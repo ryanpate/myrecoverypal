@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Add Milestone - Journey to Recovery{% endblock %}
+
+{% block extra_css %}
+<style>
+    .milestone-form-container {
+        max-width: 600px;
+        margin: 100px auto 2rem;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .form-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .form-header h2 {
+        color: var(--primary-color);
+    }
+    
+    .milestone-suggestions {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 5px;
+        margin-bottom: 2rem;
+    }
+    
+    .suggestion-item {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        margin: 0.25rem;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .suggestion-item:hover {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="milestone-form-container">
+    <div class="form-header">
+        <h2>Add a New Milestone</h2>
+        <p>Celebrate your recovery achievements, big or small</p>
+    </div>
+    
+    <div class="milestone-suggestions">
+        <h4>Common Milestones:</h4>
+        <div class="suggestion-item" onclick="fillForm('First AA/NA Meeting')">First AA/NA Meeting</div>
+        <div class="suggestion-item" onclick="fillForm('Found a Sponsor')">Found a Sponsor</div>
+        <div class="suggestion-item" onclick="fillForm('Completed Step 1')">Completed Step 1</div>
+        <div class="suggestion-item" onclick="fillForm('Repaired a Relationship')">Repaired a Relationship</div>
+        <div class="suggestion-item" onclick="fillForm('New Job/Promotion')">New Job/Promotion</div>
+        <div class="suggestion-item" onclick="fillForm('Fitness Goal Achieved')">Fitness Goal Achieved</div>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button type="submit" class="btn btn-primary">Save Milestone</button>
+            <a href="{% url 'accounts:milestones' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+function fillForm(title) {
+    document.getElementById('id_title').value = title;
+}
+</script>
+{% endblock %}

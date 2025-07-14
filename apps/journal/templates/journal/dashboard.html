@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Journal - Journey to Recovery{% endblock %}
+
+{% block extra_css %}
+<style>
+    .journal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 100px 0 50px;
+        color: white;
+        text-align: center;
+    }
+    
+    .journal-container {
+        max-width: 1200px;
+        margin: -30px auto 2rem;
+        padding: 0 2rem;
+    }
+    
+    .quick-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+    
+    .stat-label {
+        color: #666;
+        margin-top: 0.5rem;
+    }
+    
+    .streak-fire {
+        color: #ff6b6b;
+        animation: flicker 2s ease-in-out infinite;
+    }
+    
+    @keyframes flicker {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+    }
+    
+    .journal-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+    }
+    
+    .main-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .sidebar-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+    }
+    
+    .prompt-card {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        border-left: 4px solid var(--accent-color);
+    }
+    
+    .prompt-card h4 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .recent-entry {
+        padding: 1rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .recent-entry:last-child {
+        border-bottom: none;
+    }
+    
+    .mood-indicator {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 30px;
+        color: white;
+        font-weight: bold;
+        margin-right: 0.5rem;
+    }
+    
+    .mood-1, .mood-2, .mood-3 { background: #dc3545; }
+    .mood-4, .mood-5 { background: #ffc107; }
+    .mood-6, .mood-7 { background: #28a745; }
+    .mood-8, .mood-9, .mood-10 { background: #007bff; }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .btn-journal {
+        background: var(--accent-color);
+        color: white;
+        padding: 0.75rem 2rem;
+        text-decoration: none;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+    
+    .btn-journal:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    @media (max-width: 768px) {
+        .journal-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="journal-header">
+    <h1>My Recovery Journal</h1>
+    <p>Track your thoughts, feelings, and progress</p>
+</div>
+
+<div class="journal-container">
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+        <div class="stat-card">
+            <div class="stat-number">{{ streak.current_streak }} <span class="streak-fire">🔥</span></div>
+            <div class="stat-label">Day Streak</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_entries }}</div>
+            <div class="stat-label">Total Entries</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ recent_stats.avg_mood|floatformat:1|default:"--" }}</div>
+            <div class="stat-label">Average Mood (30 days)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ streak.longest_streak }}</div>
+            <div class="stat-label">Longest Streak</div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        {% if not wrote_today %}
+            <a href="{% url 'journal:create_entry' %}" class="btn-journal">Write Today's Entry</a>
+            {% if daily_prompt %}
+                <a href="{% url 'journal:guided_entry_with_prompt' daily_prompt.id %}" class="btn-journal">Use Today's Prompt</a>
+            {% endif %}
+        {% else %}
+            <a href="{% url 'journal:create_entry' %}" class="btn-journal">Write Another Entry</a>
+        {% endif %}
+        <a href="{% url 'journal:prompts_list' %}" class="btn btn-secondary">Browse Prompts</a>
+    </div>
+    
+    <div class="journal-grid">
+        <!-- Main Content -->
+        <div class="main-content">
+            <h3>Recent Entries</h3>
+            {% for entry in recent_entries %}
+                <div class="recent-entry">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            {% if entry.mood_rating %}
+                                <span class="mood-indicator mood-{{ entry.mood_rating }}">{{ entry.mood_rating }}</span>
+                            {% endif %}
+                            <a href="{% url 'journal:entry_detail' entry.pk %}" style="font-weight: bold;">
+                                {{ entry.title|default:"Untitled Entry" }}
+                            </a>
+                            <div style="color: #666; font-size: 0.9rem; margin-top: 0.25rem;">
+                                {{ entry.created_at|date:"F d, Y - g:i A" }}
+                            </div>
+                            {% if entry.prompt %}
+                                <div style="color: #666; font-size: 0.85rem;">
+                                    Prompt: {{ entry.prompt.title }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% if entry.cravings_today %}
+                            <span style="color: #ff6b6b;" title="Experienced cravings">⚠️</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <p style="text-align: center; color: #666; padding: 2rem;">
+                    No journal entries yet. Start your journaling journey today!
+                </p>
+            {% endfor %}
+            
+            {% if recent_entries %}
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="{% url 'journal:entry_list' %}">View All Entries →</a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Sidebar -->
+        <div>
+            <!-- Today's Prompt -->
+            {% if daily_prompt %}
+            <div class="sidebar-card prompt-card">
+                <h4>Today's Prompt</h4>
+                <p>{{ daily_prompt.prompt }}</p>
+                <a href="{% url 'journal:guided_entry_with_prompt' daily_prompt.id %}" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                    Use This Prompt
+                </a>
+            </div>
+            {% endif %}
+            
+            <!-- Quick Links -->
+            <div class="sidebar-card">
+                <h4>Quick Links</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="{% url 'journal:stats' %}">📊 View Statistics</a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="{% url 'journal:entry_list' %}">📚 All Entries</a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="{% url 'journal:prompts_list' %}">💭 Browse Prompts</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'journal:manage_reminders' %}">⏰ Set Reminders</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 30 Day Summary -->
+            {% if recent_stats.total_entries > 0 %}
+            <div class="sidebar-card">
+                <h4>Last 30 Days</h4>
+                <p><strong>{{ recent_stats.total_entries }}</strong> entries written</p>
+                {% if recent_stats.days_with_cravings > 0 %}
+                    <p><strong>{{ recent_stats.days_with_cravings }}</strong> days with cravings</p>
+                {% endif %}
+                {% if recent_stats.avg_mood %}
+                    <p>Average mood: <strong>{{ recent_stats.avg_mood|floatformat:1 }}/10</strong></p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

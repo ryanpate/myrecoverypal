@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ entry.title|default:"Journal Entry" }} - Journey to Recovery{% endblock %}
+
+{% block extra_css %}
+<style>
+    .entry-container {
+        max-width: 800px;
+        margin: 100px auto 2rem;
+        padding: 0 2rem;
+    }
+    
+    .entry-header {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .entry-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        color: #666;
+    }
+    
+    .mood-display {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: #f0f0f0;
+        border-radius: 20px;
+    }
+    
+    .entry-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .entry-content p {
+        line-height: 1.8;
+        margin-bottom: 1rem;
+    }
+    
+    .prompt-info {
+        background: #e3f2fd;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1.5rem;
+        font-style: italic;
+    }
+    
+    .gratitude-list {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-top: 2rem;
+    }
+    
+    .gratitude-item {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .gratitude-item:last-child {
+        border-bottom: none;
+    }
+    
+    .craving-info {
+        background: #fff3e0;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-top: 1rem;
+    }
+    
+    .entry-tags {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #eee;
+    }
+    
+    .tag {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: #e0e0e0;
+        border-radius: 15px;
+        margin-right: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .entry-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="entry-container">
+    <div class="entry-header">
+        <div class="entry-meta">
+            <div>
+                <h2>{{ entry.title|default:"Untitled Entry" }}</h2>
+                <div>{{ entry.created_at|date:"F d, Y - g:i A" }}</div>
+            </div>
+            {% if entry.mood_rating %}
+            <div class="mood-display">
+                Mood: <strong>{{ entry.mood_rating }}/10</strong>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if entry.prompt %}
+        <div class="prompt-info">
+            <strong>Prompt:</strong> {{ entry.prompt.title }}
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="entry-content">
+        {{ entry.content|linebreaks }}
+        
+        {% if entry.gratitude_1 or entry.gratitude_2 or entry.gratitude_3 %}
+        <div class="gratitude-list">
+            <h4>Today's Gratitude</h4>
+            {% if entry.gratitude_1 %}
+            <div class="gratitude-item">✨ {{ entry.gratitude_1 }}</div>
+            {% endif %}
+            {% if entry.gratitude_2 %}
+            <div class="gratitude-item">✨ {{ entry.gratitude_2 }}</div>
+            {% endif %}
+            {% if entry.gratitude_3 %}
+            <div class="gratitude-item">✨ {{ entry.gratitude_3 }}</div>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        {% if entry.cravings_today %}
+        <div class="craving-info">
+            <strong>Experienced cravings today</strong>
+            {% if entry.craving_intensity %}
+            - Intensity: {{ entry.craving_intensity }}/10
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        {% if entry.tags %}
+        <div class="entry-tags">
+            <strong>Tags:</strong>
+            {% for tag in entry.get_tags_list %}
+            <span class="tag">{{ tag }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="entry-actions">
+        <a href="{% url 'journal:dashboard' %}" class="btn btn-secondary">Back to Journal</a>
+        <a href="{% url 'journal:create_entry' %}" class="btn btn-primary">Write New Entry</a>
+    </div>
+</div>
+{% endblock %}

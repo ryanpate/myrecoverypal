@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Journal Statistics - Journey to Recovery{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 100px 0 50px;
+        color: white;
+        text-align: center;
+    }
+
+    .stats-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card h3 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .big-number {
+        font-size: 3rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        text-align: center;
+        display: block;
+        margin: 1rem 0;
+    }
+
+    .mood-trend {
+        height: 200px;
+        position: relative;
+        margin-top: 1rem;
+    }
+
+    .tag-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .tag-item {
+        padding: 0.5rem 1rem;
+        background: #e0e0e0;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+
+    .tag-item.large {
+        font-size: 1.1rem;
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .tag-item.medium {
+        font-size: 1rem;
+        background: var(--secondary-color);
+        color: white;
+    }
+
+    .writing-pattern {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .pattern-bar {
+        background: #e0e0e0;
+        height: 20px;
+        border-radius: 10px;
+        overflow: hidden;
+        flex: 1;
+        margin-left: 1rem;
+    }
+
+    .pattern-fill {
+        background: var(--accent-color);
+        height: 100%;
+        transition: width 0.3s ease;
+    }
+
+    .craving-stats {
+        text-align: center;
+        padding: 2rem;
+        background: #fff3e0;
+        border-radius: 10px;
+    }
+
+    .craving-percentage {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #f57c00;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stats-header">
+    <h1>Journal Statistics</h1>
+    <p>Insights from your recovery journey</p>
+</div>
+
+<div class="stats-container">
+    <div class="stats-grid">
+        <!-- Total Entries -->
+        <div class="stat-card">
+            <h3>Total Journal Entries</h3>
+            <span class="big-number">{{ total_entries }}</span>
+            <p style="text-align: center; color: #666;">
+                Keep writing! Consistency is key to recovery.
+            </p>
+        </div>
+
+        <!-- Mood Trends -->
+        <div class="stat-card">
+            <h3>Mood Trend (Last 30 Days)</h3>
+            {% if mood_trend %}
+            <canvas id="moodChart" class="mood-trend"></canvas>
+            {% else %}
+            <p style="text-align: center; color: #666; padding: 2rem;">
+                No mood data available yet. Track your mood in journal entries to see trends.
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Cravings Analysis -->
+        {% if craving_stats %}
+        <div class="stat-card">
+            <h3>Craving Management</h3>
+            <div class="craving-stats">
+                <div class="craving-percentage">{{ craving_stats.percentage|floatformat:0 }}%</div>
+                <p>of days with recorded cravings</p>
+                <p style="margin-top: 1rem;">
+                    <strong>{{ craving_stats.days_with_cravings }}</strong> out of
+                    <strong>{{ craving_stats.total_days }}</strong> days
+                </p>
+                {% if craving_stats.avg_intensity %}
+                <p>Average intensity: <strong>{{ craving_stats.avg_intensity|floatformat:1 }}/10</strong></p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Top Tags -->
+    {% if top_tags %}
+    <div class="stat-card">
+        <h3>Your Top Topics</h3>
+        <div class="tag-cloud">
+            {% for tag, count in top_tags %}
+            <span class="tag-item {% if forloop.counter <= 3 %}large{% elif forloop.counter <= 6 %}medium{% endif %}">
+                {{ tag }} ({{ count }})
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Writing Patterns -->
+    {% if writing_patterns %}
+    <div class="stat-card">
+        <h3>Writing Patterns by Day</h3>
+        {% for pattern in writing_patterns %}
+        <div class="writing-pattern">
+            <span style="width: 100px;">{{ pattern.day }}</span>
+            <div class="pattern-bar">
+                <div class="pattern-fill" style="width: {{ pattern.count|floatformat:0 }}%;"></div>
+            </div>
+            <span style="margin-left: 1rem;">{{ pattern.count }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    {% if mood_trend %}
+    // Mood trend chart
+    const ctx = document.getElementById('moodChart').getContext('2d');
+    const moodData = {{ mood_trend| safe }};
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: moodData.map(d => new Date(d.created_at__date).toLocaleDateString()),
+            datasets: [{
+                label: 'Average Mood',
+                data: moodData.map(d => d.avg_mood),
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126,

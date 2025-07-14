@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Journal Entries - Journey to Recovery{% endblock %}
+
+{% block extra_css %}
+<style>
+    .entries-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 100px 0 50px;
+        color: white;
+        text-align: center;
+    }
+    
+    .entries-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+    
+    .search-filters {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .filter-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 1rem;
+        align-items: end;
+    }
+    
+    .entries-list {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    
+    .entry-item {
+        padding: 1.5rem;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.3s ease;
+    }
+    
+    .entry-item:hover {
+        background: #f8f9fa;
+    }
+    
+    .entry-item:last-child {
+        border-bottom: none;
+    }
+    
+    .entry-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 0.5rem;
+    }
+    
+    .entry-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+    
+    .entry-title:hover {
+        text-decoration: underline;
+    }
+    
+    .entry-date {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .entry-preview {
+        color: #444;
+        line-height: 1.6;
+        margin: 0.5rem 0;
+    }
+    
+    .entry-footer {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+    
+    .mood-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        background: #e3f2fd;
+        border-radius: 15px;
+        font-size: 0.85rem;
+    }
+    
+    .tag {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        background: #f0f0f0;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        color: #666;
+    }
+    
+    .mood-chart {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .mood-bar {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    
+    .mood-segment {
+        flex: 1;
+        height: 40px;
+        background: #e0e0e0;
+        border-radius: 5px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .mood-fill {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--primary-color);
+        transition: height 0.3s ease;
+    }
+    
+    @media (max-width: 768px) {
+        .filter-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="entries-header">
+    <h1>My Journal Entries</h1>
+    <p>Your complete recovery journey</p>
+</div>
+
+<div class="entries-container">
+    <!-- Search and Filters -->
+    <div class="search-filters">
+        <form method="get" class="filter-row">
+            <div>
+                <label for="search">Search entries:</label>
+                <input type="text" name="search" id="search" class="form-control" 
+                       placeholder="Search title, content, or tags..." 
+                       value="{{ request.GET.search }}">
+            </div>
+            <div>
+                <label for="mood">Mood filter:</label>
+                <select name="mood" id="mood" class="form-control">
+                    <option value="">All moods</option>
+                    {% for i in "12345678910"|make_list %}
+                        <option value="{{ i }}" {% if request.GET.mood == i %}selected{% endif %}>
+                            Mood {{ i }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="date_from">From date:</label>
+                <input type="date" name="date_from" id="date_from" class="form-control" 
+                       value="{{ request.GET.date_from }}">
+            </div>
+            <div>
+                <label for="date_to">To date:</label>
+                <input type="date" name="date_to" id="date_to" class="form-control" 
+                       value="{{ request.GET.date_to }}">
+            </div>
+            <div style="grid-column: 1 / -1; text-align: center; margin-top: 1rem;">
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                <a href="{% url 'journal:entry_list' %}" class="btn btn-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Mood Distribution (if available) -->
+    {% if mood_stats %}
+    <div class="mood-chart">
+        <h4>Mood Distribution</h4>
+        <div class="mood-bar">
+            {% for stat in mood_stats %}
+                <div class="mood-segment" title="Mood {{ stat.mood_rating }}: {{ stat.count }} entries">
+                    <div class="mood-fill" style="height: {{ stat.count|floatformat:0 }}%;"></div>
+                    <small style="position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);">
+                        {{ stat.mood_rating }}
+                    </small>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Entries List -->
+    <div class="entries-list">
+        {% for entry in entries %}
+            <div class="entry-item">
+                <div class="entry-header">
+                    <a href="{% url 'journal:entry_detail' entry.pk %}" class="entry-title">
+                        {{ entry.title|default:"Untitled Entry" }}
+                    </a>
+                    <span class="entry-date">{{ entry.created_at|date:"M d, Y" }}</span>
+                </div>
+                
+                <p class="entry-preview">
+                    {{ entry.content|truncatewords:30|linebreaks }}
+                </p>
+                
+                <div class="entry-footer">
+                    {% if entry.mood_rating %}
+                        <span class="mood-badge">
+                            😊 Mood: {{ entry.mood_rating }}/10
+                        </span>
+                    {% endif %}
+                    
+                    {% if entry.cravings_today %}
+                        <span class="tag" style="background: #fff3e0;">
+                            ⚠️ Cravings
+                        </span>
+                    {% endif %}
+                    
+                    {% for tag in entry.get_tags_list %}
+                        <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        {% empty %}
+            <div style="text-align: center; padding: 3rem;">
+                <p>No entries found matching your criteria.</p>
+                <a href="{% url 'journal:create_entry' %}" class="btn btn-primary">
+                    Write Your First Entry
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div style="text-align: center; margin-top: 2rem;">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary">Previous</a>
+        {% endif %}
+        
+        <span style="margin: 0 1rem;">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

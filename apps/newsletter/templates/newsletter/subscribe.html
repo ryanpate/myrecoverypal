@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Newsletter - Journey to Recovery{% endblock %}
+
+{% block extra_css %}
+<style>
+    .newsletter-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 100px 0 50px;
+        color: white;
+        text-align: center;
+    }
+    
+    .newsletter-container {
+        max-width: 600px;
+        margin: -30px auto 2rem;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .subscribe-card {
+        background: white;
+        padding: 3rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    
+    .benefits-list {
+        list-style: none;
+        padding: 0;
+        margin: 2rem 0;
+    }
+    
+    .benefits-list li {
+        padding: 0.75rem 0;
+        padding-left: 2rem;
+        position: relative;
+    }
+    
+    .benefits-list li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: var(--accent-color);
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+    
+    .newsletter-preview {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-top: 3rem;
+        text-align: center;
+    }
+    
+    .frequency-info {
+        background: #e3f2fd;
+        padding: 1rem;
+        border-radius: 5px;
+        margin: 1rem 0;
+        font-size: 0.9rem;
+    }
+    
+    .privacy-note {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 1rem;
+        text-align: center;
+    }
+    
+    .sample-topics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .topic-card {
+        background: #f0f0f0;
+        padding: 1rem;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+    
+    .topic-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="newsletter-header">
+    <h1>Stay Connected on Your Recovery Journey</h1>
+    <p>Weekly inspiration, tips, and community updates delivered to your inbox</p>
+</div>
+
+<div class="newsletter-container">
+    <div class="subscribe-card">
+        <h2 style="text-align: center; color: var(--primary-color); margin-bottom: 2rem;">
+            Join Our Newsletter Community
+        </h2>
+        
+        <ul class="benefits-list">
+            <li>Weekly recovery tips and strategies</li>
+            <li>Inspiring success stories from the community</li>
+            <li>Exclusive resources and tools</li>
+            <li>Event announcements and workshops</li>
+            <li>Milestone celebration ideas</li>
+        </ul>
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            
+            <div class="frequency-info">
+                <strong>📧 Frequency:</strong> We send newsletters once a week, 
+                typically on Sunday mornings to help you start your week with inspiration.
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-lg w-100" style="margin-top: 1.5rem;">
+                Subscribe to Newsletter
+            </button>
+        </form>
+        
+        <p class="privacy-note">
+            <i class="fas fa-lock"></i> We respect your privacy. Unsubscribe anytime.
+            <br>
+            <a href="#" style="color: var(--primary-color);">Read our Privacy Policy</a>
+        </p>
+    </div>
+    
+    <div class="newsletter-preview">
+        <h3>What We Cover</h3>
+        <div class="sample-topics">
+            <div class="topic-card">
+                <div class="topic-icon">🎯</div>
+                <div>Goal Setting</div>
+            </div>
+            <div class="topic-card">
+                <div class="topic-icon">💪</div>
+                <div>Coping Skills</div>
+            </div>
+            <div class="topic-card">
+                <div class="topic-icon">🧘</div>
+                <div>Mindfulness</div>
+            </div>
+            <div class="topic-card">
+                <div class="topic-icon">👥</div>
+                <div>Community</div>
+            </div>
+        </div>
+        
+        {% if user.is_authenticated and not user.newsletter_subscriber %}
+        <div style="margin-top: 2rem; padding: 1rem; background: #fff3e0; border-radius: 5px;">
+            <p style="margin: 0;">
+                <strong>Hey {{ user.first_name|default:user.username }}!</strong> 
+                Stay updated with your recovery community.
+            </p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{% url 'newsletter:archive' %}" style="color: var(--primary-color);">
+            View Past Newsletters →
+        </a>
+    </div>
+</div>
+{% endblock %}

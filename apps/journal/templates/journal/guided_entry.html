@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Guided Journal Entry - Journey to Recovery{% endblock %}
+
+{% block extra_css %}
+<style>
+    .guided-container {
+        max-width: 800px;
+        margin: 100px auto 2rem;
+        padding: 2rem;
+    }
+    
+    .prompt-display {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+    
+    .prompt-display h2 {
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+    }
+    
+    .prompt-question {
+        font-size: 1.3rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+    
+    .prompt-category {
+        display: inline-block;
+        background: rgba(255,255,255,0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+    }
+    
+    .journal-form {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .form-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border-left: 4px solid var(--accent-color);
+    }
+    
+    .follow-up-section {
+        background: #e3f2fd;
+        border-left-color: var(--primary-color);
+    }
+    
+    .form-section h4 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .writing-tips {
+        background: #fff3e0;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 2rem;
+    }
+    
+    .writing-tips h5 {
+        color: #f57c00;
+        margin-bottom: 0.5rem;
+    }
+    
+    .writing-tips ul {
+        margin: 0;
+        padding-left: 1.5rem;
+    }
+    
+    .no-prompt {
+        text-align: center;
+        padding: 3rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+    
+    .btn-refresh {
+        background: var(--secondary-color);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+    
+    .btn-refresh:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="guided-container">
+    {% if prompt %}
+        <div class="prompt-display">
+            <h2>{{ prompt.title }}</h2>
+            <p class="prompt-question">{{ prompt.prompt }}</p>
+            <span class="prompt-category">{{ prompt.get_category_display }}</span>
+        </div>
+        
+        <div class="writing-tips">
+            <h5>💡 Writing Tips:</h5>
+            <ul>
+                <li>Take your time - there's no rush</li>
+                <li>Be honest with yourself</li>
+                <li>No judgment - this is your safe space</li>
+                <li>Focus on feelings, not just facts</li>
+            </ul>
+        </div>
+        
+        <form method="post" class="journal-form">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <h4>Your Response</h4>
+                {{ form.content|as_crispy_field }}
+            </div>
+            
+            {% if prompt.follow_up_1 %}
+            <div class="form-section follow-up-section">
+                <h4>Going Deeper</h4>
+                <p>{{ prompt.follow_up_1 }}</p>
+                {{ form.follow_up_1_response|as_crispy_field }}
+            </div>
+            {% endif %}
+            
+            {% if prompt.follow_up_2 %}
+            <div class="form-section follow-up-section">
+                <h4>Final Reflection</h4>
+                <p>{{ prompt.follow_up_2 }}</p>
+                {{ form.follow_up_2_response|as_crispy_field }}
+            </div>
+            {% endif %}
+            
+            <div class="form-section">
+                <h4>How are you feeling?</h4>
+                {{ form.mood_rating|as_crispy_field }}
+            </div>
+            
+            <div class="form-section">
+                <h4>Tags (optional)</h4>
+                {{ form.tags|as_crispy_field }}
+            </div>
+            
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button type="submit" class="btn btn-primary btn-lg">Save Entry</button>
+                <a href="{% url 'journal:dashboard' %}" class="btn btn-secondary btn-lg">Cancel</a>
+            </div>
+        </form>
+    {% else %}
+        <div class="no-prompt">
+            <h3>No prompts available</h3>
+            <p>It looks like there aren't any prompts suitable for your recovery stage right now.</p>
+            <p>You can still write a free-form journal entry!</p>
+            <a href="{% url 'journal:create_entry' %}" class="btn btn-primary">Write Free Entry</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

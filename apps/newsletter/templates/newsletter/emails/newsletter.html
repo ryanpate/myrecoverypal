@@ -1,0 +1,66 @@
+{% extends 'newsletter/emails/base.html' %}
+
+{% block content %}
+<div class="header">
+    <h1>{{ newsletter.title }}</h1>
+    {% if newsletter.preheader %}
+        <p style="margin-top: 10px; opacity: 0.9;">{{ newsletter.preheader }}</p>
+    {% endif %}
+</div>
+
+<div class="content">
+    <!-- Personalized Greeting -->
+    <p>Hi {{ subscriber.get_full_name|default:"Friend" }},</p>
+    
+    <!-- Introduction -->
+    <div style="margin-bottom: 30px;">
+        {{ newsletter.intro_content|linebreaks }}
+    </div>
+    
+    <!-- Main Content -->
+    <div style="margin-bottom: 30px;">
+        {{ newsletter.main_content|safe }}
+    </div>
+    
+    <!-- Featured Section -->
+    {% if newsletter.featured_title %}
+    <div class="featured-box">
+        <h3 style="margin-top: 0; color: #333;">{{ newsletter.featured_title }}</h3>
+        {{ newsletter.featured_content|linebreaks }}
+        {% if newsletter.featured_link %}
+            <a href="{{ newsletter.featured_link }}" class="button">
+                {{ newsletter.featured_link_text }}
+            </a>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <!-- Call to Action -->
+    {% if newsletter.cta_text and newsletter.cta_url %}
+    <div style="text-align: center; margin: 40px 0;">
+        <a href="{{ newsletter.cta_url }}" class="button" style="font-size: 18px; padding: 15px 40px;">
+            {{ newsletter.cta_text }}
+        </a>
+    </div>
+    {% endif %}
+    
+    <!-- Signature -->
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+        <p>Stay strong on your journey,</p>
+        <p><strong>The Journey to Recovery Team</strong></p>
+    </div>
+    
+    <!-- Social Links -->
+    <div class="social-links" style="text-align: center; margin-top: 30px;">
+        <p>Connect with us:</p>
+        <a href="#" style="color: #667eea;">Facebook</a> | 
+        <a href="#" style="color: #667eea;">Instagram</a> | 
+        <a href="#" style="color: #667eea;">Twitter</a>
+    </div>
+</div>
+
+<!-- Tracking Pixel -->
+{% if not is_preview %}
+<img src="{{ site_url }}/newsletter/track/open/{{ tracking_id }}/" width="1" height="1" style="display: none;">
+{% endif %}
+{% endblock %}

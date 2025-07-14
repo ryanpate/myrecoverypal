@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Edit Profile - Journey to Recovery{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-profile-container {
+        max-width: 800px;
+        margin: 100px auto 2rem;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .profile-header h1 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .current-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #ddd;
+        font-size: 3rem;
+        color: #666;
+        overflow: hidden;
+        border: 4px solid #f0f0f0;
+    }
+
+    .current-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+    }
+
+    .form-section h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+    }
+
+    .form-section p {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        justify-content: center;
+    }
+
+    .privacy-note {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .privacy-note i {
+        color: var(--primary-color);
+        margin-right: 0.5rem;
+    }
+
+    .recovery-info {
+        background: #e3f2fd;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .recovery-info h4 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    /* Custom checkbox styling */
+    .form-check {
+        padding: 0.5rem 0;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+    }
+
+    /* File input styling */
+    .form-control[type="file"] {
+        padding: 0.375rem 0.75rem;
+    }
+
+    .help-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+        .edit-profile-container {
+            margin: 80px auto 2rem;
+            padding: 1rem;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+
+        .btn-group .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-profile-container">
+    <div class="profile-header">
+        <h1>Edit Profile</h1>
+        <p>Update your profile information and recovery settings</p>
+
+        {% if user.avatar %}
+        <div class="current-avatar">
+            <img src="{{ user.avatar.url }}" alt="{{ user.username }}">
+        </div>
+        {% else %}
+        <div class="current-avatar">
+            {{ user.username|first|upper }}
+        </div>
+        {% endif %}
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Basic Information -->
+        <div class="form-section">
+            <h3>Basic Information</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form.first_name|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.last_name|as_crispy_field }}
+                </div>
+            </div>
+            {{ form.email|as_crispy_field }}
+            {{ form.location|as_crispy_field }}
+            {{ form.bio|as_crispy_field }}
+            {{ form.avatar|as_crispy_field }}
+            {% if user.avatar %}
+            <p class="help-text">Current avatar shown above. Upload a new image to change it.</p>
+            {% endif %}
+        </div>
+
+        <!-- Recovery Information -->
+        <div class="form-section">
+            <h3>Recovery Information</h3>
+            <div class="recovery-info">
+                <h4>Your Recovery Journey</h4>
+                <p>Sharing your recovery information can inspire and help others in the community.</p>
+            </div>
+            {{ form.sobriety_date|as_crispy_field }}
+            {% if user.sobriety_date %}
+            <p class="help-text">
+                <strong>{{ user.get_days_sober }}</strong> days of sobriety
+                ({{ user.get_sobriety_milestone }})
+            </p>
+            {% endif %}
+            {{ form.recovery_goals|as_crispy_field }}
+            {{ form.is_sponsor|as_crispy_field }}
+        </div>
+
+        <!-- Privacy Settings -->
+        <div class="form-section">
+            <h3>Privacy Settings</h3>
+            <div class="privacy-note">
+                <i class="fas fa-shield-alt"></i>
+                Control what information other members can see on your profile.
+            </div>
+            {{ form.is_profile_public|as_crispy_field }}
+            {{ form.show_sobriety_date|as_crispy_field }}
+            {{ form.allow_messages|as_crispy_field }}
+        </div>
+
+        <!-- Email Preferences -->
+        <div class="form-section">
+            <h3>Email Preferences</h3>
+            <p>Manage how we communicate with you</p>
+            {{ form.email_notifications|as_crispy_field }}
+            {{ form.newsletter_subscriber|as_crispy_field }}
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+            <a href="{% url 'accounts:profile' request.user.username %}" class="btn btn-secondary btn-lg">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Preview avatar image before upload
+    document.addEventListener('DOMContentLoaded', function () {
+        const avatarInput = document.getElementById('id_avatar');
+        if (avatarInput) {
+            avatarInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const avatar = document.querySelector('.current-avatar');
+                        avatar.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Add character counter for bio
+        const bioField = document.getElementById('id_bio');
+        if (bioField) {
+            const maxLength = 500;
+            const counter = document.createElement('div');
+            counter.className = 'help-text text-end';
+            counter.innerHTML = `<span id="bio-counter">0</span> / ${maxLength} characters`;
+            bioField.parentNode.appendChild(counter);
+
+            function updateCounter() {
+                const length = bioField.value.length;
+                document.getElementById('bio-counter').textContent = length;
+                if (length > maxLength) {
+                    counter.classList.add('text-danger');
+                } else {
+                    counter.classList.remove('text-danger');
+                }
+            }
+
+            bioField.addEventListener('input', updateCounter);
+            updateCounter();
+        }
+    });
+</script>
+{% endblock %}

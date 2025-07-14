@@ -1,0 +1,11 @@
+{% extends 'blog/post_list.html' %}
+
+{% block title %}Posts tagged "{{ tag.name }}" - Journey to Recovery{% endblock %}
+
+{% block content %}
+<div class="blog-header">
+    <h1>Posts tagged "{{ tag.name }}"</h1>
+</div>
+
+{{ block.super }}
+{% endblock %}

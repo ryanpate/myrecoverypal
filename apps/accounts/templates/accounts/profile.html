@@ -1,0 +1,423 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ profile_user.get_full_name|default:profile_user.username }} - Profile{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 100px 0 150px;
+        color: white;
+        text-align: center;
+        position: relative;
+    }
+    
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 5px solid white;
+        position: absolute;
+        bottom: -75px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: #666;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .profile-container {
+        max-width: 800px;
+        margin: 100px auto 2rem;
+        padding: 0 2rem;
+    }
+    
+    .profile-actions {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .profile-info {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .info-section {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .info-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    
+    .info-section h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+    
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+    
+    .info-row:last-child {
+        border-bottom: none;
+    }
+    
+    .info-label {
+        font-weight: 600;
+        color: #666;
+    }
+    
+    .info-value {
+        color: #333;
+        text-align: right;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        margin-left: 0.5rem;
+    }
+    
+    .badge-sponsor {
+        background: var(--accent-color);
+        color: white;
+    }
+    
+    .badge-public {
+        background: #28a745;
+        color: white;
+    }
+    
+    .badge-private {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .milestone-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .milestone-card {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 5px;
+        text-align: center;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .milestone-card:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+    
+    .milestone-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .milestone-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.25rem;
+    }
+    
+    .milestone-date {
+        font-size: 0.85rem;
+        color: #666;
+    }
+    
+    .private-profile {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+    }
+    
+    .private-profile i {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+    
+    .sobriety-counter {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .sobriety-days {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    
+    .sobriety-label {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+    
+    .bio-section {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .bio-section p {
+        margin: 0;
+        line-height: 1.6;
+        color: #444;
+    }
+    
+    .recent-posts {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .recent-posts li {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .recent-posts li:last-child {
+        border-bottom: none;
+    }
+    
+    .recent-posts a {
+        color: #333;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .recent-posts a:hover {
+        color: var(--primary-color);
+    }
+    
+    .post-meta {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 0.25rem;
+    }
+    
+    .message-btn {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+    
+    .message-btn:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    @media (max-width: 768px) {
+        .profile-header {
+            padding: 80px 0 120px;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            bottom: -60px;
+        }
+        
+        .profile-container {
+            margin: 80px auto 2rem;
+        }
+        
+        .info-row {
+            flex-direction: column;
+            text-align: left;
+        }
+        
+        .info-value {
+            text-align: left;
+            margin-top: 0.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <h1>{{ profile_user.get_full_name|default:profile_user.username }}</h1>
+    {% if profile_user.location %}
+        <p><i class="fas fa-map-marker-alt"></i> {{ profile_user.location }}</p>
+    {% endif %}
+    {% if profile_user.is_sponsor %}
+        <span class="badge badge-sponsor">Available as Sponsor</span>
+    {% endif %}
+    
+    <div class="profile-avatar">
+        {% if profile_user.avatar %}
+            <img src="{{ profile_user.avatar.url }}" alt="{{ profile_user.username }}">
+        {% else %}
+            {{ profile_user.username|first|upper }}
+        {% endif %}
+    </div>
+</div>
+
+<div class="profile-container">
+    {% if profile_user == request.user %}
+        <div class="profile-actions">
+            <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit Profile
+            </a>
+            <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+        </div>
+    {% elif request.user.is_authenticated and profile_user.allow_messages %}
+        <div class="profile-actions">
+            <a href="{% url 'accounts:send_message' profile_user.username %}" class="message-btn">
+                <i class="fas fa-envelope"></i> Send Message
+            </a>
+        </div>
+    {% endif %}
+    
+    {% if show_full_profile %}
+        <!-- Sobriety Counter -->
+        {% if profile_user.show_sobriety_date and profile_user.sobriety_date %}
+        <div class="sobriety-counter">
+            <div class="sobriety-days">{{ profile_user.get_days_sober }}</div>
+            <div class="sobriety-label">Days of Sobriety</div>
+            <p style="margin-top: 1rem; opacity: 0.9;">
+                Clean since {{ profile_user.sobriety_date|date:"F d, Y" }}
+            </p>
+        </div>
+        {% endif %}
+        
+        <!-- Bio Section -->
+        {% if profile_user.bio %}
+        <div class="bio-section">
+            <h3 style="margin-bottom: 1rem; color: var(--primary-color);">About</h3>
+            <p>{{ profile_user.bio|linebreaks }}</p>
+        </div>
+        {% endif %}
+        
+        <div class="profile-info">
+            <!-- Basic Information -->
+            <div class="info-section">
+                <h3>Profile Information</h3>
+                <div class="info-row">
+                    <span class="info-label">Member Since</span>
+                    <span class="info-value">{{ profile_user.date_joined|date:"F Y" }}</span>
+                </div>
+                {% if profile_user.last_seen %}
+                <div class="info-row">
+                    <span class="info-label">Last Active</span>
+                    <span class="info-value">{{ profile_user.last_seen|timesince }} ago</span>
+                </div>
+                {% endif %}
+                <div class="info-row">
+                    <span class="info-label">Profile Status</span>
+                    <span class="info-value">
+                        {% if profile_user.is_profile_public %}
+                            <span class="badge badge-public">Public</span>
+                        {% else %}
+                            <span class="badge badge-private">Private</span>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Recovery Goals -->
+            {% if profile_user.recovery_goals %}
+            <div class="info-section">
+                <h3>Recovery Goals</h3>
+                <p style="color: #444; line-height: 1.6;">{{ profile_user.recovery_goals|linebreaks }}</p>
+            </div>
+            {% endif %}
+            
+            <!-- Recent Milestones -->
+            {% if milestones %}
+            <div class="info-section">
+                <h3>Recent Milestones</h3>
+                <div class="milestone-grid">
+                    {% for milestone in milestones %}
+                        <div class="milestone-card">
+                            <div class="milestone-icon">🏆</div>
+                            <div class="milestone-title">{{ milestone.title }}</div>
+                            <div class="milestone-date">{{ milestone.date_achieved|date:"M d, Y" }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if profile_user == request.user %}
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <a href="{% url 'accounts:milestones' %}" style="color: var(--primary-color);">
+                            View All Milestones →
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <!-- Recent Blog Posts -->
+            {% if recent_posts %}
+            <div class="info-section">
+                <h3>Recent Blog Posts</h3>
+                <ul class="recent-posts">
+                    {% for post in recent_posts %}
+                        <li>
+                            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                            <div class="post-meta">
+                                {{ post.published_at|date:"M d, Y" }} • {{ post.views }} views
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="profile-info private-profile">
+            <i class="fas fa-lock"></i>
+            <h3>This Profile is Private</h3>
+            <p>{{ profile_user.get_full_name|default:profile_user.username }} has chosen to keep their profile private.</p>
+            {% if not request.user.is_authenticated %}
+                <p style="margin-top: 1rem;">
+                    <a href="{% url 'accounts:login' %}?next={{ request.path }}">Login</a> to view more profiles and connect with the community.
+                </p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

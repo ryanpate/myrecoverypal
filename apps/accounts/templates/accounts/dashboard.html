@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Journey to Recovery{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 100px 0 50px;
+        color: white;
+        text-align: center;
+    }
+    
+    .dashboard-container {
+        max-width: 1200px;
+        margin: -30px auto 2rem;
+        padding: 0 2rem;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stat-number {
+        font-size: 3rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 1.1rem;
+    }
+    
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 2rem;
+    }
+    
+    .dashboard-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .milestone-item {
+        padding: 1rem;
+        border-left: 4px solid var(--accent-color);
+        margin-bottom: 1rem;
+        background: #f8f9fa;
+        border-radius: 5px;
+    }
+    
+    .milestone-date {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .quick-actions {
+        display: grid;
+        gap: 1rem;
+    }
+    
+    .action-btn {
+        display: block;
+        padding: 1rem;
+        background: #f8f9fa;
+        text-align: center;
+        text-decoration: none;
+        color: #333;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+    
+    .action-btn:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateX(5px);
+    }
+    
+    @media (max-width: 768px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Welcome back, {{ user.get_full_name|default:user.username }}!</h1>
+    <p>{{ sobriety_milestone }} of recovery</p>
+</div>
+
+<div class="dashboard-container">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ user.blog_posts.count }}</div>
+            <div class="stat-label">Stories Shared</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ unread_messages }}</div>
+            <div class="stat-label">Unread Messages</div>
+        </div>
+    </div>
+    
+    <div class="dashboard-grid">
+        <div class="main-content">
+            <!-- Recent Milestones -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h3>Recent Milestones</h3>
+                    <a href="{% url 'accounts:add_milestone' %}" class="btn btn-sm btn-primary">Add New</a>
+                </div>
+                {% for milestone in recent_milestones %}
+                    <div class="milestone-item">
+                        <h4>{{ milestone.title }}</h4>
+                        {% if milestone.description %}
+                            <p>{{ milestone.description }}</p>
+                        {% endif %}
+                        <div class="milestone-date">{{ milestone.date_achieved }}</div>
+                    </div>
+                {% empty %}
+                    <p>No milestones yet. <a href="{% url 'accounts:add_milestone' %}">Add your first milestone!</a></p>
+                {% endfor %}
+                <a href="{% url 'accounts:milestones' %}" style="display: block; margin-top: 1rem; text-align: center;">View All Milestones →</a>
+            </div>
+            
+            <!-- Recent Posts -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h3>Your Recent Posts</h3>
+                    <a href="{% url 'blog:post_list' %}" class="btn btn-sm btn-primary">Write New</a>
+                </div>
+                {% for post in recent_posts %}
+                    <div style="margin-bottom: 1rem;">
+                        <a href="{{ post.get_absolute_url }}" style="font-weight: bold;">{{ post.title }}</a>
+                        <div style="color: #666; font-size: 0.9rem;">
+                            {{ post.published_at|date:"M d, Y" }} • {{ post.views }} views
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>You haven't written any posts yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <!-- Quick Actions -->
+            <div class="dashboard-section">
+                <h3>Quick Actions</h3>
+                <div class="quick-actions">
+                    <a href="{% url 'accounts:edit_profile' %}" class="action-btn">✏️ Edit Profile</a>
+                    <a href="{% url 'accounts:community' %}" class="action-btn">👥 Browse Community</a>
+                    <a href="{% url 'accounts:messages' %}" class="action-btn">
+                        📬 Messages
+                        {% if unread_messages > 0 %}
+                            <span style="background: red; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; margin-left: 5px;">{{ unread_messages }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'blog:post_list' %}" class="action-btn">📝 Read Blog</a>
+                </div>
+            </div>
+            
+            <!-- Profile Completion -->
+            <div class="dashboard-section">
+                <h3>Profile Completion</h3>
+                <div style="background: #f0f0f0; height: 10px; border-radius: 5px; overflow: hidden; margin: 1rem 0;">
+                    <div style="background: var(--accent-color); height: 100%; width: 70%;"></div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666;">Complete your profile to connect with more members</p>
+                <a href="{% url 'accounts:edit_profile' %}" style="color: var(--primary-color);">Complete Profile →</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}d">
+            <div class="stat-number">{{ days_sober }}</div>
+            <div class="stat-label">Days Sober</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ user.milestones.count }}</div>
+            <div class="stat-label">Milestones Achieved</div>
+        </div>
+        <div class="stat-car

@@ -1,0 +1,12 @@
+html{% extends 'blog/post_list.html' %}
+
+{% block title %}{{ category.name }} - Journey to Recovery{% endblock %}
+
+{% block content %}
+<div class="blog-header">
+    <h1>{{ category.name }}</h1>
+    <p>{{ category.description|default:"Posts in this category" }}</p>
+</div>
+
+{{ block.super }}
+{% endblock %}

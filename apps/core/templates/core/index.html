@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Journey to Recovery - Support & Resources{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" id="home">
+    <div class="hero-content">
+        <h1 class="floating">Your Journey to Recovery Starts Here</h1>
+        <p>Find support, resources, and community on your path to healing</p>
+        {% if user.is_authenticated %}
+        <a href="{% url 'accounts:dashboard' %}" class="cta-button">Go to Dashboard</a>
+        {% else %}
+        <a href="{% url 'accounts:register' %}" class="cta-button">Join Our Community</a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features" id="features">
+    <div class="container">
+        <h2 class="section-title">What We Offer</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📝</div>
+                <h3>Recovery Blog</h3>
+                <p>Read inspiring stories, practical tips, and evidence-based strategies from those who understand your
+                    journey.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <h3>Resources & Tools</h3>
+                <p>Access comprehensive guides, worksheets, and recovery tools designed to support your healing process.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📔</div>
+                <h3>Personal Journal</h3>
+                <p>Track your progress with guided prompts and reflections tailored specifically for recovery.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛍️</div>
+                <h3>Recovery Store</h3>
+                <p>Shop meaningful apparel and items that celebrate your journey and inspire continued growth.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>Community Support</h3>
+                <p>Connect with others who understand your experience in a safe, supportive environment.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📧</div>
+                <h3>Newsletter</h3>
+                <p>Stay connected with weekly inspiration, recovery tips, and community updates.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about" id="about">
+    <div class="container">
+        <h2 class="section-title">About Our Mission</h2>
+        <div class="about-content">
+            <p>We believe that recovery is a journey, not a destination. Our platform provides a safe, supportive space
+                for individuals at every stage of their recovery process.</p>
+            <p>Whether you're just beginning your journey or celebrating years of sobriety, you'll find resources,
+                community, and tools designed to support your continued growth and healing.</p>
+            {% if user.is_authenticated %}
+            <a href="{% url 'blog:post_list' %}" class="cta-button">Read Recovery Stories</a>
+            {% else %}
+            <a href="{% url 'accounts:register' %}" class="cta-button">Start Your Journey</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="#privacy">Privacy Policy</a>
+            <a href="#terms">Terms of Service</a>
+            <a href="{% url 'core:contact' %}">Contact Us</a>
+            <a href="#support">Get Support</a>
+        </div>
+        <p>&copy; 2025 Journey to Recovery. All rights reserved.</p>
+        <p style="opacity: 0.7; font-size: 0.9rem; margin-top: 1rem;">If you're in crisis, please call 988 (Suicide &
+            Crisis Lifeline) or text "HELLO" to 741741 (Crisis Text Line)</p>
+    </div>
+</footer>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Milestones - Journey to Recovery{% endblock %}
+
+{% block extra_css %}
+<style>
+    .milestones-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 100px 0 50px;
+        color: white;
+        text-align: center;
+    }
+    
+    .milestones-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+    
+    .milestone-timeline {
+        position: relative;
+        padding: 2rem 0;
+    }
+    
+    .milestone-timeline::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--primary-color);
+        transform: translateX(-50%);
+    }
+    
+    .milestone-item {
+        background: white;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        position: relative;
+        width: calc(50% - 2rem);
+    }
+    
+    .milestone-item:nth-child(odd) {
+        margin-left: auto;
+    }
+    
+    .milestone-item::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 20px;
+        height: 20px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .milestone-item:nth-child(odd)::before {
+        left: -30px;
+    }
+    
+    .milestone-item:nth-child(even)::before {
+        right: -30px;
+    }
+    
+    .milestone-type {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .milestone-date {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .add-milestone-btn {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 60px;
+        height: 60px;
+        background: var(--accent-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .add-milestone-btn:hover {
+        transform: scale(1.1);
+        background: var(--primary-color);
+        color: white;
+    }
+    
+    @media (max-width: 768px) {
+        .milestone-item {
+            width: 100%;
+            margin-left: 0 !important;
+        }
+        
+        .milestone-timeline::before {
+            left: 20px;
+        }
+        
+        .milestone-item::before {
+            left: 10px !important;
+            right: auto !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="milestones-header">
+    <h1>My Recovery Milestones</h1>
+    <p>Celebrating every step of your journey</p>
+</div>
+
+<div class="milestones-container">
+    <div class="milestone-timeline">
+        {% for milestone in milestones %}
+            <div class="milestone-item">
+                <span class="milestone-type">{{ milestone.get_milestone_type_display }}</span>
+                <h3>{{ milestone.title }}</h3>
+                {% if milestone.description %}
+                    <p>{{ milestone.description }}</p>
+                {% endif %}
+                <div class="milestone-date">{{ milestone.date_achieved|date:"F d, Y" }}</div>
+                {% if milestone.days_sober %}
+                    <div class="milestone-date">Day {{ milestone.days_sober }} of sobriety</div>
+                {% endif %}
+            </div>
+        {% empty %}
+            <div style="text-align: center; padding: 3rem;">
+                <p>No milestones yet. Start celebrating your achievements!</p>
+                <a href="{% url 'accounts:add_milestone' %}" class="btn btn-primary">Add Your First Milestone</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<a href="{% url 'accounts:add_milestone' %}" class="add-milestone-btn">+</a>
+{% endblock %}
