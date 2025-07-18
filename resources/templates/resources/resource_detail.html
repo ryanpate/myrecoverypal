@@ -1,0 +1,508 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ resource.title }} - Recovery Resources{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
+<style>
+    /* Resource Detail Styles */
+    .resource-detail-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 100px 0 50px;
+        color: white;
+    }
+    
+    .resource-detail-container {
+        max-width: 1000px;
+        margin: -30px auto 0;
+        padding: 0 2rem;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .resource-main-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    
+    .resource-info-header {
+        padding: 2rem;
+        border-bottom: 1px solid #E5E7EB;
+    }
+    
+    .resource-title-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .resource-title-large {
+        font-size: 2rem;
+        color: #1F2937;
+        margin: 0;
+    }
+    
+    .resource-meta {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6B7280;
+        font-size: 0.95rem;
+    }
+    
+    .resource-content-section {
+        padding: 2rem;
+    }
+    
+    .resource-content {
+        line-height: 1.8;
+        color: #374151;
+    }
+    
+    .resource-content h2 {
+        color: #1F2937;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .resource-content h3 {
+        color: #374151;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .resource-content ul {
+        margin-left: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .resource-content li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .download-section {
+        background: #F3F4F6;
+        padding: 2rem;
+        border-radius: 12px;
+        margin: 2rem 0;
+        text-align: center;
+    }
+    
+    .download-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 2.5rem;
+        background: var(--accent-color);
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .download-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(82, 211, 170, 0.4);
+        background: #45b89d;
+    }
+    
+    .download-info {
+        margin-top: 1rem;
+        color: #6B7280;
+        font-size: 0.9rem;
+    }
+    
+    .external-link-button {
+        background: var(--primary-color);
+    }
+    
+    .external-link-button:hover {
+        background: var(--secondary-color);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin: 2rem 0;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .bookmark-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: white;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .bookmark-button:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+    
+    .bookmark-button.bookmarked {
+        background: var(--primary-color);
+        color: white;
+    }
+    
+    .rating-section {
+        background: #F9FAFB;
+        padding: 2rem;
+        border-radius: 12px;
+        margin: 2rem 0;
+    }
+    
+    .rating-stars {
+        display: flex;
+        gap: 0.5rem;
+        font-size: 2rem;
+        margin: 1rem 0;
+    }
+    
+    .rating-star {
+        cursor: pointer;
+        color: #D1D5DB;
+        transition: color 0.2s ease;
+    }
+    
+    .rating-star:hover,
+    .rating-star.active {
+        color: #FCD34D;
+    }
+    
+    .related-resources {
+        margin-top: 4rem;
+    }
+    
+    .related-resources h2 {
+        color: #1F2937;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .related-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .breadcrumbs {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+        color: #6B7280;
+    }
+    
+    .breadcrumbs a {
+        color: #6B7280;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .breadcrumbs a:hover {
+        color: var(--primary-color);
+    }
+    
+    .access-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .access-free {
+        background: #D1FAE5;
+        color: #065F46;
+    }
+    
+    .access-registered {
+        background: #DBEAFE;
+        color: #1E40AF;
+    }
+    
+    .access-premium {
+        background: #FEF3C7;
+        color: #92400E;
+    }
+    
+    @media (max-width: 768px) {
+        .resource-detail-header {
+            padding: 80px 0 40px;
+        }
+        
+        .resource-title-large {
+            font-size: 1.5rem;
+        }
+        
+        .resource-meta {
+            gap: 1rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .download-button,
+        .bookmark-button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="resource-detail-header">
+    <div style="text-align: center;">
+        <h1 style="font-size: 1.2rem; opacity: 0.9; margin-bottom: 0.5rem;">
+            {{ resource.category.name }}
+        </h1>
+    </div>
+</div>
+
+<!-- Breadcrumbs -->
+<div class="breadcrumbs">
+    <a href="{% url 'core:index' %}">Home</a> 
+    <span style="margin: 0 0.5rem;">›</span>
+    <a href="{% url 'resources:list' %}">Resources</a>
+    <span style="margin: 0 0.5rem;">›</span>
+    <a href="{{ resource.category.get_absolute_url }}">{{ resource.category.name }}</a>
+    <span style="margin: 0 0.5rem;">›</span>
+    <span>{{ resource.title }}</span>
+</div>
+
+<!-- Main Content -->
+<div class="resource-detail-container">
+    <div class="resource-main-card">
+        <!-- Resource Header Info -->
+        <div class="resource-info-header">
+            <div class="resource-title-section">
+                <h1 class="resource-title-large">{{ resource.title }}</h1>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    {% if resource.resource_type %}
+                        <span class="resource-type" 
+                              {% if resource.resource_type.color %}
+                              style="background-color: {{ resource.resource_type.color }}"
+                              {% endif %}>
+                            {{ resource.resource_type.name }}
+                        </span>
+                    {% endif %}
+                    <span class="access-badge access-{{ resource.access_level }}">
+                        {{ resource.get_access_level_display }}
+                    </span>
+                </div>
+            </div>
+            
+            <p style="font-size: 1.1rem; color: #4B5563; margin-bottom: 1rem;">
+                {{ resource.description }}
+            </p>
+            
+            <div class="resource-meta">
+                <span class="meta-item">
+                    <span>👁️</span> {{ resource.views }} views
+                </span>
+                {% if resource.is_downloadable %}
+                    <span class="meta-item">
+                        <span>⬇️</span> {{ resource.downloads }} downloads
+                    </span>
+                {% endif %}
+                <span class="meta-item">
+                    <span>📅</span> Added {{ resource.created_at|date:"M d, Y" }}
+                </span>
+                {% if avg_rating > 0 %}
+                    <span class="meta-item">
+                        <span>⭐</span> {{ avg_rating|floatformat:1 }} ({{ rating_count }} rating{{ rating_count|pluralize }})
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Resource Content -->
+        {% if resource.content %}
+            <div class="resource-content-section">
+                <div class="resource-content">
+                    {{ resource.content|safe|linebreaks }}
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Download/Access Section -->
+        <div style="padding: 2rem;">
+            {% if resource.is_downloadable %}
+                <div class="download-section">
+                    <h3 style="margin-bottom: 1rem;">Download This Resource</h3>
+                    <a href="{% url 'resources:download' resource.slug %}" class="download-button">
+                        <span>⬇️</span> Download {{ resource.resource_type.name }}
+                    </a>
+                    <p class="download-info">
+                        Free download • No registration required
+                    </p>
+                </div>
+            {% elif resource.is_external %}
+                <div class="download-section">
+                    <h3 style="margin-bottom: 1rem;">Access This Resource</h3>
+                    <a href="{{ resource.external_url }}" target="_blank" rel="noopener" class="download-button external-link-button">
+                        <span>🔗</span> Visit External Resource
+                    </a>
+                    <p class="download-info">
+                        This will open in a new window
+                    </p>
+                </div>
+            {% endif %}
+            
+            <!-- Action Buttons -->
+            {% if user.is_authenticated %}
+                <div class="action-buttons">
+                    <form method="post" action="{% url 'resources:toggle_bookmark' resource.slug %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="bookmark-button {% if is_bookmarked %}bookmarked{% endif %}">
+                            {% if is_bookmarked %}
+                                <span>🔖</span> Bookmarked
+                            {% else %}
+                                <span>🔖</span> Bookmark Resource
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Rating Section -->
+                <div class="rating-section">
+                    <h3>Rate This Resource</h3>
+                    <form method="post" action="{% url 'resources:rate' resource.slug %}">
+                        {% csrf_token %}
+                        <div class="rating-stars">
+                            {% for i in "12345" %}
+                                <span class="rating-star" data-rating="{{ i }}"
+                                      {% if user_rating and user_rating.rating >= i|add:0 %}class="rating-star active"{% endif %}>
+                                    ★
+                                </span>
+                            {% endfor %}
+                        </div>
+                        <input type="hidden" name="rating" id="rating-input" 
+                               value="{% if user_rating %}{{ user_rating.rating }}{% endif %}">
+                        <textarea name="review" rows="3" placeholder="Share your thoughts about this resource (optional)"
+                                  style="width: 100%; padding: 0.75rem; border: 1px solid #E5E7EB; 
+                                         border-radius: 8px; margin-top: 1rem;">{% if user_rating %}{{ user_rating.review }}{% endif %}</textarea>
+                        <button type="submit" class="cta-button" style="margin-top: 1rem;">
+                            {% if user_rating %}Update Rating{% else %}Submit Rating{% endif %}
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <div style="text-align: center; margin: 2rem 0;">
+                    <p style="color: #6B7280; margin-bottom: 1rem;">
+                        Sign in to bookmark and rate this resource
+                    </p>
+                    <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="cta-button">
+                        Sign In
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Related Resources -->
+    {% if related_resources %}
+        <div class="related-resources">
+            <h2>Related Resources</h2>
+            <div class="related-grid">
+                {% for related in related_resources %}
+                    <div class="resource-card">
+                        <div class="resource-card-header">
+                            <a href="{{ related.get_absolute_url }}" class="resource-card-title">
+                                {{ related.title }}
+                            </a>
+                        </div>
+                        <p class="resource-card-description">
+                            {{ related.description|truncatewords:20 }}
+                        </p>
+                        <a href="{{ related.get_absolute_url }}" class="view-resource-btn">
+                            View Resource →
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Rating functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const ratingStars = document.querySelectorAll('.rating-star');
+        const ratingInput = document.getElementById('rating-input');
+        
+        ratingStars.forEach((star, index) => {
+            star.addEventListener('click', function() {
+                const rating = index + 1;
+                ratingInput.value = rating;
+                
+                // Update visual state
+                ratingStars.forEach((s, i) => {
+                    if (i < rating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Hover effect
+            star.addEventListener('mouseenter', function() {
+                const rating = index + 1;
+                ratingStars.forEach((s, i) => {
+                    if (i < rating) {
+                        s.style.color = '#FCD34D';
+                    } else {
+                        s.style.color = '#D1D5DB';
+                    }
+                });
+            });
+        });
+        
+        // Reset on mouse leave
+        const ratingContainer = document.querySelector('.rating-stars');
+        if (ratingContainer) {
+            ratingContainer.addEventListener('mouseleave', function() {
+                const currentRating = parseInt(ratingInput.value) || 0;
+                ratingStars.forEach((s, i) => {
+                    if (i < currentRating) {
+                        s.style.color = '#FCD34D';
+                    } else {
+                        s.style.color = '#D1D5DB';
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

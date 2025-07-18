@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Journey to Recovery{% endblock %}</title>
+    <title>{% block title %}My Recovery Pal{% endblock %}</title>
 
     {% load static %}
 
@@ -252,13 +252,14 @@
             <div class="nav-left">
                 <div class="logo">
                     <a href="{% url 'core:index' %}" style="text-decoration: none; color: inherit;">
-                        Journey to Recovery
+                        My Recovery Pal
                     </a>
                 </div>
 
                 <ul class="nav-links" id="navLinks">
                     <li><a href="{% url 'core:index' %}">Home</a></li>
                     <li><a href="{% url 'blog:post_list' %}">Blog</a></li>
+                    <li><a href="{% url 'resources:list' %}">Resources</a></li>
                     {% if user.is_authenticated %}
                     <li><a href="{% url 'journal:dashboard' %}">Journal</a></li>
                     <li><a href="{% url 'accounts:community' %}">Community</a></li>

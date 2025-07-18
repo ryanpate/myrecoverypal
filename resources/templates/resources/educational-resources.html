@@ -1,0 +1,549 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Educational Resources - {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .educational-resources {
+        background: #f8f9fa;
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, #8b7ff0 0%, #7f6ed9 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 700;
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .resource-heading {
+        color: #2c3e50;
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .resource-heading i {
+        color: #8b7ff0;
+        font-size: 2rem;
+    }
+
+    .resource-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+    }
+
+    .resource-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #8b7ff0 0%, #7f6ed9 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .resource-card h3 {
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        font-size: 1.4rem;
+    }
+
+    .resource-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .resource-list li {
+        margin-bottom: 1.2rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .resource-list li:before {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: #8b7ff0;
+        font-weight: bold;
+    }
+
+    .resource-list a {
+        text-decoration: none;
+        color: #2c3e50;
+        transition: color 0.3s ease;
+        display: block;
+    }
+
+    .resource-list a:hover {
+        color: #8b7ff0;
+    }
+
+    .resource-list strong {
+        display: block;
+        color: #2c3e50;
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .resource-list span {
+        color: #6c757d;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    .cta-section {
+        background: white;
+        padding: 3rem;
+        border-radius: 15px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        margin-top: 3rem;
+    }
+
+    .cta-section h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #8b7ff0 0%, #7f6ed9 100%);
+        border: none;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(139, 127, 240, 0.3);
+    }
+
+    .btn-outline-primary {
+        color: #8b7ff0;
+        border-color: #8b7ff0;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-primary:hover {
+        background: #8b7ff0;
+        border-color: #8b7ff0;
+        transform: translateY(-2px);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .gradient-text {
+            font-size: 2rem;
+        }
+
+        .resource-heading {
+            font-size: 1.5rem;
+        }
+
+        .resource-card {
+            padding: 1.5rem;
+        }
+
+        .cta-section {
+            padding: 2rem;
+        }
+    }
+
+    /* Loading animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .resource-card {
+        animation: fadeIn 0.6s ease-out;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="educational-resources">
+    <div class="container">
+        <!-- Section Header -->
+        <div class="text-center mb-5">
+            <h1 class="section-title gradient-text">Educational Resources</h1>
+            <p class="lead text-muted">Comprehensive resources for your recovery journey and support network</p>
+        </div>
+
+        <!-- Resources for People in Recovery -->
+        <div class="resource-section mb-5">
+            <h2 class="resource-heading">
+                <span>👥</span> Resources for People in Recovery
+            </h2>
+
+            <!-- Resource Cards Grid -->
+            <div class="row g-4">
+
+                <!-- Websites & Online Communities -->
+                <div class="col-lg-6">
+                    <div class="resource-card h-100">
+                        <div class="card-icon">
+                            <span>🌐</span>
+                        </div>
+                        <h3>Websites & Online Communities</h3>
+                        <ul class="resource-list">
+                            <li>
+                                <a href="https://www.smartrecovery.org/" target="_blank" rel="noopener">
+                                    <strong>SMART Recovery</strong>
+                                    <span>Evidence-based tools & meetings (online & in-person)</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.intherooms.com/home/" target="_blank" rel="noopener">
+                                    <strong>In The Rooms</strong>
+                                    <span>Global online meetings, groups, webinars</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://recoverydharma.org/" target="_blank" rel="noopener">
+                                    <strong>Recovery Dharma</strong>
+                                    <span>Buddhist-inspired peer support & step work</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.sobergrid.com/" target="_blank" rel="noopener">
+                                    <strong>Sober Grid</strong>
+                                    <span>Mobile social network for milestones & 24/7 support</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://thisnakedmind.com/" target="_blank" rel="noopener">
+                                    <strong>This Naked Mind</strong>
+                                    <span>Articles, free resources & paid courses</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Podcasts -->
+                <div class="col-lg-6">
+                    <div class="resource-card h-100">
+                        <div class="card-icon">
+                            <span>🎙️</span>
+                        </div>
+                        <h3>Podcasts</h3>
+                        <ul class="resource-list">
+                            <li>
+                                <a href="https://www.thebubblehour.com/" target="_blank" rel="noopener">
+                                    <strong>The Bubble Hour</strong>
+                                    <span>Weekly stories & discussions on sobriety challenges</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://recoveryelevator.com/podcast/" target="_blank" rel="noopener">
+                                    <strong>Recovery Elevator</strong>
+                                    <span>Interviews with experts & lived-experience insights</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://hub.harmonyfoundation.org/podcast/" target="_blank" rel="noopener">
+                                    <strong>Harmony Foundation Podcast</strong>
+                                    <span>Recovery tips, guest speakers, meditation sessions</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- YouTube Channels -->
+                <div class="col-lg-6">
+                    <div class="resource-card h-100">
+                        <div class="card-icon">
+                            <span>📺</span>
+                        </div>
+                        <h3>YouTube Channels</h3>
+                        <ul class="resource-list">
+                            <li>
+                                <a href="https://www.youtube.com/c/RecoveryElevator" target="_blank" rel="noopener">
+                                    <strong>The Recovery Elevator</strong>
+                                    <span>Video interviews, tips & livestream meetings</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com/c/TheSoberGuy" target="_blank" rel="noopener">
+                                    <strong>The Sober Guy</strong>
+                                    <span>Personal vlogs on life in long-term recovery</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com/playlist?list=PLyLTEzFzkmFtS0tAAtb9iNMp2TtYOISxI"
+                                    target="_blank" rel="noopener">
+                                    <strong>TED Talks: Addiction & Recovery</strong>
+                                    <span>Curated talks on brain science & recovery journeys</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Books -->
+                <div class="col-lg-6">
+                    <div class="resource-card h-100">
+                        <div class="card-icon">
+                            <span>📚</span>
+                        </div>
+                        <h3>Books</h3>
+                        <ul class="resource-list">
+                            <li>
+                                <a href="https://www.aa.org/pages/en_US/the-big-book" target="_blank" rel="noopener">
+                                    <strong>"Alcoholics Anonymous" (The Big Book)</strong>
+                                    <span>Foundational text of 12-step recovery</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.amazon.com/Unexpected-Joy-Being-Sober-Jules-Janeway/dp/0399186618"
+                                    target="_blank" rel="noopener">
+                                    <strong>"The Unexpected Joy of Being Sober"</strong>
+                                    <span>by Catherine Gray - Personal memoir & strategies</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.amazon.com/Recovery-Book-Comprehensive-Guide-Getting/dp/1572245970"
+                                    target="_blank" rel="noopener">
+                                    <strong>"The Recovery Book"</strong>
+                                    <span>by Al J. Mooney & Catherine Dold - Evidence-based guide</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Other Media & Tools -->
+                <div class="col-12">
+                    <div class="resource-card">
+                        <div class="card-icon">
+                            <span>🎬</span>
+                        </div>
+                        <h3>Other Media & Tools</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="resource-list">
+                                    <li>
+                                        <a href="https://www.netflix.com/title/80195021" target="_blank" rel="noopener">
+                                            <strong>"The Anonymous People" (Documentary)</strong>
+                                            <span>Profiles of recovery advocates</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://www.netflix.com/title/81283499" target="_blank" rel="noopener">
+                                            <strong>"Recovery Boys" (Documentary)</strong>
+                                            <span>Five men navigate early recovery</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="resource-list">
+                                    <li>
+                                        <a href="https://apps.apple.com/app/id987215104" target="_blank" rel="noopener">
+                                            <strong>"I Am Sober" App</strong>
+                                            <span>Daily tracking, community badges & reminders</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <hr class="my-5">
+
+        <!-- Resources for Friends & Family -->
+        <div class="resource-section">
+            <h2 class="resource-heading">
+                <span>💗</span> Resources for Friends & Family
+            </h2>
+
+            <div class="row g-4">
+
+                <!-- Websites & Support Groups -->
+                <div class="col-lg-6">
+                    <div class="resource-card h-100">
+                        <div class="card-icon">
+                            <span>🤝</span>
+                        </div>
+                        <h3>Websites & Support Groups</h3>
+                        <ul class="resource-list">
+                            <li>
+                                <a href="https://al-anon.org/" target="_blank" rel="noopener">
+                                    <strong>Al-Anon Family Groups</strong>
+                                    <span>Literature & meetings for loved ones of drinkers</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.nar-anon.org/" target="_blank" rel="noopener">
+                                    <strong>Nar-Anon Family Groups</strong>
+                                    <span>Peer support for families affected by addiction</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.samhsa.gov/families" target="_blank" rel="noopener">
+                                    <strong>SAMHSA Family Resources</strong>
+                                    <span>Guides, toolkits & webinars</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.nami.org/Support-Education/Mental-Health-Education/NAMI-Family-to-Family"
+                                    target="_blank" rel="noopener">
+                                    <strong>NAMI Family-to-Family</strong>
+                                    <span>Free 8-week education program</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Podcasts & YouTube -->
+                <div class="col-lg-6">
+                    <div class="resource-card h-100">
+                        <div class="card-icon">
+                            <span>🎧</span>
+                        </div>
+                        <h3>Podcasts & Videos</h3>
+                        <ul class="resource-list">
+                            <li>
+                                <a href="https://al-anon.org/al-anon-podcast-series/" target="_blank" rel="noopener">
+                                    <strong>Al-Anon Podcast Series</strong>
+                                    <span>Stories & tips for family recovery</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.nar-anon.org/podcast/" target="_blank" rel="noopener">
+                                    <strong>Nar-Anon Voices Podcast</strong>
+                                    <span>Member stories & coping strategies</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com/user/AlAnongrp" target="_blank" rel="noopener">
+                                    <strong>Al-Anon YouTube Channel</strong>
+                                    <span>Talks, Q&A's & recovery education</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com/playlist?list=PLh2Sj6U6N-_AdpMBmi7xnL_9I8inzcDmR"
+                                    target="_blank" rel="noopener">
+                                    <strong>TEDx Talks: Addiction Impact</strong>
+                                    <span>Presentations on family & community effects</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Books -->
+                <div class="col-lg-6">
+                    <div class="resource-card h-100">
+                        <div class="card-icon">
+                            <span>📖</span>
+                        </div>
+                        <h3>Books</h3>
+                        <ul class="resource-list">
+                            <li>
+                                <a href="https://www.amazon.com/Codependent-No-More-Relationships-Younger/dp/0060807965"
+                                    target="_blank" rel="noopener">
+                                    <strong>"Codependent No More"</strong>
+                                    <span>by Melody Beattie - Healing codependency workbook</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.amazon.com/Beyond-Addiction-Loved-Science-Based-Approach/dp/1626257405"
+                                    target="_blank" rel="noopener">
+                                    <strong>"Beyond Addiction"</strong>
+                                    <span>by Jeffrey Foote - Compassionate approach for loved ones</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.amazon.com/Perfect-Daughters-Power-Young-People/dp/125019645X"
+                                    target="_blank" rel="noopener">
+                                    <strong>"Perfect Daughters"</strong>
+                                    <span>by Robert Lindner - Understanding family ripple effects</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Other Resources -->
+                <div class="col-lg-6">
+                    <div class="resource-card h-100">
+                        <div class="card-icon">
+                            <span>🧰</span>
+                        </div>
+                        <h3>Other Resources</h3>
+                        <ul class="resource-list">
+                            <li>
+                                <a href="https://www.psychologytoday.com/us/topics/substance-use" target="_blank"
+                                    rel="noopener">
+                                    <strong>Psychology Today: Substance Use</strong>
+                                    <span>Articles on addiction & family dynamics</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://apps.apple.com/app/id845569163" target="_blank" rel="noopener">
+                                    <strong>"Al-Anon Meetings" App</strong>
+                                    <span>Find local & online meetings, meeting schedules</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center mt-5">
+            <div class="cta-section">
+                <h3>Need More Support?</h3>
+                <p class="lead mb-4">Join our community to connect with others on the same journey</p>
+                <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg me-3">Join Our Community</a>
+                <a href="{% url 'newsletter:subscribe' %}" class="btn btn-outline-primary btn-lg">Subscribe to
+                    Newsletter</a>
+            </div>
+        </div>
+
+        <!-- Back to Resources -->
+        <div class="text-center mt-4">
+            <a href="{% url 'resources:list' %}" class="btn btn-secondary">
+                ← Back to All Resources
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

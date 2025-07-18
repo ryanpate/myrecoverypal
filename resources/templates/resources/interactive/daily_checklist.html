@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Daily Recovery Checklist - MyRecoveryPal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f2f5;
+            color: #1a1a1a;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.3;
+            }
+        }
+
+        .date-selector {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.2s;
+        }
+
+        .date-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .current-date {
+            font-size: 16px;
+            font-weight: 500;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-fill {
+            background: white;
+            height: 100%;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 35px;
+            background: #fafbfc;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e9ecef;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+            color: white;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3436;
+            flex: 1;
+        }
+
+        .section-progress {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checklist-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+        }
+
+        .checklist-item.completed {
+            background: #f8f9fa;
+            opacity: 0.8;
+        }
+
+        .checklist-item.completed .checklist-text {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        .checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            margin-right: 12px;
+            flex-shrink: 0;
+            position: relative;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .checklist-item.completed .checkbox {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+        }
+
+        .checkbox::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .checklist-item.completed .checkbox::after {
+            opacity: 1;
+        }
+
+        .checklist-text {
+            flex: 1;
+            font-size: 15px;
+            color: #495057;
+            line-height: 1.5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 40px 0;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        .save-indicator {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .save-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notes-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+
+        .notes-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .notes-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .notes-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 15px;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .notes-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .save-indicator {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="date-selector">
+                <button class="date-btn" onclick="changeDate(-1)">◀</button>
+                <div class="current-date" id="currentDate">Today</div>
+                <button class="date-btn" onclick="changeDate(1)">▶</button>
+            </div>
+            <h1>Daily Recovery Checklist</h1>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0 of 12 tasks completed</div>
+        </header>
+
+        <div class="content">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">🤝</div>
+                    <h2 class="section-title">Connection & Support</h2>
+                    <span class="section-progress" data-section="connection">0/2</span>
+                </div>
+                <ul class="checklist">
+                    <li class="checklist-item" onclick="toggleItem(this)" data-section="connection">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">Reach out to your support network (call, text, or attend a meeting)
+                        </div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this)" data-section="connection">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">Review and update emergency contacts in your phone</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">🧠</div>
+                    <h2 class="section-title">Mental Wellness</h2>
+                    <span class="section-progress" data-section="mental">0/3</span>
+                </div>
+                <ul class="checklist">
+                    <li class="checklist-item" onclick="toggleItem(this)" data-section="mental">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">Practice 5-10 minutes of mindful breathing or meditation</div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this)" data-section="mental">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">Journal about your feelings, thoughts, and progress</div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this)" data-section="mental">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">Identify and document your top 3 triggers</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">💪</div>
+                    <h2 class="section-title">Physical Health</h2>
+                    <span class="section-progress" data-section="physical">0/3</span>
+                </div>
+                <ul class="checklist">
+                    <li class="checklist-item" onclick="toggleItem(this)" data-section="physical">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">Drink at least 8 cups of water throughout the day</div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this)" data-section="physical">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">Eat balanced meals with protein, carbohydrates, and healthy fats
+                        </div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this)" data-section="physical">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">Engage in 20-30 minutes of physical activity (walk, stretch, or
+                            yoga)</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">✨</div>
+                    <h2 class="section-title">Personal Growth</h2>
+                    <span class="section-progress" data-section="growth">0/4</span>
+                </div>
+                <ul class="checklist">
+                    <li class="checklist-item" onclick="toggleItem(this)" data-section="growth">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">Practice gratitude by listing 3 things you're thankful for</div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this)" data-section="growth">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">Schedule one meaningful self-care activity</div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this)" data-section="growth">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">Set a small, achievable goal for tomorrow</div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this)" data-section="growth">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">Reflect on a personal strength and how you'll use it today</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="notes-section">
+                <div class="notes-header">
+                    <span class="notes-icon">📝</span>
+                    <h3 class="notes-title">Daily Reflections</h3>
+                </div>
+                <textarea class="notes-textarea" id="dailyNotes"
+                    placeholder="Take a moment to reflect on your day. What went well? What challenges did you face? What are you grateful for?"
+                    onblur="saveNotes()"></textarea>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="resetChecklist()">
+                    <span>↻</span> Reset Today
+                </button>
+                <button class="btn btn-primary" onclick="downloadPDF()">
+                    <span>📥</span> Download PDF
+                </button>
+            </div>
+        </div>
+
+        <div class="save-indicator" id="saveIndicator">
+            ✓ Progress saved
+        </div>
+    </div>
+
+    <script>
+        // Initialize date
+        let currentDateOffset = 0;
+        const today = new Date();
+
+        // Load saved data on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            updateDateDisplay();
+            loadProgress();
+        });
+
+        function updateDateDisplay() {
+            const date = new Date(today);
+            date.setDate(date.getDate() + currentDateOffset);
+
+            const dateElement = document.getElementById('currentDate');
+
+            if (currentDateOffset === 0) {
+                dateElement.textContent = 'Today';
+            } else if (currentDateOffset === -1) {
+                dateElement.textContent = 'Yesterday';
+            } else if (currentDateOffset === 1) {
+                dateElement.textContent = 'Tomorrow';
+            } else {
+                const options = { month: 'short', day: 'numeric', year: 'numeric' };
+                dateElement.textContent = date.toLocaleDateString('en-US', options);
+            }
+        }
+
+        function changeDate(direction) {
+            currentDateOffset += direction;
+            updateDateDisplay();
+            loadProgress();
+        }
+
+        function getDateKey() {
+            const date = new Date(today);
+            date.setDate(date.getDate() + currentDateOffset);
+            return `checklist_${date.toISOString().split('T')[0]}`;
+        }
+
+        function toggleItem(element) {
+            element.classList.toggle('completed');
+            updateProgress();
+            saveProgress();
+            showSaveIndicator();
+        }
+
+        function updateProgress() {
+            const totalItems = document.querySelectorAll('.checklist-item').length;
+            const completedItems = document.querySelectorAll('.checklist-item.completed').length;
+            const percentage = (completedItems / totalItems) * 100;
+
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = `${completedItems} of ${totalItems} tasks completed`;
+
+            // Update section progress
+            const sections = ['connection', 'mental', 'physical', 'growth'];
+            sections.forEach(section => {
+                const sectionItems = document.querySelectorAll(`.checklist-item[data-section="${section}"]`);
+                const sectionCompleted = document.querySelectorAll(`.checklist-item[data-section="${section}"].completed`);
+                const progressElement = document.querySelector(`.section-progress[data-section="${section}"]`);
+                if (progressElement) {
+                    progressElement.textContent = `${sectionCompleted.length}/${sectionItems.length}`;
+                }
+            });
+        }
+
+        function saveProgress() {
+            const dateKey = getDateKey();
+            const items = document.querySelectorAll('.checklist-item');
+            const progress = [];
+
+            items.forEach((item, index) => {
+                progress.push(item.classList.contains('completed'));
+            });
+
+            // Save to localStorage (in production, this would be an API call)
+            localStorage.setItem(dateKey, JSON.stringify(progress));
+        }
+
+        function loadProgress() {
+            const dateKey = getDateKey();
+            const savedProgress = localStorage.getItem(dateKey);
+            const savedNotes = localStorage.getItem(dateKey + '_notes');
+
+            if (savedProgress) {
+                const progress = JSON.parse(savedProgress);
+                const items = document.querySelectorAll('.checklist-item');
+
+                items.forEach((item, index) => {
+                    if (progress[index]) {
+                        item.classList.add('completed');
+                    } else {
+                        item.classList.remove('completed');
+                    }
+                });
+            } else {
+                // Clear all checkmarks for new date
+                document.querySelectorAll('.checklist-item').forEach(item => {
+                    item.classList.remove('completed');
+                });
+            }
+
+            // Load notes
+            const notesElement = document.getElementById('dailyNotes');
+            notesElement.value = savedNotes || '';
+
+            updateProgress();
+        }
+
+        function saveNotes() {
+            const dateKey = getDateKey();
+            const notes = document.getElementById('dailyNotes').value;
+            localStorage.setItem(dateKey + '_notes', notes);
+            showSaveIndicator();
+        }
+
+        function resetChecklist() {
+            if (confirm('Are you sure you want to reset today\'s progress?')) {
+                document.querySelectorAll('.checklist-item').forEach(item => {
+                    item.classList.remove('completed');
+                });
+                document.getElementById('dailyNotes').value = '';
+                saveProgress();
+                saveNotes();
+                updateProgress();
+            }
+        }
+
+        function showSaveIndicator() {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        function downloadPDF() {
+            // In production, this would trigger a server-side PDF generation
+            // For now, we'll open the print dialog
+            window.print();
+        }
+
+        // Auto-save when user navigates away
+        window.addEventListener('beforeunload', function () {
+            saveProgress();
+            saveNotes();
+        });
+    </script>
+</body>
+
+</html>

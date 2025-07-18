@@ -1,0 +1,584 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} - Interactive{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checklist-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 100px 0 50px;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .checklist-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+            opacity: 0.5;
+        }
+
+        50% {
+            transform: scale(1.1);
+            opacity: 0.3;
+        }
+    }
+
+    .checklist-container {
+        max-width: 800px;
+        margin: -30px auto 50px;
+        padding: 0 20px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .checklist-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .checklist-intro {
+        padding: 40px;
+        text-align: center;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .checklist-intro p {
+        font-size: 16px;
+        color: #495057;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.8;
+    }
+
+    .progress-bar {
+        background: #f8f9fa;
+        padding: 30px 40px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .progress-track {
+        height: 20px;
+        background: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        width: 0%;
+        transition: width 0.5s ease;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 10px;
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .checklist-content {
+        padding: 40px;
+    }
+
+    .checklist-section {
+        margin-bottom: 40px;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 20px;
+        color: white;
+    }
+
+    .section-title {
+        font-size: 22px;
+        font-weight: 600;
+        color: #2d3436;
+        flex: 1;
+    }
+
+    .section-count {
+        font-size: 14px;
+        color: #6c757d;
+        font-weight: normal;
+    }
+
+    .checklist-items {
+        list-style: none;
+        padding: 0;
+    }
+
+    .checklist-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 18px;
+        padding: 15px;
+        background: #fafbfc;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .checklist-item:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .checklist-item.checked {
+        background: #f0f9ff;
+        border-color: #667eea;
+    }
+
+    .checkbox-wrapper {
+        position: relative;
+        margin-right: 15px;
+    }
+
+    .checkbox {
+        width: 24px;
+        height: 24px;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .checkbox-custom {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 24px;
+        height: 24px;
+        border: 2px solid #dee2e6;
+        border-radius: 6px;
+        background: white;
+        transition: all 0.3s ease;
+        pointer-events: none;
+    }
+
+    .checkbox:checked~.checkbox-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: #667eea;
+    }
+
+    .checkbox-custom::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-weight: bold;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .checkbox:checked~.checkbox-custom::after {
+        opacity: 1;
+    }
+
+    .checklist-text {
+        flex: 1;
+        font-size: 16px;
+        color: #495057;
+        line-height: 1.6;
+    }
+
+    .action-buttons {
+        background: #f8f9fa;
+        padding: 40px;
+        text-align: center;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+
+    .btn-secondary:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    .quote-section {
+        margin: 40px 0;
+        padding: 40px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 16px;
+        text-align: center;
+    }
+
+    .quote-mark {
+        font-size: 60px;
+        color: #667eea;
+        opacity: 0.2;
+        line-height: 1;
+        margin-bottom: 10px;
+    }
+
+    .quote-text {
+        font-size: 20px;
+        font-style: italic;
+        color: #495057;
+        margin-bottom: 15px;
+        font-weight: 300;
+        line-height: 1.8;
+    }
+
+    .quote-author {
+        font-size: 16px;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        .checklist-container {
+            margin-top: -20px;
+        }
+
+        .checklist-intro,
+        .checklist-content,
+        .action-buttons {
+            padding: 30px 20px;
+        }
+
+        .btn-group {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="checklist-header">
+    <h1>Daily Recovery Checklist</h1>
+    <p style="font-size: 18px; opacity: 0.95;">Your Personal Guide to Sustainable Recovery</p>
+</div>
+
+<!-- Main Content -->
+<div class="checklist-container">
+    <div class="checklist-card">
+        <!-- Introduction -->
+        <div class="checklist-intro">
+            <p>Welcome to your recovery journey. This daily checklist is designed to help you establish healthy habits,
+                strengthen your support network, and build lasting momentum. Remember, progress is personal—use this as
+                a guide, not a rulebook.</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-label">
+                <span>Today's Progress</span>
+                <span id="progress-text">0 of <span id="total-items">0</span> completed</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill">0%</div>
+            </div>
+        </div>
+
+        <!-- Checklist Content -->
+        <div class="checklist-content">
+            {% for section in checklist_data.sections %}
+            <div class="checklist-section" data-section="{{ section.id }}">
+                <div class="section-header">
+                    <div class="section-icon">{{ section.icon }}</div>
+                    <h2 class="section-title">
+                        {{ section.title }}
+                        <span class="section-count">(<span class="section-checked">0</span>/{{ section.items|length
+                            }})</span>
+                    </h2>
+                </div>
+                <ul class="checklist-items">
+                    {% for item in section.items %}
+                    <li class="checklist-item" data-item="{{ forloop.counter0 }}">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" class="checkbox" id="{{ section.id }}-{{ forloop.counter0 }}">
+                            <div class="checkbox-custom"></div>
+                        </div>
+                        <label class="checklist-text" for="{{ section.id }}-{{ forloop.counter0 }}">
+                            {{ item }}
+                        </label>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+
+            <!-- Quote Section -->
+            <div class="quote-section">
+                <div class="quote-mark">"</div>
+                <p class="quote-text">Recovery is not a race. You don't have to feel guilty if it takes you longer than
+                    you thought it would.</p>
+                <p class="quote-author">— Recovery Wisdom</p>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="resetChecklist()">
+                    <span>🔄</span> Reset Checklist
+                </button>
+                <button class="btn btn-primary" onclick="downloadPDF()">
+                    <span>📥</span> Download as PDF
+                </button>
+            </div>
+            <p style="margin-top: 20px; color: #6c757d; font-size: 14px;">
+                Your progress is saved automatically in your browser
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize checklist
+    const STORAGE_KEY = 'daily-recovery-checklist';
+    let checklistData = {};
+
+    // Load saved progress
+    function loadProgress() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            const savedData = JSON.parse(saved);
+            // Check if it's today's checklist
+            const today = new Date().toDateString();
+            if (savedData.date === today) {
+                checklistData = savedData.items || {};
+                restoreCheckboxes();
+            } else {
+                // New day, reset
+                checklistData = {};
+                saveProgress();
+            }
+        }
+        updateProgress();
+    }
+
+    // Save progress
+    function saveProgress() {
+        const data = {
+            date: new Date().toDateString(),
+            items: checklistData
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    // Restore checkboxes from saved data
+    function restoreCheckboxes() {
+        Object.keys(checklistData).forEach(key => {
+            const checkbox = document.getElementById(key);
+            if (checkbox && checklistData[key]) {
+                checkbox.checked = true;
+                checkbox.closest('.checklist-item').classList.add('checked');
+            }
+        });
+    }
+
+    // Update progress display
+    function updateProgress() {
+        const allCheckboxes = document.querySelectorAll('.checkbox');
+        const checkedCount = document.querySelectorAll('.checkbox:checked').length;
+        const totalCount = allCheckboxes.length;
+
+        // Update progress bar
+        const percentage = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
+        const progressFill = document.getElementById('progress-fill');
+        progressFill.style.width = percentage + '%';
+        progressFill.textContent = percentage + '%';
+
+        // Update progress text
+        document.getElementById('total-items').textContent = totalCount;
+        document.getElementById('progress-text').innerHTML = `${checkedCount} of ${totalCount} completed`;
+
+        // Update section counts
+        document.querySelectorAll('.checklist-section').forEach(section => {
+            const sectionChecked = section.querySelectorAll('.checkbox:checked').length;
+            section.querySelector('.section-checked').textContent = sectionChecked;
+        });
+    }
+
+    // Handle checkbox changes
+    document.addEventListener('DOMContentLoaded', function () {
+        // Set total items count
+        const totalCheckboxes = document.querySelectorAll('.checkbox').length;
+        document.getElementById('total-items').textContent = totalCheckboxes;
+
+        // Load saved progress
+        loadProgress();
+
+        // Add event listeners
+        document.querySelectorAll('.checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const item = this.closest('.checklist-item');
+                const id = this.id;
+
+                if (this.checked) {
+                    item.classList.add('checked');
+                    checklistData[id] = true;
+                } else {
+                    item.classList.remove('checked');
+                    delete checklistData[id];
+                }
+
+                saveProgress();
+                updateProgress();
+            });
+        });
+
+        // Make entire item clickable
+        document.querySelectorAll('.checklist-item').forEach(item => {
+            item.addEventListener('click', function (e) {
+                if (e.target.type !== 'checkbox') {
+                    const checkbox = this.querySelector('.checkbox');
+                    checkbox.checked = !checkbox.checked;
+                    checkbox.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+    });
+
+    // Reset checklist
+    function resetChecklist() {
+        if (confirm('Are you sure you want to reset today\'s checklist?')) {
+            checklistData = {};
+            saveProgress();
+
+            document.querySelectorAll('.checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.closest('.checklist-item').classList.remove('checked');
+            });
+
+            updateProgress();
+        }
+    }
+
+    // Download as PDF
+    function downloadPDF() {
+        // Collect checked items
+        const checkedItems = [];
+        document.querySelectorAll('.checkbox:checked').forEach(checkbox => {
+            const item = checkbox.closest('.checklist-item');
+            const section = item.closest('.checklist-section');
+            const sectionTitle = section.querySelector('.section-title').textContent.trim();
+            const itemText = item.querySelector('.checklist-text').textContent.trim();
+
+            checkedItems.push({
+                section: sectionTitle,
+                item: itemText,
+                id: checkbox.id
+            });
+        });
+
+        // Create form to submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "resources:download_checklist" %}';
+
+        // Add CSRF token
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = '{{ csrf_token }}';
+        form.appendChild(csrfInput);
+
+        // Add checked items
+        const itemsInput = document.createElement('input');
+        itemsInput.type = 'hidden';
+        itemsInput.name = 'checked_items';
+        itemsInput.value = JSON.stringify(checkedItems);
+        form.appendChild(itemsInput);
+
+        // Submit form
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    }
+</script>
+{% endblock %}

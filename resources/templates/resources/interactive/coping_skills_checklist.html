@@ -1,0 +1,560 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ resource.title }} - Interactive Tool{% endblock %}
+
+{% block extra_css %}
+<style>
+    .interactive-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .tool-header {
+        background: linear-gradient(135deg, #8b7ff0 0%, #7f6ed9 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px 15px 0 0;
+        text-align: center;
+        margin: -2rem -2rem 0 -2rem;
+    }
+    
+    .tool-header h1 {
+        margin: 0 0 0.5rem 0;
+        font-size: 2rem;
+    }
+    
+    .tool-header p {
+        margin: 0;
+        opacity: 0.9;
+    }
+    
+    .progress-section {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        margin: 0 -2rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .progress-bar {
+        background: #e9ecef;
+        height: 10px;
+        border-radius: 5px;
+        overflow: hidden;
+        margin: 0.5rem 0;
+    }
+    
+    .progress-fill {
+        background: linear-gradient(90deg, #8b7ff0 0%, #7f6ed9 100%);
+        height: 100%;
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+    
+    .progress-text {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: #6b7280;
+    }
+    
+    .strategies-list {
+        padding: 2rem 0;
+    }
+    
+    .strategy-item {
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .strategy-item:hover {
+        border-color: #8b7ff0;
+        box-shadow: 0 4px 12px rgba(139, 127, 240, 0.1);
+    }
+    
+    .strategy-item.checked {
+        background: #f8f7fd;
+        border-color: #8b7ff0;
+    }
+    
+    .strategy-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .strategy-icon {
+        font-size: 2rem;
+        line-height: 1;
+    }
+    
+    .strategy-content {
+        flex: 1;
+    }
+    
+    .strategy-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.25rem;
+    }
+    
+    .strategy-time {
+        font-size: 0.875rem;
+        color: #8b7ff0;
+        font-weight: 600;
+    }
+    
+    .strategy-description {
+        color: #6b7280;
+        margin-top: 0.5rem;
+    }
+    
+    .checkbox-wrapper {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+    }
+    
+    .checkbox {
+        width: 24px;
+        height: 24px;
+        border: 2px solid #d1d5db;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+    
+    .strategy-item.checked .checkbox {
+        background: #8b7ff0;
+        border-color: #8b7ff0;
+    }
+    
+    .checkbox-icon {
+        color: white;
+        font-size: 16px;
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.2s ease;
+    }
+    
+    .strategy-item.checked .checkbox-icon {
+        opacity: 1;
+        transform: scale(1);
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        border: none;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-primary {
+        background: #8b7ff0;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #7f6ed9;
+        transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+    
+    .btn-secondary:hover {
+        background: #e5e7eb;
+    }
+    
+    .motivational-quote {
+        background: #f8f7fd;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        margin-top: 2rem;
+    }
+    
+    .quote-text {
+        font-size: 1.125rem;
+        font-style: italic;
+        color: #4b5563;
+        margin-bottom: 0.5rem;
+    }
+    
+    .quote-author {
+        color: #8b7ff0;
+        font-weight: 600;
+    }
+    
+    @media (max-width: 768px) {
+        .interactive-container {
+            padding: 1rem;
+        }
+        
+        .tool-header {
+            margin: -1rem -1rem 0 -1rem;
+            padding: 1.5rem;
+        }
+        
+        .tool-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .progress-section {
+            margin: 0 -1rem;
+        }
+        
+        .strategy-item {
+            padding: 1rem;
+        }
+        
+        .checkbox-wrapper {
+            position: static;
+            margin-top: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="interactive-container">
+    <div class="tool-header">
+        <h1>{{ resource.title }}</h1>
+        <p>Quick strategies to help you manage cravings in the moment</p>
+    </div>
+    
+    <div class="progress-section">
+        <div class="progress-text">
+            <span>Progress</span>
+            <span id="progress-count">0 of 10 completed</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+    </div>
+    
+    <div class="strategies-list">
+        <div class="strategy-item" data-strategy="delay">
+            <div class="strategy-header">
+                <div class="strategy-icon">⏱️</div>
+                <div class="strategy-content">
+                    <h3 class="strategy-title">Delay & Wait</h3>
+                    <span class="strategy-time">10 minutes</span>
+                    <p class="strategy-description">Tell yourself you'll wait 10 minutes before acting on the craving. Often, the urge will pass. Repeat as needed.</p>
+                </div>
+            </div>
+            <div class="checkbox-wrapper">
+                <div class="checkbox">
+                    <span class="checkbox-icon">✓</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="strategy-item" data-strategy="breathing">
+            <div class="strategy-header">
+                <div class="strategy-icon">🫁</div>
+                <div class="strategy-content">
+                    <h3 class="strategy-title">Deep Breathing</h3>
+                    <span class="strategy-time">5 minutes</span>
+                    <p class="strategy-description">Practice 4-7-8 breathing: inhale for 4 seconds, hold for 7, exhale for 8. This calms your nervous system.</p>
+                </div>
+            </div>
+            <div class="checkbox-wrapper">
+                <div class="checkbox">
+                    <span class="checkbox-icon">✓</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="strategy-item" data-strategy="distract">
+            <div class="strategy-header">
+                <div class="strategy-icon">🎯</div>
+                <div class="strategy-content">
+                    <h3 class="strategy-title">Distract & Engage</h3>
+                    <span class="strategy-time">15+ minutes</span>
+                    <p class="strategy-description">Shift focus with an enjoyable activity: read, listen to music, watch a video, or start a creative project.</p>
+                </div>
+            </div>
+            <div class="checkbox-wrapper">
+                <div class="checkbox">
+                    <span class="checkbox-icon">✓</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="strategy-item" data-strategy="surfing">
+            <div class="strategy-header">
+                <div class="strategy-icon">🌊</div>
+                <div class="strategy-content">
+                    <h3 class="strategy-title">Urge Surfing</h3>
+                    <span class="strategy-time">5-10 minutes</span>
+                    <p class="strategy-description">Notice the craving as a wave—observe it rising and falling without judgment. You don't have to act on it.</p>
+                </div>
+            </div>
+            <div class="checkbox-wrapper">
+                <div class="checkbox">
+                    <span class="checkbox-icon">✓</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="strategy-item" data-strategy="hydrate">
+            <div class="strategy-header">
+                <div class="strategy-icon">💧</div>
+                <div class="strategy-content">
+                    <h3 class="strategy-title">Hydrate & Nourish</h3>
+                    <span class="strategy-time">2 minutes</span>
+                    <p class="strategy-description">Drink water slowly and mindfully. Proper hydration can help reduce physical tension and cravings.</p>
+                </div>
+            </div>
+            <div class="checkbox-wrapper">
+                <div class="checkbox">
+                    <span class="checkbox-icon">✓</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="strategy-item" data-strategy="move">
+            <div class="strategy-header">
+                <div class="strategy-icon">🏃</div>
+                <div class="strategy-content">
+                    <h3 class="strategy-title">Move Your Body</h3>
+                    <span class="strategy-time">10-20 minutes</span>
+                    <p class="strategy-description">Go for a walk, stretch, or do jumping jacks. Physical movement shifts your energy and focus.</p>
+                </div>
+            </div>
+            <div class="checkbox-wrapper">
+                <div class="checkbox">
+                    <span class="checkbox-icon">✓</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="strategy-item" data-strategy="mindfulness">
+            <div class="strategy-header">
+                <div class="strategy-icon">🧘</div>
+                <div class="strategy-content">
+                    <h3 class="strategy-title">Practice Mindfulness</h3>
+                    <span class="strategy-time">5 minutes</span>
+                    <p class="strategy-description">Ground yourself: name 5 things you see, 4 you hear, 3 you touch, 2 you smell, 1 you taste.</p>
+                </div>
+            </div>
+            <div class="checkbox-wrapper">
+                <div class="checkbox">
+                    <span class="checkbox-icon">✓</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="strategy-item" data-strategy="reach">
+            <div class="strategy-header">
+                <div class="strategy-icon">📞</div>
+                <div class="strategy-content">
+                    <h3 class="strategy-title">Reach Out</h3>
+                    <span class="strategy-time">Varies</span>
+                    <p class="strategy-description">Call or text a friend, sponsor, or support group member. Connection is powerful in recovery.</p>
+                </div>
+            </div>
+            <div class="checkbox-wrapper">
+                <div class="checkbox">
+                    <span class="checkbox-icon">✓</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="strategy-item" data-strategy="selftalk">
+            <div class="strategy-header">
+                <div class="strategy-icon">💭</div>
+                <div class="strategy-content">
+                    <h3 class="strategy-title">Positive Self-Talk</h3>
+                    <span class="strategy-time">2-5 minutes</span>
+                    <p class="strategy-description">Use affirmations: "I am strong," "This feeling will pass," "I choose my recovery."</p>
+                </div>
+            </div>
+            <div class="checkbox-wrapper">
+                <div class="checkbox">
+                    <span class="checkbox-icon">✓</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="strategy-item" data-strategy="journal">
+            <div class="strategy-header">
+                <div class="strategy-icon">📝</div>
+                <div class="strategy-content">
+                    <h3 class="strategy-title">Journal It Out</h3>
+                    <span class="strategy-time">10 minutes</span>
+                    <p class="strategy-description">Write about the trigger, your feelings, and which coping strategy you used. Track your progress.</p>
+                </div>
+            </div>
+            <div class="checkbox-wrapper">
+                <div class="checkbox">
+                    <span class="checkbox-icon">✓</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="action-buttons">
+        <button class="btn btn-secondary" id="reset-btn">
+            <span>🔄</span> Reset Checklist
+        </button>
+        <button class="btn btn-primary" id="save-btn">
+            <span>💾</span> Save Progress
+        </button>
+        <a href="{% url 'resources:download' resource.slug %}" class="btn btn-secondary">
+            <span>📄</span> Download PDF
+        </a>
+    </div>
+    
+    <div class="motivational-quote">
+        <p class="quote-text">"You don't have to see the whole staircase, just take the first step."</p>
+        <p class="quote-author">— Martin Luther King Jr.</p>
+    </div>
+</div>
+
+{% csrf_token %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const strategies = document.querySelectorAll('.strategy-item');
+    const progressFill = document.getElementById('progress-fill');
+    const progressCount = document.getElementById('progress-count');
+    const resetBtn = document.getElementById('reset-btn');
+    const saveBtn = document.getElementById('save-btn');
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    let checkedItems = {};
+    
+    // Load saved progress if exists
+    {% if progress.session_data %}
+    checkedItems = {{ progress.session_data|safe }};
+    updateUI();
+    {% endif %}
+    
+    // Handle strategy clicks
+    strategies.forEach(strategy => {
+        strategy.addEventListener('click', function() {
+            const strategyId = this.dataset.strategy;
+            
+            if (this.classList.contains('checked')) {
+                this.classList.remove('checked');
+                delete checkedItems[strategyId];
+            } else {
+                this.classList.add('checked');
+                checkedItems[strategyId] = true;
+            }
+            
+            updateProgress();
+            saveProgressAuto();
+        });
+    });
+    
+    // Reset button
+    resetBtn.addEventListener('click', function() {
+        if (confirm('Are you sure you want to reset your progress?')) {
+            strategies.forEach(strategy => {
+                strategy.classList.remove('checked');
+            });
+            checkedItems = {};
+            updateProgress();
+            saveProgressAuto();
+        }
+    });
+    
+    // Save button
+    saveBtn.addEventListener('click', function() {
+        saveProgress(true);
+    });
+    
+    function updateUI() {
+        strategies.forEach(strategy => {
+            const strategyId = strategy.dataset.strategy;
+            if (checkedItems[strategyId]) {
+                strategy.classList.add('checked');
+            }
+        });
+        updateProgress();
+    }
+    
+    function updateProgress() {
+        const total = strategies.length;
+        const completed = Object.keys(checkedItems).length;
+        const percentage = (completed / total) * 100;
+        
+        progressFill.style.width = percentage + '%';
+        progressCount.textContent = `${completed} of ${total} completed`;
+    }
+    
+    function saveProgressAuto() {
+        // Auto-save after a delay
+        clearTimeout(window.saveTimeout);
+        window.saveTimeout = setTimeout(() => saveProgress(false), 1000);
+    }
+    
+    function saveProgress(showFeedback) {
+        const data = {
+            session_data: checkedItems,
+            completed_items: Object.keys(checkedItems).length,
+            total_items: strategies.length
+        };
+        
+        fetch("{% url 'resources:save_progress' resource.slug %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (showFeedback && data.success) {
+                // Show success message
+                const btn = document.getElementById('save-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<span>✓</span> Saved!';
+                btn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            }
+        })
+        .catch(error => {
+            console.error('Error saving progress:', error);
+        });
+    }
+});
+</script>
+{% endblock %}

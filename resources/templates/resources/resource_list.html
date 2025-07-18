@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Recovery Resources - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Blog-style Header -->
+<div class="blog-header">
+    <h1>Recovery Resources</h1>
+    <p>Evidence-based tools and support services for your recovery journey</p>
+</div>
+
+<!-- Main Content -->
+<div class="resources-container">
+    <!-- Crisis Resources Banner -->
+    {% if crisis_resources %}
+    <div class="crisis-banner">
+        <h3>🚨 Need Immediate Help?</h3>
+        <p>24/7 crisis support available:</p>
+        <div class="crisis-numbers">
+            {% for crisis in crisis_resources %}
+            <div class="crisis-contact">
+                <div>{{ crisis.name }}</div>
+                {% if crisis.phone_number %}
+                <div style="color: #DC2626; font-size: 1.1rem;">{{ crisis.phone_number }}</div>
+                {% elif crisis.text_number %}
+                <div style="color: #DC2626;">{{ crisis.text_number }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Search Bar -->
+    <div class="search-section">
+        <form method="get" action="{% url 'resources:list' %}">
+            <input type="text" name="q" value="{{ query }}" placeholder="Search resources..." class="search-input">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+    </div>
+
+    <!-- Featured Resources -->
+    {% if featured_resources and not query %}
+    <section class="featured-section">
+        <h2>Featured Resources</h2>
+        <div class="featured-grid">
+            {% for resource in featured_resources %}
+            <div class="featured-card">
+                <a href="{{ resource.get_absolute_url }}">
+                    <h3>{{ resource.title }}</h3>
+                    <p>{{ resource.description|truncatewords:20 }}</p>
+                    {% if resource.resource_type %}
+                    <span class="resource-type" {% if resource.resource_type.color %}
+                        style="background-color: {{ resource.resource_type.color }}" {% endif %}>
+                        {{ resource.resource_type.name }}
+                    </span>
+                    {% endif %}
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Search Results -->
+    {% if query %}
+    <section class="search-results">
+        <h2>Search Results for "{{ query }}"</h2>
+        {% if resources %}
+        <div class="resource-list">
+            {% for resource in resources %}
+            <div class="resource-item">
+                <div class="resource-header">
+                    <a href="{{ resource.get_absolute_url }}" class="resource-title">
+                        {{ resource.title }}
+                    </a>
+                    {% if resource.resource_type %}
+                    <span class="resource-type" {% if resource.resource_type.color %}
+                        style="background-color: {{ resource.resource_type.color }}" {% endif %}>
+                        {{ resource.resource_type.name }}
+                    </span>
+                    {% endif %}
+                </div>
+                <p class="resource-description">{{ resource.description }}</p>
+                <a href="{{ resource.get_absolute_url }}" class="resource-link">
+                    View Resource →
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="text-align: center; color: #6B7280; margin: 2rem 0;">
+            No resources found matching your search. Try different keywords or
+            <a href="{% url 'resources:list' %}" style="color: var(--primary-color);">browse all resources</a>.
+        </p>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <!-- Resource Categories -->
+    {% if not query %}
+    <section class="categories-section">
+        <h2>Browse by Category</h2>
+        <div class="categories-grid">
+            {% for category in categories %}
+            <a href="{{ category.get_absolute_url }}" class="category-card">
+                <span class="category-icon">{{ category.icon }}</span>
+                <h3>{{ category.name }}</h3>
+                <p>{{ category.description }}</p>
+                <span class="resource-count">{{ category.resources.count }} resources</span>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Call to Action -->
+    {% if user.is_authenticated %}
+    {% if not query %}
+    <div style="text-align: center; margin: 3rem 0;">
+        <p style="color: #6B7280; margin-bottom: 1rem;">Can't find what you're looking for?</p>
+        <a href="{% url 'resources:my_bookmarks' %}" class="cta-button">View My Bookmarks</a>
+    </div>
+    {% endif %}
+    {% else %}
+    <div style="text-align: center; margin: 3rem 0; padding: 2rem; background: #f8f9fa; border-radius: 15px;">
+        <h3 style="color: var(--text-dark); margin-bottom: 1rem;">Get More from Recovery Resources</h3>
+        <p style="color: #6B7280; margin-bottom: 1.5rem;">
+            Create a free account to bookmark resources, track your progress, and access exclusive content.
+        </p>
+        <a href="{% url 'accounts:register' %}" class="cta-button">Join Our Community</a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Add smooth scroll behavior -->
+<style>
+    html {
+        scroll-behavior: smooth;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'resources/js/resources.js' %}"></script>
+{% endblock %}

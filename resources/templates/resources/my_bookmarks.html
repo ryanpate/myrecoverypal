@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Bookmarked Resources{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
+<style>
+    .bookmarks-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 100px 0 50px;
+        color: white;
+        text-align: center;
+    }
+
+    .bookmarks-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    .bookmarks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .empty-state img {
+        max-width: 200px;
+        opacity: 0.5;
+        margin-bottom: 2rem;
+    }
+
+    .empty-state h3 {
+        color: #4B5563;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        color: #6B7280;
+        margin-bottom: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bookmarks-header">
+    <h1>My Bookmarked Resources</h1>
+    <p>Quick access to your saved recovery resources</p>
+</div>
+
+<!-- Main Content -->
+<div class="bookmarks-container">
+    {% if bookmarks %}
+    <p style="color: #6B7280; margin-bottom: 2rem;">
+        You have {{ bookmarks.count }} bookmarked resource{{ bookmarks.count|pluralize }}
+    </p>
+
+    <div class="bookmarks-grid">
+        {% for bookmark in bookmarks %}
+        <div class="resource-card">
+            <div class="resource-card-header">
+                <a href="{{ bookmark.resource.get_absolute_url }}" class="resource-card-title">
+                    {{ bookmark.resource.title }}
+                </a>
+                {% if bookmark.resource.resource_type %}
+                <span class="resource-type" {% if bookmark.resource.resource_type.color %}
+                    style="background-color: {{ bookmark.resource.resource_type.color }}" {% endif %}>
+                    {{ bookmark.resource.resource_type.name }}
+                </span>
+                {% endif %}
+            </div>
+
+            <p class="resource-card-description">
+                {{ bookmark.resource.description|truncatewords:30 }}
+            </p>
+
+            <div class="resource-card-footer">
+                <div class="resource-stats">
+                    <span class="stat-item" style="color: #6B7280; font-size: 0.85rem;">
+                        Saved {{ bookmark.created_at|timesince }} ago
+                    </span>
+                </div>
+                <a href="{{ bookmark.resource.get_absolute_url }}" class="view-resource-btn">
+                    View Resource →
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>No Bookmarks Yet</h3>
+        <p>
+            Start building your personal library of recovery resources.<br>
+            Click the bookmark button on any resource to save it here.
+        </p>
+        <a href="{% url 'resources:list' %}" class="cta-button">
+            Browse Resources
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

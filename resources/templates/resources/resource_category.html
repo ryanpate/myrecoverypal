@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ category.name }} - Recovery Resources{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
+<style>
+    /* Category-specific styles */
+    .category-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 100px 0 50px;
+        color: white;
+        text-align: center;
+    }
+
+    .category-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .category-icon-large {
+        font-size: 3rem;
+    }
+
+    .category-description {
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+        opacity: 0.95;
+    }
+
+    .filters-bar {
+        background: white;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #4B5563;
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid #E5E7EB;
+        background: white;
+        border-radius: 20px;
+        text-decoration: none;
+        color: #4B5563;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .resources-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .resource-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .resource-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Featured badge */
+    .featured-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #ffc107;
+        color: #000;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .resource-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 1rem;
+        gap: 0.5rem;
+    }
+
+    .resource-card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        text-decoration: none;
+        line-height: 1.3;
+    }
+
+    .resource-card-title:hover {
+        color: var(--secondary-color);
+    }
+
+    .resource-card-description {
+        color: #6B7280;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        flex-grow: 1;
+    }
+
+    /* Meta information */
+    .resource-meta {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: #6B7280;
+        flex-wrap: wrap;
+    }
+
+    .resource-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    /* Action buttons for hybrid resources */
+    .resource-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        padding: 0.5rem 1.25rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-interactive {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-interactive:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    .btn-pdf {
+        background: #DC2626;
+        color: white;
+    }
+
+    .btn-pdf:hover {
+        background: #B91C1C;
+        transform: translateY(-2px);
+    }
+
+    .btn-view {
+        background: #f3f4f6;
+        color: #4B5563;
+    }
+
+    .btn-view:hover {
+        background: #e5e7eb;
+        color: #1F2937;
+    }
+
+    .resource-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid #E5E7EB;
+    }
+
+    .resource-stats {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: #9CA3AF;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .view-resource-btn {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: gap 0.3s ease;
+    }
+
+    .view-resource-btn:hover {
+        gap: 0.75rem;
+    }
+
+    .no-resources {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #6B7280;
+    }
+
+    .no-resources h3 {
+        color: #4B5563;
+        margin-bottom: 1rem;
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 3rem 0;
+    }
+
+    .pagination a,
+    .pagination span {
+        padding: 0.5rem 1rem;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #4B5563;
+        transition: all 0.3s ease;
+    }
+
+    .pagination a:hover {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .pagination .current {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    @media (max-width: 768px) {
+        .category-header {
+            padding: 80px 0 40px;
+        }
+
+        .category-header h1 {
+            font-size: 2rem;
+        }
+
+        .filters-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .resources-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .resource-actions {
+            flex-direction: column;
+        }
+
+        .action-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Category Header -->
+<div class="category-header">
+    <h1>
+        <span class="category-icon-large">{{ category.icon }}</span>
+        {{ category.name }}
+    </h1>
+    <p class="category-description">{{ category.description }}</p>
+</div>
+
+<!-- Main Content -->
+<div class="resources-container">
+    <!-- Filters Bar -->
+    <div class="filters-bar">
+        <span class="filter-label">Filter by Type:</span>
+        <div class="filter-buttons">
+            <a href="?{% if request.GET.page %}page={{ request.GET.page }}{% endif %}"
+                class="filter-btn {% if not request.GET.type %}active{% endif %}">
+                All Resources
+            </a>
+            {% for type in resource_types %}
+            <a href="?type={{ type.slug }}{% if request.GET.page %}&page={{ request.GET.page }}{% endif %}"
+                class="filter-btn {% if request.GET.type == type.slug %}active{% endif %}">
+                {{ type.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Resources Grid -->
+    {% if resources %}
+    <div class="resources-grid">
+        {% for resource in resources %}
+        <div class="resource-card">
+            {% if resource.featured %}
+            <span class="featured-badge">⭐ Featured</span>
+            {% endif %}
+
+            <div class="resource-card-header">
+                <a href="{{ resource.get_absolute_url }}" class="resource-card-title">
+                    {{ resource.title }}
+                </a>
+                {% if resource.resource_type %}
+                <span class="resource-type" {% if resource.resource_type.color %}
+                    style="background-color: {{ resource.resource_type.color }}" {% endif %}>
+                    {{ resource.resource_type.name }}
+                </span>
+                {% endif %}
+            </div>
+
+            <p class="resource-card-description">
+                {{ resource.description|truncatewords:30 }}
+            </p>
+
+            <!-- Meta information -->
+            {% if resource.estimated_time or resource.difficulty_level %}
+            <div class="resource-meta">
+                {% if resource.estimated_time %}
+                <span>⏱️ {{ resource.estimated_time }}</span>
+                {% endif %}
+                {% if resource.difficulty_level %}
+                <span>📊 {{ resource.get_difficulty_level_display }}</span>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Action buttons for hybrid resources -->
+            {% if resource.slug == 'comprehensive-educational-resources' %}
+            <div class="resource-actions">
+                <a href="{% url 'resources:educational_resources' %}" class="action-btn btn-interactive">
+                    📖 View Educational Resources
+                </a>
+            </div>
+            {% elif resource.interaction_type == 'hybrid' %}
+            <div class="resource-actions">
+                <a href="{% url 'resources:interactive' resource.slug %}" class="action-btn btn-interactive">
+                    ✅ Interactive Version
+                </a>
+                <a href="{% url 'resources:download' resource.slug %}" class="action-btn btn-pdf">
+                    📄 Download PDF
+                </a>
+            </div>
+            {% elif resource.is_interactive %}
+            <div class="resource-actions">
+                <a href="{% url 'resources:interactive' resource.slug %}" class="action-btn btn-interactive">
+                    ✅ Start Interactive Tool
+                </a>
+            </div>
+            {% elif resource.is_downloadable %}
+            <div class="resource-actions">
+                <a href="{% url 'resources:download' resource.slug %}" class="action-btn btn-pdf">
+                    📄 Download {{ resource.resource_type.name }}
+                </a>
+            </div>
+            {% endif %}
+            <div class="resource-card-footer">
+                <div class="resource-stats">
+                    <span class="stat-item">
+                        👁️ {{ resource.views }} views
+                    </span>
+                    {% if resource.is_downloadable %}
+                    <span class="stat-item">
+                        ⬇️ {{ resource.downloads }} downloads
+                    </span>
+                    {% endif %}
+                </div>
+                <a href="{{ resource.get_absolute_url }}" class="view-resource-btn">
+                    View Details →
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}">« First</a>
+        <a
+            href="?page={{ page_obj.previous_page_number }}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}">‹
+            Previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}">Next
+            ›</a>
+        <a
+            href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}">Last
+            »</a>
+        {% endif %}
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="no-resources">
+        <h3>No resources found</h3>
+        <p>
+            {% if request.GET.type %}
+            No {{ request.GET.type }} resources in this category yet.
+            <br>
+            <a href="{{ request.path }}" style="color: var(--primary-color);">
+                View all {{ category.name }} resources
+            </a>
+            {% else %}
+            This category doesn't have any resources yet. Check back soon!
+            {% endif %}
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- Back to All Resources -->
+    <div style="text-align: center; margin: 3rem 0;">
+        <a href="{% url 'resources:list' %}" class="cta-button" style="display: inline-block;">
+            ← Back to All Resources
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'resources/js/resources.js' %}"></script>
+{% endblock %}
