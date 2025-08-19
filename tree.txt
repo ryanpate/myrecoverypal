@@ -1,0 +1,168 @@
+.
+├── apps
+│   ├── accounts
+│   │   ├── __pycache__
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── forms.py
+│   │   ├── init.py
+│   │   ├── management
+│   │   ├── managers.py
+│   │   ├── migrations
+│   │   ├── models.py
+│   │   ├── signals.py
+│   │   ├── templates
+│   │   ├── templatetags
+│   │   ├── urls.py
+│   │   └── views.py
+│   ├── blog
+│   │   ├── __pycache__
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── forms.py
+│   │   ├── init.py
+│   │   ├── management
+│   │   ├── migrations
+│   │   ├── models.py
+│   │   ├── templates
+│   │   ├── urls.py
+│   │   └── views.py
+│   ├── core
+│   │   ├── __pycache__
+│   │   ├── apps.py
+│   │   ├── init.py
+│   │   ├── models.py
+│   │   ├── templates
+│   │   ├── urls.py
+│   │   └── views.py
+│   ├── init.py
+│   ├── journal
+│   │   ├── __pycache__
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── forms.py
+│   │   ├── init.py
+│   │   ├── management
+│   │   ├── migrations
+│   │   ├── models.py
+│   │   ├── templates
+│   │   ├── urls.py
+│   │   └── views.py
+│   └── newsletter
+│       ├── __pycache__
+│       ├── admin.py
+│       ├── forms.py
+│       ├── migrations
+│       ├── models.py
+│       ├── tasks.py
+│       ├── templates
+│       ├── urls.py
+│       └── views.py
+├── db.sqlite3
+├── educational-resources.html
+├── index.html
+├── manage.py
+├── media
+│   ├── avatars
+│   │   └── image.webp
+│   └── resources
+│       └── files
+├── README.md
+├── recovery_hub
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-310.pyc
+│   │   ├── settings.cpython-310.pyc
+│   │   ├── urls.cpython-310.pyc
+│   │   └── wsgi.cpython-310.pyc
+│   ├── apps
+│   │   ├── accounts
+│   │   ├── blog
+│   │   ├── core
+│   │   ├── init.py
+│   │   ├── journal
+│   │   ├── newsletter
+│   │   └── store
+│   ├── asgi.py
+│   ├── celery.py
+│   ├── init.py
+│   ├── settings
+│   │   ├── base.py
+│   │   ├── development .py
+│   │   ├── init.py
+│   │   └── production.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── venv
+│   │   ├── bin
+│   │   ├── lib
+│   │   └── pyvenv.cfg
+│   └── wsgi.py
+├── requirements.txt
+├── resources
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-310.pyc
+│   │   ├── admin.cpython-310.pyc
+│   │   ├── apps.cpython-310.pyc
+│   │   ├── models.cpython-310.pyc
+│   │   ├── urls.cpython-310.pyc
+│   │   └── views.cpython-310.pyc
+│   ├── admin.py
+│   ├── apps.py
+│   ├── management
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   └── commands
+│   ├── migrations
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   ├── 0001_initial.py
+│   │   ├── 0002_resource_difficulty_level_resource_estimated_time_and_more.py
+│   │   └── 0003_add_coping_skills_resources.py
+│   ├── models.py
+│   ├── static
+│   │   └── resources
+│   ├── templates
+│   │   └── resources
+│   ├── tests.py
+│   ├── urls.py
+│   ├── views.py
+│   └── views2.py
+├── static
+│   ├── css
+│   │   └── main.css
+│   └── js
+│       └── main.js
+├── staticfiles
+│   ├── admin
+│   │   ├── css
+│   │   ├── img
+│   │   └── js
+│   ├── css
+│   │   └── main.css
+│   ├── js
+│   │   └── main.js
+│   └── resources
+│       ├── css
+│       └── js
+├── templates
+│   └── base.html
+└── venv
+    ├── bin
+    │   ├── activate
+    │   ├── activate.csh
+    │   ├── activate.fish
+    │   ├── Activate.ps1
+    │   ├── celery
+    │   ├── django-admin
+    │   ├── pip
+    │   ├── pip3
+    │   ├── pip3.10
+    │   ├── python -> python3
+    │   ├── python3 -> /Library/Frameworks/Python.framework/Versions/3.10/bin/python3
+    │   ├── python3.10 -> python3
+    │   └── sqlformat
+    ├── lib
+    │   └── python3.10
+    └── pyvenv.cfg

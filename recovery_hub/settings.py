@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'apps.journal',
     'apps.newsletter',
     'resources',
+    'apps.store',
 ]
 
 # Add crispy forms settings

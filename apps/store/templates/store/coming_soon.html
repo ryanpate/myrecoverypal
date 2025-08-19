@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Store Coming Soon - MyRecoveryPal{% endblock %}
+
+{% block content %}
+<style>
+    .coming-soon-container {
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+        margin-top: -70px;
+        padding-top: 70px;
+    }
+    
+    .coming-soon-content {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        max-width: 600px;
+        margin: 2rem;
+    }
+    
+    .coming-soon-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .coming-soon-title {
+        color: var(--primary-dark);
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .coming-soon-text {
+        color: #666;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+    }
+    
+    .notify-form {
+        display: flex;
+        gap: 1rem;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .notify-input {
+        flex: 1;
+        padding: 0.75rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 50px;
+        font-size: 1rem;
+    }
+    
+    .notify-button {
+        padding: 0.75rem 2rem;
+        background: var(--accent-green);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .notify-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
+    }
+    
+    .features-preview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+        padding-top: 3rem;
+        border-top: 1px solid #e0e0e0;
+    }
+    
+    .feature-item {
+        text-align: center;
+    }
+    
+    .feature-item-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: var(--primary-light);
+    }
+    
+    .feature-item-text {
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="coming-soon-container">
+    <div class="coming-soon-content">
+        <div class="coming-soon-icon">🛍️</div>
+        <h1 class="coming-soon-title">Store Coming Soon!</h1>
+        <p class="coming-soon-text">
+            We're working hard to bring you meaningful recovery merchandise, books, and tools to support your journey. 
+            Be the first to know when we launch!
+        </p>
+        
+        <form class="notify-form" method="post" action="{% url 'newsletter:subscribe' %}">
+            {% csrf_token %}
+            <input type="email" 
+                   name="email" 
+                   class="notify-input" 
+                   placeholder="Enter your email" 
+                   required>
+            <button type="submit" class="notify-button">Notify Me</button>
+        </form>
+        
+        <div class="features-preview">
+            <div class="feature-item">
+                <div class="feature-item-icon">👕</div>
+                <div class="feature-item-text">Recovery Apparel</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-item-icon">📚</div>
+                <div class="feature-item-text">Inspirational Books</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-item-icon">🎁</div>
+                <div class="feature-item-text">Milestone Gifts</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-item-icon">🧘</div>
+                <div class="feature-item-text">Wellness Products</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

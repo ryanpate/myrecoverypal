@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Recovery Pal - Recovery Support & Resources</title>
+    <title>MyRecoveryPal - Your Journey to Recovery Starts Here</title>
     <style>
         * {
             margin: 0;
@@ -12,13 +13,19 @@
         }
 
         :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #7ec8e3;
-            --accent-color: #52d3aa;
+            /* Colors from the logo */
+            --primary-dark: #1e4d8b;
+            /* Dark blue from logo */
+            --primary-light: #4db8e8;
+            /* Light blue/cyan from logo */
+            --accent-green: #52b788;
+            /* Green from checkmark */
             --text-dark: #2c3e50;
             --text-light: #ffffff;
             --bg-light: #f8f9fa;
-            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --bg-lighter: #ffffff;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 5px 20px rgba(0, 0, 0, 0.15);
         }
 
         body {
@@ -26,6 +33,7 @@
             line-height: 1.6;
             color: var(--text-dark);
             overflow-x: hidden;
+            background: var(--bg-light);
         }
 
         /* Navigation */
@@ -33,7 +41,7 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
             box-shadow: var(--shadow);
             z-index: 1000;
@@ -43,30 +51,45 @@
         .nav-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 1rem 2rem;
+            padding: 0.75rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shimmer 3s ease-in-out infinite;
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        @keyframes shimmer {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
+        .logo-svg {
+            width: 45px;
+            height: 45px;
+        }
+
+        /* Add this style for logo images */
+        img.logo-svg {
+            width: 45px;
+            height: auto;
+        }
+
+        img.hero-logo {
+            width: 150px;
+            height: auto;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-dark);
         }
 
         .nav-links {
             display: flex;
             list-style: none;
             gap: 2rem;
+            align-items: center;
         }
 
         .nav-links a {
@@ -84,25 +107,57 @@
             left: 0;
             width: 0;
             height: 2px;
-            background: var(--accent-color);
+            background: var(--accent-green);
             transition: width 0.3s ease;
         }
 
         .nav-links a:hover {
-            color: var(--primary-color);
+            color: var(--primary-dark);
         }
 
         .nav-links a:hover::after {
             width: 100%;
         }
 
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .mobile-menu span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-dark);
+            transition: all 0.3s ease;
+        }
+
+        .login-btn {
+            padding: 0.5rem 1.5rem;
+            background: var(--accent-green);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: #45a675;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
+        }
+
         /* Hero Section */
         .hero {
             min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            text-align: center;
+            padding: 2rem;
             position: relative;
             overflow: hidden;
         }
@@ -110,66 +165,94 @@
         .hero::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff20" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
-            background-size: cover;
-            animation: wave 20s linear infinite;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: float 20s linear infinite;
         }
 
-        @keyframes wave {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-1440px); }
+        @keyframes float {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
 
         .hero-content {
-            text-align: center;
-            color: var(--text-light);
+            position: relative;
             z-index: 1;
-            padding: 2rem;
-            animation: fadeInUp 1s ease-out;
+            max-width: 800px;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+        .hero-logo {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 2rem;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+            50% {
+                transform: scale(1.05);
             }
         }
 
         .hero h1 {
             font-size: 3.5rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .hero p {
             font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
             margin-bottom: 2rem;
-            opacity: 0.95;
+            line-height: 1.8;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .cta-button {
-            display: inline-block;
             padding: 1rem 2.5rem;
-            background: var(--accent-color);
-            color: var(--text-light);
+            background: var(--accent-green);
+            color: white;
             text-decoration: none;
             border-radius: 50px;
             font-weight: 600;
+            font-size: 1.1rem;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(82, 211, 170, 0.4);
+            display: inline-block;
         }
 
         .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(82, 211, 170, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button-secondary {
+            background: transparent;
+            border: 2px solid white;
+        }
+
+        .cta-button-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         /* Features Section */
@@ -186,28 +269,22 @@
         .section-title {
             text-align: center;
             font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: var(--text-dark);
-            position: relative;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
         }
 
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 4px;
-            background: var(--accent-color);
-            border-radius: 2px;
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
         }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
-            margin-top: 4rem;
+            margin-top: 3rem;
         }
 
         .feature-card {
@@ -215,8 +292,8 @@
             padding: 2rem;
             border-radius: 15px;
             box-shadow: var(--shadow);
-            text-align: center;
             transition: all 0.3s ease;
+            text-align: center;
             position: relative;
             overflow: hidden;
         }
@@ -226,38 +303,38 @@
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-            transform: translateX(-100%);
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-light), var(--accent-green));
+            transform: scaleX(0);
             transition: transform 0.3s ease;
         }
 
         .feature-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            box-shadow: var(--shadow-hover);
         }
 
         .feature-card:hover::before {
-            transform: translateX(0);
+            transform: scaleX(1);
         }
 
         .feature-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 1rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--primary-light), var(--accent-green));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            color: white;
+            font-size: 2rem;
         }
 
         .feature-card h3 {
+            color: var(--primary-dark);
             margin-bottom: 1rem;
-            color: var(--text-dark);
+            font-size: 1.5rem;
         }
 
         .feature-card p {
@@ -265,159 +342,510 @@
             line-height: 1.8;
         }
 
-        /* About Section */
-        .about {
-            padding: 5rem 2rem;
-            background: white;
+        /* Statistics Section */
+        .stats {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            padding: 4rem 2rem;
+            color: white;
         }
 
-        .about-content {
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
             max-width: 800px;
             margin: 0 auto;
             text-align: center;
         }
 
-        .about-content p {
+        .stat-item h3 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-green);
+        }
+
+        .stat-item p {
             font-size: 1.1rem;
-            color: #666;
+            opacity: 0.9;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            padding: 5rem 2rem;
+            background: white;
+        }
+
+        .testimonial-slider {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .testimonial-card {
+            background: var(--bg-light);
+            padding: 3rem;
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            font-size: 100px;
+            color: var(--primary-light);
+            opacity: 0.3;
+        }
+
+        .testimonial-text {
+            font-size: 1.2rem;
             line-height: 1.8;
+            color: #555;
             margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .author-info h4 {
+            color: var(--primary-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .author-info p {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 5rem 2rem;
+            background: var(--bg-light);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card.featured {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(30, 77, 139, 0.2);
+        }
+
+        .pricing-card.featured::before {
+            content: 'RECOMMENDED';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-green);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price span {
+            font-size: 1rem;
+            color: #999;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .plan-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+            color: #666;
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: var(--accent-green);
+            font-weight: bold;
+            margin-right: 0.5rem;
         }
 
         /* Footer */
         footer {
-            background: var(--text-dark);
-            color: var(--text-light);
+            background: var(--primary-dark);
+            color: white;
             padding: 3rem 2rem 1rem;
-            text-align: center;
         }
 
         .footer-content {
             max-width: 1200px;
             margin: 0 auto;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
             margin-bottom: 2rem;
-            flex-wrap: wrap;
         }
 
-        .footer-links a {
-            color: var(--text-light);
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-green);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            padding: 0.5rem 0;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
+            transition: color 0.3s ease;
         }
 
-        .footer-links a:hover {
-            opacity: 1;
+        .footer-section a:hover {
+            color: var(--accent-green);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding: 2rem 0 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--accent-green);
+            transform: translateY(-3px);
         }
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: var(--shadow);
             }
-            
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 2rem;
             }
-            
+
             .hero p {
-                font-size: 1.1rem;
+                font-size: 1rem;
             }
-            
+
             .features-grid {
                 grid-template-columns: 1fr;
             }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
         }
 
-        /* Floating elements animation */
-        .floating {
-            animation: float 6s ease-in-out infinite;
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease forwards;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-icon {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--primary-light);
+            border-top-color: var(--accent-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-icon"></div>
+    </div>
+
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
-            <div class="logo">My Recovery Pal</div>
-            <ul class="nav-links">
+            <div class="logo-container">
+                <!-- Logo placeholder - replace with your logo file -->
+                <img src="logo.svg" alt="MyRecoveryPal Logo" class="logo-svg">
+                <span class="logo-text">MyRecoveryPal</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
                 <li><a href="#home">Home</a></li>
-                <li><a href="#blog">Blog</a></li>
+                <li><a href="#features">Features</a></li>
                 <li><a href="#resources">Resources</a></li>
                 <li><a href="#journal">Journal</a></li>
-                <li><a href="#store">Store</a></li>
-                <li><a href="#about">About</a></li>
+                <li><a href="#community">Community</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#login" class="login-btn">Login / Sign Up</a></li>
             </ul>
+            <div class="mobile-menu" id="mobileMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-content">
-            <h1 class="floating">Your Journey to Recovery Starts Here</h1>
-            <p>Find support, resources, and community on your path to healing</p>
-            <a href="#resources" class="cta-button">Explore Resources</a>
+            <!-- Hero logo placeholder - replace with your logo file -->
+            <img src="logo-white.svg" alt="MyRecoveryPal" class="hero-logo">
+            <h1 class="fade-in">Your Journey to Recovery Starts Here</h1>
+            <p class="fade-in">Find support, resources, and community on your path to healing. Join thousands who have
+                transformed their lives.</p>
+            <div class="cta-buttons fade-in">
+                <a href="#signup" class="cta-button">Start Free Today</a>
+                <a href="#features" class="cta-button cta-button-secondary">Learn More</a>
+            </div>
         </div>
     </section>
 
     <!-- Features Section -->
     <section class="features" id="features">
         <div class="container">
-            <h2 class="section-title">What We Offer</h2>
+            <h2 class="section-title">Everything You Need for Recovery</h2>
+            <p class="section-subtitle">Comprehensive tools and support to help you stay on track</p>
             <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">📝</div>
-                    <h3>Recovery Blog</h3>
-                    <p>Read inspiring stories, practical tips, and evidence-based strategies from those who understand your journey.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📚</div>
-                    <h3>Resources & Tools</h3>
-                    <p>Access comprehensive guides, worksheets, and recovery tools designed to support your healing process.</p>
-                </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in">
                     <div class="feature-icon">📔</div>
                     <h3>Personal Journal</h3>
-                    <p>Track your progress with guided prompts and reflections tailored specifically for recovery.</p>
+                    <p>Track your progress with guided prompts and reflections tailored specifically for recovery.
+                        Private, secure, and always accessible.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🛍️</div>
-                    <h3>Recovery Store</h3>
-                    <p>Shop meaningful apparel and items that celebrate your journey and inspire continued growth.</p>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Milestone Tracking</h3>
+                    <p>Celebrate every achievement, big and small. Set goals, track progress, and visualize your journey
+                        to recovery.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💬</div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">👥</div>
                     <h3>Community Support</h3>
-                    <p>Connect with others who understand your experience in a safe, supportive environment.</p>
+                    <p>Connect with others who understand your journey. Share experiences, find sponsors, and build
+                        lasting friendships.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📧</div>
-                    <h3>Newsletter</h3>
-                    <p>Stay connected with weekly inspiration, recovery tips, and community updates.</p>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">📚</div>
+                    <h3>Resources Library</h3>
+                    <p>Access evidence-based articles, videos, worksheets, and tools to support your recovery journey.
+                    </p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile App</h3>
+                    <p>Take your recovery support anywhere. Available on iOS and Android with full synchronization.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🏪</div>
+                    <h3>Recovery Store</h3>
+                    <p>Shop meaningful recovery merchandise, books, and tools to support and celebrate your journey.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- About Section -->
-    <section class="about" id="about">
+    <!-- Call to Action Section -->
+    <section class="stats">
         <div class="container">
-            <h2 class="section-title">About Our Mission</h2>
-            <div class="about-content">
-                <p>We believe that recovery is a journey, not a destination. Our platform provides a safe, supportive space for individuals at every stage of their recovery process.</p>
-                <p>Whether you're just beginning your journey or celebrating years of sobriety, you'll find resources, community, and tools designed to support your continued growth and healing.</p>
-                <a href="#resources" class="cta-button">Start Your Journey</a>
+            <div style="text-align: center; padding: 2rem;">
+                <h2 style="color: white; font-size: 2.5rem; margin-bottom: 1rem;">Start Your Recovery Journey Today</h2>
+                <p
+                    style="color: rgba(255,255,255,0.9); font-size: 1.2rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    Join a supportive community dedicated to helping you achieve lasting recovery. Your path to healing
+                    begins here.
+                </p>
+                <a href="#signup" class="cta-button" style="font-size: 1.2rem; padding: 1rem 2.5rem;">Get Started
+                    Free</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2 class="section-title">Choose Your Path</h2>
+            <p class="section-subtitle">Start free, upgrade when you're ready</p>
+            <div class="pricing-grid">
+                <div class="pricing-card fade-in">
+                    <h3 class="plan-name">Free Forever</h3>
+                    <div class="plan-price">$0<span>/month</span></div>
+                    <ul class="plan-features">
+                        <li>Basic journal with prompts</li>
+                        <li>Milestone tracking</li>
+                        <li>Community access</li>
+                        <li>Daily motivational quotes</li>
+                        <li>Mobile app access</li>
+                    </ul>
+                    <a href="#signup" class="cta-button">Start Free</a>
+                </div>
+                <div class="pricing-card featured fade-in">
+                    <h3 class="plan-name">Premium</h3>
+                    <div class="plan-price">$9.99<span>/month</span></div>
+                    <ul class="plan-features">
+                        <li>Everything in Free</li>
+                        <li>Unlimited journal entries</li>
+                        <li>Advanced analytics</li>
+                        <li>Priority support</li>
+                        <li>Exclusive resources</li>
+                        <li>Ad-free experience</li>
+                        <li>Export your data</li>
+                    </ul>
+                    <a href="#signup" class="cta-button">Start Trial</a>
+                </div>
+                <div class="pricing-card fade-in">
+                    <h3 class="plan-name">Family</h3>
+                    <div class="plan-price">$19.99<span>/month</span></div>
+                    <ul class="plan-features">
+                        <li>Everything in Premium</li>
+                        <li>Up to 5 accounts</li>
+                        <li>Family dashboard</li>
+                        <li>Shared milestones</li>
+                        <li>Group therapy resources</li>
+                    </ul>
+                    <a href="#signup" class="cta-button">Contact Us</a>
+                </div>
             </div>
         </div>
     </section>
@@ -425,18 +853,79 @@
     <!-- Footer -->
     <footer>
         <div class="footer-content">
-            <div class="footer-links">
-                <a href="#privacy">Privacy Policy</a>
-                <a href="#terms">Terms of Service</a>
-                <a href="#contact">Contact Us</a>
-                <a href="#support">Get Support</a>
+            <div class="footer-section">
+                <h3>About</h3>
+                <ul>
+                    <li><a href="#mission">Our Mission</a></li>
+                    <li><a href="#team">Team</a></li>
+                    <li><a href="#careers">Careers</a></li>
+                    <li><a href="#press">Press</a></li>
+                </ul>
             </div>
-            <p>&copy; 2025 My Recovery Pal. All rights reserved.</p>
-            <p style="opacity: 0.7; font-size: 0.9rem; margin-top: 1rem;">If you're in crisis, please call 988 (Suicide & Crisis Lifeline) or text "HELLO" to 741741 (Crisis Text Line)</p>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#articles">Articles</a></li>
+                    <li><a href="#guides">Recovery Guides</a></li>
+                    <li><a href="#tools">Tools</a></li>
+                    <li><a href="#blog">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#help">Help Center</a></li>
+                    <li><a href="#contact">Contact Us</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#crisis">Crisis Support</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <p>Stay updated with our newsletter</p>
+                <div class="social-links">
+                    <a href="#facebook">f</a>
+                    <a href="#twitter">t</a>
+                    <a href="#instagram">i</a>
+                    <a href="#youtube">y</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 MyRecoveryPal. All rights reserved. | <a href="#privacy"
+                    style="color: var(--accent-green);">Privacy Policy</a> | <a href="#terms"
+                    style="color: var(--accent-green);">Terms of Service</a></p>
         </div>
     </footer>
 
     <script>
+        // Hide loader when page loads
+        window.addEventListener('load', function () {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 500);
+        });
+
+        // Mobile menu toggle
+        const mobileMenu = document.getElementById('mobileMenu');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileMenu.addEventListener('click', function () {
+            navLinks.classList.toggle('active');
+
+            // Animate hamburger menu
+            const spans = mobileMenu.querySelectorAll('span');
+            if (navLinks.classList.contains('active')) {
+                spans[0].style.transform = 'rotate(45deg) translateY(10px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translateY(-10px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        });
+
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -448,31 +937,43 @@
                         block: 'start'
                     });
                 }
+                // Close mobile menu if open
+                navLinks.classList.remove('active');
             });
         });
 
-        // Add scroll effect to navigation
-        window.addEventListener('scroll', function() {
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function (entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = '0.1s';
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all elements with fade-in class
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Change navigation background on scroll
+        window.addEventListener('scroll', function () {
             const nav = document.querySelector('nav');
             if (window.scrollY > 50) {
                 nav.style.background = 'rgba(255, 255, 255, 0.98)';
                 nav.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
             } else {
-                nav.style.background = 'rgba(255, 255, 255, 0.95)';
+                nav.style.background = 'rgba(255, 255, 255, 0.98)';
                 nav.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
             }
         });
-
-        // Add hover effect to feature cards
-        const featureCards = document.querySelectorAll('.feature-card');
-        featureCards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-5px) scale(1.02)';
-            });
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
-        });
     </script>
 </body>
+
 </html>

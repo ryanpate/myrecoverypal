@@ -13,7 +13,7 @@ urlpatterns = [
     path('journal/', include('apps.journal.urls')),
     path('resources/', include('resources.urls')),  # Add this line
     path('newsletter/', include('apps.newsletter.urls')),
-    #path('store/', include('apps.store.urls')),
+    path('store/', include('apps.store.urls')),
     # Add other app URLs as needed
 ]
 
