@@ -1,0 +1,451 @@
+# Django #
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+static_root/
+
+# Backup files #
+*.bak
+
+# If you are using PyCharm #
+.idea/
+*.iml
+*.iws
+out/
+.idea_modules/
+
+# Visual Studio Code #
+.vscode/
+*.code-workspace
+.history
+
+# Sublime Text #
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+# Package control specific files
+Package Control.last-run
+Package Control.ca-list
+Package Control.ca-bundle
+Package Control.system-ca-bundle
+Package Control.cache/
+Package Control.ca-certs/
+Package Control.merged-ca-bundle
+Package Control.user-ca-bundle
+oscrypto-ca-bundle.crt
+bh_unicode_properties.cache
+GitHub.sublime-settings
+
+# Python #
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports #
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations #
+*.mo
+
+# Django stuff #
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff #
+instance/
+.webassets-cache
+
+# Scrapy stuff #
+.scrapy
+
+# Sphinx documentation #
+docs/_build/
+doc/_build/
+
+# PyBuilder #
+.pybuilder/
+target/
+
+# Jupyter Notebook #
+.ipynb_checkpoints
+
+# IPython #
+profile_default/
+ipython_config.py
+
+# Environments #
+.env
+.env.local
+.env.*.local
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pythonenv*
+.python-version
+
+# Pipenv #
+Pipfile.lock
+
+# Poetry #
+poetry.lock
+
+# PEP 582 #
+__pypackages__/
+
+# Celery stuff #
+celerybeat-schedule
+celerybeat.pid
+celerybeat-schedule.db
+
+# SageMath parsed files #
+*.sage.py
+
+# Spyder project settings #
+.spyderproject
+.spyproject
+
+# Rope project settings #
+.ropeproject
+
+# mkdocs documentation #
+/site
+
+# mypy #
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker #
+.pyre/
+
+# pytype static type analyzer #
+.pytype/
+
+# Cython debug symbols #
+cython_debug/
+
+# macOS #
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows #
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux #
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Backup files #
+*.backup
+*.bck
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Database #
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+
+# Logs #
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data #
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Testing #
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Docker #
+docker-compose.override.yml
+.dockerignore
+
+# Node (if using any JS/CSS build tools) #
+node_modules/
+bower_components/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+.npm/
+.yarn/
+.pnp.*
+
+# Webpack #
+bundle.js
+*.bundle.js
+*.bundle.js.map
+
+# Environment Variables #
+.env
+.env.*
+!.env.example
+.envrc
+.env.local
+.env.production
+.env.development
+
+# Secret files #
+secrets.json
+config.json
+**/secrets/
+**/credentials/
+*.pem
+*.key
+*.crt
+*.cer
+*.pfx
+*.p12
+
+# AWS #
+.aws/
+aws.json
+
+# Google Cloud #
+gcloud/
+.gcloud/
+credentials.json
+service-account-key.json
+
+# Azure #
+.azure/
+local.settings.json
+
+# Heroku #
+*.env
+
+# Sensitive or large data files #
+*.csv
+*.dat
+*.efx
+*.gbr
+*.gtm
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.gz
+*.tar
+*.tar.gz
+*.zip
+*.rar
+*.7z
+!fixtures/*.json
+!sample_data/*.csv
+
+# Large media files (adjust based on your needs) #
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.mkv
+*.webm
+*.mp3
+*.wav
+*.flac
+*.aac
+*.ogg
+*.wma
+*.pdf
+*.psd
+*.ai
+*.sketch
+*.fig
+
+# Keep small images but ignore large ones
+!static/images/*.svg
+!static/images/*.png
+!static/images/*.jpg
+!static/images/*.jpeg
+!static/images/*.gif
+!static/images/*.ico
+!static/images/*.webp
+
+# But ignore images over 5MB (you'll need to handle this with git-lfs or manually)
+static/images/large/
+
+# Django migrations (optional - some teams track these) #
+# Uncomment if you want to ignore migrations
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# Local development #
+local/
+tmp/
+temp/
+TODO.txt
+notes.txt
+*.local.*
+
+# CI/CD #
+.github/workflows/secrets/
+.gitlab-ci-local/
+.circleci/local/
+
+# Documentation build #
+docs/_build/
+_build/
+build/
+dist/
+
+# Cache directories #
+.sass-cache/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vuepress/dist/
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port/
+
+# SSL Certificates #
+*.pem
+*.crt
+*.key
+*.cer
+ssl/
+
+# MyRecoveryPal specific (add your own as needed) #
+uploaded_files/
+user_uploads/
+private_media/
+exports/
+backups/
+data_dumps/
+recovery_hub/settings_local.py
+myrecoverypal/settings_local.py
+
+# Keep important files #
+!.gitkeep
+!requirements.txt
+!requirements/
+!README.md
+!LICENSE
+!Procfile
+!runtime.txt
+!.gitignore
+!.env.example
+
+# Ignore all .env files except the example #
+.env*
+!.env.example
+
+# If using WhiteNoise for static files in production #
+staticfiles/
+static_collected/
+
+# Email spool if using file-based email backend #
+sent_emails/
+
+# Session files #
+django_session/
+sessions/
+
+# If using Whoosh for search #
+whoosh_index/
+
+# Ignore the actual logo files if they're proprietary but keep placeholders #
+# static/images/logo-*.svg
+# !static/images/logo-placeholder.svg
