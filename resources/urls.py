@@ -23,6 +23,8 @@ urlpatterns = [
     path('resource/<slug:slug>/interactive/',
          views.interactive_resource_view, name='interactive'),
     path('my-bookmarks/', views.my_bookmarks_view, name='my_bookmarks'),
+    path('professional-help/', views.professional_help_view,
+         name='professional_help'),
 
     # Keep existing daily checklist URLs for backward compatibility if they exist
     # Comment these out if daily_checklist_interactive and download_checklist_pdf don't exist in views.py
