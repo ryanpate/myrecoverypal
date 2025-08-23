@@ -1,0 +1,725 @@
+[
+  {
+    "_irow": 1,
+    "name1": "Good Shepherd Recovery House",
+    "name2": "",
+    "street1": "601 Moore Road",
+    "city": "Jasper",
+    "street2": "",
+    "state": "GA",
+    "zip": "30143",
+    "phone": "678-459-2347",
+    "intake1": null,
+    "hotline1": null,
+    "website": "https://gsrecovery.org",
+    "latitude": "34.4538256",
+    "longitude": "-84.5798457",
+    "services": [
+      {
+        "f1": "Type of Care",
+        "f2": "TC",
+        "f3": "Substance use treatment; Transitional housing, halfway house, or sober home; Treatment for co-occurring substance use plus either serious mental health illness in adults/serious emotional disturbance in children"
+      },
+      {
+        "f1": "Service Setting (e.g., Outpatient, Residential, Inpatient, etc.)",
+        "f2": "SET",
+        "f3": "Residential/24-hour residential; Long-term residential"
+      },
+      {
+        "f1": "Type of Alcohol Use Disorder Treatment",
+        "f2": "AUT",
+        "f3": "Does not use medication assisted treatment for alcohol use disorder"
+      },
+      {
+        "f1": "Type of Opioid Treatment",
+        "f2": "OT",
+        "f3": "Does not use MAT for opioid use disorders"
+      },
+      {
+        "f1": "Pharmacotherapies",
+        "f2": "PHR",
+        "f3": "Nicotine replacement"
+      },
+      {
+        "f1": "Treatment Approaches",
+        "f2": "TAP",
+        "f3": "Anger management; Brief intervention; Cognitive behavioral therapy; Contingency management/motivational incentives; Motivational interviewing; Matrix Model; Relapse prevention; Substance use disorder counseling; Telemedicine/telehealth therapy; Trauma-related counseling; 12-step facilitation"
+      },
+      {
+        "f1": "Facility Operation (e.g., Private, Public)",
+        "f2": "FOP",
+        "f3": "Private non-profit organization"
+      },
+      {
+        "f1": "License/Certification/Accreditation",
+        "f2": "LCA",
+        "f3": "State Substance use treatment agency; State department of health"
+      },
+      {
+        "f1": "Payment/Insurance/Funding Accepted",
+        "f2": "PAY",
+        "f3": "Cash or self-payment"
+      },
+      {
+        "f1": "Special Programs/Groups Offered",
+        "f2": "SG",
+        "f3": "Adult men; Criminal justice (other than DUI/DWI)/Forensic clients; Clients with co-occurring mental and substance use disorders; Clients with HIV or AIDS; Clients who have experienced sexual abuse; Clients who have experienced intimate partner violence, domestic violence; Clients who have experienced trauma"
+      },
+      {
+        "f1": "Assessment/Pre-treatment",
+        "f2": "ASPT",
+        "f3": "Comprehensive substance use assessment; Interim services for clients; Outreach to persons in the community; Complete medical history/physical exam; Screening for tobacco use; Screening for substance use; Professional interventionist/educational consultant"
+      },
+      {
+        "f1": "Testing",
+        "f2": "SCR",
+        "f3": "Breathalyzer or blood alcohol testing; Drug and alcohol oral fluid testing; Drug or alcohol urine screening; HIV testing; STD testing; TB screening; Metabolic syndrome monitoring; Testing for Hepatitis B (HBV); Testing for Hepatitis C (HCV)"
+      },
+      {
+        "f1": "Transitional Services",
+        "f2": "TRSRV",
+        "f3": "Aftercare/continuing care; Discharge Planning; Naloxone and overdose education; Outcome follow-up after discharge"
+      },
+      {
+        "f1": "Recovery Support Services",
+        "f2": "RSS",
+        "f3": "Self-help groups; Housing services; Assistance with obtaining social services; Recovery coach; Mentoring/peer support; Employment counseling or training"
+      },
+      {
+        "f1": "Other Services",
+        "f2": "OTHR",
+        "f3": "Treatment for other addiction disorder"
+      },
+      {
+        "f1": "Education and Counseling Services",
+        "f2": "ECS",
+        "f3": "HIV or AIDS education, counseling, or support; Hepatitis education, counseling, or support; Health education services other than HIV/AIDS or hepatitis; Substance use disorder education; Smoking/vaping/tobacco cessation counseling; Individual counseling; Group counseling; Family counseling; Marital/couples counseling; Vocational training or educational support (for example, high school coursework, GED preparation, etc.)\u00a0"
+      },
+      {
+        "f1": "Facility Smoking Policy ",
+        "f2": "SMP",
+        "f3": "Smoking not permitted"
+      },
+      {
+        "f1": "Age Groups Accepted",
+        "f2": "AGE",
+        "f3": "Young Adults; Adults"
+      },
+      {
+        "f1": "Sex Accepted",
+        "f2": "SN",
+        "f3": "Male"
+      },
+      {
+        "f1": "Facility Vaping Policy",
+        "f2": "FVP",
+        "f3": "Vaping not permitted"
+      },
+      {
+        "f1": "Ancillary Services",
+        "f2": "AS",
+        "f3": "Case management service; Mental health services; Social skills development; Transportation assistance"
+      }
+    ],
+    "typeFacility": "SA"
+  },
+  {
+    "_irow": 2,
+    "name1": "MARR",
+    "name2": "Mens Recovery Center",
+    "street1": "2815 Clearview Place",
+    "city": "Atlanta",
+    "street2": "",
+    "state": "GA",
+    "zip": "30340",
+    "phone": "678-805-5140",
+    "intake1": null,
+    "hotline1": null,
+    "website": "http://www.marrinc.org",
+    "latitude": "33.8988078",
+    "longitude": "-84.2714576",
+    "services": [
+      {
+        "f1": "Type of Care",
+        "f2": "TC",
+        "f3": "Substance use treatment; Transitional housing, halfway house, or sober home; Treatment for co-occurring substance use plus either serious mental health illness in adults/serious emotional disturbance in children"
+      },
+      {
+        "f1": "Service Setting (e.g., Outpatient, Residential, Inpatient, etc.)",
+        "f2": "SET",
+        "f3": "Outpatient; Residential/24-hour residential; Outpatient day treatment or partial hospitalization; Intensive outpatient treatment; Long-term residential"
+      },
+      {
+        "f1": "Opioid Medications used in Treatment",
+        "f2": "OM",
+        "f3": "Naltrexone used in Treatment"
+      },
+      {
+        "f1": "Type of Alcohol Use Disorder Treatment",
+        "f2": "AUT",
+        "f3": "This facility administers/prescribes medication for alcohol use disorder"
+      },
+      {
+        "f1": " External Source of Medications Used for Alcohol Use Disorder Treatment",
+        "f2": "SMAT",
+        "f3": "Other contracted prescribing entity"
+      },
+      {
+        "f1": "Type of Opioid Treatment",
+        "f2": "OT",
+        "f3": "Prescribes naltrexone; Relapse prevention with naltrexone; Lofexidine or Clonidine detoxification"
+      },
+      {
+        "f1": "Pharmacotherapies",
+        "f2": "PHR",
+        "f3": "Acamprosate (Campral\u00ae); Naltrexone (oral); Naltrexone (extended-release, injectable); Medications for Hepatitis C treatment; Clonidine; Medication for mental disorders; Nicotine replacement; Non-nicotine smoking/tobacco cessation"
+      },
+      {
+        "f1": "Treatment Approaches",
+        "f2": "TAP",
+        "f3": "Anger management; Cognitive behavioral therapy; Motivational interviewing; Matrix Model; Relapse prevention; Substance use disorder counseling; Telemedicine/telehealth therapy; Trauma-related counseling; 12-step facilitation"
+      },
+      {
+        "f1": "Facility Operation (e.g., Private, Public)",
+        "f2": "FOP",
+        "f3": "Private non-profit organization"
+      },
+      {
+        "f1": "License/Certification/Accreditation",
+        "f2": "LCA",
+        "f3": "State Substance use treatment agency; State department of health; The Joint Commission"
+      },
+      {
+        "f1": "Payment/Insurance/Funding Accepted",
+        "f2": "PAY",
+        "f3": "Private health insurance; Cash or self-payment"
+      },
+      {
+        "f1": "Special Programs/Groups Offered",
+        "f2": "SG",
+        "f3": "Adult men; Seniors or older adults; Veterans; Members of military families; Criminal justice (other than DUI/DWI)/Forensic clients; Clients with co-occurring mental and substance use disorders; Clients with co-occurring pain and substance use disorders; Clients with HIV or AIDS; Clients who have experienced sexual abuse; Clients who have experienced intimate partner violence, domestic violence; Clients who have experienced trauma"
+      },
+      {
+        "f1": "Assessment/Pre-treatment",
+        "f2": "ASPT",
+        "f3": "Comprehensive mental health assessment; Comprehensive substance use assessment; Interim services for clients; Complete medical history/physical exam; Screening for tobacco use; Screening for substance use; Screening for mental disorders"
+      },
+      {
+        "f1": "Testing",
+        "f2": "SCR",
+        "f3": "Breathalyzer or blood alcohol testing; Drug and alcohol oral fluid testing; Drug or alcohol urine screening; HIV testing; STD testing; TB screening; Metabolic syndrome monitoring; Testing for Hepatitis B (HBV); Testing for Hepatitis C (HCV)"
+      },
+      {
+        "f1": "Transitional Services",
+        "f2": "TRSRV",
+        "f3": "Aftercare/continuing care; Discharge Planning; Naloxone and overdose education; Outcome follow-up after discharge"
+      },
+      {
+        "f1": "Recovery Support Services",
+        "f2": "RSS",
+        "f3": "Self-help groups; Housing services; Assistance with obtaining social services; Mentoring/peer support; Employment counseling or training"
+      },
+      {
+        "f1": "Education and Counseling Services",
+        "f2": "ECS",
+        "f3": "HIV or AIDS education, counseling, or support; Hepatitis education, counseling, or support; Health education services other than HIV/AIDS or hepatitis; Substance use disorder education; Smoking/vaping/tobacco cessation counseling; Individual counseling; Group counseling; Family counseling; Marital/couples counseling"
+      },
+      {
+        "f1": "Facility Smoking Policy ",
+        "f2": "SMP",
+        "f3": "Smoking permitted in designated area"
+      },
+      {
+        "f1": "Age Groups Accepted",
+        "f2": "AGE",
+        "f3": "Young Adults; Adults; Seniors"
+      },
+      {
+        "f1": "Sex Accepted",
+        "f2": "SN",
+        "f3": "Male"
+      },
+      {
+        "f1": "Facility Vaping Policy",
+        "f2": "FVP",
+        "f3": "Vaping permitted in designated area"
+      },
+      {
+        "f1": "Ancillary Services",
+        "f2": "AS",
+        "f3": "Case management service; Mental health services; Social skills development; Integrated primary care services; Suicide prevention services"
+      }
+    ],
+    "typeFacility": "SA"
+  },
+  {
+    "_irow": 3,
+    "name1": "Medicine Wheel Clinic",
+    "name2": "",
+    "street1": "85 Auburn Park Drive",
+    "city": "Auburn",
+    "street2": "",
+    "state": "GA",
+    "zip": "30011",
+    "phone": "770-277-7958",
+    "intake1": null,
+    "hotline1": null,
+    "website": "http://www.medicinewheelclinic.com",
+    "latitude": "34.0085139",
+    "longitude": "-83.8427809",
+    "services": [
+      {
+        "f1": "Type of Care",
+        "f2": "TC",
+        "f3": "Substance use treatment; Detoxification"
+      },
+      {
+        "f1": "Service Setting (e.g., Outpatient, Residential, Inpatient, etc.)",
+        "f2": "SET",
+        "f3": "Outpatient; Outpatient detoxification; Outpatient methadone/buprenorphine or naltrexone treatment"
+      },
+      {
+        "f1": "Opioid Medications used in Treatment",
+        "f2": "OM",
+        "f3": "Methadone used in Treatment; Naltrexone used in Treatment"
+      },
+      {
+        "f1": "Type of Alcohol Use Disorder Treatment",
+        "f2": "AUT",
+        "f3": "Does not treat alcohol use disorder"
+      },
+      {
+        "f1": "Type of Opioid Treatment",
+        "f2": "OT",
+        "f3": "Federally-certified Opioid Treatment Program; Methadone detoxification; Methadone maintenance; Maintenance service with medically supervised withdrawal after stabilization"
+      },
+      {
+        "f1": "Pharmacotherapies",
+        "f2": "PHR",
+        "f3": "Methadone"
+      },
+      {
+        "f1": "Treatment Approaches",
+        "f2": "TAP",
+        "f3": "Anger management; Brief intervention; Cognitive behavioral therapy; Contingency management/motivational incentives; Motivational interviewing; Matrix Model; Relapse prevention; Substance use disorder counseling; Trauma-related counseling; Telemedicine/telehealth therapy; 12-step facilitation"
+      },
+      {
+        "f1": "Facility Operation (e.g., Private, Public)",
+        "f2": "FOP",
+        "f3": "Private for-profit organization"
+      },
+      {
+        "f1": "License/Certification/Accreditation",
+        "f2": "LCA",
+        "f3": "Commission on Accreditation of Rehabilitation Facilities (CARF)"
+      },
+      {
+        "f1": "Payment/Insurance/Funding Accepted",
+        "f2": "PAY",
+        "f3": "Federal, or any government funding for substance use treatment programs; Medicaid; Cash or self-payment"
+      },
+      {
+        "f1": "Payment Assistance Available",
+        "f2": "PYAS",
+        "f3": "Payment assistance (check with facility for details)"
+      },
+      {
+        "f1": "Assessment/Pre-treatment",
+        "f2": "ASPT",
+        "f3": "Comprehensive substance use assessment; Outreach to persons in the community; Complete medical history/physical exam; Screening for tobacco use; Screening for substance use; Screening for mental disorders; Professional interventionist/educational consultant"
+      },
+      {
+        "f1": "Testing",
+        "f2": "SCR",
+        "f3": "Drug and alcohol oral fluid testing; Drug or alcohol urine screening; HIV testing; STD testing; TB screening; Metabolic syndrome monitoring; Testing for Hepatitis B (HBV); Testing for Hepatitis C (HCV)"
+      },
+      {
+        "f1": "Transitional Services",
+        "f2": "TRSRV",
+        "f3": "Aftercare/continuing care; Discharge Planning; Naloxone and overdose education; Outcome follow-up after discharge"
+      },
+      {
+        "f1": "Recovery Support Services",
+        "f2": "RSS",
+        "f3": "Self-help groups; Housing services; Assistance with obtaining social services; Employment counseling or training"
+      },
+      {
+        "f1": "Detoxification (medical withdrawal) Services",
+        "f2": "DETOX",
+        "f3": "Cocaine Detoxification; Methamphetamines detoxification; Opioids detoxification; Medication routinely used during detoxification"
+      },
+      {
+        "f1": "Education and Counseling Services",
+        "f2": "ECS",
+        "f3": "HIV or AIDS education, counseling, or support; Hepatitis education, counseling, or support; Health education services other than HIV/AIDS or hepatitis; Substance use disorder education; Smoking/vaping/tobacco cessation counseling; Individual counseling; Group counseling; Family counseling"
+      },
+      {
+        "f1": "Facility Smoking Policy ",
+        "f2": "SMP",
+        "f3": "Smoking not permitted"
+      },
+      {
+        "f1": "Age Groups Accepted",
+        "f2": "AGE",
+        "f3": "Young Adults; Adults"
+      },
+      {
+        "f1": "Sex Accepted",
+        "f2": "SN",
+        "f3": "Female; Male"
+      },
+      {
+        "f1": "Exclusive Services",
+        "f2": "EXCL",
+        "f3": "Opioid use disorder clients only"
+      },
+      {
+        "f1": "Facility Vaping Policy",
+        "f2": "FVP",
+        "f3": "Vaping not permitted"
+      },
+      {
+        "f1": "Ancillary Services",
+        "f2": "AS",
+        "f3": "Case management service; Mental health services; Social skills development; Suicide prevention services"
+      }
+    ],
+    "typeFacility": "SA"
+  },
+  {
+    "_irow": 4,
+    "name1": "Extended Wellness LLC",
+    "name2": "",
+    "street1": "604 North Broad Foot Boulevard",
+    "city": "Vidalia",
+    "street2": "",
+    "state": "GA",
+    "zip": "30474",
+    "phone": "912-537-8745 x0",
+    "intake1": null,
+    "hotline1": null,
+    "website": "http://",
+    "latitude": "32.2182044",
+    "longitude": "-82.3953523",
+    "services": [
+      {
+        "f1": "Type of Care",
+        "f2": "TC",
+        "f3": "Substance use treatment; Detoxification"
+      },
+      {
+        "f1": "Service Setting (e.g., Outpatient, Residential, Inpatient, etc.)",
+        "f2": "SET",
+        "f3": "Outpatient; Outpatient methadone/buprenorphine or naltrexone treatment; Regular outpatient treatment"
+      },
+      {
+        "f1": "Opioid Medications used in Treatment",
+        "f2": "OM",
+        "f3": "Methadone used in Treatment"
+      },
+      {
+        "f1": "Type of Alcohol Use Disorder Treatment",
+        "f2": "AUT",
+        "f3": "Does not treat alcohol use disorder"
+      },
+      {
+        "f1": "Type of Opioid Treatment",
+        "f2": "OT",
+        "f3": "Federally-certified Opioid Treatment Program; Methadone detoxification; Methadone maintenance; Maintenance service with medically supervised withdrawal after stabilization"
+      },
+      {
+        "f1": "Pharmacotherapies",
+        "f2": "PHR",
+        "f3": "Methadone"
+      },
+      {
+        "f1": "Treatment Approaches",
+        "f2": "TAP",
+        "f3": "Brief intervention; Cognitive behavioral therapy; Motivational interviewing; Matrix Model; Relapse prevention; Substance use disorder counseling; Telemedicine/telehealth therapy"
+      },
+      {
+        "f1": "Facility Operation (e.g., Private, Public)",
+        "f2": "FOP",
+        "f3": "Private for-profit organization"
+      },
+      {
+        "f1": "License/Certification/Accreditation",
+        "f2": "LCA",
+        "f3": "State department of health; Commission on Accreditation of Rehabilitation Facilities (CARF); SAMHSA certification for opioid treatment program (OTP); Drug Enforcement Agency (DEA)"
+      },
+      {
+        "f1": "Payment/Insurance/Funding Accepted",
+        "f2": "PAY",
+        "f3": "Medicare; Medicaid; Private health insurance; Cash or self-payment"
+      },
+      {
+        "f1": "Special Programs/Groups Offered",
+        "f2": "SG",
+        "f3": "Adult women; Pregnant/postpartum women; Adult men"
+      },
+      {
+        "f1": "Assessment/Pre-treatment",
+        "f2": "ASPT",
+        "f3": "Comprehensive substance use assessment; Interim services for clients; Outreach to persons in the community; Screening for tobacco use; Screening for substance use; Screening for mental disorders"
+      },
+      {
+        "f1": "Testing",
+        "f2": "SCR",
+        "f3": "Drug or alcohol urine screening; STD testing; TB screening; Testing for Hepatitis C (HCV)"
+      },
+      {
+        "f1": "Transitional Services",
+        "f2": "TRSRV",
+        "f3": "Aftercare/continuing care; Discharge Planning; Naloxone and overdose education; Outcome follow-up after discharge"
+      },
+      {
+        "f1": "Recovery Support Services",
+        "f2": "RSS",
+        "f3": "Self-help groups; Housing services; Assistance with obtaining social services; Employment counseling or training"
+      },
+      {
+        "f1": "Detoxification (medical withdrawal) Services",
+        "f2": "DETOX",
+        "f3": "Opioids detoxification; Medication routinely used during detoxification"
+      },
+      {
+        "f1": "Education and Counseling Services",
+        "f2": "ECS",
+        "f3": "HIV or AIDS education, counseling, or support; Hepatitis education, counseling, or support; Health education services other than HIV/AIDS or hepatitis; Substance use disorder education; Smoking/vaping/tobacco cessation counseling; Individual counseling; Group counseling; Family counseling; Marital/couples counseling"
+      },
+      {
+        "f1": "Facility Smoking Policy ",
+        "f2": "SMP",
+        "f3": "Smoking not permitted"
+      },
+      {
+        "f1": "Age Groups Accepted",
+        "f2": "AGE",
+        "f3": "Young Adults; Adults"
+      },
+      {
+        "f1": "Sex Accepted",
+        "f2": "SN",
+        "f3": "Female; Male"
+      },
+      {
+        "f1": "Exclusive Services",
+        "f2": "EXCL",
+        "f3": "Opioid use disorder clients only"
+      },
+      {
+        "f1": "Facility Vaping Policy",
+        "f2": "FVP",
+        "f3": "Vaping not permitted"
+      },
+      {
+        "f1": "Ancillary Services",
+        "f2": "AS",
+        "f3": "Case management service; Early intervention for HIV; Social skills development; Transportation assistance"
+      }
+    ],
+    "typeFacility": "SA"
+  },
+  {
+    "_irow": 5,
+    "name1": "Willow Oak Community Behav Health Ctr",
+    "name2": "",
+    "street1": "6944 Highway 85",
+    "city": "Riverdale",
+    "street2": "Suite F",
+    "state": "GA",
+    "zip": "30274",
+    "phone": "770-683-6946",
+    "intake1": null,
+    "hotline1": null,
+    "website": "http://www.willowoakgeorgia.com",
+    "latitude": "33.5652721",
+    "longitude": "-84.412609",
+    "services": [
+      {
+        "f1": "Type of Care",
+        "f2": "TC",
+        "f3": "Substance use treatment; Mental health treatment; Treatment for co-occurring substance use plus either serious mental health illness in adults/serious emotional disturbance in children"
+      },
+      {
+        "f1": "Service Setting (e.g., Outpatient, Residential, Inpatient, etc.)",
+        "f2": "SET",
+        "f3": "Outpatient"
+      },
+      {
+        "f1": "Facility Type",
+        "f2": "FT",
+        "f3": "Outpatient mental health facility"
+      },
+      {
+        "f1": "Treatment Approaches",
+        "f2": "TAP",
+        "f3": "Activity therapy; Cognitive behavioral therapy; Couples/family therapy; Group therapy; Integrated Mental and Substance Use Disorder treatment; Individual psychotherapy; Telemedicine/telehealth therapy; Abnormal involuntary movement scale"
+      },
+      {
+        "f1": "Emergency Mental Health Services",
+        "f2": "EMS",
+        "f3": "Psychiatric emergency walk-in services"
+      },
+      {
+        "f1": "Facility Operation (e.g., Private, Public)",
+        "f2": "FOP",
+        "f3": "Private for-profit organization"
+      },
+      {
+        "f1": "License/Certification/Accreditation",
+        "f2": "LCA",
+        "f3": "Federally Qualified Health Center"
+      },
+      {
+        "f1": "Payment/Insurance/Funding Accepted",
+        "f2": "PAY",
+        "f3": "Medicare; Medicaid; Federal military insurance (e.g., TRICARE); Private health insurance; Cash or self-payment"
+      },
+      {
+        "f1": "Special Programs/Groups Offered",
+        "f2": "SG",
+        "f3": "Young adults; Seniors or older adults; Veterans; Active duty military; Members of military families; Clients with co-occurring mental and substance use disorders; Clients with HIV or AIDS; Clients who have experienced trauma; Persons with post-traumatic stress disorder (PTSD); Children/adolescents with serious emotional disturbance (SED); Persons  18 and older with serious mental illness (SMI)"
+      },
+      {
+        "f1": "Recovery Support Services",
+        "f2": "RSS",
+        "f3": "Housing services; Mentoring/peer support"
+      },
+      {
+        "f1": "Facility Smoking Policy ",
+        "f2": "SMP",
+        "f3": "Smoking permitted in designated area"
+      },
+      {
+        "f1": "Age Groups Accepted",
+        "f2": "AGE",
+        "f3": "Children/Adolescents; Young Adults; Adults; Seniors"
+      },
+      {
+        "f1": "Facility Vaping Policy",
+        "f2": "FVP",
+        "f3": "Vaping permitted in designated area"
+      },
+      {
+        "f1": "Ancillary Services",
+        "f2": "AS",
+        "f3": "Assertive community treatment; Intensive case management; Case management service; Suicide prevention services"
+      }
+    ],
+    "typeFacility": "MH"
+  },
+  {
+    "_irow": 6,
+    "name1": "HealthQwest",
+    "name2": "Douglasville",
+    "street1": "2109 Fairburn Road",
+    "city": "Douglasville",
+    "street2": "Suite A",
+    "state": "GA",
+    "zip": "30135",
+    "phone": "770-726-7958",
+    "intake1": null,
+    "hotline1": null,
+    "website": "http://www.healthqwest.us",
+    "latitude": "33.7463576",
+    "longitude": "-84.7016139",
+    "services": [
+      {
+        "f1": "Type of Care",
+        "f2": "TC",
+        "f3": "Substance use treatment"
+      },
+      {
+        "f1": "Service Setting (e.g., Outpatient, Residential, Inpatient, etc.)",
+        "f2": "SET",
+        "f3": "Outpatient; Outpatient methadone/buprenorphine or naltrexone treatment"
+      },
+      {
+        "f1": "Opioid Medications used in Treatment",
+        "f2": "OM",
+        "f3": "Methadone used in Treatment; Buprenorphine used in Treatment"
+      },
+      {
+        "f1": "Type of Alcohol Use Disorder Treatment",
+        "f2": "AUT",
+        "f3": "Does not treat alcohol use disorder"
+      },
+      {
+        "f1": "Type of Opioid Treatment",
+        "f2": "OT",
+        "f3": "Buprenorphine maintenance; Federally-certified Opioid Treatment Program; Methadone maintenance; Maintenance service with medically supervised withdrawal after stabilization"
+      },
+      {
+        "f1": "Pharmacotherapies",
+        "f2": "PHR",
+        "f3": "Methadone; Buprenorphine without naloxone"
+      },
+      {
+        "f1": "Treatment Approaches",
+        "f2": "TAP",
+        "f3": "Cognitive behavioral therapy; Motivational interviewing; Relapse prevention; Substance use disorder counseling"
+      },
+      {
+        "f1": "Facility Operation (e.g., Private, Public)",
+        "f2": "FOP",
+        "f3": "Private for-profit organization"
+      },
+      {
+        "f1": "License/Certification/Accreditation",
+        "f2": "LCA",
+        "f3": "State Substance use treatment agency; Commission on Accreditation of Rehabilitation Facilities (CARF); SAMHSA certification for opioid treatment program (OTP); Drug Enforcement Agency (DEA)"
+      },
+      {
+        "f1": "Payment/Insurance/Funding Accepted",
+        "f2": "PAY",
+        "f3": "Medicare; Medicaid; Private health insurance; Cash or self-payment"
+      },
+      {
+        "f1": "Testing",
+        "f2": "SCR",
+        "f3": "Breathalyzer or blood alcohol testing; Drug and alcohol oral fluid testing; Drug or alcohol urine screening; STD testing; TB screening; Metabolic syndrome monitoring"
+      },
+      {
+        "f1": "Transitional Services",
+        "f2": "TRSRV",
+        "f3": "Discharge Planning; Naloxone and overdose education"
+      },
+      {
+        "f1": "Education and Counseling Services",
+        "f2": "ECS",
+        "f3": "Substance use disorder education; Individual counseling; Group counseling; Marital/couples counseling"
+      },
+      {
+        "f1": "Facility Smoking Policy ",
+        "f2": "SMP",
+        "f3": "Smoking not permitted"
+      },
+      {
+        "f1": "Age Groups Accepted",
+        "f2": "AGE",
+        "f3": "Young Adults; Adults"
+      },
+      {
+        "f1": "Sex Accepted",
+        "f2": "SN",
+        "f3": "Female; Male"
+      },
+      {
+        "f1": "Exclusive Services",
+        "f2": "EXCL",
+        "f3": "Opioid use disorder clients only"
+      },
+      {
+        "f1": "Facility Vaping Policy",
+        "f2": "FVP",
+        "f3": "Vaping not permitted"
+      },
+      {
+        "f1": "Ancillary Services",
+        "f2": "AS",
+        "f3": "Case management service"
+      }
+    ],
+    "typeFacility": "SA"
+  },

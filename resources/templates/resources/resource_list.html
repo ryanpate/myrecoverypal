@@ -108,17 +108,28 @@
         <h2>Browse by Category</h2>
         <div class="categories-grid">
             {% for category in categories %}
+            {% if category.slug == 'professional' %}
+            <!-- Special handling for Professional Help category -->
+            <a href="{% url 'resources:professional_help' %}" class="category-card">
+                <span class="category-icon">{{ category.icon }}</span>
+                <h3>{{ category.name }}</h3>
+                <p>{{ category.description }}</p>
+                <span class="resource-count">Search facilities</span>
+            </a>
+            {% else %}
+            <!-- Regular categories -->
             <a href="{{ category.get_absolute_url }}" class="category-card">
                 <span class="category-icon">{{ category.icon }}</span>
                 <h3>{{ category.name }}</h3>
                 <p>{{ category.description }}</p>
                 <span class="resource-count">{{ category.resources.count }} resources</span>
             </a>
+            {% endif %}
             {% endfor %}
         </div>
     </section>
     {% endif %}
-
+    
     <!-- Call to Action -->
     {% if user.is_authenticated %}
     {% if not query %}

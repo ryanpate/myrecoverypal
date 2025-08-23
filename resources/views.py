@@ -260,6 +260,9 @@ def download_resource_pdf(request, slug):
     except Exception as e:
         raise Http404(f"PDF generation failed: {str(e)}")
 
+@login_required
+def professional_help_view(request):
+    return render(request, 'resources/professional_help.html')
 
 def get_coping_skills_pdf_html(resource):
     """Generate HTML for Coping Skills PDF"""
