@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Support Services - MyRecoveryPal{% endblock %}
+
+{% block content %}
+<style>
+    .support-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 60px 0;
+        color: white;
+        text-align: center;
+        margin-bottom: -50px;
+    }
+
+    .support-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+    }
+
+    .support-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .support-card .icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        color: white;
+        font-size: 24px;
+    }
+
+    .crisis-banner {
+        background: #fee2e2;
+        border: 2px solid #ef4444;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .crisis-banner h4 {
+        color: #991b1b;
+        margin-bottom: 10px;
+    }
+
+    .stats-box {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .stats-box h3 {
+        color: #667eea;
+        font-size: 2rem;
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="support-hero">
+    <div class="container">
+        <h1 class="display-4 font-weight-bold mb-3">Support Services</h1>
+        <p class="lead">Find recovery meetings, support groups, helplines, and treatment resources</p>
+    </div>
+</div>
+
+<div class="container" style="margin-top: 80px;">
+    <!-- Crisis Resources Banner -->
+    <div class="crisis-banner">
+        <h4><i class="fas fa-exclamation-triangle"></i> Need Immediate Help?</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <strong>988 Suicide & Crisis Lifeline:</strong> Call or text <a href="tel:988">988</a>
+            </div>
+            <div class="col-md-6">
+                <strong>SAMHSA Helpline:</strong> Call <a href="tel:18006624357">1-800-662-HELP (4357)</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stats-box">
+                <h3>{{ meetings_count }}</h3>
+                <p class="text-muted">Recovery Meetings</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-box">
+                <h3>{{ services_count }}</h3>
+                <p class="text-muted">Support Services</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-box">
+                <h3>{{ helplines_count }}</h3>
+                <p class="text-muted">Helplines</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-box">
+                <h3>24/7</h3>
+                <p class="text-muted">Available Support</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Service Cards -->
+    <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="support-card">
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h4>Recovery Meetings</h4>
+                <p class="text-muted">Find AA, NA, SMART Recovery, and other support group meetings in your area or
+                    online.</p>
+                <a href="{% url 'support_services:meeting_list' %}" class="btn btn-primary btn-block mt-3">
+                    Find Meetings <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="support-card">
+                <div class="icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h4>Crisis Helplines</h4>
+                <p class="text-muted">24/7 confidential support for mental health crises, substance use, and suicide
+                    prevention.</p>
+                <a href="{% url 'support_services:service_list' %}?type=helpline"
+                    class="btn btn-primary btn-block mt-3">
+                    View Helplines <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="support-card">
+                <div class="icon">
+                    <i class="fas fa-hospital"></i>
+                </div>
+                <h4>Treatment Facilities</h4>
+                <p class="text-muted">Locate treatment centers, detox facilities, and rehabilitation programs near you.
+                </p>
+                <a href="{% url 'support_services:service_list' %}?type=treatment_facility"
+                    class="btn btn-primary btn-block mt-3">
+                    Find Treatment <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="support-card">
+                <div class="icon">
+                    <i class="fas fa-laptop"></i>
+                </div>
+                <h4>Online Resources</h4>
+                <p class="text-muted">Access online support groups, virtual meetings, and digital recovery tools.</p>
+                <a href="{% url 'support_services:service_list' %}?type=online_resource"
+                    class="btn btn-primary btn-block mt-3">
+                    Online Support <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="support-card">
+                <div class="icon">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </div>
+                <h4>Community Services</h4>
+                <p class="text-muted">Connect with local community organizations and recovery support services.</p>
+                <a href="{% url 'support_services:service_list' %}?type=community_service"
+                    class="btn btn-primary btn-block mt-3">
+                    Community Support <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="support-card">
+                <div class="icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <h4>Submit a Resource</h4>
+                <p class="text-muted">Help others by submitting a meeting or support service to our directory.</p>
+                <button class="btn btn-outline-primary btn-block mt-3" disabled>
+                    Coming Soon <i class="fas fa-clock"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Services -->
+    {% if featured_services %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">Featured Services</h3>
+        </div>
+        {% for service in featured_services %}
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ service.name }}</h5>
+                    <p class="card-text">{{ service.description|truncatewords:20 }}</p>
+                    {% if service.phone %}
+                    <p><i class="fas fa-phone"></i> {{ service.phone_display|default:service.phone }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Back to Resources -->
+<div class="container mt-5 mb-5">
+    <a href="{% url 'resources:list' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back to All Resources
+    </a>
+</div>
+{% endblock %}

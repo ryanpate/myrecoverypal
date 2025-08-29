@@ -116,6 +116,14 @@
                 <p>{{ category.description }}</p>
                 <span class="resource-count">Search facilities</span>
             </a>
+            {% elif category.slug == 'support-services' %}
+            <!-- Special handling for Support Services category -->
+            <a href="{% url 'support_services:home' %}" class="category-card">
+                <span class="category-icon">{{ category.icon }}</span>
+                <h3>{{ category.name }}</h3>
+                <p>{{ category.description }}</p>
+                <span class="resource-count">Browse services</span>
+            </a>
             {% else %}
             <!-- Regular categories -->
             <a href="{{ category.get_absolute_url }}" class="category-card">

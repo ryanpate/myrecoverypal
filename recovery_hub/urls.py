@@ -14,6 +14,7 @@ urlpatterns = [
     path('resources/', include('resources.urls', namespace='resources')),
     path('newsletter/', include('apps.newsletter.urls', namespace='newsletter')),
     path('store/', include('apps.store.urls', namespace='store')),
+    path('support/', include('apps.support_services.urls')),
     # Add other app URLs as needed
 ]
 

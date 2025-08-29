@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
-    ResourceCategory, ResourceType, Resource,
+    Resource, ResourceCategory, ResourceType,
     ResourceBookmark, ResourceRating, CrisisResource
 )
 

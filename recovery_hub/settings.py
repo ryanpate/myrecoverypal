@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'apps.newsletter',
     'resources',
     'apps.store',
+    'apps.support_services',
 ]
 
 # Add crispy forms settings
@@ -50,6 +51,9 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'accounts:dashboard'
 LOGOUT_REDIRECT_URL = 'core:index'
+
+# Add Google API key (for geocoding)
+GOOGLE_API_KEY = 'AIzaSyAKFMk5grddW39DgsQ9NZ0CI62emQaleys'
 
 # Email settings (for password reset)
 if DEBUG:
