@@ -148,6 +148,8 @@ backups/
 
 # Custom project files
 my_facilities_example.json
+static/resources/data/my_facilities_example.json
+./my_facilities_example.json
 facilities_data/
 recovery_resources/
 private_data/
