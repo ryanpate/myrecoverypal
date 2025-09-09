@@ -1,0 +1,567 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Find Recovery Meetings - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .meeting-filters {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .meeting-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .meeting-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .meeting-time {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #7C3AED;
+    }
+
+    .meeting-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1F2937;
+        margin-bottom: 10px;
+    }
+
+    .meeting-location {
+        color: #6B7280;
+        margin-bottom: 10px;
+    }
+
+    .meeting-types {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .meeting-type-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        background: #EDE9FE;
+        color: #7C3AED;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .attendance-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+
+    .attendance-badge.in-person {
+        background: #DCFCE7;
+        color: #166534;
+    }
+
+    .attendance-badge.online {
+        background: #DBEAFE;
+        color: #1E40AF;
+    }
+
+    .attendance-badge.hybrid {
+        background: #FEF3C7;
+        color: #92400E;
+    }
+
+    .today-badge {
+        background: #FEE2E2;
+        color: #DC2626;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+
+    .filter-section {
+        margin-bottom: 20px;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #4B5563;
+        margin-bottom: 8px;
+    }
+
+    .btn-filter {
+        background: white;
+        border: 2px solid #E5E7EB;
+        color: #4B5563;
+        padding: 8px 16px;
+        border-radius: 8px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        transition: all 0.2s;
+    }
+
+    .btn-filter:hover {
+        border-color: #7C3AED;
+        color: #7C3AED;
+    }
+
+    .btn-filter.active {
+        background: #7C3AED;
+        border-color: #7C3AED;
+        color: white;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .no-results h3 {
+        color: #4B5563;
+        margin-bottom: 15px;
+    }
+
+    .no-results p {
+        color: #9CA3AF;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .meeting-filters {
+            padding: 15px;
+        }
+
+        .meeting-card {
+            padding: 15px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Gradient -->
+<div class="hero-section py-5" style="background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%); color: white;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-12 text-center">
+                <h1 class="display-4 fw-bold mb-3" style="color: white;">Find Recovery Meetings</h1>
+                <p class="lead mb-0" style="color: rgba(255, 255, 255, 0.9);">
+                    Connect with support groups in your area or join online meetings
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:index' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'support_services:home' %}">Support Services</a></li>
+            <li class="breadcrumb-item active">Recovery Meetings</li>
+        </ol>
+    </nav>
+
+    <!-- Search and Filters -->
+    <div class="meeting-filters">
+        <form method="get" action="{% url 'support_services:meeting_list' %}" id="filterForm">
+            <!-- Search Bar -->
+            <div class="row mb-3">
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <input type="text" 
+                               class="form-control form-control-lg" 
+                               name="q" 
+                               value="{{ search_query }}"
+                               placeholder="Search by name, location, or group...">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-3 mt-3 mt-lg-0">
+                    <a href="{% url 'support_services:meeting_finder' %}" class="btn btn-info btn-lg w-100">
+                        <i class="fas fa-globe"></i> Worldwide Search
+                    </a>
+                </div>
+                <div class="col-lg-3 mt-3 mt-lg-0">
+                    <a href="{% url 'support_services:submit_meeting' %}" class="btn btn-success btn-lg w-100">
+                        <i class="fas fa-plus"></i> Submit Meeting
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Source Filter (if external sources configured) -->
+            {% if has_external_sources %}
+            <div class="filter-section">
+                <div class="filter-label">Meeting Source</div>
+                <div class="btn-group-wrapper">
+                    <button type="button" class="btn-filter {% if selected_source == 'all' %}active{% endif %}"
+                        onclick="setFilter('source', 'all')">All Sources</button>
+                    <button type="button" class="btn-filter {% if selected_source == 'local' %}active{% endif %}"
+                        onclick="setFilter('source', 'local')">Local Meetings</button>
+                    <button type="button" class="btn-filter {% if selected_source == 'external' %}active{% endif %}"
+                        onclick="setFilter('source', 'external')">Network Meetings</button>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Day Filter -->
+            <div class="filter-section">
+                <div class="filter-label">Day of Week</div>
+                <div class="btn-group-wrapper">
+                    <button type="button" class="btn-filter {% if not selected_day %}active{% endif %}" 
+                            onclick="clearFilter('day')">All Days</button>
+                    {% for day_value, day_name in days %}
+                        <button type="button" 
+                                class="btn-filter {% if selected_day == day_value|stringformat:'s' %}active{% endif %} {% if today_day == day_value %}today-indicator{% endif %}"
+                                onclick="setFilter('day', '{{ day_value }}')">
+                            {{ day_name }}
+                            {% if today_day == day_value %}
+                                <span class="badge bg-danger ms-1">Today</span>
+                            {% endif %}
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Attendance Option Filter -->
+            <div class="filter-section">
+                <div class="filter-label">Attendance Type</div>
+                <div class="btn-group-wrapper">
+                    <button type="button" class="btn-filter {% if not selected_attendance %}active{% endif %}" 
+                            onclick="clearFilter('attendance')">All Types</button>
+                    {% for att_value, att_name in attendance_options %}
+                        <button type="button" 
+                                class="btn-filter {% if selected_attendance == att_value %}active{% endif %}"
+                                onclick="setFilter('attendance', '{{ att_value }}')">
+                            {{ att_name }}
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Location Filters -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="filter-section">
+                        <label for="city" class="filter-label">City</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="city" 
+                               name="city" 
+                               value="{{ selected_city }}"
+                               placeholder="Enter city name">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="filter-section">
+                        <label for="state" class="filter-label">State</label>
+                        <select class="form-select" id="state" name="state">
+                            <option value="">All States</option>
+                            <option value="IL" {% if selected_state == 'IL' %}selected{% endif %}>Illinois</option>
+                            <option value="AL" {% if selected_state == 'AL' %}selected{% endif %}>Alabama</option>
+                            <option value="AK" {% if selected_state == 'AK' %}selected{% endif %}>Alaska</option>
+                            <option value="AZ" {% if selected_state == 'AZ' %}selected{% endif %}>Arizona</option>
+                            <option value="AR" {% if selected_state == 'AR' %}selected{% endif %}>Arkansas</option>
+                            <option value="CA" {% if selected_state == 'CA' %}selected{% endif %}>California</option>
+                            <option value="CO" {% if selected_state == 'CO' %}selected{% endif %}>Colorado</option>
+                            <option value="CT" {% if selected_state == 'CT' %}selected{% endif %}>Connecticut</option>
+                            <option value="DE" {% if selected_state == 'DE' %}selected{% endif %}>Delaware</option>
+                            <option value="FL" {% if selected_state == 'FL' %}selected{% endif %}>Florida</option>
+                            <option value="GA" {% if selected_state == 'GA' %}selected{% endif %}>Georgia</option>
+                            <option value="HI" {% if selected_state == 'HI' %}selected{% endif %}>Hawaii</option>
+                            <option value="ID" {% if selected_state == 'ID' %}selected{% endif %}>Idaho</option>
+                            <option value="IN" {% if selected_state == 'IN' %}selected{% endif %}>Indiana</option>
+                            <option value="IA" {% if selected_state == 'IA' %}selected{% endif %}>Iowa</option>
+                            <option value="KS" {% if selected_state == 'KS' %}selected{% endif %}>Kansas</option>
+                            <option value="KY" {% if selected_state == 'KY' %}selected{% endif %}>Kentucky</option>
+                            <option value="LA" {% if selected_state == 'LA' %}selected{% endif %}>Louisiana</option>
+                            <option value="ME" {% if selected_state == 'ME' %}selected{% endif %}>Maine</option>
+                            <option value="MD" {% if selected_state == 'MD' %}selected{% endif %}>Maryland</option>
+                            <option value="MA" {% if selected_state == 'MA' %}selected{% endif %}>Massachusetts</option>
+                            <option value="MI" {% if selected_state == 'MI' %}selected{% endif %}>Michigan</option>
+                            <option value="MN" {% if selected_state == 'MN' %}selected{% endif %}>Minnesota</option>
+                            <option value="MS" {% if selected_state == 'MS' %}selected{% endif %}>Mississippi</option>
+                            <option value="MO" {% if selected_state == 'MO' %}selected{% endif %}>Missouri</option>
+                            <option value="MT" {% if selected_state == 'MT' %}selected{% endif %}>Montana</option>
+                            <option value="NE" {% if selected_state == 'NE' %}selected{% endif %}>Nebraska</option>
+                            <option value="NV" {% if selected_state == 'NV' %}selected{% endif %}>Nevada</option>
+                            <option value="NH" {% if selected_state == 'NH' %}selected{% endif %}>New Hampshire</option>
+                            <option value="NJ" {% if selected_state == 'NJ' %}selected{% endif %}>New Jersey</option>
+                            <option value="NM" {% if selected_state == 'NM' %}selected{% endif %}>New Mexico</option>
+                            <option value="NY" {% if selected_state == 'NY' %}selected{% endif %}>New York</option>
+                            <option value="NC" {% if selected_state == 'NC' %}selected{% endif %}>North Carolina</option>
+                            <option value="ND" {% if selected_state == 'ND' %}selected{% endif %}>North Dakota</option>
+                            <option value="OH" {% if selected_state == 'OH' %}selected{% endif %}>Ohio</option>
+                            <option value="OK" {% if selected_state == 'OK' %}selected{% endif %}>Oklahoma</option>
+                            <option value="OR" {% if selected_state == 'OR' %}selected{% endif %}>Oregon</option>
+                            <option value="PA" {% if selected_state == 'PA' %}selected{% endif %}>Pennsylvania</option>
+                            <option value="RI" {% if selected_state == 'RI' %}selected{% endif %}>Rhode Island</option>
+                            <option value="SC" {% if selected_state == 'SC' %}selected{% endif %}>South Carolina</option>
+                            <option value="SD" {% if selected_state == 'SD' %}selected{% endif %}>South Dakota</option>
+                            <option value="TN" {% if selected_state == 'TN' %}selected{% endif %}>Tennessee</option>
+                            <option value="TX" {% if selected_state == 'TX' %}selected{% endif %}>Texas</option>
+                            <option value="UT" {% if selected_state == 'UT' %}selected{% endif %}>Utah</option>
+                            <option value="VT" {% if selected_state == 'VT' %}selected{% endif %}>Vermont</option>
+                            <option value="VA" {% if selected_state == 'VA' %}selected{% endif %}>Virginia</option>
+                            <option value="WA" {% if selected_state == 'WA' %}selected{% endif %}>Washington</option>
+                            <option value="WV" {% if selected_state == 'WV' %}selected{% endif %}>West Virginia</option>
+                            <option value="WI" {% if selected_state == 'WI' %}selected{% endif %}>Wisconsin</option>
+                            <option value="WY" {% if selected_state == 'WY' %}selected{% endif %}>Wyoming</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hidden fields to maintain filter state -->
+            <input type="hidden" name="day" id="dayFilter" value="{{ selected_day }}">
+            <input type="hidden" name="attendance" id="attendanceFilter" value="{{ selected_attendance }}">
+            <input type="hidden" name="type" id="typeFilter" value="{{ selected_type }}">
+            <input type="hidden" name="source" id="sourceFilter" value="{{ selected_source }}">
+        </form>
+    </div>
+
+    <!-- Results Count -->
+    {% if meetings %}
+    <div class="mb-3">
+        <p class="text-muted">
+            Found <strong>{{ meetings.paginator.count }}</strong> meeting{{ meetings.paginator.count|pluralize }}
+            {% if search_query or selected_day or selected_city or selected_state or selected_attendance %}
+                matching your filters
+            {% endif %}
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- Meeting List -->
+    <div class="row">
+        <div class="col-lg-12">
+            {% if meetings %}
+                {% for meeting in meetings %}
+                <div class="meeting-card">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="meeting-time">
+                                            {% if meeting.day is not None %}
+                                                {{ meeting.get_day_display }}
+                                            {% endif %}
+                                            {% if meeting.time %}
+                                                {{ meeting.time|time:"g:i A" }}
+                                            {% endif %}
+                                        </span>
+                                        {% if meeting.day == today_day %}
+                                            <span class="today-badge">TODAY</span>
+                                        {% endif %}
+                                        <span class="attendance-badge {{ meeting.attendance_option }}">
+                                            {{ meeting.get_attendance_option_display }}
+                                        </span>
+                                    </div>
+                                    
+                                    <h3 class="meeting-name">
+                                        <a href="{% url 'support_services:meeting_detail' meeting.slug %}" 
+                                           class="text-decoration-none text-dark">
+                                            {{ meeting.name }}
+                                        </a>
+                                    </h3>
+                                    
+                                    {% if meeting.group %}
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-users"></i> {{ meeting.group }}
+                                    </p>
+                                    {% endif %}
+                                    
+                                    {% if meeting.location or meeting.formatted_address %}
+                                    <p class="meeting-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        {% if meeting.location %}{{ meeting.location }}{% endif %}
+                                        {% if meeting.location and meeting.formatted_address %}<br>{% endif %}
+                                        {% if meeting.formatted_address %}
+                                            <small>{{ meeting.formatted_address }}</small>
+                                        {% elif meeting.city and meeting.state %}
+                                            <small>{{ meeting.city }}, {{ meeting.state }}</small>
+                                        {% endif %}
+                                    </p>
+                                    {% endif %}
+                                    
+                                    {% if meeting.conference_url and meeting.attendance_option != 'in_person' %}
+                                    <p class="text-muted">
+                                        <i class="fas fa-video"></i> 
+                                        <a href="{{ meeting.conference_url }}" target="_blank" rel="noopener">
+                                            Join Online Meeting
+                                        </a>
+                                    </p>
+                                    {% endif %}
+                                    
+                                    {% if meeting.types %}
+                                    <div class="meeting-types">
+                                        {% for type_code in meeting.types %}
+                                            <span class="meeting-type-badge">{{ type_code }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                            <a href="{% url 'support_services:meeting_detail' meeting.slug %}" 
+                               class="btn btn-outline-primary">
+                                View Details <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                            
+                            {% if user.is_authenticated %}
+                            <button class="btn btn-outline-secondary ms-2 bookmark-btn" 
+                                    data-type="meeting" 
+                                    data-id="{{ meeting.id }}">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Pagination -->
+                {% if meetings.has_other_pages %}
+                <nav aria-label="Meeting pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if meetings.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ meetings.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if selected_day %}&day={{ selected_day }}{% endif %}{% if selected_city %}&city={{ selected_city }}{% endif %}{% if selected_state %}&state={{ selected_state }}{% endif %}{% if selected_attendance %}&attendance={{ selected_attendance }}{% endif %}">
+                                Previous
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for num in meetings.paginator.page_range %}
+                            {% if meetings.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > meetings.number|add:'-3' and num < meetings.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if selected_day %}&day={{ selected_day }}{% endif %}{% if selected_city %}&city={{ selected_city }}{% endif %}{% if selected_state %}&state={{ selected_state }}{% endif %}{% if selected_attendance %}&attendance={{ selected_attendance }}{% endif %}">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if meetings.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ meetings.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if selected_day %}&day={{ selected_day }}{% endif %}{% if selected_city %}&city={{ selected_city }}{% endif %}{% if selected_state %}&state={{ selected_state }}{% endif %}{% if selected_attendance %}&attendance={{ selected_attendance }}{% endif %}">
+                                Next
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+            {% else %}
+                <!-- No Results -->
+                <div class="no-results">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h3>No meetings found</h3>
+                    <p>Try adjusting your search filters or browse all meetings.</p>
+                    <a href="{% url 'support_services:meeting_list' %}" class="btn btn-primary">
+                        View All Meetings
+                    </a>
+                    <a href="{% url 'support_services:submit_meeting' %}" class="btn btn-outline-primary ms-2">
+                        Submit a Meeting
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Filter functions
+function setFilter(filterType, value) {
+    document.getElementById(filterType + 'Filter').value = value;
+    document.getElementById('filterForm').submit();
+}
+
+function clearFilter(filterType) {
+    document.getElementById(filterType + 'Filter').value = '';
+    document.getElementById('filterForm').submit();
+}
+
+// Bookmark functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const bookmarkBtns = document.querySelectorAll('.bookmark-btn');
+    
+    bookmarkBtns.forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const type = this.dataset.type;
+            const id = this.dataset.id;
+            
+            try {
+                const response = await fetch(`/support/bookmark/${type}/${id}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.bookmarked) {
+                    this.innerHTML = '<i class="fas fa-bookmark"></i>';
+                    this.classList.add('btn-primary');
+                    this.classList.remove('btn-outline-secondary');
+                } else {
+                    this.innerHTML = '<i class="far fa-bookmark"></i>';
+                    this.classList.remove('btn-primary');
+                    this.classList.add('btn-outline-secondary');
+                }
+            } catch (error) {
+                console.error('Error toggling bookmark:', error);
+            }
+        });
+    });
+});
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

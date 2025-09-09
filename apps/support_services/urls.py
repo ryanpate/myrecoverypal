@@ -1,3 +1,6 @@
+# Update apps/support_services/urls.py
+# Add this to your urlpatterns list
+
 from django.urls import path
 from . import views
 
@@ -9,6 +12,8 @@ urlpatterns = [
 
     # Meetings
     path('meetings/', views.meeting_list, name='meeting_list'),
+    path('meetings/finder/', views.meeting_finder,
+         name='meeting_finder'),  # Add this line
     path('meetings/submit/', views.submit_meeting, name='submit_meeting'),
     path('meetings/<slug:slug>/', views.meeting_detail, name='meeting_detail'),
 

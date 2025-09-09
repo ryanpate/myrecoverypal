@@ -1,61 +1,164 @@
+ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 .
 ├── apps
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   └── __init__.cpython-310.pyc
 │   ├── accounts
 │   │   ├── __pycache__
+│   │   │   ├── admin.cpython-310.pyc
+│   │   │   ├── apps.cpython-310.pyc
+│   │   │   ├── forms.cpython-310.pyc
+│   │   │   ├── models.cpython-310.pyc
+│   │   │   ├── signals.cpython-310.pyc
+│   │   │   ├── urls.cpython-310.pyc
+│   │   │   └── views.cpython-310.pyc
 │   │   ├── admin.py
 │   │   ├── apps.py
 │   │   ├── forms.py
 │   │   ├── init.py
 │   │   ├── management
+│   │   │   └── commands
 │   │   ├── managers.py
 │   │   ├── migrations
+│   │   │   ├── __init__.py
+│   │   │   ├── __pycache__
+│   │   │   └── 0001_initial.py
 │   │   ├── models.py
 │   │   ├── signals.py
 │   │   ├── templates
+│   │   │   ├── accounts
+│   │   │   └── registration
 │   │   ├── templatetags
+│   │   │   ├── __pycache__
+│   │   │   ├── account_tags.py
+│   │   │   └── init.py
 │   │   ├── urls.py
 │   │   └── views.py
 │   ├── blog
 │   │   ├── __pycache__
+│   │   │   ├── admin.cpython-310.pyc
+│   │   │   ├── apps.cpython-310.pyc
+│   │   │   ├── forms.cpython-310.pyc
+│   │   │   ├── models.cpython-310.pyc
+│   │   │   ├── urls.cpython-310.pyc
+│   │   │   └── views.cpython-310.pyc
 │   │   ├── admin.py
 │   │   ├── apps.py
 │   │   ├── forms.py
 │   │   ├── init.py
 │   │   ├── management
+│   │   │   └── commands
 │   │   ├── migrations
+│   │   │   ├── __init__.py
+│   │   │   ├── __pycache__
+│   │   │   └── 0001_initial.py
 │   │   ├── models.py
 │   │   ├── templates
+│   │   │   └── blog
 │   │   ├── urls.py
 │   │   └── views.py
 │   ├── core
 │   │   ├── __pycache__
+│   │   │   ├── apps.cpython-310.pyc
+│   │   │   ├── models.cpython-310.pyc
+│   │   │   ├── urls.cpython-310.pyc
+│   │   │   └── views.cpython-310.pyc
 │   │   ├── apps.py
 │   │   ├── init.py
 │   │   ├── models.py
 │   │   ├── templates
+│   │   │   └── core
 │   │   ├── urls.py
 │   │   └── views.py
 │   ├── init.py
 │   ├── journal
 │   │   ├── __pycache__
+│   │   │   ├── admin.cpython-310.pyc
+│   │   │   ├── apps.cpython-310.pyc
+│   │   │   ├── forms.cpython-310.pyc
+│   │   │   ├── models.cpython-310.pyc
+│   │   │   ├── urls.cpython-310.pyc
+│   │   │   └── views.cpython-310.pyc
 │   │   ├── admin.py
 │   │   ├── apps.py
 │   │   ├── forms.py
 │   │   ├── init.py
 │   │   ├── management
+│   │   │   └── commands
 │   │   ├── migrations
+│   │   │   ├── __init__.py
+│   │   │   ├── __pycache__
+│   │   │   └── 0001_initial.py
 │   │   ├── models.py
 │   │   ├── templates
+│   │   │   └── journal
 │   │   ├── urls.py
 │   │   └── views.py
-│   └── newsletter
+│   ├── newsletter
+│   │   ├── __pycache__
+│   │   │   ├── admin.cpython-310.pyc
+│   │   │   ├── forms.cpython-310.pyc
+│   │   │   ├── models.cpython-310.pyc
+│   │   │   ├── tasks.cpython-310.pyc
+│   │   │   ├── urls.cpython-310.pyc
+│   │   │   └── views.cpython-310.pyc
+│   │   ├── admin.py
+│   │   ├── forms.py
+│   │   ├── migrations
+│   │   │   ├── __init__.py
+│   │   │   ├── __pycache__
+│   │   │   └── 0001_initial.py
+│   │   ├── models.py
+│   │   ├── tasks.py
+│   │   ├── templates
+│   │   │   └── newsletter
+│   │   ├── urls.py
+│   │   └── views.py
+│   ├── store
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-310.pyc
+│   │   │   ├── admin.cpython-310.pyc
+│   │   │   ├── apps.cpython-310.pyc
+│   │   │   ├── models.cpython-310.pyc
+│   │   │   ├── urls.cpython-310.pyc
+│   │   │   └── views.cpython-310.pyc
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── migrations
+│   │   │   ├── __init__.py
+│   │   │   ├── __pycache__
+│   │   │   └── 0001_initial.py
+│   │   ├── models.py
+│   │   ├── templates
+│   │   │   └── store
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   └── views.py
+│   └── support_services
+│       ├── __init__.py
 │       ├── __pycache__
+│       │   ├── __init__.cpython-310.pyc
+│       │   ├── admin.cpython-310.pyc
+│       │   ├── apps.cpython-310.pyc
+│       │   ├── forms.cpython-310.pyc
+│       │   ├── models.cpython-310.pyc
+│       │   ├── urls.cpython-310.pyc
+│       │   └── views.cpython-310.pyc
 │       ├── admin.py
+│       ├── apps.py
 │       ├── forms.py
+│       ├── management
+│       │   └── commands
 │       ├── migrations
+│       │   ├── __init__.py
+│       │   ├── __pycache__
+│       │   └── 0001_initial.py
 │       ├── models.py
-│       ├── tasks.py
 │       ├── templates
+│       │   └── support_services
+│       ├── tests.py
 │       ├── urls.py
 │       └── views.py
 ├── db.sqlite3
@@ -67,6 +170,13 @@
 │   │   └── image.webp
 │   └── resources
 │       └── files
+│           ├── 30-Day_Free_Recovery_Journal.pdf
+│           ├── 30-Day_Recovery_Journal_-_MyRecoveryPal.pdf
+│           ├── Coping_Skills_for_Cravings_-_MyRecoveryPal_LBm0aLt.pdf
+│           ├── Coping_Skills_for_Cravings_-_MyRecoveryPal.pdf
+│           ├── Daily_Recovery_Checklist_-_MyRecoveryPal.pdf
+│           └── daily-recovery-checklist.pdf
+├── my_facilities_example.json
 ├── README.md
 ├── recovery_hub
 │   ├── __init__.py
@@ -77,12 +187,27 @@
 │   │   └── wsgi.cpython-310.pyc
 │   ├── apps
 │   │   ├── accounts
+│   │   │   ├── apps.py
+│   │   │   ├── forms.py
+│   │   │   ├── models.py
+│   │   │   ├── urls.py
+│   │   │   └── views.py
 │   │   ├── blog
+│   │   │   ├── admin.py
+│   │   │   ├── models.py
+│   │   │   └── urls.py
 │   │   ├── core
+│   │   │   ├── apps.py
+│   │   │   ├── init.py
+│   │   │   └── urls.py
 │   │   ├── init.py
 │   │   ├── journal
+│   │   │   ├── forms.py
+│   │   │   └── models.py
 │   │   ├── newsletter
+│   │   │   └── models.py
 │   │   └── store
+│   │       └── models.py
 │   ├── asgi.py
 │   ├── celery.py
 │   ├── init.py
@@ -95,7 +220,30 @@
 │   ├── urls.py
 │   ├── venv
 │   │   ├── bin
+│   │   │   ├── activate
+│   │   │   ├── activate.csh
+│   │   │   ├── activate.fish
+│   │   │   ├── Activate.ps1
+│   │   │   ├── celery
+│   │   │   ├── coverage
+│   │   │   ├── coverage-3.10
+│   │   │   ├── coverage3
+│   │   │   ├── django-admin
+│   │   │   ├── faker
+│   │   │   ├── gunicorn
+│   │   │   ├── jp.py
+│   │   │   ├── normalizer
+│   │   │   ├── pip
+│   │   │   ├── pip3
+│   │   │   ├── pip3.10
+│   │   │   ├── py.test
+│   │   │   ├── pytest
+│   │   │   ├── python -> python3
+│   │   │   ├── python3 -> /Library/Frameworks/Python.framework/Versions/3.10/bin/python3
+│   │   │   ├── python3.10 -> python3
+│   │   │   └── sqlformat
 │   │   ├── lib
+│   │   │   └── python3.10
 │   │   └── pyvenv.cfg
 │   └── wsgi.py
 ├── requirements.txt
@@ -113,18 +261,43 @@
 │   ├── management
 │   │   ├── __init__.py
 │   │   ├── __pycache__
+│   │   │   └── __init__.cpython-310.pyc
 │   │   └── commands
+│   │       ├── __init__.py
+│   │       ├── add_daily_checklist.py
+│   │       ├── add_educational_resources.py
+│   │       ├── add_recovery_journal.py
+│   │       ├── create_coping_skills.py
+│   │       └── populate_resources.py
 │   ├── migrations
 │   │   ├── __init__.py
 │   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-310.pyc
+│   │   │   ├── 0001_initial.cpython-310.pyc
+│   │   │   ├── 0002_resource_difficulty_level_resource_estimated_time_and_more.cpython-310.pyc
+│   │   │   └── 0003_add_coping_skills_resources.cpython-310.pyc
 │   │   ├── 0001_initial.py
 │   │   ├── 0002_resource_difficulty_level_resource_estimated_time_and_more.py
 │   │   └── 0003_add_coping_skills_resources.py
 │   ├── models.py
 │   ├── static
 │   │   └── resources
+│   │       ├── css
+│   │       └── js
 │   ├── templates
+│   │   ├── professional_help.html.bak
 │   │   └── resources
+│   │       ├── crisis.html
+│   │       ├── daily_checklist.html
+│   │       ├── educational_resources.html
+│   │       ├── educational-resources.html
+│   │       ├── interactive
+│   │       ├── my_bookmarks.html
+│   │       ├── pdf
+│   │       ├── professional_help.html
+│   │       ├── resource_category.html
+│   │       ├── resource_detail.html
+│   │       └── resource_list.html
 │   ├── tests.py
 │   ├── urls.py
 │   ├── views.py
@@ -132,22 +305,108 @@
 ├── static
 │   ├── css
 │   │   └── main.css
-│   └── js
-│       └── main.js
+│   ├── images
+│   │   ├── favicon_16.png
+│   │   ├── favicon_192.png
+│   │   ├── favicon_32.png
+│   │   ├── favicon_512.png
+│   │   ├── favicon.ico
+│   │   ├── favicon.png
+│   │   ├── logo-horizontal.png
+│   │   ├── logo-icon.svg
+│   │   ├── logo-white.svg
+│   │   └── logo.svg
+│   ├── js
+│   │   └── main.js
+│   └── resources
+│       └── data
+│           ├── my_facilities_example.json
+│           └── my_facilities_example.json.bak
 ├── staticfiles
 │   ├── admin
 │   │   ├── css
+│   │   │   ├── autocomplete.css
+│   │   │   ├── base.css
+│   │   │   ├── changelists.css
+│   │   │   ├── dark_mode.css
+│   │   │   ├── dashboard.css
+│   │   │   ├── forms.css
+│   │   │   ├── login.css
+│   │   │   ├── nav_sidebar.css
+│   │   │   ├── responsive_rtl.css
+│   │   │   ├── responsive.css
+│   │   │   ├── rtl.css
+│   │   │   ├── unusable_password_field.css
+│   │   │   ├── vendor
+│   │   │   └── widgets.css
 │   │   ├── img
+│   │   │   ├── calendar-icons.svg
+│   │   │   ├── gis
+│   │   │   ├── icon-addlink.svg
+│   │   │   ├── icon-alert.svg
+│   │   │   ├── icon-calendar.svg
+│   │   │   ├── icon-changelink.svg
+│   │   │   ├── icon-clock.svg
+│   │   │   ├── icon-deletelink.svg
+│   │   │   ├── icon-hidelink.svg
+│   │   │   ├── icon-no.svg
+│   │   │   ├── icon-unknown-alt.svg
+│   │   │   ├── icon-unknown.svg
+│   │   │   ├── icon-viewlink.svg
+│   │   │   ├── icon-yes.svg
+│   │   │   ├── inline-delete.svg
+│   │   │   ├── LICENSE
+│   │   │   ├── README.txt
+│   │   │   ├── search.svg
+│   │   │   ├── selector-icons.svg
+│   │   │   ├── sorting-icons.svg
+│   │   │   ├── tooltag-add.svg
+│   │   │   └── tooltag-arrowright.svg
 │   │   └── js
+│   │       ├── actions.js
+│   │       ├── admin
+│   │       ├── autocomplete.js
+│   │       ├── calendar.js
+│   │       ├── cancel.js
+│   │       ├── change_form.js
+│   │       ├── collapse.js
+│   │       ├── core.js
+│   │       ├── filters.js
+│   │       ├── inlines.js
+│   │       ├── jquery.init.js
+│   │       ├── nav_sidebar.js
+│   │       ├── popup_response.js
+│   │       ├── prepopulate_init.js
+│   │       ├── prepopulate.js
+│   │       ├── SelectBox.js
+│   │       ├── SelectFilter2.js
+│   │       ├── theme.js
+│   │       ├── unusable_password_field.js
+│   │       ├── urlify.js
+│   │       └── vendor
 │   ├── css
 │   │   └── main.css
+│   ├── images
+│   │   ├── favicon_16.png
+│   │   ├── favicon_192.png
+│   │   ├── favicon_32.png
+│   │   ├── favicon_512.png
+│   │   ├── favicon.ico
+│   │   ├── favicon.png
+│   │   ├── logo-horizontal.png
+│   │   ├── logo-icon.svg
+│   │   ├── logo-white.svg
+│   │   └── logo.svg
 │   ├── js
 │   │   └── main.js
 │   └── resources
 │       ├── css
+│       │   └── resources.css
 │       └── js
+│           └── resources.js
 ├── templates
 │   └── base.html
+├── tree.txt
 └── venv
     ├── bin
     │   ├── activate
@@ -165,4 +424,7 @@
     │   └── sqlformat
     ├── lib
     │   └── python3.10
+    │       └── site-packages
     └── pyvenv.cfg
+
+114 directories, 313 files

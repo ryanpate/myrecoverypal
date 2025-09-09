@@ -1,0 +1,592 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Submit a Meeting - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-section h3 {
+        color: #1e4d8b;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #4B5563;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-control,
+    .form-select {
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        padding: 10px 15px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #4db8e8;
+        box-shadow: 0 0 0 3px rgba(77, 184, 232, 0.1);
+        outline: none;
+    }
+
+    .form-text {
+        font-size: 0.875rem;
+        color: #6B7280;
+        margin-top: 5px;
+    }
+
+    .attendance-options {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        background: #f8f9fa;
+        border: 2px solid #E5E7EB;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .form-check:hover {
+        border-color: #4db8e8;
+        background: #f0f8ff;
+    }
+
+    .form-check-input {
+        margin-right: 10px;
+    }
+
+    .form-check-input:checked ~ .form-check-label {
+        color: #1e4d8b;
+        font-weight: 600;
+    }
+
+    .form-check-input[type="radio"]:checked {
+        background-color: #52b788;
+        border-color: #52b788;
+    }
+
+    .btn-submit {
+        background: #52b788;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-submit:hover {
+        background: #45a675;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
+    }
+
+    .btn-cancel {
+        background: transparent;
+        color: #6B7280;
+        padding: 12px 30px;
+        border: 2px solid #E5E7EB;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-cancel:hover {
+        border-color: #9CA3AF;
+        background: #f8f9fa;
+    }
+
+    .required-star {
+        color: #DC2626;
+    }
+
+    .alert-info {
+        background: #EFF6FF;
+        border: 1px solid #BFDBFE;
+        color: #1E40AF;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+
+    .alert-info i {
+        margin-right: 10px;
+    }
+
+    .conditional-fields {
+        display: none;
+        animation: slideDown 0.3s ease;
+    }
+
+    .conditional-fields.active {
+        display: block;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .meeting-types-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .type-checkbox {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background: #f8f9fa;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .type-checkbox:hover {
+        background: #f0f8ff;
+        border-color: #4db8e8;
+    }
+
+    .type-checkbox input[type="checkbox"] {
+        margin-right: 8px;
+    }
+
+    .type-checkbox input[type="checkbox"]:checked ~ label {
+        color: #1e4d8b;
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        .form-section {
+            padding: 20px;
+        }
+
+        .attendance-options {
+            flex-direction: column;
+        }
+
+        .form-check {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Gradient -->
+<div class="hero-section py-5" style="background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%); color: white;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-12 text-center">
+                <h1 class="display-4 fw-bold mb-3" style="color: white;">Submit a Recovery Meeting</h1>
+                <p class="lead mb-0" style="color: rgba(255, 255, 255, 0.9);">
+                    Help others find support by adding a meeting to our directory
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <!-- Alert Message -->
+    <div class="alert-info">
+        <i class="fas fa-info-circle"></i>
+        <strong>Note:</strong> All meeting submissions are reviewed before being published. This typically takes 24-48 hours. 
+        You'll receive an email notification once your submission is approved.
+    </div>
+
+    <!-- Form -->
+    <form method="post" action="{% url 'support_services:submit_meeting' %}">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <!-- Basic Information Section -->
+        <div class="form-section">
+            <h3>Basic Information</h3>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.name.id_for_label }}" class="form-label">
+                            Meeting Name <span class="required-star">*</span>
+                        </label>
+                        {{ form.name }}
+                        {% if form.name.help_text %}
+                            <small class="form-text">{{ form.name.help_text }}</small>
+                        {% endif %}
+                        {% if form.name.errors %}
+                            <div class="text-danger">{{ form.name.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.group.id_for_label }}" class="form-label">
+                            Group Name
+                        </label>
+                        {{ form.group }}
+                        {% if form.group.help_text %}
+                            <small class="form-text">{{ form.group.help_text }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule Section -->
+        <div class="form-section">
+            <h3>Meeting Schedule</h3>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.day.id_for_label }}" class="form-label">
+                            Day of Week
+                        </label>
+                        {{ form.day }}
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.time.id_for_label }}" class="form-label">
+                            Start Time
+                        </label>
+                        {{ form.time }}
+                        {% if form.time.help_text %}
+                            <small class="form-text">{{ form.time.help_text }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.end_time.id_for_label }}" class="form-label">
+                            End Time
+                        </label>
+                        {{ form.end_time }}
+                        {% if form.end_time.help_text %}
+                            <small class="form-text">{{ form.end_time.help_text }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Type Section -->
+        <div class="form-section">
+            <h3>Attendance Type</h3>
+            
+            <div class="form-group">
+                <label class="form-label">How do people attend this meeting? <span class="required-star">*</span></label>
+                <div class="attendance-options">
+                    {% for radio in form.attendance_option %}
+                    <div class="form-check">
+                        {{ radio.tag }}
+                        <label class="form-check-label" for="{{ radio.id_for_label }}">
+                            {% if radio.choice_label == 'In-Person' %}
+                                <i class="fas fa-users"></i> In-Person Only
+                            {% elif radio.choice_label == 'Online' %}
+                                <i class="fas fa-video"></i> Online Only
+                            {% else %}
+                                <i class="fas fa-globe"></i> Hybrid (Both)
+                            {% endif %}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if form.attendance_option.errors %}
+                    <div class="text-danger">{{ form.attendance_option.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Physical Location Section (conditional) -->
+        <div class="form-section conditional-fields" id="physical-location">
+            <h3>Physical Location</h3>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.location.id_for_label }}" class="form-label">
+                            Venue/Building Name
+                        </label>
+                        {{ form.location }}
+                        {% if form.location.help_text %}
+                            <small class="form-text">{{ form.location.help_text }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.address.id_for_label }}" class="form-label">
+                            Street Address
+                        </label>
+                        {{ form.address }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.city.id_for_label }}" class="form-label">
+                            City
+                        </label>
+                        {{ form.city }}
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.state.id_for_label }}" class="form-label">
+                            State
+                        </label>
+                        {{ form.state }}
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.postal_code.id_for_label }}" class="form-label">
+                            ZIP Code
+                        </label>
+                        {{ form.postal_code }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Online Meeting Section (conditional) -->
+        <div class="form-section conditional-fields" id="online-meeting">
+            <h3>Online Meeting Information</h3>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.conference_url.id_for_label }}" class="form-label">
+                            Meeting URL
+                        </label>
+                        {{ form.conference_url }}
+                        {% if form.conference_url.help_text %}
+                            <small class="form-text">{{ form.conference_url.help_text }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.conference_phone.id_for_label }}" class="form-label">
+                            Phone Number
+                        </label>
+                        {{ form.conference_phone }}
+                        {% if form.conference_phone.help_text %}
+                            <small class="form-text">{{ form.conference_phone.help_text }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.conference_url_notes.id_for_label }}" class="form-label">
+                    Access Instructions
+                </label>
+                {{ form.conference_url_notes }}
+                {% if form.conference_url_notes.help_text %}
+                    <small class="form-text">{{ form.conference_url_notes.help_text }}</small>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Additional Information Section -->
+        <div class="form-section">
+            <h3>Additional Information</h3>
+            
+            <div class="form-group">
+                <label for="{{ form.notes.id_for_label }}" class="form-label">
+                    Meeting Notes
+                </label>
+                {{ form.notes }}
+                {% if form.notes.help_text %}
+                    <small class="form-text">{{ form.notes.help_text }}</small>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Contact Information Section -->
+        <div class="form-section">
+            <h3>Your Contact Information</h3>
+            <p class="text-muted mb-3">This information is for verification purposes only and will not be published.</p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.contact_email.id_for_label }}" class="form-label">
+                            Email Address
+                        </label>
+                        {{ form.contact_email }}
+                        {% if form.contact_email.help_text %}
+                            <small class="form-text">{{ form.contact_email.help_text }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.contact_phone.id_for_label }}" class="form-label">
+                            Phone Number
+                        </label>
+                        {{ form.contact_phone }}
+                        {% if form.contact_phone.help_text %}
+                            <small class="form-text">{{ form.contact_phone.help_text }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Buttons -->
+        <div class="text-center mt-4 mb-5">
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane"></i> Submit Meeting
+            </button>
+            <a href="{% url 'support_services:meeting_list' %}" class="btn-cancel ms-3">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle conditional field display based on attendance type
+    const attendanceOptions = document.querySelectorAll('input[name="attendance_option"]');
+    const physicalLocation = document.getElementById('physical-location');
+    const onlineMeeting = document.getElementById('online-meeting');
+    
+    function updateConditionalFields() {
+        const selectedOption = document.querySelector('input[name="attendance_option"]:checked');
+        
+        if (selectedOption) {
+            const value = selectedOption.value;
+            
+            // Show/hide physical location fields
+            if (value === 'in_person' || value === 'hybrid') {
+                physicalLocation.classList.add('active');
+            } else {
+                physicalLocation.classList.remove('active');
+            }
+            
+            // Show/hide online meeting fields
+            if (value === 'online' || value === 'hybrid') {
+                onlineMeeting.classList.add('active');
+            } else {
+                onlineMeeting.classList.remove('active');
+            }
+        }
+    }
+    
+    // Add event listeners
+    attendanceOptions.forEach(option => {
+        option.addEventListener('change', updateConditionalFields);
+    });
+    
+    // Initialize on page load
+    updateConditionalFields();
+    
+    // Form validation enhancement
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const nameField = document.querySelector('input[name="name"]');
+        const attendanceSelected = document.querySelector('input[name="attendance_option"]:checked');
+        
+        if (!nameField.value.trim()) {
+            e.preventDefault();
+            alert('Please enter a meeting name.');
+            nameField.focus();
+            return false;
+        }
+        
+        if (!attendanceSelected) {
+            e.preventDefault();
+            alert('Please select an attendance type.');
+            return false;
+        }
+        
+        // Validate location fields for in-person meetings
+        if (attendanceSelected.value === 'in_person' || attendanceSelected.value === 'hybrid') {
+            const location = document.querySelector('input[name="location"]');
+            const address = document.querySelector('input[name="address"]');
+            
+            if (!location.value.trim() && !address.value.trim()) {
+                e.preventDefault();
+                alert('Please provide location information for in-person meetings.');
+                location.focus();
+                return false;
+            }
+        }
+        
+        // Validate online fields for online meetings
+        if (attendanceSelected.value === 'online' || attendanceSelected.value === 'hybrid') {
+            const url = document.querySelector('input[name="conference_url"]');
+            const phone = document.querySelector('input[name="conference_phone"]');
+            
+            if (!url.value.trim() && !phone.value.trim()) {
+                e.preventDefault();
+                alert('Please provide online meeting access information.');
+                url.focus();
+                return false;
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

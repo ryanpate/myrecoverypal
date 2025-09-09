@@ -52,8 +52,11 @@ LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'accounts:dashboard'
 LOGOUT_REDIRECT_URL = 'core:index'
 
+TSML_DATA_SOURCE = None
+
 # Add Google API key (for geocoding)
 GOOGLE_API_KEY = 'AIzaSyAKFMk5grddW39DgsQ9NZ0CI62emQaleys'
+MAPBOX_API_KEY = 'pk.eyJ1IjoicnlhbnBhdGUxIiwiYSI6ImNtZXd6cTQ1ejB4ajgyam9uZzNxazhvanMifQ.9oqD8jZ6rrhEjQtnO6TsgA'
 
 # Email settings (for password reset)
 if DEBUG:

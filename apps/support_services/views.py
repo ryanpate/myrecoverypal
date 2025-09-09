@@ -43,6 +43,19 @@ def support_services_home(request):
     return render(request, 'support_services/home.html', context)
 
 
+def meeting_finder(request):
+    """
+    TSML UI Meeting Finder - comprehensive meeting search interface
+    """
+    context = {
+        # You can pass configuration from Django settings if needed
+        'tsml_data_source': getattr(settings, 'TSML_DATA_SOURCE', None),
+        'mapbox_api_key': getattr(settings, 'MAPBOX_API_KEY', None),
+        'google_maps_api_key': getattr(settings, 'GOOGLE_MAPS_API_KEY', None),
+    }
+    return render(request, 'support_services/meeting_finder.html', context)
+
+
 def meeting_list(request):
     """List and search meetings"""
     meetings = Meeting.objects.filter(is_approved=True, is_active=True)

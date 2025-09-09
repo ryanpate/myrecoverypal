@@ -1,9 +1,13 @@
 /* Resources Page Styles - resources.css */
 
 :root {
-    --primary-color: #4a90e2;
-    --secondary-color: #7ec8e3;
-    --accent-color: #52d3aa;
+    /* Updated to match main brand colors */
+    --primary-color: #1e4d8b;
+    /* Dark blue */
+    --secondary-color: #4db8e8;
+    /* Light blue */
+    --accent-color: #52b788;
+    /* Green */
     --text-dark: #2c3e50;
     --text-light: #ffffff;
     --bg-light: #f8f9fa;
@@ -11,12 +15,19 @@
     --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* Blog-style Header - matching the blog page */
+/* Remove old purple gradient */
 .blog-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%) !important;
     padding: 100px 0 50px;
     color: white;
     text-align: center;
+}
+
+/* Update other gradient references */
+.resource-detail-header,
+.category-header,
+.educational-resources-header {
+    background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%) !important;
 }
 
 /* Crisis Banner - More Compact */
