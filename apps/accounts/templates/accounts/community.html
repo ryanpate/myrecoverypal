@@ -11,50 +11,50 @@
         color: white;
         text-align: center;
     }
-    
+
     .community-container {
         max-width: 1200px;
         margin: 2rem auto;
         padding: 0 2rem;
     }
-    
+
     .search-filters {
         background: white;
         padding: 1.5rem;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         margin-bottom: 2rem;
     }
-    
+
     .filter-form {
         display: flex;
         gap: 1rem;
         align-items: end;
         flex-wrap: wrap;
     }
-    
+
     .filter-form .form-group {
         flex: 1;
         min-width: 200px;
     }
-    
+
     .filter-form label {
         display: block;
         margin-bottom: 0.5rem;
         color: #666;
         font-weight: 500;
     }
-    
+
     .members-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 1.5rem;
     }
-    
+
     .member-card {
         background: white;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         padding: 1.5rem;
         text-align: center;
         transition: all 0.3s ease;
@@ -63,7 +63,7 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     .member-card::before {
         content: '';
         position: absolute;
@@ -75,16 +75,16 @@
         transform: translateY(-100%);
         transition: transform 0.3s ease;
     }
-    
+
     .member-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
     }
-    
+
     .member-card:hover::before {
         transform: translateY(0);
     }
-    
+
     .member-avatar {
         width: 80px;
         height: 80px;
@@ -99,26 +99,26 @@
         overflow: hidden;
         border: 3px solid #f0f0f0;
     }
-    
+
     .member-avatar img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
-    
+
     .member-name {
         font-size: 1.2rem;
         font-weight: bold;
         margin-bottom: 0.5rem;
         color: #333;
     }
-    
+
     .member-info {
         color: #666;
         font-size: 0.9rem;
         margin-bottom: 0.5rem;
     }
-    
+
     .member-bio {
         font-size: 0.85rem;
         color: #777;
@@ -129,7 +129,7 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    
+
     .sponsor-badge {
         display: inline-block;
         background: var(--accent-color);
@@ -139,7 +139,7 @@
         font-size: 0.8rem;
         margin-top: 0.5rem;
     }
-    
+
     .online-indicator {
         position: absolute;
         top: 1rem;
@@ -149,58 +149,58 @@
         background: #4caf50;
         border-radius: 50%;
         border: 2px solid white;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
-    
+
     .no-members {
         text-align: center;
         padding: 3rem;
         background: white;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-    
+
     .no-members h3 {
         color: #666;
         margin-bottom: 1rem;
     }
-    
+
     .community-stats {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1rem;
         margin-bottom: 2rem;
     }
-    
+
     .stat-box {
         background: white;
         padding: 1.5rem;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         text-align: center;
     }
-    
+
     .stat-number {
         font-size: 2rem;
         font-weight: bold;
         color: var(--primary-color);
     }
-    
+
     .stat-label {
         color: #666;
         font-size: 0.9rem;
         margin-top: 0.5rem;
     }
-    
+
     @media (max-width: 768px) {
         .members-grid {
             grid-template-columns: 1fr;
         }
-        
+
         .filter-form {
             flex-direction: column;
         }
-        
+
         .filter-form .form-group {
             width: 100%;
         }
@@ -218,11 +218,11 @@
     <!-- Community Stats -->
     <div class="community-stats">
         <div class="stat-box">
-            <div class="stat-number">{{ members.paginator.count }}</div>
+            <div class="stat-number">{{ total_members|default:"0" }}</div>
             <div class="stat-label">Community Members</div>
         </div>
         <div class="stat-box">
-            <div class="stat-number">{{ members.paginator.count|add:"-1" }}</div>
+            <div class="stat-number">{{ potential_connections|default:"0" }}</div>
             <div class="stat-label">Potential Connections</div>
         </div>
         <div class="stat-box">
@@ -230,24 +230,18 @@
             <div class="stat-label">Available Sponsors</div>
         </div>
     </div>
-    
+
     <!-- Search and Filters -->
     <div class="search-filters">
         <form method="get" class="filter-form">
             <div class="form-group" style="flex: 2;">
                 <label for="search">Search members</label>
-                <input type="text" 
-                       name="search" 
-                       id="search"
-                       class="form-control" 
-                       placeholder="Search by name, location, or bio..." 
-                       value="{{ request.GET.search }}">
+                <input type="text" name="search" id="search" class="form-control"
+                    placeholder="Search by name, location, or bio..." value="{{ request.GET.search }}">
             </div>
             <div class="form-group">
                 <label>
-                    <input type="checkbox" 
-                           name="sponsors_only" 
-                           {% if request.GET.sponsors_only %}checked{% endif %}>
+                    <input type="checkbox" name="sponsors_only" {% if request.GET.sponsors_only %}checked{% endif %}>
                     Show Sponsors Only
                 </label>
             </div>
@@ -256,116 +250,120 @@
                     <i class="fas fa-search"></i> Search
                 </button>
                 {% if request.GET.search or request.GET.sponsors_only %}
-                    <a href="{% url 'accounts:community' %}" class="btn btn-secondary">Clear</a>
+                <a href="{% url 'accounts:community' %}" class="btn btn-secondary">Clear</a>
                 {% endif %}
             </div>
         </form>
     </div>
-    
+
     <!-- Members Grid -->
     {% if members %}
-        <div class="members-grid">
-            {% for member in members %}
-                <a href="{% url 'accounts:profile' member.username %}" class="member-card">
-                    {% if member.last_seen %}
-                        {% with time_since=member.last_seen|timesince %}
-                            {% if "minute" in time_since or "hour" in time_since and "hours" not in time_since %}
-                                <div class="online-indicator" title="Recently active"></div>
-                            {% endif %}
-                        {% endwith %}
-                    {% endif %}
-                    
-                    <div class="member-avatar">
-                        {% if member.avatar %}
-                            <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
-                        {% else %}
-                            {{ member.username|first|upper }}
-                        {% endif %}
-                    </div>
-                    
-                    <div class="member-name">
-                        {{ member.get_full_name|default:member.username }}
-                    </div>
-                    
-                    {% if member.location %}
-                        <div class="member-info">
-                            <i class="fas fa-map-marker-alt"></i> {{ member.location }}
-                        </div>
-                    {% endif %}
-                    
-                    {% if member.show_sobriety_date and member.sobriety_date %}
-                        <div class="member-info">
-                            <i class="fas fa-calendar-check"></i> {{ member.get_sobriety_milestone }} sober
-                        </div>
-                    {% endif %}
-                    
-                    {% if member.bio %}
-                        <div class="member-bio">
-                            {{ member.bio }}
-                        </div>
-                    {% endif %}
-                    
-                    {% if member.is_sponsor %}
-                        <div class="sponsor-badge">
-                            <i class="fas fa-hands-helping"></i> Available as Sponsor
-                        </div>
-                    {% endif %}
-                </a>
-            {% endfor %}
-        </div>
-        
-        <!-- Pagination -->
-        {% if is_paginated %}
-        <nav aria-label="Page navigation" style="margin-top: 3rem;">
-            <ul class="pagination justify-content-center">
-                {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.sponsors_only %}&sponsors_only=on{% endif %}">
-                            First
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.sponsors_only %}&sponsors_only=on{% endif %}">
-                            Previous
-                        </a>
-                    </li>
-                {% endif %}
-                
-                <li class="page-item active">
-                    <span class="page-link">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                    </span>
-                </li>
-                
-                {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.sponsors_only %}&sponsors_only=on{% endif %}">
-                            Next
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.sponsors_only %}&sponsors_only=on{% endif %}">
-                            Last
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
-        {% endif %}
-    {% else %}
-        <div class="no-members">
-            <h3>No members found</h3>
-            <p>
-                {% if request.GET.search or request.GET.sponsors_only %}
-                    No members match your search criteria. Try adjusting your filters.
-                {% else %}
-                    Be the first to join our community!
-                {% endif %}
-            </p>
-            {% if request.GET.search or request.GET.sponsors_only %}
-                <a href="{% url 'accounts:community' %}" class="btn btn-primary">View All Members</a>
+    <div class="members-grid">
+        {% for member in members %}
+        <a href="{% url 'accounts:profile' member.username %}" class="member-card">
+            {% if member.last_seen %}
+            {% with time_since=member.last_seen|timesince %}
+            {% if "minute" in time_since or "hour" in time_since and "hours" not in time_since %}
+            <div class="online-indicator" title="Recently active"></div>
             {% endif %}
-        </div>
+            {% endwith %}
+            {% endif %}
+
+            <div class="member-avatar">
+                {% if member.avatar %}
+                <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
+                {% else %}
+                {{ member.username|first|upper }}
+                {% endif %}
+            </div>
+
+            <div class="member-name">
+                {{ member.get_full_name|default:member.username }}
+            </div>
+
+            {% if member.location %}
+            <div class="member-info">
+                <i class="fas fa-map-marker-alt"></i> {{ member.location }}
+            </div>
+            {% endif %}
+
+            {% if member.show_sobriety_date and member.sobriety_date %}
+            <div class="member-info">
+                <i class="fas fa-calendar-check"></i> {{ member.get_sobriety_milestone }} sober
+            </div>
+            {% endif %}
+
+            {% if member.bio %}
+            <div class="member-bio">
+                {{ member.bio }}
+            </div>
+            {% endif %}
+
+            {% if member.is_sponsor %}
+            <div class="sponsor-badge">
+                <i class="fas fa-hands-helping"></i> Available as Sponsor
+            </div>
+            {% endif %}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <nav aria-label="Page navigation" style="margin-top: 3rem;">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.sponsors_only %}&sponsors_only=on{% endif %}">
+                    First
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.sponsors_only %}&sponsors_only=on{% endif %}">
+                    Previous
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.sponsors_only %}&sponsors_only=on{% endif %}">
+                    Next
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.sponsors_only %}&sponsors_only=on{% endif %}">
+                    Last
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="no-members">
+        <h3>No members found</h3>
+        <p>
+            {% if request.GET.search or request.GET.sponsors_only %}
+            No members match your search criteria. Try adjusting your filters.
+            {% else %}
+            Be the first to join our community!
+            {% endif %}
+        </p>
+        {% if request.GET.search or request.GET.sponsors_only %}
+        <a href="{% url 'accounts:community' %}" class="btn btn-primary">View All Members</a>
+        {% endif %}
+    </div>
     {% endif %}
 </div>
 {% endblock %}

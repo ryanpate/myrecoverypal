@@ -1,13 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q, F
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 from .models import Post, Category, Tag, Comment
-from .forms import CommentForm
+from .forms import CommentForm, PostForm
 
 class PostListView(ListView):
     model = Post
@@ -118,6 +118,60 @@ class TagListView(ListView):
         context = super().get_context_data(**kwargs)
         context['tag'] = self.tag
         context['popular_tags'] = Tag.objects.all()[:20]
+        return context
+
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    """View for creating new blog posts"""
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+
+        # Set published_at if status is published
+        if form.instance.status == 'published':
+            form.instance.published_at = timezone.now()
+
+        messages.success(
+            self.request,
+            'Your post has been created successfully!' if form.instance.status == 'published'
+            else 'Your draft has been saved!'
+        )
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Create New Post'
+        context['button_text'] = 'Publish Post'
+        return context
+
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """View for editing blog posts"""
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'
+
+    def test_func(self):
+        """Check if user is the author of the post"""
+        post = self.get_object()
+        return self.request.user == post.author or self.request.user.is_staff
+
+    def form_valid(self, form):
+        # Update published_at if status changes to published
+        if form.instance.status == 'published' and not form.instance.published_at:
+            form.instance.published_at = timezone.now()
+
+        messages.success(
+            self.request, 'Your post has been updated successfully!')
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edit Post'
+        context['button_text'] = 'Update Post'
         return context
 
 @login_required

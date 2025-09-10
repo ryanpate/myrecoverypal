@@ -30,7 +30,7 @@
             --accent-green: #52b788;
             /* Green from checkmark */
 
-            /* Legacy color variables for compatibility - UPDATE THESE TOO */
+            /* Legacy color variables for compatibility */
             --primary-color: #1e4d8b;
             --secondary-color: #4db8e8;
             --accent-color: #52b788;
@@ -47,6 +47,48 @@
             --gradient-primary: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
             --gradient-secondary: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
             --gradient-accent: linear-gradient(135deg, #4db8e8 0%, #52b788 100%);
+
+            /* Border radius */
+            --border-radius: 10px;
+        }
+
+        * {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding-top: 70px;
+            /* Account for fixed nav */
+            background: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        /* Default heading colors for regular content */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+            color: var(--primary-dark);
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        /* Links */
+        a {
+            color: var(--primary-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--primary-dark);
         }
 
         /* Override Bootstrap primary colors */
@@ -68,18 +110,207 @@
             color: var(--primary-dark) !important;
         }
 
-        /* Common header style for all pages */
-        .page-header {
+        /* ========================================
+           UNIFIED PAGE HEADER STYLES
+           All page headers will have consistent styling
+           ======================================== */
+
+        .page-header,
+        .dashboard-header,
+        .blog-header,
+        .resources-header,
+        .journal-header,
+        .community-header,
+        .profile-header,
+        .milestones-header,
+        .stats-header,
+        .entries-header,
+        .prompts-header,
+        .category-header,
+        .educational-resources-header,
+        .support-header,
+        .hero-section {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
-            background: var(--gradient-primary);
+            background: var(--gradient-primary) !important;
             padding: 100px 0 50px;
-            color: white;
+            color: white !important;
             text-align: center;
             position: relative;
             overflow: hidden;
+            margin-bottom: 2rem;
         }
 
-        .page-header::before {
+        /* Ensure all text elements within page headers are white */
+        .page-header h1,
+        .page-header h2,
+        .page-header h3,
+        .page-header h4,
+        .page-header h5,
+        .page-header h6,
+        .page-header p,
+        .dashboard-header h1,
+        .dashboard-header h2,
+        .dashboard-header h3,
+        .dashboard-header h4,
+        .dashboard-header h5,
+        .dashboard-header h6,
+        .dashboard-header p,
+        .blog-header h1,
+        .blog-header h2,
+        .blog-header h3,
+        .blog-header h4,
+        .blog-header h5,
+        .blog-header h6,
+        .blog-header p,
+        .resources-header h1,
+        .resources-header h2,
+        .resources-header h3,
+        .resources-header h4,
+        .resources-header h5,
+        .resources-header h6,
+        .resources-header p,
+        .journal-header h1,
+        .journal-header h2,
+        .journal-header h3,
+        .journal-header h4,
+        .journal-header h5,
+        .journal-header h6,
+        .journal-header p,
+        .community-header h1,
+        .community-header h2,
+        .community-header h3,
+        .community-header h4,
+        .community-header h5,
+        .community-header h6,
+        .community-header p,
+        .profile-header h1,
+        .profile-header h2,
+        .profile-header h3,
+        .profile-header h4,
+        .profile-header h5,
+        .profile-header h6,
+        .profile-header p,
+        .milestones-header h1,
+        .milestones-header h2,
+        .milestones-header h3,
+        .milestones-header h4,
+        .milestones-header h5,
+        .milestones-header h6,
+        .milestones-header p,
+        .stats-header h1,
+        .stats-header h2,
+        .stats-header h3,
+        .stats-header h4,
+        .stats-header h5,
+        .stats-header h6,
+        .stats-header p,
+        .entries-header h1,
+        .entries-header h2,
+        .entries-header h3,
+        .entries-header h4,
+        .entries-header h5,
+        .entries-header h6,
+        .entries-header p,
+        .prompts-header h1,
+        .prompts-header h2,
+        .prompts-header h3,
+        .prompts-header h4,
+        .prompts-header h5,
+        .prompts-header h6,
+        .prompts-header p,
+        .category-header h1,
+        .category-header h2,
+        .category-header h3,
+        .category-header h4,
+        .category-header h5,
+        .category-header h6,
+        .category-header p,
+        .educational-resources-header h1,
+        .educational-resources-header h2,
+        .educational-resources-header h3,
+        .educational-resources-header h4,
+        .educational-resources-header h5,
+        .educational-resources-header h6,
+        .educational-resources-header p,
+        .support-header h1,
+        .support-header h2,
+        .support-header h3,
+        .support-header h4,
+        .support-header h5,
+        .support-header h6,
+        .support-header p,
+        .hero-section h1,
+        .hero-section h2,
+        .hero-section h3,
+        .hero-section h4,
+        .hero-section h5,
+        .hero-section h6,
+        .hero-section p {
+            color: white !important;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Header h1 specific styles */
+        .page-header h1,
+        .dashboard-header h1,
+        .blog-header h1,
+        .resources-header h1,
+        .journal-header h1,
+        .community-header h1,
+        .profile-header h1,
+        .milestones-header h1,
+        .stats-header h1,
+        .entries-header h1,
+        .prompts-header h1,
+        .category-header h1,
+        .educational-resources-header h1,
+        .support-header h1,
+        .hero-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header paragraph specific styles */
+        .page-header p,
+        .dashboard-header p,
+        .blog-header p,
+        .resources-header p,
+        .journal-header p,
+        .community-header p,
+        .profile-header p,
+        .milestones-header p,
+        .stats-header p,
+        .entries-header p,
+        .prompts-header p,
+        .category-header p,
+        .educational-resources-header p,
+        .support-header p,
+        .hero-section p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.95) !important;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Animated background for all headers */
+        .page-header::before,
+        .dashboard-header::before,
+        .blog-header::before,
+        .resources-header::before,
+        .journal-header::before,
+        .community-header::before,
+        .profile-header::before,
+        .milestones-header::before,
+        .stats-header::before,
+        .entries-header::before,
+        .prompts-header::before,
+        .category-header::before,
+        .educational-resources-header::before,
+        .support-header::before,
+        .hero-section::before {
             content: '';
             position: absolute;
             width: 150%;
@@ -104,125 +335,9 @@
             }
         }
 
-        .page-header h1 {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
-            position: relative;
-            z-index: 1;
-            font-size: 2.5rem;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Update any existing purple/old color gradients */
-        .dashboard-header,
-        .blog-header,
-        .resources-header,
-        .journal-header,
-        .community-header,
-        .profile-header,
-        .milestones-header,
-        .stats-header,
-        .entries-header,
-        .prompts-header {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
-            background: var(--gradient-primary) !important;
-        }
-
-        /* Update old purple color references */
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
-            color: var(--primary-dark);
-        }
-
-        a {
-            color: var(--primary-light);
-        }
-
-        a:hover {
-            color: var(--primary-dark);
-        }
-
-        /* Update stat numbers and important metrics */
-        .stat-number,
-        .big-number {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Update cards and sections */
-        .stat-card:hover::before,
-        .feature-card:hover::before,
-        .resource-card:hover::before,
-        .blog-card:hover::before {
-            background: linear-gradient(90deg, var(--primary-dark), var(--primary-light), var(--accent-green)) !important;
-        }
-
-        /* Update buttons across the site */
-        .cta-button,
-        .btn-success {
-            background: var(--accent-green) !important;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .cta-button:hover,
-        .btn-success:hover {
-            background: #45a675 !important;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
-        }
-
-        /* Update form inputs */
-        input:focus,
-        textarea:focus,
-        select:focus {
-            border-color: var(--primary-light) !important;
-            box-shadow: 0 0 0 3px rgba(77, 184, 232, 0.1) !important;
-        }
-
-        /* Update badges and pills */
-        .badge-primary {
-            background-color: var(--primary-dark) !important;
-        }
-
-        .badge-success {
-            background-color: var(--accent-green) !important;
-        }
-
-        /* Update progress bars */
-        .progress-bar {
-            background-color: var(--accent-green) !important;
-        }
-
-        /* Update existing purple hex codes */
-        [style*="#667eea"],
-        [style*="#764ba2"],
-        [style*="#8b7ff0"],
-        [style*="#7f6ed9"] {
-            background: var(--gradient-primary) !important;
-        }
-
-        * {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            padding-top: 70px;
-            /* Account for fixed nav */
-            background: var(--bg-light);
-            color: var(--text-dark);
-        }
-
-        /* Updated Navigation Styles */
+        /* ========================================
+           NAVIGATION STYLES
+           ======================================== */
         nav {
             position: fixed;
             top: 0;
@@ -390,6 +505,32 @@
             border-top: 1px solid #e0e0e0;
         }
 
+        /* Logout button styled as link */
+        .logout-form {
+            margin: 0;
+            padding: 0;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            cursor: pointer;
+            font: inherit;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            width: 100%;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            background: var(--bg-light);
+            color: var(--primary-dark);
+        }
+
         /* Message notification badge */
         .notification-badge {
             background: #ff4444;
@@ -421,6 +562,7 @@
             font-weight: 600;
             transition: all 0.3s ease;
             display: inline-block;
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
         .cta-button:hover {
@@ -445,7 +587,10 @@
             transition: all 0.3s ease;
         }
 
-        /* Main Content */
+        /* ========================================
+           MAIN CONTENT & FOOTER
+           ======================================== */
+
         main {
             min-height: calc(100vh - 70px);
         }
@@ -498,7 +643,9 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
-        /* Alert Messages */
+        /* ========================================
+           ALERT MESSAGES
+           ======================================== */
         .messages {
             max-width: 1200px;
             margin: 1rem auto;
@@ -537,10 +684,117 @@
             color: #0c5460;
         }
 
-        /* Responsive Design */
+        /* ========================================
+           COMPONENTS
+           ======================================== */
+
+        /* Stat numbers and important metrics */
+        .stat-number,
+        .big-number {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        /* Cards and sections */
+        .stat-card:hover::before,
+        .feature-card:hover::before,
+        .resource-card:hover::before,
+        .blog-card:hover::before {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-light), var(--accent-green)) !important;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-success {
+            background: var(--accent-green) !important;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a675 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
+        }
+
+        /* Form inputs */
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--primary-light) !important;
+            box-shadow: 0 0 0 3px rgba(77, 184, 232, 0.1) !important;
+            outline: none;
+        }
+
+        /* Badges and pills */
+        .badge-primary {
+            background-color: var(--primary-dark) !important;
+        }
+
+        .badge-success {
+            background-color: var(--accent-green) !important;
+        }
+
+        /* Progress bars */
+        .progress-bar {
+            background-color: var(--accent-green) !important;
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN
+           ======================================== */
         @media (max-width: 768px) {
             body {
                 padding-top: 60px;
+            }
+
+            .page-header,
+            .dashboard-header,
+            .blog-header,
+            .resources-header,
+            .journal-header,
+            .community-header,
+            .profile-header,
+            .milestones-header,
+            .stats-header,
+            .entries-header,
+            .prompts-header,
+            .category-header,
+            .educational-resources-header,
+            .support-header,
+            .hero-section {
+                padding: 80px 0 40px;
+            }
+
+            .page-header h1,
+            .dashboard-header h1,
+            .blog-header h1,
+            .resources-header h1,
+            .journal-header h1,
+            .community-header h1,
+            .profile-header h1,
+            .milestones-header h1,
+            .stats-header h1,
+            .entries-header h1,
+            .prompts-header h1,
+            .category-header h1,
+            .educational-resources-header h1,
+            .support-header h1,
+            .hero-section h1 {
+                font-size: 2rem;
             }
 
             .nav-links {
@@ -577,6 +831,10 @@
             }
         }
 
+        /* ========================================
+           UTILITY CLASSES
+           ======================================== */
+
         /* Loading Animation */
         .loader {
             position: fixed;
@@ -597,7 +855,7 @@
             }
         }
 
-        /* Utility Classes */
+        /* Text utilities */
         .text-center {
             text-align: center;
         }
@@ -606,6 +864,7 @@
             color: #6c757d;
         }
 
+        /* Margin utilities */
         .mt-1 {
             margin-top: 0.5rem;
         }
@@ -638,6 +897,7 @@
             margin-bottom: 2rem;
         }
 
+        /* Padding utilities */
         .p-2 {
             padding: 1rem;
         }
@@ -720,9 +980,12 @@
                         <a href="{% url 'accounts:edit_profile' %}">
                             <i class="fas fa-cog"></i> Settings
                         </a>
-                        <a href="{% url 'accounts:logout' %}">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
+                        <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
                     </div>
                 </div>
                 {% else %}

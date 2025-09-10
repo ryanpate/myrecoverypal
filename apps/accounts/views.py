@@ -166,14 +166,25 @@ class CommunityView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
+        # Calculate total members (all active users with public profiles except current user)
+        total_members = User.objects.filter(
+            is_profile_public=True,
+            is_active=True
+        ).exclude(id=self.request.user.id if self.request.user.is_authenticated else None).count()
+        
+        # Potential connections is the same as total members (everyone you can connect with)
+        context['total_members'] = total_members
+        context['potential_connections'] = total_members
+        
         # Add sponsors count
         context['sponsors_count'] = User.objects.filter(
             is_profile_public=True,
             is_active=True,
             is_sponsor=True
-        ).count()
-        return context
-    
+        ).exclude(id=self.request.user.id if self.request.user.is_authenticated else None).count()
+        
+        return context    
 @login_required
 def send_message_view(request, username):
     recipient = get_object_or_404(User, username=username)

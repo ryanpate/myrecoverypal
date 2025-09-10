@@ -133,6 +133,13 @@
 <div class="post-header">
     <h1>{{ post.title }}</h1>
     <div class="post-meta">
+        {% if user == post.author or user.is_staff %}
+        <div style="margin: 1rem 0;">
+            <a href="{% url 'blog:post_edit' post.slug %}" class="btn btn-secondary">
+                <i class="fas fa-edit"></i> Edit Post
+            </a>
+        </div>
+        {% endif %}
         <span>By {{ post.author.get_full_name|default:post.author.username }}</span>
         <span>{{ post.published_at|date:"F d, Y" }}</span>
         <span>{{ post.reading_time }} min read</span>

@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .post-form-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .form-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    }
+    
+    .checkbox-group {
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: #f9f9f9;
+        border-radius: 5px;
+    }
+    
+    .checkbox-group .form-check {
+        margin-bottom: 1rem;
+    }
+    
+    .form-check-input {
+        margin-right: 0.5rem;
+    }
+    
+    .form-actions {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid #f0f0f0;
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
+    }
+    
+    .btn {
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+    
+    .btn-outline {
+        background: white;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+    }
+    
+    .btn-outline:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+    
+    .help-text {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 0.25rem;
+    }
+    
+    .error-message {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    
+    /* Rich text editor styles */
+    .content-editor {
+        min-height: 300px;
+    }
+    
+    @media (max-width: 768px) {
+        .post-form-container {
+            padding: 1rem;
+            margin: 1rem;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="post-form-container">
+        <div class="form-header">
+            <h2>{{ title|default:"Create New Post" }}</h2>
+            <p>Share your recovery journey, insights, or helpful resources with the community.</p>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data" id="postForm">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+            
+            <!-- Title Field -->
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                {{ form.title }}
+                {% if form.title.help_text %}
+                <small class="help-text">{{ form.title.help_text }}</small>
+                {% endif %}
+                {% if form.title.errors %}
+                <div class="error-message">{{ form.title.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <!-- Excerpt Field -->
+            <div class="form-group">
+                <label for="{{ form.excerpt.id_for_label }}">{{ form.excerpt.label }}</label>
+                {{ form.excerpt }}
+                <small class="help-text">A brief summary that will appear in post listings</small>
+                {% if form.excerpt.errors %}
+                <div class="error-message">{{ form.excerpt.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <!-- Content Field -->
+            <div class="form-group">
+                <label for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
+                {{ form.content }}
+                {% if form.content.errors %}
+                <div class="error-message">{{ form.content.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <!-- Category and Tags -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                        <div class="error-message">{{ form.category.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.tags.id_for_label }}">{{ form.tags.label }}</label>
+                        {{ form.tags }}
+                        <small class="help-text">Hold Ctrl/Cmd to select multiple tags</small>
+                        {% if form.tags.errors %}
+                        <div class="error-message">{{ form.tags.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- New Tags Field -->
+            <div class="form-group">
+                <label for="{{ form.new_tags.id_for_label }}">Add New Tags</label>
+                {{ form.new_tags }}
+                <small class="help-text">{{ form.new_tags.help_text }}</small>
+            </div>
+            
+            <!-- Featured Image -->
+            <div class="form-group">
+                <label for="{{ form.featured_image.id_for_label }}">{{ form.featured_image.label }}</label>
+                {{ form.featured_image }}
+                <small class="help-text">Upload an image to display with your post</small>
+                {% if form.featured_image.errors %}
+                <div class="error-message">{{ form.featured_image.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <!-- Checkboxes -->
+            <div class="checkbox-group">
+                <div class="form-check">
+                    {{ form.is_personal_story }}
+                    <label class="form-check-label" for="{{ form.is_personal_story.id_for_label }}">
+                        {{ form.is_personal_story.label }}
+                    </label>
+                </div>
+                
+                <div class="form-check">
+                    {{ form.trigger_warning }}
+                    <label class="form-check-label" for="{{ form.trigger_warning.id_for_label }}">
+                        {{ form.trigger_warning.label }}
+                    </label>
+                </div>
+                
+                <div id="triggerDescriptionGroup" style="display:none; margin-top: 1rem;">
+                    <label for="{{ form.trigger_description.id_for_label }}">
+                        Trigger Description
+                    </label>
+                    {{ form.trigger_description }}
+                    <small class="help-text">Please briefly describe the nature of potential triggers</small>
+                </div>
+            </div>
+            
+            <!-- Status Field -->
+            <div class="form-group">
+                <label for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
+                {{ form.status }}
+                <small class="help-text">Save as draft to continue editing later, or publish immediately</small>
+                {% if form.status.errors %}
+                <div class="error-message">{{ form.status.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <div>
+                    <a href="{% url 'blog:post_list' %}" class="btn btn-outline">Cancel</a>
+                </div>
+                <div>
+                    <button type="submit" name="save_draft" class="btn btn-secondary">Save as Draft</button>
+                    <button type="submit" name="publish" class="btn btn-primary">
+                        {{ button_text|default:"Publish Post" }}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Show/hide trigger description based on checkbox
+document.addEventListener('DOMContentLoaded', function() {
+    const triggerWarningCheckbox = document.getElementById('id_trigger_warning');
+    const triggerDescriptionGroup = document.getElementById('triggerDescriptionGroup');
+    
+    // Show/hide on page load based on initial state
+    if (triggerWarningCheckbox.checked) {
+        triggerDescriptionGroup.style.display = 'block';
+    }
+    
+    // Show/hide on checkbox change
+    triggerWarningCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            triggerDescriptionGroup.style.display = 'block';
+        } else {
+            triggerDescriptionGroup.style.display = 'none';
+            document.getElementById('id_trigger_description').value = '';
+        }
+    });
+    
+    // Handle different submit buttons
+    const form = document.getElementById('postForm');
+    const saveDraftBtn = document.querySelector('button[name="save_draft"]');
+    const publishBtn = document.querySelector('button[name="publish"]');
+    
+    saveDraftBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('id_status').value = 'draft';
+        form.submit();
+    });
+    
+    publishBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('id_status').value = 'published';
+        form.submit();
+    });
+});
+</script>
+{% endblock %}
