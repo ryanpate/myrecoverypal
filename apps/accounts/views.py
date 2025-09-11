@@ -5,10 +5,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, UpdateView, ListView, CreateView
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.db.models import Q
+from django.db.models import Q, Count, Prefetch
 from django.utils import timezone
-from .models import User, Milestone, SupportMessage
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from .models import User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, ActivityComment
 from .forms import CustomUserCreationForm, UserProfileForm, MilestoneForm, SupportMessageForm
+from .signals import create_profile_update_activity
 
 def register_view(request):
     if request.method == 'POST':
@@ -43,13 +47,55 @@ def register_view(request):
 @login_required
 def dashboard_view(request):
     user = request.user
+    
+    # Get activity feed - show public activities from all users
+    activity_feed = ActivityFeed.objects.filter(
+        is_public=True
+    ).select_related(
+        'user'
+    ).prefetch_related(
+        'likes',
+        Prefetch('comments', queryset=ActivityComment.objects.select_related('user')[:3])
+    )[:20]  # Last 20 activities
+    
+    # Get user's recent activities
+    user_recent_activities = ActivityFeed.objects.filter(
+        user=user
+    )[:5]
+    
+    # Check if user has checked in today
+    today = timezone.now().date()
+    has_checked_in_today = DailyCheckIn.objects.filter(
+        user=user,
+        date=today
+    ).exists()
+    
+    # Get recent community stats
+    recent_milestones = Milestone.objects.filter(
+        created_at__gte=timezone.now() - timezone.timedelta(days=7)
+    ).count()
+    
+    active_users_week = User.objects.filter(
+        last_seen__gte=timezone.now() - timezone.timedelta(days=7)
+    ).count()
+    
     context = {
         'user': user,
         'days_sober': user.get_days_sober(),
         'sobriety_milestone': user.get_sobriety_milestone(),
         'recent_milestones': user.milestones.all()[:5],
-        'recent_posts': user.blog_posts.all()[:5],
+        'recent_posts': user.blog_posts.all()[:5] if hasattr(user, 'blog_posts') else [],
         'unread_messages': user.received_messages.filter(is_read=False).count(),
+        
+        # Activity Feed Data
+        'activity_feed': activity_feed,
+        'user_recent_activities': user_recent_activities,
+        'has_checked_in_today': has_checked_in_today,
+        
+        # Community Stats
+        'recent_milestones_count': recent_milestones,
+        'active_users_week': active_users_week,
+        'total_members': User.objects.filter(is_active=True).count(),
     }
     
     # Check for milestone achievements
@@ -77,6 +123,88 @@ def dashboard_view(request):
     
     return render(request, 'accounts/dashboard.html', context)
 
+
+@login_required
+@require_POST
+def like_activity(request, activity_id):
+    """AJAX endpoint to like/unlike an activity"""
+    activity = get_object_or_404(ActivityFeed, id=activity_id)
+    
+    if request.user in activity.likes.all():
+        activity.likes.remove(request.user)
+        liked = False
+    else:
+        activity.likes.add(request.user)
+        liked = True
+    
+    return JsonResponse({
+        'liked': liked,
+        'likes_count': activity.likes_count
+    })
+
+
+@login_required
+def daily_checkin_view(request):
+    """Handle daily check-in creation"""
+    today = timezone.now().date()
+    
+    # Check if user already checked in today
+    existing_checkin = DailyCheckIn.objects.filter(
+        user=request.user,
+        date=today
+    ).first()
+    
+    if existing_checkin:
+        messages.info(request, "You've already checked in today! Come back tomorrow.")
+        return redirect('accounts:dashboard')
+    
+    if request.method == 'POST':
+        # Create check-in from form data
+        checkin = DailyCheckIn.objects.create(
+            user=request.user,
+            date=today,
+            mood=int(request.POST.get('mood')),
+            craving_level=int(request.POST.get('craving_level', 0)),
+            energy_level=int(request.POST.get('energy_level', 3)),
+            gratitude=request.POST.get('gratitude', ''),
+            challenge=request.POST.get('challenge', ''),
+            goal=request.POST.get('goal', ''),
+            is_shared=bool(request.POST.get('is_shared'))
+        )
+        
+        messages.success(request, 'Daily check-in completed! 🌟')
+        return redirect('accounts:dashboard')
+    
+    return render(request, 'accounts/daily_checkin.html')
+
+
+@login_required
+@require_POST
+def comment_on_activity(request, activity_id):
+    """AJAX endpoint to comment on an activity"""
+    activity = get_object_or_404(ActivityFeed, id=activity_id)
+    content = request.POST.get('content', '').strip()
+    
+    if content:
+        comment = ActivityComment.objects.create(
+            activity=activity,
+            user=request.user,
+            content=content
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'comment': {
+                'id': comment.id,
+                'content': comment.content,
+                'user': comment.user.get_full_name() or comment.user.username,
+                'created_at': comment.created_at.strftime('%b %d, %Y at %I:%M %p')
+            }
+        })
+    
+    return JsonResponse({'success': False, 'error': 'Comment cannot be empty'})
+
+
 class ProfileView(DetailView):
     model = User
     template_name = 'accounts/profile.html'
@@ -94,7 +222,13 @@ class ProfileView(DetailView):
             context['milestones'] = profile_user.milestones.all()[:10]
             context['recent_posts'] = profile_user.blog_posts.filter(
                 status='published'
-            )[:5]
+            )[:5] if hasattr(profile_user, 'blog_posts') else []
+            
+            # Add recent activities for this user
+            context['user_activities'] = ActivityFeed.objects.filter(
+                user=profile_user,
+                is_public=True
+            )[:10]
         else:
             context['show_full_profile'] = False
         
@@ -106,6 +240,8 @@ def edit_profile_view(request):
         form = UserProfileForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
+            # Create activity for profile update
+            create_profile_update_activity(request.user)
             messages.success(request, 'Your profile has been updated!')
             return redirect('accounts:profile', username=request.user.username)
     else:
@@ -185,6 +321,7 @@ class CommunityView(ListView):
         ).exclude(id=self.request.user.id if self.request.user.is_authenticated else None).count()
         
         return context    
+
 @login_required
 def send_message_view(request, username):
     recipient = get_object_or_404(User, username=username)

@@ -1,0 +1,419 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Daily Check-in - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checkin-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .checkin-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .checkin-header {
+        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .checkin-header h1 {
+        margin: 0 0 0.5rem 0;
+        font-size: 2rem;
+    }
+
+    .checkin-form {
+        padding: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 2rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .mood-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .mood-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+    }
+
+    .mood-option:hover {
+        border-color: #52b788;
+        background: #f8f9fa;
+    }
+
+    .mood-option.selected {
+        border-color: #52b788;
+        background: #e8f5e8;
+    }
+
+    .mood-emoji {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .mood-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #666;
+    }
+
+    .scale-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .scale-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .range-input {
+        width: 100%;
+        height: 8px;
+        border-radius: 4px;
+        background: #e9ecef;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    .range-input::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #52b788;
+        cursor: pointer;
+    }
+
+    .range-input::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #52b788;
+        cursor: pointer;
+        border: none;
+    }
+
+    .text-input {
+        width: 100%;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 1rem;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .text-input:focus {
+        outline: none;
+        border-color: #52b788;
+    }
+
+    .share-toggle {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-top: 1rem;
+    }
+
+    .toggle-switch {
+        position: relative;
+        width: 50px;
+        height: 24px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.3s;
+        border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+    }
+
+    input:checked+.toggle-slider {
+        background-color: #52b788;
+    }
+
+    input:checked+.toggle-slider:before {
+        transform: translateX(26px);
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 2rem;
+        transition: transform 0.3s;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .cancel-btn {
+        background: none;
+        border: 2px solid #6c757d;
+        color: #6c757d;
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 1rem;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .cancel-btn:hover {
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .mood-options {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .mood-emoji {
+            font-size: 2rem;
+        }
+
+        .checkin-header h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checkin-container">
+    <div class="checkin-card">
+        <div class="checkin-header">
+            <h1>✅ Daily Check-in</h1>
+            <p style="margin: 0; opacity: 0.9;">How are you feeling today? Your journey matters.</p>
+        </div>
+
+        <form method="post" class="checkin-form">
+            {% csrf_token %}
+
+            <!-- Mood Selection -->
+            <div class="form-group">
+                <label>How's your mood today?</label>
+                <div class="mood-options">
+                    <div class="mood-option" onclick="selectMood(1)">
+                        <div class="mood-emoji">😰</div>
+                        <div class="mood-label">Struggling</div>
+                    </div>
+                    <div class="mood-option" onclick="selectMood(2)">
+                        <div class="mood-emoji">😔</div>
+                        <div class="mood-label">Down</div>
+                    </div>
+                    <div class="mood-option" onclick="selectMood(3)">
+                        <div class="mood-emoji">😐</div>
+                        <div class="mood-label">Okay</div>
+                    </div>
+                    <div class="mood-option" onclick="selectMood(4)">
+                        <div class="mood-emoji">😊</div>
+                        <div class="mood-label">Good</div>
+                    </div>
+                    <div class="mood-option" onclick="selectMood(5)">
+                        <div class="mood-emoji">😄</div>
+                        <div class="mood-label">Great</div>
+                    </div>
+                    <div class="mood-option" onclick="selectMood(6)">
+                        <div class="mood-emoji">🌟</div>
+                        <div class="mood-label">Amazing</div>
+                    </div>
+                </div>
+                <input type="hidden" name="mood" id="mood" required>
+            </div>
+
+            <!-- Craving Level -->
+            <div class="form-group">
+                <label for="craving_level">Craving Level Today</label>
+                <div class="scale-container">
+                    <span>None</span>
+                    <input type="range" name="craving_level" id="craving_level" min="0" max="4" value="0"
+                        class="range-input">
+                    <span>Intense</span>
+                </div>
+                <div class="scale-labels">
+                    <span>0</span>
+                    <span>1</span>
+                    <span>2</span>
+                    <span>3</span>
+                    <span>4</span>
+                </div>
+            </div>
+
+            <!-- Energy Level -->
+            <div class="form-group">
+                <label for="energy_level">Energy Level</label>
+                <div class="scale-container">
+                    <span>Low</span>
+                    <input type="range" name="energy_level" id="energy_level" min="1" max="5" value="3"
+                        class="range-input">
+                    <span>High</span>
+                </div>
+                <div class="scale-labels">
+                    <span>1</span>
+                    <span>2</span>
+                    <span>3</span>
+                    <span>4</span>
+                    <span>5</span>
+                </div>
+            </div>
+
+            <!-- Gratitude -->
+            <div class="form-group">
+                <label for="gratitude">What are you grateful for today? (Optional)</label>
+                <textarea name="gratitude" id="gratitude" class="text-input"
+                    placeholder="Express what you're thankful for today..."></textarea>
+            </div>
+
+            <!-- Challenge -->
+            <div class="form-group">
+                <label for="challenge">What's your biggest challenge today? (Optional)</label>
+                <textarea name="challenge" id="challenge" class="text-input"
+                    placeholder="Share what you're struggling with..."></textarea>
+            </div>
+
+            <!-- Goal -->
+            <div class="form-group">
+                <label for="goal">What's your goal for today? (Optional)</label>
+                <textarea name="goal" id="goal" class="text-input"
+                    placeholder="What do you want to accomplish today?"></textarea>
+            </div>
+
+            <!-- Share Toggle -->
+            <div class="form-group">
+                <div class="share-toggle">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="is_shared" id="is_shared">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <div>
+                        <strong>Share with community</strong>
+                        <div style="font-size: 0.9rem; color: #666; margin-top: 0.25rem;">
+                            Let others see your check-in to provide support and encouragement
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Complete Check-in</button>
+            <a href="{% url 'accounts:dashboard' %}" class="cancel-btn">Cancel</a>
+        </form>
+    </div>
+</div>
+
+<script>
+    let selectedMood = null;
+
+    function selectMood(moodValue) {
+        // Remove previous selection
+        document.querySelectorAll('.mood-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+
+        // Add selection to clicked option
+        event.currentTarget.classList.add('selected');
+
+        // Set hidden input value
+        document.getElementById('mood').value = moodValue;
+        selectedMood = moodValue;
+    }
+
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function (e) {
+        if (!selectedMood) {
+            e.preventDefault();
+            alert('Please select your mood before submitting.');
+            return false;
+        }
+    });
+
+    // Update range input displays
+    document.getElementById('craving_level').addEventListener('input', function (e) {
+        const labels = ['None', 'Mild', 'Moderate', 'Strong', 'Intense'];
+        const value = parseInt(e.target.value);
+        // You could add a display element to show the current value
+    });
+
+    document.getElementById('energy_level').addEventListener('input', function (e) {
+        const value = parseInt(e.target.value);
+        // You could add a display element to show the current value
+    });
+</script>
+{% endblock %}

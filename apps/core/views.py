@@ -1,9 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 
 class IndexView(TemplateView):
     template_name = 'core/index.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        # If user is authenticated, redirect to dashboard
+        if request.user.is_authenticated:
+            return redirect('accounts:dashboard')
+        # Otherwise, show the home page
+        return super().dispatch(request, *args, **kwargs)
 class AboutView(TemplateView):
     template_name = 'core/about.html'
 

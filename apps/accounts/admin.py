@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Milestone, SupportMessage
+from .models import User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, ActivityComment
 
 
 class CustomUserAdmin(UserAdmin):
@@ -49,5 +49,44 @@ class SupportMessageAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
 
 
-# Register the custom user admin - FIXED VERSION
+@admin.register(ActivityFeed)
+class ActivityFeedAdmin(admin.ModelAdmin):
+    list_display = ['user', 'activity_type', 'title', 'is_public', 'created_at', 'likes_count']
+    list_filter = ['activity_type', 'is_public', 'created_at']
+    search_fields = ['user__username', 'title', 'description']
+    date_hierarchy = 'created_at'
+    readonly_fields = ['created_at', 'likes_count']
+    
+    def likes_count(self, obj):
+        return obj.likes_count
+    likes_count.short_description = 'Likes'
+
+
+@admin.register(DailyCheckIn)
+class DailyCheckInAdmin(admin.ModelAdmin):
+    list_display = ['user', 'date', 'mood', 'craving_level', 'energy_level', 'is_shared', 'likes_count']
+    list_filter = ['mood', 'craving_level', 'energy_level', 'is_shared', 'date']
+    search_fields = ['user__username', 'gratitude', 'challenge', 'goal']
+    date_hierarchy = 'date'
+    readonly_fields = ['created_at', 'likes_count']
+    
+    def likes_count(self, obj):
+        return obj.likes_count
+    likes_count.short_description = 'Likes'
+
+
+@admin.register(ActivityComment)
+class ActivityCommentAdmin(admin.ModelAdmin):
+    list_display = ['user', 'activity', 'content_preview', 'created_at']
+    list_filter = ['created_at']
+    search_fields = ['user__username', 'content', 'activity__title']
+    date_hierarchy = 'created_at'
+    readonly_fields = ['created_at', 'updated_at']
+    
+    def content_preview(self, obj):
+        return obj.content[:50] + '...' if len(obj.content) > 50 else obj.content
+    content_preview.short_description = 'Content Preview'
+
+
+# Register the custom user admin
 admin.site.register(User, CustomUserAdmin)

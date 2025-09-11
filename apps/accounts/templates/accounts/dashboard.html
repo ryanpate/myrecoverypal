@@ -11,13 +11,11 @@
         color: white;
         text-align: center;
         margin-bottom: 2rem;
-        /* Added margin to prevent overlap */
     }
 
     .dashboard-container {
         max-width: 1200px;
         margin: 0 auto 2rem;
-        /* Changed from negative margin to 0 */
         padding: 0 2rem;
     }
 
@@ -27,7 +25,6 @@
         gap: 1.5rem;
         margin-bottom: 2rem;
         margin-top: 0;
-        /* Ensure no negative space */
     }
 
     .stat-card {
@@ -38,7 +35,6 @@
         text-align: center;
         transition: transform 0.3s ease;
         position: relative;
-        /* Ensure proper stacking */
     }
 
     .stat-card:hover {
@@ -117,6 +113,7 @@
         background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
         color: white;
         transform: translateX(5px);
+        text-decoration: none;
     }
 
     .posts-list {
@@ -166,11 +163,264 @@
     .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3);
+        text-decoration: none;
+        color: white;
     }
 
     .btn-sm {
         padding: 0.5rem 1rem;
         font-size: 0.9rem;
+    }
+
+    /* NEW ACTIVITY FEED STYLES */
+    .activity-feed-section {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+
+    .feed-header {
+        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        color: white;
+        padding: 1.5rem 2rem;
+    }
+
+    .feed-header h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.4rem;
+    }
+
+    .feed-header p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 0.95rem;
+    }
+
+    .checkin-prompt {
+        background: #f8f9fa;
+        border: 2px dashed #52b788;
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        margin: 1.5rem;
+    }
+
+    .checkin-btn {
+        background: #52b788;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 25px;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 0.5rem;
+        transition: all 0.3s;
+        font-weight: 600;
+    }
+
+    .checkin-btn:hover {
+        background: #45a065;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    .activity-item {
+        border-bottom: 1px solid #eee;
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .activity-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.2rem;
+        color: white;
+        overflow: hidden;
+    }
+
+    .activity-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .activity-meta {
+        flex: 1;
+    }
+
+    .activity-user {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.25rem;
+    }
+
+    .activity-user a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .activity-user a:hover {
+        color: #52b788;
+    }
+
+    .activity-time {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .activity-icon {
+        font-size: 1.5rem;
+        margin-left: auto;
+    }
+
+    .activity-content {
+        margin-bottom: 1rem;
+    }
+
+    .activity-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+
+    .activity-description {
+        color: #666;
+        line-height: 1.5;
+    }
+
+    .activity-engagement {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .engagement-btn {
+        background: none;
+        border: none;
+        color: #666;
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .engagement-btn:hover {
+        background: #f8f9fa;
+        color: #52b788;
+    }
+
+    .engagement-btn.liked {
+        color: #e74c3c;
+        background: #fee;
+    }
+
+    .comment-form {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f0f0f0;
+        display: none;
+    }
+
+    .comment-input {
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        padding: 0.75rem 1rem;
+        resize: none;
+        font-family: inherit;
+    }
+
+    .comment-btn {
+        background: #52b788;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        margin-top: 0.5rem;
+        cursor: pointer;
+    }
+
+    .activity-comments {
+        margin-top: 1rem;
+    }
+
+    .comment {
+        background: #f8f9fa;
+        padding: 0.75rem;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+    }
+
+    .comment strong {
+        color: #333;
+        margin-right: 0.5rem;
+    }
+
+    .comment p {
+        margin: 0.25rem 0 0 0;
+        color: #666;
+    }
+
+    .empty-feed {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+    }
+
+    .empty-feed h4 {
+        margin-bottom: 1rem;
+        color: #999;
+    }
+
+    .community-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .community-stat {
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .community-stat-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #52b788;
+        margin-bottom: 0.25rem;
+    }
+
+    .community-stat-label {
+        font-size: 0.9rem;
+        color: #666;
     }
 
     @media (max-width: 768px) {
@@ -184,6 +434,14 @@
 
         .dashboard-header {
             padding: 80px 0 40px;
+        }
+
+        .activity-header {
+            flex-wrap: wrap;
+        }
+
+        .activity-engagement {
+            flex-wrap: wrap;
         }
     }
 </style>
@@ -207,17 +465,106 @@
             <div class="stat-label">Milestones Achieved</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number">{{ user.blog_posts.count }}</div>
+            <div class="stat-number">{{ user.blog_posts.count|default:0 }}</div>
             <div class="stat-label">Stories Shared</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number">{{ unread_messages }}</div>
-            <div class="stat-label">Unread Messages</div>
+            <div class="stat-number">{{ total_members|default:unread_messages }}</div>
+            <div class="stat-label">{% if total_members %}Community Members{% else %}Unread Messages{% endif %}</div>
         </div>
     </div>
 
     <div class="dashboard-grid">
         <div class="main-content">
+            <!-- NEW: Community Activity Feed -->
+            <div class="activity-feed-section">
+                <div class="feed-header">
+                    <h3>🌟 Community Activity</h3>
+                    <p>See what's happening in your recovery community</p>
+                </div>
+
+                <!-- Daily Check-in Prompt -->
+                {% if not has_checked_in_today %}
+                <div class="checkin-prompt">
+                    <h4 style="margin-top: 0; color: #52b788;">✅ How are you doing today?</h4>
+                    <p>Share your mood and progress with the community</p>
+                    <a href="{% url 'accounts:daily_checkin' %}" class="checkin-btn">Check In Today</a>
+                </div>
+                {% endif %}
+
+                <!-- Activity Feed -->
+                <div class="activity-feed">
+                    {% for activity in activity_feed %}
+                    <div class="activity-item" data-activity-id="{{ activity.id }}">
+                        <div class="activity-header">
+                            <div class="activity-avatar">
+                                {% if activity.user.avatar %}
+                                <img src="{{ activity.user.avatar.url }}" alt="{{ activity.user.username }}">
+                                {% else %}
+                                👤
+                                {% endif %}
+                            </div>
+                            <div class="activity-meta">
+                                <div class="activity-user">
+                                    <a href="{% url 'accounts:profile' activity.user.username %}">
+                                        {{ activity.user.get_full_name|default:activity.user.username }}
+                                    </a>
+                                </div>
+                                <div class="activity-time">{{ activity.created_at|timesince }} ago</div>
+                            </div>
+                            <div class="activity-icon">{{ activity.get_activity_icon }}</div>
+                        </div>
+
+                        <div class="activity-content">
+                            <div class="activity-title">{{ activity.title }}</div>
+                            {% if activity.description %}
+                            <div class="activity-description">{{ activity.description|linebreaks }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="activity-engagement">
+                            <button
+                                class="engagement-btn like-btn {% if request.user in activity.likes.all %}liked{% endif %}"
+                                onclick="likeActivity({{ activity.id }})">
+                                ❤️ <span class="like-count">{{ activity.likes_count }}</span>
+                            </button>
+                            <button class="engagement-btn" onclick="toggleCommentForm({{ activity.id }})">
+                                💬 Comment
+                            </button>
+                        </div>
+
+                        <!-- Comment Form -->
+                        <div class="comment-form" id="comment-form-{{ activity.id }}">
+                            <textarea class="comment-input" placeholder="Leave a supportive comment..."
+                                rows="2"></textarea>
+                            <button class="comment-btn" onclick="submitComment({{ activity.id }})">Post Comment</button>
+                        </div>
+
+                        <!-- Existing Comments -->
+                        {% if activity.comments.all %}
+                        <div class="activity-comments">
+                            {% for comment in activity.comments.all %}
+                            <div class="comment">
+                                <strong>{{ comment.user.get_full_name|default:comment.user.username }}</strong>
+                                <span style="color: #666; font-size: 0.9rem;">{{ comment.created_at|timesince }}
+                                    ago</span>
+                                <p>{{ comment.content }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="empty-feed">
+                        <h4>Welcome to your recovery community!</h4>
+                        <p>Activity from community members will appear here.</p>
+                        <p><a href="{% url 'accounts:community' %}" style="color: #52b788;">Explore the community</a> to
+                            see more content.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
             <!-- Recent Milestones -->
             <div class="dashboard-section">
                 <div class="section-header">
@@ -269,7 +616,6 @@
                 <a href="{% url 'blog:post_create' %}" class="btn btn-primary">Write Your First Post</a>
                 {% endif %}
             </div>
-
         </div>
 
         <div class="sidebar">
@@ -304,7 +650,114 @@
                 <p style="font-size: 0.9rem; color: #666;">Complete your profile to connect with more members</p>
                 <a href="{% url 'accounts:edit_profile' %}" style="color: #1e4d8b;">Complete Profile →</a>
             </div>
+
+            <!-- NEW: Community Stats -->
+            {% if recent_milestones_count or active_users_week %}
+            <div class="dashboard-section">
+                <h3>Community This Week</h3>
+                <div class="community-stats">
+                    <div class="community-stat">
+                        <div class="community-stat-number">{{ recent_milestones_count|default:0 }}</div>
+                        <div class="community-stat-label">New Milestones</div>
+                    </div>
+                    <div class="community-stat">
+                        <div class="community-stat-number">{{ active_users_week|default:0 }}</div>
+                        <div class="community-stat-label">Active Members</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
+
+<script>
+    // CSRF token for AJAX requests
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    function likeActivity(activityId) {
+        fetch(`/accounts/like-activity/${activityId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                const likeBtn = document.querySelector(`[data-activity-id="${activityId}"] .like-btn`);
+                const likeCount = likeBtn.querySelector('.like-count');
+
+                if (data.liked) {
+                    likeBtn.classList.add('liked');
+                } else {
+                    likeBtn.classList.remove('liked');
+                }
+
+                likeCount.textContent = data.likes_count;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function toggleCommentForm(activityId) {
+        const commentForm = document.getElementById(`comment-form-${activityId}`);
+        commentForm.style.display = commentForm.style.display === 'none' || commentForm.style.display === '' ? 'block' : 'none';
+
+        if (commentForm.style.display === 'block') {
+            commentForm.querySelector('.comment-input').focus();
+        }
+    }
+
+    function submitComment(activityId) {
+        const commentForm = document.getElementById(`comment-form-${activityId}`);
+        const textarea = commentForm.querySelector('.comment-input');
+        const content = textarea.value.trim();
+
+        if (!content) {
+            alert('Please enter a comment');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('content', content);
+        formData.append('csrfmiddlewaretoken', csrfToken);
+
+        fetch(`/accounts/comment-on-activity/${activityId}/`, {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    textarea.value = '';
+
+                    const activityItem = document.querySelector(`[data-activity-id="${activityId}"]`);
+                    let commentsSection = activityItem.querySelector('.activity-comments');
+
+                    if (!commentsSection) {
+                        commentsSection = document.createElement('div');
+                        commentsSection.className = 'activity-comments';
+                        commentForm.insertAdjacentElement('afterend', commentsSection);
+                    }
+
+                    const newComment = document.createElement('div');
+                    newComment.className = 'comment';
+                    newComment.innerHTML = `
+                <strong>${data.comment.user}</strong>
+                <span style="color: #666; font-size: 0.9rem;">just now</span>
+                <p>${data.comment.content}</p>
+            `;
+
+                    commentsSection.appendChild(newComment);
+                    commentForm.style.display = 'none';
+                } else {
+                    alert(data.error || 'Error posting comment');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error posting comment');
+            });
+    }
+</script>
 {% endblock %}

@@ -1,0 +1,76 @@
+# Generated migration for Activity Feed models
+
+from django.conf import settings
+from django.db import migrations, models
+import django.db.models.deletion
+import django.utils.timezone
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('contenttypes', '0002_remove_content_type_name'),
+        ('accounts', '0001_initial'),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='ActivityFeed',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('activity_type', models.CharField(choices=[('milestone_created', 'Milestone Created'), ('blog_post_published', 'Blog Post Published'), ('comment_posted', 'Comment Posted'), ('journal_entry_shared', 'Journal Entry Shared'), ('user_joined', 'User Joined'), ('profile_updated', 'Profile Updated'), ('achievement_unlocked', 'Achievement Unlocked'), ('support_message_sent', 'Support Message Sent'), ('resource_bookmarked', 'Resource Bookmarked'), ('check_in_posted', 'Check-in Posted')], max_length=30)),
+                ('object_id', models.PositiveIntegerField(blank=True, null=True)),
+                ('title', models.CharField(max_length=200)),
+                ('description', models.TextField(blank=True)),
+                ('is_public', models.BooleanField(default=True)),
+                ('extra_data', models.JSONField(blank=True, default=dict)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('content_type', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
+                ('likes', models.ManyToManyField(blank=True, related_name='liked_activities', to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='activities', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'verbose_name': 'Activity Feed Item',
+                'verbose_name_plural': 'Activity Feed Items',
+                'ordering': ['-created_at'],
+            },
+        ),
+        migrations.CreateModel(
+            name='DailyCheckIn',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('date', models.DateField(default=django.utils.timezone.now)),
+                ('mood', models.IntegerField(choices=[(1, '😰 Struggling'), (2, '😔 Down'), (3, '😐 Okay'), (4, '😊 Good'), (5, '😄 Great'), (6, '🌟 Amazing')])),
+                ('craving_level', models.IntegerField(choices=[(0, 'None'), (1, 'Mild'), (2, 'Moderate'), (3, 'Strong'), (4, 'Intense')], default=0)),
+                ('energy_level', models.IntegerField(choices=[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)])),
+                ('gratitude', models.TextField(blank=True, help_text='What are you grateful for today?')),
+                ('challenge', models.TextField(blank=True, help_text="What's your biggest challenge today?")),
+                ('goal', models.TextField(blank=True, help_text="What's your goal for today?")),
+                ('is_shared', models.BooleanField(default=False, help_text='Share with community')),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('likes', models.ManyToManyField(blank=True, related_name='liked_checkins', to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='daily_checkins', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ['-date'],
+            },
+        ),
+        migrations.CreateModel(
+            name='ActivityComment',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('content', models.TextField(max_length=500)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('activity', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='accounts.activityfeed')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ['created_at'],
+            },
+        ),
+        migrations.AlterUniqueTogether(
+            name='dailycheckin',
+            unique_together={('user', 'date')},
+        ),
+    ]

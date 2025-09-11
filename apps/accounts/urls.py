@@ -31,7 +31,6 @@ urlpatterns = [
     # User dashboard and profile
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('profile/<str:username>/', views.ProfileView.as_view(), name='profile'),
-    # This should be the correct pattern
     path('edit-profile/', views.edit_profile_view, name='edit_profile'),
 
     # Milestones
@@ -45,4 +44,9 @@ urlpatterns = [
     path('messages/', views.MessageListView.as_view(), name='messages'),
     path('send-message/<str:username>/',
          views.send_message_view, name='send_message'),
+    
+    # NEW: Activity Feed URLs
+    path('daily-checkin/', views.daily_checkin_view, name='daily_checkin'),
+    path('like-activity/<int:activity_id>/', views.like_activity, name='like_activity'),
+    path('comment-on-activity/<int:activity_id>/', views.comment_on_activity, name='comment_on_activity'),
 ]
