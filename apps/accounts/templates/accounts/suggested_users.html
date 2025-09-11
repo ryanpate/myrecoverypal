@@ -1,0 +1,54 @@
+<!-- Create this file: apps/accounts/templates/accounts/suggested_users.html -->
+{% extends 'base.html' %}
+
+{% block title %}Suggested Users - MyRecoveryPal{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Suggested for You</h2>
+    <p>Discover new connections in the recovery community</p>
+    
+    <div class="row">
+        {% for user in suggested_users %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5>{{ user.get_full_name|default:user.username }}</h5>
+                    <p class="text-muted">@{{ user.username }}</p>
+                    {% if user.bio %}
+                    <p>{{ user.bio|truncatewords:15 }}</p>
+                    {% endif %}
+                    <button class="btn btn-primary" onclick="followUser('{{ user.username }}')">
+                        Follow
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+
+<script>
+async function followUser(username) {
+    try {
+        const response = await fetch(`/accounts/follow/${username}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            alert(data.is_following ? 'Now following!' : 'Unfollowed');
+            location.reload();
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+</script>
+{% endblock %}

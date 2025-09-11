@@ -1,7 +1,9 @@
+## Prompt
+Use the github rep and attached files for reference. Reviewing the site, how can it be made to focus more on the community aspect. I'd like the site to be more about connecting people in recovery and people effected by those in addiction. Like social media for that segment of the population. Lets start with 1. Start with the Activity Feed: This will immediately make the site feel more social. When creating files, make sure not to lose any important information or functionality that's already there by reviewing the original files. If you can't find a file to use as an example, ask me if there's a file and to attach it.
+
 I'll help you analyze your recovery website and suggest ways to enhance the community focus. Let me first search through your project knowledge to understand the current structure and then provide specific recommendations.Based on my analysis of your MyRecoveryPal website structure and files, I can see you have a solid foundation with Django-based user authentication, blogging, journaling, resources, and basic community features. Here's how you can transform it into a more community-focused social platform for recovery:
 
 ## **Current Community Features Assessment**
-
 Your site already has:
 - User profiles with recovery-specific fields
 - Basic messaging system (SupportMessage model)

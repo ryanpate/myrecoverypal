@@ -1,3 +1,5 @@
+# Replace your entire apps/accounts/urls.py file with this:
+
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
@@ -42,11 +44,32 @@ urlpatterns = [
 
     # Messages
     path('messages/', views.MessageListView.as_view(), name='messages'),
-    path('send-message/<str:username>/',
-         views.send_message_view, name='send_message'),
+    path('send-message/<str:username>/', views.send_message_view, name='send_message'),
     
-    # NEW: Activity Feed URLs
+    # Activity Feed URLs
     path('daily-checkin/', views.daily_checkin_view, name='daily_checkin'),
     path('like-activity/<int:activity_id>/', views.like_activity, name='like_activity'),
     path('comment-on-activity/<int:activity_id>/', views.comment_on_activity, name='comment_on_activity'),
+
+    # Follow/Following System
+    path('follow/<str:username>/', views.follow_user, name='follow_user'),
+    path('users/<str:username>/followers/', views.followers_list, name='followers_list'),
+    path('users/<str:username>/following/', views.following_list, name='following_list'),
+    path('suggested-users/', views.suggested_users, name='suggested_users'),
+
+    # Sponsor Relationships
+    path('sponsors/', views.sponsor_dashboard, name='sponsor_dashboard'),
+    path('sponsors/request/<str:username>/', views.request_sponsor, name='request_sponsor'),
+    path('sponsors/respond/<int:relationship_id>/', views.respond_sponsor_request, name='respond_sponsor_request'),
+
+    # Recovery Buddy System
+    path('buddies/', views.buddy_dashboard, name='buddy_dashboard'),
+    path('buddies/request/<str:username>/', views.request_buddy, name='request_buddy'),
+
+    # Recovery Groups
+    path('groups/', views.RecoveryGroupListView.as_view(), name='groups_list'),
+    path('groups/create/', views.create_group, name='create_group'),
+    path('groups/<int:pk>/', views.RecoveryGroupDetailView.as_view(), name='group_detail'),
+    path('groups/my-groups/', views.my_groups, name='my_groups'),
+    path('groups/<int:group_id>/join/', views.join_group, name='join_group'),
 ]
