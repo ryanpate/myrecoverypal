@@ -1,0 +1,504 @@
+<!-- apps/accounts/templates/accounts/groups/group_detail.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ group.name }} - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .group-header {
+        height: 300px;
+        background: linear-gradient(135deg, {{ group.group_color|default:"#1e4d8b" }} 0%, #52b788 100%);
+        position: relative;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .group-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+    }
+
+    .group-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.3;
+    }
+
+    .group-content {
+        position: relative;
+        z-index: 1;
+        color: white;
+    }
+
+    .group-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .info-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .member-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .member-card {
+        background: white;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        transition: all 0.3s;
+    }
+
+    .member-card:hover {
+        border-color: #52b788;
+        transform: translateY(-2px);
+    }
+
+    .member-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #666;
+        overflow: hidden;
+        margin: 0 auto 1rem;
+    }
+
+    .member-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-active {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-admin {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .join-btn {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    .join-btn.primary {
+        background: #52b788;
+        color: white;
+    }
+
+    .join-btn.secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .join-btn.disabled {
+        background: #f5f5f5;
+        color: #999;
+        cursor: not-allowed;
+    }
+
+    .join-btn:hover:not(.disabled) {
+        transform: translateY(-2px);
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .group-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #52b788;
+    }
+
+    .post-item {
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .post-item:hover {
+        border-color: #52b788;
+    }
+
+    .post-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .post-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .post-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="group-header">
+    {% if group.group_image %}
+        <img src="{{ group.group_image.url }}" alt="{{ group.name }}" class="group-image">
+    {% endif %}
+    
+    <div class="container group-content">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="group-avatar">
+                    {% if group.group_type == 'addiction_type' %}🎯
+                    {% elif group.group_type == 'location' %}📍
+                    {% elif group.group_type == 'recovery_stage' %}⭐
+                    {% elif group.group_type == 'interest' %}💡
+                    {% elif group.group_type == 'age_group' %}👥
+                    {% elif group.group_type == 'gender' %}🚻
+                    {% elif group.group_type == 'family' %}👨‍👩‍👧‍👦
+                    {% elif group.group_type == 'professional' %}💼
+                    {% else %}👥
+                    {% endif %}
+                </div>
+                <h1>{{ group.name }}</h1>
+                <p class="lead">{{ group.description|truncatewords:20 }}</p>
+                <div class="d-flex gap-3 align-items-center">
+                    <span class="badge bg-light text-dark">{{ group.get_group_type_display }}</span>
+                    <span class="badge bg-light text-dark">{{ group.get_privacy_level_display }}</span>
+                    <span>👥 {{ group.member_count }} members</span>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                {% if user.is_authenticated %}
+                    {% if membership %}
+                        {% if membership.status == 'active' %}
+                            <button class="join-btn secondary">
+                                ✓ Member
+                            </button>
+                        {% elif membership.status == 'pending' %}
+                            <button class="join-btn disabled">
+                                ⏳ Pending Approval
+                            </button>
+                        {% elif membership.status == 'admin' %}
+                            <button class="join-btn secondary">
+                                👑 Administrator
+                            </button>
+                        {% elif membership.status == 'moderator' %}
+                            <button class="join-btn secondary">
+                                🛡️ Moderator
+                            </button>
+                        {% endif %}
+                    {% else %}
+                        {% if group.is_full %}
+                            <button class="join-btn disabled">
+                                Group Full
+                            </button>
+                        {% elif group.privacy_level == 'secret' %}
+                            <button class="join-btn disabled">
+                                Invitation Only
+                            </button>
+                        {% else %}
+                            <button class="join-btn primary" onclick="joinGroup({{ group.id }})">
+                                {% if group.privacy_level == 'private' %}
+                                    🔒 Request to Join
+                                {% else %}
+                                    ➕ Join Group
+                                {% endif %}
+                            </button>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="join-btn primary">
+                        Sign in to Join
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-md-8">
+            <!-- Group Description -->
+            <div class="info-card">
+                <h3>About This Group</h3>
+                <p>{{ group.description }}</p>
+                
+                {% if group.location %}
+                <p><strong>📍 Location:</strong> {{ group.location }}</p>
+                {% endif %}
+                
+                {% if group.meeting_schedule %}
+                <p><strong>📅 Meeting Schedule:</strong> {{ group.meeting_schedule }}</p>
+                {% endif %}
+                
+                <div class="group-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ group.member_count }}</div>
+                        <div>Members</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ recent_posts|length|default:0 }}</div>
+                        <div>Recent Posts</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ group.created_at|timesince|truncatewords:1 }}</div>
+                        <div>Age</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Posts -->
+            {% if is_member and recent_posts %}
+            <div class="info-card">
+                <h3>Recent Discussions</h3>
+                {% for post in recent_posts %}
+                <div class="post-item">
+                    <div class="post-header">
+                        <div class="post-avatar">
+                            {% if post.author.avatar %}
+                                <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username }}">
+                            {% else %}
+                                👤
+                            {% endif %}
+                        </div>
+                        <div>
+                            <strong>{{ post.author.get_full_name|default:post.author.username }}</strong>
+                            <small class="text-muted d-block">{{ post.created_at|timesince }} ago</small>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge bg-secondary">{{ post.get_post_type_display }}</span>
+                        </div>
+                    </div>
+                    <h5>{{ post.title }}</h5>
+                    <p>{{ post.content|truncatewords:20 }}</p>
+                    <div class="d-flex gap-3 text-muted">
+                        <span>👍 {{ post.likes_count }}</span>
+                        <span>💬 Comments</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% elif is_member %}
+            <div class="info-card">
+                <h3>Group Discussion</h3>
+                <div class="text-center py-4">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
+                    <h5>No posts yet</h5>
+                    <p>Be the first to start a discussion in this group!</p>
+                    <button class="btn btn-primary">Create Post</button>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Group Creator -->
+            <div class="info-card">
+                <h5>Group Creator</h5>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="member-avatar" style="width: 50px; height: 50px; font-size: 1.25rem;">
+                        {% if group.creator.avatar %}
+                            <img src="{{ group.creator.avatar.url }}" alt="{{ group.creator.username }}">
+                        {% else %}
+                            👤
+                        {% endif %}
+                    </div>
+                    <div>
+                        <strong>{{ group.creator.get_full_name|default:group.creator.username }}</strong>
+                        <small class="text-muted d-block">@{{ group.creator.username }}</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Members -->
+            <div class="info-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>Members ({{ group.member_count }})</h5>
+                    {% if group.member_count > 12 %}
+                    <small class="text-muted">Showing 12 of {{ group.member_count }}</small>
+                    {% endif %}
+                </div>
+                
+                <div class="member-grid">
+                    {% for member in members %}
+                    <div class="member-card">
+                        <div class="member-avatar">
+                            {% if member.avatar %}
+                                <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
+                            {% else %}
+                                👤
+                            {% endif %}
+                        </div>
+                        <div>
+                            <strong>{{ member.get_full_name|default:member.username|truncatewords:2 }}</strong>
+                            <small class="text-muted d-block">@{{ member.username }}</small>
+                            {% if member.get_days_sober > 0 %}
+                            <small class="text-success">{{ member.get_days_sober }} days</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-3 text-muted">
+                        No members to display
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Group Guidelines -->
+            {% if group.rules_and_guidelines %}
+            <div class="info-card">
+                <h5>Group Guidelines</h5>
+                <p>{{ group.rules_and_guidelines }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function joinGroup(groupId) {
+    try {
+        const response = await fetch(`/accounts/groups/${groupId}/join/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast(`Successfully ${data.action} group!`, 'success');
+            
+            // Reload page after delay
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            showToast(data.error || 'Something went wrong', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Network error', 'error');
+    }
+}
+
+function showToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible`;
+    toast.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+    toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
+    }, 3000);
+}
+
+// Add CSRF token
+document.addEventListener('DOMContentLoaded', function() {
+    if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
+        const token = document.createElement('input');
+        token.type = 'hidden';
+        token.name = 'csrfmiddlewaretoken';
+        token.value = '{{ csrf_token }}';
+        document.body.appendChild(token);
+    }
+});
+</script>
+{% endblock %}

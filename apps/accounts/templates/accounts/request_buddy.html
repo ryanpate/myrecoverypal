@@ -1,0 +1,324 @@
+<!-- apps/accounts/templates/accounts/request_buddy.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Request Recovery Buddy - {{ buddy_user.username }} - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .request-header {
+        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        color: white;
+        padding: 3rem 0 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .buddy-profile {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .buddy-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: #666;
+        overflow: hidden;
+        margin: 0 auto 1rem;
+    }
+
+    .buddy-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .request-form {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        padding: 0.75rem 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #52b788;
+        box-shadow: 0 0 0 0.2rem rgba(82, 183, 136, 0.25);
+    }
+
+    .btn-primary {
+        background: #52b788;
+        border-color: #52b788;
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+    }
+
+    .btn-outline-secondary {
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+    }
+
+    .info-card {
+        background: #e8f4f8;
+        border: 1px solid #bee5eb;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .buddy-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+        text-align: center;
+    }
+
+    .stat-item {
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #52b788;
+    }
+
+    .compatibility-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .compatibility-icon {
+        font-size: 1.2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="request-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1>Request Recovery Buddy</h1>
+                <p class="lead">Ask {{ buddy_user.get_full_name|default:buddy_user.username }} to be your recovery buddy</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{% url 'accounts:profile' buddy_user.username %}" class="btn btn-light">
+                    View Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Buddy Profile Summary -->
+            <div class="buddy-profile">
+                <div class="text-center">
+                    <div class="buddy-avatar">
+                        {% if buddy_user.avatar %}
+                            <img src="{{ buddy_user.avatar.url }}" alt="{{ buddy_user.username }}">
+                        {% else %}
+                            <span style="font-size: 2.5rem;">👤</span>
+                        {% endif %}
+                    </div>
+                    <h3>{{ buddy_user.get_full_name|default:buddy_user.username }}</h3>
+                    <p class="text-muted">@{{ buddy_user.username }}</p>
+                    
+                    <div class="buddy-stats">
+                        {% if buddy_user.get_days_sober > 0 %}
+                        <div class="stat-item">
+                            <div class="stat-number">{{ buddy_user.get_days_sober }}</div>
+                            <div>Days Sober</div>
+                        </div>
+                        {% endif %}
+                        <div class="stat-item">
+                            <div class="stat-number">{{ buddy_user.followers_count }}</div>
+                            <div>Followers</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">{{ buddy_user.following_count }}</div>
+                            <div>Following</div>
+                        </div>
+                    </div>
+                    
+                    {% if buddy_user.bio %}
+                    <div class="mt-3">
+                        <h6>About</h6>
+                        <p>{{ buddy_user.bio|truncatewords:50 }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if buddy_user.recovery_goals %}
+                    <div class="mt-3">
+                        <h6>Recovery Goals</h6>
+                        <p>{{ buddy_user.recovery_goals|truncatewords:30 }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if buddy_user.location %}
+                    <div class="mt-3">
+                        <h6>Location</h6>
+                        <p>{{ buddy_user.location }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Compatibility Indicators -->
+                <div class="mt-4">
+                    <h6>Potential Compatibility</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {% if user.get_days_sober and buddy_user.get_days_sober %}
+                                {% with days_diff=user.get_days_sober|add:buddy_user.get_days_sober|floatformat:0 %}
+                                <div class="compatibility-item">
+                                    <span class="compatibility-icon">📅</span>
+                                    <span>Similar recovery timeline</span>
+                                </div>
+                                {% endwith %}
+                            {% endif %}
+                            
+                            {% if user.location and buddy_user.location and user.location == buddy_user.location %}
+                            <div class="compatibility-item">
+                                <span class="compatibility-icon">📍</span>
+                                <span>Same location</span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if buddy_user.allow_messages %}
+                            <div class="compatibility-item">
+                                <span class="compatibility-icon">💬</span>
+                                <span>Open to messages</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {% if not buddy_user.get_recovery_buddy %}
+                            <div class="compatibility-item">
+                                <span class="compatibility-icon">🤝</span>
+                                <span>Available for buddy partnership</span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if buddy_user.is_profile_public %}
+                            <div class="compatibility-item">
+                                <span class="compatibility-icon">👁️</span>
+                                <span>Open profile</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Request Form -->
+            <div class="request-form">
+                <h3>Send Buddy Request</h3>
+                <p class="text-muted mb-4">Tell {{ buddy_user.get_full_name|default:buddy_user.username }} why you'd like to be recovery buddies and how you'd like to support each other.</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="check_in_frequency" class="form-label">How often would you like to check in?</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="check_in_frequency" 
+                               name="check_in_frequency"
+                               placeholder="e.g., Daily, Weekly, Bi-weekly, As needed">
+                        <div class="form-text">Regular check-ins help maintain accountability and support.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="shared_goals" class="form-label">What goals would you like to work on together? *</label>
+                        <textarea class="form-control" 
+                                  id="shared_goals" 
+                                  name="shared_goals" 
+                                  rows="5"
+                                  placeholder="Share what you're hoping to achieve together as recovery buddies. What specific goals, challenges, or areas of growth would you like to support each other with?"
+                                  required></textarea>
+                        <div class="form-text">Be specific about what kind of mutual support you're looking for.</div>
+                    </div>
+
+                    <div class="d-flex gap-3 justify-content-end mt-4">
+                        <a href="{% url 'accounts:profile' buddy_user.username %}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            Send Buddy Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Guidelines Sidebar -->
+        <div class="col-md-4">
+            <div class="info-card">
+                <h6>🤝 What is a Recovery Buddy?</h6>
+                <p class="small">A recovery buddy is a peer who:</p>
+                <ul class="small">
+                    <li>Provides mutual support and accountability</li>
+                    <li>Shares similar recovery experiences</li>
+                    <li>Offers non-judgmental listening</li>
+                    <li>Celebrates wins and helps through challenges</li>
+                    <li>Maintains regular check-ins</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h6>💡 Making a Good Request</h6>
+                <ul class="small">
+                    <li>Be genuine about your recovery journey</li>
+                    <li>Explain what you can offer in return</li>
+                    <li>Set realistic expectations</li>
+                    <li>Be specific about your goals</li>
+                    <li>Respect their decision</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h6>🌟 Buddy Best Practices</h6>
+                <ul class="small">
+                    <li>Maintain regular communication</li>
+                    <li>Be honest and supportive</li>
+                    <li>Respect boundaries</li>
+                    <li>Share both struggles and successes</li>
+                    <li>Keep confidentiality</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h6>⚠️ Remember</h6>
+                <p class="small">A recovery buddy is a peer support relationship, not professional therapy or medical advice. Always consult healthcare providers for medical concerns.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

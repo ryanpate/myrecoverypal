@@ -1,0 +1,367 @@
+<!-- apps/accounts/templates/accounts/groups/create_group.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Recovery Group - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .create-header {
+        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        color: white;
+        padding: 3rem 0 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .section-title {
+        color: #1e4d8b;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        padding: 0.75rem 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #52b788;
+        box-shadow: 0 0 0 0.2rem rgba(82, 183, 136, 0.25);
+    }
+
+    .form-select {
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        padding: 0.75rem 1rem;
+    }
+
+    .form-check-input:checked {
+        background-color: #52b788;
+        border-color: #52b788;
+    }
+
+    .help-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+
+    .icon-preview {
+        width: 80px;
+        height: 80px;
+        border-radius: 15px;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .color-picker {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        cursor: pointer;
+    }
+
+    .preview-card {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .btn-primary {
+        background: #52b788;
+        border-color: #52b788;
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+    }
+
+    .btn-outline-secondary {
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+    }
+
+    .tips-card {
+        background: #e8f4f8;
+        border: 1px solid #bee5eb;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="create-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h1>Create a Recovery Group</h1>
+                <p class="lead">Start a supportive community around shared experiences and goals</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{% url 'accounts:groups_list' %}" class="btn btn-light">
+                    ← Back to Groups
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-card">
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            📝 Basic Information
+                        </h4>
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Group Name *</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   placeholder="Enter a descriptive name for your group" required>
+                            <div class="help-text">Choose a clear, welcoming name that describes your group's purpose</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description *</label>
+                            <textarea class="form-control" id="description" name="description" rows="4"
+                                      placeholder="Describe what your group is about, who it's for, and what members can expect..."
+                                      required></textarea>
+                            <div class="help-text">Help people understand if this group is right for them</div>
+                        </div>
+                    </div>
+
+                    <!-- Group Settings -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            ⚙️ Group Settings
+                        </h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="group_type" class="form-label">Group Type *</label>
+                                    <select class="form-select" id="group_type" name="group_type" required>
+                                        <option value="">Choose a category...</option>
+                                        <option value="addiction_type">By Addiction Type</option>
+                                        <option value="location">Location-based</option>
+                                        <option value="recovery_stage">Recovery Stage</option>
+                                        <option value="interest">Shared Interest</option>
+                                        <option value="age_group">Age Group</option>
+                                        <option value="gender">Gender-specific</option>
+                                        <option value="family">Family/Supporters</option>
+                                        <option value="professional">Professional Support</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="privacy_level" class="form-label">Privacy Level *</label>
+                                    <select class="form-select" id="privacy_level" name="privacy_level" required>
+                                        <option value="public">Public - Anyone can join</option>
+                                        <option value="private">Private - Approval required</option>
+                                        <option value="secret">Secret - Invitation only</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="location" class="form-label">Location (Optional)</label>
+                                    <input type="text" class="form-control" id="location" name="location"
+                                           placeholder="City, State or 'Online'">
+                                    <div class="help-text">Leave blank if location doesn't matter</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="max_members" class="form-label">Max Members (Optional)</label>
+                                    <input type="number" class="form-control" id="max_members" name="max_members"
+                                           placeholder="Leave blank for unlimited">
+                                    <div class="help-text">Set a limit to keep discussions intimate</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="meeting_schedule" class="form-label">Meeting Schedule (Optional)</label>
+                            <input type="text" class="form-control" id="meeting_schedule" name="meeting_schedule"
+                                   placeholder="e.g., 'Mondays 7 PM EST' or 'First Friday of each month'">
+                            <div class="help-text">When do you plan to meet or have group activities?</div>
+                        </div>
+                    </div>
+
+                    <!-- Appearance -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            🎨 Appearance
+                        </h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="group_image" class="form-label">Group Image (Optional)</label>
+                                    <input type="file" class="form-control" id="group_image" name="group_image"
+                                           accept="image/*">
+                                    <div class="help-text">Upload a banner image that represents your group</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="group_color" class="form-label">Group Color</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <input type="color" class="color-picker" id="group_color" name="group_color" value="#52b788">
+                                        <span class="help-text">Choose a color theme for your group</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Buttons -->
+                    <div class="d-flex gap-3 justify-content-end">
+                        <a href="{% url 'accounts:groups_list' %}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            Create Group
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tips Sidebar -->
+        <div class="col-md-4">
+            <div class="tips-card">
+                <h5>💡 Tips for Creating a Great Group</h5>
+                
+                <div class="mb-3">
+                    <strong>Choose a Clear Purpose</strong>
+                    <p class="small mb-2">Be specific about what your group offers and who it's for</p>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Set Clear Guidelines</strong>
+                    <p class="small mb-2">Establish rules for respectful communication and participation</p>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Start with Welcome Posts</strong>
+                    <p class="small mb-2">Create initial discussions to help members get to know each other</p>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Be an Active Leader</strong>
+                    <p class="small mb-2">Regular participation from the creator helps groups thrive</p>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Consider Privacy Carefully</strong>
+                    <p class="small mb-2">Public groups grow faster, but private groups feel safer for sensitive topics</p>
+                </div>
+            </div>
+
+            <!-- Preview Card -->
+            <div class="preview-card">
+                <h6>Group Preview</h6>
+                <div class="icon-preview" id="preview-icon">
+                    👥
+                </div>
+                <div>
+                    <strong id="preview-name">Your Group Name</strong>
+                    <small class="text-muted d-block" id="preview-type">Group Type</small>
+                </div>
+                <p class="small mt-2" id="preview-description">Your group description will appear here...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Live preview updates
+document.addEventListener('DOMContentLoaded', function() {
+    const nameInput = document.getElementById('name');
+    const descriptionInput = document.getElementById('description');
+    const typeSelect = document.getElementById('group_type');
+    const colorInput = document.getElementById('group_color');
+    
+    const previewName = document.getElementById('preview-name');
+    const previewDescription = document.getElementById('preview-description');
+    const previewType = document.getElementById('preview-type');
+    const previewIcon = document.getElementById('preview-icon');
+    
+    // Group type icons
+    const typeIcons = {
+        'addiction_type': '🎯',
+        'location': '📍',
+        'recovery_stage': '⭐',
+        'interest': '💡',
+        'age_group': '👥',
+        'gender': '🚻',
+        'family': '👨‍👩‍👧‍👦',
+        'professional': '💼'
+    };
+
+    function updatePreview() {
+        previewName.textContent = nameInput.value || 'Your Group Name';
+        previewDescription.textContent = descriptionInput.value || 'Your group description will appear here...';
+        
+        const selectedType = typeSelect.value;
+        if (selectedType) {
+            previewType.textContent = typeSelect.options[typeSelect.selectedIndex].text;
+            previewIcon.textContent = typeIcons[selectedType] || '👥';
+        } else {
+            previewType.textContent = 'Group Type';
+            previewIcon.textContent = '👥';
+        }
+        
+        previewIcon.style.background = colorInput.value + '20';
+        previewIcon.style.borderColor = colorInput.value;
+    }
+
+    nameInput.addEventListener('input', updatePreview);
+    descriptionInput.addEventListener('input', updatePreview);
+    typeSelect.addEventListener('change', updatePreview);
+    colorInput.addEventListener('change', updatePreview);
+});
+</script>
+{% endblock %}

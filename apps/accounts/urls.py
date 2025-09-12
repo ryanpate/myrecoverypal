@@ -67,8 +67,8 @@ urlpatterns = [
 
     # Recovery Buddy System
     path('buddies/', views.buddy_dashboard, name='buddy_dashboard'),
-    path('buddies/request/<str:username>/', views.request_buddy, name='request_buddy'),
-
+    path('buddies/request/<str:username>/',
+         views.request_buddy, name='request_buddy'),
     # Recovery Groups
     path('groups/', views.RecoveryGroupListView.as_view(), name='groups_list'),
     path('groups/create/', views.create_group, name='create_group'),
@@ -92,9 +92,9 @@ urlpatterns = [
     path('challenges/<int:challenge_id>/feed/',
          views.challenge_feed, name='challenge_feed'),
     path('challenges/<int:challenge_id>/buddy/<int:user_id>/',
-         views.request_buddy, name='request_challenge_buddy'),
+         views.request_challenge_buddy, name='request_challenge_buddy'),
     path('my-challenges/', views.my_challenges, name='my_challenges'),
-
+    
     # AJAX endpoints for challenge interactions
     path('ajax/challenge-comment/<int:check_in_id>/',
          views.add_challenge_comment, name='add_challenge_comment'),

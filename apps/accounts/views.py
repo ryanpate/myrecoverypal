@@ -364,13 +364,92 @@ def request_sponsor(request, username):
     messages.info(request, 'Sponsor request feature coming soon!')
     return redirect('accounts:profile', username=username)
 
-
 @login_required
 def request_buddy(request, username):
     """Request to be recovery buddies"""
-    messages.info(request, 'Recovery buddy request feature coming soon!')
-    return redirect('accounts:profile', username=username)
+    buddy_user = get_object_or_404(User, username=username)
 
+    if buddy_user == request.user:
+        messages.error(request, "You cannot be your own recovery buddy.")
+        return redirect('accounts:profile', username=username)
+
+    # Check for existing relationship
+    existing = RecoveryBuddy.objects.filter(
+        Q(user1=request.user, user2=buddy_user) |
+        Q(user1=buddy_user, user2=request.user)
+    ).first()
+
+    if existing:
+        messages.warning(
+            request, 'You already have a buddy relationship with this user.')
+        return redirect('accounts:buddy_dashboard')
+
+    if request.method == 'POST':
+        form = RecoveryBuddyForm(request.POST)
+        if form.is_valid():
+            buddy_relationship = form.save(commit=False)
+            buddy_relationship.user1 = request.user
+            buddy_relationship.user2 = buddy_user
+            buddy_relationship.save()
+
+            messages.success(
+                request, f'Recovery buddy request sent to {buddy_user.username}!')
+            return redirect('accounts:buddy_dashboard')
+    else:
+        form = RecoveryBuddyForm()
+
+    context = {
+        'form': form,
+        'buddy_user': buddy_user,
+    }
+    return render(request, 'accounts/request_buddy.html', context)
+
+
+@login_required
+def request_challenge_buddy(request, challenge_id, user_id):
+    """Request accountability partner for a challenge"""
+    challenge = get_object_or_404(GroupChallenge, id=challenge_id)
+    target_user = get_object_or_404(User, id=user_id)
+
+    # Check if both users are participating
+    try:
+        user_participation = challenge.participants.get(
+            user=request.user, status='active')
+        target_participation = challenge.participants.get(
+            user=target_user, status='active')
+    except ChallengeParticipant.DoesNotExist:
+        messages.error(
+            request, "Both users must be participating in the challenge.")
+        return redirect('accounts:challenge_detail', challenge_id=challenge_id)
+
+    # Check if already partners or request exists
+    if user_participation.accountability_partner == target_participation:
+        messages.info(request, "You are already accountability partners!")
+        return redirect('accounts:challenge_detail', challenge_id=challenge_id)
+
+    if request.method == 'POST':
+        form = BuddyRequestForm(request.POST)
+        if form.is_valid():
+            # Send buddy request (you could implement a notification system here)
+            # For now, just pair them up directly
+            user_participation.accountability_partner = target_participation
+            target_participation.accountability_partner = user_participation
+            user_participation.save()
+            target_participation.save()
+
+            messages.success(
+                request, f"You are now accountability partners with {target_user.get_full_name() or target_user.username}!")
+            return redirect('accounts:challenge_detail', challenge_id=challenge_id)
+    else:
+        form = BuddyRequestForm()
+
+    context = {
+        'form': form,
+        'challenge': challenge,
+        'target_user': target_user,
+    }
+
+    return render(request, 'accounts/challenges/request_buddy.html', context)
 
 @login_required
 @require_POST
@@ -937,45 +1016,50 @@ def buddy_dashboard(request):
 
 
 @login_required
-def request_buddy(request, username):
-    """Request to be recovery buddies"""
-    buddy_user = get_object_or_404(User, username=username)
+def request_challenge_buddy(request, challenge_id, user_id):
+    """Request accountability partner for a challenge"""
+    challenge = get_object_or_404(GroupChallenge, id=challenge_id)
+    target_user = get_object_or_404(User, id=user_id)
 
-    if buddy_user == request.user:
-        messages.error(request, "You cannot be your own recovery buddy.")
-        return redirect('accounts:profile', username=username)
+    # Check if both users are participating
+    try:
+        user_participation = challenge.participants.get(
+            user=request.user, status='active')
+        target_participation = challenge.participants.get(
+            user=target_user, status='active')
+    except ChallengeParticipant.DoesNotExist:
+        messages.error(
+            request, "Both users must be participating in the challenge.")
+        return redirect('accounts:challenge_detail', challenge_id=challenge_id)
 
-    # Check for existing relationship
-    existing = RecoveryBuddy.objects.filter(
-        Q(user1=request.user, user2=buddy_user) |
-        Q(user1=buddy_user, user2=request.user)
-    ).first()
-
-    if existing:
-        messages.warning(
-            request, 'You already have a buddy relationship with this user.')
-        return redirect('accounts:buddy_dashboard')
+    # Check if already partners or request exists
+    if user_participation.accountability_partner == target_participation:
+        messages.info(request, "You are already accountability partners!")
+        return redirect('accounts:challenge_detail', challenge_id=challenge_id)
 
     if request.method == 'POST':
-        form = RecoveryBuddyForm(request.POST)
+        form = BuddyRequestForm(request.POST)
         if form.is_valid():
-            buddy_relationship = form.save(commit=False)
-            buddy_relationship.user1 = request.user
-            buddy_relationship.user2 = buddy_user
-            buddy_relationship.save()
+            # Send buddy request (you could implement a notification system here)
+            # For now, just pair them up directly
+            user_participation.accountability_partner = target_participation
+            target_participation.accountability_partner = user_participation
+            user_participation.save()
+            target_participation.save()
 
             messages.success(
-                request, f'Recovery buddy request sent to {buddy_user.username}!')
-            return redirect('accounts:buddy_dashboard')
+                request, f"You are now accountability partners with {target_user.get_full_name() or target_user.username}!")
+            return redirect('accounts:challenge_detail', challenge_id=challenge_id)
     else:
-        form = RecoveryBuddyForm()
+        form = BuddyRequestForm()
 
     context = {
         'form': form,
-        'buddy_user': buddy_user,
+        'challenge': challenge,
+        'target_user': target_user,
     }
-    return render(request, 'accounts/request_buddy.html', context)
 
+    return render(request, 'accounts/challenges/request_buddy.html', context)
 
 # =============================================================================
 # RECOVERY GROUP VIEWS
@@ -1165,10 +1249,15 @@ class EnhancedCommunityView(ListView):
         if self.request.user.is_authenticated:
             following_ids = list(
                 self.request.user.get_following().values_list('id', flat=True))
-            queryset = queryset.extra(
-                select={
-                    'is_followed': f"CASE WHEN id IN ({','.join(map(str, following_ids)) or '0'}) THEN 1 ELSE 0 END"
-                }
+
+            # Use proper table alias to avoid ambiguous column name
+            from django.db.models import Case, When, Value, BooleanField
+            queryset = queryset.annotate(
+                is_followed=Case(
+                    When(id__in=following_ids, then=Value(True)),
+                    default=Value(False),
+                    output_field=BooleanField()
+                )
             )
 
         # Filters
@@ -1195,6 +1284,29 @@ class EnhancedCommunityView(ListView):
 
         return queryset.select_related('profile').order_by('-date_joined')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        if self.request.user.is_authenticated:
+            user = self.request.user
+
+            # Get suggested users (excluding followed users)
+            excluded_ids = list(
+                user.get_following().values_list('id', flat=True))
+            excluded_ids.append(user.id)
+
+            suggested_users = User.objects.filter(
+                is_active=True
+            ).exclude(id__in=excluded_ids)[:3]
+
+            context.update({
+                'followers_count': user.followers_count,
+                'following_count': user.following_count,
+                'suggested_users': suggested_users,
+            })
+
+        return context
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -1706,7 +1818,8 @@ def give_encouragement(request, check_in_id):
 
 
 @login_required
-def request_buddy(request, challenge_id, user_id):
+def request_challenge_buddy(
+    request, challenge_id, user_id):
     """Request accountability partner for a challenge"""
 
     challenge = get_object_or_404(GroupChallenge, id=challenge_id)

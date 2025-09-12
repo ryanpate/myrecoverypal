@@ -1,0 +1,316 @@
+<!-- apps/accounts/templates/accounts/sponsor_dashboard.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sponsor Dashboard - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .sponsor-header {
+        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        color: white;
+        padding: 3rem 0 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        transition: transform 0.3s;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .sponsor-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        border: 2px solid #e0e0e0;
+        margin-bottom: 1rem;
+        transition: all 0.3s;
+    }
+
+    .sponsor-card:hover {
+        border-color: #52b788;
+        transform: translateY(-2px);
+    }
+
+    .sponsor-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #666;
+        overflow: hidden;
+        margin-right: 1rem;
+    }
+
+    .sponsor-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-active {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: #666;
+    }
+
+    .action-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-accept {
+        background: #52b788;
+        color: white;
+    }
+
+    .btn-decline {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-primary {
+        background: #1e4d8b;
+        color: white;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-1px);
+        text-decoration: none;
+        color: inherit;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sponsor-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1>🎯 Sponsor Dashboard</h1>
+                <p class="lead">Manage your sponsorship relationships and mentorship journey</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                {% if can_be_sponsor %}
+                <span class="badge bg-light text-dark fs-6">Available as Sponsor</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Current Sponsor -->
+        <div class="col-md-6">
+            <div class="dashboard-card">
+                <h3>👤 My Sponsor</h3>
+                {% if sponsor_relationship %}
+                <div class="sponsor-card">
+                    <div class="d-flex align-items-center">
+                        <div class="sponsor-avatar">
+                            {% if sponsor_relationship.sponsor.avatar %}
+                                <img src="{{ sponsor_relationship.sponsor.avatar.url }}" alt="{{ sponsor_relationship.sponsor.username }}">
+                            {% else %}
+                                👤
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5>{{ sponsor_relationship.sponsor.get_full_name|default:sponsor_relationship.sponsor.username }}</h5>
+                            <p class="text-muted mb-1">@{{ sponsor_relationship.sponsor.username }}</p>
+                            <span class="status-badge status-active">Active</span>
+                            {% if sponsor_relationship.started_date %}
+                            <small class="text-muted d-block">Since {{ sponsor_relationship.started_date }}</small>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <a href="{% url 'accounts:profile' sponsor_relationship.sponsor.username %}" class="action-btn btn-primary">
+                                View Profile
+                            </a>
+                        </div>
+                    </div>
+                    {% if sponsor_relationship.notes %}
+                    <div class="mt-2">
+                        <small class="text-muted">{{ sponsor_relationship.notes }}</small>
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+                    <h5>No Active Sponsor</h5>
+                    <p>You don't currently have a sponsor. Browse the community to find someone who can guide your recovery journey.</p>
+                    <a href="{% url 'accounts:community' %}?filter=sponsors" class="btn btn-primary">Find Sponsors</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- My Sponsorships -->
+        <div class="col-md-6">
+            <div class="dashboard-card">
+                <h3>🤝 My Sponsorships</h3>
+                {% if sponsorships %}
+                {% for sponsorship in sponsorships %}
+                <div class="sponsor-card">
+                    <div class="d-flex align-items-center">
+                        <div class="sponsor-avatar">
+                            {% if sponsorship.sponsee.avatar %}
+                                <img src="{{ sponsorship.sponsee.avatar.url }}" alt="{{ sponsorship.sponsee.username }}">
+                            {% else %}
+                                👤
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5>{{ sponsorship.sponsee.get_full_name|default:sponsorship.sponsee.username }}</h5>
+                            <p class="text-muted mb-1">@{{ sponsorship.sponsee.username }}</p>
+                            <span class="status-badge {% if sponsorship.status == 'active' %}status-active{% else %}status-pending{% endif %}">
+                                {{ sponsorship.get_status_display }}
+                            </span>
+                            {% if sponsorship.started_date %}
+                            <small class="text-muted d-block">Since {{ sponsorship.started_date }}</small>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <a href="{% url 'accounts:profile' sponsorship.sponsee.username %}" class="action-btn btn-primary">
+                                View Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="empty-state">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🌱</div>
+                    <h5>No Active Sponsorships</h5>
+                    <p>You're not currently sponsoring anyone. When someone requests you as their sponsor, they'll appear here.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sponsor Requests -->
+    {% if sponsor_requests %}
+    <div class="dashboard-card">
+        <h3>📬 Sponsor Requests</h3>
+        <p class="text-muted">People who would like you to be their sponsor</p>
+        
+        {% for request in sponsor_requests %}
+        <div class="sponsor-card">
+            <div class="d-flex align-items-center">
+                <div class="sponsor-avatar">
+                    {% if request.sponsee.avatar %}
+                        <img src="{{ request.sponsee.avatar.url }}" alt="{{ request.sponsee.username }}">
+                    {% else %}
+                        👤
+                    {% endif %}
+                </div>
+                <div class="flex-grow-1">
+                    <h5>{{ request.sponsee.get_full_name|default:request.sponsee.username }}</h5>
+                    <p class="text-muted mb-1">@{{ request.sponsee.username }}</p>
+                    <small class="text-muted">Requested {{ request.created_at|timesince }} ago</small>
+                    {% if request.notes %}
+                    <div class="mt-2">
+                        <strong>Message:</strong> {{ request.notes }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="d-flex gap-2">
+                    <form method="post" action="{% url 'accounts:respond_sponsor_request' request.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="accept">
+                        <button type="submit" class="action-btn btn-accept">
+                            ✓ Accept
+                        </button>
+                    </form>
+                    <form method="post" action="{% url 'accounts:respond_sponsor_request' request.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="decline">
+                        <button type="submit" class="action-btn btn-decline">
+                            ✗ Decline
+                        </button>
+                    </form>
+                    <a href="{% url 'accounts:profile' request.sponsee.username %}" class="action-btn btn-primary">
+                        View Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Getting Started Section -->
+    {% if not sponsor_relationship and not sponsorships %}
+    <div class="dashboard-card">
+        <h3>🚀 Getting Started with Sponsorship</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Finding a Sponsor</h5>
+                <p>A sponsor is someone further along in recovery who can guide and support you. Look for someone with:</p>
+                <ul>
+                    <li>Solid recovery time</li>
+                    <li>Experience you relate to</li>
+                    <li>Availability for regular contact</li>
+                    <li>A positive recovery story</li>
+                </ul>
+                <a href="{% url 'accounts:community' %}?filter=sponsors" class="btn btn-primary">Browse Sponsors</a>
+            </div>
+            <div class="col-md-6">
+                <h5>Becoming a Sponsor</h5>
+                <p>Ready to help others? Consider becoming a sponsor if you have:</p>
+                <ul>
+                    <li>Significant recovery time</li>
+                    <li>Stable recovery foundation</li>
+                    <li>Time to commit to mentoring</li>
+                    <li>Desire to give back</li>
+                </ul>
+                {% if not can_be_sponsor %}
+                <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-primary">Enable Sponsor Status</a>
+                {% else %}
+                <span class="text-success">✓ You're available as a sponsor</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

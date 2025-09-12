@@ -1,0 +1,383 @@
+<!-- apps/accounts/templates/accounts/buddy_dashboard.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Recovery Buddy Dashboard - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .buddy-header {
+        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        color: white;
+        padding: 3rem 0 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        transition: transform 0.3s;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .buddy-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        border: 2px solid #e0e0e0;
+        margin-bottom: 1rem;
+        transition: all 0.3s;
+    }
+
+    .buddy-card:hover {
+        border-color: #52b788;
+        transform: translateY(-2px);
+    }
+
+    .buddy-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #666;
+        overflow: hidden;
+        margin-right: 1.5rem;
+    }
+
+    .buddy-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-active {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: #666;
+    }
+
+    .action-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0.25rem;
+    }
+
+    .btn-accept {
+        background: #52b788;
+        color: white;
+    }
+
+    .btn-decline {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-primary {
+        background: #1e4d8b;
+        color: white;
+    }
+
+    .btn-message {
+        background: #6c757d;
+        color: white;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-1px);
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .buddy-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .feature-card {
+        text-align: center;
+        padding: 1.5rem;
+        border: 2px dashed #ddd;
+        border-radius: 10px;
+        transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+        border-color: #52b788;
+        background: #f0f9ff;
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="buddy-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1>🤝 Recovery Buddy Dashboard</h1>
+                <p class="lead">Connect with a recovery partner for mutual support and accountability</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{% url 'accounts:community' %}" class="btn btn-light btn-lg">
+                    🔍 Find Buddies
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Current Buddy -->
+        <div class="col-md-8">
+            <div class="dashboard-card">
+                <h3>👥 My Recovery Buddy</h3>
+                {% if current_buddy %}
+                <div class="buddy-card">
+                    <div class="d-flex align-items-center">
+                        <div class="buddy-avatar">
+                            {% if current_buddy.avatar %}
+                                <img src="{{ current_buddy.avatar.url }}" alt="{{ current_buddy.username }}">
+                            {% else %}
+                                👤
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h4>{{ current_buddy.get_full_name|default:current_buddy.username }}</h4>
+                            <p class="text-muted mb-2">@{{ current_buddy.username }}</p>
+                            <span class="status-badge status-active">Active Buddy</span>
+                            {% if current_buddy.get_days_sober > 0 %}
+                            <div class="mt-2">
+                                <small class="text-muted">{{ current_buddy.get_days_sober }} days sober</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            <a href="{% url 'accounts:profile' current_buddy.username %}" class="action-btn btn-primary">
+                                👁️ View Profile
+                            </a>
+                            <a href="{% url 'accounts:send_message' current_buddy.username %}" class="action-btn btn-message">
+                                💬 Send Message
+                            </a>
+                        </div>
+                    </div>
+                    {% if current_buddy.bio %}
+                    <div class="mt-3">
+                        <strong>About:</strong>
+                        <p class="text-muted mb-0">{{ current_buddy.bio|truncatewords:30 }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Buddy Features -->
+                <div class="buddy-features">
+                    <div class="feature-card">
+                        <div class="feature-icon">📅</div>
+                        <h6>Daily Check-ins</h6>
+                        <p class="small text-muted">Share your daily progress and support each other</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h6>Shared Goals</h6>
+                        <p class="small text-muted">Work together toward recovery milestones</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💪</div>
+                        <h6>Accountability</h6>
+                        <p class="small text-muted">Keep each other motivated and on track</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤗</div>
+                        <h6>Peer Support</h6>
+                        <p class="small text-muted">Someone who understands your journey</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🤝</div>
+                    <h5>No Recovery Buddy Yet</h5>
+                    <p>A recovery buddy is someone going through a similar journey who can provide mutual support, accountability, and encouragement.</p>
+                    <a href="{% url 'accounts:community' %}" class="btn btn-primary btn-lg">Find a Recovery Buddy</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Requests -->
+        <div class="col-md-4">
+            <!-- Received Requests -->
+            {% if received_requests %}
+            <div class="dashboard-card">
+                <h5>📬 Buddy Requests</h5>
+                <p class="small text-muted">People who want to be your recovery buddy</p>
+                
+                {% for request in received_requests %}
+                {% with buddy_user=request.user1 %}
+                {% if buddy_user == user %}
+                    {% with buddy_user=request.user2 %}
+                    {% endwith %}
+                {% endif %}
+                <div class="buddy-card">
+                    <div class="text-center">
+                        <div class="buddy-avatar mx-auto" style="width: 60px; height: 60px; font-size: 1.5rem; margin: 0 auto 1rem;">
+                            {% if buddy_user.avatar %}
+                                <img src="{{ buddy_user.avatar.url }}" alt="{{ buddy_user.username }}">
+                            {% else %}
+                                👤
+                            {% endif %}
+                        </div>
+                        <h6>{{ buddy_user.get_full_name|default:buddy_user.username }}</h6>
+                        <p class="small text-muted">@{{ buddy_user.username }}</p>
+                        <span class="status-badge status-pending">Pending</span>
+                        
+                        <div class="mt-3">
+                            <form method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="action-btn btn-accept btn-sm">
+                                    ✓ Accept
+                                </button>
+                            </form>
+                            <form method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="action-btn btn-decline btn-sm">
+                                    ✗ Decline
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endwith %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Sent Requests -->
+            {% if sent_requests %}
+            <div class="dashboard-card">
+                <h5>📤 Sent Requests</h5>
+                <p class="small text-muted">Buddy requests you've sent</p>
+                
+                {% for request in sent_requests %}
+                {% with buddy_user=request.user2 %}
+                {% if buddy_user == user %}
+                    {% with buddy_user=request.user1 %}
+                    {% endwith %}
+                {% endif %}
+                <div class="buddy-card">
+                    <div class="text-center">
+                        <div class="buddy-avatar mx-auto" style="width: 50px; height: 50px; font-size: 1.25rem; margin: 0 auto 1rem;">
+                            {% if buddy_user.avatar %}
+                                <img src="{{ buddy_user.avatar.url }}" alt="{{ buddy_user.username }}">
+                            {% else %}
+                                👤
+                            {% endif %}
+                        </div>
+                        <h6>{{ buddy_user.get_full_name|default:buddy_user.username }}</h6>
+                        <p class="small text-muted">@{{ buddy_user.username }}</p>
+                        <span class="status-badge status-pending">Waiting for response</span>
+                    </div>
+                </div>
+                {% endwith %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Getting Started -->
+            {% if not current_buddy and not received_requests and not sent_requests %}
+            <div class="dashboard-card">
+                <h5>🚀 Getting Started</h5>
+                <p class="small">A recovery buddy is a peer who:</p>
+                <ul class="small">
+                    <li>Shares similar experiences</li>
+                    <li>Provides mutual accountability</li>
+                    <li>Offers non-judgmental support</li>
+                    <li>Celebrates your wins</li>
+                    <li>Helps during tough times</li>
+                </ul>
+                <a href="{% url 'accounts:community' %}" class="btn btn-outline-primary w-100">
+                    Browse Community
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tips Section -->
+    {% if not current_buddy %}
+    <div class="dashboard-card">
+        <h3>💡 Tips for Finding a Recovery Buddy</h3>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
+                    <h6>Similar Goals</h6>
+                    <p class="small">Look for someone with similar recovery goals and timeline</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
+                    <h6>Good Communication</h6>
+                    <p class="small">Find someone who communicates regularly and honestly</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">⚖️</div>
+                    <h6>Mutual Support</h6>
+                    <p class="small">The relationship should benefit both people equally</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
+                    <h6>Positive Influence</h6>
+                    <p class="small">Choose someone who motivates and inspires you</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

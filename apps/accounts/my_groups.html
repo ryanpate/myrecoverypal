@@ -1,0 +1,370 @@
+<!-- apps/accounts/templates/accounts/groups/my_groups.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Groups - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .my-groups-header {
+        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        color: white;
+        padding: 3rem 0 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .group-card {
+        background: white;
+        border-radius: 15px;
+        padding: 0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        border: 2px solid transparent;
+    }
+
+    .group-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        border-color: #52b788;
+    }
+
+    .group-header {
+        height: 100px;
+        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .group-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .group-icon {
+        font-size: 2.5rem;
+        color: white;
+        z-index: 1;
+        position: relative;
+    }
+
+    .group-body {
+        padding: 1.5rem;
+    }
+
+    .group-name {
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+
+    .group-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        color: #777;
+    }
+
+    .group-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    .status-active {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-admin {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-moderator {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .group-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .action-btn {
+        flex: 1;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: #52b788;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-outline {
+        background: white;
+        color: #52b788;
+        border: 2px solid #52b788;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-1px);
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #666;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #52b788;
+        margin-bottom: 0.5rem;
+    }
+
+    .activity-item {
+        background: white;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid #52b788;
+    }
+
+    @media (max-width: 768px) {
+        .group-actions {
+            flex-direction: column;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="my-groups-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1>My Recovery Groups</h1>
+                <p class="lead">Your supportive communities and connections</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{% url 'accounts:create_group' %}" class="btn btn-light btn-lg">
+                    Create New Group
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    {% if memberships %}
+    <!-- Statistics -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ memberships|length }}</div>
+            <div>Groups Joined</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                {% for membership in memberships %}
+                    {% if membership.status == 'admin' %}1{% else %}0{% endif %}
+                {% empty %}0{% endfor %}
+            </div>
+            <div>Groups Created</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                {% for membership in memberships %}
+                    {% if membership.status == 'moderator' %}1{% else %}0{% endif %}
+                {% empty %}0{% endfor %}
+            </div>
+            <div>Moderating</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                {% for membership in memberships %}
+                    {% if membership.last_active %}{{ membership.last_active|timesince|truncatewords:1 }}{% endif %}
+                {% empty %}0{% endfor %}
+            </div>
+            <div>Days Active</div>
+        </div>
+    </div>
+
+    <!-- Groups Grid -->
+    <div class="row">
+        {% for membership in memberships %}
+        <div class="col-md-6 col-lg-4">
+            <div class="group-card">
+                <div class="group-header" style="background: {{ membership.group.group_color|default:'#52b788' }};">
+                    {% if membership.group.group_image %}
+                        <img src="{{ membership.group.group_image.url }}" alt="{{ membership.group.name }}" class="group-image">
+                    {% endif %}
+                    <div class="group-icon">
+                        {% if membership.group.group_type == 'addiction_type' %}🎯
+                        {% elif membership.group.group_type == 'location' %}📍
+                        {% elif membership.group.group_type == 'recovery_stage' %}⭐
+                        {% elif membership.group.group_type == 'interest' %}💡
+                        {% elif membership.group.group_type == 'age_group' %}👥
+                        {% elif membership.group.group_type == 'gender' %}🚻
+                        {% elif membership.group.group_type == 'family' %}👨‍👩‍👧‍👦
+                        {% elif membership.group.group_type == 'professional' %}💼
+                        {% else %}👥
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="group-body">
+                    <h4 class="group-name">{{ membership.group.name }}</h4>
+                    
+                    <span class="status-badge {% if membership.status == 'admin' %}status-admin{% elif membership.status == 'moderator' %}status-moderator{% else %}status-active{% endif %}">
+                        {% if membership.status == 'admin' %}👑 Administrator
+                        {% elif membership.status == 'moderator' %}🛡️ Moderator
+                        {% else %}✓ Member
+                        {% endif %}
+                    </span>
+
+                    <div class="group-meta">
+                        <div class="group-meta-item">
+                            👥 {{ membership.group.member_count }} members
+                        </div>
+                        {% if membership.joined_date %}
+                        <div class="group-meta-item">
+                            📅 Joined {{ membership.joined_date }}
+                        </div>
+                        {% endif %}
+                        {% if membership.last_active %}
+                        <div class="group-meta-item">
+                            🕒 Active {{ membership.last_active|timesince }} ago
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <p class="text-muted">{{ membership.group.description|truncatewords:15 }}</p>
+
+                    <div class="group-actions">
+                        <a href="{% url 'accounts:group_detail' membership.group.id %}" class="action-btn btn-primary">
+                            👁️ View Group
+                        </a>
+                        {% if membership.status == 'admin' %}
+                        <a href="#" class="action-btn btn-secondary">
+                            ⚙️ Manage
+                        </a>
+                        {% else %}
+                        <a href="#" class="action-btn btn-outline">
+                            📤 Leave
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Group Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div class="activity-item">
+                        <strong>New member joined "Daily Motivation"</strong>
+                        <small class="text-muted d-block">2 hours ago</small>
+                    </div>
+                    <div class="activity-item">
+                        <strong>You posted in "Mindfulness Practice"</strong>
+                        <small class="text-muted d-block">1 day ago</small>
+                    </div>
+                    <div class="activity-item">
+                        <strong>New discussion started in "Family Support"</strong>
+                        <small class="text-muted d-block">2 days ago</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+        <div class="empty-icon">👥</div>
+        <h3>No Groups Yet</h3>
+        <p>You haven't joined any recovery groups yet. Groups are a great way to connect with others who share similar experiences and goals.</p>
+        <div class="d-flex gap-3 justify-content-center">
+            <a href="{% url 'accounts:groups_list' %}" class="btn btn-primary btn-lg">
+                Browse Groups
+            </a>
+            <a href="{% url 'accounts:create_group' %}" class="btn btn-outline-primary btn-lg">
+                Create Group
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
