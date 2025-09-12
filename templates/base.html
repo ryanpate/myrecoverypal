@@ -388,6 +388,39 @@
             color: var(--primary-light);
         }
 
+        /* Challenge notification styles */
+        .challenge-notification {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        .pending-checkin-alert {
+            background: #fff3cd !important;
+            color: #856404 !important;
+            border-left: 4px solid #ffc107;
+        }
+
+        /* Challenge menu item highlight */
+        .nav-links a[href*="challenges"] {
+            position: relative;
+        }
+
+        .nav-links a[href*="challenges"]::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 8px;
+            height: 8px;
+            background: #52b788;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        
         /* Navigation Links */
         .nav-links {
             display: flex;
@@ -934,6 +967,9 @@
                     <li><a href="{% url 'journal:entry_list' %}"
                             class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">Journal</a>
                     </li>
+                    <li><a href="{% url 'accounts:challenges_home' %}"
+                            class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">🏆 Challenges</a>
+                    </li>
                     <li><a href="{% url 'accounts:community' %}"
                             class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">Community</a>
                     </li>
@@ -973,6 +1009,18 @@
                             <span class="message-count-badge">{{ user.received_messages.filter.is_read.count }}</span>
                             {% endif %}
                         </a>
+                        <a href="{% url 'accounts:my_challenges' %}">
+                            <i class="fas fa-trophy"></i> My Challenges
+                            {% if user_active_challenges_count > 0 %}
+                            <span class="message-count-badge">{{ user_active_challenges_count }}</span>
+                            {% endif %}
+                        </a>
+                        {% if user_pending_check_ins > 0 %}
+                        <a href="{% url 'accounts:my_challenges' %}" style="background: #fff3cd; color: #856404;">
+                            <i class="fas fa-check-circle"></i> {{ user_pending_check_ins }} Check-in{{ user_pending_check_ins|pluralize }}
+                            Needed
+                        </a>
+                        {% endif %}
                         <a href="{% url 'accounts:milestones' %}">
                             <i class="fas fa-trophy"></i> Milestones
                         </a>

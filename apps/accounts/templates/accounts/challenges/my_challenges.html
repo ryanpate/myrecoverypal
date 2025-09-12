@@ -1,0 +1,528 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Challenges - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .challenges-dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+    }
+    
+    .stats-overview {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        text-align: center;
+        padding: 1.5rem;
+        border-radius: 10px;
+        background: #f8f9fc;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .check-in-alerts {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .alert-item {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: between;
+    }
+    
+    .alert-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .active-challenges {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .challenge-card {
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+    
+    .challenge-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .challenge-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .challenge-type-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: #e9ecef;
+        color: #495057;
+    }
+    
+    .progress-section {
+        background: #f8f9fc;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .progress-bar-container {
+        background: #e9ecef;
+        border-radius: 10px;
+        height: 20px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 10px;
+        transition: width 0.3s ease;
+        position: relative;
+    }
+    
+    .progress-text {
+        display: flex;
+        justify-content: between;
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .streak-display {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .streak-item {
+        text-align: center;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .streak-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #f5576c;
+        margin-bottom: 0.25rem;
+    }
+    
+    .streak-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .challenge-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .badges-section {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .badge-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+    }
+    
+    .badge-item {
+        text-align: center;
+        padding: 1rem;
+        background: #f8f9fc;
+        border-radius: 8px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .badge-item:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    
+    .badge-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .badge-name {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.25rem;
+    }
+    
+    .badge-date {
+        font-size: 0.7rem;
+        color: #6c757d;
+    }
+    
+    .rarity-1 { border-left: 4px solid #28a745; }
+    .rarity-2 { border-left: 4px solid #17a2b8; }
+    .rarity-3 { border-left: 4px solid #ffc107; }
+    .rarity-4 { border-left: 4px solid #fd7e14; }
+    .rarity-5 { border-left: 4px solid #dc3545; }
+    
+    .completed-challenges {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .completed-challenge-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fc;
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+    }
+    
+    .completed-challenge-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .completion-badge {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #28a745, #20c997);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        margin-right: 1rem;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #6c757d;
+    }
+    
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="challenges-dashboard-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1>🏆 My Challenge Dashboard</h1>
+                <p class="lead mb-0">Track your progress and celebrate your achievements</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{% url 'accounts:challenges_home' %}" class="btn btn-light btn-lg">
+                    🔍 Browse Challenges
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Stats Overview -->
+    <div class="stats-overview">
+        <h4 class="mb-3">📊 Your Challenge Statistics</h4>
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.total_challenges_completed }}</div>
+                    <div class="stat-label">Challenges Completed</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.total_days_participated }}</div>
+                    <div class="stat-label">Total Days</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.longest_current_streak }}</div>
+                    <div class="stat-label">Longest Streak</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.badges_earned }}</div>
+                    <div class="stat-label">Badges Earned</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Check-ins Needed -->
+    {% if todays_check_ins %}
+    <div class="check-in-alerts">
+        <h4 class="mb-3">📝 Today's Check-ins</h4>
+        {% for item in todays_check_ins %}
+        <div class="alert-item">
+            <div class="flex-grow-1">
+                <h6 class="mb-1">{{ item.participation.challenge.title }}</h6>
+                {% if item.needs_check_in %}
+                <small>⏰ Check-in needed for today</small>
+                {% elif item.check_in %}
+                <small>✅ Checked in today - {{ item.check_in.get_mood_display }}</small>
+                {% else %}
+                <small>ℹ️ No check-in required</small>
+                {% endif %}
+            </div>
+            {% if item.needs_check_in %}
+            <a href="{% url 'accounts:challenge_check_in' item.participation.challenge.id %}" 
+               class="btn btn-light btn-sm">
+                Check In
+            </a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <!-- Active Challenges -->
+        <div class="col-lg-8">
+            <div class="active-challenges">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>🔥 Active Challenges</h4>
+                    <span class="badge bg-primary">{{ active_participations.count }} active</span>
+                </div>
+
+                {% for participation in active_participations %}
+                <div class="challenge-card">
+                    <div class="challenge-header">
+                        <div>
+                            <div class="challenge-type-badge">
+                                {{ participation.challenge.get_challenge_type_display }}
+                            </div>
+                            <h5 class="mt-2 mb-0">
+                                <a href="{% url 'accounts:challenge_detail' participation.challenge.id %}" 
+                                   class="text-decoration-none">
+                                    {{ participation.challenge.title }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">
+                                {{ participation.challenge.days_remaining }} days left
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="progress-section">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: {{ participation.completion_percentage }}%"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span>{{ participation.days_completed }}/{{ participation.challenge.duration_days }} days</span>
+                            <span>{{ participation.completion_percentage|floatformat:0 }}% complete</span>
+                        </div>
+                    </div>
+
+                    <div class="streak-display">
+                        <div class="streak-item">
+                            <div class="streak-number">{{ participation.current_streak }}</div>
+                            <div class="streak-label">Current Streak</div>
+                        </div>
+                        <div class="streak-item">
+                            <div class="streak-number">{{ participation.longest_streak }}</div>
+                            <div class="streak-label">Best Streak</div>
+                        </div>
+                        {% if participation.accountability_partner %}
+                        <div class="streak-item">
+                            <div class="streak-number">🤝</div>
+                            <div class="streak-label">
+                                <a href="{% url 'accounts:profile' participation.accountability_partner.user.username %}" 
+                                   class="text-decoration-none">
+                                    {{ participation.accountability_partner.user.get_full_name|default:participation.accountability_partner.user.username|truncatechars:15 }}
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if participation.personal_goal %}
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <strong>Your Goal:</strong> {{ participation.personal_goal|truncatechars:100 }}
+                        </small>
+                    </div>
+                    {% endif %}
+
+                    <div class="challenge-actions">
+                        {% if participation.challenge.enable_daily_check_in %}
+                        <a href="{% url 'accounts:challenge_check_in' participation.challenge.id %}" 
+                           class="btn btn-primary btn-sm">
+                            📝 Daily Check-in
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'accounts:challenge_detail' participation.challenge.id %}" 
+                           class="btn btn-outline-primary btn-sm">
+                            📊 View Details
+                        </a>
+                        <a href="{% url 'accounts:challenge_feed' participation.challenge.id %}" 
+                           class="btn btn-outline-secondary btn-sm">
+                            📈 Activity Feed
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">🎯</div>
+                    <h5>No Active Challenges</h5>
+                    <p>Ready to start your journey? Join a challenge today!</p>
+                    <a href="{% url 'accounts:challenges_home' %}" class="btn btn-primary">
+                        Browse Challenges
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Badges -->
+            {% if user_badges %}
+            <div class="badges-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>🏅 Recent Badges</h5>
+                    <small class="text-muted">{{ stats.badges_earned }} total</small>
+                </div>
+                <div class="badge-grid">
+                    {% for user_badge in user_badges %}
+                    <div class="badge-item rarity-{{ user_badge.badge.rarity_level }}" 
+                         title="{{ user_badge.badge.description }}">
+                        <div class="badge-icon">{{ user_badge.badge.icon }}</div>
+                        <div class="badge-name">{{ user_badge.badge.name }}</div>
+                        <div class="badge-date">{{ user_badge.earned_date|date:"M d" }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Completed Challenges -->
+            {% if completed_participations %}
+            <div class="completed-challenges">
+                <h5 class="mb-3">✅ Recently Completed</h5>
+                {% for participation in completed_participations %}
+                <div class="completed-challenge-item">
+                    <div class="completion-badge">
+                        {% if participation.challenge.challenge_type == 'sobriety' %}🎯
+                        {% elif participation.challenge.challenge_type == 'wellness' %}💪
+                        {% elif participation.challenge.challenge_type == 'mindfulness' %}🧘
+                        {% elif participation.challenge.challenge_type == 'gratitude' %}🙏
+                        {% elif participation.challenge.challenge_type == 'exercise' %}🏃
+                        {% else %}🏆
+                        {% endif %}
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">{{ participation.challenge.title }}</h6>
+                        <small class="text-muted">
+                            Completed {{ participation.completion_date|date:"M d, Y" }}
+                            • {{ participation.days_completed }}/{{ participation.challenge.duration_days }} days
+                            {% if participation.longest_streak > 0 %}
+                                • 🔥{{ participation.longest_streak }} best streak
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                {% if stats.total_challenges_completed > completed_participations|length %}
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        And {{ stats.total_challenges_completed|sub:completed_participations|length }} more...
+                    </small>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add tooltips to badges
+    const badges = document.querySelectorAll('.badge-item');
+    badges.forEach(badge => {
+        badge.addEventListener('mouseenter', function() {
+            // You could add a more sophisticated tooltip here
+            console.log('Badge hovered:', this.title);
+        });
+    });
+    
+    // Animate progress bars
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => {
+            bar.style.width = width;
+        }, 300);
+    });
+});
+</script>
+{% endblock %}

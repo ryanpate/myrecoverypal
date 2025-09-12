@@ -40,7 +40,10 @@ urlpatterns = [
     path('milestones/add/', views.MilestoneCreateView.as_view(), name='add_milestone'),
 
     # Community
-    path('community/', views.CommunityView.as_view(), name='community'),
+    #path('community/', views.CommunityView.as_view(), name='community'),
+    path('community/', views.EnhancedCommunityView.as_view(), name='community'),
+    path('community/suggested/', views.suggested_users, name='suggested_users'),
+
 
     # Messages
     path('messages/', views.MessageListView.as_view(), name='messages'),
@@ -72,4 +75,29 @@ urlpatterns = [
     path('groups/<int:pk>/', views.RecoveryGroupDetailView.as_view(), name='group_detail'),
     path('groups/my-groups/', views.my_groups, name='my_groups'),
     path('groups/<int:group_id>/join/', views.join_group, name='join_group'),
+
+    # Challenge System URLs
+    path('challenges/', views.challenges_home, name='challenges_home'),
+    path('challenges/create/', views.create_challenge, name='create_challenge'),
+    path('challenges/create/<int:group_id>/',
+         views.create_challenge, name='create_group_challenge'),
+    path('challenges/<int:challenge_id>/',
+         views.challenge_detail, name='challenge_detail'),
+    path('challenges/<int:challenge_id>/join/',
+         views.join_challenge, name='join_challenge'),
+    path('challenges/<int:challenge_id>/leave/',
+         views.leave_challenge, name='leave_challenge'),
+    path('challenges/<int:challenge_id>/check-in/',
+         views.challenge_check_in, name='challenge_check_in'),
+    path('challenges/<int:challenge_id>/feed/',
+         views.challenge_feed, name='challenge_feed'),
+    path('challenges/<int:challenge_id>/buddy/<int:user_id>/',
+         views.request_buddy, name='request_challenge_buddy'),
+    path('my-challenges/', views.my_challenges, name='my_challenges'),
+
+    # AJAX endpoints for challenge interactions
+    path('ajax/challenge-comment/<int:check_in_id>/',
+         views.add_challenge_comment, name='add_challenge_comment'),
+    path('ajax/encourage/<int:check_in_id>/',
+         views.give_encouragement, name='give_encouragement'),
 ]

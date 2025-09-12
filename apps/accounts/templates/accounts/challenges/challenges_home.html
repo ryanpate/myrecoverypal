@@ -1,0 +1,498 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Recovery Challenges - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .challenges-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+    }
+    
+    .challenge-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    .challenge-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .challenge-type-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.25rem 0.5rem;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .challenge-status {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .status-active { background: #d4edda; color: #155724; }
+    .status-upcoming { background: #fff3cd; color: #856404; }
+    .status-completed { background: #d1ecf1; color: #0c5460; }
+    
+    .progress-ring {
+        width: 60px;
+        height: 60px;
+        position: relative;
+    }
+    
+    .progress-circle {
+        fill: transparent;
+        stroke: #e9ecef;
+        stroke-width: 4;
+    }
+    
+    .progress-bar {
+        fill: transparent;
+        stroke: #28a745;
+        stroke-width: 4;
+        stroke-linecap: round;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+        transition: stroke-dasharray 0.3s ease;
+    }
+    
+    .quick-stats {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 0.5rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .filter-section {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .recommended-challenges {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        border-radius: 12px;
+        padding: 2rem;
+        color: white;
+        margin-bottom: 2rem;
+    }
+    
+    .activity-feed {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        max-height: 500px;
+        overflow-y: auto;
+    }
+    
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.75rem;
+        font-size: 1.2rem;
+    }
+    
+    .my-participations {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .participation-item {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        justify-content: between;
+        align-items: center;
+    }
+    
+    .participation-item:last-child {
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="challenges-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1>🏆 Recovery Challenges</h1>
+                <p class="lead mb-0">Join group challenges to build healthy habits and connect with others on their recovery journey</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{% url 'accounts:create_challenge' %}" class="btn btn-light btn-lg">
+                    ➕ Create Challenge
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <h5 class="mb-3">📊 Challenge Stats</h5>
+                <div class="row text-center">
+                    <div class="stat-item col-12">
+                        <div class="stat-number">{{ total_challenges }}</div>
+                        <div class="stat-label">Total Challenges</div>
+                    </div>
+                    <div class="stat-item col-12">
+                        <div class="stat-number">{{ active_challenges }}</div>
+                        <div class="stat-label">Active Now</div>
+                    </div>
+                    <div class="stat-item col-12">
+                        <div class="stat-number">{{ user_participations.count }}</div>
+                        <div class="stat-label">Your Active</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Active Challenges -->
+            {% if user_participations %}
+            <div class="my-participations">
+                <h5 class="mb-3">🔥 Your Active Challenges</h5>
+                {% for participation in user_participations %}
+                <div class="participation-item">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">
+                            <a href="{% url 'accounts:challenge_detail' participation.challenge.id %}" class="text-decoration-none">
+                                {{ participation.challenge.title }}
+                            </a>
+                        </h6>
+                        <small class="text-muted">
+                            Day {{ participation.days_completed }}/{{ participation.challenge.duration_days }}
+                            {% if participation.current_streak > 0 %}
+                                • 🔥{{ participation.current_streak }} streak
+                            {% endif %}
+                        </small>
+                    </div>
+                    <div class="progress-ring">
+                        <svg width="60" height="60">
+                            <circle class="progress-circle" cx="30" cy="30" r="26"></circle>
+                            <circle class="progress-bar" cx="30" cy="30" r="26"
+                                stroke-dasharray="{{ participation.completion_percentage|floatformat:0 }}, 100"></circle>
+                        </svg>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem; font-weight: bold;">
+                            {{ participation.completion_percentage|floatformat:0 }}%
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="text-center mt-3">
+                    <a href="{% url 'accounts:my_challenges' %}" class="btn btn-outline-primary btn-sm">
+                        View All My Challenges
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Recent Activity -->
+            {% if recent_check_ins %}
+            <div class="activity-feed">
+                <h5 class="mb-3">📈 Recent Activity</h5>
+                {% for check_in in recent_check_ins %}
+                <div class="activity-item">
+                    <div class="activity-avatar">
+                        {% if check_in.participant.user.avatar %}
+                            <img src="{{ check_in.participant.user.avatar.url }}" alt="{{ check_in.participant.user.username }}" 
+                                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        {% else %}
+                            👤
+                        {% endif %}
+                    </div>
+                    <div class="flex-grow-1">
+                        <div style="font-size: 0.9rem;">
+                            <strong>{{ check_in.participant.user.get_full_name|default:check_in.participant.user.username }}</strong>
+                            {% if check_in.completed_daily_goal %}✅{% else %}📝{% endif %}
+                            <a href="{% url 'accounts:challenge_detail' check_in.participant.challenge.id %}" class="text-decoration-none">
+                                {{ check_in.participant.challenge.title }}
+                            </a>
+                        </div>
+                        <small class="text-muted">{{ check_in.created_at|timesince }} ago</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Filters -->
+            <div class="filter-section">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        {{ filter_form.status.label_tag }}
+                        {{ filter_form.status }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ filter_form.challenge_type.label_tag }}
+                        {{ filter_form.challenge_type }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ filter_form.duration.label_tag }}
+                        {{ filter_form.duration }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ filter_form.search.label_tag }}
+                        {{ filter_form.search }}
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            {{ filter_form.my_challenges_only }}
+                            {{ filter_form.my_challenges_only.label_tag }}
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                        <a href="{% url 'accounts:challenges_home' %}" class="btn btn-outline-secondary">Clear</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Recommended Challenges -->
+            {% if recommended_challenges %}
+            <div class="recommended-challenges">
+                <h4 class="mb-3">💡 Recommended for You</h4>
+                <div class="row">
+                    {% for challenge in recommended_challenges %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-transparent border-light">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ challenge.get_challenge_type_display }}</h6>
+                                <h5>{{ challenge.title }}</h5>
+                                <p class="card-text small">{{ challenge.description|truncatewords:15 }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small>{{ challenge.duration_days }} days • {{ challenge.participant_count }} participants</small>
+                                    <a href="{% url 'accounts:challenge_detail' challenge.id %}" class="btn btn-light btn-sm">Join</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Challenge Grid -->
+            <div class="row">
+                {% for challenge in page_obj %}
+                <div class="col-lg-6 col-xl-4 mb-4">
+                    <div class="card challenge-card">
+                        <div class="card-body position-relative">
+                            <div class="challenge-type-badge">
+                                {{ challenge.get_challenge_type_display }}
+                            </div>
+                            
+                            <div class="challenge-status status-{{ challenge.status }}">
+                                {{ challenge.get_status_display }}
+                            </div>
+                            
+                            <h5 class="card-title">{{ challenge.title }}</h5>
+                            <p class="card-text text-muted">{{ challenge.description|truncatewords:20 }}</p>
+                            
+                            <div class="challenge-meta mb-3">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="fw-bold">{{ challenge.duration_days }}</div>
+                                        <small class="text-muted">Days</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="fw-bold">{{ challenge.participant_count }}</div>
+                                        <small class="text-muted">Participants</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="fw-bold">{{ challenge.completion_rate }}%</div>
+                                        <small class="text-muted">Completion</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="challenge-group mb-2">
+                                <small class="text-muted">
+                                    👥 {{ challenge.group.name }}
+                                    {% if not challenge.is_public %}🔒{% endif %}
+                                </small>
+                            </div>
+                            
+                            {% if challenge.status == 'active' or challenge.status == 'upcoming' %}
+                            <div class="challenge-timing mb-3">
+                                {% if challenge.status == 'upcoming' %}
+                                    <small class="text-warning">
+                                        ⏳ Starts {{ challenge.start_date|date:"M d" }}
+                                    </small>
+                                {% else %}
+                                    <small class="text-success">
+                                        🔥 {{ challenge.days_remaining }} days remaining
+                                    </small>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="d-grid">
+                                <a href="{% url 'accounts:challenge_detail' challenge.id %}" class="btn btn-primary">
+                                    View Challenge
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer bg-light">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="creator-info">
+                                    <small class="text-muted">
+                                        Created by 
+                                        <a href="{% url 'accounts:profile' challenge.creator.username %}" class="text-decoration-none">
+                                            {{ challenge.creator.get_full_name|default:challenge.creator.username }}
+                                        </a>
+                                    </small>
+                                </div>
+                                {% if challenge.enable_leaderboard %}
+                                <small class="text-muted">🏆 Leaderboard</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <h4 class="text-muted">No challenges found</h4>
+                        <p class="text-muted">Try adjusting your filters or create a new challenge!</p>
+                        <a href="{% url 'accounts:create_challenge' %}" class="btn btn-primary">
+                            ➕ Create Your First Challenge
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Challenge pagination">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">Previous</a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">Last</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-submit filter form on change
+    const filterSelects = document.querySelectorAll('.filter-section select');
+    filterSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            this.closest('form').submit();
+        });
+    });
+    
+    // Search form delay submit
+    const searchInput = document.querySelector('input[name="search"]');
+    if (searchInput) {
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                this.closest('form').submit();
+            }, 500);
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,594 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ challenge.title }} - Recovery Challenges{% endblock %}
+
+{% block extra_css %}
+<style>
+    .challenge-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+    }
+    
+    .challenge-status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+    
+    .status-active { background: #d4edda; color: #155724; }
+    .status-upcoming { background: #fff3cd; color: #856404; }
+    .status-completed { background: #d1ecf1; color: #0c5460; }
+    .status-draft { background: #f8d7da; color: #721c24; }
+    
+    .stats-grid {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        text-align: center;
+        padding: 1rem;
+        border-radius: 8px;
+        background: #f8f9fa;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .leaderboard-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .leaderboard-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+    
+    .leaderboard-item:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+    }
+    
+    .leaderboard-rank {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 1rem;
+    }
+    
+    .rank-1 { background: #ffd700; color: #996f00; }
+    .rank-2 { background: #c0c0c0; color: #5a5a5a; }
+    .rank-3 { background: #cd7f32; color: #8b5522; }
+    .rank-other { background: #e9ecef; color: #6c757d; }
+    
+    .participant-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.5rem;
+    }
+    
+    .challenge-details {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .challenge-timeline {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+    
+    .timeline-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .timeline-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.2rem;
+    }
+    
+    .activity-feed {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-height: 600px;
+        overflow-y: auto;
+    }
+    
+    .check-in-item {
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .check-in-item:hover {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .check-in-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+    
+    .check-in-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.75rem;
+        font-size: 1.2rem;
+    }
+    
+    .mood-indicator {
+        padding: 0.25rem 0.5rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: auto;
+    }
+    
+    .mood-great { background: #d4edda; color: #155724; }
+    .mood-good { background: #d1ecf1; color: #0c5460; }
+    .mood-okay { background: #fff3cd; color: #856404; }
+    .mood-struggling { background: #f8d7da; color: #721c24; }
+    .mood-difficult { background: #f5c6cb; color: #721c24; }
+    
+    .encouragement-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid #f8f9fa;
+    }
+    
+    .encourage-btn {
+        background: none;
+        border: 1px solid #ffc107;
+        color: #ffc107;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    }
+    
+    .encourage-btn:hover, .encourage-btn.encouraged {
+        background: #ffc107;
+        color: #000;
+    }
+    
+    .user-participation-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+    
+    .progress-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 0 auto 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="challenge-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="challenge-status-badge status-{{ challenge.status }}">
+                    {{ challenge.get_status_display }}
+                </div>
+                <h1>{{ challenge.get_challenge_type_display }} {{ challenge.title }}</h1>
+                <p class="lead mb-3">{{ challenge.description }}</p>
+                <div class="challenge-meta">
+                    <span class="me-4">📅 {{ challenge.duration_days }} days</span>
+                    <span class="me-4">👥 {{ challenge.participant_count }} participants</span>
+                    <span class="me-4">🏆 {{ challenge.completion_rate }}% completion rate</span>
+                    <span>👤 by {{ challenge.creator.get_full_name|default:challenge.creator.username }}</span>
+                </div>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                {% if user_participation %}
+                    <a href="{% url 'accounts:challenge_check_in' challenge.id %}" class="btn btn-light btn-lg me-2">
+                        📝 Daily Check-in
+                    </a>
+                    <a href="{% url 'accounts:leave_challenge' challenge.id %}" class="btn btn-outline-light">
+                        Leave Challenge
+                    </a>
+                {% elif can_join %}
+                    <a href="{% url 'accounts:join_challenge' challenge.id %}" class="btn btn-light btn-lg">
+                        🚀 Join Challenge
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- User Participation Status -->
+            {% if user_participation %}
+            <div class="user-participation-card">
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center">
+                        <div class="progress-circle">
+                            {{ user_participation.completion_percentage|floatformat:0 }}%
+                        </div>
+                        <h5>Your Progress</h5>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <h3>{{ user_participation.days_completed }}</h3>
+                                <small>Days Completed</small>
+                            </div>
+                            <div class="col-4">
+                                <h3>{{ user_participation.current_streak }}</h3>
+                                <small>Current Streak</small>
+                            </div>
+                            <div class="col-4">
+                                <h3>{{ user_participation.longest_streak }}</h3>
+                                <small>Longest Streak</small>
+                            </div>
+                        </div>
+                        {% if user_participation.personal_goal %}
+                        <div class="mt-3">
+                            <h6>Your Goal:</h6>
+                            <p class="mb-0">{{ user_participation.personal_goal }}</p>
+                        </div>
+                        {% endif %}
+                        {% if user_participation.accountability_partner %}
+                        <div class="mt-3">
+                            <h6>Accountability Partner:</h6>
+                            <p class="mb-0">
+                                <a href="{% url 'accounts:profile' user_participation.accountability_partner.user.username %}" class="text-white">
+                                    {{ user_participation.accountability_partner.user.get_full_name|default:user_participation.accountability_partner.user.username }}
+                                </a>
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Challenge Details -->
+            <div class="challenge-details">
+                <h3>📋 Challenge Details</h3>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Daily Goal</h5>
+                        <p>{{ challenge.daily_goal_description }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Group</h5>
+                        <p>
+                            <a href="{% url 'accounts:group_detail' challenge.group.id %}" class="text-decoration-none">
+                                👥 {{ challenge.group.name }}
+                            </a>
+                            {% if not challenge.is_public %}🔒 Private{% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                {% if challenge.rules_and_guidelines %}
+                <div class="mb-4">
+                    <h5>Rules & Guidelines</h5>
+                    <p>{{ challenge.rules_and_guidelines|linebreaks }}</p>
+                </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Features</h6>
+                        <ul class="list-unstyled">
+                            {% if challenge.enable_daily_check_in %}
+                            <li>✅ Daily check-ins required</li>
+                            {% endif %}
+                            {% if challenge.enable_leaderboard %}
+                            <li>🏆 Leaderboard enabled</li>
+                            {% endif %}
+                            {% if challenge.allow_buddy_system %}
+                            <li>🤝 Buddy system available</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Timeline</h6>
+                        <ul class="list-unstyled">
+                            <li>📅 Start: {{ challenge.start_date|date:"M d, Y" }}</li>
+                            <li>🏁 End: {{ challenge.end_date|date:"M d, Y" }}</li>
+                            {% if challenge.status == 'active' %}
+                            <li>⏰ {{ challenge.days_remaining }} days remaining</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="activity-feed">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>📈 Recent Check-ins</h4>
+                    <a href="{% url 'accounts:challenge_feed' challenge.id %}" class="btn btn-outline-primary btn-sm">
+                        View All Activity
+                    </a>
+                </div>
+
+                {% for check_in in recent_check_ins %}
+                <div class="check-in-item">
+                    <div class="check-in-header">
+                        <div class="check-in-avatar">
+                            {% if check_in.participant.user.avatar %}
+                                <img src="{{ check_in.participant.user.avatar.url }}" alt="{{ check_in.participant.user.username }}" 
+                                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                            {% else %}
+                                👤
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">
+                                <a href="{% url 'accounts:profile' check_in.participant.user.username %}" class="text-decoration-none">
+                                    {{ check_in.participant.user.get_full_name|default:check_in.participant.user.username }}
+                                </a>
+                            </h6>
+                            <small class="text-muted">{{ check_in.created_at|timesince }} ago</small>
+                        </div>
+                        <div class="mood-indicator mood-{{ check_in.mood }}">
+                            {{ check_in.get_mood_display }}
+                        </div>
+                    </div>
+                    
+                    <div class="check-in-status mb-2">
+                        {% if check_in.completed_daily_goal %}
+                            <span class="badge bg-success">✅ Completed daily goal</span>
+                        {% else %}
+                            <span class="badge bg-warning">⏸️ Partial completion</span>
+                        {% endif %}
+                    </div>
+
+                    {% if check_in.progress_note %}
+                    <p class="mb-2">{{ check_in.progress_note }}</p>
+                    {% endif %}
+
+                    {% if check_in.custom_metric_1 or check_in.custom_metric_2 %}
+                    <div class="metrics mb-2">
+                        {% if check_in.custom_metric_1 %}
+                        <small class="text-muted me-3">📊 {{ check_in.custom_metric_1 }}</small>
+                        {% endif %}
+                        {% if check_in.custom_metric_2 %}
+                        <small class="text-muted">📊 {{ check_in.custom_metric_2 }}</small>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="encouragement-section">
+                        <button class="encourage-btn" data-check-in-id="{{ check_in.id }}">
+                            👏 Encourage ({{ check_in.encouragement_count }})
+                        </button>
+                        <small class="text-muted">{{ check_in.comments.count }} comments</small>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-4">
+                    <p class="text-muted">No shared check-ins yet. Be the first to share your progress!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Challenge Stats -->
+            <div class="stats-grid">
+                <h5 class="mb-3">📊 Challenge Statistics</h5>
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.total_participants }}</div>
+                    <div class="stat-label">Total Participants</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.completion_rate }}%</div>
+                    <div class="stat-label">Completion Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.average_streak|floatformat:1 }}</div>
+                    <div class="stat-label">Average Streak</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.total_check_ins }}</div>
+                    <div class="stat-label">Total Check-ins</div>
+                </div>
+            </div>
+
+            <!-- Leaderboard -->
+            {% if challenge.enable_leaderboard and leaderboard %}
+            <div class="leaderboard-card">
+                <h5 class="mb-3">🏆 Leaderboard</h5>
+                {% for participant in leaderboard %}
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank {% if forloop.counter == 1 %}rank-1{% elif forloop.counter == 2 %}rank-2{% elif forloop.counter == 3 %}rank-3{% else %}rank-other{% endif %}">
+                        {{ forloop.counter }}
+                    </div>
+                    <div class="participant-avatar">
+                        {% if participant.user.avatar %}
+                            <img src="{{ participant.user.avatar.url }}" alt="{{ participant.user.username }}" 
+                                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        {% else %}
+                            👤
+                        {% endif %}
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">
+                            <a href="{% url 'accounts:profile' participant.user.username %}" class="text-decoration-none">
+                                {{ participant.user.get_full_name|default:participant.user.username }}
+                            </a>
+                        </h6>
+                        <small class="text-muted">
+                            {{ participant.days_completed }}/{{ challenge.duration_days }} days
+                            {% if participant.current_streak > 0 %}
+                                • 🔥{{ participant.current_streak }} streak
+                            {% endif %}
+                        </small>
+                    </div>
+                    {% if challenge.allow_buddy_system and user_participation and participant != user_participation and not user_participation.accountability_partner %}
+                    <a href="{% url 'accounts:request_challenge_buddy' challenge.id participant.user.id %}" 
+                       class="btn btn-outline-primary btn-sm">
+                        🤝 Buddy
+                    </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Challenge Timeline -->
+            <div class="challenge-timeline">
+                <h5 class="mb-3">📅 Timeline</h5>
+                <div class="timeline-item">
+                    <div class="timeline-icon">📝</div>
+                    <div>
+                        <strong>Created</strong><br>
+                        <small>{{ challenge.created_at|date:"M d, Y" }}</small>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">🚀</div>
+                    <div>
+                        <strong>Start Date</strong><br>
+                        <small>{{ challenge.start_date|date:"M d, Y" }}</small>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">🏁</div>
+                    <div>
+                        <strong>End Date</strong><br>
+                        <small>{{ challenge.end_date|date:"M d, Y" }}</small>
+                    </div>
+                </div>
+                {% if challenge.completion_badge_name %}
+                <div class="timeline-item">
+                    <div class="timeline-icon">🏆</div>
+                    <div>
+                        <strong>Completion Badge</strong><br>
+                        <small>{{ challenge.completion_badge_name }}</small>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle encouragement buttons
+    document.querySelectorAll('.encourage-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const checkInId = this.dataset.checkInId;
+            
+            fetch(`/accounts/ajax/encourage/${checkInId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.textContent = `👏 Encourage (${data.total_encouragements})`;
+                    if (data.encouraged) {
+                        this.classList.add('encouraged');
+                    } else {
+                        this.classList.remove('encouraged');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

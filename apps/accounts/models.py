@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-
+from datetime import timedelta
 
 class User(AbstractUser):
     # Additional fields for recovery
@@ -762,3 +762,454 @@ class GroupPost(models.Model):
     @property
     def likes_count(self):
         return self.likes.count()
+
+class GroupChallenge(models.Model):
+    """
+    Group challenges for recovery milestones and wellness goals
+    """
+    CHALLENGE_TYPES = (
+        ('sobriety', '🎯 Sobriety Challenge'),
+        ('wellness', '💪 Wellness Challenge'),
+        ('mindfulness', '🧘 Mindfulness Challenge'),
+        ('community', '🤝 Community Engagement'),
+        ('self_care', '🌿 Self-Care Challenge'),
+        ('gratitude', '🙏 Gratitude Challenge'),
+        ('exercise', '🏃 Exercise Challenge'),
+        ('learning', '📚 Learning Challenge'),
+        ('service', '🤲 Service Challenge'),
+        ('creativity', '🎨 Creative Challenge'),
+    )
+
+    DURATION_CHOICES = (
+        (7, '7 Days'),
+        (14, '14 Days'),
+        (21, '21 Days'),
+        (30, '30 Days'),
+        (60, '60 Days'),
+        (90, '90 Days'),
+    )
+
+    STATUS_CHOICES = (
+        ('draft', '📝 Draft'),
+        ('upcoming', '⏳ Upcoming'),
+        ('active', '🔥 Active'),
+        ('completed', '✅ Completed'),
+        ('cancelled', '❌ Cancelled'),
+    )
+
+    # Basic Challenge Info
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    challenge_type = models.CharField(max_length=20, choices=CHALLENGE_TYPES)
+
+    # Challenge Settings
+    duration_days = models.IntegerField(choices=DURATION_CHOICES)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    # Rules and Guidelines
+    daily_goal_description = models.TextField(
+        help_text="What participants need to do each day"
+    )
+    rules_and_guidelines = models.TextField(blank=True)
+
+    # Group and Creator
+    group = models.ForeignKey(
+        RecoveryGroup,
+        on_delete=models.CASCADE,
+        related_name='challenges'
+    )
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='created_challenges'
+    )
+
+    # Challenge Status
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default='draft')
+    is_public = models.BooleanField(
+        default=True,
+        help_text="Allow non-group members to see and join"
+    )
+    max_participants = models.IntegerField(
+        null=True,
+        blank=True,
+        help_text="Leave blank for unlimited"
+    )
+
+    # Engagement Features
+    allow_buddy_system = models.BooleanField(
+        default=True,
+        help_text="Allow participants to pair up for accountability"
+    )
+    enable_leaderboard = models.BooleanField(
+        default=True,
+        help_text="Show participant progress rankings"
+    )
+    enable_daily_check_in = models.BooleanField(
+        default=True,
+        help_text="Require daily check-ins"
+    )
+
+    # Rewards and Recognition
+    completion_badge_name = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Custom badge name for completing this challenge"
+    )
+    completion_message = models.TextField(
+        blank=True,
+        help_text="Message shown when someone completes the challenge"
+    )
+
+    # Metadata
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-start_date', '-created_at']
+        indexes = [
+            models.Index(fields=['group', 'status']),
+            models.Index(fields=['start_date', 'end_date']),
+            models.Index(fields=['challenge_type', 'status']),
+        ]
+
+    def __str__(self):
+        return f"{self.title} ({self.group.name})"
+
+    @property
+    def participant_count(self):
+        return self.participants.filter(status='active').count()
+
+    @property
+    def completion_rate(self):
+        active_participants = self.participants.filter(status='active').count()
+        if active_participants == 0:
+            return 0
+        completed_participants = self.participants.filter(
+            status='completed').count()
+        return round((completed_participants / active_participants) * 100, 1)
+
+    @property
+    def days_remaining(self):
+        if self.status == 'completed':
+            return 0
+        today = timezone.now().date()
+        if today > self.end_date:
+            return 0
+        return (self.end_date - today).days
+
+    @property
+    def is_full(self):
+        if not self.max_participants:
+            return False
+        return self.participant_count >= self.max_participants
+
+    def can_join(self, user):
+        """Check if a user can join this challenge"""
+        if self.is_full:
+            return False, "Challenge is full"
+        if self.status not in ['upcoming', 'active']:
+            return False, "Challenge is not accepting participants"
+        if self.participants.filter(user=user).exists():
+            return False, "Already participating"
+        if not self.is_public and not self.group.memberships.filter(
+            user=user, status__in=['active', 'moderator', 'admin']
+        ).exists():
+            return False, "Must be a group member"
+        return True, "Can join"
+
+    def save(self, *args, **kwargs):
+        # Auto-calculate end_date if not set
+        if not self.end_date and self.start_date:
+            self.end_date = self.start_date + \
+                timezone.timedelta(days=self.duration_days - 1)
+
+        # Auto-update status based on dates
+        today = timezone.now().date()
+        if self.status == 'draft':
+            pass  # Keep as draft until manually activated
+        elif today < self.start_date:
+            self.status = 'upcoming'
+        elif today <= self.end_date:
+            self.status = 'active'
+        elif today > self.end_date:
+            self.status = 'completed'
+
+        super().save(*args, **kwargs)
+
+
+class ChallengeParticipant(models.Model):
+    """
+    Track user participation in group challenges
+    """
+    STATUS_CHOICES = (
+        ('active', '🔥 Active'),
+        ('completed', '✅ Completed'),
+        ('dropped', '😞 Dropped Out'),
+        ('paused', '⏸️ Paused'),
+    )
+
+    challenge = models.ForeignKey(
+        GroupChallenge,
+        on_delete=models.CASCADE,
+        related_name='participants'
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='challenge_participations'
+    )
+
+    # Participation Status
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default='active')
+    joined_date = models.DateTimeField(auto_now_add=True)
+    completion_date = models.DateTimeField(null=True, blank=True)
+
+    # Progress Tracking
+    days_completed = models.IntegerField(default=0)
+    current_streak = models.IntegerField(default=0)
+    longest_streak = models.IntegerField(default=0)
+
+    # Motivation and Notes
+    personal_goal = models.TextField(
+        blank=True,
+        help_text="Personal goal for this challenge"
+    )
+    motivation_note = models.TextField(
+        blank=True,
+        help_text="Why you're taking this challenge"
+    )
+
+    # Buddy System
+    accountability_partner = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='buddy_partnerships'
+    )
+
+    # Metadata
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('challenge', 'user')
+        ordering = ['-days_completed', '-current_streak']
+        indexes = [
+            models.Index(fields=['challenge', 'status']),
+            models.Index(fields=['user', 'status']),
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} in {self.challenge.title}"
+
+    @property
+    def completion_percentage(self):
+        return round((self.days_completed / self.challenge.duration_days) * 100, 1)
+
+    @property
+    def is_completed(self):
+        return self.days_completed >= self.challenge.duration_days
+
+    def update_progress(self):
+        """Update completion status based on check-ins"""
+        if self.is_completed and self.status == 'active':
+            self.status = 'completed'
+            self.completion_date = timezone.now()
+            self.save()
+
+
+class ChallengeCheckIn(models.Model):
+    """
+    Daily check-ins for challenge participants
+    """
+    MOOD_CHOICES = (
+        ('great', '😄 Great'),
+        ('good', '😊 Good'),
+        ('okay', '😐 Okay'),
+        ('struggling', '😔 Struggling'),
+        ('difficult', '😞 Difficult'),
+    )
+
+    participant = models.ForeignKey(
+        ChallengeParticipant,
+        on_delete=models.CASCADE,
+        related_name='check_ins'
+    )
+    date = models.DateField(default=timezone.now)
+
+    # Check-in Content
+    completed_daily_goal = models.BooleanField(default=False)
+    mood = models.CharField(
+        max_length=20, choices=MOOD_CHOICES, default='okay')
+    progress_note = models.TextField(
+        blank=True,
+        help_text="How did today go? Any challenges or wins?"
+    )
+
+    # Metrics (challenge-specific)
+    custom_metric_1 = models.FloatField(
+        null=True,
+        blank=True,
+        help_text="Exercise minutes, meditation time, etc."
+    )
+    custom_metric_2 = models.FloatField(
+        null=True,
+        blank=True,
+        help_text="Additional metric tracking"
+    )
+
+    # Social Features
+    is_shared_with_group = models.BooleanField(
+        default=False,
+        help_text="Share this check-in with the group"
+    )
+    encouragement_received = models.ManyToManyField(
+        User,
+        blank=True,
+        related_name='given_encouragements'
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('participant', 'date')
+        ordering = ['-date']
+        indexes = [
+            models.Index(fields=['participant', 'date']),
+            models.Index(fields=['date', 'is_shared_with_group']),
+        ]
+
+    def __str__(self):
+        return f"{self.participant.user.username} - {self.date}"
+
+    @property
+    def encouragement_count(self):
+        return self.encouragement_received.count()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        # Update participant progress
+        if self.completed_daily_goal:
+            participant = self.participant
+            participant.days_completed = participant.check_ins.filter(
+                completed_daily_goal=True
+            ).count()
+
+            # Update streak logic
+            yesterday = self.date - timezone.timedelta(days=1)
+            if participant.check_ins.filter(
+                date=yesterday, completed_daily_goal=True
+            ).exists():
+                participant.current_streak += 1
+            else:
+                participant.current_streak = 1
+
+            if participant.current_streak > participant.longest_streak:
+                participant.longest_streak = participant.current_streak
+
+            participant.update_progress()
+
+
+class ChallengeComment(models.Model):
+    """
+    Comments and encouragement on challenge check-ins
+    """
+    check_in = models.ForeignKey(
+        ChallengeCheckIn,
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField(max_length=500)
+
+    # Comment types
+    is_encouragement = models.BooleanField(
+        default=True,
+        help_text="Is this an encouragement/support comment?"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"Comment by {self.user.username}"
+
+
+class ChallengeBadge(models.Model):
+    """
+    Badges earned through challenge completion
+    """
+    BADGE_TYPES = (
+        ('completion', '🏆 Completion Badge'),
+        ('streak', '🔥 Streak Badge'),
+        ('participation', '⭐ Participation Badge'),
+        ('leadership', '👑 Leadership Badge'),
+        ('support', '🤝 Support Badge'),
+    )
+
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    badge_type = models.CharField(max_length=20, choices=BADGE_TYPES)
+    icon = models.CharField(
+        max_length=10,
+        default='🏆',
+        help_text="Emoji icon for the badge"
+    )
+
+    # Badge Requirements
+    challenge_type = models.CharField(
+        max_length=20,
+        choices=GroupChallenge.CHALLENGE_TYPES,
+        null=True,
+        blank=True,
+        help_text="Leave blank for universal badges"
+    )
+    required_completions = models.IntegerField(default=1)
+    required_streak_days = models.IntegerField(default=0)
+
+    # Rarity and Points
+    rarity_level = models.IntegerField(
+        default=1,
+        help_text="1=Common, 2=Uncommon, 3=Rare, 4=Epic, 5=Legendary"
+    )
+    points_value = models.IntegerField(default=10)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.icon} {self.name}"
+
+
+class UserChallengeBadge(models.Model):
+    """
+    Badges earned by users
+    """
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='challenge_badges'
+    )
+    badge = models.ForeignKey(ChallengeBadge, on_delete=models.CASCADE)
+    challenge = models.ForeignKey(
+        GroupChallenge,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        help_text="Specific challenge this was earned in"
+    )
+
+    earned_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'badge', 'challenge')
+        ordering = ['-earned_date']
+
+    def __str__(self):
+        return f"{self.user.username} earned {self.badge.name}"

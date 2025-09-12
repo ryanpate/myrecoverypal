@@ -5,10 +5,16 @@ from django.core.exceptions import ValidationError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML, Field
 from crispy_forms.bootstrap import TabHolder, Tab
+from django.utils import timezone
 
 from .models import (
     SponsorRelationship, RecoveryBuddy, RecoveryGroup,
     GroupMembership, GroupPost, UserProfile
+)
+
+from .models import (
+    GroupChallenge, ChallengeParticipant, ChallengeCheckIn,
+    ChallengeComment
 )
 
 class CustomUserCreationForm(UserCreationForm):
@@ -431,3 +437,209 @@ class UserSearchForm(forms.Form):
             ),
             Submit('submit', 'Search', css_class='btn btn-outline-primary')
         )
+
+class GroupChallengeForm(forms.ModelForm):
+    """Form for creating group challenges"""
+
+    class Meta:
+        model = GroupChallenge
+        fields = [
+            'title', 'description', 'challenge_type', 'duration_days',
+            'start_date', 'daily_goal_description', 'rules_and_guidelines',
+            'is_public', 'max_participants', 'allow_buddy_system',
+            'enable_leaderboard', 'enable_daily_check_in',
+            'completion_badge_name', 'completion_message'
+        ]
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
+            'daily_goal_description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'rules_and_guidelines': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'completion_message': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'challenge_type': forms.Select(attrs={'class': 'form-control'}),
+            'duration_days': forms.Select(attrs={'class': 'form-control'}),
+            'max_participants': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
+            'completion_badge_name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        help_texts = {
+            'title': 'Give your challenge a motivating name (e.g., "30 Days of Gratitude")',
+            'description': 'Explain what this challenge is about and why people should join',
+            'daily_goal_description': 'What do participants need to do each day? Be specific.',
+            'rules_and_guidelines': 'Optional: Any special rules or guidelines for this challenge',
+            'max_participants': 'Leave blank for unlimited participants',
+            'completion_badge_name': 'Custom badge name (e.g., "Gratitude Champion")',
+            'completion_message': 'Congratulatory message shown when someone completes the challenge',
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+        # Add CSS classes for styling
+        for field_name, field in self.fields.items():
+            if field_name not in ['is_public', 'allow_buddy_system', 'enable_leaderboard', 'enable_daily_check_in']:
+                field.widget.attrs.update({'class': 'form-control'})
+            else:
+                field.widget.attrs.update({'class': 'form-check-input'})
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+
+        if start_date and start_date < timezone.now().date():
+            raise forms.ValidationError("Start date cannot be in the past")
+
+        return cleaned_data
+
+
+class JoinChallengeForm(forms.ModelForm):
+    """Form for joining a challenge"""
+
+    class Meta:
+        model = ChallengeParticipant
+        fields = ['personal_goal', 'motivation_note']
+        widgets = {
+            'personal_goal': forms.Textarea(attrs={
+                'rows': 3,
+                'class': 'form-control',
+                'placeholder': 'What do you hope to achieve in this challenge?'
+            }),
+            'motivation_note': forms.Textarea(attrs={
+                'rows': 3,
+                'class': 'form-control',
+                'placeholder': 'What motivates you to take on this challenge?'
+            }),
+        }
+        help_texts = {
+            'personal_goal': 'Set a personal goal for this challenge (optional)',
+            'motivation_note': 'Share what motivates you to participate (optional)',
+        }
+
+
+class ChallengeCheckInForm(forms.ModelForm):
+    """Form for daily challenge check-ins"""
+
+    class Meta:
+        model = ChallengeCheckIn
+        fields = [
+            'completed_daily_goal', 'mood', 'progress_note',
+            'custom_metric_1', 'custom_metric_2', 'is_shared_with_group'
+        ]
+        widgets = {
+            'progress_note': forms.Textarea(attrs={
+                'rows': 3,
+                'class': 'form-control',
+                'placeholder': 'How did today go? Any challenges or wins to share?'
+            }),
+            'mood': forms.Select(attrs={'class': 'form-control'}),
+            'custom_metric_1': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.1',
+                'placeholder': 'e.g., minutes exercised, pages read'
+            }),
+            'custom_metric_2': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.1',
+                'placeholder': 'additional metric'
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.challenge = kwargs.pop('challenge', None)
+        super().__init__(*args, **kwargs)
+
+        # Customize labels based on challenge type
+        if self.challenge:
+            if self.challenge.challenge_type == 'exercise':
+                self.fields['custom_metric_1'].label = 'Minutes Exercised'
+                self.fields['custom_metric_2'].label = 'Steps (optional)'
+            elif self.challenge.challenge_type == 'mindfulness':
+                self.fields['custom_metric_1'].label = 'Minutes Meditated'
+                self.fields['custom_metric_2'].label = 'Mindfulness Sessions'
+            elif self.challenge.challenge_type == 'learning':
+                self.fields['custom_metric_1'].label = 'Study Time (minutes)'
+                self.fields['custom_metric_2'].label = 'Pages/Chapters'
+            else:
+                self.fields['custom_metric_1'].label = 'Metric 1 (optional)'
+                self.fields['custom_metric_2'].label = 'Metric 2 (optional)'
+
+
+class ChallengeCommentForm(forms.ModelForm):
+    """Form for commenting on challenge check-ins"""
+
+    class Meta:
+        model = ChallengeComment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'rows': 2,
+                'class': 'form-control',
+                'placeholder': 'Share some encouragement or support...'
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['content'].label = ''
+
+
+class BuddyRequestForm(forms.Form):
+    """Form for requesting an accountability partner"""
+
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'rows': 3,
+            'class': 'form-control',
+            'placeholder': 'Why would you like this person as your accountability partner?'
+        }),
+        required=False,
+        help_text='Optional message to send with your buddy request'
+    )
+
+
+class ChallengeFilterForm(forms.Form):
+    """Form for filtering challenges"""
+
+    FILTER_CHOICES = [
+        ('', 'All Challenges'),
+        ('active', 'Active'),
+        ('upcoming', 'Upcoming'),
+        ('completed', 'Completed'),
+    ]
+
+    TYPE_CHOICES = [('', 'All Types')] + list(GroupChallenge.CHALLENGE_TYPES)
+
+    DURATION_CHOICES = [('', 'Any Duration')] + \
+        list(GroupChallenge.DURATION_CHOICES)
+
+    status = forms.ChoiceField(
+        choices=FILTER_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    challenge_type = forms.ChoiceField(
+        choices=TYPE_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    duration = forms.ChoiceField(
+        choices=DURATION_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    search = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Search challenges...'
+        })
+    )
+
+    my_challenges_only = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )

@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, UpdateView, ListView, CreateView
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.db.models import Q, Count, Prefetch
+from django.db.models import Q, Count, Prefetch, Avg
 from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
@@ -16,6 +16,16 @@ from .forms import CustomUserCreationForm, UserProfileForm, MilestoneForm, Suppo
 from .signals import create_profile_update_activity
 from django.core.paginator import Paginator
 from django.db import transaction
+from datetime import timedelta
+
+from .models import (
+    GroupChallenge, ChallengeParticipant, ChallengeCheckIn,
+    ChallengeComment, ChallengeBadge, UserChallengeBadge
+)
+from .forms import (
+    GroupChallengeForm, JoinChallengeForm, ChallengeCheckInForm,
+    ChallengeCommentForm, BuddyRequestForm, ChallengeFilterForm
+)
 
 def register_view(request):
     if request.method == 'POST':
@@ -1267,3 +1277,513 @@ class MessageListView(LoginRequiredMixin, ListView):
         return SupportMessage.objects.filter(
             Q(sender=self.request.user) | Q(recipient=self.request.user)
         ).order_by('-created_at')
+
+@login_required
+def challenges_home(request):
+    """Main challenges dashboard"""
+
+    # Get filter parameters
+    filter_form = ChallengeFilterForm(request.GET)
+    challenges = GroupChallenge.objects.all()
+
+    # Apply filters
+    if filter_form.is_valid():
+        status = filter_form.cleaned_data.get('status')
+        challenge_type = filter_form.cleaned_data.get('challenge_type')
+        duration = filter_form.cleaned_data.get('duration')
+        search = filter_form.cleaned_data.get('search')
+        my_challenges_only = filter_form.cleaned_data.get('my_challenges_only')
+
+        if status:
+            challenges = challenges.filter(status=status)
+        if challenge_type:
+            challenges = challenges.filter(challenge_type=challenge_type)
+        if duration:
+            challenges = challenges.filter(duration_days=duration)
+        if search:
+            challenges = challenges.filter(
+                Q(title__icontains=search) |
+                Q(description__icontains=search)
+            )
+        if my_challenges_only:
+            challenges = challenges.filter(participants__user=request.user)
+
+    # Get user's active participations
+    user_participations = ChallengeParticipant.objects.filter(
+        user=request.user, status='active'
+    ).select_related('challenge')
+
+    # Get recent activity from user's challenges
+    recent_check_ins = ChallengeCheckIn.objects.filter(
+        participant__challenge__participants__user=request.user,
+        is_shared_with_group=True
+    ).select_related('participant__user', 'participant__challenge').order_by('-created_at')[:10]
+
+    # Get recommended challenges
+    # Logic: challenges in groups user is a member of, or public challenges of types user has participated in
+    user_groups = request.user.group_memberships.filter(
+        status__in=['active', 'moderator', 'admin']
+    ).values_list('group', flat=True)
+
+    participated_types = request.user.challenge_participations.values_list(
+        'challenge__challenge_type', flat=True
+    ).distinct()
+
+    recommended_challenges = GroupChallenge.objects.filter(
+        Q(group__id__in=user_groups) |
+        (Q(is_public=True) & Q(challenge_type__in=participated_types)),
+        status__in=['upcoming', 'active']
+    ).exclude(
+        participants__user=request.user
+    ).distinct()[:6]
+
+    # Pagination
+    paginator = Paginator(challenges, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+        'filter_form': filter_form,
+        'user_participations': user_participations,
+        'recent_check_ins': recent_check_ins,
+        'recommended_challenges': recommended_challenges,
+        'total_challenges': challenges.count(),
+        'active_challenges': GroupChallenge.objects.filter(status='active').count(),
+    }
+
+    return render(request, 'accounts/challenges/challenges_home.html', context)
+
+
+@login_required
+def challenge_detail(request, challenge_id):
+    """View challenge details and leaderboard"""
+
+    challenge = get_object_or_404(GroupChallenge, id=challenge_id)
+
+    # Check if user can view this challenge
+    if not challenge.is_public:
+        if not challenge.group.memberships.filter(
+            user=request.user, status__in=['active', 'moderator', 'admin']
+        ).exists():
+            messages.error(
+                request, "You don't have permission to view this challenge.")
+            return redirect('accounts:challenges_home')
+
+    # Get user's participation if any
+    user_participation = None
+    try:
+        user_participation = challenge.participants.get(user=request.user)
+    except ChallengeParticipant.DoesNotExist:
+        pass
+
+    # Get leaderboard (top participants by completion)
+    leaderboard = challenge.participants.filter(
+        status='active'
+    ).order_by('-days_completed', '-current_streak', '-longest_streak')[:10]
+
+    # Get recent shared check-ins
+    recent_check_ins = ChallengeCheckIn.objects.filter(
+        participant__challenge=challenge,
+        is_shared_with_group=True
+    ).select_related('participant__user').order_by('-created_at')[:20]
+
+    # Challenge statistics
+    stats = {
+        'total_participants': challenge.participant_count,
+        'completion_rate': challenge.completion_rate,
+        'average_streak': challenge.participants.filter(status='active').aggregate(
+            avg_streak=Avg('current_streak')
+        )['avg_streak'] or 0,
+        'total_check_ins': ChallengeCheckIn.objects.filter(
+            participant__challenge=challenge
+        ).count(),
+    }
+
+    context = {
+        'challenge': challenge,
+        'user_participation': user_participation,
+        'leaderboard': leaderboard,
+        'recent_check_ins': recent_check_ins,
+        'stats': stats,
+        'can_join': challenge.can_join(request.user)[0] if not user_participation else False,
+    }
+
+    return render(request, 'accounts/challenges/challenge_detail.html', context)
+
+
+@login_required
+def create_challenge(request, group_id=None):
+    """Create a new group challenge"""
+
+    group = None
+    if group_id:
+        group = get_object_or_404(RecoveryGroup, id=group_id)
+        # Check if user can create challenges in this group
+        if not group.memberships.filter(
+            user=request.user,
+            status__in=['active', 'moderator', 'admin']
+        ).exists():
+            messages.error(
+                request, "You don't have permission to create challenges in this group.")
+            return redirect('accounts:group_detail', pk=group_id)
+
+    if request.method == 'POST':
+        form = GroupChallengeForm(request.POST, user=request.user)
+        if form.is_valid():
+            challenge = form.save(commit=False)
+            challenge.creator = request.user
+            if group:
+                challenge.group = group
+            else:
+                # If no group specified, create in user's first active group or require selection
+                user_groups = request.user.group_memberships.filter(
+                    status__in=['active', 'moderator', 'admin']
+                )
+                if user_groups.exists():
+                    challenge.group = user_groups.first().group
+                else:
+                    messages.error(
+                        request, "You must be a member of a group to create challenges.")
+                    return redirect('accounts:groups_list')
+
+            challenge.save()
+            messages.success(
+                request, f'Challenge "{challenge.title}" created successfully!')
+            return redirect('accounts:challenge_detail', challenge_id=challenge.id)
+    else:
+        form = GroupChallengeForm(user=request.user)
+
+    context = {
+        'form': form,
+        'group': group,
+        'title': f'Create Challenge{"" if not group else f" in {group.name}"}',
+    }
+
+    return render(request, 'accounts/challenges/create_challenge.html', context)
+
+
+@login_required
+def join_challenge(request, challenge_id):
+    """Join a challenge"""
+
+    challenge = get_object_or_404(GroupChallenge, id=challenge_id)
+    can_join, reason = challenge.can_join(request.user)
+
+    if not can_join:
+        messages.error(request, f"Cannot join challenge: {reason}")
+        return redirect('accounts:challenge_detail', challenge_id=challenge_id)
+
+    if request.method == 'POST':
+        form = JoinChallengeForm(request.POST)
+        if form.is_valid():
+            participation = form.save(commit=False)
+            participation.challenge = challenge
+            participation.user = request.user
+            participation.save()
+
+            messages.success(
+                request, f'You have joined "{challenge.title}"! Good luck!')
+            return redirect('accounts:challenge_detail', challenge_id=challenge_id)
+    else:
+        form = JoinChallengeForm()
+
+    context = {
+        'form': form,
+        'challenge': challenge,
+    }
+
+    return render(request, 'accounts/challenges/join_challenge.html', context)
+
+
+@login_required
+def challenge_check_in(request, challenge_id):
+    """Daily check-in for a challenge"""
+
+    challenge = get_object_or_404(GroupChallenge, id=challenge_id)
+
+    try:
+        participation = challenge.participants.get(
+            user=request.user, status='active')
+    except ChallengeParticipant.DoesNotExist:
+        messages.error(request, "You are not participating in this challenge.")
+        return redirect('accounts:challenge_detail', challenge_id=challenge_id)
+
+    today = timezone.now().date()
+
+    # Check if already checked in today
+    existing_check_in = ChallengeCheckIn.objects.filter(
+        participant=participation, date=today
+    ).first()
+
+    if request.method == 'POST':
+        form = ChallengeCheckInForm(
+            request.POST, instance=existing_check_in, challenge=challenge)
+        if form.is_valid():
+            check_in = form.save(commit=False)
+            check_in.participant = participation
+            check_in.date = today
+            check_in.save()
+
+            if existing_check_in:
+                messages.success(request, 'Check-in updated successfully!')
+            else:
+                messages.success(request, 'Check-in recorded successfully!')
+
+            return redirect('accounts:my_challenges')
+    else:
+        form = ChallengeCheckInForm(
+            instance=existing_check_in, challenge=challenge)
+
+    # Get recent check-ins for context
+    recent_check_ins = participation.check_ins.order_by('-date')[:7]
+
+    context = {
+        'form': form,
+        'challenge': challenge,
+        'participation': participation,
+        'existing_check_in': existing_check_in,
+        'recent_check_ins': recent_check_ins,
+        'today': today,
+    }
+
+    return render(request, 'accounts/challenges/check_in.html', context)
+
+
+@login_required
+def my_challenges(request):
+    """User's challenge dashboard"""
+
+    # Get user's active participations
+    active_participations = request.user.challenge_participations.filter(
+        status='active'
+    ).select_related('challenge').order_by('-joined_date')
+
+    # Get completed participations
+    completed_participations = request.user.challenge_participations.filter(
+        status='completed'
+    ).select_related('challenge').order_by('-completion_date')
+
+    # Get today's check-ins needed
+    today = timezone.now().date()
+    todays_check_ins = []
+
+    for participation in active_participations:
+        check_in_today = ChallengeCheckIn.objects.filter(
+            participant=participation, date=today
+        ).first()
+        todays_check_ins.append({
+            'participation': participation,
+            'check_in': check_in_today,
+            'needs_check_in': not check_in_today and participation.challenge.enable_daily_check_in
+        })
+
+    # Get user's badges
+    user_badges = request.user.challenge_badges.select_related(
+        'badge').order_by('-earned_date')
+
+    # Calculate total stats
+    total_challenges_completed = completed_participations.count()
+    total_days_participated = sum(p.days_completed for p in active_participations) + \
+        sum(p.days_completed for p in completed_participations)
+    current_streaks = [
+        p.current_streak for p in active_participations if p.current_streak > 0]
+    longest_current_streak = max(current_streaks) if current_streaks else 0
+
+    context = {
+        'active_participations': active_participations,
+        # Show recent 5
+        'completed_participations': completed_participations[:5],
+        'todays_check_ins': todays_check_ins,
+        'user_badges': user_badges[:10],  # Show recent 10
+        'stats': {
+            'total_challenges_completed': total_challenges_completed,
+            'total_days_participated': total_days_participated,
+            'longest_current_streak': longest_current_streak,
+            'badges_earned': user_badges.count(),
+        }
+    }
+
+    return render(request, 'accounts/challenges/my_challenges.html', context)
+
+
+@login_required
+def challenge_feed(request, challenge_id):
+    """Activity feed for a specific challenge"""
+
+    challenge = get_object_or_404(GroupChallenge, id=challenge_id)
+
+    # Check access
+    if not challenge.is_public:
+        if not challenge.group.memberships.filter(
+            user=request.user, status__in=['active', 'moderator', 'admin']
+        ).exists():
+            messages.error(
+                request, "You don't have permission to view this challenge.")
+            return redirect('accounts:challenges_home')
+
+    # Get shared check-ins with comments
+    check_ins = ChallengeCheckIn.objects.filter(
+        participant__challenge=challenge,
+        is_shared_with_group=True
+    ).select_related(
+        'participant__user', 'participant__user__profile'
+    ).prefetch_related('comments__user').order_by('-created_at')
+
+    # Pagination
+    paginator = Paginator(check_ins, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'challenge': challenge,
+        'page_obj': page_obj,
+        'comment_form': ChallengeCommentForm(),
+    }
+
+    return render(request, 'accounts/challenges/challenge_feed.html', context)
+
+
+@login_required
+def add_challenge_comment(request, check_in_id):
+    """Add comment to a challenge check-in (AJAX)"""
+
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+
+    check_in = get_object_or_404(ChallengeCheckIn, id=check_in_id)
+
+    # Check if user can comment (member of group or public challenge)
+    challenge = check_in.participant.challenge
+    if not challenge.is_public:
+        if not challenge.group.memberships.filter(
+            user=request.user, status__in=['active', 'moderator', 'admin']
+        ).exists():
+            return JsonResponse({'error': 'Permission denied'}, status=403)
+
+    form = ChallengeCommentForm(request.POST)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.check_in = check_in
+        comment.user = request.user
+        comment.save()
+
+        return JsonResponse({
+            'success': True,
+            'comment': {
+                'id': comment.id,
+                'content': comment.content,
+                'user': comment.user.get_full_name() or comment.user.username,
+                'created_at': comment.created_at.strftime('%b %d, %Y at %I:%M %p'),
+            }
+        })
+
+    return JsonResponse({'error': 'Invalid form'}, status=400)
+
+
+@login_required
+def give_encouragement(request, check_in_id):
+    """Give encouragement to a check-in (AJAX)"""
+
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+
+    check_in = get_object_or_404(ChallengeCheckIn, id=check_in_id)
+
+    # Toggle encouragement
+    if request.user in check_in.encouragement_received.all():
+        check_in.encouragement_received.remove(request.user)
+        encouraged = False
+    else:
+        check_in.encouragement_received.add(request.user)
+        encouraged = True
+
+    return JsonResponse({
+        'success': True,
+        'encouraged': encouraged,
+        'total_encouragements': check_in.encouragement_count
+    })
+
+
+@login_required
+def request_buddy(request, challenge_id, user_id):
+    """Request accountability partner for a challenge"""
+
+    challenge = get_object_or_404(GroupChallenge, id=challenge_id)
+    target_user = get_object_or_404(User, id=user_id)
+
+    # Check if both users are participating
+    try:
+        user_participation = challenge.participants.get(
+            user=request.user, status='active')
+        target_participation = challenge.participants.get(
+            user=target_user, status='active')
+    except ChallengeParticipant.DoesNotExist:
+        messages.error(
+            request, "Both users must be participating in the challenge.")
+        return redirect('accounts:challenge_detail', challenge_id=challenge_id)
+
+    # Check if already partners or request exists
+    if user_participation.accountability_partner == target_participation:
+        messages.info(request, "You are already accountability partners!")
+        return redirect('accounts:challenge_detail', challenge_id=challenge_id)
+
+    if request.method == 'POST':
+        form = BuddyRequestForm(request.POST)
+        if form.is_valid():
+            # Send buddy request (you could implement a notification system here)
+            # For now, just pair them up directly
+            user_participation.accountability_partner = target_participation
+            target_participation.accountability_partner = user_participation
+            user_participation.save()
+            target_participation.save()
+
+            messages.success(
+                request, f"You are now accountability partners with {target_user.get_full_name() or target_user.username}!")
+            return redirect('accounts:challenge_detail', challenge_id=challenge_id)
+    else:
+        form = BuddyRequestForm()
+
+    context = {
+        'form': form,
+        'challenge': challenge,
+        'target_user': target_user,
+    }
+
+    return render(request, 'accounts/challenges/request_buddy.html', context)
+
+
+@login_required
+def leave_challenge(request, challenge_id):
+    """Leave a challenge"""
+
+    challenge = get_object_or_404(GroupChallenge, id=challenge_id)
+
+    try:
+        participation = challenge.participants.get(
+            user=request.user, status='active')
+    except ChallengeParticipant.DoesNotExist:
+        messages.error(request, "You are not participating in this challenge.")
+        return redirect('accounts:challenge_detail', challenge_id=challenge_id)
+
+    if request.method == 'POST':
+        participation.status = 'dropped'
+        participation.save()
+
+        # Remove buddy partnership if exists
+        if participation.accountability_partner:
+            partner = participation.accountability_partner
+            partner.accountability_partner = None
+            partner.save()
+            participation.accountability_partner = None
+            participation.save()
+
+        messages.success(request, f'You have left "{challenge.title}".')
+        return redirect('accounts:my_challenges')
+
+    context = {
+        'challenge': challenge,
+        'participation': participation,
+    }
+
+    return render(request, 'accounts/challenges/leave_challenge.html', context)
