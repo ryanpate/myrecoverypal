@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import (
     User, Milestone, SupportMessage, SponsorRelationship,
-    RecoveryBuddy, RecoveryGroup, GroupMembership, GroupPost,
+    RecoveryPal, RecoveryGroup, GroupMembership, GroupPost,
     GroupChallenge, ChallengeParticipant, ChallengeCheckIn, ChallengeComment
 )
 from django.core.exceptions import ValidationError
@@ -115,11 +115,11 @@ class SponsorRequestForm(forms.ModelForm):
         )
 
 
-class RecoveryBuddyForm(forms.ModelForm):
-    """Form for requesting a recovery buddy partnership"""
+class RecoveryPalForm(forms.ModelForm):
+    """Form for requesting a recovery pal partnership"""
 
     class Meta:
-        model = RecoveryBuddy
+        model = RecoveryPal
         fields = ['check_in_frequency', 'shared_goals']
         widgets = {
             'check_in_frequency': forms.TextInput(attrs={
@@ -136,12 +136,12 @@ class RecoveryBuddyForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Fieldset(
-                'Recovery Buddy Partnership',
-                HTML('<p class="text-muted">Recovery buddies support each other through regular check-ins and shared accountability.</p>'),
+                'Recovery Pal Partnership',
+                HTML('<p class="text-muted">Recovery pals support each other through regular check-ins and shared accountability.</p>'),
                 'check_in_frequency',
                 'shared_goals',
             ),
-            Submit('submit', 'Send Buddy Request', css_class='btn btn-success')
+            Submit('submit', 'Send Pal Request', css_class='btn btn-success')
         )
 
 
@@ -264,7 +264,7 @@ class GroupChallengeForm(forms.ModelForm):
         fields = [
             'title', 'description', 'challenge_type', 'duration_days',
             'start_date', 'daily_goal_description', 'rules_and_guidelines',
-            'is_public', 'max_participants', 'allow_buddy_system',
+            'is_public', 'max_participants', 'allow_pal_system',
             'enable_leaderboard', 'enable_daily_check_in',
             'completion_badge_name', 'completion_message'
         ]
@@ -349,7 +349,7 @@ class ChallengeCommentForm(forms.ModelForm):
         }
 
 
-class BuddyRequestForm(forms.Form):
+class PalRequestForm(forms.Form):
     """Form for requesting accountability partner in challenges"""
 
     message = forms.CharField(

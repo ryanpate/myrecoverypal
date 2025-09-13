@@ -1,0 +1,49 @@
+
+DATABASE MIGRATION NOTES
+========================
+
+After running this script, you'll need to create Django migrations for the model changes:
+
+1. Create migrations:
+   ```bash
+   python manage.py makemigrations accounts
+   ```
+
+2. Review the generated migration file carefully. You may need to:
+   - Add a data migration to rename the database table from 'accounts_recoverybuddy' to 'accounts_recoverypal'
+   - Update any foreign key references
+   - Handle any custom database constraints
+
+3. Example custom migration operations to add:
+   ```python
+   operations = [
+       migrations.RenameModel(
+           old_name='RecoveryBuddy',
+           new_name='RecoveryPal',
+       ),
+       migrations.RenameField(
+           model_name='user',
+           old_name='buddy_relationships_as_user1',
+           new_name='pal_relationships_as_user1',
+       ),
+       migrations.RenameField(
+           model_name='user',
+           old_name='buddy_relationships_as_user2',
+           new_name='pal_relationships_as_user2',
+       ),
+   ]
+   ```
+
+4. Apply migrations:
+   ```bash
+   python manage.py migrate
+   ```
+
+5. Update any existing data in the database if needed.
+
+6. Clear cache:
+   ```bash
+   python manage.py clear_cache
+   ```
+
+7. Restart your development server.

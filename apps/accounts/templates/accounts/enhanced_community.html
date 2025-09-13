@@ -184,7 +184,7 @@
         color: #856404;
     }
 
-    .recovery-badge.buddy-available {
+    .recovery-badge.pal-available {
         background: #d1ecf1;
         color: #0c5460;
     }
@@ -463,8 +463,8 @@
                     {% if member.is_sponsor %}
                     <span class="recovery-badge sponsor">🎯 Sponsor</span>
                     {% endif %}
-                    {% if not member.get_recovery_buddy %}
-                    <span class="recovery-badge buddy-available">🤝 Buddy Available</span>
+                    {% if not member.get_recovery_pal %}
+                    <span class="recovery-badge pal-available">🤝 Pal Available</span>
                     {% endif %}
                     {% if member.get_days_sober > 30 %}
                     <span class="recovery-badge">🌟 {{ member.get_days_sober }} Days</span>
@@ -499,8 +499,8 @@
                     </a>
                     {% endif %}
                     
-                    {% if not member.get_recovery_buddy and not user.get_recovery_buddy %}
-                    <a href="{% url 'accounts:request_buddy' member.username %}" class="action-btn" title="Request Recovery Buddy">
+                    {% if not member.get_recovery_pal and not user.get_recovery_pal %}
+                    <a href="{% url 'accounts:request_pal' member.username %}" class="action-btn" title="Request Recovery Pal">
                         🤝
                     </a>
                     {% endif %}
@@ -564,7 +564,7 @@
                 <li><a class="dropdown-item" href="{% url 'accounts:groups_list' %}">👥 Browse Groups</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">🎯 Sponsor Hub</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:buddy_dashboard' %}">🤝 Buddy Hub</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:pal_dashboard' %}">🤝 Pal Hub</a></li>
             </ul>
         </div>
     </div>

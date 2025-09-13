@@ -65,10 +65,10 @@ urlpatterns = [
     path('sponsors/request/<str:username>/', views.request_sponsor, name='request_sponsor'),
     path('sponsors/respond/<int:relationship_id>/', views.respond_sponsor_request, name='respond_sponsor_request'),
 
-    # Recovery Buddy System
-    path('buddies/', views.buddy_dashboard, name='buddy_dashboard'),
-    path('buddies/request/<str:username>/',
-         views.request_buddy, name='request_buddy'),
+    # Recovery Pal System
+    path('pals/', views.pal_dashboard, name='pal_dashboard'),
+    path('pals/request/<str:username>/',
+         views.request_pal, name='request_pal'),
     # Recovery Groups
     path('groups/', views.RecoveryGroupListView.as_view(), name='groups_list'),
     path('groups/create/', views.create_group, name='create_group'),
@@ -91,8 +91,8 @@ urlpatterns = [
          views.challenge_check_in, name='challenge_check_in'),
     path('challenges/<int:challenge_id>/feed/',
          views.challenge_feed, name='challenge_feed'),
-    path('challenges/<int:challenge_id>/buddy/<int:user_id>/',
-         views.request_challenge_buddy, name='request_challenge_buddy'),
+    path('challenges/<int:challenge_id>/pal/<int:user_id>/',
+         views.request_challenge_pal, name='request_challenge_pal'),
     path('my-challenges/', views.my_challenges, name='my_challenges'),
     
     # AJAX endpoints for challenge interactions

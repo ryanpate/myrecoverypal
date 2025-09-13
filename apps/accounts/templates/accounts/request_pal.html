@@ -1,8 +1,8 @@
-<!-- apps/accounts/templates/accounts/request_buddy.html -->
+<!-- apps/accounts/templates/accounts/request_pal.html -->
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Request Recovery Buddy - {{ buddy_user.username }} - MyRecoveryPal{% endblock %}
+{% block title %}Request Recovery Pal - {{ pal_user.username }} - MyRecoveryPal{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -13,7 +13,7 @@
         margin-bottom: 2rem;
     }
 
-    .buddy-profile {
+    .pal-profile {
         background: white;
         border-radius: 15px;
         padding: 2rem;
@@ -21,7 +21,7 @@
         margin-bottom: 2rem;
     }
 
-    .buddy-avatar {
+    .pal-avatar {
         width: 100px;
         height: 100px;
         border-radius: 50%;
@@ -35,7 +35,7 @@
         margin: 0 auto 1rem;
     }
 
-    .buddy-avatar img {
+    .pal-avatar img {
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -82,7 +82,7 @@
         margin-bottom: 2rem;
     }
 
-    .buddy-stats {
+    .pal-stats {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 1rem;
@@ -123,11 +123,11 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h1>Request Recovery Buddy</h1>
-                <p class="lead">Ask {{ buddy_user.get_full_name|default:buddy_user.username }} to be your recovery buddy</p>
+                <h1>Request Recovery Pal</h1>
+                <p class="lead">Ask {{ pal_user.get_full_name|default:pal_user.username }} to be your recovery pal</p>
             </div>
             <div class="col-md-4 text-md-end">
-                <a href="{% url 'accounts:profile' buddy_user.username %}" class="btn btn-light">
+                <a href="{% url 'accounts:profile' pal_user.username %}" class="btn btn-light">
                     View Profile
                 </a>
             </div>
@@ -138,54 +138,54 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8">
-            <!-- Buddy Profile Summary -->
-            <div class="buddy-profile">
+            <!-- Pal Profile Summary -->
+            <div class="pal-profile">
                 <div class="text-center">
-                    <div class="buddy-avatar">
-                        {% if buddy_user.avatar %}
-                            <img src="{{ buddy_user.avatar.url }}" alt="{{ buddy_user.username }}">
+                    <div class="pal-avatar">
+                        {% if pal_user.avatar %}
+                            <img src="{{ pal_user.avatar.url }}" alt="{{ pal_user.username }}">
                         {% else %}
                             <span style="font-size: 2.5rem;">👤</span>
                         {% endif %}
                     </div>
-                    <h3>{{ buddy_user.get_full_name|default:buddy_user.username }}</h3>
-                    <p class="text-muted">@{{ buddy_user.username }}</p>
+                    <h3>{{ pal_user.get_full_name|default:pal_user.username }}</h3>
+                    <p class="text-muted">@{{ pal_user.username }}</p>
                     
-                    <div class="buddy-stats">
-                        {% if buddy_user.get_days_sober > 0 %}
+                    <div class="pal-stats">
+                        {% if pal_user.get_days_sober > 0 %}
                         <div class="stat-item">
-                            <div class="stat-number">{{ buddy_user.get_days_sober }}</div>
+                            <div class="stat-number">{{ pal_user.get_days_sober }}</div>
                             <div>Days Sober</div>
                         </div>
                         {% endif %}
                         <div class="stat-item">
-                            <div class="stat-number">{{ buddy_user.followers_count }}</div>
+                            <div class="stat-number">{{ pal_user.followers_count }}</div>
                             <div>Followers</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-number">{{ buddy_user.following_count }}</div>
+                            <div class="stat-number">{{ pal_user.following_count }}</div>
                             <div>Following</div>
                         </div>
                     </div>
                     
-                    {% if buddy_user.bio %}
+                    {% if pal_user.bio %}
                     <div class="mt-3">
                         <h6>About</h6>
-                        <p>{{ buddy_user.bio|truncatewords:50 }}</p>
+                        <p>{{ pal_user.bio|truncatewords:50 }}</p>
                     </div>
                     {% endif %}
                     
-                    {% if buddy_user.recovery_goals %}
+                    {% if pal_user.recovery_goals %}
                     <div class="mt-3">
                         <h6>Recovery Goals</h6>
-                        <p>{{ buddy_user.recovery_goals|truncatewords:30 }}</p>
+                        <p>{{ pal_user.recovery_goals|truncatewords:30 }}</p>
                     </div>
                     {% endif %}
 
-                    {% if buddy_user.location %}
+                    {% if pal_user.location %}
                     <div class="mt-3">
                         <h6>Location</h6>
-                        <p>{{ buddy_user.location }}</p>
+                        <p>{{ pal_user.location }}</p>
                     </div>
                     {% endif %}
                 </div>
@@ -195,8 +195,8 @@
                     <h6>Potential Compatibility</h6>
                     <div class="row">
                         <div class="col-md-6">
-                            {% if user.get_days_sober and buddy_user.get_days_sober %}
-                                {% with days_diff=user.get_days_sober|add:buddy_user.get_days_sober|floatformat:0 %}
+                            {% if user.get_days_sober and pal_user.get_days_sober %}
+                                {% with days_diff=user.get_days_sober|add:pal_user.get_days_sober|floatformat:0 %}
                                 <div class="compatibility-item">
                                     <span class="compatibility-icon">📅</span>
                                     <span>Similar recovery timeline</span>
@@ -204,14 +204,14 @@
                                 {% endwith %}
                             {% endif %}
                             
-                            {% if user.location and buddy_user.location and user.location == buddy_user.location %}
+                            {% if user.location and pal_user.location and user.location == pal_user.location %}
                             <div class="compatibility-item">
                                 <span class="compatibility-icon">📍</span>
                                 <span>Same location</span>
                             </div>
                             {% endif %}
                             
-                            {% if buddy_user.allow_messages %}
+                            {% if pal_user.allow_messages %}
                             <div class="compatibility-item">
                                 <span class="compatibility-icon">💬</span>
                                 <span>Open to messages</span>
@@ -219,14 +219,14 @@
                             {% endif %}
                         </div>
                         <div class="col-md-6">
-                            {% if not buddy_user.get_recovery_buddy %}
+                            {% if not pal_user.get_recovery_pal %}
                             <div class="compatibility-item">
                                 <span class="compatibility-icon">🤝</span>
-                                <span>Available for buddy partnership</span>
+                                <span>Available for pal partnership</span>
                             </div>
                             {% endif %}
                             
-                            {% if buddy_user.is_profile_public %}
+                            {% if pal_user.is_profile_public %}
                             <div class="compatibility-item">
                                 <span class="compatibility-icon">👁️</span>
                                 <span>Open profile</span>
@@ -239,8 +239,8 @@
 
             <!-- Request Form -->
             <div class="request-form">
-                <h3>Send Buddy Request</h3>
-                <p class="text-muted mb-4">Tell {{ buddy_user.get_full_name|default:buddy_user.username }} why you'd like to be recovery buddies and how you'd like to support each other.</p>
+                <h3>Send Pal Request</h3>
+                <p class="text-muted mb-4">Tell {{ pal_user.get_full_name|default:pal_user.username }} why you'd like to be recovery pals and how you'd like to support each other.</p>
                 
                 <form method="post">
                     {% csrf_token %}
@@ -261,17 +261,17 @@
                                   id="shared_goals" 
                                   name="shared_goals" 
                                   rows="5"
-                                  placeholder="Share what you're hoping to achieve together as recovery buddies. What specific goals, challenges, or areas of growth would you like to support each other with?"
+                                  placeholder="Share what you're hoping to achieve together as recovery pals. What specific goals, challenges, or areas of growth would you like to support each other with?"
                                   required></textarea>
                         <div class="form-text">Be specific about what kind of mutual support you're looking for.</div>
                     </div>
 
                     <div class="d-flex gap-3 justify-content-end mt-4">
-                        <a href="{% url 'accounts:profile' buddy_user.username %}" class="btn btn-outline-secondary">
+                        <a href="{% url 'accounts:profile' pal_user.username %}" class="btn btn-outline-secondary">
                             Cancel
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            Send Buddy Request
+                            Send Pal Request
                         </button>
                     </div>
                 </form>
@@ -281,8 +281,8 @@
         <!-- Guidelines Sidebar -->
         <div class="col-md-4">
             <div class="info-card">
-                <h6>🤝 What is a Recovery Buddy?</h6>
-                <p class="small">A recovery buddy is a peer who:</p>
+                <h6>🤝 What is a Recovery Pal?</h6>
+                <p class="small">A recovery pal is a peer who:</p>
                 <ul class="small">
                     <li>Provides mutual support and accountability</li>
                     <li>Shares similar recovery experiences</li>
@@ -304,7 +304,7 @@
             </div>
 
             <div class="info-card">
-                <h6>🌟 Buddy Best Practices</h6>
+                <h6>🌟 Pal Best Practices</h6>
                 <ul class="small">
                     <li>Maintain regular communication</li>
                     <li>Be honest and supportive</li>
@@ -316,7 +316,7 @@
 
             <div class="info-card">
                 <h6>⚠️ Remember</h6>
-                <p class="small">A recovery buddy is a peer support relationship, not professional therapy or medical advice. Always consult healthcare providers for medical concerns.</p>
+                <p class="small">A recovery pal is a peer support relationship, not professional therapy or medical advice. Always consult healthcare providers for medical concerns.</p>
             </div>
         </div>
     </div>

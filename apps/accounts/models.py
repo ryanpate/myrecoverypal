@@ -130,13 +130,13 @@ class User(AbstractUser):
             status='active').first()
         return relationship.sponsor if relationship else None
 
-    def get_recovery_buddy(self):
-        """Get active recovery buddy"""
-        buddy = RecoveryBuddy.objects.filter(
+    def get_recovery_pal(self):
+        """Get active recovery pal"""
+        pal = RecoveryPal.objects.filter(
             models.Q(user1=self) | models.Q(user2=self),
             status='active'
         ).first()
-        return buddy.get_partner(self) if buddy else None
+        return pal.get_partner(self) if pal else None
 
     def get_joined_groups(self):
         """Get groups this user has joined"""
@@ -523,7 +523,7 @@ class SponsorRelationship(models.Model):
         super().save(*args, **kwargs)
 
 
-class RecoveryBuddy(models.Model):
+class RecoveryPal(models.Model):
     """
     Mutual support partnerships between users
     """
@@ -537,12 +537,12 @@ class RecoveryBuddy(models.Model):
     user1 = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='buddy_relationships_as_user1'
+        related_name='pal_relationships_as_user1'
     )
     user2 = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='buddy_relationships_as_user2'
+        related_name='pal_relationships_as_user2'
     )
 
     status = models.CharField(
@@ -574,10 +574,10 @@ class RecoveryBuddy(models.Model):
         ]
 
     def __str__(self):
-        return f"Recovery Buddies: {self.user1.username} & {self.user2.username}"
+        return f"Recovery Pals: {self.user1.username} & {self.user2.username}"
 
     def get_partner(self, user):
-        """Get the other user in the buddy relationship"""
+        """Get the other user in the pal relationship"""
         return self.user2 if self.user1 == user else self.user1
 
     def save(self, *args, **kwargs):
@@ -839,7 +839,7 @@ class GroupChallenge(models.Model):
     )
 
     # Engagement Features
-    allow_buddy_system = models.BooleanField(
+    allow_pal_system = models.BooleanField(
         default=True,
         help_text="Allow participants to pair up for accountability"
     )
@@ -983,13 +983,13 @@ class ChallengeParticipant(models.Model):
         help_text="Why you're taking this challenge"
     )
 
-    # Buddy System
+    # Pal System
     accountability_partner = models.ForeignKey(
         'self',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='buddy_partnerships'
+        related_name='pal_partnerships'
     )
 
     # Metadata

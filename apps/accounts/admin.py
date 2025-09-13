@@ -97,7 +97,7 @@ class GroupChallengeAdmin(admin.ModelAdmin):
     ]
     list_filter = [
         'status', 'challenge_type', 'is_public', 'enable_leaderboard',
-        'allow_buddy_system', 'enable_daily_check_in', 'created_at'
+        'allow_pal_system', 'enable_daily_check_in', 'created_at'
     ]
     search_fields = ['title', 'description',
                      'group__name', 'creator__username']
@@ -117,7 +117,7 @@ class GroupChallengeAdmin(admin.ModelAdmin):
         ('Settings', {
             'fields': (
                 'is_public', 'max_participants', 'enable_daily_check_in',
-                'enable_leaderboard', 'allow_buddy_system'
+                'enable_leaderboard', 'allow_pal_system'
             )
         }),
         ('Completion', {
@@ -191,7 +191,7 @@ class ChallengeParticipantAdmin(admin.ModelAdmin):
         ('Personal Goals', {
             'fields': ('personal_goal', 'motivation_note')
         }),
-        ('Buddy System', {
+        ('Pal System', {
             'fields': ('accountability_partner',)
         }),
         ('Metadata', {

@@ -11,8 +11,8 @@ from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from .models import GroupPost, User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, ActivityComment, UserConnection, SponsorRelationship, RecoveryBuddy, RecoveryGroup, GroupMembership
-from .forms import CustomUserCreationForm, UserProfileForm, MilestoneForm, SupportMessageForm, SponsorRequestForm, RecoveryBuddyForm, RecoveryGroupForm, GroupPostForm, GroupMembershipForm
+from .models import GroupPost, User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, ActivityComment, UserConnection, SponsorRelationship, RecoveryPal, RecoveryGroup, GroupMembership
+from .forms import CustomUserCreationForm, UserProfileForm, MilestoneForm, SupportMessageForm, SponsorRequestForm, RecoveryPalForm, RecoveryGroupForm, GroupPostForm, GroupMembershipForm
 from .signals import create_profile_update_activity
 from django.core.paginator import Paginator
 from django.db import transaction
@@ -24,7 +24,7 @@ from .models import (
 )
 from .forms import (
     GroupChallengeForm, JoinChallengeForm, ChallengeCheckInForm,
-    ChallengeCommentForm, BuddyRequestForm, ChallengeFilterForm
+    ChallengeCommentForm, PalRequestForm, ChallengeFilterForm
 )
 
 def register_view(request):
@@ -114,7 +114,7 @@ def dashboard_view(request):
 
     # User's recovery connections
     active_sponsor = user.get_active_sponsor()
-    recovery_buddy = user.get_recovery_buddy()
+    recovery_pal = user.get_recovery_pal()
     active_sponsorships = user.get_active_sponsorships()[:3]
 
     # User's groups
@@ -150,7 +150,7 @@ def dashboard_view(request):
 
         # Recovery connections
         'active_sponsor': active_sponsor,
-        'recovery_buddy': recovery_buddy,
+        'recovery_pal': recovery_pal,
         'active_sponsorships': active_sponsorships,
 
         # Groups
@@ -349,13 +349,13 @@ def sponsor_dashboard(request):
 
 
 @login_required
-def buddy_dashboard(request):
-    """Dashboard for recovery buddy relationships"""
+def pal_dashboard(request):
+    """Dashboard for recovery pal relationships"""
     context = {
-        'current_buddy': None,
+        'current_pal': None,
         'sent_requests': [],
     }
-    return render(request, 'accounts/buddy_dashboard.html', context)
+    return render(request, 'accounts/pal_dashboard.html', context)
 
 
 @login_required
@@ -365,48 +365,48 @@ def request_sponsor(request, username):
     return redirect('accounts:profile', username=username)
 
 @login_required
-def request_buddy(request, username):
-    """Request to be recovery buddies"""
-    buddy_user = get_object_or_404(User, username=username)
+def request_pal(request, username):
+    """Request to be recovery pals"""
+    pal_user = get_object_or_404(User, username=username)
 
-    if buddy_user == request.user:
-        messages.error(request, "You cannot be your own recovery buddy.")
+    if pal_user == request.user:
+        messages.error(request, "You cannot be your own recovery pal.")
         return redirect('accounts:profile', username=username)
 
     # Check for existing relationship
-    existing = RecoveryBuddy.objects.filter(
-        Q(user1=request.user, user2=buddy_user) |
-        Q(user1=buddy_user, user2=request.user)
+    existing = RecoveryPal.objects.filter(
+        Q(user1=request.user, user2=pal_user) |
+        Q(user1=pal_user, user2=request.user)
     ).first()
 
     if existing:
         messages.warning(
-            request, 'You already have a buddy relationship with this user.')
-        return redirect('accounts:buddy_dashboard')
+            request, 'You already have a pal relationship with this user.')
+        return redirect('accounts:pal_dashboard')
 
     if request.method == 'POST':
-        form = RecoveryBuddyForm(request.POST)
+        form = RecoveryPalForm(request.POST)
         if form.is_valid():
-            buddy_relationship = form.save(commit=False)
-            buddy_relationship.user1 = request.user
-            buddy_relationship.user2 = buddy_user
-            buddy_relationship.save()
+            pal_relationship = form.save(commit=False)
+            pal_relationship.user1 = request.user
+            pal_relationship.user2 = pal_user
+            pal_relationship.save()
 
             messages.success(
-                request, f'Recovery buddy request sent to {buddy_user.username}!')
-            return redirect('accounts:buddy_dashboard')
+                request, f'Recovery pal request sent to {pal_user.username}!')
+            return redirect('accounts:pal_dashboard')
     else:
-        form = RecoveryBuddyForm()
+        form = RecoveryPalForm()
 
     context = {
         'form': form,
-        'buddy_user': buddy_user,
+        'pal_user': pal_user,
     }
-    return render(request, 'accounts/request_buddy.html', context)
+    return render(request, 'accounts/request_pal.html', context)
 
 
 @login_required
-def request_challenge_buddy(request, challenge_id, user_id):
+def request_challenge_pal(request, challenge_id, user_id):
     """Request accountability partner for a challenge"""
     challenge = get_object_or_404(GroupChallenge, id=challenge_id)
     target_user = get_object_or_404(User, id=user_id)
@@ -428,9 +428,9 @@ def request_challenge_buddy(request, challenge_id, user_id):
         return redirect('accounts:challenge_detail', challenge_id=challenge_id)
 
     if request.method == 'POST':
-        form = BuddyRequestForm(request.POST)
+        form = PalRequestForm(request.POST)
         if form.is_valid():
-            # Send buddy request (you could implement a notification system here)
+            # Send pal request (you could implement a notification system here)
             # For now, just pair them up directly
             user_participation.accountability_partner = target_participation
             target_participation.accountability_partner = user_participation
@@ -441,7 +441,7 @@ def request_challenge_buddy(request, challenge_id, user_id):
                 request, f"You are now accountability partners with {target_user.get_full_name() or target_user.username}!")
             return redirect('accounts:challenge_detail', challenge_id=challenge_id)
     else:
-        form = BuddyRequestForm()
+        form = PalRequestForm()
 
     context = {
         'form': form,
@@ -449,7 +449,7 @@ def request_challenge_buddy(request, challenge_id, user_id):
         'target_user': target_user,
     }
 
-    return render(request, 'accounts/challenges/request_buddy.html', context)
+    return render(request, 'accounts/challenges/request_pal.html', context)
 
 @login_required
 @require_POST
@@ -983,17 +983,17 @@ def respond_sponsor_request(request, relationship_id):
 
 
 # =============================================================================
-# RECOVERY BUDDY VIEWS
+# RECOVERY PAL VIEWS
 # =============================================================================
 
 @login_required
-def buddy_dashboard(request):
-    """Dashboard for recovery buddy relationships"""
-    # Current buddy
-    current_buddy = request.user.get_recovery_buddy()
+def pal_dashboard(request):
+    """Dashboard for recovery pal relationships"""
+    # Current pal
+    current_pal = request.user.get_recovery_pal()
 
-    # Pending buddy requests (sent and received)
-    sent_requests = RecoveryBuddy.objects.filter(
+    # Pending pal requests (sent and received)
+    sent_requests = RecoveryPal.objects.filter(
         Q(user1=request.user) | Q(user2=request.user),
         status='pending'
     ).exclude(
@@ -1002,21 +1002,21 @@ def buddy_dashboard(request):
         Q(user2=request.user, user1__lt=request.user)
     )
 
-    received_requests = RecoveryBuddy.objects.filter(
+    received_requests = RecoveryPal.objects.filter(
         Q(user1=request.user) | Q(user2=request.user),
         status='pending'
     ).exclude(id__in=sent_requests.values_list('id', flat=True))
 
     context = {
-        'current_buddy': current_buddy,
+        'current_pal': current_pal,
         'sent_requests': sent_requests,
         'received_requests': received_requests,
     }
-    return render(request, 'accounts/buddy_dashboard.html', context)
+    return render(request, 'accounts/pal_dashboard.html', context)
 
 
 @login_required
-def request_challenge_buddy(request, challenge_id, user_id):
+def request_challenge_pal(request, challenge_id, user_id):
     """Request accountability partner for a challenge"""
     challenge = get_object_or_404(GroupChallenge, id=challenge_id)
     target_user = get_object_or_404(User, id=user_id)
@@ -1038,9 +1038,9 @@ def request_challenge_buddy(request, challenge_id, user_id):
         return redirect('accounts:challenge_detail', challenge_id=challenge_id)
 
     if request.method == 'POST':
-        form = BuddyRequestForm(request.POST)
+        form = PalRequestForm(request.POST)
         if form.is_valid():
-            # Send buddy request (you could implement a notification system here)
+            # Send pal request (you could implement a notification system here)
             # For now, just pair them up directly
             user_participation.accountability_partner = target_participation
             target_participation.accountability_partner = user_participation
@@ -1051,7 +1051,7 @@ def request_challenge_buddy(request, challenge_id, user_id):
                 request, f"You are now accountability partners with {target_user.get_full_name() or target_user.username}!")
             return redirect('accounts:challenge_detail', challenge_id=challenge_id)
     else:
-        form = BuddyRequestForm()
+        form = PalRequestForm()
 
     context = {
         'form': form,
@@ -1059,7 +1059,7 @@ def request_challenge_buddy(request, challenge_id, user_id):
         'target_user': target_user,
     }
 
-    return render(request, 'accounts/challenges/request_buddy.html', context)
+    return render(request, 'accounts/challenges/request_pal.html', context)
 
 # =============================================================================
 # RECOVERY GROUP VIEWS
@@ -1818,7 +1818,7 @@ def give_encouragement(request, check_in_id):
 
 
 @login_required
-def request_challenge_buddy(
+def request_challenge_pal(
     request, challenge_id, user_id):
     """Request accountability partner for a challenge"""
 
@@ -1842,9 +1842,9 @@ def request_challenge_buddy(
         return redirect('accounts:challenge_detail', challenge_id=challenge_id)
 
     if request.method == 'POST':
-        form = BuddyRequestForm(request.POST)
+        form = PalRequestForm(request.POST)
         if form.is_valid():
-            # Send buddy request (you could implement a notification system here)
+            # Send pal request (you could implement a notification system here)
             # For now, just pair them up directly
             user_participation.accountability_partner = target_participation
             target_participation.accountability_partner = user_participation
@@ -1855,7 +1855,7 @@ def request_challenge_buddy(
                 request, f"You are now accountability partners with {target_user.get_full_name() or target_user.username}!")
             return redirect('accounts:challenge_detail', challenge_id=challenge_id)
     else:
-        form = BuddyRequestForm()
+        form = PalRequestForm()
 
     context = {
         'form': form,
@@ -1863,7 +1863,7 @@ def request_challenge_buddy(
         'target_user': target_user,
     }
 
-    return render(request, 'accounts/challenges/request_buddy.html', context)
+    return render(request, 'accounts/challenges/request_pal.html', context)
 
 
 @login_required
@@ -1883,7 +1883,7 @@ def leave_challenge(request, challenge_id):
         participation.status = 'dropped'
         participation.save()
 
-        # Remove buddy partnership if exists
+        # Remove pal partnership if exists
         if participation.accountability_partner:
             partner = participation.accountability_partner
             partner.accountability_partner = None

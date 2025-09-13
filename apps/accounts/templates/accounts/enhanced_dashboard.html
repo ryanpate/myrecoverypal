@@ -633,18 +633,18 @@
                 </div>
                 {% endif %}
 
-                {% if user.get_recovery_buddy %}
+                {% if user.get_recovery_pal %}
                 <div class="connection-item">
                     <div class="connection-avatar">
-                        {% if user.get_recovery_buddy.profile.avatar %}
-                            <img src="{{ user.get_recovery_buddy.profile.avatar.url }}" alt="Buddy">
+                        {% if user.get_recovery_pal.profile.avatar %}
+                            <img src="{{ user.get_recovery_pal.profile.avatar.url }}" alt="Pal">
                         {% else %}
                             🤝
                         {% endif %}
                     </div>
                     <div class="connection-info">
-                        <div class="connection-name">{{ user.get_recovery_buddy.get_full_name|default:user.get_recovery_buddy.username }}</div>
-                        <div class="connection-status">Recovery Buddy</div>
+                        <div class="connection-name">{{ user.get_recovery_pal.get_full_name|default:user.get_recovery_pal.username }}</div>
+                        <div class="connection-status">Recovery Pal</div>
                     </div>
                 </div>
                 {% endif %}
@@ -672,8 +672,8 @@
                     <a href="{% url 'accounts:sponsor_dashboard' %}" class="action-btn">
                         🎯 Sponsors
                     </a>
-                    <a href="{% url 'accounts:buddy_dashboard' %}" class="action-btn">
-                        🤝 Buddies
+                    <a href="{% url 'accounts:pal_dashboard' %}" class="action-btn">
+                        🤝 Pals
                     </a>
                     <a href="{% url 'accounts:following_list' user.username %}" class="action-btn">
                         👥 Following

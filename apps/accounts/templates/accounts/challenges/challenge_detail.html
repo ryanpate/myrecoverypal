@@ -366,8 +366,8 @@
                             {% if challenge.enable_leaderboard %}
                             <li>🏆 Leaderboard enabled</li>
                             {% endif %}
-                            {% if challenge.allow_buddy_system %}
-                            <li>🤝 Buddy system available</li>
+                            {% if challenge.allow_pal_system %}
+                            <li>🤝 Pal system available</li>
                             {% endif %}
                         </ul>
                     </div>
@@ -508,10 +508,10 @@
                             {% endif %}
                         </small>
                     </div>
-                    {% if challenge.allow_buddy_system and user_participation and participant != user_participation and not user_participation.accountability_partner %}
-                    <a href="{% url 'accounts:request_challenge_buddy' challenge.id participant.user.id %}" 
+                    {% if challenge.allow_pal_system and user_participation and participant != user_participation and not user_participation.accountability_partner %}
+                    <a href="{% url 'accounts:request_challenge_pal' challenge.id participant.user.id %}" 
                        class="btn btn-outline-primary btn-sm">
-                        🤝 Buddy
+                        🤝 Pal
                     </a>
                     {% endif %}
                 </div>

@@ -23,7 +23,7 @@ Transform the dashboard into a social media-style feed:
 Build deeper relationship features:
 - **Follow/Following System**: Let users follow others' journeys
 - **Sponsor/Sponsee Relationships**: Formal mentorship connections
-- **Recovery Buddies**: Mutual support partnerships
+- **Recovery Pals**: Mutual support partnerships
 - **Interest-based Groups**: Support groups by addiction type, location, recovery stage
 
 ### **3. Interactive Community Features**
