@@ -5,6 +5,38 @@
 
 {% block extra_css %}
 <style>
+    /* Header button styles to match other pages */
+    .header-action-buttons {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .header-btn {
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        color: white !important;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+    }
+
+    .header-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        color: white !important;
+        text-decoration: none;
+    }
+
     .challenge-card {
         border: none;
         border-radius: 12px;
@@ -13,12 +45,12 @@
         height: 100%;
         overflow: hidden;
     }
-    
+
     .challenge-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     }
-    
+
     .challenge-type-badge {
         position: absolute;
         top: 1rem;
@@ -29,7 +61,7 @@
         font-size: 0.8rem;
         font-weight: 600;
     }
-    
+
     .challenge-status {
         display: inline-block;
         padding: 0.25rem 0.75rem;
@@ -38,33 +70,44 @@
         font-weight: 600;
         margin-bottom: 0.5rem;
     }
-    
-    .status-active { background: #d4edda; color: #155724; }
-    .status-upcoming { background: #fff3cd; color: #856404; }
-    .status-completed { background: #d1ecf1; color: #0c5460; }
-    
+
+    .status-active {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-upcoming {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-completed {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
     .progress-ring {
         width: 60px;
         height: 60px;
         position: relative;
     }
-    
+
     .progress-circle {
         fill: transparent;
         stroke: #e9ecef;
         stroke-width: 4;
     }
-    
+
     .progress-bar {
         fill: transparent;
-        stroke: #28a745;
+        stroke: #52b788;
         stroke-width: 4;
         stroke-linecap: round;
         transform: rotate(-90deg);
         transform-origin: 50% 50%;
         transition: stroke-dasharray 0.3s ease;
     }
-    
+
     .quick-stats {
         background: white;
         border-radius: 12px;
@@ -72,26 +115,30 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         margin-bottom: 2rem;
     }
-    
+
     .stat-item {
         text-align: center;
         padding: 0.5rem;
     }
-    
+
+    /* Use gradient style from base.html */
     .stat-number {
         font-size: 2rem;
         font-weight: bold;
-        color: #667eea;
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin-bottom: 0.25rem;
     }
-    
+
     .stat-label {
         font-size: 0.9rem;
         color: #6c757d;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
-    
+
     .filter-section {
         background: white;
         border-radius: 12px;
@@ -99,15 +146,15 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         margin-bottom: 2rem;
     }
-    
+
     .recommended-challenges {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary-light), var(--accent-green));
         border-radius: 12px;
         padding: 2rem;
         color: white;
         margin-bottom: 2rem;
     }
-    
+
     .activity-feed {
         background: white;
         border-radius: 12px;
@@ -116,18 +163,18 @@
         max-height: 500px;
         overflow-y: auto;
     }
-    
+
     .activity-item {
         display: flex;
         align-items: center;
         padding: 0.75rem 0;
         border-bottom: 1px solid #f8f9fa;
     }
-    
+
     .activity-item:last-child {
         border-bottom: none;
     }
-    
+
     .activity-avatar {
         width: 40px;
         height: 40px;
@@ -139,7 +186,7 @@
         margin-right: 0.75rem;
         font-size: 1.2rem;
     }
-    
+
     .my-participations {
         background: white;
         border-radius: 12px;
@@ -147,29 +194,60 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         margin-bottom: 2rem;
     }
-    
+
     .participation-item {
         background: #f8f9fa;
         border-radius: 8px;
         padding: 1rem;
         margin-bottom: 0.75rem;
         display: flex;
-        justify-content: between;
+        justify-content: space-between;
         align-items: center;
     }
-    
+
     .participation-item:last-child {
         margin-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+        .header-action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-btn {
+            width: 100%;
+            max-width: 250px;
+            justify-content: center;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="challenges-header">
+<div class="page-header challenges-header">
     <div class="container">
-        <h1>Recovery Challenges</h1>
-        <p class="lead">Join challenges to build healthy habits and stay motivated</p>
-        <p>Track progress, earn badges, and support others on their journey</p>
+        <h1>🏆 Recovery Challenges</h1>
+        <p>Join challenges to build healthy habits and stay motivated</p>
+
+        <!-- Action buttons in header -->
+        <div class="header-action-buttons">
+            {% if user.is_authenticated %}
+            <a href="{% url 'accounts:my_challenges' %}" class="header-btn">
+                📊 My Challenges
+            </a>
+            <a href="{% url 'accounts:create_challenge' %}" class="header-btn">
+                ➕ Create Challenge
+            </a>
+            <a href="{% url 'accounts:groups_list' %}" class="header-btn">
+                👥 Browse Groups
+            </a>
+            {% else %}
+            <a href="{% url 'accounts:login' %}" class="header-btn">
+                🔐 Login to Join
+            </a>
+            {% endif %}
+        </div>
     </div>
 </div>
 
@@ -182,15 +260,15 @@
                 <h5 class="mb-3">📊 Challenge Stats</h5>
                 <div class="row text-center">
                     <div class="stat-item col-12">
-                        <div class="stat-number">{{ total_challenges }}</div>
+                        <div class="stat-number">{{ total_challenges|default:0 }}</div>
                         <div class="stat-label">Total Challenges</div>
                     </div>
                     <div class="stat-item col-12">
-                        <div class="stat-number">{{ active_challenges }}</div>
+                        <div class="stat-number">{{ active_challenges|default:0 }}</div>
                         <div class="stat-label">Active Now</div>
                     </div>
                     <div class="stat-item col-12">
-                        <div class="stat-number">{{ user_participations.count }}</div>
+                        <div class="stat-number">{{ user_participations.count|default:0 }}</div>
                         <div class="stat-label">Your Active</div>
                     </div>
                 </div>
@@ -204,14 +282,15 @@
                 <div class="participation-item">
                     <div class="flex-grow-1">
                         <h6 class="mb-1">
-                            <a href="{% url 'accounts:challenge_detail' participation.challenge.id %}" class="text-decoration-none">
+                            <a href="{% url 'accounts:challenge_detail' participation.challenge.id %}"
+                                class="text-decoration-none">
                                 {{ participation.challenge.title }}
                             </a>
                         </h6>
                         <small class="text-muted">
-                            Day {{ participation.days_completed }}/{{ participation.challenge.duration_days }}
+                            Day {{ participation.days_completed|default:0 }}/{{ participation.challenge.duration_days }}
                             {% if participation.current_streak > 0 %}
-                                • 🔥{{ participation.current_streak }} streak
+                            • 🔥{{ participation.current_streak }} streak
                             {% endif %}
                         </small>
                     </div>
@@ -219,10 +298,12 @@
                         <svg width="60" height="60">
                             <circle class="progress-circle" cx="30" cy="30" r="26"></circle>
                             <circle class="progress-bar" cx="30" cy="30" r="26"
-                                stroke-dasharray="{{ participation.completion_percentage|floatformat:0 }}, 100"></circle>
+                                stroke-dasharray="{{ participation.completion_percentage|default:0|floatformat:0 }}, 100">
+                            </circle>
                         </svg>
-                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem; font-weight: bold;">
-                            {{ participation.completion_percentage|floatformat:0 }}%
+                        <div
+                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem; font-weight: bold;">
+                            {{ participation.completion_percentage|default:0|floatformat:0 }}%
                         </div>
                     </div>
                 </div>
@@ -243,17 +324,21 @@
                 <div class="activity-item">
                     <div class="activity-avatar">
                         {% if check_in.participant.user.avatar %}
-                            <img src="{{ check_in.participant.user.avatar.url }}" alt="{{ check_in.participant.user.username }}" 
-                                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        <img src="{{ check_in.participant.user.avatar.url }}"
+                            alt="{{ check_in.participant.user.username }}"
+                            style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                         {% else %}
-                            👤
+                        👤
                         {% endif %}
                     </div>
                     <div class="flex-grow-1">
                         <div style="font-size: 0.9rem;">
-                            <strong>{{ check_in.participant.user.get_full_name|default:check_in.participant.user.username }}</strong>
+                            <strong>{{
+                                check_in.participant.user.get_full_name|default:check_in.participant.user.username
+                                }}</strong>
                             {% if check_in.completed_daily_goal %}✅{% else %}📝{% endif %}
-                            <a href="{% url 'accounts:challenge_detail' check_in.participant.challenge.id %}" class="text-decoration-none">
+                            <a href="{% url 'accounts:challenge_detail' check_in.participant.challenge.id %}"
+                                class="text-decoration-none">
                                 {{ check_in.participant.challenge.title }}
                             </a>
                         </div>
@@ -293,7 +378,7 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                        <button type="submit" class="btn btn-success">Apply Filters</button>
                         <a href="{% url 'accounts:challenges_home' %}" class="btn btn-outline-secondary">Clear</a>
                     </div>
                 </form>
@@ -312,8 +397,10 @@
                                 <h5>{{ challenge.title }}</h5>
                                 <p class="card-text small">{{ challenge.description|truncatewords:15 }}</p>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <small>{{ challenge.duration_days }} days • {{ challenge.participant_count }} participants</small>
-                                    <a href="{% url 'accounts:challenge_detail' challenge.id %}" class="btn btn-light btn-sm">Join</a>
+                                    <small>{{ challenge.duration_days }} days • {{ challenge.participant_count|default:0
+                                        }} participants</small>
+                                    <a href="{% url 'accounts:challenge_detail' challenge.id %}"
+                                        class="btn btn-light btn-sm">Join</a>
                                 </div>
                             </div>
                         </div>
@@ -332,14 +419,14 @@
                             <div class="challenge-type-badge">
                                 {{ challenge.get_challenge_type_display }}
                             </div>
-                            
+
                             <div class="challenge-status status-{{ challenge.status }}">
                                 {{ challenge.get_status_display }}
                             </div>
-                            
+
                             <h5 class="card-title">{{ challenge.title }}</h5>
                             <p class="card-text text-muted">{{ challenge.description|truncatewords:20 }}</p>
-                            
+
                             <div class="challenge-meta mb-3">
                                 <div class="row text-center">
                                     <div class="col-4">
@@ -347,50 +434,51 @@
                                         <small class="text-muted">Days</small>
                                     </div>
                                     <div class="col-4">
-                                        <div class="fw-bold">{{ challenge.participant_count }}</div>
+                                        <div class="fw-bold">{{ challenge.participant_count|default:0 }}</div>
                                         <small class="text-muted">Participants</small>
                                     </div>
                                     <div class="col-4">
-                                        <div class="fw-bold">{{ challenge.completion_rate }}%</div>
+                                        <div class="fw-bold">{{ challenge.completion_rate|default:0 }}%</div>
                                         <small class="text-muted">Completion</small>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="challenge-group mb-2">
                                 <small class="text-muted">
                                     👥 {{ challenge.group.name }}
                                     {% if not challenge.is_public %}🔒{% endif %}
                                 </small>
                             </div>
-                            
+
                             {% if challenge.status == 'active' or challenge.status == 'upcoming' %}
                             <div class="challenge-timing mb-3">
                                 {% if challenge.status == 'upcoming' %}
-                                    <small class="text-warning">
-                                        ⏳ Starts {{ challenge.start_date|date:"M d" }}
-                                    </small>
+                                <small class="text-warning">
+                                    ⏳ Starts {{ challenge.start_date|date:"M d" }}
+                                </small>
                                 {% else %}
-                                    <small class="text-success">
-                                        🔥 {{ challenge.days_remaining }} days remaining
-                                    </small>
+                                <small class="text-success">
+                                    🔥 {{ challenge.days_remaining|default:"Many" }} days remaining
+                                </small>
                                 {% endif %}
                             </div>
                             {% endif %}
-                            
+
                             <div class="d-grid">
-                                <a href="{% url 'accounts:challenge_detail' challenge.id %}" class="btn btn-primary">
+                                <a href="{% url 'accounts:challenge_detail' challenge.id %}" class="btn btn-success">
                                     View Challenge
                                 </a>
                             </div>
                         </div>
-                        
+
                         <div class="card-footer bg-light">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="creator-info">
                                     <small class="text-muted">
-                                        Created by 
-                                        <a href="{% url 'accounts:profile' challenge.creator.username %}" class="text-decoration-none">
+                                        Created by
+                                        <a href="{% url 'accounts:profile' challenge.creator.username %}"
+                                            class="text-decoration-none">
                                             {{ challenge.creator.get_full_name|default:challenge.creator.username }}
                                         </a>
                                     </small>
@@ -407,7 +495,7 @@
                     <div class="text-center py-5">
                         <h4 class="text-muted">No challenges found</h4>
                         <p class="text-muted">Try adjusting your filters or create a new challenge!</p>
-                        <a href="{% url 'accounts:create_challenge' %}" class="btn btn-primary">
+                        <a href="{% url 'accounts:create_challenge' %}" class="btn btn-success">
                             ➕ Create Your First Challenge
                         </a>
                     </div>
@@ -420,64 +508,94 @@
             <nav aria-label="Challenge pagination">
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page=1{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">First</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">Previous</a>
-                        </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?page=1{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">Previous</a>
+                    </li>
                     {% endif %}
 
                     {% for num in page_obj.paginator.page_range %}
-                        {% if page_obj.number == num %}
-                            <li class="page-item active">
-                                <span class="page-link">{{ num }}</span>
-                            </li>
-                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">{{ num }}</a>
-                            </li>
+                    {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li class="page-item">
+                        <a class="page-link"
+                            href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">{{
+                            num }}</a>
+                        </li>
                         {% endif %}
-                    {% endfor %}
+                        {% endfor %}
 
-                    {% if page_obj.has_next %}
+                        {% if page_obj.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">Next</a>
+                            <a class="page-link"
+                                href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">Next</a>
                         </li>
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">Last</a>
+                            <a class="page-link"
+                                href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.challenge_type %}&challenge_type={{ request.GET.challenge_type }}{% endif %}{% if request.GET.duration %}&duration={{ request.GET.duration }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.my_challenges_only %}&my_challenges_only=on{% endif %}">Last</a>
                         </li>
-                    {% endif %}
+                        {% endif %}
                 </ul>
             </nav>
             {% endif %}
         </div>
     </div>
 </div>
+
+<!-- Quick Actions Modal -->
+{% if user.is_authenticated %}
+<div class="fixed-bottom p-3" style="z-index: 1000;">
+    <div class="text-end">
+        <div class="dropdown dropup">
+            <button class="btn btn-primary btn-lg rounded-circle" type="button" data-bs-toggle="dropdown"
+                style="width: 60px; height: 60px; background: var(--accent-green); border-color: var(--accent-green);">
+                ➕
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{% url 'accounts:create_challenge' %}">➕ Create Challenge</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:my_challenges' %}">📊 My Challenges</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="{% url 'accounts:groups_list' %}">👥 Browse Groups</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:community' %}">🤝 Community Hub</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">🎯 Sponsor Hub</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:pal_dashboard' %}">🤝 Pal Hub</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Auto-submit filter form on change
-    const filterSelects = document.querySelectorAll('.filter-section select');
-    filterSelects.forEach(select => {
-        select.addEventListener('change', function() {
-            this.closest('form').submit();
-        });
-    });
-    
-    // Search form delay submit
-    const searchInput = document.querySelector('input[name="search"]');
-    if (searchInput) {
-        let searchTimeout;
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
+    document.addEventListener('DOMContentLoaded', function () {
+        // Auto-submit filter form on change
+        const filterSelects = document.querySelectorAll('.filter-section select');
+        filterSelects.forEach(select => {
+            select.addEventListener('change', function () {
                 this.closest('form').submit();
-            }, 500);
+            });
         });
-    }
-});
+
+        // Search form delay submit
+        const searchInput = document.querySelector('input[name="search"]');
+        if (searchInput) {
+            let searchTimeout;
+            searchInput.addEventListener('input', function () {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    this.closest('form').submit();
+                }, 500);
+            });
+        }
+    });
 </script>
 {% endblock %}

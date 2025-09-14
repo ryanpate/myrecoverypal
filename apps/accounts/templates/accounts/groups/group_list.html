@@ -1,4 +1,4 @@
-<!-- apps/accounts/templates/accounts/groups/group_list.html -->
+<!-- Updated apps/accounts/templates/accounts/groups/group_list.html -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -6,28 +6,36 @@
 
 {% block extra_css %}
 <style>
-    .groups-header {
-        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
-        color: white;
-        padding: 4rem 0 3rem;
-        margin-bottom: 2rem;
-        position: relative;
-        overflow: hidden;
+    /* Header button styles to match other pages */
+    .header-action-buttons {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
     }
 
-    .groups-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+    .header-btn {
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        color: white !important;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
     }
 
-    .groups-header .container {
-        position: relative;
-        z-index: 1;
+    .header-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        color: white !important;
+        text-decoration: none;
     }
 
     .group-filters {
@@ -239,7 +247,7 @@
     .join-btn:hover:not(.disabled) {
         transform: translateY(-2px);
         text-decoration: none;
-        color: inherit;
+        color: white;
     }
 
     .view-btn {
@@ -311,7 +319,7 @@
         width: 50px;
         height: 50px;
         border-radius: 10px;
-        background: var(--group-color, #52b788);
+        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -345,19 +353,44 @@
             flex-direction: column;
         }
 
-        .groups-header {
-            padding: 2rem 0;
+        .header-action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-btn {
+            width: 100%;
+            max-width: 250px;
+            justify-content: center;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="groups-header">
+<div class="page-header groups-header">
     <div class="container">
-        <h1>Recovery Groups</h1>
-        <p class="lead">Find your community and support system</p>
-        <p>Join groups based on your interests, recovery stage, or location</p>
+        <h1>👥 Recovery Groups</h1>
+        <p>Find your community and support system</p>
+
+        <!-- Action buttons in header -->
+        <div class="header-action-buttons">
+            {% if user.is_authenticated %}
+            <a href="{% url 'accounts:my_groups' %}" class="header-btn">
+                📊 My Groups
+            </a>
+            <a href="{% url 'accounts:create_group' %}" class="header-btn">
+                ➕ Create Group
+            </a>
+            <a href="{% url 'accounts:community' %}" class="header-btn">
+                🤝 Community Hub
+            </a>
+            {% else %}
+            <a href="{% url 'accounts:login' %}" class="header-btn">
+                🔐 Login to Join
+            </a>
+            {% endif %}
+        </div>
     </div>
 </div>
 
@@ -369,21 +402,23 @@
             <h3>🏠 My Groups</h3>
             <a href="{% url 'accounts:my_groups' %}" class="btn btn-outline-primary">View All</a>
         </div>
-        
+
         <div class="row">
             {% for group in user_groups|slice:":3" %}
             <div class="col-md-4">
                 <div class="my-group-item">
-                    <div class="my-group-avatar" style="--group-color: {{ group.group_color }}">
+                    <div class="my-group-avatar">
                         {% if group.group_image %}
-                            <img src="{{ group.group_image.url }}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;">
+                        <img src="{{ group.group_image.url }}"
+                            style="width:100%; height:100%; object-fit:cover; border-radius:10px;">
                         {% else %}
-                            👥
+                        👥
                         {% endif %}
                     </div>
                     <div class="flex-grow-1">
                         <strong>{{ group.name }}</strong>
-                        <small class="text-muted d-block">{{ group.active_member_count|default:group.member_count }} members</small>
+                        <small class="text-muted d-block">{{
+                            group.active_member_count|default:group.member_count|default:0 }} members</small>
                     </div>
                 </div>
             </div>
@@ -395,7 +430,7 @@
     <!-- Group Filters -->
     <div class="group-filters">
         <h3>🔍 Find Groups</h3>
-        
+
         <!-- Group Type Filter -->
         <div class="filter-section">
             <h5>By Category</h5>
@@ -404,7 +439,8 @@
                     🌟 All Groups
                 </a>
                 {% for type_code, type_name in group_types %}
-                <a href="?type={{ type_code }}" class="filter-chip {% if request.GET.type == type_code %}active{% endif %}">
+                <a href="?type={{ type_code }}"
+                    class="filter-chip {% if request.GET.type == type_code %}active{% endif %}">
                     {% if type_code == 'addiction_type' %}🎯
                     {% elif type_code == 'location' %}📍
                     {% elif type_code == 'recovery_stage' %}⭐
@@ -425,8 +461,8 @@
             <h5>By Privacy</h5>
             <div class="filter-chips">
                 {% for privacy_code, privacy_name in privacy_levels %}
-                <a href="?{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}privacy={{ privacy_code }}" 
-                   class="filter-chip {% if request.GET.privacy == privacy_code %}active{% endif %}">
+                <a href="?{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}privacy={{ privacy_code }}"
+                    class="filter-chip {% if request.GET.privacy == privacy_code %}active{% endif %}">
                     {% if privacy_code == 'public' %}🌍
                     {% elif privacy_code == 'private' %}🔒
                     {% elif privacy_code == 'secret' %}🤐
@@ -440,20 +476,17 @@
         <!-- Search -->
         <form method="get" class="row">
             {% if request.GET.type %}
-                <input type="hidden" name="type" value="{{ request.GET.type }}">
+            <input type="hidden" name="type" value="{{ request.GET.type }}">
             {% endif %}
             {% if request.GET.privacy %}
-                <input type="hidden" name="privacy" value="{{ request.GET.privacy }}">
+            <input type="hidden" name="privacy" value="{{ request.GET.privacy }}">
             {% endif %}
             <div class="col-md-9">
-                <input type="text" 
-                       name="search" 
-                       class="form-control form-control-lg" 
-                       placeholder="Search groups by name or description..." 
-                       value="{{ request.GET.search }}">
+                <input type="text" name="search" class="form-control form-control-lg"
+                    placeholder="Search groups by name or description..." value="{{ request.GET.search }}">
             </div>
             <div class="col-md-3">
-                <button type="submit" class="btn btn-primary btn-lg w-100">Search</button>
+                <button type="submit" class="btn btn-success btn-lg w-100">Search</button>
             </div>
         </form>
     </div>
@@ -466,15 +499,15 @@
             <div class="create-icon">➕</div>
             <h4>Start Your Own Group</h4>
             <p>Create a support group for your specific needs and interests</p>
-            <a href="{% url 'accounts:create_group' %}" class="btn btn-primary btn-lg">Create Group</a>
+            <a href="{% url 'accounts:create_group' %}" class="btn btn-success btn-lg">Create Group</a>
         </div>
         {% endif %}
 
         {% for group in groups %}
         <div class="group-card">
-            <div class="group-header" style="background: {{ group.group_color }};">
+            <div class="group-header" style="{% if group.group_color %}background: {{ group.group_color }};{% endif %}">
                 {% if group.group_image %}
-                    <img src="{{ group.group_image.url }}" alt="{{ group.name }}" class="group-image">
+                <img src="{{ group.group_image.url }}" alt="{{ group.name }}" class="group-image">
                 {% endif %}
                 <div class="group-icon">
                     {% if group.group_type == 'addiction_type' %}🎯
@@ -496,7 +529,8 @@
 
                 <div class="group-meta">
                     <div class="group-meta-item">
-                        👥 {{ group.active_member_count|default:group.member_count }} member{{ group.active_member_count|default:group.member_count|pluralize }}
+                        👥 {{ group.active_member_count|default:group.member_count|default:0 }} member{{
+                        group.active_member_count|default:group.member_count|default:0|pluralize }}
                     </div>
                     {% if group.location %}
                     <div class="group-meta-item">
@@ -512,7 +546,8 @@
 
                 <div class="group-badges">
                     <span class="group-badge type">{{ group.get_group_type_display }}</span>
-                    <span class="group-badge privacy {% if group.privacy_level == 'private' %}private{% elif group.privacy_level == 'secret' %}secret{% endif %}">
+                    <span
+                        class="group-badge privacy {% if group.privacy_level == 'private' %}private{% elif group.privacy_level == 'secret' %}secret{% endif %}">
                         {{ group.get_privacy_level_display }}
                     </span>
                     {% if group.is_full %}
@@ -522,29 +557,29 @@
 
                 <div class="group-actions">
                     {% if user.is_authenticated %}
-                        {% if group.is_full %}
-                            <button class="join-btn disabled">
-                                Group Full
-                            </button>
-                        {% elif group.privacy_level == 'secret' %}
-                            <button class="join-btn disabled">
-                                Invitation Only
-                            </button>
-                        {% else %}
-                            <button class="join-btn primary" onclick="joinGroup({{ group.id }})">
-                                {% if group.privacy_level == 'private' %}
-                                    📝 Request to Join
-                                {% else %}
-                                    ➕ Join Group
-                                {% endif %}
-                            </button>
-                        {% endif %}
+                    {% if group.is_full %}
+                    <button class="join-btn disabled">
+                        Group Full
+                    </button>
+                    {% elif group.privacy_level == 'secret' %}
+                    <button class="join-btn disabled">
+                        Invitation Only
+                    </button>
                     {% else %}
-                        <a href="{% url 'accounts:login' %}" class="join-btn secondary">
-                            Sign in to Join
-                        </a>
+                    <button class="join-btn primary" onclick="joinGroup({{ group.id }})">
+                        {% if group.privacy_level == 'private' %}
+                        🔒 Request to Join
+                        {% else %}
+                        ➕ Join Group
+                        {% endif %}
+                    </button>
                     {% endif %}
-                    
+                    {% else %}
+                    <a href="{% url 'accounts:login' %}" class="join-btn secondary">
+                        Sign in to Join
+                    </a>
+                    {% endif %}
+
                     <a href="{% url 'accounts:group_detail' group.id %}" class="view-btn">
                         👁️
                     </a>
@@ -558,7 +593,7 @@
                 <h3>No groups found</h3>
                 <p>Try adjusting your search criteria or create a new group.</p>
                 {% if user.is_authenticated %}
-                <a href="{% url 'accounts:create_group' %}" class="btn btn-primary btn-lg">Create the First Group</a>
+                <a href="{% url 'accounts:create_group' %}" class="btn btn-success btn-lg">Create the First Group</a>
                 {% endif %}
             </div>
         </div>
@@ -571,92 +606,121 @@
         <nav aria-label="Groups pagination">
             <ul class="pagination">
                 {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}{% if request.GET.privacy %}privacy={{ request.GET.privacy }}&{% endif %}page=1">First</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}{% if request.GET.privacy %}privacy={{ request.GET.privacy }}&{% endif %}page={{ page_obj.previous_page_number }}">Previous</a>
-                    </li>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}{% if request.GET.privacy %}privacy={{ request.GET.privacy }}&{% endif %}page=1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}{% if request.GET.privacy %}privacy={{ request.GET.privacy }}&{% endif %}page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
                 {% endif %}
-                
+
                 <li class="page-item active">
                     <span class="page-link">
                         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
                     </span>
                 </li>
-                
+
                 {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}{% if request.GET.privacy %}privacy={{ request.GET.privacy }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}{% if request.GET.privacy %}privacy={{ request.GET.privacy }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Last</a>
-                    </li>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}{% if request.GET.privacy %}privacy={{ request.GET.privacy }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}{% if request.GET.privacy %}privacy={{ request.GET.privacy }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Last</a>
+                </li>
                 {% endif %}
             </ul>
         </nav>
     </div>
     {% endif %}
 </div>
+
+<!-- Quick Actions Modal -->
+{% if user.is_authenticated %}
+<div class="fixed-bottom p-3" style="z-index: 1000;">
+    <div class="text-end">
+        <div class="dropdown dropup">
+            <button class="btn btn-primary btn-lg rounded-circle" type="button" data-bs-toggle="dropdown"
+                style="width: 60px; height: 60px; background: var(--accent-green); border-color: var(--accent-green);">
+                ➕
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{% url 'accounts:create_group' %}">➕ Create New Group</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:my_groups' %}">📊 My Groups</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="{% url 'accounts:community' %}">🤝 Community Hub</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:challenges_home' %}">🏆 View Challenges</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">🎯 Sponsor Hub</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:pal_dashboard' %}">🤝 Pal Hub</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block extra_js %}
 <script>
-async function joinGroup(groupId) {
-    try {
-        const response = await fetch(`/accounts/groups/${groupId}/join/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                'Content-Type': 'application/json',
-            },
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast(`Successfully ${data.action} group!`, 'success');
-            
-            // Update button text and reload after delay
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        } else {
-            showToast(data.error || 'Something went wrong', 'error');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        showToast('Network error', 'error');
-    }
-}
+    async function joinGroup(groupId) {
+        try {
+            const response = await fetch(`/accounts/groups/${groupId}/join/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
+            });
 
-function showToast(message, type) {
-    const toast = document.createElement('div');
-    toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible`;
-    toast.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
-    toast.innerHTML = `
+            const data = await response.json();
+
+            if (data.success) {
+                showToast(`Successfully ${data.action} group!`, 'success');
+
+                // Update button text and reload after delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showToast(data.error || 'Something went wrong', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Network error', 'error');
+        }
+    }
+
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible`;
+        toast.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+        toast.innerHTML = `
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     `;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        if (toast.parentNode) {
-            toast.parentNode.removeChild(toast);
-        }
-    }, 3000);
-}
 
-// Add CSRF token
-document.addEventListener('DOMContentLoaded', function() {
-    if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
-        const token = document.createElement('input');
-        token.type = 'hidden';
-        token.name = 'csrfmiddlewaretoken';
-        token.value = '{{ csrf_token }}';
-        document.body.appendChild(token);
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 3000);
     }
-});
+
+    // Add CSRF token
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
+            const token = document.createElement('input');
+            token.type = 'hidden';
+            token.name = 'csrfmiddlewaretoken';
+            token.value = '{{ csrf_token }}';
+            document.body.appendChild(token);
+        }
+    });
 </script>
 {% endblock %}

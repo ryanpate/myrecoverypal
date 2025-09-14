@@ -1,4 +1,4 @@
-<!-- apps/accounts/templates/accounts/groups/my_groups.html -->
+<!-- Updated apps/accounts/templates/accounts/groups/my_groups.html -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -6,11 +6,36 @@
 
 {% block extra_css %}
 <style>
-    .my-groups-header {
-        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
-        color: white;
-        padding: 3rem 0 2rem;
-        margin-bottom: 2rem;
+    /* Header button styles to match other pages */
+    .header-action-buttons {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .header-btn {
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        color: white !important;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+    }
+
+    .header-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        color: white !important;
+        text-decoration: none;
     }
 
     .group-card {
@@ -146,7 +171,7 @@
     .action-btn:hover {
         transform: translateY(-1px);
         text-decoration: none;
-        color: inherit;
+        color: white;
     }
 
     .empty-state {
@@ -176,10 +201,14 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
+    /* Use the gradient style from base.html for stat numbers */
     .stat-number {
         font-size: 2.5rem;
         font-weight: bold;
-        color: #52b788;
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin-bottom: 0.5rem;
     }
 
@@ -195,27 +224,44 @@
         .group-actions {
             flex-direction: column;
         }
-        
+
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
+        }
+
+        .header-action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-btn {
+            width: 100%;
+            max-width: 250px;
+            justify-content: center;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="my-groups-header">
+<div class="page-header my-groups-header">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1>My Recovery Groups</h1>
-                <p class="lead">Your supportive communities and connections</p>
-            </div>
-            <div class="col-md-4 text-md-end">
-                <a href="{% url 'accounts:create_group' %}" class="btn btn-light btn-lg">
-                    Create New Group
-                </a>
-            </div>
+        <h1>👥 My Recovery Groups</h1>
+        <p>Your supportive communities and connections</p>
+
+        <!-- Action buttons in header -->
+        <div class="header-action-buttons">
+            <a href="{% url 'accounts:groups_list' %}" class="header-btn">
+                🔍 Browse All Groups
+            </a>
+            <a href="{% url 'accounts:create_group' %}" class="header-btn">
+                ➕ Create New Group
+            </a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'accounts:community' %}" class="header-btn">
+                🤝 Community Hub
+            </a>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -231,7 +277,7 @@
         <div class="stat-card">
             <div class="stat-number">
                 {% for membership in memberships %}
-                    {% if membership.status == 'admin' %}1{% else %}0{% endif %}
+                {% if membership.status == 'admin' %}1{% else %}0{% endif %}
                 {% empty %}0{% endfor %}
             </div>
             <div>Groups Created</div>
@@ -239,7 +285,7 @@
         <div class="stat-card">
             <div class="stat-number">
                 {% for membership in memberships %}
-                    {% if membership.status == 'moderator' %}1{% else %}0{% endif %}
+                {% if membership.status == 'moderator' %}1{% else %}0{% endif %}
                 {% empty %}0{% endfor %}
             </div>
             <div>Moderating</div>
@@ -247,7 +293,7 @@
         <div class="stat-card">
             <div class="stat-number">
                 {% for membership in memberships %}
-                    {% if membership.last_active %}{{ membership.last_active|timesince|truncatewords:1 }}{% endif %}
+                {% if membership.last_active %}{{ membership.last_active|timesince|truncatewords:1 }}{% endif %}
                 {% empty %}0{% endfor %}
             </div>
             <div>Days Active</div>
@@ -259,9 +305,11 @@
         {% for membership in memberships %}
         <div class="col-md-6 col-lg-4">
             <div class="group-card">
-                <div class="group-header" style="background: {{ membership.group.group_color|default:'#52b788' }};">
+                <div class="group-header"
+                    style="background: {{ membership.group.group_color|default:'linear-gradient(135deg, #1e4d8b 0%, #52b788 100%)' }};">
                     {% if membership.group.group_image %}
-                        <img src="{{ membership.group.group_image.url }}" alt="{{ membership.group.name }}" class="group-image">
+                    <img src="{{ membership.group.group_image.url }}" alt="{{ membership.group.name }}"
+                        class="group-image">
                     {% endif %}
                     <div class="group-icon">
                         {% if membership.group.group_type == 'addiction_type' %}🎯
@@ -279,8 +327,9 @@
 
                 <div class="group-body">
                     <h4 class="group-name">{{ membership.group.name }}</h4>
-                    
-                    <span class="status-badge {% if membership.status == 'admin' %}status-admin{% elif membership.status == 'moderator' %}status-moderator{% else %}status-active{% endif %}">
+
+                    <span
+                        class="status-badge {% if membership.status == 'admin' %}status-admin{% elif membership.status == 'moderator' %}status-moderator{% else %}status-active{% endif %}">
                         {% if membership.status == 'admin' %}👑 Administrator
                         {% elif membership.status == 'moderator' %}🛡️ Moderator
                         {% else %}✓ Member
@@ -289,16 +338,16 @@
 
                     <div class="group-meta">
                         <div class="group-meta-item">
-                            👥 {{ membership.group.member_count }} members
+                            👥 {{ membership.group.member_count|default:0 }} members
                         </div>
                         {% if membership.joined_date %}
                         <div class="group-meta-item">
-                            📅 Joined {{ membership.joined_date }}
+                            📅 Joined {{ membership.joined_date|date:"M d, Y" }}
                         </div>
                         {% endif %}
                         {% if membership.last_active %}
                         <div class="group-meta-item">
-                            🕒 Active {{ membership.last_active|timesince }} ago
+                            🕑 Active {{ membership.last_active|timesince }} ago
                         </div>
                         {% endif %}
                     </div>
@@ -330,7 +379,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Recent Group Activity</h5>
+                    <h5>📊 Recent Group Activity</h5>
                 </div>
                 <div class="card-body">
                     <div class="activity-item">
@@ -355,16 +404,42 @@
     <div class="empty-state">
         <div class="empty-icon">👥</div>
         <h3>No Groups Yet</h3>
-        <p>You haven't joined any recovery groups yet. Groups are a great way to connect with others who share similar experiences and goals.</p>
-        <div class="d-flex gap-3 justify-content-center">
-            <a href="{% url 'accounts:groups_list' %}" class="btn btn-primary btn-lg">
-                Browse Groups
+        <p>You haven't joined any recovery groups yet. Groups are a great way to connect with others who share similar
+            experiences and goals.</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'accounts:groups_list' %}" class="btn btn-success btn-lg">
+                🔍 Browse Groups
             </a>
-            <a href="{% url 'accounts:create_group' %}" class="btn btn-outline-primary btn-lg">
-                Create Group
+            <a href="{% url 'accounts:create_group' %}" class="btn btn-outline-success btn-lg">
+                ➕ Create Group
             </a>
         </div>
     </div>
     {% endif %}
 </div>
+
+<!-- Quick Actions Modal -->
+{% if user.is_authenticated %}
+<div class="fixed-bottom p-3" style="z-index: 1000;">
+    <div class="text-end">
+        <div class="dropdown dropup">
+            <button class="btn btn-primary btn-lg rounded-circle" type="button" data-bs-toggle="dropdown"
+                style="width: 60px; height: 60px; background: var(--accent-green); border-color: var(--accent-green);">
+                ➕
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{% url 'accounts:create_group' %}">➕ Create New Group</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:groups_list' %}">🔍 Browse All Groups</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="{% url 'accounts:community' %}">🤝 Community Hub</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:challenges_home' %}">🏆 View Challenges</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">🎯 Sponsor Hub</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:pal_dashboard' %}">🤝 Pal Hub</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

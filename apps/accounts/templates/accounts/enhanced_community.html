@@ -1,4 +1,4 @@
-<!-- apps/accounts/templates/accounts/enhanced_community.html -->
+<!-- Updated enhanced_community.html with working header buttons -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -6,11 +6,36 @@
 
 {% block extra_css %}
 <style>
-    .community-header {
-        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
-        color: white;
-        padding: 3rem 0 2rem;
-        margin-bottom: 2rem;
+    /* Header button styles */
+    .header-action-buttons {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .header-btn {
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        color: white !important;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+    }
+
+    .header-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        color: white !important;
+        text-decoration: none;
     }
 
     .community-stats {
@@ -32,6 +57,11 @@
         font-size: 2rem;
         font-weight: bold;
         margin-bottom: 0.5rem;
+        color: white !important;
+    }
+
+    .stat-label {
+        color: rgba(255, 255, 255, 0.9) !important;
     }
 
     .community-filters {
@@ -307,41 +337,64 @@
         .member-actions {
             flex-direction: column;
         }
+
+        .header-action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-btn {
+            width: 100%;
+            max-width: 250px;
+            justify-content: center;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="community-header">
+<div class="page-header community-header">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1>🤝 Recovery Community</h1>
-                <p class="lead">Connect with others on their recovery journey</p>
-            </div>
-            <div class="col-md-4 text-md-end">
-                <a href="{% url 'accounts:groups_list' %}" class="btn btn-light btn-lg">
-                    👥 Browse Groups
-                </a>
-            </div>
+        <h1>🤝 Recovery Community</h1>
+        <p>Connect with others on their recovery journey</p>
+
+        <!-- Action buttons in header -->
+        <div class="header-action-buttons">
+            <a href="{% url 'accounts:groups_list' %}" class="header-btn">
+                👥 Browse Groups
+            </a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'accounts:create_group' %}" class="header-btn">
+                ➕ Create Group
+            </a>
+            <a href="{% url 'accounts:suggested_users' %}" class="header-btn">
+                💡 Find Connections
+            </a>
+            <a href="{% url 'accounts:sponsor_dashboard' %}" class="header-btn">
+                🎯 Sponsor Hub
+            </a>
+            <a href="{% url 'accounts:pal_dashboard' %}" class="header-btn">
+                🤝 Pal Hub
+            </a>
+            {% endif %}
         </div>
 
         {% if user.is_authenticated %}
         <div class="community-stats">
             <div class="stat-card">
-                <div class="stat-number">{{ following_count }}</div>
+                <div class="stat-number">{{ following_count|default:0 }}</div>
                 <div class="stat-label">Following</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">{{ followers_count }}</div>
+                <div class="stat-number">{{ followers_count|default:0 }}</div>
                 <div class="stat-label">Followers</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">{{ members|length }}</div>
+                <div class="stat-number">{{ members|length|default:0 }}</div>
                 <div class="stat-label">Total Members</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">{{ page_obj.paginator.count }}</div>
+                <div class="stat-number">{{ page_obj.paginator.count|default:0 }}</div>
                 <div class="stat-label">Active Today</div>
             </div>
         </div>
@@ -356,21 +409,22 @@
     <div class="suggested-users">
         <h3>💡 Suggested for You</h3>
         <p class="text-muted">Based on your interests and mutual connections</p>
-        
+
         {% for suggested_user in suggested_users %}
         <div class="suggested-user">
             <div class="suggested-avatar">
                 {% if suggested_user.profile.avatar %}
-                    <img src="{{ suggested_user.profile.avatar.url }}" alt="{{ suggested_user.username }}">
+                <img src="{{ suggested_user.profile.avatar.url }}" alt="{{ suggested_user.username }}">
                 {% else %}
-                    👤
+                👤
                 {% endif %}
             </div>
             <div class="flex-grow-1">
                 <strong>{{ suggested_user.get_full_name|default:suggested_user.username }}</strong>
                 <small class="text-muted d-block">@{{ suggested_user.username }}</small>
                 {% if suggested_user.profile.bio %}
-                <p class="text-muted mb-0" style="font-size: 0.9rem;">{{ suggested_user.profile.bio|truncatewords:15 }}</p>
+                <p class="text-muted mb-0" style="font-size: 0.9rem;">{{ suggested_user.profile.bio|truncatewords:15 }}
+                </p>
                 {% endif %}
             </div>
             <button class="follow-btn follow" onclick="followUser('{{ suggested_user.username }}')">
@@ -385,7 +439,7 @@
     <!-- Community Filters -->
     <div class="community-filters">
         <h3>🔍 Discover Members</h3>
-        
+
         <div class="filter-tabs">
             <a href="?filter=" class="filter-tab {% if not request.GET.filter %}active{% endif %}">
                 🌟 All Members
@@ -406,11 +460,8 @@
         <!-- Search Form -->
         <form method="get" class="row">
             <div class="col-md-8">
-                <input type="text" 
-                       name="search" 
-                       class="form-control" 
-                       placeholder="Search members by name, username, or interests..." 
-                       value="{{ request.GET.search }}">
+                <input type="text" name="search" class="form-control"
+                    placeholder="Search members by name, username, or interests..." value="{{ request.GET.search }}">
             </div>
             <div class="col-md-4">
                 <button type="submit" class="btn btn-primary w-100">Search</button>
@@ -425,18 +476,19 @@
             {% if member.is_active %}
             <div class="online-indicator" title="Online recently"></div>
             {% endif %}
-            
+
             <div class="member-avatar">
                 {% if member.profile.avatar %}
-                    <img src="{{ member.profile.avatar.url }}" alt="{{ member.username }}">
+                <img src="{{ member.profile.avatar.url }}" alt="{{ member.username }}">
                 {% else %}
-                    👤
+                👤
                 {% endif %}
             </div>
 
             <div class="member-info">
                 <div class="member-name">
-                    <a href="{% url 'accounts:profile' member.username %}" style="text-decoration: none; color: inherit;">
+                    <a href="{% url 'accounts:profile' member.username %}"
+                        style="text-decoration: none; color: inherit;">
                         {{ member.get_full_name|default:member.username }}
                     </a>
                 </div>
@@ -444,11 +496,11 @@
 
                 <div class="member-stats">
                     <div class="member-stat">
-                        <div class="member-stat-number">{{ member.followers_count }}</div>
+                        <div class="member-stat-number">{{ member.followers_count|default:0 }}</div>
                         <div>Followers</div>
                     </div>
                     <div class="member-stat">
-                        <div class="member-stat-number">{{ member.following_count }}</div>
+                        <div class="member-stat-number">{{ member.following_count|default:0 }}</div>
                         <div>Following</div>
                     </div>
                     {% if member.get_days_sober > 0 %}
@@ -488,19 +540,21 @@
                         ➕ Follow
                     </button>
                     {% endif %}
-                    
+
                     <a href="{% url 'accounts:send_message' member.username %}" class="action-btn" title="Send Message">
                         💬
                     </a>
-                    
+
                     {% if member.is_sponsor and not user.get_active_sponsor %}
-                    <a href="{% url 'accounts:request_sponsor' member.username %}" class="action-btn" title="Request as Sponsor">
+                    <a href="{% url 'accounts:request_sponsor' member.username %}" class="action-btn"
+                        title="Request as Sponsor">
                         🎯
                     </a>
                     {% endif %}
-                    
+
                     {% if not member.get_recovery_pal and not user.get_recovery_pal %}
-                    <a href="{% url 'accounts:request_pal' member.username %}" class="action-btn" title="Request Recovery Pal">
+                    <a href="{% url 'accounts:request_pal' member.username %}" class="action-btn"
+                        title="Request Recovery Pal">
                         🤝
                     </a>
                     {% endif %}
@@ -522,27 +576,31 @@
         <nav aria-label="Members pagination">
             <ul class="pagination">
                 {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.filter %}filter={{ request.GET.filter }}&{% endif %}page=1">First</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.filter %}filter={{ request.GET.filter }}&{% endif %}page={{ page_obj.previous_page_number }}">Previous</a>
-                    </li>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.filter %}filter={{ request.GET.filter }}&{% endif %}page=1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.filter %}filter={{ request.GET.filter }}&{% endif %}page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
                 {% endif %}
-                
+
                 <li class="page-item active">
                     <span class="page-link">
                         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
                     </span>
                 </li>
-                
+
                 {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.filter %}filter={{ request.GET.filter }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.filter %}filter={{ request.GET.filter }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Last</a>
-                    </li>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.filter %}filter={{ request.GET.filter }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.filter %}filter={{ request.GET.filter }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Last</a>
+                </li>
                 {% endif %}
             </ul>
         </nav>
@@ -555,14 +613,17 @@
 <div class="fixed-bottom p-3" style="z-index: 1000;">
     <div class="text-end">
         <div class="dropdown dropup">
-            <button class="btn btn-primary btn-lg rounded-circle" type="button" data-bs-toggle="dropdown" style="width: 60px; height: 60px;">
+            <button class="btn btn-primary btn-lg rounded-circle" type="button" data-bs-toggle="dropdown"
+                style="width: 60px; height: 60px; background: var(--accent-green); border-color: var(--accent-green);">
                 ➕
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="{% url 'accounts:create_group' %}">🏗️ Create Group</a></li>
                 <li><a class="dropdown-item" href="{% url 'accounts:suggested_users' %}">💡 Find Connections</a></li>
                 <li><a class="dropdown-item" href="{% url 'accounts:groups_list' %}">👥 Browse Groups</a></li>
-                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
                 <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">🎯 Sponsor Hub</a></li>
                 <li><a class="dropdown-item" href="{% url 'accounts:pal_dashboard' %}">🤝 Pal Hub</a></li>
             </ul>
@@ -574,74 +635,74 @@
 
 {% block extra_js %}
 <script>
-async function followUser(username) {
-    try {
-        const response = await fetch(`/accounts/follow/${username}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                'Content-Type': 'application/json',
-            },
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            // Find all follow buttons for this user
-            const buttons = document.querySelectorAll(`button[onclick="followUser('${username}')"]`);
-            
-            buttons.forEach(button => {
-                if (data.is_following) {
-                    button.className = 'follow-btn following';
-                    button.innerHTML = '✓ Following';
-                } else {
-                    button.className = 'follow-btn follow';
-                    button.innerHTML = '➕ Follow';
-                }
+    async function followUser(username) {
+        try {
+            const response = await fetch(`/accounts/follow/${username}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
             });
-            
-            // Show success message
-            showToast(data.is_following ? 'Now following!' : 'Unfollowed', 'success');
-        } else {
-            showToast(data.error || 'Something went wrong', 'error');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        showToast('Network error', 'error');
-    }
-}
 
-function showToast(message, type) {
-    // Create toast notification
-    const toast = document.createElement('div');
-    toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible`;
-    toast.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
-    toast.innerHTML = `
+            const data = await response.json();
+
+            if (data.success) {
+                // Find all follow buttons for this user
+                const buttons = document.querySelectorAll(`button[onclick="followUser('${username}')"]`);
+
+                buttons.forEach(button => {
+                    if (data.is_following) {
+                        button.className = 'follow-btn following';
+                        button.innerHTML = '✓ Following';
+                    } else {
+                        button.className = 'follow-btn follow';
+                        button.innerHTML = '➕ Follow';
+                    }
+                });
+
+                // Show success message
+                showToast(data.is_following ? 'Now following!' : 'Unfollowed', 'success');
+            } else {
+                showToast(data.error || 'Something went wrong', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Network error', 'error');
+        }
+    }
+
+    function showToast(message, type) {
+        // Create toast notification
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible`;
+        toast.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+        toast.innerHTML = `
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     `;
-    
-    document.body.appendChild(toast);
-    
-    // Auto-remove after 3 seconds
-    setTimeout(() => {
-        if (toast.parentNode) {
-            toast.parentNode.removeChild(toast);
-        }
-    }, 3000);
-}
 
-// Add CSRF token to all forms
-document.addEventListener('DOMContentLoaded', function() {
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
-    if (!csrfToken) {
-        // Add CSRF token if not present
-        const token = document.createElement('input');
-        token.type = 'hidden';
-        token.name = 'csrfmiddlewaretoken';
-        token.value = '{{ csrf_token }}';
-        document.body.appendChild(token);
+        document.body.appendChild(toast);
+
+        // Auto-remove after 3 seconds
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 3000);
     }
-});
+
+    // Add CSRF token to all forms
+    document.addEventListener('DOMContentLoaded', function () {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (!csrfToken) {
+            // Add CSRF token if not present
+            const token = document.createElement('input');
+            token.type = 'hidden';
+            token.name = 'csrfmiddlewaretoken';
+            token.value = '{{ csrf_token }}';
+            document.body.appendChild(token);
+        }
+    });
 </script>
 {% endblock %}

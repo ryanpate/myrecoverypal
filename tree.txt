@@ -14,10 +14,8 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 5
 │   │   │   ├── urls.cpython-310.pyc
 │   │   │   └── views.cpython-310.pyc
 │   │   ├── admin.py
-│   │   ├── admin.py.bak
 │   │   ├── apps.py
 │   │   ├── forms.py
-│   │   ├── forms.py.bak
 │   │   ├── init.py
 │   │   ├── management
 │   │   │   ├── __init__.py
@@ -53,10 +51,7 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 5
 │   │   │   ├── 0008_challengebadge_challengecheckin_challengecomment_and_more.py
 │   │   │   └── 0009_rename_allow_buddy_system_groupchallenge_allow_pal_system_and_more.py
 │   │   ├── models.py
-│   │   ├── models.py.bak
-│   │   ├── my_groups.html
 │   │   ├── signals.py
-│   │   ├── signals.py.bak
 │   │   ├── templates
 │   │   │   ├── accounts
 │   │   │   │   ├── challenges
@@ -93,9 +88,7 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 5
 │   │   │   ├── account_tags.py
 │   │   │   └── init.py
 │   │   ├── urls.py
-│   │   ├── urls.py.bak
-│   │   ├── views.py
-│   │   └── views.py.bak
+│   │   └── views.py
 │   ├── blog
 │   │   ├── __pycache__
 │   │   │   ├── admin.cpython-310.pyc
@@ -483,4 +476,4 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 5
 │   └── base.html
 └── tree.txt
 
-110 directories, 373 files
+110 directories, 366 files

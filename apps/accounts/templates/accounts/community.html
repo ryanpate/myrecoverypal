@@ -1,4 +1,4 @@
-<!-- Replace your existing apps/accounts/templates/accounts/community.html with this: -->
+<!-- Updated community.html header section with working Browse Groups button -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -6,13 +6,6 @@
 
 {% block extra_css %}
 <style>
-    .community-header {
-        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
-        color: white;
-        padding: 3rem 0 2rem;
-        margin-bottom: 2rem;
-    }
-
     .community-stats {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -230,6 +223,38 @@
         text-decoration: none;
     }
 
+    /* Header button styles */
+    .header-action-buttons {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .header-btn {
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+    }
+
+    .header-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
     @media (max-width: 768px) {
         .community-stats {
             grid-template-columns: repeat(2, 1fr);
@@ -246,18 +271,40 @@
         .member-actions {
             flex-direction: column;
         }
+
+        .header-action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-btn {
+            width: 100%;
+            max-width: 250px;
+            justify-content: center;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="community-header">
+<div class="page-header community-header">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1>🤝 Recovery Community</h1>
-                <p class="lead">Connect with others on their recovery journey</p>
-            </div>
+        <h1>🤝 Recovery Community</h1>
+        <p class="lead">Connect with others on their recovery journey</p>
+
+        <!-- Action buttons in header -->
+        <div class="header-action-buttons">
+            <a href="{% url 'accounts:groups_list' %}" class="header-btn">
+                👥 Browse Groups
+            </a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'accounts:create_group' %}" class="header-btn">
+                ➕ Create Group
+            </a>
+            <a href="{% url 'accounts:suggested_users' %}" class="header-btn">
+                💡 Find Connections
+            </a>
+            {% endif %}
         </div>
 
         {% if user.is_authenticated %}
