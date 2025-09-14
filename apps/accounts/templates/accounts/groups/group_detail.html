@@ -246,7 +246,7 @@
                 <div class="d-flex gap-3 align-items-center">
                     <span class="badge bg-light text-dark">{{ group.get_group_type_display }}</span>
                     <span class="badge bg-light text-dark">{{ group.get_privacy_level_display }}</span>
-                    <span>👥 {{ group.member_count }} members</span>
+                    <span>👥 {{ group.active_member_count|default:group.member_count }} members</span>
                 </div>
             </div>
             <div class="col-md-4 text-md-end">
@@ -317,7 +317,7 @@
                 
                 <div class="group-stats">
                     <div class="stat-item">
-                        <div class="stat-number">{{ group.member_count }}</div>
+                        <div class="stat-number">{{ group.active_member_count|default:group.member_count }}</div>
                         <div>Members</div>
                     </div>
                     <div class="stat-item">
@@ -398,9 +398,9 @@
             <!-- Members -->
             <div class="info-card">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5>Members ({{ group.member_count }})</h5>
-                    {% if group.member_count > 12 %}
-                    <small class="text-muted">Showing 12 of {{ group.member_count }}</small>
+                    <h5>Members ({{ group.active_member_count|default:group.member_count }})</h5>
+                    {% if group.active_member_count > 12 %}
+                    <small class="text-muted">Showing 12 of {{ group.active_member_count|default:group.member_count }}</small>
                     {% endif %}
                 </div>
                 

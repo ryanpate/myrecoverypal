@@ -355,20 +355,9 @@
 {% block content %}
 <div class="groups-header">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1>👥 Recovery Groups</h1>
-                <p class="lead">Find your community and support system</p>
-                <p>Join groups based on your interests, recovery stage, or location</p>
-            </div>
-            <div class="col-md-4 text-md-end">
-                {% if user.is_authenticated %}
-                <a href="{% url 'accounts:create_group' %}" class="btn btn-light btn-lg">
-                    ➕ Create Group
-                </a>
-                {% endif %}
-            </div>
-        </div>
+        <h1>Recovery Groups</h1>
+        <p class="lead">Find your community and support system</p>
+        <p>Join groups based on your interests, recovery stage, or location</p>
     </div>
 </div>
 
@@ -394,7 +383,7 @@
                     </div>
                     <div class="flex-grow-1">
                         <strong>{{ group.name }}</strong>
-                        <small class="text-muted d-block">{{ group.member_count }} members</small>
+                        <small class="text-muted d-block">{{ group.active_member_count|default:group.member_count }} members</small>
                     </div>
                 </div>
             </div>
@@ -507,7 +496,7 @@
 
                 <div class="group-meta">
                     <div class="group-meta-item">
-                        👥 {{ group.member_count }} member{{ group.member_count|pluralize }}
+                        👥 {{ group.active_member_count|default:group.member_count }} member{{ group.active_member_count|default:group.member_count|pluralize }}
                     </div>
                     {% if group.location %}
                     <div class="group-meta-item">

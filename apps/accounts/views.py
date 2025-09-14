@@ -459,7 +459,7 @@ def respond_sponsor_request(request, relationship_id):
     return redirect('accounts:sponsor_dashboard')
 
 
-# Group views (simplified for now)
+# Group views
 class RecoveryGroupListView(ListView):
     """List all recovery groups"""
     model = RecoveryGroup
@@ -468,8 +468,41 @@ class RecoveryGroupListView(ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        return RecoveryGroup.objects.filter(is_active=True)
+        queryset = RecoveryGroup.objects.filter(is_active=True).annotate(
+            active_member_count=Count('memberships', filter=Q(
+                memberships__status='active'))
+        ).select_related('creator')
 
+        # Filter by group type
+        group_type = self.request.GET.get('type')
+        if group_type:
+            queryset = queryset.filter(group_type=group_type)
+
+        # Search functionality
+        search = self.request.GET.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(description__icontains=search)
+            )
+
+        # Filter by privacy level
+        privacy = self.request.GET.get('privacy')
+        if privacy:
+            queryset = queryset.filter(privacy_level=privacy)
+
+        return queryset.order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['group_types'] = RecoveryGroup.GROUP_TYPES
+        context['privacy_levels'] = RecoveryGroup.PRIVACY_LEVELS
+
+        # User's groups
+        if self.request.user.is_authenticated:
+            context['user_groups'] = self.request.user.get_joined_groups()
+
+        return context
 
 class RecoveryGroupDetailView(DetailView):
     """Detailed view of a recovery group"""
@@ -1060,173 +1093,6 @@ def request_challenge_pal(request, challenge_id, user_id):
     }
 
     return render(request, 'accounts/challenges/request_pal.html', context)
-
-# =============================================================================
-# RECOVERY GROUP VIEWS
-# =============================================================================
-
-class RecoveryGroupListView(ListView):
-    """List all recovery groups"""
-    model = RecoveryGroup
-    template_name = 'accounts/groups/group_list.html'
-    context_object_name = 'groups'
-    paginate_by = 12
-
-    def get_queryset(self):
-        queryset = RecoveryGroup.objects.filter(is_active=True).annotate(
-            member_count=Count('memberships', filter=Q(
-                memberships__status='active'))
-        ).select_related('creator')
-
-        # Filter by group type
-        group_type = self.request.GET.get('type')
-        if group_type:
-            queryset = queryset.filter(group_type=group_type)
-
-        # Search functionality
-        search = self.request.GET.get('search')
-        if search:
-            queryset = queryset.filter(
-                Q(name__icontains=search) |
-                Q(description__icontains=search)
-            )
-
-        # Filter by privacy level
-        privacy = self.request.GET.get('privacy')
-        if privacy:
-            queryset = queryset.filter(privacy_level=privacy)
-
-        return queryset.order_by('-created_at')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['group_types'] = RecoveryGroup.GROUP_TYPES
-        context['privacy_levels'] = RecoveryGroup.PRIVACY_LEVELS
-
-        # User's groups
-        if self.request.user.is_authenticated:
-            context['user_groups'] = self.request.user.get_joined_groups()
-
-        return context
-
-
-class RecoveryGroupDetailView(DetailView):
-    """Detailed view of a recovery group"""
-    model = RecoveryGroup
-    template_name = 'accounts/groups/group_detail.html'
-    context_object_name = 'group'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        group = self.object
-
-        # Check user's membership status
-        membership = None
-        if self.request.user.is_authenticated:
-            membership = GroupMembership.objects.filter(
-                user=self.request.user,
-                group=group
-            ).first()
-
-        context['membership'] = membership
-        context['is_member'] = membership and membership.status in [
-            'active', 'moderator', 'admin']
-
-        # Recent posts
-        if context['is_member']:
-            context['recent_posts'] = group.posts.select_related(
-                'author').prefetch_related('likes')[:10]
-
-        # Member list (limited for privacy)
-        context['members'] = User.objects.filter(
-            group_memberships__group=group,
-            group_memberships__status__in=['active', 'moderator', 'admin']
-        ).select_related('profile')[:12]
-
-        return context
-
-
-@login_required
-def create_group(request):
-    """Create a new recovery group"""
-    if request.method == 'POST':
-        form = RecoveryGroupForm(request.POST, request.FILES)
-        if form.is_valid():
-            group = form.save(commit=False)
-            group.creator = request.user
-            group.save()
-
-            # Auto-join creator as admin
-            GroupMembership.objects.create(
-                user=request.user,
-                group=group,
-                status='admin'
-            )
-
-            messages.success(
-                request, f'Recovery group "{group.name}" created successfully!')
-            return redirect('accounts:group_detail', pk=group.id)
-    else:
-        form = RecoveryGroupForm()
-
-    context = {'form': form}
-    return render(request, 'accounts/groups/create_group.html', context)
-
-
-@login_required
-@require_POST
-def join_group(request, group_id):
-    """Join a recovery group"""
-    group = get_object_or_404(RecoveryGroup, id=group_id, is_active=True)
-
-    # Check if already a member
-    existing_membership = GroupMembership.objects.filter(
-        user=request.user,
-        group=group
-    ).first()
-
-    if existing_membership:
-        if existing_membership.status == 'left':
-            # Rejoin group
-            existing_membership.status = 'pending' if group.privacy_level == 'private' else 'active'
-            existing_membership.save()
-            action = 'rejoined'
-        else:
-            return JsonResponse({'error': 'Already a member or pending'}, status=400)
-    else:
-        # Create new membership
-        status = 'pending' if group.privacy_level == 'private' else 'active'
-        GroupMembership.objects.create(
-            user=request.user,
-            group=group,
-            status=status
-        )
-        action = 'joined'
-
-    # Check if group is full
-    if group.is_full and group.privacy_level == 'public':
-        return JsonResponse({'error': 'Group is full'}, status=400)
-
-    return JsonResponse({
-        'success': True,
-        'action': action,
-        'status': status,
-        'member_count': group.member_count
-    })
-
-
-@login_required
-def my_groups(request):
-    """User's joined groups dashboard"""
-    memberships = GroupMembership.objects.filter(
-        user=request.user,
-        status__in=['active', 'moderator', 'admin']
-    ).select_related('group').order_by('-last_active')
-
-    context = {
-        'memberships': memberships,
-    }
-    return render(request, 'accounts/groups/my_groups.html', context)
 
 
 # =============================================================================

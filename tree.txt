@@ -1,4 +1,4 @@
-ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
+ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 5
 .
 ├── apps
 │   ├── __init__.py
@@ -14,27 +14,88 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │   │   │   ├── urls.cpython-310.pyc
 │   │   │   └── views.cpython-310.pyc
 │   │   ├── admin.py
+│   │   ├── admin.py.bak
 │   │   ├── apps.py
 │   │   ├── forms.py
+│   │   ├── forms.py.bak
 │   │   ├── init.py
 │   │   ├── management
+│   │   │   ├── __init__.py
+│   │   │   ├── __pycache__
+│   │   │   │   └── __init__.cpython-310.pyc
 │   │   │   └── commands
+│   │   │       ├── __init__.py
+│   │   │       ├── __pycache__
+│   │   │       ├── create_challenge_badges.py
+│   │   │       └── create_sample_users.py
 │   │   ├── managers.py
 │   │   ├── migrations
 │   │   │   ├── __init__.py
 │   │   │   ├── __pycache__
-│   │   │   └── 0001_initial.py
+│   │   │   │   ├── __init__.cpython-310.pyc
+│   │   │   │   ├── 0001_initial.cpython-310.pyc
+│   │   │   │   ├── 0002_activityfeed_activitycomment_dailycheckin.cpython-310.pyc
+│   │   │   │   ├── 0003_activity_feed.cpython-310.pyc
+│   │   │   │   ├── 0004_merge_20250911_1821.cpython-310.pyc
+│   │   │   │   ├── 0005_add_community.cpython-310.pyc
+│   │   │   │   ├── 0006_merge_0004_merge_20250911_1821_0005_add_community.cpython-310.pyc
+│   │   │   │   ├── 0007_userprofile_and_more.cpython-310.pyc
+│   │   │   │   ├── 0008_challengebadge_challengecheckin_challengecomment_and_more.cpython-310.pyc
+│   │   │   │   ├── 0009_group_challenges.cpython-310.pyc
+│   │   │   │   └── 0009_rename_allow_buddy_system_groupchallenge_allow_pal_system_and_more.cpython-310.pyc
+│   │   │   ├── 0001_initial.py
+│   │   │   ├── 0002_activityfeed_activitycomment_dailycheckin.py
+│   │   │   ├── 0003_activity_feed.py
+│   │   │   ├── 0004_merge_20250911_1821.py
+│   │   │   ├── 0005_add_community.py
+│   │   │   ├── 0006_merge_0004_merge_20250911_1821_0005_add_community.py
+│   │   │   ├── 0007_userprofile_and_more.py
+│   │   │   ├── 0008_challengebadge_challengecheckin_challengecomment_and_more.py
+│   │   │   └── 0009_rename_allow_buddy_system_groupchallenge_allow_pal_system_and_more.py
 │   │   ├── models.py
+│   │   ├── models.py.bak
+│   │   ├── my_groups.html
 │   │   ├── signals.py
+│   │   ├── signals.py.bak
 │   │   ├── templates
 │   │   │   ├── accounts
+│   │   │   │   ├── challenges
+│   │   │   │   ├── community.html
+│   │   │   │   ├── daily_checkin.html
+│   │   │   │   ├── dashboard.html
+│   │   │   │   ├── dashboard.html.bak
+│   │   │   │   ├── edit_profile.html
+│   │   │   │   ├── enhanced_community.html
+│   │   │   │   ├── enhanced_dashboard.html
+│   │   │   │   ├── groups
+│   │   │   │   ├── messages.html
+│   │   │   │   ├── milestone_form.html
+│   │   │   │   ├── milestones.html
+│   │   │   │   ├── pal_dashboard.html
+│   │   │   │   ├── password_reset.html
+│   │   │   │   ├── profile.html
+│   │   │   │   ├── request_pal.html
+│   │   │   │   ├── request_sponsor.html
+│   │   │   │   ├── send_message.html
+│   │   │   │   ├── sponsor_dashboard.html
+│   │   │   │   └── suggested_users.html
 │   │   │   └── registration
+│   │   │       ├── login.html
+│   │   │       ├── password_reset_complete.html
+│   │   │       ├── password_reset_confirm.html
+│   │   │       ├── password_reset_done.html
+│   │   │       ├── password_reset.html
+│   │   │       └── register.html
 │   │   ├── templatetags
 │   │   │   ├── __pycache__
+│   │   │   │   ├── account_tags.cpython-310.pyc
+│   │   │   │   └── init.cpython-310.pyc
 │   │   │   ├── account_tags.py
 │   │   │   └── init.py
 │   │   ├── urls.py
-│   │   └── views.py
+│   │   ├── urls.py.bak
+│   │   ├── views.py
+│   │   └── views.py.bak
 │   ├── blog
 │   │   ├── __pycache__
 │   │   │   ├── admin.cpython-310.pyc
@@ -49,13 +110,21 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │   │   ├── init.py
 │   │   ├── management
 │   │   │   └── commands
+│   │   │       └── create_sample_posts.py
 │   │   ├── migrations
 │   │   │   ├── __init__.py
 │   │   │   ├── __pycache__
+│   │   │   │   ├── __init__.cpython-310.pyc
+│   │   │   │   └── 0001_initial.cpython-310.pyc
 │   │   │   └── 0001_initial.py
 │   │   ├── models.py
 │   │   ├── templates
 │   │   │   └── blog
+│   │   │       ├── category_posts.html
+│   │   │       ├── post_detail.html
+│   │   │       ├── post_form.html
+│   │   │       ├── post_list.html
+│   │   │       └── tag_posts.html
 │   │   ├── urls.py
 │   │   └── views.py
 │   ├── core
@@ -69,6 +138,11 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │   │   ├── models.py
 │   │   ├── templates
 │   │   │   └── core
+│   │   │       ├── about.html
+│   │   │       ├── contact.html
+│   │   │       ├── index.html
+│   │   │       ├── privacy.html
+│   │   │       └── terms.html
 │   │   ├── urls.py
 │   │   └── views.py
 │   ├── init.py
@@ -86,13 +160,24 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │   │   ├── init.py
 │   │   ├── management
 │   │   │   └── commands
+│   │   │       └── create_journal_prompts.py
 │   │   ├── migrations
 │   │   │   ├── __init__.py
 │   │   │   ├── __pycache__
+│   │   │   │   ├── __init__.cpython-310.pyc
+│   │   │   │   └── 0001_initial.cpython-310.pyc
 │   │   │   └── 0001_initial.py
 │   │   ├── models.py
 │   │   ├── templates
 │   │   │   └── journal
+│   │   │       ├── dashboard.html
+│   │   │       ├── entry_detail.html
+│   │   │       ├── entry_form.html
+│   │   │       ├── entry_list.html
+│   │   │       ├── guided_entry.html
+│   │   │       ├── prompts_list.html
+│   │   │       ├── reminder_form.html
+│   │   │       └── stats.html
 │   │   ├── urls.py
 │   │   └── views.py
 │   ├── newsletter
@@ -108,11 +193,15 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │   │   ├── migrations
 │   │   │   ├── __init__.py
 │   │   │   ├── __pycache__
+│   │   │   │   ├── __init__.cpython-310.pyc
+│   │   │   │   └── 0001_initial.cpython-310.pyc
 │   │   │   └── 0001_initial.py
 │   │   ├── models.py
 │   │   ├── tasks.py
 │   │   ├── templates
 │   │   │   └── newsletter
+│   │   │       ├── emails
+│   │   │       └── subscribe.html
 │   │   ├── urls.py
 │   │   └── views.py
 │   ├── store
@@ -129,10 +218,13 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │   │   ├── migrations
 │   │   │   ├── __init__.py
 │   │   │   ├── __pycache__
+│   │   │   │   ├── __init__.cpython-310.pyc
+│   │   │   │   └── 0001_initial.cpython-310.pyc
 │   │   │   └── 0001_initial.py
 │   │   ├── models.py
 │   │   ├── templates
 │   │   │   └── store
+│   │   │       └── coming_soon.html
 │   │   ├── tests.py
 │   │   ├── urls.py
 │   │   └── views.py
@@ -151,13 +243,21 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │       ├── forms.py
 │       ├── management
 │       │   └── commands
+│       │       ├── import_meeting_guide.py
+│       │       └── populate_support_services.py
 │       ├── migrations
 │       │   ├── __init__.py
 │       │   ├── __pycache__
+│       │   │   ├── __init__.cpython-310.pyc
+│       │   │   └── 0001_initial.cpython-310.pyc
 │       │   └── 0001_initial.py
 │       ├── models.py
 │       ├── templates
 │       │   └── support_services
+│       │       ├── home.html
+│       │       ├── meeting_finder.html
+│       │       ├── meeting_list.html
+│       │       └── submit_meeting.html
 │       ├── tests.py
 │       ├── urls.py
 │       └── views.py
@@ -166,17 +266,9 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 ├── index.html
 ├── manage.py
 ├── media
-│   ├── avatars
-│   │   └── image.webp
-│   └── resources
-│       └── files
-│           ├── 30-Day_Free_Recovery_Journal.pdf
-│           ├── 30-Day_Recovery_Journal_-_MyRecoveryPal.pdf
-│           ├── Coping_Skills_for_Cravings_-_MyRecoveryPal_LBm0aLt.pdf
-│           ├── Coping_Skills_for_Cravings_-_MyRecoveryPal.pdf
-│           ├── Daily_Recovery_Checklist_-_MyRecoveryPal.pdf
-│           └── daily-recovery-checklist.pdf
-├── my_facilities_example.json
+│   └── avatars
+│       └── image.webp
+├── MIGRATION_NOTES.txt
 ├── README.md
 ├── recovery_hub
 │   ├── __init__.py
@@ -214,38 +306,11 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │   ├── settings
 │   │   ├── base.py
 │   │   ├── development .py
-│   │   ├── init.py
-│   │   └── production.py
+│   │   └── init.py
 │   ├── settings.py
 │   ├── urls.py
-│   ├── venv
-│   │   ├── bin
-│   │   │   ├── activate
-│   │   │   ├── activate.csh
-│   │   │   ├── activate.fish
-│   │   │   ├── Activate.ps1
-│   │   │   ├── celery
-│   │   │   ├── coverage
-│   │   │   ├── coverage-3.10
-│   │   │   ├── coverage3
-│   │   │   ├── django-admin
-│   │   │   ├── faker
-│   │   │   ├── gunicorn
-│   │   │   ├── jp.py
-│   │   │   ├── normalizer
-│   │   │   ├── pip
-│   │   │   ├── pip3
-│   │   │   ├── pip3.10
-│   │   │   ├── py.test
-│   │   │   ├── pytest
-│   │   │   ├── python -> python3
-│   │   │   ├── python3 -> /Library/Frameworks/Python.framework/Versions/3.10/bin/python3
-│   │   │   ├── python3.10 -> python3
-│   │   │   └── sqlformat
-│   │   ├── lib
-│   │   │   └── python3.10
-│   │   └── pyvenv.cfg
 │   └── wsgi.py
+├── rename_buddy_to_pal.py
 ├── requirements.txt
 ├── resources
 │   ├── __init__.py
@@ -283,17 +348,23 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │   ├── static
 │   │   └── resources
 │   │       ├── css
+│   │       │   └── resources.css
 │   │       └── js
+│   │           └── resources.js
 │   ├── templates
-│   │   ├── professional_help.html.bak
 │   │   └── resources
 │   │       ├── crisis.html
 │   │       ├── daily_checklist.html
 │   │       ├── educational_resources.html
 │   │       ├── educational-resources.html
 │   │       ├── interactive
+│   │       │   ├── coping_skills_checklist.html
+│   │       │   └── daily_checklist.html
 │   │       ├── my_bookmarks.html
 │   │       ├── pdf
+│   │       │   ├── 30-Day Recovery Journal - MyRecoveryPal.pdf
+│   │       │   ├── Coping Skills for Cravings - MyRecoveryPal.pdf
+│   │       │   └── daily-recovery-checklist.pdf
 │   │       ├── professional_help.html
 │   │       ├── resource_category.html
 │   │       ├── resource_detail.html
@@ -302,6 +373,7 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │   ├── urls.py
 │   ├── views.py
 │   └── views2.py
+├── site purpose and build plan ideas.md
 ├── static
 │   ├── css
 │   │   └── main.css
@@ -316,12 +388,8 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │   │   ├── logo-icon.svg
 │   │   ├── logo-white.svg
 │   │   └── logo.svg
-│   ├── js
-│   │   └── main.js
-│   └── resources
-│       └── data
-│           ├── my_facilities_example.json
-│           └── my_facilities_example.json.bak
+│   └── js
+│       └── main.js
 ├── staticfiles
 │   ├── admin
 │   │   ├── css
@@ -338,10 +406,13 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │   │   │   ├── rtl.css
 │   │   │   ├── unusable_password_field.css
 │   │   │   ├── vendor
+│   │   │   │   └── select2
 │   │   │   └── widgets.css
 │   │   ├── img
 │   │   │   ├── calendar-icons.svg
 │   │   │   ├── gis
+│   │   │   │   ├── move_vertex_off.svg
+│   │   │   │   └── move_vertex_on.svg
 │   │   │   ├── icon-addlink.svg
 │   │   │   ├── icon-alert.svg
 │   │   │   ├── icon-calendar.svg
@@ -365,11 +436,12 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │   │   └── js
 │   │       ├── actions.js
 │   │       ├── admin
+│   │       │   ├── DateTimeShortcuts.js
+│   │       │   └── RelatedObjectLookups.js
 │   │       ├── autocomplete.js
 │   │       ├── calendar.js
 │   │       ├── cancel.js
 │   │       ├── change_form.js
-│   │       ├── collapse.js
 │   │       ├── core.js
 │   │       ├── filters.js
 │   │       ├── inlines.js
@@ -384,6 +456,9 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │   │       ├── unusable_password_field.js
 │   │       ├── urlify.js
 │   │       └── vendor
+│   │           ├── jquery
+│   │           ├── select2
+│   │           └── xregexp
 │   ├── css
 │   │   └── main.css
 │   ├── images
@@ -406,25 +481,6 @@ ryanpate@MacBook-Pro-7 myrecoverypal % tree -L 4
 │           └── resources.js
 ├── templates
 │   └── base.html
-├── tree.txt
-└── venv
-    ├── bin
-    │   ├── activate
-    │   ├── activate.csh
-    │   ├── activate.fish
-    │   ├── Activate.ps1
-    │   ├── celery
-    │   ├── django-admin
-    │   ├── pip
-    │   ├── pip3
-    │   ├── pip3.10
-    │   ├── python -> python3
-    │   ├── python3 -> /Library/Frameworks/Python.framework/Versions/3.10/bin/python3
-    │   ├── python3.10 -> python3
-    │   └── sqlformat
-    ├── lib
-    │   └── python3.10
-    │       └── site-packages
-    └── pyvenv.cfg
+└── tree.txt
 
-114 directories, 313 files
+110 directories, 373 files

@@ -5,13 +5,6 @@
 
 {% block extra_css %}
 <style>
-    .challenges-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 3rem 0;
-        margin-bottom: 2rem;
-    }
-    
     .challenge-card {
         border: none;
         border-radius: 12px;
@@ -174,17 +167,9 @@
 {% block content %}
 <div class="challenges-header">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1>🏆 Recovery Challenges</h1>
-                <p class="lead mb-0">Join group challenges to build healthy habits and connect with others on their recovery journey</p>
-            </div>
-            <div class="col-md-4 text-md-end">
-                <a href="{% url 'accounts:create_challenge' %}" class="btn btn-light btn-lg">
-                    ➕ Create Challenge
-                </a>
-            </div>
-        </div>
+        <h1>Recovery Challenges</h1>
+        <p class="lead">Join challenges to build healthy habits and stay motivated</p>
+        <p>Track progress, earn badges, and support others on their journey</p>
     </div>
 </div>
 

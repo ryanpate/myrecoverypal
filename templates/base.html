@@ -808,6 +808,14 @@
             .category-header,
             .educational-resources-header,
             .support-header,
+            .groups-header,
+            .group-detail-header,
+            .challenges-header,
+            .challenge-detail-header,
+            .pal-header,
+            .sponsor-header,
+            .my-groups-header,
+            .my-challenges-header,
             .hero-section {
                 padding: 80px 0 40px;
             }
@@ -967,8 +975,11 @@
                     <li><a href="{% url 'journal:entry_list' %}"
                             class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">Journal</a>
                     </li>
+                    <li><a href="{% url 'accounts:groups_list' %}"
+                            class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">Groups</a>
+                    </li>
                     <li><a href="{% url 'accounts:challenges_home' %}"
-                            class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">🏆 Challenges</a>
+                            class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">Challenges</a>
                     </li>
                     <li><a href="{% url 'accounts:community' %}"
                             class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">Community</a>
@@ -1003,11 +1014,8 @@
                         <a href="{% url 'accounts:profile' username=user.username %}">
                             <i class="fas fa-user"></i> My Profile
                         </a>
-                        <a href="{% url 'accounts:messages' %}">
-                            <i class="fas fa-envelope"></i> Messages
-                            {% if user.received_messages.filter.is_read.count > 0 %}
-                            <span class="message-count-badge">{{ user.received_messages.filter.is_read.count }}</span>
-                            {% endif %}
+                        <a href="{% url 'accounts:my_groups' %}">
+                            <i class="fas fa-users"></i> My Groups
                         </a>
                         <a href="{% url 'accounts:my_challenges' %}">
                             <i class="fas fa-trophy"></i> My Challenges
@@ -1021,6 +1029,12 @@
                             Needed
                         </a>
                         {% endif %}
+                        <a href="{% url 'accounts:messages' %}">
+                            <i class="fas fa-envelope"></i> Messages
+                            {% if user.received_messages.filter.is_read.count > 0 %}
+                            <span class="message-count-badge">{{ user.received_messages.filter.is_read.count }}</span>
+                            {% endif %}
+                        </a>
                         <a href="{% url 'accounts:milestones' %}">
                             <i class="fas fa-trophy"></i> Milestones
                         </a>
