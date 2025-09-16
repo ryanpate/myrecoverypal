@@ -1,39 +1,26 @@
 #!/usr/bin/env python
 """
-Database initialization script for Railway deployment.
-Ensures all migrations are created and applied properly.
+Robust database initialization for Railway deployment.
+Forces migration application even if Django thinks they're already applied.
 """
+from django.db import connection, transaction
+from django.core.management import call_command
 import os
 import sys
 import django
-from django.core.management import execute_from_command_line, call_command
 
 # Setup Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'recovery_hub.settings')
 django.setup()
 
 
-def run_command(command, *args, **kwargs):
-    """Helper function to run Django management commands with error handling."""
-    try:
-        print(f"Running: {command} {' '.join(args)}")
-        call_command(command, *args, **kwargs)
-        return True
-    except Exception as e:
-        print(f"⚠️  Error running {command}: {e}")
-        return False
-
-
 def init_database():
-    """Initialize database with migrations and create all necessary tables."""
-
     print("=" * 50)
-    print("Starting Database Initialization")
+    print("Database Initialization Starting")
     print("=" * 50)
 
-    # Test database connection
+    # Step 1: Check database connection
     try:
-        from django.db import connection
         with connection.cursor() as cursor:
             cursor.execute("SELECT 1")
         print("✅ Database connection successful")
@@ -41,108 +28,8 @@ def init_database():
         print(f"❌ Database connection failed: {e}")
         sys.exit(1)
 
-    # List of all your apps that need migrations
-    apps = [
-        'core',
-        'accounts',
-        'blog',
-        'resources',
-        'journal',
-        'store',
-        'newsletter',
-        'support_services',
-    ]
-
-    # Step 1: Create migration files for all apps
-    print("\n" + "=" * 50)
-    print("Creating Migration Files")
-    print("=" * 50)
-
-    for app in apps:
-        try:
-            print(f"\nProcessing app: {app}")
-            call_command('makemigrations', app, verbosity=2, interactive=False)
-            print(f"✅ Created migrations for {app}")
-        except Exception as e:
-            print(f"⚠️  Could not create migrations for {app}: {e}")
-            # Try without app name in case migrations already exist
-            try:
-                call_command('makemigrations', verbosity=0, interactive=False)
-            except:
-                pass
-
-    # Step 2: Create a general migration in case any were missed
-    try:
-        print("\nCreating any remaining migrations...")
-        call_command('makemigrations', verbosity=1, interactive=False)
-        print("✅ General migrations created")
-    except Exception as e:
-        print(f"⚠️  No additional migrations needed: {e}")
-
-    # Step 3: Show migration plan
-    print("\n" + "=" * 50)
-    print("Migration Plan")
-    print("=" * 50)
-    try:
-        call_command('showmigrations', verbosity=2)
-    except:
-        print("Could not display migration plan")
-
-    # Step 4: Apply all migrations
-    print("\n" + "=" * 50)
-    print("Applying Migrations")
-    print("=" * 50)
-
-    # First, try to migrate built-in Django apps
-    django_apps = ['contenttypes', 'auth',
-                   'sessions', 'sites', 'admin', 'messages']
-    for app in django_apps:
-        try:
-            call_command('migrate', app, verbosity=1, interactive=False)
-            print(f"✅ Migrated {app}")
-        except Exception as e:
-            print(f"⚠️  Issue with {app}: {e}")
-
-    # Then migrate third-party apps
-    third_party = ['allauth', 'account', 'socialaccount',
-                   'crispy_forms', 'crispy_bootstrap5']
-    for app in third_party:
-        try:
-            call_command('migrate', app, verbosity=0, interactive=False)
-            print(f"✅ Migrated {app}")
-        except:
-            pass  # These might not have migrations
-
-    # Now migrate your custom apps
-    for app in apps:
-        try:
-            call_command('migrate', app, verbosity=1, interactive=False)
-            print(f"✅ Migrated {app}")
-        except Exception as e:
-            print(f"⚠️  Could not migrate {app}: {e}")
-
-    # Finally, run a general migrate to catch anything missed
-    print("\nRunning final migration...")
-    try:
-        call_command('migrate', verbosity=1,
-                     interactive=False, run_syncdb=True)
-        print("✅ All migrations completed successfully!")
-    except Exception as e:
-        print(f"⚠️  Final migration had issues: {e}")
-        # Try with --fake-initial as a last resort
-        try:
-            call_command('migrate', fake_initial=True,
-                         verbosity=1, interactive=False)
-            print("✅ Migrations completed with --fake-initial")
-        except Exception as e2:
-            print(f"❌ Could not complete migrations: {e2}")
-
-    # Step 5: Verify tables were created
-    print("\n" + "=" * 50)
-    print("Verifying Database Tables")
-    print("=" * 50)
-
-    from django.db import connection
+    # Step 2: Check current table status
+    print("\n📊 Current database status:")
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT table_name 
@@ -150,69 +37,172 @@ def init_database():
             WHERE table_schema = 'public' 
             ORDER BY table_name;
         """)
-        tables = cursor.fetchall()
+        existing_tables = [row[0] for row in cursor.fetchall()]
+        print(f"Found {len(existing_tables)} tables")
 
-        print(f"\n✅ Found {len(tables)} tables in database:")
-        for table in tables:
-            print(f"   - {table[0]}")
+        # Check for our app tables
+        app_tables = {
+            'blog_post': False,
+            'resources_resource': False,
+            'journal_journalentry': False,
+            'newsletter_subscriber': False,
+            'store_product': False,
+            'support_services_meeting': False
+        }
 
-        # Check for critical tables
-        table_names = [t[0] for t in tables]
-        critical_tables = [
-            'accounts_user',
-            'blog_post',
-            'resources_resource',
-            'journal_journalentry',
-            'newsletter_subscriber'
-        ]
+        for table in app_tables:
+            if table in existing_tables:
+                app_tables[table] = True
+                print(f"  ✅ {table} exists")
+            else:
+                print(f"  ❌ {table} missing")
 
-        missing_tables = []
-        for table in critical_tables:
-            if table not in table_names:
-                missing_tables.append(table)
-                print(f"⚠️  Missing critical table: {table}")
+    # Step 3: Force migration if tables are missing
+    if not all(app_tables.values()):
+        print("\n🔧 Missing tables detected. Forcing migration...")
 
-        if missing_tables:
-            print(f"\n❌ Missing {len(missing_tables)} critical tables!")
-            print("Attempting to create them manually...")
+        # Try to clear migration history for apps with missing tables
+        try:
+            with connection.cursor() as cursor:
+                # Get list of applied migrations
+                cursor.execute("""
+                    SELECT app, name 
+                    FROM django_migrations 
+                    WHERE app IN ('blog', 'resources', 'journal', 'newsletter', 'store', 'support_services')
+                """)
+                applied_migrations = cursor.fetchall()
 
-            # Try creating tables with syncdb
+                if applied_migrations:
+                    print(
+                        f"Found {len(applied_migrations)} recorded migrations")
+                    print("Clearing migration records for apps with missing tables...")
+
+                    # Clear migration records for apps with missing tables
+                    for app_name, table_name in [
+                        ('blog', 'blog_post'),
+                        ('resources', 'resources_resource'),
+                        ('journal', 'journal_journalentry'),
+                        ('newsletter', 'newsletter_subscriber'),
+                        ('store', 'store_product'),
+                        ('support_services', 'support_services_meeting')
+                    ]:
+                        if not app_tables.get(table_name, False):
+                            cursor.execute(
+                                "DELETE FROM django_migrations WHERE app = %s",
+                                [app_name]
+                            )
+                            print(
+                                f"  Cleared migration records for {app_name}")
+        except Exception as e:
+            print(f"⚠️ Could not clear migration history: {e}")
+
+    # Step 4: Run migrations
+    print("\n🚀 Applying migrations...")
+
+    # Migrate each app explicitly
+    apps_to_migrate = [
+        ('contenttypes', 'Django'),
+        ('auth', 'Django'),
+        ('accounts', 'Custom'),
+        ('sessions', 'Django'),
+        ('admin', 'Django'),
+        ('sites', 'Django'),
+        ('blog', 'Custom'),
+        ('resources', 'Custom'),
+        ('journal', 'Custom'),
+        ('newsletter', 'Custom'),
+        ('store', 'Custom'),
+        ('support_services', 'Custom'),
+    ]
+
+    for app, app_type in apps_to_migrate:
+        try:
+            print(f"\nMigrating {app} ({app_type} app)...")
+            call_command('migrate', app, verbosity=2, interactive=False)
+            print(f"✅ {app} migrated successfully")
+        except Exception as e:
+            print(f"⚠️ Issue with {app}: {e}")
+
+            # If migration failed, try with --fake-initial
+            if app_type == 'Custom':
+                try:
+                    print(f"  Trying {app} with --fake-initial...")
+                    call_command('migrate', app, '--fake-initial',
+                                 interactive=False)
+                    print(f"  ✅ {app} migrated with --fake-initial")
+                except Exception as e2:
+                    print(f"  ❌ Still couldn't migrate {app}: {e2}")
+
+    # Step 5: Final catch-all migration
+    print("\n🔄 Running final migration pass...")
+    try:
+        call_command('migrate', '--run-syncdb', verbosity=1, interactive=False)
+        print("✅ Final migration complete")
+    except Exception as e:
+        print(f"⚠️ Final migration warning: {e}")
+
+    # Step 6: Verify tables were created
+    print("\n✅ Verifying database tables...")
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT table_name 
+            FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            AND table_name IN ('blog_post', 'resources_resource', 'journal_journalentry', 
+                               'newsletter_subscriber', 'store_product', 'support_services_meeting')
+            ORDER BY table_name;
+        """)
+        created_tables = [row[0] for row in cursor.fetchall()]
+
+        if created_tables:
+            print(f"Successfully verified {len(created_tables)} app tables:")
+            for table in created_tables:
+                print(f"  ✅ {table}")
+        else:
+            print("❌ WARNING: App tables still missing!")
+            print("Attempting emergency table creation...")
+
+            # Last resort: try to create tables manually
             try:
-                from django.core.management import call_command
-                call_command('migrate', '--run-syncdb', verbosity=2)
-                print("✅ Tables created with syncdb")
+                from django.db import models
+                from django.apps import apps
+
+                for app_label in ['blog', 'resources', 'journal', 'newsletter', 'store', 'support_services']:
+                    try:
+                        app = apps.get_app_config(app_label)
+                        with connection.schema_editor() as schema_editor:
+                            for model in app.get_models():
+                                if not model._meta.db_table in existing_tables:
+                                    schema_editor.create_model(model)
+                                    print(
+                                        f"  Created table for {model._meta.label}")
+                    except Exception as e:
+                        print(
+                            f"  Could not create tables for {app_label}: {e}")
             except Exception as e:
-                print(f"❌ Could not create tables: {e}")
+                print(f"Emergency table creation failed: {e}")
 
-    # Step 6: Create superuser if configured
-    print("\n" + "=" * 50)
-    print("Superuser Setup")
-    print("=" * 50)
-
-    if all([os.environ.get('DJANGO_SUPERUSER_EMAIL'),
-            os.environ.get('DJANGO_SUPERUSER_PASSWORD')]):
+    # Step 7: Create superuser if configured
+    if os.environ.get('DJANGO_SUPERUSER_EMAIL'):
+        print("\n👤 Setting up superuser...")
         try:
             from django.contrib.auth import get_user_model
             User = get_user_model()
 
             email = os.environ.get('DJANGO_SUPERUSER_EMAIL')
-            password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
+            password = os.environ.get(
+                'DJANGO_SUPERUSER_PASSWORD', 'changeme123')
 
             if not User.objects.filter(email=email).exists():
-                user = User.objects.create_superuser(
-                    email=email,
-                    password=password
-                )
+                User.objects.create_superuser(email=email, password=password)
                 print(f"✅ Superuser created: {email}")
             else:
-                print(f"ℹ️  Superuser already exists: {email}")
+                print(f"ℹ️ Superuser already exists: {email}")
         except Exception as e:
-            print(f"⚠️  Could not create superuser: {e}")
-    else:
-        print("ℹ️  No superuser credentials provided in environment")
+            print(f"⚠️ Could not create superuser: {e}")
 
     print("\n" + "=" * 50)
-    print("✅ Database Initialization Complete!")
+    print("Database initialization complete!")
     print("=" * 50)
 
 
