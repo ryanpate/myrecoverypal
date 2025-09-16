@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.accounts',
     'apps.blog',
-    'apps.resources',
+    'resources',  # FIXED: Changed from 'apps.resources' to 'resources'
     'apps.journal',
     'apps.store',
     'apps.newsletter',
