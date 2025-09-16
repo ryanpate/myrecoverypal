@@ -111,8 +111,11 @@ WSGI_APPLICATION = 'recovery_hub.wsgi.application'
 
 # Database
 
+# Database
+
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
+# Only configure database if DATABASE_URL exists
 if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
@@ -120,15 +123,14 @@ if DATABASE_URL:
             conn_max_age=600,
         )
     }
-    print(f"Using PostgreSQL database from Railway")
 else:
+    # Use SQLite as fallback (for build phase and local dev)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-    print(f"WARNING: Using SQLite - DATABASE_URL not found")
     
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
