@@ -26,6 +26,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+DEBUG = env('DEBUG', default=False)
 
 DATABASES = {
     "default": dj_database_url.config(
