@@ -118,7 +118,6 @@ if DATABASE_URL:
             default=DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
-            ssl_require=not DEBUG  # Only require SSL in production
         )
     }
     # Disable SSL for local PostgreSQL connections
@@ -132,7 +131,7 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-    
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
