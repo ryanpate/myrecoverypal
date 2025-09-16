@@ -1,253 +1,49 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-*.egg
-*.egg-info/
-dist/
-build/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Virtual Environments
-venv/
-env/
-ENV/
-env.bak/
-venv.bak/
-.venv/
-.virtualenv/
-virtualenv/
-
-# Django specific
+# Django
 *.log
 *.pot
 *.pyc
+__pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media/
 staticfiles/
-static_root/
 
-# Flask specific
-instance/
-.webassets-cache
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv/
 
-# Environment variables
-.env
-.env.local
-.env.production
-.env.development
-*.env
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-*.postgresql
-*.mysql
-
-# IDE and Editors
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+
+# OS
 .DS_Store
 Thumbs.db
-.project
-.pydevproject
-.settings/
-*.sublime-project
-*.sublime-workspace
 
-# Node.js (if using for frontend)
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-
-# Frontend build files
-/build
-/dist
-/.next
-/out
-.cache/
-.parcel-cache/
+# Environment
+.env
+.env.local
+.env.*.local
 
 # Testing
-htmlcov/
-.tox/
-.nox/
 .coverage
-.coverage.*
-.cache
-nosetests.xml
+htmlcov/
+.pytest_cache/
 coverage.xml
 *.cover
-.hypothesis/
-.pytest_cache/
 
-# Documentation
-docs/_build/
-site/
-
-# Secrets and credentials
-*.pem
-*.key
-*.crt
-*.cert
-secrets/
-credentials/
-config/secrets/
-
-# User uploaded content
-uploads/
-user_uploads/
-user_content/
-media/uploads/
-
-# Backup files
+# Backup
 *.bak
-*.backup
-*.old
-*.orig
-*.tmp
-*.temp
-backups/
-
-# Large files
-*.zip
-*.tar
-*.tar.gz
-*.rar
-*.7z
-*.dmg
-*.iso
-*.jar
-*.deb
-*.rpm
-
-# Custom project files
-my_facilities_example.json
-static/resources/data/my_facilities_example.json
-./my_facilities_example.json
-facilities_data/
-recovery_resources/
-private_data/
-user_data/
-journal_exports/
-milestone_exports/
-
-# Payment and Store related
-payment_logs/
-transaction_reports/
-stripe_webhooks.log
-payment_credentials/
-
-# Session files
-sessions/
-flask_session/
-django_sessions/
-
-# Cache directories
-__pycache__/
-.cache/
-.sass-cache/
-.eslintcache
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-.pnpm-debug.log*
-
-# OS files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-desktop.ini
-
-# Docker
-.dockerignore
-docker-compose.override.yml
-
-# Terraform
-*.tfstate
-*.tfstate.*
-.terraform/
-
-# Mobile app specific (if using React Native or similar)
-*.apk
-*.aab
-*.ipa
-.expo/
-.expo-shared/
-
-# Temporary files
-*.tmp
-*.temp
-*.swp
-*.swo
-~*
-
-# Production config files
-production.py
-production_settings.py
-prod.env
-
-# Analytics and tracking
-analytics_reports/
-user_analytics/
-google_analytics_credentials.json
-
-# Email templates testing
-email_test_outputs/
-sent_emails_log/
-
-# Webpack
-webpack-stats.json
-bundles/
-
-# Celery
-celerybeat-schedule
-celerybeat.pid
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# pytype static type analyzer
-.pytype/
-
-# Cython debug symbols
-cython_debug/
+backup/
