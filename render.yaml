@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: myrecoverypal
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: gunicorn recovery_hub.wsgi:application --log-file -
+    autoDeploy: true
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: recovery_hub.settings
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: myrecoverypal-db
+          property: connectionString
+      - key: ALLOWED_HOSTS
+        value: "myrecoverypal.onrender.com,www.myrecoverypal.com,myrecoverypal.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://myrecoverypal.onrender.com,https://www.myrecoverypal.com,https://myrecoverypal.com"
+databases:
+  - name: myrecoverypal-db
+    plan: free
