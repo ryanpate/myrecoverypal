@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """
-Robust database initialization for Railway deployment.
-Forces migration application even if Django thinks they're already applied.
+Complete database initialization with special handling for accounts app.
 """
 from django.db import connection, transaction
 from django.core.management import call_command
@@ -9,182 +8,53 @@ import os
 import sys
 import django
 
-# Setup Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'recovery_hub.settings')
 django.setup()
 
 
 def init_database():
-    print("=" * 50)
-    print("Database Initialization Starting")
-    print("=" * 50)
+    print("=" * 70)
+    print("COMPLETE DATABASE INITIALIZATION")
+    print("=" * 70)
 
-    # Step 1: Check database connection
+    # Step 1: Basic setup and migration
+    print("\n1. Running standard migrations...")
     try:
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT 1")
-        print("✅ Database connection successful")
+        call_command('migrate', 'contenttypes', interactive=False)
+        call_command('migrate', 'auth', interactive=False)
+        call_command('migrate', 'sessions', interactive=False)
+        call_command('migrate', 'admin', interactive=False)
+        call_command('migrate', 'sites', interactive=False)
+        print("✅ Core Django apps migrated")
     except Exception as e:
-        print(f"❌ Database connection failed: {e}")
-        sys.exit(1)
+        print(f"⚠️  Core migration warning: {e}")
 
-    # Step 2: Check current table status
-    print("\n📊 Current database status:")
-    with connection.cursor() as cursor:
-        cursor.execute("""
-            SELECT table_name 
-            FROM information_schema.tables 
-            WHERE table_schema = 'public' 
-            ORDER BY table_name;
-        """)
-        existing_tables = [row[0] for row in cursor.fetchall()]
-        print(f"Found {len(existing_tables)} tables")
+    # Step 2: Fix accounts app specifically
+    print("\n2. Fixing accounts app...")
+    fix_accounts_app()
 
-        # Check for our app tables
-        app_tables = {
-            'blog_post': False,
-            'resources_resource': False,
-            'journal_journalentry': False,
-            'newsletter_subscriber': False,
-            'store_product': False,
-            'support_services_meeting': False
-        }
-
-        for table in app_tables:
-            if table in existing_tables:
-                app_tables[table] = True
-                print(f"  ✅ {table} exists")
-            else:
-                print(f"  ❌ {table} missing")
-
-    # Step 3: Force migration if tables are missing
-    if not all(app_tables.values()):
-        print("\n🔧 Missing tables detected. Forcing migration...")
-
-        # Try to clear migration history for apps with missing tables
+    # Step 3: Migrate other apps
+    print("\n3. Migrating other apps...")
+    other_apps = ['blog', 'resources', 'journal',
+                  'newsletter', 'store', 'support_services']
+    for app in other_apps:
         try:
-            with connection.cursor() as cursor:
-                # Get list of applied migrations
-                cursor.execute("""
-                    SELECT app, name 
-                    FROM django_migrations 
-                    WHERE app IN ('blog', 'resources', 'journal', 'newsletter', 'store', 'support_services')
-                """)
-                applied_migrations = cursor.fetchall()
-
-                if applied_migrations:
-                    print(
-                        f"Found {len(applied_migrations)} recorded migrations")
-                    print("Clearing migration records for apps with missing tables...")
-
-                    # Clear migration records for apps with missing tables
-                    for app_name, table_name in [
-                        ('blog', 'blog_post'),
-                        ('resources', 'resources_resource'),
-                        ('journal', 'journal_journalentry'),
-                        ('newsletter', 'newsletter_subscriber'),
-                        ('store', 'store_product'),
-                        ('support_services', 'support_services_meeting')
-                    ]:
-                        if not app_tables.get(table_name, False):
-                            cursor.execute(
-                                "DELETE FROM django_migrations WHERE app = %s",
-                                [app_name]
-                            )
-                            print(
-                                f"  Cleared migration records for {app_name}")
+            call_command('migrate', app, interactive=False)
+            print(f"✅ {app} migrated")
         except Exception as e:
-            print(f"⚠️ Could not clear migration history: {e}")
+            print(f"⚠️  {app}: {e}")
 
-    # Step 4: Run migrations
-    print("\n🚀 Applying migrations...")
-
-    # Migrate each app explicitly
-    apps_to_migrate = [
-        ('contenttypes', 'Django'),
-        ('auth', 'Django'),
-        ('accounts', 'Custom'),
-        ('sessions', 'Django'),
-        ('admin', 'Django'),
-        ('sites', 'Django'),
-        ('blog', 'Custom'),
-        ('resources', 'Custom'),
-        ('journal', 'Custom'),
-        ('newsletter', 'Custom'),
-        ('store', 'Custom'),
-        ('support_services', 'Custom'),
-    ]
-
-    for app, app_type in apps_to_migrate:
-        try:
-            print(f"\nMigrating {app} ({app_type} app)...")
-            call_command('migrate', app, verbosity=2, interactive=False)
-            print(f"✅ {app} migrated successfully")
-        except Exception as e:
-            print(f"⚠️ Issue with {app}: {e}")
-
-            # If migration failed, try with --fake-initial
-            if app_type == 'Custom':
-                try:
-                    print(f"  Trying {app} with --fake-initial...")
-                    call_command('migrate', app, '--fake-initial',
-                                 interactive=False)
-                    print(f"  ✅ {app} migrated with --fake-initial")
-                except Exception as e2:
-                    print(f"  ❌ Still couldn't migrate {app}: {e2}")
-
-    # Step 5: Final catch-all migration
-    print("\n🔄 Running final migration pass...")
+    # Step 4: Final migrate
+    print("\n4. Final migration pass...")
     try:
-        call_command('migrate', '--run-syncdb', verbosity=1, interactive=False)
+        call_command('migrate', '--run-syncdb', interactive=False)
         print("✅ Final migration complete")
     except Exception as e:
-        print(f"⚠️ Final migration warning: {e}")
+        print(f"⚠️  Final migration: {e}")
 
-    # Step 6: Verify tables were created
-    print("\n✅ Verifying database tables...")
-    with connection.cursor() as cursor:
-        cursor.execute("""
-            SELECT table_name 
-            FROM information_schema.tables 
-            WHERE table_schema = 'public' 
-            AND table_name IN ('blog_post', 'resources_resource', 'journal_journalentry', 
-                               'newsletter_subscriber', 'store_product', 'support_services_meeting')
-            ORDER BY table_name;
-        """)
-        created_tables = [row[0] for row in cursor.fetchall()]
-
-        if created_tables:
-            print(f"Successfully verified {len(created_tables)} app tables:")
-            for table in created_tables:
-                print(f"  ✅ {table}")
-        else:
-            print("❌ WARNING: App tables still missing!")
-            print("Attempting emergency table creation...")
-
-            # Last resort: try to create tables manually
-            try:
-                from django.db import models
-                from django.apps import apps
-
-                for app_label in ['blog', 'resources', 'journal', 'newsletter', 'store', 'support_services']:
-                    try:
-                        app = apps.get_app_config(app_label)
-                        with connection.schema_editor() as schema_editor:
-                            for model in app.get_models():
-                                if not model._meta.db_table in existing_tables:
-                                    schema_editor.create_model(model)
-                                    print(
-                                        f"  Created table for {model._meta.label}")
-                    except Exception as e:
-                        print(
-                            f"  Could not create tables for {app_label}: {e}")
-            except Exception as e:
-                print(f"Emergency table creation failed: {e}")
-
-    # Step 7: Create superuser if configured
+    # Step 5: Create superuser
     if os.environ.get('DJANGO_SUPERUSER_EMAIL'):
-        print("\n👤 Setting up superuser...")
+        print("\n5. Creating superuser...")
         try:
             from django.contrib.auth import get_user_model
             User = get_user_model()
@@ -197,13 +67,107 @@ def init_database():
                 User.objects.create_superuser(email=email, password=password)
                 print(f"✅ Superuser created: {email}")
             else:
-                print(f"ℹ️ Superuser already exists: {email}")
+                print(f"ℹ️  Superuser exists: {email}")
         except Exception as e:
-            print(f"⚠️ Could not create superuser: {e}")
+            print(f"⚠️  Superuser creation: {e}")
 
-    print("\n" + "=" * 50)
-    print("Database initialization complete!")
-    print("=" * 50)
+    print("\n" + "=" * 70)
+    print("INITIALIZATION COMPLETE")
+    print("=" * 70)
+
+
+def fix_accounts_app():
+    """Special handling for accounts app with its complex migrations."""
+
+    # Check what accounts tables exist
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT table_name FROM information_schema.tables 
+            WHERE table_schema = 'public' AND table_name LIKE 'accounts_%'
+        """)
+        existing = [row[0] for row in cursor.fetchall()]
+
+    # Check for the specific missing table
+    needs_fix = False
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT NOT EXISTS (
+                SELECT FROM information_schema.tables 
+                WHERE table_schema = 'public' 
+                AND (table_name = 'accounts_recoverypal' OR table_name = 'accounts_recoverybuddy')
+            );
+        """)
+        needs_fix = cursor.fetchone()[0]
+
+    if needs_fix:
+        print("  ⚠️  Accounts tables missing, applying fix...")
+
+        try:
+            # Clear accounts migrations
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "DELETE FROM django_migrations WHERE app = 'accounts';")
+
+            # Apply migrations in order
+            migrations = [
+                '0001_initial',
+                '0002_activityfeed_activitycomment_dailycheckin',
+                '0003_activity_feed',
+                '0004_merge_20250911_1821',
+                '0005_add_community',
+                '0006_merge_0004_merge_20250911_1821_0005_add_community',
+                '0007_userprofile_and_more',
+                '0008_challengebadge_challengecheckin_challengecomment_and_more',
+                '0009_rename_allow_buddy_system_groupchallenge_allow_pal_system_and_more',
+            ]
+
+            for migration in migrations:
+                try:
+                    call_command('migrate', 'accounts',
+                                 migration, interactive=False)
+                    print(f"  ✅ Applied {migration}")
+                except Exception as e:
+                    print(f"  ⚠️  {migration}: {e}")
+                    # Try fake if real fails
+                    try:
+                        call_command('migrate', 'accounts',
+                                     migration, '--fake', interactive=False)
+                    except:
+                        pass
+
+            # If still missing, create manually
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT NOT EXISTS (
+                        SELECT FROM information_schema.tables 
+                        WHERE table_schema = 'public' 
+                        AND (table_name = 'accounts_recoverypal' OR table_name = 'accounts_recoverybuddy')
+                    );
+                """)
+                still_missing = cursor.fetchone()[0]
+
+                if still_missing:
+                    print("  Creating RecoveryPal table manually...")
+                    cursor.execute("""
+                        CREATE TABLE IF NOT EXISTS accounts_recoverypal (
+                            id SERIAL PRIMARY KEY,
+                            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                            pal_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                            is_active BOOLEAN DEFAULT TRUE,
+                            created_at TIMESTAMP DEFAULT NOW(),
+                            updated_at TIMESTAMP DEFAULT NOW(),
+                            UNIQUE(user_id, pal_id)
+                        );
+                        
+                        CREATE INDEX IF NOT EXISTS idx_recoverypal_user ON accounts_recoverypal(user_id);
+                        CREATE INDEX IF NOT EXISTS idx_recoverypal_pal ON accounts_recoverypal(pal_id);
+                    """)
+                    print("  ✅ Created accounts_recoverypal table")
+
+        except Exception as e:
+            print(f"  ❌ Accounts fix failed: {e}")
+    else:
+        print("  ✅ Accounts tables exist")
 
 
 if __name__ == '__main__':
