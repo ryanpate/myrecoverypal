@@ -108,16 +108,31 @@ TEMPLATES = [
 WSGI_APPLICATION = 'recovery_hub.wsgi.application'
 
 # Database
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get(
-            'DATABASE_URL', f'sqlite:///{BASE_DIR}/db.sqlite3'),
-        conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=False if DEBUG else True
-    )
-}
 
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    # Production database from Railway
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=not DEBUG  # Only require SSL in production
+        )
+    }
+    # Disable SSL for local PostgreSQL connections
+    if DATABASE_URL.startswith('postgres://localhost') or DATABASE_URL.startswith('postgresql://localhost'):
+        DATABASES['default']['OPTIONS'] = {'sslmode': 'disable'}
+else:
+    # Fallback to SQLite for local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+    
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
