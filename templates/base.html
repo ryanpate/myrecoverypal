@@ -1,466 +1,2048 @@
-<!-- Add this updated CSS to replace the existing mobile navigation styles in your base.html -->
+<!DOCTYPE html>
+<html lang="en">
 
-<style>
-/* ========================================
-   MOBILE SLIDE-OUT NAVIGATION
-   ======================================== */
-   
-/* Mobile Navigation Overlay */
-.mobile-nav-overlay {
-    display: none;
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <!-- Enhanced Mobile Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#1e4d8b">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+
+    <!-- iOS Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/icon-180.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/icon-32.png' %}">
+    <title>{% block title %}My Recovery Pal{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+
+    <!-- Bootstrap CSS (optional, for better forms with crispy-forms) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    <!-- Additional CSS -->
+    {% block extra_css %}{% endblock %}
+
+    <style>
+        :root {
+            /* Updated colors from logo */
+            --primary-dark: #1e4d8b;
+            /* Dark blue from logo */
+            --primary-light: #4db8e8;
+            /* Light blue/cyan from logo */
+            --accent-green: #52b788;
+            /* Green from checkmark */
+
+            /* Legacy color variables for compatibility */
+            --primary-color: #1e4d8b;
+            --secondary-color: #4db8e8;
+            --accent-color: #52b788;
+
+            /* Text and background colors */
+            --text-dark: #2c3e50;
+            --text-light: #ffffff;
+            --bg-light: #f8f9fa;
+            --bg-lighter: #ffffff;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 5px 20px rgba(0, 0, 0, 0.15);
+
+            /* Gradient backgrounds for headers */
+            --gradient-primary: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+            --gradient-secondary: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
+            --gradient-accent: linear-gradient(135deg, #4db8e8 0%, #52b788 100%);
+
+            /* Border radius */
+            --border-radius: 10px;
+        }
+
+        * {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding-top: 70px;
+            /* Account for fixed nav */
+            background: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        /* Skip to main content link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-dark);
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10001;
+            border-radius: 0 0 5px 0;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Default heading colors for regular content */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+            color: var(--primary-dark);
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        /* Links */
+        a {
+            color: var(--primary-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Override Bootstrap primary colors */
+        .btn-primary {
+            background-color: var(--accent-green) !important;
+            border-color: var(--accent-green) !important;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a675 !important;
+            border-color: #45a675 !important;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-dark) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-dark) !important;
+        }
+
+        /* ========================================
+           UNIFIED PAGE HEADER STYLES
+           All page headers will have consistent styling
+           ======================================== */
+
+        .page-header,
+        .dashboard-header,
+        .blog-header,
+        .resources-header,
+        .journal-header,
+        .community-header,
+        .profile-header,
+        .milestones-header,
+        .stats-header,
+        .entries-header,
+        .prompts-header,
+        .category-header,
+        .educational-resources-header,
+        .support-header,
+        .groups-header,
+        .group-detail-header,
+        .challenges-header,
+        .challenge-detail-header,
+        .pal-header,
+        .sponsor-header,
+        .my-groups-header,
+        .my-challenges-header,
+        .hero-section {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+            background: var(--gradient-primary) !important;
+            padding: 100px 0 50px;
+            color: white !important;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        /* Ensure all text elements within page headers are white */
+        .page-header h1,
+        .page-header h2,
+        .page-header h3,
+        .page-header h4,
+        .page-header h5,
+        .page-header h6,
+        .page-header p,
+        .dashboard-header h1,
+        .dashboard-header h2,
+        .dashboard-header h3,
+        .dashboard-header h4,
+        .dashboard-header h5,
+        .dashboard-header h6,
+        .dashboard-header p,
+        .blog-header h1,
+        .blog-header h2,
+        .blog-header h3,
+        .blog-header h4,
+        .blog-header h5,
+        .blog-header h6,
+        .blog-header p,
+        .resources-header h1,
+        .resources-header h2,
+        .resources-header h3,
+        .resources-header h4,
+        .resources-header h5,
+        .resources-header h6,
+        .resources-header p,
+        .journal-header h1,
+        .journal-header h2,
+        .journal-header h3,
+        .journal-header h4,
+        .journal-header h5,
+        .journal-header h6,
+        .journal-header p,
+        .community-header h1,
+        .community-header h2,
+        .community-header h3,
+        .community-header h4,
+        .community-header h5,
+        .community-header h6,
+        .community-header p,
+        .profile-header h1,
+        .profile-header h2,
+        .profile-header h3,
+        .profile-header h4,
+        .profile-header h5,
+        .profile-header h6,
+        .profile-header p,
+        .milestones-header h1,
+        .milestones-header h2,
+        .milestones-header h3,
+        .milestones-header h4,
+        .milestones-header h5,
+        .milestones-header h6,
+        .milestones-header p,
+        .stats-header h1,
+        .stats-header h2,
+        .stats-header h3,
+        .stats-header h4,
+        .stats-header h5,
+        .stats-header h6,
+        .stats-header p,
+        .entries-header h1,
+        .entries-header h2,
+        .entries-header h3,
+        .entries-header h4,
+        .entries-header h5,
+        .entries-header h6,
+        .entries-header p,
+        .prompts-header h1,
+        .prompts-header h2,
+        .prompts-header h3,
+        .prompts-header h4,
+        .prompts-header h5,
+        .prompts-header h6,
+        .prompts-header p,
+        .category-header h1,
+        .category-header h2,
+        .category-header h3,
+        .category-header h4,
+        .category-header h5,
+        .category-header h6,
+        .category-header p,
+        .educational-resources-header h1,
+        .educational-resources-header h2,
+        .educational-resources-header h3,
+        .educational-resources-header h4,
+        .educational-resources-header h5,
+        .educational-resources-header h6,
+        .educational-resources-header p,
+        .support-header h1,
+        .support-header h2,
+        .support-header h3,
+        .support-header h4,
+        .support-header h5,
+        .support-header h6,
+        .support-header p,
+        .hero-section h1,
+        .hero-section h2,
+        .hero-section h3,
+        .hero-section h4,
+        .hero-section h5,
+        .hero-section h6,
+        .hero-section p {
+            color: white !important;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Header h1 specific styles */
+        .page-header h1,
+        .dashboard-header h1,
+        .blog-header h1,
+        .resources-header h1,
+        .journal-header h1,
+        .community-header h1,
+        .profile-header h1,
+        .milestones-header h1,
+        .stats-header h1,
+        .entries-header h1,
+        .prompts-header h1,
+        .category-header h1,
+        .educational-resources-header h1,
+        .support-header h1,
+        .hero-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header paragraph specific styles */
+        .page-header p,
+        .dashboard-header p,
+        .blog-header p,
+        .resources-header p,
+        .journal-header p,
+        .community-header p,
+        .profile-header p,
+        .milestones-header p,
+        .stats-header p,
+        .entries-header p,
+        .prompts-header p,
+        .category-header p,
+        .educational-resources-header p,
+        .support-header p,
+        .hero-section p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.95) !important;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Animated background for all headers */
+        .page-header::before,
+        .dashboard-header::before,
+        .blog-header::before,
+        .resources-header::before,
+        .journal-header::before,
+        .community-header::before,
+        .profile-header::before,
+        .milestones-header::before,
+        .stats-header::before,
+        .entries-header::before,
+        .prompts-header::before,
+        .category-header::before,
+        .educational-resources-header::before,
+        .support-header::before,
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            top: -25%;
+            left: -25%;
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+            animation: float-bg 20s ease-in-out infinite;
+        }
+
+        @keyframes float-bg {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(-20px, -20px);
+            }
+        }
+
+        /* ========================================
+           NAVIGATION STYLES
+           ======================================== */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        /* Logo Styles */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            height: 45px;
+            width: auto;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-decoration: none;
+        }
+
+        .logo-container:hover .logo-text {
+            color: var(--primary-light);
+        }
+
+        /* Challenge notification styles */
+        .challenge-notification {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        .pending-checkin-alert {
+            background: #fff3cd !important;
+            color: #856404 !important;
+            border-left: 4px solid #ffc107;
+        }
+
+        /* Challenge menu item highlight */
+        .nav-links a[href*="challenges"] {
+            position: relative;
+        }
+
+        .nav-links a[href*="challenges"]::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 8px;
+            height: 8px;
+            background: #52b788;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+
+        /* Navigation Links */
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-green);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-dark);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: var(--primary-dark);
+        }
+
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* User Menu Styles */
+        .user-menu {
+            position: relative;
+        }
+
+        .user-menu-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-light);
+            border: 1px solid #e0e0e0;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-menu-toggle:hover {
+            background: var(--primary-light);
+            color: white;
+            border-color: var(--primary-light);
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow-hover);
+            min-width: 220px;
+            z-index: 1000;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .user-dropdown.active {
+            display: block;
+        }
+
+        .user-dropdown a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        .user-dropdown a:hover {
+            background: var(--bg-light);
+            color: var(--primary-dark);
+        }
+
+        .user-dropdown hr {
+            margin: 0;
+            border: none;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* Logout button styled as link */
+        .logout-form {
+            margin: 0;
+            padding: 0;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            cursor: pointer;
+            font: inherit;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            width: 100%;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            background: var(--bg-light);
+            color: var(--primary-dark);
+        }
+
+        /* Message notification badge */
+        .notification-badge {
+            background: #ff4444;
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+        .message-count-badge {
+            background: #ff4444;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            padding: 0.6rem 1.5rem;
+            background: var(--accent-green);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .cta-button:hover {
+            background: #45a675;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
+            color: white;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .mobile-menu span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-dark);
+            transition: all 0.3s ease;
+        }
+
+        /* Mobile Bottom Navigation Bar */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 4px 0;  /* Reduced from 8px */
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            height: 56px;  /* Fixed height for consistency */
+        }
+
+        .mobile-bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 0.65rem;  /* Reduced from 0.75rem */
+            padding: 2px;  /* Reduced from 4px */
+            flex: 1;
+        }
+
+        .mobile-bottom-nav a.active {
+            color: var(--primary-dark);
+        }
+
+        .mobile-bottom-nav i {
+            font-size: 1.1rem;  /* Reduced from 1.25rem */
+            margin-bottom: 1px;  /* Reduced from 2px */
+        }
+
+/* PWA Install Banner */
+.install-prompt {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 998;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
+    bottom: 70px;
+    left: 1rem;
+            right: 1rem;
+            background: var(--primary-dark);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            display: none;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
 
-.mobile-nav-overlay.active {
-    display: block;
-    opacity: 1;
-}
+        .install-prompt.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
 
-/* Mobile Slide-Out Menu */
-.mobile-slide-menu {
-    position: fixed;
-    top: 0;
-    right: -280px;
-    width: 280px;
-    height: 100%;
-    background: white;
-    z-index: 999;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto;
-    box-shadow: -2px 0 20px rgba(0, 0, 0, 0.1);
-}
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
 
-.mobile-slide-menu.active {
-    transform: translateX(-280px);
-}
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
 
-/* Mobile Menu Header */
-.mobile-menu-header {
-    background: var(--gradient-primary);
-    padding: 1.5rem;
-    color: white;
-    position: relative;
-}
+        /* Offline Banner */
+        .offline-banner {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: #fbbf24;
+            color: #92400e;
+            padding: 0.75rem;
+            text-align: center;
+            z-index: 998;
+            display: none;
+        }
 
-.mobile-menu-close {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.mobile-menu-close:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-.mobile-menu-close svg {
-    width: 20px;
-    height: 20px;
-    stroke: white;
-    stroke-width: 2;
-}
-
-.mobile-menu-user {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.mobile-menu-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary-dark);
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-.mobile-menu-user-info h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    color: white;
-}
-
-.mobile-menu-user-info p {
-    margin: 0;
-    font-size: 0.9rem;
-    opacity: 0.9;
-    color: white;
-}
-
-/* Mobile Menu Navigation */
-.mobile-menu-nav {
-    padding: 1rem 0;
-}
-
-.mobile-menu-section {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.mobile-menu-section:last-child {
-    border-bottom: none;
-}
-
-.mobile-menu-label {
-    padding: 0.5rem 1.5rem;
-    font-size: 0.75rem;
-    color: #6b7280;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 600;
-}
-
-.mobile-menu-nav a {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.875rem 1.5rem;
-    color: var(--text-dark);
-    text-decoration: none;
-    transition: background 0.2s ease;
-    position: relative;
-}
-
-.mobile-menu-nav a:active {
-    background: var(--bg-light);
-}
-
-.mobile-menu-nav a.active {
-    background: #f0f9ff;
-    color: var(--primary-dark);
-}
-
-.mobile-menu-nav a.active::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: var(--accent-green);
-}
-
-.mobile-menu-nav i {
-    width: 20px;
-    text-align: center;
-    color: var(--primary-light);
-}
-
-.mobile-menu-nav .badge {
-    margin-left: auto;
-    background: #ff4444;
-    color: white;
-    padding: 0.2rem 0.5rem;
-    border-radius: 10px;
-    font-size: 0.75rem;
-}
-
-/* Mobile Menu Footer */
-.mobile-menu-footer {
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #e5e7eb;
-    margin-top: auto;
-}
-
-.mobile-logout-btn {
-    width: 100%;
-    padding: 0.75rem;
-    background: var(--accent-green);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.mobile-logout-btn:active {
-    background: #45a675;
-}
-
-/* Hamburger Menu Animation */
-.hamburger {
-    display: none;
-    width: 48px;
-    height: 48px;
-    padding: 12px;
-    cursor: pointer;
-    background: transparent;
-    border: none;
-    position: relative;
-}
-
-.hamburger-line {
-    display: block;
-    width: 24px;
-    height: 2px;
-    background: var(--primary-dark);
-    margin: 5px 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hamburger.active .hamburger-line:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-}
-
-.hamburger.active .hamburger-line:nth-child(2) {
-    opacity: 0;
-    transform: translateX(-10px);
-}
-
-.hamburger.active .hamburger-line:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -6px);
-}
-
-/* Mobile-specific styles */
-@media (max-width: 768px) {
-    .hamburger {
-        display: block;
-    }
-    
-    /* Hide desktop nav links on mobile */
-    .nav-links {
-        display: none !important;
-    }
-    
-    /* Prevent body scroll when menu is open */
-    body.menu-open {
-        overflow: hidden;
-    }
-}
-
-/* Touch feedback */
-@media (hover: none) and (pointer: coarse) {
-    .mobile-menu-nav a:active {
-        background: #f3f4f6;
-        transform: scale(0.98);
-    }
-    
-    .mobile-menu-close:active {
-        transform: scale(0.95);
-    }
-}
-</style>
-
-<!-- Replace the existing mobile menu button in your nav with this -->
-<button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="Menu">
-    <span class="hamburger-line"></span>
-    <span class="hamburger-line"></span>
-    <span class="hamburger-line"></span>
-</button>
-
-<!-- Add this right after the closing </nav> tag -->
-<div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileMenu()"></div>
-
-<div class="mobile-slide-menu" id="mobileSlideMenu">
-    <div class="mobile-menu-header">
-        <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
+        body.offline .offline-banner {
+            display: block;
+        }
+        /* ========================================
+        MOBILE SLIDE-OUT NAVIGATION
+        ======================================== */
         
-        {% if user.is_authenticated %}
-        <div class="mobile-menu-user">
-            <div class="mobile-menu-avatar">
-                {% if user.profile_picture %}
-                <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" 
-                     style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+        /* Mobile Navigation Overlay */
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-nav-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Mobile Slide-Out Menu */
+        .mobile-slide-menu {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100%;
+            background: white;
+            z-index: 999;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            box-shadow: -2px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-slide-menu.active {
+            transform: translateX(-280px);
+        }
+
+        /* Mobile Menu Header */
+        .mobile-menu-header {
+            background: var(--gradient-primary);
+            padding: 1.5rem;
+            color: white;
+            position: relative;
+        }
+
+        .mobile-menu-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .mobile-menu-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .mobile-menu-close svg {
+            width: 20px;
+            height: 20px;
+            stroke: white;
+            stroke-width: 2;
+        }
+
+        .mobile-menu-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .mobile-menu-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-dark);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .mobile-menu-user-info h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .mobile-menu-user-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            color: white;
+        }
+
+        /* Mobile Menu Navigation */
+        .mobile-menu-nav {
+            padding: 1rem 0;
+        }
+
+        .mobile-menu-section {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .mobile-menu-section:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-menu-label {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .mobile-menu-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.875rem 1.5rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: background 0.2s ease;
+            position: relative;
+        }
+
+        .mobile-menu-nav a:active {
+            background: var(--bg-light);
+        }
+
+        .mobile-menu-nav a.active {
+            background: #f0f9ff;
+            color: var(--primary-dark);
+        }
+
+        .mobile-menu-nav a.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent-green);
+        }
+
+        .mobile-menu-nav i {
+            width: 20px;
+            text-align: center;
+            color: var(--primary-light);
+        }
+
+        .mobile-menu-nav .badge {
+            margin-left: auto;
+            background: #ff4444;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+
+        /* Mobile Menu Footer */
+        .mobile-menu-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e5e7eb;
+            margin-top: auto;
+        }
+
+        .mobile-logout-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .mobile-logout-btn:active {
+            background: #45a675;
+        }
+
+        /* Hamburger Menu Animation */
+        .hamburger {
+            display: none;
+            width: 48px;
+            height: 48px;
+            padding: 12px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            position: relative;
+        }
+
+        .hamburger-line {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--primary-dark);
+            margin: 5px 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hamburger.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+
+        .hamburger.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Update mobile styles */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            
+            /* Hide desktop nav links on mobile */
+            .nav-links {
+                display: none !important;
+            }
+            
+            /* Prevent body scroll when menu is open */
+            body.menu-open {
+                overflow: hidden;
+            }
+
+            /* Show mobile bottom navigation */
+            .mobile-bottom-nav {
+                display: flex;
+                justify-content: space-around;
+            }
+        }
+        /* ========================================
+           MAIN CONTENT & FOOTER
+           ======================================== */
+
+        main {
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-dark);
+            color: white;
+            padding: 3rem 2rem 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-green);
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            padding: 0.5rem 0;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent-green);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding: 2rem 0 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ========================================
+           MOBILE STYLES
+           ======================================== */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+                padding-bottom: 56px;
+                /* Account for bottom nav */
+            }
+
+            main {
+                    min-height: calc(100vh - 116px); /* 60px top + 56px bottom */
+            }
+
+            /* Mobile navigation */
+            nav {
+                padding: 0.5rem 0;
+            }
+
+            .nav-container {
+                padding: 0.5rem 1rem;
+            }
+
+            .nav-left {
+                gap: 1rem;
+            }
+
+            .logo-img {
+                height: 35px;
+            }
+
+            .logo-text {
+                font-size: 1.1rem;
+            }
+
+            /* Hide desktop navigation on mobile */
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                padding: 2rem 1rem;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                z-index: 999;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 12px 20px;
+                min-height: 48px;
+                width: 100%;
+                border-radius: 8px;
+            }
+
+            .nav-links a:hover {
+                background: var(--bg-light);
+            }
+
+            /* Show mobile menu button */
+            .mobile-menu {
+                display: flex;
+                padding: 12px;
+                min-height: 48px;
+                min-width: 48px;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* Mobile headers */
+            .page-header,
+            .dashboard-header,
+            .blog-header,
+            .resources-header,
+            .journal-header,
+            .community-header,
+            .profile-header,
+            .milestones-header,
+            .stats-header,
+            .entries-header,
+            .prompts-header,
+            .category-header,
+            .educational-resources-header,
+            .support-header,
+            .groups-header,
+            .group-detail-header,
+            .challenges-header,
+            .challenge-detail-header,
+            .pal-header,
+            .sponsor-header,
+            .my-groups-header,
+            .my-challenges-header,
+            .hero-section {
+                padding: 80px 1rem 40px;
+            }
+
+            .page-header h1,
+            .dashboard-header h1,
+            .blog-header h1,
+            .resources-header h1,
+            .journal-header h1,
+            .community-header h1,
+            .profile-header h1,
+            .milestones-header h1,
+            .stats-header h1,
+            .entries-header h1,
+            .prompts-header h1,
+            .category-header h1,
+            .educational-resources-header h1,
+            .support-header h1,
+            .hero-section h1 {
+                font-size: 1.75rem;
+            }
+
+            .page-header p,
+            .dashboard-header p,
+            .blog-header p,
+            .resources-header p,
+            .journal-header p,
+            .community-header p,
+            .profile-header p,
+            .milestones-header p,
+            .stats-header p,
+            .entries-header p,
+            .prompts-header p,
+            .category-header p,
+            .educational-resources-header p,
+            .support-header p,
+            .hero-section p {
+                font-size: 1rem;
+            }
+
+            /* Remove complex animations on mobile for better performance */
+            .page-header::before,
+            .dashboard-header::before,
+            .blog-header::before,
+            .resources-header::before,
+            .journal-header::before,
+            .community-header::before,
+            .profile-header::before,
+            .milestones-header::before,
+            .stats-header::before,
+            .entries-header::before,
+            .prompts-header::before,
+            .category-header::before,
+            .educational-resources-header::before,
+            .support-header::before,
+            .hero-section::before {
+                display: none;
+            }
+
+            /* Touch-friendly form elements */
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            input[type="search"],
+            input[type="tel"],
+            input[type="number"],
+            input[type="date"],
+            textarea,
+            select {
+                font-size: 16px !important;
+                /* Prevents zoom on iOS */
+                min-height: 48px;
+                padding: 12px 16px;
+                border-radius: 8px;
+            }
+
+            /* Touch-friendly buttons */
+            button,
+            .btn,
+            input[type="submit"],
+            .cta-button {
+                min-height: 48px;
+                padding: 12px 24px;
+                font-size: 16px;
+                font-weight: 600;
+                touch-action: manipulation;
+            }
+
+            /* Mobile footer */
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                margin-bottom: 60px;
+                /* Account for bottom nav */
+            }
+
+            /* Mobile-specific main padding */
+            main {
+                min-height: calc(100vh - 120px);
+                /* Account for both navs */
+                padding-bottom: 20px;
+            }
+
+            /* User menu on mobile */
+            .user-menu-toggle {
+                padding: 0.5rem;
+            }
+
+            .user-menu-toggle span {
+                display: none;
+            }
+
+            .user-dropdown {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                bottom: 60px;
+                border-radius: 0;
+                max-width: 100%;
+                overflow-y: auto;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+
+            /* Remove hover effects on touch devices */
+            a:hover,
+            button:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+            /* Add active states for touch feedback */
+            a:active,
+            button:active {
+                opacity: 0.8;
+                transform: scale(0.98);
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+
+            .card,
+            .btn {
+                border: 2px solid currentColor;
+            }
+        }
+
+        /* ========================================
+           ALERT MESSAGES
+           ======================================== */
+        .messages {
+            max-width: 1200px;
+            margin: 1rem auto;
+            padding: 0 2rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            border: 1px solid transparent;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error,
+        .alert-danger {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+
+        /* ========================================
+           COMPONENTS
+           ======================================== */
+
+        /* Stat numbers and important metrics */
+        .stat-number,
+        .big-number {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        /* Cards and sections */
+        .stat-card:hover::before,
+        .feature-card:hover::before,
+        .resource-card:hover::before,
+        .blog-card:hover::before {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-light), var(--accent-green)) !important;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-success {
+            background: var(--accent-green) !important;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a675 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
+        }
+
+        /* Form inputs */
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--primary-light) !important;
+            box-shadow: 0 0 0 3px rgba(77, 184, 232, 0.1) !important;
+            outline: none;
+        }
+
+        /* Badges and pills */
+        .badge-primary {
+            background-color: var(--primary-dark) !important;
+        }
+
+        .badge-success {
+            background-color: var(--accent-green) !important;
+        }
+
+        /* Progress bars */
+        .progress-bar {
+            background-color: var(--accent-green) !important;
+        }
+
+        /* ========================================
+           UTILITY CLASSES
+           ======================================== */
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--primary-light);
+            border-top-color: var(--accent-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* Text utilities */
+        .text-center {
+            text-align: center;
+        }
+
+        .text-muted {
+            color: #6c757d;
+        }
+
+        /* Margin utilities */
+        .mt-1 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-2 {
+            margin-top: 1rem;
+        }
+
+        .mt-3 {
+            margin-top: 1.5rem;
+        }
+
+        .mt-4 {
+            margin-top: 2rem;
+        }
+
+        .mb-1 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 2rem;
+        }
+
+        /* Padding utilities */
+        .p-2 {
+            padding: 1rem;
+        }
+
+        .p-3 {
+            padding: 1.5rem;
+        }
+
+        .p-4 {
+            padding: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main" class="skip-link">Skip to main content</a>
+
+    <!-- Offline Banner -->
+    <div class="offline-banner">
+        <i class="fas fa-wifi-slash"></i> You're currently offline. Some features may be limited.
+    </div>
+
+    <!-- PWA Install Prompt -->
+    <div class="install-prompt" id="installBanner">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong>Install MyRecoveryPal</strong>
+                <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">Add to your home screen for quick access</p>
+            </div>
+            <button id="installBtn" class="btn btn-light btn-sm" style="margin-left: 1rem;">Install</button>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="{% url 'core:index' %}" class="logo-container">
+                    <img src="{% static 'images/logo.svg' %}" alt="MyRecoveryPal Logo" class="logo-img">
+                    <span class="logo-text">MyRecoveryPal</span>
+                </a>
+
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="{% url 'core:index' %}"
+                            class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Home</a></li>
+                    <li><a href="{% url 'blog:post_list' %}"
+                            class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">Blog</a></li>
+                    <li><a href="{% url 'resources:list' %}"
+                            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">Resources</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'journal:entry_list' %}"
+                            class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">Journal</a>
+                    </li>
+                    <li><a href="{% url 'accounts:groups_list' %}"
+                            class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">Groups</a>
+                    </li>
+                    <li><a href="{% url 'accounts:challenges_home' %}"
+                            class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">Challenges</a>
+                    </li>
+                    <li><a href="{% url 'accounts:community' %}"
+                            class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">Community</a>
+                    </li>
+                    {% endif %}
+                    <li><a href="{% url 'store:product_list' %}"
+                            class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">Store</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-right">
+                {% if user.is_authenticated %}
+                <div class="user-menu">
+                    <div class="user-menu-toggle" onclick="toggleUserMenu()">
+                        <div class="user-avatar">
+                            {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}"
+                                style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                            {% else %}
+                            {{ user.username|first|upper }}
+                            {% endif %}
+                        </div>
+                        <span>{{ user.username }}</span>
+                        {% if user.received_messages.filter.is_read.count > 0 %}
+                        <span class="notification-badge">{{ user.received_messages.filter.is_read.count }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="{% url 'accounts:dashboard' %}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="{% url 'accounts:profile' username=user.username %}">
+                            <i class="fas fa-user"></i> My Profile
+                        </a>
+                        <a href="{% url 'accounts:my_groups' %}">
+                            <i class="fas fa-users"></i> My Groups
+                        </a>
+                        <a href="{% url 'accounts:my_challenges' %}">
+                            <i class="fas fa-trophy"></i> My Challenges
+                            {% if user_active_challenges_count > 0 %}
+                            <span class="message-count-badge">{{ user_active_challenges_count }}</span>
+                            {% endif %}
+                        </a>
+                        {% if user_pending_check_ins > 0 %}
+                        <a href="{% url 'accounts:my_challenges' %}" style="background: #fff3cd; color: #856404;">
+                            <i class="fas fa-check-circle"></i> {{ user_pending_check_ins }} Check-in{{
+                            user_pending_check_ins|pluralize }}
+                            Needed
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'accounts:messages' %}">
+                            <i class="fas fa-envelope"></i> Messages
+                            {% if user.received_messages.filter.is_read.count > 0 %}
+                            <span class="message-count-badge">{{ user.received_messages.filter.is_read.count }}</span>
+                            {% endif %}
+                        </a>
+                        <a href="{% url 'accounts:milestones' %}">
+                            <i class="fas fa-trophy"></i> Milestones
+                        </a>
+                        <hr>
+                        <a href="{% url 'accounts:edit_profile' %}">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
                 {% else %}
-                {{ user.username|first|upper }}
+                <a href="{% url 'accounts:login' %}" class="cta-button">Login / Sign Up</a>
                 {% endif %}
-            </div>
-            <div class="mobile-menu-user-info">
-                <h3>{{ user.username }}</h3>
-                <p>{{ user.email }}</p>
-            </div>
-        </div>
-        {% else %}
-        <div class="mobile-menu-user">
-            <div class="mobile-menu-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="mobile-menu-user-info">
-                <h3>Welcome</h3>
-                <p>Sign in to continue</p>
+
+                <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="Menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>            
             </div>
         </div>
-        {% endif %}
-    </div>
-    
-    <nav class="mobile-menu-nav">
-        <div class="mobile-menu-section">
-            <div class="mobile-menu-label">Main</div>
-            <a href="{% url 'core:index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
-                <i class="fas fa-home"></i>
-                Home
-            </a>
-            <a href="{% url 'blog:post_list' %}" class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
-                <i class="fas fa-newspaper"></i>
-                Blog
-            </a>
-            <a href="{% url 'resources:list' %}" class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
-                <i class="fas fa-book-open"></i>
-                Resources
-            </a>
-            <a href="{% url 'store:product_list' %}" class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
-                <i class="fas fa-shopping-cart"></i>
-                Store
-            </a>
-        </div>
-        
-        {% if user.is_authenticated %}
-        <div class="mobile-menu-section">
-            <div class="mobile-menu-label">Recovery Tools</div>
-            <a href="{% url 'journal:entry_list' %}" class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
-                <i class="fas fa-book"></i>
-                Journal
-            </a>
-            <a href="{% url 'accounts:milestones' %}" class="{% if request.resolver_match.url_name == 'milestones' %}active{% endif %}">
-                <i class="fas fa-trophy"></i>
-                Milestones
-            </a>
-            <a href="{% url 'accounts:challenges_home' %}" class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">
-                <i class="fas fa-flag-checkered"></i>
-                Challenges
-                {% if user_active_challenges_count > 0 %}
-                <span class="badge">{{ user_active_challenges_count }}</span>
-                {% endif %}
-            </a>
-        </div>
-        
-        <div class="mobile-menu-section">
-            <div class="mobile-menu-label">Community</div>
-            <a href="{% url 'accounts:community' %}" class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
-                <i class="fas fa-users"></i>
-                Members
-            </a>
-            <a href="{% url 'accounts:groups_list' %}" class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">
-                <i class="fas fa-user-friends"></i>
-                Groups
-            </a>
-            <a href="{% url 'accounts:messages' %}" class="{% if request.resolver_match.url_name == 'messages' %}active{% endif %}">
-                <i class="fas fa-envelope"></i>
-                Messages
-                {% if user.received_messages.filter.is_read.count > 0 %}
-                <span class="badge">{{ user.received_messages.filter.is_read.count }}</span>
-                {% endif %}
-            </a>
-        </div>
-        
-        <div class="mobile-menu-section">
-            <div class="mobile-menu-label">Account</div>
-            <a href="{% url 'accounts:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                <i class="fas fa-tachometer-alt"></i>
-                Dashboard
-            </a>
-            <a href="{% url 'accounts:profile' username=user.username %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
-                <i class="fas fa-user-circle"></i>
-                Profile
-            </a>
-            <a href="{% url 'accounts:edit_profile' %}" class="{% if request.resolver_match.url_name == 'edit_profile' %}active{% endif %}">
-                <i class="fas fa-cog"></i>
-                Settings
-            </a>
-        </div>
-        {% endif %}
     </nav>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileMenu()"></div>
     
-    <div class="mobile-menu-footer">
-        {% if user.is_authenticated %}
-        <form method="post" action="{% url 'accounts:logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="mobile-logout-btn">
-                <i class="fas fa-sign-out-alt"></i> Logout
+    <!-- Mobile Slide-Out Menu -->
+    <div class="mobile-slide-menu" id="mobileSlideMenu">
+        <div class="mobile-menu-header">
+            <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
             </button>
-        </form>
-        {% else %}
-        <a href="{% url 'accounts:login' %}" class="mobile-logout-btn" style="text-align: center; display: block; text-decoration: none;">
-            <i class="fas fa-sign-in-alt"></i> Login / Sign Up
-        </a>
-        {% endif %}
+    
+            {% if user.is_authenticated %}
+            <div class="mobile-menu-user">
+                <div class="mobile-menu-avatar">
+                    {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}"
+                        style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                    {{ user.username|first|upper }}
+                    {% endif %}
+                </div>
+                <div class="mobile-menu-user-info">
+                    <h3>{{ user.username }}</h3>
+                    <p>{{ user.email }}</p>
+                </div>
+            </div>
+            {% else %}
+            <div class="mobile-menu-user">
+                <div class="mobile-menu-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="mobile-menu-user-info">
+                    <h3>Welcome</h3>
+                    <p>Sign in to continue</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    
+        <nav class="mobile-menu-nav">
+            <div class="mobile-menu-section">
+                <div class="mobile-menu-label">Main</div>
+                <a href="{% url 'core:index' %}"
+                    class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                    <i class="fas fa-home"></i>
+                    Home
+                </a>
+                <a href="{% url 'blog:post_list' %}"
+                    class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-newspaper"></i>
+                    Blog
+                </a>
+                <a href="{% url 'resources:list' %}"
+                    class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-book-open"></i>
+                    Resources
+                </a>
+                <a href="{% url 'store:product_list' %}"
+                    class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-shopping-cart"></i>
+                    Store
+                </a>
+            </div>
+    
+            {% if user.is_authenticated %}
+            <div class="mobile-menu-section">
+                <div class="mobile-menu-label">Recovery Tools</div>
+                <a href="{% url 'journal:entry_list' %}"
+                    class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-book"></i>
+                    Journal
+                </a>
+                <a href="{% url 'accounts:milestones' %}"
+                    class="{% if request.resolver_match.url_name == 'milestones' %}active{% endif %}">
+                    <i class="fas fa-trophy"></i>
+                    Milestones
+                </a>
+                <a href="{% url 'accounts:challenges_home' %}"
+                    class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-flag-checkered"></i>
+                    Challenges
+                    {% if user_active_challenges_count > 0 %}
+                    <span class="badge">{{ user_active_challenges_count }}</span>
+                    {% endif %}
+                </a>
+            </div>
+    
+            <div class="mobile-menu-section">
+                <div class="mobile-menu-label">Community</div>
+                <a href="{% url 'accounts:community' %}"
+                    class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
+                    <i class="fas fa-users"></i>
+                    Members
+                </a>
+                <a href="{% url 'accounts:groups_list' %}"
+                    class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-user-friends"></i>
+                    Groups
+                </a>
+                <a href="{% url 'accounts:messages' %}"
+                    class="{% if request.resolver_match.url_name == 'messages' %}active{% endif %}">
+                    <i class="fas fa-envelope"></i>
+                    Messages
+                    {% if user.received_messages.filter.is_read.count > 0 %}
+                    <span class="badge">{{ user.received_messages.filter.is_read.count }}</span>
+                    {% endif %}
+                </a>
+            </div>
+    
+            <div class="mobile-menu-section">
+                <div class="mobile-menu-label">Account</div>
+                <a href="{% url 'accounts:dashboard' %}"
+                    class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+                <a href="{% url 'accounts:profile' username=user.username %}"
+                    class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                    <i class="fas fa-user-circle"></i>
+                    Profile
+                </a>
+                <a href="{% url 'accounts:edit_profile' %}"
+                    class="{% if request.resolver_match.url_name == 'edit_profile' %}active{% endif %}">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </div>
+            {% endif %}
+        </nav>
+    
+        <div class="mobile-menu-footer">
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="mobile-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+            {% else %}
+            <a href="{% url 'accounts:login' %}" class="mobile-logout-btn"
+                style="text-align: center; display: block; text-decoration: none;">
+                <i class="fas fa-sign-in-alt"></i> Login / Sign Up
+            </a>
+            {% endif %}
+        </div>
     </div>
-</div>
+    <!-- Mobile Bottom Navigation Bar -->
+    {% if user.is_authenticated %}
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <a href="{% url 'core:index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="{% url 'journal:entry_list' %}"
+            class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
+            <i class="fas fa-book"></i>
+            <span>Journal</span>
+        </a>
+        <a href="{% url 'resources:list' %}"
+            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+            <i class="fas fa-folder"></i>
+            <span>Resources</span>
+        </a>
+        <a href="{% url 'accounts:community' %}"
+            class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
+            <i class="fas fa-users"></i>
+            <span>Community</span>
+        </a>
+        <a href="{% url 'accounts:dashboard' %}"
+            class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <i class="fas fa-user"></i>
+            <span>Account</span>
+        </a>
+    </nav>
+    {% else %}
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <a href="{% url 'core:index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="{% url 'blog:post_list' %}"
+            class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
+            <i class="fas fa-newspaper"></i>
+            <span>Blog</span>
+        </a>
+        <a href="{% url 'resources:list' %}"
+            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+            <i class="fas fa-folder"></i>
+            <span>Resources</span>
+        </a>
+        <a href="{% url 'store:product_list' %}"
+            class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Store</span>
+        </a>
+        <a href="{% url 'accounts:login' %}">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Login</span>
+        </a>
+    </nav>
+    {% endif %}
 
-<!-- Updated JavaScript -->
-<script>
-function toggleMobileMenu() {
-    const menu = document.getElementById('mobileSlideMenu');
-    const overlay = document.getElementById('mobileNavOverlay');
-    const hamburger = document.getElementById('hamburgerBtn');
-    const body = document.body;
-    
-    menu.classList.toggle('active');
-    overlay.classList.toggle('active');
-    hamburger.classList.toggle('active');
-    body.classList.toggle('menu-open');
-}
+    <!-- Messages/Alerts -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
-function closeMobileMenu() {
-    const menu = document.getElementById('mobileSlideMenu');
-    const overlay = document.getElementById('mobileNavOverlay');
-    const hamburger = document.getElementById('hamburgerBtn');
-    const body = document.body;
-    
-    menu.classList.remove('active');
-    overlay.classList.remove('active');
-    hamburger.classList.remove('active');
-    body.classList.remove('menu-open');
-}
+    <!-- Main Content -->
+    <main id="main">
+        {% block content %}{% endblock %}
+    </main>
 
-// Close menu when clicking on a link
-document.querySelectorAll('.mobile-menu-nav a').forEach(link => {
-    link.addEventListener('click', () => {
-        closeMobileMenu();
-    });
-});
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About</h3>
+                <ul>
+                    <li><a href="{% url 'core:about' %}">Our Mission</a></li>
+                    <li><a href="{% url 'core:team' %}">Team</a></li>
+                    <li><a href="{% url 'core:contact' %}">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="{% url 'resources:list' %}">Recovery Tools</a></li>
+                    <li><a href="{% url 'blog:post_list' %}">Blog</a></li>
+                    <li><a href="#">Crisis Support</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Community</h3>
+                <ul>
+                    <li><a href="{% url 'accounts:community' %}">Members</a></li>
+                    <li><a href="{% url 'core:guidelines' %}">Guidelines</a></li>
+                    <li><a href="{% url 'core:success_stories' %}">Success Stories</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="{% url 'core:privacy' %}">Privacy Policy</a></li>
+                    <li><a href="{% url 'core:terms' %}">Terms of Service</a></li>
+                    <li><a href="{% url 'core:cookies' %}">Cookie Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 MyRecoveryPal. All rights reserved. | Recovery is possible.</p>
+        </div>
+    </footer>
 
-// Close menu on escape key
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        closeMobileMenu();
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        // Mobile detection
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+            document.body.classList.add('is-mobile');
+        }
+
+        // PWA Install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBanner = document.getElementById('installBanner');
+            if (installBanner) {
+                installBanner.classList.add('show');
+            }
+        });
+
+        const installBtn = document.getElementById('installBtn');
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                const installBanner = document.getElementById('installBanner');
+                installBanner.classList.remove('show');
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                }
+            });
+        }
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('{% static "service-worker.js" %}')
+                    .then(registration => console.log('ServiceWorker registered'))
+                    .catch(err => console.log('ServiceWorker registration failed: ', err));
+            });
+        }
+
+        // Offline detection
+        window.addEventListener('online', () => {
+            document.body.classList.remove('offline');
+        });
+
+        window.addEventListener('offline', () => {
+            document.body.classList.add('offline');
+        });
+
+        // Toggle user dropdown menu
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobileSlideMenu');
+        const overlay = document.getElementById('mobileNavOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        const body = document.body;
+
+        menu.classList.toggle('active');
+        overlay.classList.toggle('active');
+        hamburger.classList.toggle('active');
+        body.classList.toggle('menu-open');
     }
-});
 
-// Prevent scroll when menu is open
-let scrollPosition = 0;
+    function closeMobileMenu() {
+        const menu = document.getElementById('mobileSlideMenu');
+        const overlay = document.getElementById('mobileNavOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        const body = document.body;
 
-function disableScroll() {
-    scrollPosition = window.pageYOffset;
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollPosition}px`;
-    document.body.style.width = '100%';
-}
+        menu.classList.remove('active');
+        overlay.classList.remove('active');
+        hamburger.classList.remove('active');
+        body.classList.remove('menu-open');
+    }
 
-function enableScroll() {
-    document.body.style.removeProperty('overflow');
-    document.body.style.removeProperty('position');
-    document.body.style.removeProperty('top');
-    document.body.style.removeProperty('width');
-    window.scrollTo(0, scrollPosition);
-}
-</script>
+    // Close menu when clicking on a link
+    document.querySelectorAll('.mobile-menu-nav a').forEach(link => {
+        link.addEventListener('click', () => {
+            closeMobileMenu();
+        });
+    });
+
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeMobileMenu();
+        }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function (event) {
+        const userMenu = document.querySelector('.user-menu');
+        const userDropdown = document.getElementById('userDropdown');
+
+            if (userMenu && !userMenu.contains(event.target)) {
+                userDropdown.classList.remove('active');
+            }
+        });
+
+        // Add scroll effect to navigation
+        window.addEventListener('scroll', function () {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+            } else {
+                nav.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+            }
+        });
+
+        // Touch gesture support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        function handleGesture() {
+            if (touchEndX < touchStartX - 50) {
+                // Swiped left - could be used for navigation
+                console.log('Swiped left');
+            }
+            if (touchEndX > touchStartX + 50) {
+                // Swiped right - could be used for navigation
+                console.log('Swiped right');
+            }
+        }
+
+        // Add touch listeners to swipeable elements
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleGesture();
+        });
+    </script>
+
+    <!-- Additional Scripts -->
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>
