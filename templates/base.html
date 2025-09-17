@@ -665,19 +665,21 @@
             right: 0;
             background: white;
             border-top: 1px solid #e5e7eb;
-            padding: 8px 0;
+            padding: 4px 0;  /* Reduced from 8px */
             z-index: 1000;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            height: 56px;  /* Fixed height for consistency */
         }
 
         .mobile-bottom-nav a {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             text-decoration: none;
             color: #6b7280;
-            font-size: 0.75rem;
-            padding: 4px;
+            font-size: 0.65rem;  /* Reduced from 0.75rem */
+            padding: 2px;  /* Reduced from 4px */
             flex: 1;
         }
 
@@ -686,15 +688,15 @@
         }
 
         .mobile-bottom-nav i {
-            font-size: 1.25rem;
-            margin-bottom: 2px;
+            font-size: 1.1rem;  /* Reduced from 1.25rem */
+            margin-bottom: 1px;  /* Reduced from 2px */
         }
 
-        /* PWA Install Banner */
-        .install-prompt {
-            position: fixed;
-            bottom: 70px;
-            left: 1rem;
+/* PWA Install Banner */
+.install-prompt {
+    position: fixed;
+    bottom: 70px;
+    left: 1rem;
             right: 1rem;
             background: var(--primary-dark);
             color: white;
@@ -802,8 +804,13 @@
         @media (max-width: 768px) {
             body {
                 padding-top: 60px;
-                padding-bottom: 60px;
+                padding-bottom: 56px;
                 /* Account for bottom nav */
+            }
+            
+            main {
+                    min-height: calc(100vh - 116px); /* 60px top + 56px bottom */
+                }
             }
 
             /* Mobile navigation */
