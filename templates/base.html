@@ -915,7 +915,7 @@
             position: sticky; /* Add this */
             bottom: 0; /* Add this */
         }
-        
+
         .mobile-logout-btn {
             width: 100%;
             padding: 0.75rem;
@@ -1058,20 +1058,48 @@
                 padding: 0.5rem 0;
             }
 
+            /* Better mobile header alignment */
             .nav-container {
-                padding: 0.5rem 1rem;
+                padding: 0.5rem 0.75rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
 
             .nav-left {
-                gap: 1rem;
+                flex: 1;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .logo-text {
+                font-size: 1rem;
+                white-space: nowrap;
+            }
+
+            .nav-right {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                flex-shrink: 0;
+            }
+
+            /* Compact CTA button on mobile */
+            .cta-button {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+                white-space: nowrap;
+            }
+
+            /* Ensure hamburger stays visible */
+            .hamburger {
+                display: block !important;
+                flex-shrink: 0;
             }
 
             .logo-img {
                 height: 35px;
-            }
-
-            .logo-text {
-                font-size: 1.1rem;
             }
 
             /* Hide desktop navigation on mobile */
