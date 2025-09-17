@@ -774,8 +774,9 @@
             background: white;
             z-index: 999;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-y: auto;
             box-shadow: -2px 0 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column; /* Add this */
         }
 
         .mobile-slide-menu.active {
@@ -853,6 +854,9 @@
         /* Mobile Menu Navigation */
         .mobile-menu-nav {
             padding: 1rem 0;
+            max-height: calc(100vh - 200px); /* Account for header and footer */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         }
 
         .mobile-menu-section {
@@ -874,43 +878,27 @@
         }
 
         .mobile-menu-nav a {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.875rem 1.5rem;
+            display: block; /* Changed from flex to block for better single-column layout */
+            padding: 1rem 1.5rem;
             color: var(--text-dark);
             text-decoration: none;
             transition: background 0.2s ease;
             position: relative;
+            width: 100%;
+            text-align: left;
         }
 
-        .mobile-menu-nav a:active {
-            background: var(--bg-light);
-        }
-
-        .mobile-menu-nav a.active {
-            background: #f0f9ff;
-            color: var(--primary-dark);
-        }
-
-        .mobile-menu-nav a.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--accent-green);
-        }
-
-        .mobile-menu-nav i {
-            width: 20px;
+        .mobile-menu-nav a i {
+            display: inline-block;
+            width: 24px;
+            margin-right: 1rem;
             text-align: center;
             color: var(--primary-light);
+            vertical-align: middle;
         }
 
-        .mobile-menu-nav .badge {
-            margin-left: auto;
+        .mobile-menu-nav a .badge {
+            float: right; /* Changed from margin-left: auto */
             background: #ff4444;
             color: white;
             padding: 0.2rem 0.5rem;
@@ -923,8 +911,11 @@
             padding: 1rem 1.5rem;
             border-top: 1px solid #e5e7eb;
             margin-top: auto;
+            background: white; /* Add this */
+            position: sticky; /* Add this */
+            bottom: 0; /* Add this */
         }
-
+        
         .mobile-logout-btn {
             width: 100%;
             padding: 0.75rem;
