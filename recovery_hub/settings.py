@@ -23,6 +23,13 @@ ALLOWED_HOSTS = [
     '.up.railway.app',  # Railway subdomain
     'myrecoverypal.com',
     'www.myrecoverypal.com',
+    '.myrecoverypal.com',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.up.railway.app',
+    'https://myrecoverypal.com',
+    'https://www.myrecoverypal.com',
 ]
 
 # Add any additional hosts from environment
