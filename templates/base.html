@@ -798,87 +798,52 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
-        /* ========================================
-           MOBILE STYLES
-           ======================================== */
+/* ========================================
+    MOBILE STYLES
+    ======================================== */
         @media (max-width: 768px) {
+            /* Hide the entire top navigation on mobile */
+            nav:first-of-type {
+                display: none !important;
+            }
+            
+            /* Remove all top padding since nav is hidden */
             body {
-                padding-top: 70px;
-                padding-bottom: 56px;
-                /* Account for bottom nav */
+                padding-top: 0;
+                padding-bottom: 56px; /* Keep bottom padding for bottom nav */
             }
 
+            /* Adjust main content height */
             main {
-                    min-height: calc(100vh - 116px); /* 60px top + 56px bottom */
+                min-height: calc(100vh - 56px); /* Only account for bottom nav */
             }
 
-            /* Mobile navigation */
-            nav {
-                height: 70px;
-                padding: 0.5rem 0;
-            }
-
+            /* Remove any top margin from headers */
             .hero-section,
-            .page-header {
-                margin-top: 70px;
-            }
-
-            .nav-container {
-                padding: 0.5rem 1rem;
-            }
-
-            .nav-left {
-                gap: 1rem;
-            }
-
-            .logo-img {
-                height: 35px;
-            }
-
-            .logo-text {
-                font-size: 1.1rem;
-            }
-
-            /* Hide desktop navigation on mobile */
-            .nav-links {
-                display: none;
-                position: fixed;
-                top: 60px;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(255, 255, 255, 0.98);
-                backdrop-filter: blur(10px);
-                flex-direction: column;
-                padding: 2rem 1rem;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-                z-index: 999;
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .nav-links a {
-                padding: 12px 20px;
-                min-height: 48px;
-                width: 100%;
-                border-radius: 8px;
-            }
-
-            .nav-links a:hover {
-                background: var(--bg-light);
-            }
-
-            /* Show mobile menu button */
-            .mobile-menu {
-                display: flex;
-                padding: 12px;
-                min-height: 48px;
-                min-width: 48px;
-                align-items: center;
-                justify-content: center;
+            .page-header,
+            .dashboard-header,
+            .blog-header,
+            .resources-header,
+            .journal-header,
+            .community-header,
+            .profile-header,
+            .milestones-header,
+            .stats-header,
+            .entries-header,
+            .prompts-header,
+            .category-header,
+            .educational-resources-header,
+            .support-header,
+            .groups-header,
+            .group-detail-header,
+            .challenges-header,
+            .challenge-detail-header,
+            .pal-header,
+            .sponsor-header,
+            .my-groups-header,
+            .my-challenges-header {
+                margin-top: 0;
+                padding: 40px 1rem;
             }
 
             /* Show mobile bottom navigation */
