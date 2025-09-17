@@ -3,7 +3,19 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Enhanced Mobile Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#1e4d8b">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+
+    <!-- iOS Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/icon-180.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/icon-32.png' %}">
     <title>{% block title %}My Recovery Pal{% endblock %}</title>
 
     {% load static %}
@@ -65,6 +77,23 @@
             /* Account for fixed nav */
             background: var(--bg-light);
             color: var(--text-dark);
+        }
+
+        /* Skip to main content link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-dark);
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10001;
+            border-radius: 0 0 5px 0;
+        }
+
+        .skip-link:focus {
+            top: 0;
         }
 
         /* Default heading colors for regular content */
@@ -136,7 +165,7 @@
         .pal-header,
         .sponsor-header,
         .my-groups-header,
-        .my-challenges-header,        
+        .my-challenges-header,
         .hero-section {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
             background: var(--gradient-primary) !important;
@@ -428,7 +457,7 @@
             border-radius: 50%;
             opacity: 0.8;
         }
-        
+
         /* Navigation Links */
         .nav-links {
             display: flex;
@@ -628,6 +657,90 @@
             transition: all 0.3s ease;
         }
 
+        /* Mobile Bottom Navigation Bar */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 8px 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 0.75rem;
+            padding: 4px;
+            flex: 1;
+        }
+
+        .mobile-bottom-nav a.active {
+            color: var(--primary-dark);
+        }
+
+        .mobile-bottom-nav i {
+            font-size: 1.25rem;
+            margin-bottom: 2px;
+        }
+
+        /* PWA Install Banner */
+        .install-prompt {
+            position: fixed;
+            bottom: 70px;
+            left: 1rem;
+            right: 1rem;
+            background: var(--primary-dark);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            display: none;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .install-prompt.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Offline Banner */
+        .offline-banner {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: #fbbf24;
+            color: #92400e;
+            padding: 0.75rem;
+            text-align: center;
+            z-index: 998;
+            display: none;
+        }
+
+        body.offline .offline-banner {
+            display: block;
+        }
+
         /* ========================================
            MAIN CONTENT & FOOTER
            ======================================== */
@@ -682,6 +795,267 @@
             padding: 2rem 0 1rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ========================================
+           MOBILE STYLES
+           ======================================== */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+                padding-bottom: 60px;
+                /* Account for bottom nav */
+            }
+
+            /* Mobile navigation */
+            nav {
+                padding: 0.5rem 0;
+            }
+
+            .nav-container {
+                padding: 0.5rem 1rem;
+            }
+
+            .nav-left {
+                gap: 1rem;
+            }
+
+            .logo-img {
+                height: 35px;
+            }
+
+            .logo-text {
+                font-size: 1.1rem;
+            }
+
+            /* Hide desktop navigation on mobile */
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                padding: 2rem 1rem;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                z-index: 999;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 12px 20px;
+                min-height: 48px;
+                width: 100%;
+                border-radius: 8px;
+            }
+
+            .nav-links a:hover {
+                background: var(--bg-light);
+            }
+
+            /* Show mobile menu button */
+            .mobile-menu {
+                display: flex;
+                padding: 12px;
+                min-height: 48px;
+                min-width: 48px;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* Show mobile bottom navigation */
+            .mobile-bottom-nav {
+                display: flex;
+                justify-content: space-around;
+            }
+
+            /* Mobile headers */
+            .page-header,
+            .dashboard-header,
+            .blog-header,
+            .resources-header,
+            .journal-header,
+            .community-header,
+            .profile-header,
+            .milestones-header,
+            .stats-header,
+            .entries-header,
+            .prompts-header,
+            .category-header,
+            .educational-resources-header,
+            .support-header,
+            .groups-header,
+            .group-detail-header,
+            .challenges-header,
+            .challenge-detail-header,
+            .pal-header,
+            .sponsor-header,
+            .my-groups-header,
+            .my-challenges-header,
+            .hero-section {
+                padding: 80px 1rem 40px;
+            }
+
+            .page-header h1,
+            .dashboard-header h1,
+            .blog-header h1,
+            .resources-header h1,
+            .journal-header h1,
+            .community-header h1,
+            .profile-header h1,
+            .milestones-header h1,
+            .stats-header h1,
+            .entries-header h1,
+            .prompts-header h1,
+            .category-header h1,
+            .educational-resources-header h1,
+            .support-header h1,
+            .hero-section h1 {
+                font-size: 1.75rem;
+            }
+
+            .page-header p,
+            .dashboard-header p,
+            .blog-header p,
+            .resources-header p,
+            .journal-header p,
+            .community-header p,
+            .profile-header p,
+            .milestones-header p,
+            .stats-header p,
+            .entries-header p,
+            .prompts-header p,
+            .category-header p,
+            .educational-resources-header p,
+            .support-header p,
+            .hero-section p {
+                font-size: 1rem;
+            }
+
+            /* Remove complex animations on mobile for better performance */
+            .page-header::before,
+            .dashboard-header::before,
+            .blog-header::before,
+            .resources-header::before,
+            .journal-header::before,
+            .community-header::before,
+            .profile-header::before,
+            .milestones-header::before,
+            .stats-header::before,
+            .entries-header::before,
+            .prompts-header::before,
+            .category-header::before,
+            .educational-resources-header::before,
+            .support-header::before,
+            .hero-section::before {
+                display: none;
+            }
+
+            /* Touch-friendly form elements */
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            input[type="search"],
+            input[type="tel"],
+            input[type="number"],
+            input[type="date"],
+            textarea,
+            select {
+                font-size: 16px !important;
+                /* Prevents zoom on iOS */
+                min-height: 48px;
+                padding: 12px 16px;
+                border-radius: 8px;
+            }
+
+            /* Touch-friendly buttons */
+            button,
+            .btn,
+            input[type="submit"],
+            .cta-button {
+                min-height: 48px;
+                padding: 12px 24px;
+                font-size: 16px;
+                font-weight: 600;
+                touch-action: manipulation;
+            }
+
+            /* Mobile footer */
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                margin-bottom: 60px;
+                /* Account for bottom nav */
+            }
+
+            /* Mobile-specific main padding */
+            main {
+                min-height: calc(100vh - 120px);
+                /* Account for both navs */
+                padding-bottom: 20px;
+            }
+
+            /* User menu on mobile */
+            .user-menu-toggle {
+                padding: 0.5rem;
+            }
+
+            .user-menu-toggle span {
+                display: none;
+            }
+
+            .user-dropdown {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                bottom: 60px;
+                border-radius: 0;
+                max-width: 100%;
+                overflow-y: auto;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+
+            /* Remove hover effects on touch devices */
+            a:hover,
+            button:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+            /* Add active states for touch feedback */
+            a:active,
+            button:active {
+                opacity: 0.8;
+                transform: scale(0.98);
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+
+            .card,
+            .btn {
+                border: 2px solid currentColor;
+            }
         }
 
         /* ========================================
@@ -795,92 +1169,6 @@
         }
 
         /* ========================================
-           RESPONSIVE DESIGN
-           ======================================== */
-        @media (max-width: 768px) {
-            body {
-                padding-top: 60px;
-            }
-
-            .page-header,
-            .dashboard-header,
-            .blog-header,
-            .resources-header,
-            .journal-header,
-            .community-header,
-            .profile-header,
-            .milestones-header,
-            .stats-header,
-            .entries-header,
-            .prompts-header,
-            .category-header,
-            .educational-resources-header,
-            .support-header,
-            .groups-header,
-            .group-detail-header,
-            .challenges-header,
-            .challenge-detail-header,
-            .pal-header,
-            .sponsor-header,
-            .my-groups-header,
-            .my-challenges-header,
-            .hero-section {
-                padding: 80px 0 40px;
-            }
-
-            .page-header h1,
-            .dashboard-header h1,
-            .blog-header h1,
-            .resources-header h1,
-            .journal-header h1,
-            .community-header h1,
-            .profile-header h1,
-            .milestones-header h1,
-            .stats-header h1,
-            .entries-header h1,
-            .prompts-header h1,
-            .category-header h1,
-            .educational-resources-header h1,
-            .support-header h1,
-            .hero-section h1 {
-                font-size: 2rem;
-            }
-
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: white;
-                flex-direction: column;
-                padding: 1rem;
-                box-shadow: var(--shadow);
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .mobile-menu {
-                display: flex;
-            }
-
-            .footer-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .nav-left {
-                gap: 1rem;
-            }
-
-            .user-menu-toggle span {
-                display: none;
-            }
-        }
-
-        /* ========================================
            UTILITY CLASSES
            ======================================== */
 
@@ -962,6 +1250,25 @@
 </head>
 
 <body>
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main" class="skip-link">Skip to main content</a>
+
+    <!-- Offline Banner -->
+    <div class="offline-banner">
+        <i class="fas fa-wifi-slash"></i> You're currently offline. Some features may be limited.
+    </div>
+
+    <!-- PWA Install Prompt -->
+    <div class="install-prompt" id="installBanner">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong>Install MyRecoveryPal</strong>
+                <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">Add to your home screen for quick access</p>
+            </div>
+            <button id="installBtn" class="btn btn-light btn-sm" style="margin-left: 1rem;">Install</button>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
@@ -1033,7 +1340,8 @@
                         </a>
                         {% if user_pending_check_ins > 0 %}
                         <a href="{% url 'accounts:my_challenges' %}" style="background: #fff3cd; color: #856404;">
-                            <i class="fas fa-check-circle"></i> {{ user_pending_check_ins }} Check-in{{ user_pending_check_ins|pluralize }}
+                            <i class="fas fa-check-circle"></i> {{ user_pending_check_ins }} Check-in{{
+                            user_pending_check_ins|pluralize }}
                             Needed
                         </a>
                         {% endif %}
@@ -1071,6 +1379,62 @@
         </div>
     </nav>
 
+    <!-- Mobile Bottom Navigation Bar -->
+    {% if user.is_authenticated %}
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <a href="{% url 'core:index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="{% url 'journal:entry_list' %}"
+            class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
+            <i class="fas fa-book"></i>
+            <span>Journal</span>
+        </a>
+        <a href="{% url 'resources:list' %}"
+            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+            <i class="fas fa-folder"></i>
+            <span>Resources</span>
+        </a>
+        <a href="{% url 'accounts:community' %}"
+            class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
+            <i class="fas fa-users"></i>
+            <span>Community</span>
+        </a>
+        <a href="{% url 'accounts:dashboard' %}"
+            class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <i class="fas fa-user"></i>
+            <span>Account</span>
+        </a>
+    </nav>
+    {% else %}
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <a href="{% url 'core:index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="{% url 'blog:post_list' %}"
+            class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
+            <i class="fas fa-newspaper"></i>
+            <span>Blog</span>
+        </a>
+        <a href="{% url 'resources:list' %}"
+            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+            <i class="fas fa-folder"></i>
+            <span>Resources</span>
+        </a>
+        <a href="{% url 'store:product_list' %}"
+            class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Store</span>
+        </a>
+        <a href="{% url 'accounts:login' %}">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Login</span>
+        </a>
+    </nav>
+    {% endif %}
+
     <!-- Messages/Alerts -->
     {% if messages %}
     <div class="messages">
@@ -1084,7 +1448,7 @@
     {% endif %}
 
     <!-- Main Content -->
-    <main>
+    <main id="main">
         {% block content %}{% endblock %}
     </main>
 
@@ -1136,6 +1500,55 @@
     <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
 
     <script>
+        // Mobile detection
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+            document.body.classList.add('is-mobile');
+        }
+
+        // PWA Install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBanner = document.getElementById('installBanner');
+            if (installBanner) {
+                installBanner.classList.add('show');
+            }
+        });
+
+        const installBtn = document.getElementById('installBtn');
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                const installBanner = document.getElementById('installBanner');
+                installBanner.classList.remove('show');
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                }
+            });
+        }
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('{% static "service-worker.js" %}')
+                    .then(registration => console.log('ServiceWorker registered'))
+                    .catch(err => console.log('ServiceWorker registration failed: ', err));
+            });
+        }
+
+        // Offline detection
+        window.addEventListener('online', () => {
+            document.body.classList.remove('offline');
+        });
+
+        window.addEventListener('offline', () => {
+            document.body.classList.add('offline');
+        });
+
         // Toggle user dropdown menu
         function toggleUserMenu() {
             const dropdown = document.getElementById('userDropdown');
@@ -1179,6 +1592,31 @@
             } else {
                 nav.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
             }
+        });
+
+        // Touch gesture support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        function handleGesture() {
+            if (touchEndX < touchStartX - 50) {
+                // Swiped left - could be used for navigation
+                console.log('Swiped left');
+            }
+            if (touchEndX > touchStartX + 50) {
+                // Swiped right - could be used for navigation
+                console.log('Swiped right');
+            }
+        }
+
+        // Add touch listeners to swipeable elements
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleGesture();
         });
     </script>
 

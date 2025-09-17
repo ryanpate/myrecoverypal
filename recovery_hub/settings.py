@@ -68,6 +68,9 @@ INSTALLED_APPS = [
     'apps.store',
     'apps.newsletter',
     'apps.support_services',
+
+    # PWA Support (optional - install with: pip install django-pwa)
+    # 'pwa',
 ]
 
 # Add debug toolbar in development
@@ -107,16 +110,14 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Add PWA context processor if using django-pwa
+                # 'pwa.context_processors.pwa',
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'recovery_hub.wsgi.application'
-
-# Database
-
-# Database
 
 # Database
 
@@ -138,7 +139,7 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-    
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -186,6 +187,12 @@ if os.path.exists(BASE_DIR / 'static'):
 # WhiteNoise for serving static files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# WhiteNoise root files (for service worker, manifest.json, etc.)
+# This allows files to be served from the root URL path
+WHITENOISE_ROOT = BASE_DIR / 'root_files'
+WHITENOISE_KEEP_ONLY_HASHED_FILES = False
+WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['manifest', 'json', 'js']
+
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -197,7 +204,104 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-# Email configuration
+# ========================================
+# PWA (Progressive Web App) Settings
+# ========================================
+
+PWA_APP_NAME = 'MyRecoveryPal'
+PWA_APP_DESCRIPTION = "Your Journey to Recovery Starts Here"
+PWA_APP_THEME_COLOR = '#1e4d8b'
+PWA_APP_BACKGROUND_COLOR = '#f8f9fa'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'any'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICONS = [
+    {
+        'src': '/static/images/icon-192.png',
+        'sizes': '192x192',
+        'type': 'image/png',
+        'purpose': 'any maskable'
+    },
+    {
+        'src': '/static/images/icon-512.png',
+        'sizes': '512x512',
+        'type': 'image/png',
+        'purpose': 'any maskable'
+    }
+]
+PWA_APP_ICONS_APPLE = [
+    {
+        'src': '/static/images/icon-180.png',
+        'sizes': '180x180'
+    }
+]
+PWA_APP_SPLASH_SCREEN = [
+    {
+        'src': '/static/images/splash-640x1136.png',
+        'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
+    }
+]
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = 'en-US'
+PWA_APP_SHORTCUTS = [
+    {
+        "name": "Daily Journal",
+        "url": "/journal/",
+        "description": "Write in your recovery journal",
+        "icon": "/static/images/journal-icon.png"
+    },
+    {
+        "name": "Find Meetings",
+        "url": "/support/meetings/",
+        "description": "Find recovery meetings near you",
+        "icon": "/static/images/meeting-icon.png"
+    },
+    {
+        "name": "Crisis Help",
+        "url": "/support/crisis/",
+        "description": "Get immediate crisis support",
+        "icon": "/static/images/crisis-icon.png"
+    }
+]
+PWA_APP_SCREENSHOTS = [
+    {
+        'src': '/static/images/screenshot1.png',
+        'type': 'image/png',
+        'sizes': '540x720'
+    },
+    {
+        'src': '/static/images/screenshot2.png',
+        'type': 'image/png',
+        'sizes': '540x720'
+    }
+]
+PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static', 'service-worker.js')
+PWA_APP_DEBUG_MODE = DEBUG
+
+# ========================================
+# Mobile App Configuration
+# ========================================
+
+# Mobile-specific settings
+MOBILE_APP_IOS_APP_ID = 'com.myrecoverypal.app'
+MOBILE_APP_ANDROID_APP_ID = 'com.myrecoverypal.app'
+MOBILE_APP_APPLE_MOBILE_WEB_APP_CAPABLE = True
+MOBILE_APP_APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE = 'default'
+MOBILE_APP_APPLE_MOBILE_WEB_APP_TITLE = 'RecoveryPal'
+
+# Apple Smart App Banner (for promoting iOS app if you have one)
+# MOBILE_APP_IOS_APP_STORE_ID = 'your-app-store-id'
+
+# Android App Links
+# MOBILE_APP_ANDROID_PACKAGE = 'com.myrecoverypal.app'
+# MOBILE_APP_ANDROID_APP_NAME = 'MyRecoveryPal'
+
+# ========================================
+# Email Configuration
+# ========================================
+
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
@@ -209,6 +313,10 @@ else:
     EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
     DEFAULT_FROM_EMAIL = os.environ.get(
         'DEFAULT_FROM_EMAIL', 'noreply@myrecoverypal.com')
+
+# ========================================
+# CORS and CSRF Settings
+# ========================================
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
@@ -224,6 +332,10 @@ if DEBUG:
         'http://127.0.0.1:3000',
     ])
 
+# Allow CORS for PWA to work properly
+CORS_ALLOW_CREDENTIALS = True
+CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
+
 # CSRF settings
 CSRF_TRUSTED_ORIGINS = [
     'https://*.up.railway.app',
@@ -237,7 +349,10 @@ if extra_csrf:
     CSRF_TRUSTED_ORIGINS.extend([o.strip()
                                 for o in extra_csrf.split(',') if o.strip()])
 
-# Security settings for production
+# ========================================
+# Security Settings
+# ========================================
+
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = True
@@ -248,6 +363,26 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
+    # Additional security headers for mobile apps
+    SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+    SECURE_REFERRER_POLICY = 'same-origin'
+
+# Content Security Policy (CSP) for PWA
+# Only enable if you need strict CSP (may break some features)
+# CSP_DEFAULT_SRC = ("'self'",)
+# CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", 'cdn.jsdelivr.net', 'kit.fontawesome.com')
+# CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", 'cdn.jsdelivr.net', 'fonts.googleapis.com')
+# CSP_FONT_SRC = ("'self'", 'fonts.gstatic.com', 'kit.fontawesome.com')
+# CSP_IMG_SRC = ("'self'", 'data:', 'https:')
+# CSP_CONNECT_SRC = ("'self'",)
+# CSP_FRAME_ANCESTORS = ("'none'",)
+# CSP_BASE_URI = ("'self'",)
+# CSP_FORM_ACTION = ("'self'",)
+
+# ========================================
+# Cache Configuration
+# ========================================
 
 # Redis/Celery Configuration (if using Railway Redis)
 REDIS_URL = os.environ.get('REDIS_URL')
@@ -263,15 +398,31 @@ if REDIS_URL:
             }
         }
     }
+
+    # Add PWA cache configuration
+    CACHES['pwa_cache'] = {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_URL,
+        'KEY_PREFIX': 'pwa',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
 else:
     # Fallback to dummy cache if Redis not available
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        },
+        'pwa_cache': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'pwa-cache',
         }
     }
 
-# Celery settings
+# ========================================
+# Celery Settings
+# ========================================
 
 CELERY_BEAT_SCHEDULE = {
     'send-scheduled-newsletters': {
@@ -279,6 +430,10 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab(minute='*/15'),  # Check every 15 minutes
     },
 }
+
+# ========================================
+# API Keys and External Services
+# ========================================
 
 # API Keys from environment
 GOOGLE_API_KEY = os.environ.get(
@@ -288,13 +443,66 @@ MAPBOX_API_KEY = os.environ.get(
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
 
-# Logging configuration
+# Push Notification Services (optional)
+# FCM_SERVER_KEY = os.environ.get('FCM_SERVER_KEY', '')
+# APNS_CERTIFICATE = os.environ.get('APNS_CERTIFICATE', '')
+
+# ========================================
+# Django REST Framework Configuration
+# ========================================
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+
+    # Mobile app optimizations
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/hour',
+        'user': '1000/hour'
+    }
+}
+
+# ========================================
+# Logging Configuration
+# ========================================
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'django.log',
+            'formatter': 'verbose',
         },
     },
     'root': {
@@ -303,9 +511,18 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'] if os.path.exists(BASE_DIR / 'logs') else ['console'],
             'level': 'INFO',
+            'propagate': False,
+        },
+        'pwa': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
             'propagate': False,
         },
     },
 }
+
+# Create logs directory if it doesn't exist
+if not os.path.exists(BASE_DIR / 'logs'):
+    os.makedirs(BASE_DIR / 'logs', exist_ok=True)
