@@ -803,26 +803,28 @@
            ======================================== */
         @media (max-width: 768px) {
             body {
-                padding-top: 60px;  /* Space for the mobile nav bar */
-                padding-bottom: 56px; /* Space for bottom nav */
+                padding-top: 70px;
+                padding-bottom: 56px;
+                /* Account for bottom nav */
             }
 
-            /* Mobile navigation bar adjustments */
+            main {
+                    min-height: calc(100vh - 116px); /* 60px top + 56px bottom */
+            }
+
+            /* Mobile navigation */
             nav {
-                height: 60px;  /* Fixed height for consistency */
-                padding: 0;
+                padding: 0.5rem 0;
             }
 
             .nav-container {
                 padding: 0.5rem 1rem;
-                height: 100%;
             }
 
             .nav-left {
                 gap: 1rem;
             }
 
-            /* Keep logo visible */
             .logo-img {
                 height: 35px;
             }
@@ -831,16 +833,11 @@
                 font-size: 1.1rem;
             }
 
-            /* HIDE desktop navigation links completely on mobile */
+            /* Hide desktop navigation on mobile */
             .nav-links {
-                display: none !important;  /* This hides the desktop menu items */
-            }
-
-            /* When hamburger is clicked, show mobile menu overlay */
-            .nav-links.active {
-                display: flex !important;
+                display: none;
                 position: fixed;
-                top: 60px;  /* Below the nav bar */
+                top: 60px;
                 left: 0;
                 right: 0;
                 bottom: 0;
@@ -851,6 +848,10 @@
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
                 z-index: 999;
+            }
+
+            .nav-links.active {
+                display: flex;
             }
 
             .nav-links a {
@@ -864,7 +865,7 @@
                 background: var(--bg-light);
             }
 
-            /* Show hamburger menu button */
+            /* Show mobile menu button */
             .mobile-menu {
                 display: flex;
                 padding: 12px;
@@ -874,54 +875,12 @@
                 justify-content: center;
             }
 
-            /* Hide desktop user menu toggle text on mobile */
-            .user-menu-toggle span {
-                display: none;
-            }
-
-            .user-menu-toggle {
-                padding: 0.5rem;
-            }
-
             /* Show mobile bottom navigation */
             .mobile-bottom-nav {
                 display: flex;
                 justify-content: space-around;
             }
 
-            /* Adjust main content */
-            main {
-                min-height: calc(100vh - 116px); /* 60px top + 56px bottom */
-            }
-
-            /* Adjust headers to account for fixed nav */
-            .hero-section,
-            .page-header,
-            .dashboard-header,
-            .blog-header,
-            .resources-header,
-            .journal-header,
-            .community-header,
-            .profile-header,
-            .milestones-header,
-            .stats-header,
-            .entries-header,
-            .prompts-header,
-            .category-header,
-            .educational-resources-header,
-            .support-header,
-            .groups-header,
-            .group-detail-header,
-            .challenges-header,
-            .challenge-detail-header,
-            .pal-header,
-            .sponsor-header,
-            .my-groups-header,
-            .my-challenges-header {
-                padding: 40px 1rem;
-                margin-top: 0;
-            }
-            
             /* Mobile headers */
             .page-header,
             .dashboard-header,
