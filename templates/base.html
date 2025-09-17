@@ -966,23 +966,6 @@
             transform: rotate(-45deg) translate(6px, -6px);
         }
 
-        /* Update mobile styles */
-        @media (max-width: 768px) {
-            .hamburger {
-                display: block;
-            }
-            
-            /* Hide desktop nav links on mobile */
-            .nav-links {
-                display: none !important;
-            }
-            
-            /* Prevent body scroll when menu is open */
-            body.menu-open {
-                overflow: hidden;
-            }
-
-        }
         /* ========================================
            MAIN CONTENT & FOOTER
            ======================================== */
@@ -1058,6 +1041,10 @@
                 padding: 0.5rem 0;
             }
 
+            body.menu-open {
+                overflow: hidden;
+            }
+            
             /* Better mobile header alignment */
             .nav-container {
                 padding: 0.5rem 0.75rem;
@@ -1090,6 +1077,12 @@
                 padding: 0.5rem 0.75rem;
                 font-size: 0.85rem;
                 white-space: nowrap;
+            }
+
+            /* Show mobile bottom navigation only on mobile */
+            .mobile-bottom-nav {
+                display: flex !important;
+                justify-content: space-around;
             }
 
             /* Ensure hamburger stays visible */
