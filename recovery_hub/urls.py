@@ -1,4 +1,4 @@
-# recovery_hub/urls.py (or your main urls.py)
+# recovery_hub/urls.py
 
 from django.contrib import admin
 from django.urls import path, include
@@ -15,14 +15,35 @@ urlpatterns = [
     path('newsletter/', include('apps.newsletter.urls', namespace='newsletter')),
     path('store/', include('apps.store.urls', namespace='store')),
     path('support/', include('apps.support_services.urls')),
-    # Add other app URLs as needed
+
+    # Add allauth URLs if using django-allauth
+    path('accounts/', include('allauth.urls')),
 ]
+
+# Debug toolbar URLs (only in development)
+if settings.DEBUG:
+    try:
+        import debug_toolbar
+        urlpatterns = [
+            path('__debug__/', include(debug_toolbar.urls)),
+        ] + urlpatterns
+    except ImportError:
+        pass
 
 # Serve media files and static files in development
 if settings.DEBUG:
+    # Media files (user uploads)
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)
-    # Note: Django automatically serves static files in DEBUG mode from STATICFILES_DIRS
-    # But if you need to explicitly add it:
+
+    # Static files - simplified approach
+    # Django automatically serves from STATICFILES_DIRS in DEBUG mode,
+    # but we can be explicit for clarity
     urlpatterns += static(settings.STATIC_URL,
-                          document_root=settings.STATICFILES_DIRS[0] if settings.STATICFILES_DIRS else settings.STATIC_ROOT)
+                          document_root=settings.STATIC_ROOT)
+
+# Handler pages for errors (optional but recommended)
+handler404 = 'apps.core.views.custom_404'
+handler500 = 'apps.core.views.custom_500'
+handler403 = 'apps.core.views.custom_403'
+handler400 = 'apps.core.views.custom_400'
