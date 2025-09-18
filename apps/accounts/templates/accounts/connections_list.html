@@ -14,22 +14,6 @@
 {% block content %}
 <div class="container">
     <div class="connections-header">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'accounts:dashboard' %}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'accounts:profile' user.username %}">{{ user.username }}</a></li>
-                <li class="breadcrumb-item active">
-                    {% if is_following_page %}
-                        Following
-                    {% elif is_followers_page %}
-                        Followers
-                    {% else %}
-                        Connections
-                    {% endif %}
-                </li>
-            </ol>
-        </nav>
-
         <h2>
             {% if is_following_page %}
                 👥 People {{ user.username }} Follows

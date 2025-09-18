@@ -268,28 +268,6 @@ def comment_on_activity(request, activity_id):
 
     return JsonResponse({'success': False, 'error': 'Comment cannot be empty'})
 
-@login_required
-@require_POST
-def like_activity(request, activity_id):
-    """AJAX endpoint to like/unlike an activity"""
-    activity = get_object_or_404(ActivityFeed, id=activity_id)
-    
-    if request.user in activity.likes.all():
-        activity.likes.remove(request.user)
-        liked = False
-    else:
-        activity.likes.add(request.user)
-        liked = True
-    
-    return JsonResponse({
-        'liked': liked,
-        'likes_count': activity.likes_count
-    })
-
-# Add these view functions to your apps/accounts/views.py file:
-
-# Simple placeholder views (you can enhance these later)
-
 
 @login_required
 def suggested_users(request):
@@ -299,27 +277,53 @@ def suggested_users(request):
         request.user.get_following().values_list('id', flat=True))
     excluded_ids.append(request.user.id)
 
+    # Get users with mutual followers
+    mutual_suggestions = User.objects.filter(
+        follower_connections__follower__in=request.user.get_following(),
+        is_active=True
+    ).exclude(id__in=excluded_ids).annotate(
+        mutual_count=Count('follower_connections__follower')
+    ).order_by('-mutual_count')[:5]
+
     # Get users with similar recovery goals/interests
-    suggested_users = User.objects.filter(
+    similar_users = User.objects.filter(
         is_active=True,
-        is_profile_public=True
-    ).exclude(id__in=excluded_ids)[:10]
+        recovery_goals__isnull=False
+    ).exclude(id__in=excluded_ids).exclude(
+        id__in=mutual_suggestions.values_list('id', flat=True)
+    )[:5]
+
+    # Get new members
+    new_members = User.objects.filter(
+        is_active=True,
+        date_joined__gte=timezone.now() - timezone.timedelta(days=30)
+    ).exclude(id__in=excluded_ids).order_by('-date_joined')[:5]
 
     context = {
-        'suggested_users': suggested_users,
+        'mutual_suggestions': mutual_suggestions,
+        'similar_users': similar_users,
+        'new_members': new_members,
     }
     return render(request, 'accounts/suggested_users.html', context)
 
 
+# UPDATED FUNCTIONS WITH FIX FOR FOLLOWERS/FOLLOWING PAGES
 @login_required
 def followers_list(request, username):
     """List of user's followers"""
     user = get_object_or_404(User, username=username)
-    followers = user.get_followers()
+    followers = user.get_followers().select_related('profile')
+
+    paginator = Paginator(followers, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     context = {
         'user': user,
-        'followers': followers,
+        'followers': page_obj,
+        'page_obj': page_obj,  # Added for pagination in template
+        'is_followers_page': True,
+        'is_following_page': False,  # Explicitly set to False
     }
     return render(request, 'accounts/connections_list.html', context)
 
@@ -328,11 +332,18 @@ def followers_list(request, username):
 def following_list(request, username):
     """List of users this user is following"""
     user = get_object_or_404(User, username=username)
-    following = user.get_following()
+    following = user.get_following().select_related('profile')
+
+    paginator = Paginator(following, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     context = {
         'user': user,
-        'following': following,
+        'following': page_obj,
+        'page_obj': page_obj,  # Added for pagination in template
+        'is_following_page': True,
+        'is_followers_page': False,  # Explicitly set to False
     }
     return render(request, 'accounts/connections_list.html', context)
 
@@ -340,10 +351,26 @@ def following_list(request, username):
 @login_required
 def sponsor_dashboard(request):
     """Dashboard for sponsor relationships"""
+    # Current sponsorships (as sponsor)
+    sponsorships = request.user.sponsee_relationships.filter(
+        status__in=['pending', 'active']
+    ).select_related('sponsee__profile')
+
+    # Current sponsor (as sponsee)
+    sponsor_relationship = request.user.sponsor_relationships.filter(
+        status='active'
+    ).select_related('sponsor__profile').first()
+
+    # Sponsor requests received
+    sponsor_requests = request.user.sponsee_relationships.filter(
+        status='pending'
+    ).select_related('sponsee__profile')
+
     context = {
-        'sponsorships': [],
-        'sponsor_relationship': None,
-        'sponsor_requests': [],
+        'sponsorships': sponsorships,
+        'sponsor_relationship': sponsor_relationship,
+        'sponsor_requests': sponsor_requests,
+        'can_be_sponsor': request.user.is_sponsor,
     }
     return render(request, 'accounts/sponsor_dashboard.html', context)
 
@@ -351,9 +378,28 @@ def sponsor_dashboard(request):
 @login_required
 def pal_dashboard(request):
     """Dashboard for recovery pal relationships"""
+    # Current pal
+    current_pal = request.user.get_recovery_pal()
+
+    # Pending pal requests (sent and received)
+    sent_requests = RecoveryPal.objects.filter(
+        Q(user1=request.user) | Q(user2=request.user),
+        status='pending'
+    ).exclude(
+        # Exclude requests I initiated
+        Q(user1=request.user, user2__lt=request.user) |
+        Q(user2=request.user, user1__lt=request.user)
+    )
+
+    received_requests = RecoveryPal.objects.filter(
+        Q(user1=request.user) | Q(user2=request.user),
+        status='pending'
+    ).exclude(id__in=sent_requests.values_list('id', flat=True))
+
     context = {
-        'current_pal': None,
-        'sent_requests': [],
+        'current_pal': current_pal,
+        'sent_requests': sent_requests,
+        'received_requests': received_requests,
     }
     return render(request, 'accounts/pal_dashboard.html', context)
 
@@ -361,8 +407,38 @@ def pal_dashboard(request):
 @login_required
 def request_sponsor(request, username):
     """Request a user to be your sponsor"""
-    messages.info(request, 'Sponsor request feature coming soon!')
-    return redirect('accounts:profile', username=username)
+    sponsor = get_object_or_404(User, username=username, is_sponsor=True)
+
+    # Check if request already exists
+    existing = SponsorRelationship.objects.filter(
+        sponsor=sponsor,
+        sponsee=request.user
+    ).first()
+
+    if existing:
+        messages.warning(
+            request, 'You already have a relationship with this sponsor.')
+        return redirect('accounts:profile', username=username)
+
+    if request.method == 'POST':
+        form = SponsorRequestForm(request.POST)
+        if form.is_valid():
+            relationship = form.save(commit=False)
+            relationship.sponsor = sponsor
+            relationship.sponsee = request.user
+            relationship.save()
+
+            messages.success(
+                request, f'Sponsor request sent to {sponsor.get_full_name() or sponsor.username}!')
+            return redirect('accounts:sponsor_dashboard')
+    else:
+        form = SponsorRequestForm()
+
+    context = {
+        'form': form,
+        'sponsor': sponsor,
+    }
+    return render(request, 'accounts/request_sponsor.html', context)
 
 @login_required
 def request_pal(request, username):
@@ -455,7 +531,34 @@ def request_challenge_pal(request, challenge_id, user_id):
 @require_POST
 def respond_sponsor_request(request, relationship_id):
     """Accept or decline a sponsor request"""
-    messages.info(request, 'Sponsor response feature coming soon!')
+    relationship = get_object_or_404(
+        SponsorRelationship,
+        id=relationship_id,
+        sponsor=request.user,
+        status='pending'
+    )
+
+    action = request.POST.get('action')
+
+    if action == 'accept':
+        relationship.status = 'active'
+        relationship.save()
+        messages.success(
+            request, f'You are now sponsoring {relationship.sponsee.username}!')
+
+        # Create activity
+        ActivityFeed.objects.create(
+            user=request.user,
+            activity_type='sponsorship_started',
+            title=f"Started sponsoring {relationship.sponsee.get_full_name() or relationship.sponsee.username}",
+            description="A new mentorship journey has begun"
+        )
+
+    elif action == 'decline':
+        relationship.status = 'declined'
+        relationship.save()
+        messages.info(request, 'Sponsor request declined.')
+
     return redirect('accounts:sponsor_dashboard')
 
 
@@ -542,68 +645,6 @@ def join_group(request, group_id):
     """Join a recovery group"""
     messages.info(request, 'Group joining feature coming soon!')
     return JsonResponse({'success': True, 'message': 'Feature coming soon'})
-
-
-@login_required
-def daily_checkin_view(request):
-    """Handle daily check-in creation"""
-    today = timezone.now().date()
-    
-    # Check if user already checked in today
-    existing_checkin = DailyCheckIn.objects.filter(
-        user=request.user,
-        date=today
-    ).first()
-    
-    if existing_checkin:
-        messages.info(request, "You've already checked in today! Come back tomorrow.")
-        return redirect('accounts:dashboard')
-    
-    if request.method == 'POST':
-        # Create check-in from form data
-        checkin = DailyCheckIn.objects.create(
-            user=request.user,
-            date=today,
-            mood=int(request.POST.get('mood')),
-            craving_level=int(request.POST.get('craving_level', 0)),
-            energy_level=int(request.POST.get('energy_level', 3)),
-            gratitude=request.POST.get('gratitude', ''),
-            challenge=request.POST.get('challenge', ''),
-            goal=request.POST.get('goal', ''),
-            is_shared=bool(request.POST.get('is_shared'))
-        )
-        
-        messages.success(request, 'Daily check-in completed! 🌟')
-        return redirect('accounts:dashboard')
-    
-    return render(request, 'accounts/daily_checkin.html')
-
-
-@login_required
-@require_POST
-def comment_on_activity(request, activity_id):
-    """AJAX endpoint to comment on an activity"""
-    activity = get_object_or_404(ActivityFeed, id=activity_id)
-    content = request.POST.get('content', '').strip()
-    
-    if content:
-        comment = ActivityComment.objects.create(
-            activity=activity,
-            user=request.user,
-            content=content
-        )
-        
-        return JsonResponse({
-            'success': True,
-            'comment': {
-                'id': comment.id,
-                'content': comment.content,
-                'user': comment.user.get_full_name() or comment.user.username,
-                'created_at': comment.created_at.strftime('%b %d, %Y at %I:%M %p')
-            }
-        })
-    
-    return JsonResponse({'success': False, 'error': 'Comment cannot be empty'})
 
 
 class ProfileView(DetailView):
@@ -838,263 +879,6 @@ def follow_user(request, username):
     })
 
 
-@login_required
-def followers_list(request, username):
-    """List of user's followers"""
-    user = get_object_or_404(User, username=username)
-    followers = user.get_followers().select_related('profile')
-
-    paginator = Paginator(followers, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        'user': user,
-        'followers': page_obj,
-        'is_followers_page': True,
-    }
-    return render(request, 'accounts/connections_list.html', context)
-
-
-@login_required
-def following_list(request, username):
-    """List of users this user is following"""
-    user = get_object_or_404(User, username=username)
-    following = user.get_following().select_related('profile')
-
-    paginator = Paginator(following, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        'user': user,
-        'following': page_obj,
-        'is_following_page': True,
-    }
-    return render(request, 'accounts/connections_list.html', context)
-
-
-@login_required
-def suggested_users(request):
-    """Suggest users to follow based on mutual connections and interests"""
-    # Users not already followed
-    excluded_ids = list(
-        request.user.get_following().values_list('id', flat=True))
-    excluded_ids.append(request.user.id)
-
-    # Get users with mutual followers
-    mutual_suggestions = User.objects.filter(
-        follower_connections__follower__in=request.user.get_following(),
-        is_active=True
-    ).exclude(id__in=excluded_ids).annotate(
-        mutual_count=Count('follower_connections__follower')
-    ).order_by('-mutual_count')[:5]
-
-    # Get users with similar recovery goals/interests
-    similar_users = User.objects.filter(
-        is_active=True,
-        recovery_goals__isnull=False
-    ).exclude(id__in=excluded_ids).exclude(
-        id__in=mutual_suggestions.values_list('id', flat=True)
-    )[:5]
-
-    # Get new members
-    new_members = User.objects.filter(
-        is_active=True,
-        date_joined__gte=timezone.now() - timezone.timedelta(days=30)
-    ).exclude(id__in=excluded_ids).order_by('-date_joined')[:5]
-
-    context = {
-        'mutual_suggestions': mutual_suggestions,
-        'similar_users': similar_users,
-        'new_members': new_members,
-    }
-    return render(request, 'accounts/suggested_users.html', context)
-
-
-# =============================================================================
-# SPONSOR RELATIONSHIP VIEWS
-# =============================================================================
-
-@login_required
-def sponsor_dashboard(request):
-    """Dashboard for sponsor relationships"""
-    # Current sponsorships (as sponsor)
-    sponsorships = request.user.sponsee_relationships.filter(
-        status__in=['pending', 'active']
-    ).select_related('sponsee__profile')
-
-    # Current sponsor (as sponsee)
-    sponsor_relationship = request.user.sponsor_relationships.filter(
-        status='active'
-    ).select_related('sponsor__profile').first()
-
-    # Sponsor requests received
-    sponsor_requests = request.user.sponsee_relationships.filter(
-        status='pending'
-    ).select_related('sponsee__profile')
-
-    context = {
-        'sponsorships': sponsorships,
-        'sponsor_relationship': sponsor_relationship,
-        'sponsor_requests': sponsor_requests,
-        'can_be_sponsor': request.user.is_sponsor,
-    }
-    return render(request, 'accounts/sponsor_dashboard.html', context)
-
-
-@login_required
-def request_sponsor(request, username):
-    """Request a user to be your sponsor"""
-    sponsor = get_object_or_404(User, username=username, is_sponsor=True)
-
-    # Check if request already exists
-    existing = SponsorRelationship.objects.filter(
-        sponsor=sponsor,
-        sponsee=request.user
-    ).first()
-
-    if existing:
-        messages.warning(
-            request, 'You already have a relationship with this sponsor.')
-        return redirect('accounts:profile', username=username)
-
-    if request.method == 'POST':
-        form = SponsorRequestForm(request.POST)
-        if form.is_valid():
-            relationship = form.save(commit=False)
-            relationship.sponsor = sponsor
-            relationship.sponsee = request.user
-            relationship.save()
-
-            messages.success(
-                request, f'Sponsor request sent to {sponsor.get_full_name() or sponsor.username}!')
-            return redirect('accounts:sponsor_dashboard')
-    else:
-        form = SponsorRequestForm()
-
-    context = {
-        'form': form,
-        'sponsor': sponsor,
-    }
-    return render(request, 'accounts/request_sponsor.html', context)
-
-
-@login_required
-@require_POST
-def respond_sponsor_request(request, relationship_id):
-    """Accept or decline a sponsor request"""
-    relationship = get_object_or_404(
-        SponsorRelationship,
-        id=relationship_id,
-        sponsor=request.user,
-        status='pending'
-    )
-
-    action = request.POST.get('action')
-
-    if action == 'accept':
-        relationship.status = 'active'
-        relationship.save()
-        messages.success(
-            request, f'You are now sponsoring {relationship.sponsee.username}!')
-
-        # Create activity
-        ActivityFeed.objects.create(
-            user=request.user,
-            activity_type='sponsorship_started',
-            title=f"Started sponsoring {relationship.sponsee.get_full_name() or relationship.sponsee.username}",
-            description="A new mentorship journey has begun"
-        )
-
-    elif action == 'decline':
-        relationship.status = 'declined'
-        relationship.save()
-        messages.info(request, 'Sponsor request declined.')
-
-    return redirect('accounts:sponsor_dashboard')
-
-
-# =============================================================================
-# RECOVERY PAL VIEWS
-# =============================================================================
-
-@login_required
-def pal_dashboard(request):
-    """Dashboard for recovery pal relationships"""
-    # Current pal
-    current_pal = request.user.get_recovery_pal()
-
-    # Pending pal requests (sent and received)
-    sent_requests = RecoveryPal.objects.filter(
-        Q(user1=request.user) | Q(user2=request.user),
-        status='pending'
-    ).exclude(
-        # Exclude requests I initiated
-        Q(user1=request.user, user2__lt=request.user) |
-        Q(user2=request.user, user1__lt=request.user)
-    )
-
-    received_requests = RecoveryPal.objects.filter(
-        Q(user1=request.user) | Q(user2=request.user),
-        status='pending'
-    ).exclude(id__in=sent_requests.values_list('id', flat=True))
-
-    context = {
-        'current_pal': current_pal,
-        'sent_requests': sent_requests,
-        'received_requests': received_requests,
-    }
-    return render(request, 'accounts/pal_dashboard.html', context)
-
-
-@login_required
-def request_challenge_pal(request, challenge_id, user_id):
-    """Request accountability partner for a challenge"""
-    challenge = get_object_or_404(GroupChallenge, id=challenge_id)
-    target_user = get_object_or_404(User, id=user_id)
-
-    # Check if both users are participating
-    try:
-        user_participation = challenge.participants.get(
-            user=request.user, status='active')
-        target_participation = challenge.participants.get(
-            user=target_user, status='active')
-    except ChallengeParticipant.DoesNotExist:
-        messages.error(
-            request, "Both users must be participating in the challenge.")
-        return redirect('accounts:challenge_detail', challenge_id=challenge_id)
-
-    # Check if already partners or request exists
-    if user_participation.accountability_partner == target_participation:
-        messages.info(request, "You are already accountability partners!")
-        return redirect('accounts:challenge_detail', challenge_id=challenge_id)
-
-    if request.method == 'POST':
-        form = PalRequestForm(request.POST)
-        if form.is_valid():
-            # Send pal request (you could implement a notification system here)
-            # For now, just pair them up directly
-            user_participation.accountability_partner = target_participation
-            target_participation.accountability_partner = user_participation
-            user_participation.save()
-            target_participation.save()
-
-            messages.success(
-                request, f"You are now accountability partners with {target_user.get_full_name() or target_user.username}!")
-            return redirect('accounts:challenge_detail', challenge_id=challenge_id)
-    else:
-        form = PalRequestForm()
-
-    context = {
-        'form': form,
-        'challenge': challenge,
-        'target_user': target_user,
-    }
-
-    return render(request, 'accounts/challenges/request_pal.html', context)
-
-
 # =============================================================================
 # ENHANCED COMMUNITY VIEW WITH CONNECTIONS
 # =============================================================================
@@ -1169,75 +953,11 @@ class EnhancedCommunityView(ListView):
                 'followers_count': user.followers_count,
                 'following_count': user.following_count,
                 'suggested_users': suggested_users,
-            })
-
-        return context
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        if self.request.user.is_authenticated:
-            user = self.request.user
-            context.update({
-                'followers_count': user.followers_count,
-                'following_count': user.following_count,
                 'mutual_followers': user.get_mutual_followers()[:5],
-                'suggested_users': User.objects.filter(
-                    is_active=True
-                ).exclude(id=user.id).exclude(
-                    id__in=user.get_following()
-                )[:3],
             })
 
         return context
 
-
-@login_required
-@require_POST
-def follow_user(request, username):
-    """Follow or unfollow a user via AJAX"""
-    target_user = get_object_or_404(User, username=username)
-
-    if target_user == request.user:
-        return JsonResponse({'error': 'Cannot follow yourself'}, status=400)
-
-    # Check if already following
-    connection = UserConnection.objects.filter(
-        follower=request.user,
-        following=target_user,
-        connection_type='follow'
-    ).first()
-
-    if connection:
-        # Unfollow
-        connection.delete()
-        is_following = False
-        action = 'unfollowed'
-    else:
-        # Follow
-        request.user.follow_user(target_user)
-        is_following = True
-        action = 'followed'
-
-        # Create activity for following
-        ActivityFeed.objects.create(
-            user=request.user,
-            activity_type='user_followed',
-            title=f"Started following {target_user.get_full_name() or target_user.username}",
-            description=f"You are now following {target_user.username}'s recovery journey"
-        )
-
-    # Get updated counts
-    followers_count = target_user.followers_count
-    following_count = target_user.following_count
-
-    return JsonResponse({
-        'success': True,
-        'is_following': is_following,
-        'action': action,
-        'followers_count': followers_count,
-        'following_count': following_count
-    })
 
 class MessageListView(LoginRequiredMixin, ListView):
     model = SupportMessage
@@ -1681,55 +1401,6 @@ def give_encouragement(request, check_in_id):
         'encouraged': encouraged,
         'total_encouragements': check_in.encouragement_count
     })
-
-
-@login_required
-def request_challenge_pal(
-    request, challenge_id, user_id):
-    """Request accountability partner for a challenge"""
-
-    challenge = get_object_or_404(GroupChallenge, id=challenge_id)
-    target_user = get_object_or_404(User, id=user_id)
-
-    # Check if both users are participating
-    try:
-        user_participation = challenge.participants.get(
-            user=request.user, status='active')
-        target_participation = challenge.participants.get(
-            user=target_user, status='active')
-    except ChallengeParticipant.DoesNotExist:
-        messages.error(
-            request, "Both users must be participating in the challenge.")
-        return redirect('accounts:challenge_detail', challenge_id=challenge_id)
-
-    # Check if already partners or request exists
-    if user_participation.accountability_partner == target_participation:
-        messages.info(request, "You are already accountability partners!")
-        return redirect('accounts:challenge_detail', challenge_id=challenge_id)
-
-    if request.method == 'POST':
-        form = PalRequestForm(request.POST)
-        if form.is_valid():
-            # Send pal request (you could implement a notification system here)
-            # For now, just pair them up directly
-            user_participation.accountability_partner = target_participation
-            target_participation.accountability_partner = user_participation
-            user_participation.save()
-            target_participation.save()
-
-            messages.success(
-                request, f"You are now accountability partners with {target_user.get_full_name() or target_user.username}!")
-            return redirect('accounts:challenge_detail', challenge_id=challenge_id)
-    else:
-        form = PalRequestForm()
-
-    context = {
-        'form': form,
-        'challenge': challenge,
-        'target_user': target_user,
-    }
-
-    return render(request, 'accounts/challenges/request_pal.html', context)
 
 
 @login_required
