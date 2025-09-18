@@ -84,7 +84,12 @@
         }
 
         /* Headings */
-        h1, h2, h3, h4, h5, h6 {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
             color: var(--primary-dark);
             font-weight: 600;
@@ -230,7 +235,8 @@
             margin: 0 auto;
         }
 
-        /* Animated background for headers */
+        /* Animated background for headers - DISABLED FOR LESS DISTRACTION */
+        /*
         .page-header::before,
         .dashboard-header::before,
         .blog-header::before,
@@ -262,6 +268,7 @@
             0%, 100% { transform: translate(0, 0); }
             50% { transform: translate(-20px, -20px); }
         }
+        */
 
         /* Navigation */
         nav {
@@ -717,17 +724,19 @@
             background: #45a675;
         }
 
-        /* Mobile Bottom Navigation */
+        /* Mobile Bottom Navigation - FIXED POSITIONING */
         .mobile-bottom-nav {
             display: none;
             position: fixed !important;
             bottom: 0 !important;
+            top: auto !important;
             left: 0;
             right: 0;
             background: white;
             border-top: 1px solid #e5e7eb;
             padding: 4px 0;
-            z-index: 1000;
+            z-index: 900;
+            /* Lower than nav to prevent conflicts */
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
             height: 56px;
         }
@@ -778,6 +787,7 @@
                 transform: translateY(100%);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -971,6 +981,8 @@
 
             .logo-img {
                 height: 32px;
+                /* Remove any animation on mobile */
+                animation: none !important;
             }
 
             .logo-text {
@@ -1008,13 +1020,19 @@
                 display: none;
             }
 
-            /* Show bottom nav */
+            /* Show bottom nav - FIXED */
             .mobile-bottom-nav {
                 display: flex !important;
+                position: fixed !important;
+                bottom: 0 !important;
+                top: auto !important;
+                left: 0;
+                right: 0;
                 background: white;
                 border-top: 1px solid #e5e7eb;
                 height: 56px;
                 box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
+                z-index: 900;
             }
 
             .mobile-bottom-nav a {
@@ -1201,7 +1219,9 @@
 
         /* Touch-specific improvements */
         @media (hover: none) and (pointer: coarse) {
-            a, button {
+
+            a,
+            button {
                 min-height: 44px;
                 min-width: 44px;
             }
@@ -1273,16 +1293,28 @@
                 </a>
 
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="{% url 'core:index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Home</a></li>
-                    <li><a href="{% url 'blog:post_list' %}" class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">Blog</a></li>
-                    <li><a href="{% url 'resources:list' %}" class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">Resources</a></li>
+                    <li><a href="{% url 'core:index' %}"
+                            class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Home</a></li>
+                    <li><a href="{% url 'blog:post_list' %}"
+                            class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">Blog</a></li>
+                    <li><a href="{% url 'resources:list' %}"
+                            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">Resources</a>
+                    </li>
                     {% if user.is_authenticated %}
-                    <li><a href="{% url 'journal:entry_list' %}" class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">Journal</a></li>
-                    <li><a href="{% url 'accounts:groups_list' %}" class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">Groups</a></li>
-                    <li><a href="{% url 'accounts:challenges_home' %}" class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">Challenges</a></li>
-                    <li><a href="{% url 'accounts:community' %}" class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">Community</a></li>
+                    <li><a href="{% url 'journal:entry_list' %}"
+                            class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">Journal</a>
+                    </li>
+                    <li><a href="{% url 'accounts:groups_list' %}"
+                            class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">Groups</a></li>
+                    <li><a href="{% url 'accounts:challenges_home' %}"
+                            class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">Challenges</a>
+                    </li>
+                    <li><a href="{% url 'accounts:community' %}"
+                            class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">Community</a>
+                    </li>
                     {% endif %}
-                    <li><a href="{% url 'store:product_list' %}" class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">Store</a></li>
+                    <li><a href="{% url 'store:product_list' %}"
+                            class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">Store</a></li>
                 </ul>
             </div>
 
@@ -1292,7 +1324,8 @@
                     <div class="user-menu-toggle" onclick="toggleUserMenu()">
                         <div class="user-avatar">
                             {% if user.profile_picture %}
-                            <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                            <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}"
+                                style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                             {% else %}
                             {{ user.username|first|upper }}
                             {% endif %}
@@ -1304,7 +1337,8 @@
                     </div>
                     <div class="user-dropdown" id="userDropdown">
                         <a href="{% url 'accounts:dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                        <a href="{% url 'accounts:profile' username=user.username %}"><i class="fas fa-user"></i> My Profile</a>
+                        <a href="{% url 'accounts:profile' username=user.username %}"><i class="fas fa-user"></i> My
+                            Profile</a>
                         <a href="{% url 'accounts:my_groups' %}"><i class="fas fa-users"></i> My Groups</a>
                         <a href="{% url 'accounts:my_challenges' %}">
                             <i class="fas fa-trophy"></i> My Challenges
@@ -1314,7 +1348,8 @@
                         </a>
                         {% if user_pending_check_ins > 0 %}
                         <a href="{% url 'accounts:my_challenges' %}" style="background: #fff3cd; color: #856404;">
-                            <i class="fas fa-check-circle"></i> {{ user_pending_check_ins }} Check-in{{ user_pending_check_ins|pluralize }} Needed
+                            <i class="fas fa-check-circle"></i> {{ user_pending_check_ins }} Check-in{{
+                            user_pending_check_ins|pluralize }} Needed
                         </a>
                         {% endif %}
                         <a href="{% url 'accounts:messages' %}">
@@ -1363,7 +1398,8 @@
             <div class="mobile-menu-user">
                 <div class="mobile-menu-avatar">
                     {% if user.profile_picture %}
-                    <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}"
+                        style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                     {% else %}
                     {{ user.username|first|upper }}
                     {% endif %}
@@ -1389,16 +1425,20 @@
         <nav class="mobile-menu-nav">
             <div class="mobile-menu-section">
                 <div class="mobile-menu-label">Main</div>
-                <a href="{% url 'core:index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                <a href="{% url 'core:index' %}"
+                    class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
                     <i class="fas fa-home"></i> Home
                 </a>
-                <a href="{% url 'blog:post_list' %}" class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
+                <a href="{% url 'blog:post_list' %}"
+                    class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-newspaper"></i> Blog
                 </a>
-                <a href="{% url 'resources:list' %}" class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+                <a href="{% url 'resources:list' %}"
+                    class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-book-open"></i> Resources
                 </a>
-                <a href="{% url 'store:product_list' %}" class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
+                <a href="{% url 'store:product_list' %}"
+                    class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-shopping-cart"></i> Store
                 </a>
             </div>
@@ -1406,13 +1446,16 @@
             {% if user.is_authenticated %}
             <div class="mobile-menu-section">
                 <div class="mobile-menu-label">Recovery Tools</div>
-                <a href="{% url 'journal:entry_list' %}" class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
+                <a href="{% url 'journal:entry_list' %}"
+                    class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-book"></i> Journal
                 </a>
-                <a href="{% url 'accounts:milestones' %}" class="{% if request.resolver_match.url_name == 'milestones' %}active{% endif %}">
+                <a href="{% url 'accounts:milestones' %}"
+                    class="{% if request.resolver_match.url_name == 'milestones' %}active{% endif %}">
                     <i class="fas fa-trophy"></i> Milestones
                 </a>
-                <a href="{% url 'accounts:challenges_home' %}" class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'accounts:challenges_home' %}"
+                    class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-flag-checkered"></i> Challenges
                     {% if user_active_challenges_count > 0 %}
                     <span class="badge">{{ user_active_challenges_count }}</span>
@@ -1422,13 +1465,16 @@
 
             <div class="mobile-menu-section">
                 <div class="mobile-menu-label">Community</div>
-                <a href="{% url 'accounts:community' %}" class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
+                <a href="{% url 'accounts:community' %}"
+                    class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
                     <i class="fas fa-users"></i> Members
                 </a>
-                <a href="{% url 'accounts:groups_list' %}" class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'accounts:groups_list' %}"
+                    class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-user-friends"></i> Groups
                 </a>
-                <a href="{% url 'accounts:messages' %}" class="{% if request.resolver_match.url_name == 'messages' %}active{% endif %}">
+                <a href="{% url 'accounts:messages' %}"
+                    class="{% if request.resolver_match.url_name == 'messages' %}active{% endif %}">
                     <i class="fas fa-envelope"></i> Messages
                     {% if user.received_messages.filter.is_read.count > 0 %}
                     <span class="badge">{{ user.received_messages.filter.is_read.count }}</span>
@@ -1438,13 +1484,16 @@
 
             <div class="mobile-menu-section">
                 <div class="mobile-menu-label">Account</div>
-                <a href="{% url 'accounts:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <a href="{% url 'accounts:dashboard' %}"
+                    class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
-                <a href="{% url 'accounts:profile' username=user.username %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                <a href="{% url 'accounts:profile' username=user.username %}"
+                    class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
                     <i class="fas fa-user-circle"></i> Profile
                 </a>
-                <a href="{% url 'accounts:edit_profile' %}" class="{% if request.resolver_match.url_name == 'edit_profile' %}active{% endif %}">
+                <a href="{% url 'accounts:edit_profile' %}"
+                    class="{% if request.resolver_match.url_name == 'edit_profile' %}active{% endif %}">
                     <i class="fas fa-cog"></i> Settings
                 </a>
             </div>
@@ -1460,7 +1509,8 @@
                 </button>
             </form>
             {% else %}
-            <a href="{% url 'accounts:login' %}" class="mobile-logout-btn" style="text-align: center; display: block; text-decoration: none;">
+            <a href="{% url 'accounts:login' %}" class="mobile-logout-btn"
+                style="text-align: center; display: block; text-decoration: none;">
                 <i class="fas fa-sign-in-alt"></i> Login / Sign Up
             </a>
             {% endif %}
@@ -1474,19 +1524,23 @@
             <i class="fas fa-home"></i>
             <span>Home</span>
         </a>
-        <a href="{% url 'journal:entry_list' %}" class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
+        <a href="{% url 'journal:entry_list' %}"
+            class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
             <i class="fas fa-book"></i>
             <span>Journal</span>
         </a>
-        <a href="{% url 'resources:list' %}" class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+        <a href="{% url 'resources:list' %}"
+            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
             <i class="fas fa-folder"></i>
             <span>Resources</span>
         </a>
-        <a href="{% url 'accounts:community' %}" class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
+        <a href="{% url 'accounts:community' %}"
+            class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
             <i class="fas fa-users"></i>
             <span>Community</span>
         </a>
-        <a href="{% url 'accounts:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <a href="{% url 'accounts:dashboard' %}"
+            class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
             <i class="fas fa-user"></i>
             <span>Account</span>
         </a>
@@ -1497,15 +1551,18 @@
             <i class="fas fa-home"></i>
             <span>Home</span>
         </a>
-        <a href="{% url 'blog:post_list' %}" class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
+        <a href="{% url 'blog:post_list' %}"
+            class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
             <i class="fas fa-newspaper"></i>
             <span>Blog</span>
         </a>
-        <a href="{% url 'resources:list' %}" class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+        <a href="{% url 'resources:list' %}"
+            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
             <i class="fas fa-folder"></i>
             <span>Resources</span>
         </a>
-        <a href="{% url 'store:product_list' %}" class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
+        <a href="{% url 'store:product_list' %}"
+            class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
             <i class="fas fa-shopping-cart"></i>
             <span>Store</span>
         </a>
@@ -1699,4 +1756,5 @@
     <!-- Additional Scripts -->
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>
