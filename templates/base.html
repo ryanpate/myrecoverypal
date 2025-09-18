@@ -1565,8 +1565,8 @@
                 <div class="user-menu">
                     <div class="user-menu-toggle" onclick="toggleUserMenu()">
                         <div class="user-avatar">
-                            {% if user.profile_picture %}
-                            <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}"
+                            {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" alt="{{ user.username }}"
                                 style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                             {% else %}
                             {{ user.username|first|upper }}
