@@ -190,7 +190,7 @@ if os.path.exists(BASE_DIR / 'static'):
     STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # WhiteNoise for serving static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 
 # WhiteNoise root files (for service worker, manifest.json, etc.)
 # This allows files to be served from the root URL path
