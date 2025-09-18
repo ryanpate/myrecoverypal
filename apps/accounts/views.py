@@ -17,6 +17,8 @@ from .signals import create_profile_update_activity
 from django.core.paginator import Paginator
 from django.db import transaction
 from datetime import timedelta
+from django.conf import settings
+import cloudinary.uploader
 
 from .models import (
     GroupChallenge, ChallengeParticipant, ChallengeCheckIn,
@@ -679,85 +681,104 @@ class ProfileView(DetailView):
 
 @login_required
 def edit_profile_view(request):
-    """Optimized profile edit that avoids timeout issues"""
-
     if request.method == 'POST':
         user = request.user
         updated_fields = []
 
-        # Process text fields efficiently
-        text_fields = {
-            'first_name': request.POST.get('first_name', '').strip()[:30],
-            'last_name': request.POST.get('last_name', '').strip()[:30],
-            'email': request.POST.get('email', '').strip()[:254],
-            'bio': request.POST.get('bio', '').strip()[:500],
-            'location': request.POST.get('location', '').strip()[:100],
-            'recovery_goals': request.POST.get('recovery_goals', '').strip()[:1000],
-        }
+        # Handle avatar upload with Cloudinary
+        if 'avatar' in request.FILES:
+            avatar_file = request.FILES['avatar']
 
-        # Only update fields that have changed
-        for field, value in text_fields.items():
-            if hasattr(user, field) and getattr(user, field) != value:
-                setattr(user, field, value)
-                updated_fields.append(field)
+            # Validate file size (5MB limit)
+            if avatar_file.size > 5 * 1024 * 1024:
+                messages.error(
+                    request, 'Image file too large. Please use an image under 5MB.')
+                return redirect('accounts:edit_profile')
 
-        # Process boolean fields efficiently
-        boolean_fields = {
-            'is_profile_public': request.POST.get('is_profile_public') == 'on',
-            'show_sobriety_date': request.POST.get('show_sobriety_date') == 'on',
-            'allow_messages': request.POST.get('allow_messages') == 'on',
-            'email_notifications': request.POST.get('email_notifications') == 'on',
-            'newsletter_subscriber': request.POST.get('newsletter_subscriber') == 'on',
-            'is_sponsor': request.POST.get('is_sponsor') == 'on',
-        }
+            # Validate file type
+            allowed_types = ['image/jpeg', 'image/jpg',
+                             'image/png', 'image/gif', 'image/webp']
+            if avatar_file.content_type not in allowed_types:
+                messages.error(
+                    request, 'Invalid file type. Please use JPG, PNG, GIF, or WebP.')
+                return redirect('accounts:edit_profile')
 
-        for field, value in boolean_fields.items():
-            if hasattr(user, field) and getattr(user, field) != value:
-                setattr(user, field, value)
-                updated_fields.append(field)
-
-        # Process date field
-        sobriety_date_str = request.POST.get('sobriety_date', '').strip()
-        if sobriety_date_str:
             try:
-                from datetime import datetime
-                sobriety_date = datetime.strptime(
-                    sobriety_date_str, '%Y-%m-%d').date()
-                if user.sobriety_date != sobriety_date:
-                    user.sobriety_date = sobriety_date
-                    updated_fields.append('sobriety_date')
-            except (ValueError, TypeError):
-                pass  # Invalid date format, skip
+                # If using Cloudinary
+                if hasattr(settings, 'DEFAULT_FILE_STORAGE') and 'cloudinary' in settings.DEFAULT_FILE_STORAGE:
+                    # Delete old avatar from Cloudinary if exists
+                    if user.avatar:
+                        # Extract public_id from URL
+                        old_public_id = user.avatar.name.rsplit('.', 1)[0]
+                        try:
+                            cloudinary.uploader.destroy(old_public_id)
+                        except:
+                            pass  # Ignore errors when deleting old image
 
-        # Skip avatar processing for now - handle it separately if needed
-        # Avatar uploads can be the main cause of timeouts
+                    # Cloudinary handles optimization automatically
+                    user.avatar = avatar_file
+                    updated_fields.append('avatar')
+                else:
+                    # Local storage with PIL optimization (your existing code)
+                    from PIL import Image
+                    from io import BytesIO
+                    import sys
 
-        # Only save if there are actual changes
+                    img = Image.open(avatar_file)
+
+                    # Resize and optimize
+                    if img.mode in ('RGBA', 'LA', 'P'):
+                        background = Image.new(
+                            'RGB', img.size, (255, 255, 255))
+                        if img.mode == 'P':
+                            img = img.convert('RGBA')
+                        background.paste(img, mask=img.split()
+                                         [-1] if img.mode == 'RGBA' else None)
+                        img = background
+
+                    max_size = (800, 800)
+                    img.thumbnail(max_size, Image.Resampling.LANCZOS)
+
+                    output = BytesIO()
+                    img.save(output, format='JPEG', quality=85, optimize=True)
+                    output.seek(0)
+
+                    from django.core.files.uploadedfile import InMemoryUploadedFile
+                    avatar_file = InMemoryUploadedFile(
+                        output, 'ImageField',
+                        f"{user.username}_avatar.jpg",
+                        'image/jpeg',
+                        sys.getsizeof(output),
+                        None
+                    )
+
+                    # Delete old local file
+                    if user.avatar and os.path.exists(user.avatar.path):
+                        os.remove(user.avatar.path)
+
+                    user.avatar = avatar_file
+                    updated_fields.append('avatar')
+
+            except Exception as e:
+                messages.error(request, f'Error processing image: {str(e)}')
+                print(f"Avatar processing error: {e}")
+
+        # ... rest of your field processing code ...
+
+        # Save changes
         if updated_fields:
             try:
-                # Use update_fields to only update changed fields
                 user.save(update_fields=updated_fields)
                 messages.success(request, 'Profile updated successfully!')
             except Exception as e:
                 messages.error(
                     request, 'Failed to save profile. Please try again.')
                 print(f"Profile save error: {e}")
-        else:
-            messages.info(request, 'No changes detected.')
 
-        # Redirect immediately to prevent timeout
         return redirect('accounts:profile', username=user.username)
 
-    # GET request - display form
     else:
-        try:
-            form = UserProfileForm(instance=request.user)
-        except Exception as e:
-            # If form creation fails, create a basic form
-            print(f"Form creation error: {e}")
-            form = None
-            messages.warning(
-                request, 'Some profile fields may not be displayed correctly.')
+        form = UserProfileForm(instance=request.user)
 
     return render(request, 'accounts/edit_profile.html', {'form': form})
 class MilestoneListView(LoginRequiredMixin, ListView):

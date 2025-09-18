@@ -5,6 +5,9 @@ from celery.schedules import crontab
 import os
 from pathlib import Path
 import dj_database_url
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,7 +48,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',  # Add before django.contrib.staticfiles
     'django.contrib.staticfiles',
+    'cloudinary',  # Add after staticfiles
     'django.contrib.sites',
     'django.contrib.humanize',
 
@@ -195,7 +200,7 @@ WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['manifest', 'json', 'js']
 
 # Media files
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -204,6 +209,30 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
+    'SECURE': True,  # Use HTTPS
+}
+
+if os.environ.get('CLOUDINARY_CLOUD_NAME'):
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+    # Optional: Configure upload presets
+    CLOUDINARY_STORAGE.update({
+        'FOLDER': 'myrecoverypal/avatars',  # Organize uploads in folders
+        'OVERWRITE': True,  # Overwrite files with same name
+        'RESOURCE_TYPE': 'image',
+        'TRANSFORMATION': {
+            'quality': 'auto:good',
+            'fetch_format': 'auto',
+            'width': 800,
+            'height': 800,
+            'crop': 'limit',  # Don't upscale smaller images
+        },
+    })
+    
 # ========================================
 # PWA (Progressive Web App) Settings
 # ========================================
