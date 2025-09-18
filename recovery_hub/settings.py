@@ -215,10 +215,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 
 # WhiteNoise for serving static files - Fixed to avoid DRF issues
 # Changed from CompressedManifestStaticFilesStorage
-if DEBUG:
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-else:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 
 # WhiteNoise settings
 WHITENOISE_USE_FINDERS = True
