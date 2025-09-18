@@ -1,1 +1,1 @@
-web: gunicorn recovery_hub.wsgi:application --log-file -
+web: gunicorn recovery_hub.wsgi:application --timeout 120 --workers 2
