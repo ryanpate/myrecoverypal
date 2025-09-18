@@ -431,16 +431,16 @@
     {% if profile_user == request.user %}
     <div class="profile-actions">
         <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">
-            <i class="fas fa-edit"></i> Edit Profile
+            Edit Profile
         </a>
         <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary">
-            <i class="fas fa-tachometer-alt"></i> Dashboard
+            Dashboard
         </a>
     </div>
     {% elif request.user.is_authenticated and profile_user.allow_messages %}
     <div class="profile-actions">
         <a href="{% url 'accounts:send_message' profile_user.username %}" class="message-btn">
-            <i class="fas fa-envelope"></i> Send Message
+            Send Message
         </a>
     </div>
     {% endif %}

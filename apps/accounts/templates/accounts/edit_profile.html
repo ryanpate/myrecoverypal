@@ -202,7 +202,6 @@
         <div class="form-section">
             <h3>Privacy Settings</h3>
             <div class="privacy-note">
-                <i class="fas fa-shield-alt"></i>
                 Control what information other members can see on your profile.
             </div>
             {{ form.is_profile_public|as_crispy_field }}
@@ -220,7 +219,7 @@
 
         <div class="btn-group">
             <button type="submit" class="btn btn-primary btn-lg">
-                <i class="fas fa-save"></i> Save Changes
+                Save Changes
             </button>
             <a href="{% url 'accounts:profile' request.user.username %}" class="btn btn-secondary btn-lg">
                 Cancel
