@@ -43,7 +43,7 @@ if settings.DEBUG:
                           document_root=settings.STATIC_ROOT)
 
 # Handler pages for errors (optional but recommended)
-handler404 = 'apps.core.views.custom_404'
-handler500 = 'apps.core.views.custom_500'
-handler403 = 'apps.core.views.custom_403'
-handler400 = 'apps.core.views.custom_400'
+#handler404 = 'apps.core.views.custom_404'
+#handler500 = 'apps.core.views.custom_500'
+#handler403 = 'apps.core.views.custom_403'
+#handler400 = 'apps.core.views.custom_400'
