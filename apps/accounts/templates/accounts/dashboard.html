@@ -680,8 +680,8 @@
                 {% for suggested_user in suggested_users|slice:":2" %}
                 <div class="suggested-connection">
                     <div class="suggestion-avatar">
-                        {% if suggested_user.profile.avatar %}
-                            <img src="{{ suggested_user.profile.avatar.url }}" alt="{{ suggested_user.username }}">
+                        {% if suggested_user.avatar %}
+                            <img src="{{ suggested_user.avatar.url }}" alt="{{ suggested_user.username }}">
                         {% else %}
                             👤
                         {% endif %}
