@@ -413,8 +413,8 @@
         {% for suggested_user in suggested_users %}
         <div class="suggested-user">
             <div class="suggested-avatar">
-                {% if suggested_user.profile.avatar %}
-                <img src="{{ suggested_user.profile.avatar.url }}" alt="{{ suggested_user.username }}">
+                {% if suggested_user.avatar %}
+                <img src="{{ suggested_user.avatar.url }}" alt="{{ suggested_user.username }}">
                 {% else %}
                 👤
                 {% endif %}
@@ -478,8 +478,8 @@
             {% endif %}
 
             <div class="member-avatar">
-                {% if member.profile.avatar %}
-                <img src="{{ member.profile.avatar.url }}" alt="{{ member.username }}">
+                {% if member.avatar %}
+                <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
                 {% else %}
                 👤
                 {% endif %}
