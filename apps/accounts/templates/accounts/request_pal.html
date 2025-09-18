@@ -113,14 +113,8 @@
 
 {% block content %}
 <div class="page-header request-header">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1>Request Recovery Pal</h1>
-                <p class="lead">Ask {{ pal_user.get_full_name|default:pal_user.username }} to be your recovery pal</p>
-            </div>
-        </div>
-    </div>
+    <h1>Request Recovery Pal</h1>
+    <p class="lead">Ask {{ pal_user.get_full_name|default:pal_user.username }} to be your recovery pal</p>
 </div>
 
 <div class="container">
