@@ -119,11 +119,6 @@
                 <h1>Request Recovery Pal</h1>
                 <p class="lead">Ask {{ pal_user.get_full_name|default:pal_user.username }} to be your recovery pal</p>
             </div>
-            <div class="col-md-4 text-md-end">
-                <a href="{% url 'accounts:profile' pal_user.username %}" class="btn btn-light">
-                    View Profile
-                </a>
-            </div>
         </div>
     </div>
 </div>
