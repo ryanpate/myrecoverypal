@@ -199,12 +199,15 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # FIXED: Ensure STATICFILES_DIRS points to the correct location
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # Points to /root/static/
-]
+if os.path.exists(BASE_DIR / 'static'):
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static',
+    ]
+else:
+    STATICFILES_DIRS = []
 
 # File upload settings
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
@@ -212,14 +215,23 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 
 # WhiteNoise for serving static files - Fixed to avoid DRF issues
 # Changed from CompressedManifestStaticFilesStorage
-STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
+if DEBUG:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# WhiteNoise root files (for service worker, manifest.json, etc.)
-# This allows files to be served from the root URL path
-WHITENOISE_ROOT = BASE_DIR / 'root_files'
+# WhiteNoise settings
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = DEBUG
+
+# Only set WHITENOISE_ROOT if the directory exists
+if os.path.exists(BASE_DIR / 'root_files'):
+    WHITENOISE_ROOT = BASE_DIR / 'root_files'
+
+# Disable these for now to avoid issues
 WHITENOISE_KEEP_ONLY_HASHED_FILES = False
-WHITENOISE_SKIP_COMPRESS_EXTENSIONS = [
-    'manifest', 'json', 'js', 'eot', 'ttf', 'woff', 'woff2']
+WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp',
+                                       'zip', 'gz', 'tgz', 'bz2', 'tbz', 'xz', 'br', 'swf', 'flv', 'woff', 'woff2']
 
 # Media files
 MEDIA_URL = '/media/'

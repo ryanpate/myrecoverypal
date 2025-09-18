@@ -1,1 +1,1 @@
-web: gunicorn recovery_hub.wsgi:application --timeout 120 --workers 2
+web: gunicorn recovery_hub.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --access-logfile - --error-logfile -
