@@ -676,19 +676,67 @@ class ProfileView(DetailView):
         
         return context
 
+
 @login_required
 def edit_profile_view(request):
+    """Edit user profile with proper error handling and transaction management"""
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=request.user)
+        form = UserProfileForm(
+            request.POST, request.FILES, instance=request.user)
+
         if form.is_valid():
-            form.save()
-            # Create activity for profile update
-            create_profile_update_activity(request.user)
-            messages.success(request, 'Your profile has been updated!')
-            return redirect('accounts:profile', username=request.user.username)
+            try:
+                # Use database transaction to ensure data integrity
+                with transaction.atomic():
+                    # Save the user profile
+                    user = form.save(commit=False)
+
+                    # Handle file upload if present
+                    if 'avatar' in request.FILES:
+                        # Delete old avatar if it exists to save space
+                        if user.avatar:
+                            user.avatar.delete(save=False)
+                        user.avatar = request.FILES['avatar']
+
+                    # Save the user instance
+                    user.save()
+
+                    # Only create activity if the signal import exists and is working
+                    try:
+                        # Check if the user has the necessary fields for activity creation
+                        if hasattr(user, 'last_login') and user.last_login:
+                            # Create activity for profile update
+                            ActivityFeed.objects.create(
+                                user=user,
+                                activity_type='profile_updated',
+                                title=f"{user.get_full_name() or user.username} updated their profile",
+                                description="Check out their updated profile information",
+                                is_public=True,
+                                extra_data={
+                                    'update_date': timezone.now().isoformat()}
+                            )
+                    except Exception as activity_error:
+                        # Log the error but don't fail the entire save
+                        print(f"Activity creation failed: {activity_error}")
+                        # Continue without creating activity
+                        pass
+
+                messages.success(
+                    request, 'Your profile has been updated successfully!')
+                return redirect('accounts:profile', username=request.user.username)
+
+            except Exception as e:
+                # If any error occurs, show error message and stay on the form
+                messages.error(
+                    request, f'An error occurred while updating your profile. Please try again.')
+                print(f"Profile update error: {e}")  # Log for debugging
+        else:
+            # Form validation failed
+            messages.error(request, 'Please correct the errors below.')
     else:
+        # GET request - show the form
         form = UserProfileForm(instance=request.user)
-    
+
     return render(request, 'accounts/edit_profile.html', {'form': form})
 
 class MilestoneListView(LoginRequiredMixin, ListView):
