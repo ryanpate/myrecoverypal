@@ -17,7 +17,7 @@ django-allauth==0.61.1
 Pillow==10.2.0
 cloudinary==1.36.0
 django-cloudinary-storage==0.3.0
-django-storages==1.14.2  # Added this - required for cloud storage backends
+django-storages==1.14.2
 
 # Production server
 gunicorn==21.2.0
@@ -34,9 +34,10 @@ django-cors-headers==4.3.1
 # Additional Django utilities
 django-extensions==3.2.3
 
-# Celery for async tasks
+# Celery and Redis
 celery==5.3.4
 redis==5.0.1
+django-redis==5.4.0  # Added - Django cache backend for Redis
 
 # Django REST Framework for API
 djangorestframework==3.14.0
