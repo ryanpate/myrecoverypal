@@ -35,20 +35,31 @@
         :root {
             /* Updated colors from logo */
             --primary-dark: #1e4d8b;
+            /* Dark blue from logo */
             --primary-light: #4db8e8;
+            /* Light blue/cyan from logo */
             --accent-green: #52b788;
+            /* Green from checkmark */
+
+            /* Legacy color variables for compatibility */
             --primary-color: #1e4d8b;
             --secondary-color: #4db8e8;
             --accent-color: #52b788;
+
+            /* Text and background colors */
             --text-dark: #2c3e50;
             --text-light: #ffffff;
             --bg-light: #f8f9fa;
             --bg-lighter: #ffffff;
             --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             --shadow-hover: 0 5px 20px rgba(0, 0, 0, 0.15);
+
+            /* Gradient backgrounds for headers */
             --gradient-primary: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
             --gradient-secondary: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
             --gradient-accent: linear-gradient(135deg, #4db8e8 0%, #52b788 100%);
+
+            /* Border radius */
             --border-radius: 10px;
         }
 
@@ -62,6 +73,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             padding-top: 70px;
+            /* Account for fixed nav */
             background: var(--bg-light);
             color: var(--text-dark);
         }
@@ -83,7 +95,7 @@
             top: 0;
         }
 
-        /* Headings */
+        /* Default heading colors for regular content */
         h1,
         h2,
         h3,
@@ -107,7 +119,7 @@
             color: var(--primary-dark);
         }
 
-        /* Bootstrap Overrides */
+        /* Override Bootstrap primary colors */
         .btn-primary {
             background-color: var(--accent-green) !important;
             border-color: var(--accent-green) !important;
@@ -118,7 +130,19 @@
             border-color: #45a675 !important;
         }
 
-        /* Page Headers */
+        .bg-primary {
+            background-color: var(--primary-dark) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-dark) !important;
+        }
+
+        /* ========================================
+           UNIFIED PAGE HEADER STYLES
+           All page headers will have consistent styling
+           ======================================== */
+
         .page-header,
         .dashboard-header,
         .blog-header,
@@ -152,7 +176,7 @@
             margin-bottom: 2rem;
         }
 
-        /* Header text elements */
+        /* Ensure all text elements within page headers are white */
         .page-header h1,
         .page-header h2,
         .page-header h3,
@@ -161,37 +185,108 @@
         .page-header h6,
         .page-header p,
         .dashboard-header h1,
+        .dashboard-header h2,
+        .dashboard-header h3,
+        .dashboard-header h4,
+        .dashboard-header h5,
+        .dashboard-header h6,
         .dashboard-header p,
         .blog-header h1,
+        .blog-header h2,
+        .blog-header h3,
+        .blog-header h4,
+        .blog-header h5,
+        .blog-header h6,
         .blog-header p,
         .resources-header h1,
+        .resources-header h2,
+        .resources-header h3,
+        .resources-header h4,
+        .resources-header h5,
+        .resources-header h6,
         .resources-header p,
         .journal-header h1,
+        .journal-header h2,
+        .journal-header h3,
+        .journal-header h4,
+        .journal-header h5,
+        .journal-header h6,
         .journal-header p,
         .community-header h1,
+        .community-header h2,
+        .community-header h3,
+        .community-header h4,
+        .community-header h5,
+        .community-header h6,
         .community-header p,
         .profile-header h1,
+        .profile-header h2,
+        .profile-header h3,
+        .profile-header h4,
+        .profile-header h5,
+        .profile-header h6,
         .profile-header p,
         .milestones-header h1,
+        .milestones-header h2,
+        .milestones-header h3,
+        .milestones-header h4,
+        .milestones-header h5,
+        .milestones-header h6,
         .milestones-header p,
         .stats-header h1,
+        .stats-header h2,
+        .stats-header h3,
+        .stats-header h4,
+        .stats-header h5,
+        .stats-header h6,
         .stats-header p,
         .entries-header h1,
+        .entries-header h2,
+        .entries-header h3,
+        .entries-header h4,
+        .entries-header h5,
+        .entries-header h6,
         .entries-header p,
         .prompts-header h1,
+        .prompts-header h2,
+        .prompts-header h3,
+        .prompts-header h4,
+        .prompts-header h5,
+        .prompts-header h6,
         .prompts-header p,
         .category-header h1,
+        .category-header h2,
+        .category-header h3,
+        .category-header h4,
+        .category-header h5,
+        .category-header h6,
         .category-header p,
         .educational-resources-header h1,
+        .educational-resources-header h2,
+        .educational-resources-header h3,
+        .educational-resources-header h4,
+        .educational-resources-header h5,
+        .educational-resources-header h6,
         .educational-resources-header p,
         .support-header h1,
+        .support-header h2,
+        .support-header h3,
+        .support-header h4,
+        .support-header h5,
+        .support-header h6,
         .support-header p,
         .hero-section h1,
+        .hero-section h2,
+        .hero-section h3,
+        .hero-section h4,
+        .hero-section h5,
+        .hero-section h6,
         .hero-section p {
             color: white !important;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
+        /* Header h1 specific styles */
         .page-header h1,
         .dashboard-header h1,
         .blog-header h1,
@@ -214,6 +309,7 @@
             z-index: 1;
         }
 
+        /* Header paragraph specific styles */
         .page-header p,
         .dashboard-header p,
         .blog-header p,
@@ -235,8 +331,7 @@
             margin: 0 auto;
         }
 
-        /* Animated background for headers - DISABLED FOR LESS DISTRACTION */
-        /*
+        /* Animated background for all headers */
         .page-header::before,
         .dashboard-header::before,
         .blog-header::before,
@@ -265,12 +360,20 @@
         }
 
         @keyframes float-bg {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-20px, -20px); }
-        }
-        */
 
-        /* Navigation */
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(-20px, -20px);
+            }
+        }
+
+        /* ========================================
+           NAVIGATION STYLES
+           ======================================== */
         nav {
             position: fixed;
             top: 0;
@@ -297,13 +400,7 @@
             gap: 3rem;
         }
 
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* Logo */
+        /* Logo Styles */
         .logo-container {
             display: flex;
             align-items: center;
@@ -325,6 +422,39 @@
 
         .logo-container:hover .logo-text {
             color: var(--primary-light);
+        }
+
+        /* Challenge notification styles */
+        .challenge-notification {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        .pending-checkin-alert {
+            background: #fff3cd !important;
+            color: #856404 !important;
+            border-left: 4px solid #ffc107;
+        }
+
+        /* Challenge menu item highlight */
+        .nav-links a[href*="challenges"] {
+            position: relative;
+        }
+
+        .nav-links a[href*="challenges"]::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 8px;
+            height: 8px;
+            background: #52b788;
+            border-radius: 50%;
+            opacity: 0.8;
         }
 
         /* Navigation Links */
@@ -356,12 +486,23 @@
             transition: width 0.3s ease;
         }
 
-        .nav-links a:hover::after,
+        .nav-links a:hover {
+            color: var(--primary-dark);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: var(--primary-dark);
+        }
+
         .nav-links a.active::after {
             width: 100%;
         }
 
-        /* User Menu */
+        /* User Menu Styles */
         .user-menu {
             position: relative;
         }
@@ -433,6 +574,7 @@
             border-top: 1px solid #e0e0e0;
         }
 
+        /* Logout button styled as link */
         .logout-form {
             margin: 0;
             padding: 0;
@@ -458,7 +600,7 @@
             color: var(--primary-dark);
         }
 
-        /* Badges */
+        /* Message notification badge */
         .notification-badge {
             background: #ff4444;
             color: white;
@@ -499,40 +641,110 @@
             color: white;
         }
 
-        /* Hamburger Menu Button */
-        .hamburger {
+        /* Mobile Menu */
+        .mobile-menu {
             display: none;
-            width: 48px;
-            height: 48px;
-            padding: 12px;
+            flex-direction: column;
+            gap: 4px;
             cursor: pointer;
-            background: transparent;
-            border: none;
-            position: relative;
         }
 
-        .hamburger-line {
-            display: block;
-            width: 24px;
-            height: 2px;
+        .mobile-menu span {
+            width: 25px;
+            height: 3px;
             background: var(--primary-dark);
-            margin: 5px 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
         }
 
-        .hamburger.active .hamburger-line:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
+        /* Mobile Bottom Navigation Bar */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 4px 0;  /* Reduced from 8px */
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            height: 56px;  /* Fixed height for consistency */
         }
 
-        .hamburger.active .hamburger-line:nth-child(2) {
-            opacity: 0;
-            transform: translateX(-10px);
+        .mobile-bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 0.65rem;  /* Reduced from 0.75rem */
+            padding: 2px;  /* Reduced from 4px */
+            flex: 1;
         }
 
-        .hamburger.active .hamburger-line:nth-child(3) {
-            transform: rotate(-45deg) translate(6px, -6px);
+        .mobile-bottom-nav a.active {
+            color: var(--primary-dark);
         }
 
+        .mobile-bottom-nav i {
+            font-size: 1.1rem;  /* Reduced from 1.25rem */
+            margin-bottom: 1px;  /* Reduced from 2px */
+        }
+
+/* PWA Install Banner */
+.install-prompt {
+    position: fixed;
+    bottom: 70px;
+    left: 1rem;
+            right: 1rem;
+            background: var(--primary-dark);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            display: none;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .install-prompt.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Offline Banner */
+        .offline-banner {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: #fbbf24;
+            color: #92400e;
+            padding: 0.75rem;
+            text-align: center;
+            z-index: 998;
+            display: none;
+        }
+
+        body.offline .offline-banner {
+            display: block;
+        }
+        /* ========================================
+        MOBILE SLIDE-OUT NAVIGATION
+        ======================================== */
+        
         /* Mobile Navigation Overlay */
         .mobile-nav-overlay {
             display: none;
@@ -552,7 +764,7 @@
             opacity: 1;
         }
 
-        /* Mobile Slide-Out Menu - FIXED */
+        /* Mobile Slide-Out Menu */
         .mobile-slide-menu {
             position: fixed;
             top: 0;
@@ -564,21 +776,19 @@
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: -2px 0 20px rgba(0, 0, 0, 0.1);
             display: flex;
-            flex-direction: column;
-            overflow-y: auto;
+            flex-direction: column; /* Add this */
         }
 
         .mobile-slide-menu.active {
             transform: translateX(-280px);
         }
 
-        /* Mobile Menu Header - FIXED */
+        /* Mobile Menu Header */
         .mobile-menu-header {
             background: var(--gradient-primary);
             padding: 1.5rem;
             color: white;
             position: relative;
-            flex-shrink: 0;
         }
 
         .mobile-menu-close {
@@ -641,21 +851,17 @@
             color: white;
         }
 
-        /* Mobile Menu Navigation - FIXED */
+        /* Mobile Menu Navigation */
         .mobile-menu-nav {
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
             padding: 1rem 0;
+            max-height: calc(100vh - 200px); /* Account for header and footer */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         }
 
         .mobile-menu-section {
             padding: 0.5rem 0;
             border-bottom: 1px solid #e5e7eb;
-        }
-
-        .mobile-menu-section:first-child {
-            padding-top: 0;
         }
 
         .mobile-menu-section:last-child {
@@ -672,7 +878,7 @@
         }
 
         .mobile-menu-nav a {
-            display: block;
+            display: block; /* Changed from flex to block for better single-column layout */
             padding: 1rem 1.5rem;
             color: var(--text-dark);
             text-decoration: none;
@@ -692,7 +898,7 @@
         }
 
         .mobile-menu-nav a .badge {
-            float: right;
+            float: right; /* Changed from margin-left: auto */
             background: #ff4444;
             color: white;
             padding: 0.2rem 0.5rem;
@@ -700,12 +906,14 @@
             font-size: 0.75rem;
         }
 
-        /* Mobile Menu Footer - FIXED */
+        /* Mobile Menu Footer */
         .mobile-menu-footer {
             padding: 1rem 1.5rem;
             border-top: 1px solid #e5e7eb;
-            background: white;
-            flex-shrink: 0;
+            margin-top: auto;
+            background: white; /* Add this */
+            position: sticky; /* Add this */
+            bottom: 0; /* Add this */
         }
 
         .mobile-logout-btn {
@@ -724,95 +932,44 @@
             background: #45a675;
         }
 
-        /* Mobile Bottom Navigation - FIXED POSITIONING */
-        .mobile-bottom-nav {
+        /* Hamburger Menu Animation */
+        .hamburger {
             display: none;
-            position: fixed !important;
-            bottom: 0 !important;
-            top: auto !important;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid #e5e7eb;
-            padding: 4px 0;
-            z-index: 900;
-            /* Lower than nav to prevent conflicts */
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-            height: 56px;
+            width: 48px;
+            height: 48px;
+            padding: 12px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            position: relative;
         }
 
-        .mobile-bottom-nav a {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            color: #6b7280;
-            font-size: 0.65rem;
-            padding: 2px;
-            flex: 1;
-        }
-
-        .mobile-bottom-nav a.active {
-            color: var(--primary-dark);
-        }
-
-        .mobile-bottom-nav i {
-            font-size: 1.1rem;
-            margin-bottom: 1px;
-        }
-
-        /* PWA Install Banner */
-        .install-prompt {
-            position: fixed;
-            bottom: 70px;
-            left: 1rem;
-            right: 1rem;
+        .hamburger-line {
+            display: block;
+            width: 24px;
+            height: 2px;
             background: var(--primary-dark);
-            color: white;
-            padding: 1rem;
-            border-radius: 12px;
-            display: none;
-            z-index: 999;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            margin: 5px 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .install-prompt.show {
-            display: block;
-            animation: slideUp 0.3s ease;
+        .hamburger.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
         }
 
-        @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        .hamburger.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-10px);
         }
 
-        /* Offline Banner */
-        .offline-banner {
-            position: fixed;
-            top: 60px;
-            left: 0;
-            right: 0;
-            background: #fbbf24;
-            color: #92400e;
-            padding: 0.75rem;
-            text-align: center;
-            z-index: 998;
-            display: none;
+        .hamburger.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
         }
 
-        body.offline .offline-banner {
-            display: block;
-        }
+        /* ========================================
+           MAIN CONTENT & FOOTER
+           ======================================== */
 
-        /* Main Content */
         main {
             min-height: calc(100vh - 70px);
         }
@@ -865,7 +1022,306 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
-        /* Messages/Alerts */
+        /* ========================================
+           MOBILE STYLES
+           ======================================== */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+                padding-bottom: 56px;
+                /* Account for bottom nav */
+            }
+
+            main {
+                    min-height: calc(100vh - 116px); /* 60px top + 56px bottom */
+            }
+
+            /* Mobile navigation */
+            nav {
+                padding: 0.5rem 0;
+            }
+
+            body.menu-open {
+                overflow: hidden;
+            }
+            
+            /* Better mobile header alignment */
+            .nav-container {
+                padding: 0.5rem 0.75rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .nav-left {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .logo-text {
+                font-size: 1rem;
+                white-space: nowrap;
+            }
+
+            .nav-right {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                flex-shrink: 0;
+            }
+
+            /* Compact CTA button on mobile */
+            .cta-button {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+                white-space: nowrap;
+            }
+
+            /* Show mobile bottom navigation only on mobile */
+            .mobile-bottom-nav {
+                display: flex !important;
+                justify-content: space-around;
+            }
+
+            /* Ensure hamburger stays visible */
+            .hamburger {
+                display: block !important;
+                flex-shrink: 0;
+            }
+
+            .logo-img {
+                height: 35px;
+            }
+
+            /* Hide desktop navigation on mobile */
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                padding: 2rem 1rem;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                z-index: 999;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 12px 20px;
+                min-height: 48px;
+                width: 100%;
+                border-radius: 8px;
+            }
+
+            .nav-links a:hover {
+                background: var(--bg-light);
+            }
+
+            /* Show mobile menu button */
+            .mobile-menu {
+                display: flex;
+                padding: 12px;
+                min-height: 48px;
+                min-width: 48px;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* Mobile headers */
+            .page-header,
+            .dashboard-header,
+            .blog-header,
+            .resources-header,
+            .journal-header,
+            .community-header,
+            .profile-header,
+            .milestones-header,
+            .stats-header,
+            .entries-header,
+            .prompts-header,
+            .category-header,
+            .educational-resources-header,
+            .support-header,
+            .groups-header,
+            .group-detail-header,
+            .challenges-header,
+            .challenge-detail-header,
+            .pal-header,
+            .sponsor-header,
+            .my-groups-header,
+            .my-challenges-header,
+            .hero-section {
+                padding: 80px 1rem 40px;
+            }
+
+            .page-header h1,
+            .dashboard-header h1,
+            .blog-header h1,
+            .resources-header h1,
+            .journal-header h1,
+            .community-header h1,
+            .profile-header h1,
+            .milestones-header h1,
+            .stats-header h1,
+            .entries-header h1,
+            .prompts-header h1,
+            .category-header h1,
+            .educational-resources-header h1,
+            .support-header h1,
+            .hero-section h1 {
+                font-size: 1.75rem;
+            }
+
+            .page-header p,
+            .dashboard-header p,
+            .blog-header p,
+            .resources-header p,
+            .journal-header p,
+            .community-header p,
+            .profile-header p,
+            .milestones-header p,
+            .stats-header p,
+            .entries-header p,
+            .prompts-header p,
+            .category-header p,
+            .educational-resources-header p,
+            .support-header p,
+            .hero-section p {
+                font-size: 1rem;
+            }
+
+            /* Remove complex animations on mobile for better performance */
+            .page-header::before,
+            .dashboard-header::before,
+            .blog-header::before,
+            .resources-header::before,
+            .journal-header::before,
+            .community-header::before,
+            .profile-header::before,
+            .milestones-header::before,
+            .stats-header::before,
+            .entries-header::before,
+            .prompts-header::before,
+            .category-header::before,
+            .educational-resources-header::before,
+            .support-header::before,
+            .hero-section::before {
+                display: none;
+            }
+
+            /* Touch-friendly form elements */
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            input[type="search"],
+            input[type="tel"],
+            input[type="number"],
+            input[type="date"],
+            textarea,
+            select {
+                font-size: 16px !important;
+                /* Prevents zoom on iOS */
+                min-height: 48px;
+                padding: 12px 16px;
+                border-radius: 8px;
+            }
+
+            /* Touch-friendly buttons */
+            button,
+            .btn,
+            input[type="submit"],
+            .cta-button {
+                min-height: 48px;
+                padding: 12px 24px;
+                font-size: 16px;
+                font-weight: 600;
+                touch-action: manipulation;
+            }
+
+            /* Mobile footer */
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                margin-bottom: 60px;
+                /* Account for bottom nav */
+            }
+
+            /* Mobile-specific main padding */
+            main {
+                min-height: calc(100vh - 120px);
+                /* Account for both navs */
+                padding-bottom: 20px;
+            }
+
+            /* User menu on mobile */
+            .user-menu-toggle {
+                padding: 0.5rem;
+            }
+
+            .user-menu-toggle span {
+                display: none;
+            }
+
+            .user-dropdown {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                bottom: 60px;
+                border-radius: 0;
+                max-width: 100%;
+                overflow-y: auto;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+
+            /* Remove hover effects on touch devices */
+            a:hover,
+            button:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+            /* Add active states for touch feedback */
+            a:active,
+            button:active {
+                opacity: 0.8;
+                transform: scale(0.98);
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+
+            .card,
+            .btn {
+                border: 2px solid currentColor;
+            }
+        }
+
+        /* ========================================
+           ALERT MESSAGES
+           ======================================== */
         .messages {
             max-width: 1200px;
             margin: 1rem auto;
@@ -904,6 +1360,28 @@
             color: #0c5460;
         }
 
+        /* ========================================
+           COMPONENTS
+           ======================================== */
+
+        /* Stat numbers and important metrics */
+        .stat-number,
+        .big-number {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        /* Cards and sections */
+        .stat-card:hover::before,
+        .feature-card:hover::before,
+        .resource-card:hover::before,
+        .blog-card:hover::before {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-light), var(--accent-green)) !important;
+        }
+
         /* Buttons */
         .btn {
             padding: 0.75rem 1.5rem;
@@ -928,7 +1406,7 @@
             box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
         }
 
-        /* Form Focus States */
+        /* Form inputs */
         input:focus,
         textarea:focus,
         select:focus {
@@ -937,334 +1415,103 @@
             outline: none;
         }
 
-        /* Mobile Styles */
-        @media (max-width: 768px) {
-            body {
-                padding-top: 60px;
-                padding-bottom: 56px;
-            }
+        /* Badges and pills */
+        .badge-primary {
+            background-color: var(--primary-dark) !important;
+        }
 
-            body.menu-open {
-                overflow: hidden;
-            }
+        .badge-success {
+            background-color: var(--accent-green) !important;
+        }
 
-            /* Mobile Navigation Bar */
-            nav {
-                height: 60px;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            }
+        /* Progress bars */
+        .progress-bar {
+            background-color: var(--accent-green) !important;
+        }
 
-            .nav-container {
-                height: 100%;
-                padding: 0 1rem;
-                align-items: center;
-            }
+        /* ========================================
+           UTILITY CLASSES
+           ======================================== */
 
-            .nav-left {
-                flex: 1;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--primary-light);
+            border-top-color: var(--accent-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
 
-            .nav-right {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                flex-shrink: 0;
-            }
-
-            /* Logo */
-            .logo-container {
-                max-width: 180px;
-            }
-
-            .logo-img {
-                height: 32px;
-                /* Remove any animation on mobile */
-                animation: none !important;
-            }
-
-            .logo-text {
-                font-size: 0.95rem;
-                font-weight: 600;
-                white-space: nowrap;
-            }
-
-            /* CTA Button */
-            .cta-button {
-                padding: 0.4rem 1rem;
-                font-size: 0.85rem;
-                border-radius: 25px;
-                border: none;
-                white-space: nowrap;
-            }
-
-            /* Hamburger */
-            .hamburger {
-                display: block !important;
-                width: 44px;
-                height: 44px;
-                padding: 10px;
-                border-radius: 8px;
-                transition: background 0.2s ease;
-                flex-shrink: 0;
-            }
-
-            .hamburger:active {
-                background: rgba(0, 0, 0, 0.05);
-            }
-
-            /* Hide desktop nav */
-            .nav-links {
-                display: none;
-            }
-
-            /* Show bottom nav - FIXED */
-            .mobile-bottom-nav {
-                display: flex !important;
-                position: fixed !important;
-                bottom: 0 !important;
-                top: auto !important;
-                left: 0;
-                right: 0;
-                background: white;
-                border-top: 1px solid #e5e7eb;
-                height: 56px;
-                box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
-                z-index: 900;
-            }
-
-            .mobile-bottom-nav a {
-                font-size: 0.7rem;
-                padding: 4px;
-            }
-
-            .mobile-bottom-nav i {
-                font-size: 1.2rem;
-                margin-bottom: 2px;
-            }
-
-            /* Page Headers */
-            .page-header,
-            .dashboard-header,
-            .blog-header,
-            .resources-header,
-            .journal-header,
-            .community-header,
-            .profile-header,
-            .milestones-header,
-            .stats-header,
-            .entries-header,
-            .prompts-header,
-            .category-header,
-            .educational-resources-header,
-            .support-header,
-            .groups-header,
-            .group-detail-header,
-            .challenges-header,
-            .challenge-detail-header,
-            .pal-header,
-            .sponsor-header,
-            .my-groups-header,
-            .my-challenges-header,
-            .hero-section {
-                padding: 70px 1rem 30px;
-                margin-bottom: 1rem;
-            }
-
-            .page-header h1,
-            .dashboard-header h1,
-            .blog-header h1,
-            .resources-header h1,
-            .journal-header h1,
-            .community-header h1,
-            .profile-header h1,
-            .milestones-header h1,
-            .stats-header h1,
-            .entries-header h1,
-            .prompts-header h1,
-            .category-header h1,
-            .educational-resources-header h1,
-            .support-header h1,
-            .hero-section h1 {
-                font-size: 1.75rem;
-                font-weight: 600;
-            }
-
-            .page-header p,
-            .dashboard-header p,
-            .blog-header p,
-            .resources-header p,
-            .journal-header p,
-            .community-header p,
-            .profile-header p,
-            .milestones-header p,
-            .stats-header p,
-            .entries-header p,
-            .prompts-header p,
-            .category-header p,
-            .educational-resources-header p,
-            .support-header p,
-            .hero-section p {
-                font-size: 1rem;
-            }
-
-            /* Remove animations on mobile */
-            .page-header::before,
-            .dashboard-header::before,
-            .blog-header::before,
-            .resources-header::before,
-            .journal-header::before,
-            .community-header::before,
-            .profile-header::before,
-            .milestones-header::before,
-            .stats-header::before,
-            .entries-header::before,
-            .prompts-header::before,
-            .category-header::before,
-            .educational-resources-header::before,
-            .support-header::before,
-            .hero-section::before {
-                display: none;
-            }
-
-            /* Main Content */
-            main {
-                padding: 0 1rem;
-                min-height: calc(100vh - 116px);
-            }
-
-            /* Form Elements */
-            input[type="text"],
-            input[type="email"],
-            input[type="password"],
-            input[type="search"],
-            input[type="tel"],
-            input[type="number"],
-            input[type="date"],
-            textarea,
-            select {
-                font-size: 16px !important;
-                min-height: 44px;
-                padding: 10px 14px;
-                border: 1px solid #e5e7eb;
-                border-radius: 8px;
-                background: white;
-            }
-
-            input:focus,
-            textarea:focus,
-            select:focus {
-                border-color: var(--primary-light);
-                box-shadow: 0 0 0 2px rgba(77, 184, 232, 0.1);
-            }
-
-            /* Buttons */
-            .btn,
-            button,
-            input[type="submit"] {
-                min-height: 44px;
-                padding: 10px 20px;
-                font-size: 15px;
-                font-weight: 500;
-                border-radius: 8px;
-            }
-
-            /* Cards */
-            .card,
-            .resource-card,
-            .blog-card,
-            .feature-card,
-            .stat-card {
-                padding: 1rem;
-                margin-bottom: 1rem;
-                border-radius: 12px;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-            }
-
-            /* Footer */
-            footer {
-                margin-top: 2rem;
-                padding: 2rem 1rem 70px;
-            }
-
-            .footer-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            /* Messages */
-            .messages {
-                padding: 0 1rem;
-                margin-top: 0.5rem;
-            }
-
-            .alert {
-                padding: 0.75rem 1rem;
-                font-size: 0.9rem;
-                border-radius: 8px;
-            }
-
-            /* User menu */
-            .user-menu-toggle span {
-                display: none;
-            }
-
-            /* Animations */
-            * {
-                animation-duration: 0.2s !important;
+        @keyframes spin {
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
             }
         }
 
-        /* Touch-specific improvements */
-        @media (hover: none) and (pointer: coarse) {
-
-            a,
-            button {
-                min-height: 44px;
-                min-width: 44px;
-            }
-
-            a:active,
-            button:active,
-            .hamburger:active,
-            .mobile-menu-nav a:active {
-                opacity: 0.7;
-                transition: opacity 0.1s ease;
-            }
-
-            .card:hover,
-            .resource-card:hover,
-            .blog-card:hover {
-                transform: none;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-            }
+        /* Text utilities */
+        .text-center {
+            text-align: center;
         }
 
-        /* Safe area insets for modern phones */
-        @supports (padding: max(0px)) {
-            .mobile-bottom-nav {
-                padding-bottom: max(4px, env(safe-area-inset-bottom));
-            }
-
-            .mobile-slide-menu {
-                padding-bottom: env(safe-area-inset-bottom);
-            }
+        .text-muted {
+            color: #6c757d;
         }
 
-        /* Reduced motion support */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation: none !important;
-                transition: none !important;
-            }
+        /* Margin utilities */
+        .mt-1 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-2 {
+            margin-top: 1rem;
+        }
+
+        .mt-3 {
+            margin-top: 1.5rem;
+        }
+
+        .mt-4 {
+            margin-top: 2rem;
+        }
+
+        .mb-1 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 2rem;
+        }
+
+        /* Padding utilities */
+        .p-2 {
+            padding: 1rem;
+        }
+
+        .p-3 {
+            padding: 1.5rem;
+        }
+
+        .p-4 {
+            padding: 2rem;
         }
     </style>
 </head>
 
 <body>
-    <!-- Skip to main content link -->
+    <!-- Skip to main content link for accessibility -->
     <a href="#main" class="skip-link">Skip to main content</a>
 
     <!-- Offline Banner -->
@@ -1305,7 +1552,8 @@
                             class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">Journal</a>
                     </li>
                     <li><a href="{% url 'accounts:groups_list' %}"
-                            class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">Groups</a></li>
+                            class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">Groups</a>
+                    </li>
                     <li><a href="{% url 'accounts:challenges_home' %}"
                             class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">Challenges</a>
                     </li>
@@ -1336,12 +1584,17 @@
                         {% endif %}
                     </div>
                     <div class="user-dropdown" id="userDropdown">
-                        <a href="{% url 'accounts:dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                        <a href="{% url 'accounts:profile' username=user.username %}"><i class="fas fa-user"></i> My
-                            Profile</a>
-                        <a href="{% url 'accounts:my_groups' %}"><i class="fas fa-users"></i> My Groups</a>
+                        <a href="{% url 'accounts:dashboard' %}">
+                            Dashboard
+                        </a>
+                        <a href="{% url 'accounts:profile' username=user.username %}">
+                            My Profile
+                        </a>
+                        <a href="{% url 'accounts:my_groups' %}">
+                            My Groups
+                        </a>
                         <a href="{% url 'accounts:my_challenges' %}">
-                            <i class="fas fa-trophy"></i> My Challenges
+                            My Challenges
                             {% if user_active_challenges_count > 0 %}
                             <span class="message-count-badge">{{ user_active_challenges_count }}</span>
                             {% endif %}
@@ -1349,22 +1602,27 @@
                         {% if user_pending_check_ins > 0 %}
                         <a href="{% url 'accounts:my_challenges' %}" style="background: #fff3cd; color: #856404;">
                             <i class="fas fa-check-circle"></i> {{ user_pending_check_ins }} Check-in{{
-                            user_pending_check_ins|pluralize }} Needed
+                            user_pending_check_ins|pluralize }}
+                            Needed
                         </a>
                         {% endif %}
                         <a href="{% url 'accounts:messages' %}">
-                            <i class="fas fa-envelope"></i> Messages
+                            Messages
                             {% if user.received_messages.filter.is_read.count > 0 %}
                             <span class="message-count-badge">{{ user.received_messages.filter.is_read.count }}</span>
                             {% endif %}
                         </a>
-                        <a href="{% url 'accounts:milestones' %}"><i class="fas fa-trophy"></i> Milestones</a>
+                        <a href="{% url 'accounts:milestones' %}">
+                            Milestones
+                        </a>
                         <hr>
-                        <a href="{% url 'accounts:edit_profile' %}"><i class="fas fa-cog"></i> Settings</a>
+                        <a href="{% url 'accounts:edit_profile' %}">
+                            Settings
+                        </a>
                         <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
                             {% csrf_token %}
                             <button type="submit" class="logout-btn">
-                                <i class="fas fa-sign-out-alt"></i> Logout
+                                Logout
                             </button>
                         </form>
                     </div>
@@ -1377,14 +1635,14 @@
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
-                </button>
+                </button>            
             </div>
         </div>
     </nav>
 
     <!-- Mobile Navigation Overlay -->
     <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileMenu()"></div>
-
+    
     <!-- Mobile Slide-Out Menu -->
     <div class="mobile-slide-menu" id="mobileSlideMenu">
         <div class="mobile-menu-header">
@@ -1393,7 +1651,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-
+    
             {% if user.is_authenticated %}
             <div class="mobile-menu-user">
                 <div class="mobile-menu-avatar">
@@ -1421,102 +1679,114 @@
             </div>
             {% endif %}
         </div>
-
+    
         <nav class="mobile-menu-nav">
             <div class="mobile-menu-section">
                 <div class="mobile-menu-label">Main</div>
                 <a href="{% url 'core:index' %}"
                     class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                    <i class="fas fa-home"></i>
                     Home
                 </a>
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-newspaper"></i>
                     Blog
                 </a>
                 <a href="{% url 'resources:list' %}"
                     class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-book-open"></i>
                     Resources
                 </a>
                 <a href="{% url 'store:product_list' %}"
                     class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-shopping-cart"></i>
                     Store
                 </a>
             </div>
-
+    
             {% if user.is_authenticated %}
             <div class="mobile-menu-section">
                 <div class="mobile-menu-label">Recovery Tools</div>
                 <a href="{% url 'journal:entry_list' %}"
                     class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-book"></i>
                     Journal
                 </a>
                 <a href="{% url 'accounts:milestones' %}"
                     class="{% if request.resolver_match.url_name == 'milestones' %}active{% endif %}">
+                    <i class="fas fa-trophy"></i>
                     Milestones
                 </a>
                 <a href="{% url 'accounts:challenges_home' %}"
                     class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-flag-checkered"></i>
                     Challenges
                     {% if user_active_challenges_count > 0 %}
                     <span class="badge">{{ user_active_challenges_count }}</span>
                     {% endif %}
                 </a>
             </div>
-
+    
             <div class="mobile-menu-section">
                 <div class="mobile-menu-label">Community</div>
                 <a href="{% url 'accounts:community' %}"
                     class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
+                    <i class="fas fa-users"></i>
                     Members
                 </a>
                 <a href="{% url 'accounts:groups_list' %}"
                     class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-user-friends"></i>
                     Groups
                 </a>
                 <a href="{% url 'accounts:messages' %}"
                     class="{% if request.resolver_match.url_name == 'messages' %}active{% endif %}">
+                    <i class="fas fa-envelope"></i>
                     Messages
                     {% if user.received_messages.filter.is_read.count > 0 %}
                     <span class="badge">{{ user.received_messages.filter.is_read.count }}</span>
                     {% endif %}
                 </a>
             </div>
-
+    
             <div class="mobile-menu-section">
                 <div class="mobile-menu-label">Account</div>
                 <a href="{% url 'accounts:dashboard' %}"
                     class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="fas fa-tachometer-alt"></i>
                     Dashboard
                 </a>
                 <a href="{% url 'accounts:profile' username=user.username %}"
                     class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                    <i class="fas fa-user-circle"></i>
                     Profile
                 </a>
                 <a href="{% url 'accounts:edit_profile' %}"
                     class="{% if request.resolver_match.url_name == 'edit_profile' %}active{% endif %}">
+                    <i class="fas fa-cog"></i>
                     Settings
                 </a>
             </div>
             {% endif %}
         </nav>
-
+    
         <div class="mobile-menu-footer">
             {% if user.is_authenticated %}
             <form method="post" action="{% url 'accounts:logout' %}">
                 {% csrf_token %}
                 <button type="submit" class="mobile-logout-btn">
-                    Logout
+                    <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </form>
             {% else %}
             <a href="{% url 'accounts:login' %}" class="mobile-logout-btn"
                 style="text-align: center; display: block; text-decoration: none;">
-                Login / Sign Up
+                <i class="fas fa-sign-in-alt"></i> Login / Sign Up
             </a>
             {% endif %}
         </div>
     </div>
-
     <!-- Mobile Bottom Navigation Bar -->
     {% if user.is_authenticated %}
     <nav class="mobile-bottom-nav" id="mobileBottomNav">
@@ -1693,49 +1963,49 @@
             dropdown.classList.toggle('active');
         }
 
-        // Toggle mobile menu
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileSlideMenu');
-            const overlay = document.getElementById('mobileNavOverlay');
-            const hamburger = document.getElementById('hamburgerBtn');
-            const body = document.body;
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobileSlideMenu');
+        const overlay = document.getElementById('mobileNavOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        const body = document.body;
 
-            menu.classList.toggle('active');
-            overlay.classList.toggle('active');
-            hamburger.classList.toggle('active');
-            body.classList.toggle('menu-open');
-        }
+        menu.classList.toggle('active');
+        overlay.classList.toggle('active');
+        hamburger.classList.toggle('active');
+        body.classList.toggle('menu-open');
+    }
 
-        function closeMobileMenu() {
-            const menu = document.getElementById('mobileSlideMenu');
-            const overlay = document.getElementById('mobileNavOverlay');
-            const hamburger = document.getElementById('hamburgerBtn');
-            const body = document.body;
+    function closeMobileMenu() {
+        const menu = document.getElementById('mobileSlideMenu');
+        const overlay = document.getElementById('mobileNavOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        const body = document.body;
 
-            menu.classList.remove('active');
-            overlay.classList.remove('active');
-            hamburger.classList.remove('active');
-            body.classList.remove('menu-open');
-        }
+        menu.classList.remove('active');
+        overlay.classList.remove('active');
+        hamburger.classList.remove('active');
+        body.classList.remove('menu-open');
+    }
 
-        // Close menu when clicking on a link
-        document.querySelectorAll('.mobile-menu-nav a').forEach(link => {
-            link.addEventListener('click', () => {
-                closeMobileMenu();
-            });
+    // Close menu when clicking on a link
+    document.querySelectorAll('.mobile-menu-nav a').forEach(link => {
+        link.addEventListener('click', () => {
+            closeMobileMenu();
         });
+    });
 
-        // Close menu on escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeMobileMenu();
-            }
-        });
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeMobileMenu();
+        }
+    });
 
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function (event) {
-            const userMenu = document.querySelector('.user-menu');
-            const userDropdown = document.getElementById('userDropdown');
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function (event) {
+        const userMenu = document.querySelector('.user-menu');
+        const userDropdown = document.getElementById('userDropdown');
 
             if (userMenu && !userMenu.contains(event.target)) {
                 userDropdown.classList.remove('active');
@@ -1750,6 +2020,31 @@
             } else {
                 nav.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
             }
+        });
+
+        // Touch gesture support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        function handleGesture() {
+            if (touchEndX < touchStartX - 50) {
+                // Swiped left - could be used for navigation
+                console.log('Swiped left');
+            }
+            if (touchEndX > touchStartX + 50) {
+                // Swiped right - could be used for navigation
+                console.log('Swiped right');
+            }
+        }
+
+        // Add touch listeners to swipeable elements
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleGesture();
         });
     </script>
 
