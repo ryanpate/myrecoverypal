@@ -501,7 +501,7 @@
                     <div class="activity-header">
                         <div class="activity-avatar">
                             {% if activity.user.profile.avatar %}
-                                <img src="{{ activity.user.profile.avatar.url }}" alt="{{ activity.user.username }}">
+                                <img src="{{ activity.user.avatar.url }}" alt="{{ activity.user.username }}">
                             {% else %}
                                 👤
                             {% endif %}
@@ -609,8 +609,8 @@
                 {% if user.get_active_sponsor %}
                 <div class="connection-item">
                     <div class="connection-avatar">
-                        {% if user.get_active_sponsor.profile.avatar %}
-                            <img src="{{ user.get_active_sponsor.profile.avatar.url }}" alt="Sponsor">
+                        {% if user.get_active_sponsor.avatar %}
+                            <img src="{{ user.get_active_sponsor.avatar.url }}" alt="Sponsor">
                         {% else %}
                             🎯
                         {% endif %}
@@ -625,8 +625,8 @@
                 {% if user.get_recovery_pal %}
                 <div class="connection-item">
                     <div class="connection-avatar">
-                        {% if user.get_recovery_pal.profile.avatar %}
-                            <img src="{{ user.get_recovery_pal.profile.avatar.url }}" alt="Pal">
+                        {% if user.get_recovery_pal.avatar %}
+                            <img src="{{ user.get_recovery_pal.avatar.url }}" alt="Pal">
                         {% else %}
                             🤝
                         {% endif %}
@@ -643,8 +643,8 @@
                 {% for sponsorship in user.get_active_sponsorships|slice:":3" %}
                 <div class="connection-item">
                     <div class="connection-avatar">
-                        {% if sponsorship.sponsee.profile.avatar %}
-                            <img src="{{ sponsorship.sponsee.profile.avatar.url }}" alt="Sponsee">
+                        {% if sponsorship.sponsee.avatar %}
+                            <img src="{{ sponsorship.sponsee.avatar.url }}" alt="Sponsee">
                         {% else %}
                             👤
                         {% endif %}
