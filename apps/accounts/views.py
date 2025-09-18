@@ -682,105 +682,126 @@ class ProfileView(DetailView):
 @login_required
 def edit_profile_view(request):
     if request.method == 'POST':
-        user = request.user
-        updated_fields = []
+        # Use the UserProfileForm to handle form submission
+        form = UserProfileForm(
+            request.POST, request.FILES, instance=request.user)
 
-        # Handle avatar upload with Cloudinary
-        if 'avatar' in request.FILES:
-            avatar_file = request.FILES['avatar']
+        if form.is_valid():
+            user = form.save(commit=False)
 
-            # Validate file size (5MB limit)
-            if avatar_file.size > 5 * 1024 * 1024:
-                messages.error(
-                    request, 'Image file too large. Please use an image under 5MB.')
-                return redirect('accounts:edit_profile')
+            # Handle avatar upload with special processing if needed
+            if 'avatar' in request.FILES:
+                avatar_file = request.FILES['avatar']
 
-            # Validate file type
-            allowed_types = ['image/jpeg', 'image/jpg',
-                             'image/png', 'image/gif', 'image/webp']
-            if avatar_file.content_type not in allowed_types:
-                messages.error(
-                    request, 'Invalid file type. Please use JPG, PNG, GIF, or WebP.')
-                return redirect('accounts:edit_profile')
+                # Validate file size (5MB limit)
+                if avatar_file.size > 5 * 1024 * 1024:
+                    messages.error(
+                        request, 'Image file too large. Please use an image under 5MB.')
+                    return redirect('accounts:edit_profile')
 
+                # Validate file type
+                allowed_types = ['image/jpeg', 'image/jpg',
+                                 'image/png', 'image/gif', 'image/webp']
+                if avatar_file.content_type not in allowed_types:
+                    messages.error(
+                        request, 'Invalid file type. Please use JPG, PNG, GIF, or WebP.')
+                    return redirect('accounts:edit_profile')
+
+                try:
+                    # If using Cloudinary
+                    if hasattr(settings, 'DEFAULT_FILE_STORAGE') and 'cloudinary' in settings.DEFAULT_FILE_STORAGE:
+                        # Delete old avatar from Cloudinary if exists
+                        if user.avatar:
+                            # Extract public_id from URL
+                            old_public_id = user.avatar.name.rsplit('.', 1)[0]
+                            try:
+                                cloudinary.uploader.destroy(old_public_id)
+                            except:
+                                pass  # Ignore errors when deleting old image
+
+                        # Cloudinary handles optimization automatically
+                        user.avatar = avatar_file
+                    else:
+                        # Local storage with PIL optimization
+                        from PIL import Image
+                        from io import BytesIO
+                        import sys
+                        import os
+
+                        img = Image.open(avatar_file)
+
+                        # Convert RGBA to RGB if necessary
+                        if img.mode in ('RGBA', 'LA', 'P'):
+                            background = Image.new(
+                                'RGB', img.size, (255, 255, 255))
+                            if img.mode == 'P':
+                                img = img.convert('RGBA')
+                            background.paste(img, mask=img.split()
+                                             [-1] if img.mode == 'RGBA' else None)
+                            img = background
+
+                        # Resize and optimize
+                        max_size = (800, 800)
+                        img.thumbnail(max_size, Image.Resampling.LANCZOS)
+
+                        output = BytesIO()
+                        img.save(output, format='JPEG',
+                                 quality=85, optimize=True)
+                        output.seek(0)
+
+                        from django.core.files.uploadedfile import InMemoryUploadedFile
+                        avatar_file = InMemoryUploadedFile(
+                            output, 'ImageField',
+                            f"{user.username}_avatar.jpg",
+                            'image/jpeg',
+                            sys.getsizeof(output),
+                            None
+                        )
+
+                        # Delete old local file
+                        if user.avatar and os.path.exists(user.avatar.path):
+                            os.remove(user.avatar.path)
+
+                        user.avatar = avatar_file
+
+                except Exception as e:
+                    messages.error(
+                        request, f'Error processing image: {str(e)}')
+                    print(f"Avatar processing error: {e}")
+
+            # Save all form data
             try:
-                # If using Cloudinary
-                if hasattr(settings, 'DEFAULT_FILE_STORAGE') and 'cloudinary' in settings.DEFAULT_FILE_STORAGE:
-                    # Delete old avatar from Cloudinary if exists
-                    if user.avatar:
-                        # Extract public_id from URL
-                        old_public_id = user.avatar.name.rsplit('.', 1)[0]
-                        try:
-                            cloudinary.uploader.destroy(old_public_id)
-                        except:
-                            pass  # Ignore errors when deleting old image
+                user.save()
+                messages.success(request, 'Profile updated successfully!')
 
-                    # Cloudinary handles optimization automatically
-                    user.avatar = avatar_file
-                    updated_fields.append('avatar')
-                else:
-                    # Local storage with PIL optimization (your existing code)
-                    from PIL import Image
-                    from io import BytesIO
-                    import sys
-
-                    img = Image.open(avatar_file)
-
-                    # Resize and optimize
-                    if img.mode in ('RGBA', 'LA', 'P'):
-                        background = Image.new(
-                            'RGB', img.size, (255, 255, 255))
-                        if img.mode == 'P':
-                            img = img.convert('RGBA')
-                        background.paste(img, mask=img.split()
-                                         [-1] if img.mode == 'RGBA' else None)
-                        img = background
-
-                    max_size = (800, 800)
-                    img.thumbnail(max_size, Image.Resampling.LANCZOS)
-
-                    output = BytesIO()
-                    img.save(output, format='JPEG', quality=85, optimize=True)
-                    output.seek(0)
-
-                    from django.core.files.uploadedfile import InMemoryUploadedFile
-                    avatar_file = InMemoryUploadedFile(
-                        output, 'ImageField',
-                        f"{user.username}_avatar.jpg",
-                        'image/jpeg',
-                        sys.getsizeof(output),
-                        None
+                # Optional: Create activity feed entry for profile update
+                if hasattr(user, 'activityfeed_set'):
+                    from .models import ActivityFeed
+                    ActivityFeed.objects.create(
+                        user=user,
+                        activity_type='profile_update',
+                        title='Profile Updated',
+                        description='Updated profile information'
                     )
 
-                    # Delete old local file
-                    if user.avatar and os.path.exists(user.avatar.path):
-                        os.remove(user.avatar.path)
-
-                    user.avatar = avatar_file
-                    updated_fields.append('avatar')
-
-            except Exception as e:
-                messages.error(request, f'Error processing image: {str(e)}')
-                print(f"Avatar processing error: {e}")
-
-        # ... rest of your field processing code ...
-
-        # Save changes
-        if updated_fields:
-            try:
-                user.save(update_fields=updated_fields)
-                messages.success(request, 'Profile updated successfully!')
             except Exception as e:
                 messages.error(
                     request, 'Failed to save profile. Please try again.')
                 print(f"Profile save error: {e}")
+                return redirect('accounts:edit_profile')
 
-        return redirect('accounts:profile', username=user.username)
-
+            return redirect('accounts:profile', username=user.username)
+        else:
+            # Form is invalid, display errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
     else:
+        # GET request - display form with current user data
         form = UserProfileForm(instance=request.user)
 
     return render(request, 'accounts/edit_profile.html', {'form': form})
+
 class MilestoneListView(LoginRequiredMixin, ListView):
     model = Milestone
     template_name = 'accounts/milestones.html'
