@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if is_following_page %}
+        Following - {{ user.username }} - MyRecoveryPal
+    {% elif is_followers_page %}
+        Followers - {{ user.username }} - MyRecoveryPal
+    {% else %}
+        Connections - {{ user.username }} - MyRecoveryPal
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="connections-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'accounts:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'accounts:profile' user.username %}">{{ user.username }}</a></li>
+                <li class="breadcrumb-item active">
+                    {% if is_following_page %}
+                        Following
+                    {% elif is_followers_page %}
+                        Followers
+                    {% else %}
+                        Connections
+                    {% endif %}
+                </li>
+            </ol>
+        </nav>
+
+        <h2>
+            {% if is_following_page %}
+                👥 People {{ user.username }} Follows
+            {% elif is_followers_page %}
+                👥 {{ user.username }}'s Followers
+            {% else %}
+                👥 Connections
+            {% endif %}
+        </h2>
+
+        <!-- Connection Stats -->
+        <div class="connection-stats mb-4">
+            <a href="{% url 'accounts:followers_list' user.username %}" 
+               class="stat-link {% if is_followers_page %}active{% endif %}">
+                <strong>{{ user.followers_count|default:0 }}</strong> Followers
+            </a>
+            <a href="{% url 'accounts:following_list' user.username %}" 
+               class="stat-link {% if is_following_page %}active{% endif %}">
+                <strong>{{ user.following_count|default:0 }}</strong> Following
+            </a>
+        </div>
+    </div>
+
+    <!-- Connections List -->
+    <div class="connections-grid">
+        {% if is_following_page %}
+            {% for connection in following %}
+                <div class="connection-card">
+                    <div class="connection-avatar">
+                        {% if connection.profile.avatar %}
+                            <img src="{{ connection.profile.avatar.url }}" alt="{{ connection.username }}">
+                        {% else %}
+                            <div class="default-avatar">{{ connection.username|first|upper }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="connection-info">
+                        <h5>
+                            <a href="{% url 'accounts:profile' connection.username %}">
+                                {{ connection.get_full_name|default:connection.username }}
+                            </a>
+                        </h5>
+                        <p class="username">@{{ connection.username }}</p>
+                        {% if connection.profile.bio %}
+                            <p class="bio">{{ connection.profile.bio|truncatewords:15 }}</p>
+                        {% endif %}
+                        {% if connection.profile.recovery_date %}
+                            <p class="recovery-info">
+                                🗓️ Recovery since: {{ connection.profile.recovery_date|date:"F Y" }}
+                            </p>
+                        {% endif %}
+                    </div>
+                    {% if request.user.is_authenticated and request.user != connection %}
+                        <div class="connection-actions">
+                            {% if connection.id in request.user.get_following.values_list.id %}
+                                <button class="btn btn-outline-primary btn-sm" onclick="followUser('{{ connection.username }}')">
+                                    Following
+                                </button>
+                            {% else %}
+                                <button class="btn btn-primary btn-sm" onclick="followUser('{{ connection.username }}')">
+                                    Follow
+                                </button>
+                            {% endif %}
+                            <a href="{% url 'accounts:send_message' connection.username %}" class="btn btn-outline-secondary btn-sm">
+                                Message
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">
+                        {% if is_following_page %}
+                            {{ user.username }} isn't following anyone yet.
+                        {% else %}
+                            No connections found.
+                        {% endif %}
+                    </p>
+                    {% if request.user == user %}
+                        <a href="{% url 'accounts:community' %}" class="btn btn-primary mt-3">
+                            Find People to Follow
+                        </a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% elif is_followers_page %}
+            {% for connection in followers %}
+                <div class="connection-card">
+                    <div class="connection-avatar">
+                        {% if connection.profile.avatar %}
+                            <img src="{{ connection.profile.avatar.url }}" alt="{{ connection.username }}">
+                        {% else %}
+                            <div class="default-avatar">{{ connection.username|first|upper }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="connection-info">
+                        <h5>
+                            <a href="{% url 'accounts:profile' connection.username %}">
+                                {{ connection.get_full_name|default:connection.username }}
+                            </a>
+                        </h5>
+                        <p class="username">@{{ connection.username }}</p>
+                        {% if connection.profile.bio %}
+                            <p class="bio">{{ connection.profile.bio|truncatewords:15 }}</p>
+                        {% endif %}
+                        {% if connection.profile.recovery_date %}
+                            <p class="recovery-info">
+                                🗓️ Recovery since: {{ connection.profile.recovery_date|date:"F Y" }}
+                            </p>
+                        {% endif %}
+                    </div>
+                    {% if request.user.is_authenticated and request.user != connection %}
+                        <div class="connection-actions">
+                            <button class="btn btn-primary btn-sm" onclick="followUser('{{ connection.username }}')">
+                                Follow Back
+                            </button>
+                            <a href="{% url 'accounts:send_message' connection.username %}" class="btn btn-outline-secondary btn-sm">
+                                Message
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">
+                        {{ user.username }} doesn't have any followers yet.
+                    </p>
+                    {% if request.user != user %}
+                        <button class="btn btn-primary mt-3" onclick="followUser('{{ user.username }}')">
+                            Be the first to follow!
+                        </button>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj %}
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% endif %}
+</div>
+
+<style>
+.connections-header {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.connection-stats {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.stat-link {
+    color: #666;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.stat-link:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.stat-link.active {
+    background: var(--primary, #007bff);
+    color: white;
+}
+
+.connections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.connection-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.connection-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.connection-avatar {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.connection-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.default-avatar {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary, #007bff);
+}
+
+.connection-info h5 {
+    margin-bottom: 0.25rem;
+}
+
+.connection-info h5 a {
+    color: #333;
+    text-decoration: none;
+}
+
+.connection-info h5 a:hover {
+    color: var(--primary, #007bff);
+}
+
+.username {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.bio {
+    color: #555;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.recovery-info {
+    font-size: 0.85rem;
+    color: #28a745;
+    margin-bottom: 0.5rem;
+}
+
+.connection-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.connection-actions .btn {
+    flex: 1;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .connections-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .connection-stats {
+        justify-content: space-around;
+    }
+}
+</style>
+
+<script>
+async function followUser(username) {
+    try {
+        const response = await fetch(`/accounts/follow/${username}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                // Reload to update the UI
+                location.reload();
+            }
+        }
+    } catch (error) {
+        console.error('Error following user:', error);
+        alert('There was an error. Please try again.');
+    }
+}
+</script>
+{% endblock %}
