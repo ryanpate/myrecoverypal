@@ -80,7 +80,12 @@ INSTALLED_APPS = [
 
 # Add debug toolbar in development
 if DEBUG:
-    INSTALLED_APPS += ['debug_toolbar', 'django_extensions']
+    try:
+        import debug_toolbar
+        import django_extensions
+        INSTALLED_APPS += ['debug_toolbar', 'django_extensions']
+    except ImportError:
+        pass  # These packages might not be installed
 
 SITE_ID = 1
 
@@ -99,8 +104,12 @@ MIDDLEWARE = [
 
 # Add debug toolbar middleware in development
 if DEBUG:
-    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
-    INTERNAL_IPS = ['127.0.0.1']
+    try:
+        import debug_toolbar
+        MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+        INTERNAL_IPS = ['127.0.0.1']
+    except ImportError:
+        pass
 
 ROOT_URLCONF = 'recovery_hub.urls'
 
@@ -125,7 +134,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'recovery_hub.wsgi.application'
 
 # Database
-
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 # Only configure database if DATABASE_URL exists
@@ -134,8 +142,15 @@ if DATABASE_URL:
         'default': dj_database_url.config(
             default=DATABASE_URL,
             conn_max_age=600,
+            conn_health_checks=True,  # Added connection health checks
         )
     }
+    # Add optimizations for PostgreSQL
+    DATABASES['default']['OPTIONS'] = {
+        'connect_timeout': 10,
+    }
+    # Enable atomic requests for better transaction handling
+    DATABASES['default']['ATOMIC_REQUESTS'] = True
 else:
     # Use SQLite as fallback (for build phase and local dev)
     DATABASES = {
@@ -185,16 +200,26 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-# WhiteNoise for serving static files
+# FIXED: Ensure STATICFILES_DIRS points to the correct location
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # Points to /root/static/
+]
+
+# File upload settings
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+
+# WhiteNoise for serving static files - Fixed to avoid DRF issues
+# Changed from CompressedManifestStaticFilesStorage
 STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 
 # WhiteNoise root files (for service worker, manifest.json, etc.)
 # This allows files to be served from the root URL path
 WHITENOISE_ROOT = BASE_DIR / 'root_files'
 WHITENOISE_KEEP_ONLY_HASHED_FILES = False
-WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['manifest', 'json', 'js']
+WHITENOISE_SKIP_COMPRESS_EXTENSIONS = [
+    'manifest', 'json', 'js', 'eot', 'ttf', 'woff', 'woff2']
 
 # Media files
 MEDIA_URL = '/media/'
@@ -207,6 +232,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
+# Cloudinary configuration - Simplified to avoid signature issues
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
@@ -214,23 +240,28 @@ CLOUDINARY_STORAGE = {
     'SECURE': True,  # Use HTTPS
 }
 
+# Only use Cloudinary if credentials are provided
 if os.environ.get('CLOUDINARY_CLOUD_NAME'):
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-    # Optional: Configure upload presets
+    # Simplified configuration to avoid signature errors
     CLOUDINARY_STORAGE.update({
-        'FOLDER': 'myrecoverypal/avatars',  # Organize uploads in folders
+        'FOLDER': 'myrecoverypal',  # Simple folder without subfolders
         'OVERWRITE': True,  # Overwrite files with same name
-        'RESOURCE_TYPE': 'image',
-        'TRANSFORMATION': {
-            'quality': 'auto:good',
-            'fetch_format': 'auto',
-            'width': 800,
-            'height': 800,
-            'crop': 'limit',  # Don't upscale smaller images
-        },
+        'RESOURCE_TYPE': 'auto',  # Auto-detect resource type
     })
-    
+
+    # Initialize cloudinary
+    cloudinary.config(
+        cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+        api_key=os.environ.get('CLOUDINARY_API_KEY'),
+        api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
+        secure=True
+    )
+
+# Session configuration for better performance
+SESSION_SAVE_EVERY_REQUEST = False if not DEBUG else True
+
 # ========================================
 # PWA (Progressive Web App) Settings
 # ========================================
@@ -363,13 +394,7 @@ if DEBUG:
 CORS_ALLOW_CREDENTIALS = True
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 
-# CSRF settings
-CSRF_TRUSTED_ORIGINS = [
-    'https://*.up.railway.app',
-    'https://myrecoverypal.com',
-    'https://www.myrecoverypal.com',
-]
-
+# CSRF settings (already defined at top, but adding extras here)
 # Parse additional CSRF origins from environment
 extra_csrf = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
 if extra_csrf:
@@ -422,6 +447,7 @@ if REDIS_URL:
             'LOCATION': REDIS_URL,
             'OPTIONS': {
                 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'CONNECTION_POOL_KWARGS': {'max_connections': 50},
             }
         }
     }
@@ -436,10 +462,11 @@ if REDIS_URL:
         }
     }
 else:
-    # Fallback to dummy cache if Redis not available
+    # Fallback to local memory cache if Redis not available
     CACHES = {
         'default': {
-            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
         },
         'pwa_cache': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
