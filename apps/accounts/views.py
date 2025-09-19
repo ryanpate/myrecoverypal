@@ -16,13 +16,15 @@ from .forms import CustomUserCreationForm, UserProfileForm, MilestoneForm, Suppo
 from .signals import create_profile_update_activity
 from django.core.paginator import Paginator
 from django.db import transaction
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.conf import settings
 import cloudinary.uploader
+from django.core.serializers import serialize
+import json
 
 from .models import (
     GroupChallenge, ChallengeParticipant, ChallengeCheckIn,
-    ChallengeComment, ChallengeBadge, UserChallengeBadge
+    ChallengeComment, ChallengeBadge, UserChallengeBadge, Notification
 )
 from .forms import (
     GroupChallengeForm, JoinChallengeForm, ChallengeCheckInForm,
@@ -442,6 +444,7 @@ def request_sponsor(request, username):
     }
     return render(request, 'accounts/request_sponsor.html', context)
 
+
 @login_required
 def request_pal(request, username):
     """Request to be recovery pals"""
@@ -470,6 +473,17 @@ def request_pal(request, username):
             pal_relationship.user2 = pal_user
             pal_relationship.save()
 
+            # Create notification
+            create_notification(
+                recipient=pal_user,
+                sender=request.user,
+                notification_type='pal_request',
+                title='Recovery Pal Request',
+                message=f"{request.user.get_full_name() or request.user.username} wants to be your recovery pal",
+                link='/accounts/pals/',
+                content_object=pal_relationship
+            )
+
             messages.success(
                 request, f'Recovery pal request sent to {pal_user.username}!')
             return redirect('accounts:pal_dashboard')
@@ -481,7 +495,6 @@ def request_pal(request, username):
         'pal_user': pal_user,
     }
     return render(request, 'accounts/request_pal.html', context)
-
 
 @login_required
 def request_challenge_pal(request, challenge_id, user_id):
@@ -931,6 +944,18 @@ def send_message_view(request, username):
             message.sender = request.user
             message.recipient = recipient
             message.save()
+
+            # Create notification
+            create_notification(
+                recipient=recipient,
+                sender=request.user,
+                notification_type='message',
+                title='New Message',
+                message=f"You have a new message from {request.user.get_full_name() or request.user.username}",
+                link='/accounts/messages/',
+                content_object=message
+            )
+
             messages.success(request, 'Your message has been sent!')
             return redirect('accounts:profile', username=username)
     else:
@@ -975,6 +1000,16 @@ def follow_user(request, username):
             activity_type='user_followed',
             title=f"Started following {target_user.get_full_name() or target_user.username}",
             description=f"You are now following {target_user.username}'s recovery journey"
+        )
+
+        # Create notification for the followed user
+        create_notification(
+            recipient=target_user,
+            sender=request.user,
+            notification_type='follow',
+            title='New Follower',
+            message=f"{request.user.get_full_name() or request.user.username} started following you",
+            link=f"/accounts/profile/{request.user.username}/"
         )
 
     # Get updated counts
@@ -1548,3 +1583,113 @@ def leave_challenge(request, challenge_id):
     }
 
     return render(request, 'accounts/challenges/leave_challenge.html', context)
+
+
+@login_required
+def notifications_api(request):
+    """API endpoint to get user's notifications"""
+    notifications = request.user.notifications.all()[:20]
+
+    # Filter by read status if requested
+    filter_unread = request.GET.get('unread_only', 'false').lower() == 'true'
+    if filter_unread:
+        notifications = notifications.filter(is_read=False)
+
+    # Prepare notification data
+    notification_data = []
+    for notif in notifications:
+        time_diff = timezone.now() - notif.created_at
+        if time_diff.days > 0:
+            time_ago = f"{time_diff.days}d ago"
+        elif time_diff.seconds > 3600:
+            time_ago = f"{time_diff.seconds // 3600}h ago"
+        elif time_diff.seconds > 60:
+            time_ago = f"{time_diff.seconds // 60}m ago"
+        else:
+            time_ago = "Just now"
+
+        notification_data.append({
+            'id': notif.id,
+            'type': notif.notification_type,
+            'title': notif.title,
+            'message': notif.message,
+            'link': notif.link,
+            'is_read': notif.is_read,
+            'time_ago': time_ago,
+            'icon': notif.get_icon(),
+            'sender_name': notif.sender.get_full_name() or notif.sender.username if notif.sender else None,
+            'sender_avatar': notif.sender.avatar.url if notif.sender and notif.sender.avatar else None,
+        })
+
+    return JsonResponse({'notifications': notification_data})
+
+
+@login_required
+def unread_count_api(request):
+    """API endpoint to get unread notification count"""
+    count = request.user.notifications.filter(is_read=False).count()
+    return JsonResponse({'count': count})
+
+
+@login_required
+@require_POST
+def mark_notification_read(request, notification_id):
+    """Mark a single notification as read"""
+    notification = get_object_or_404(
+        Notification, id=notification_id, recipient=request.user
+    )
+    notification.mark_as_read()
+    return JsonResponse({'success': True})
+
+
+@login_required
+@require_POST
+def mark_all_notifications_read(request):
+    """Mark all user's notifications as read"""
+    request.user.notifications.filter(is_read=False).update(
+        is_read=True, read_at=timezone.now()
+    )
+    return JsonResponse({'success': True})
+
+
+@login_required
+def notifications_page(request):
+    """Full page view of all notifications"""
+    notifications = request.user.notifications.all()
+
+    # Pagination
+    paginator = Paginator(notifications, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Mark viewed notifications as read
+    notification_ids = [n.id for n in page_obj if not n.is_read]
+    if notification_ids:
+        Notification.objects.filter(
+            id__in=notification_ids[:10]  # Mark first 10 as read
+        ).update(is_read=True, read_at=timezone.now())
+
+    context = {
+        'page_obj': page_obj,
+        'unread_count': request.user.notifications.filter(is_read=False).count(),
+    }
+    return render(request, 'accounts/notifications.html', context)
+
+# Helper function to create notifications
+
+
+def create_notification(recipient, sender, notification_type, title, message, link='', content_object=None):
+    """Helper function to create notifications"""
+    if recipient == sender:  # Don't notify yourself
+        return None
+
+    notification = Notification.objects.create(
+        recipient=recipient,
+        sender=sender,
+        notification_type=notification_type,
+        title=title,
+        message=message,
+        link=link,
+        content_object=content_object
+    )
+    return notification

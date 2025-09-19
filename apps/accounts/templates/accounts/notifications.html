@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notifications - MyRecoveryPal{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Notifications</h1>
+    <p>Stay updated with your recovery community</p>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">All Notifications</h5>
+                    {% if unread_count > 0 %}
+                    <button class="btn btn-sm btn-outline-primary" onclick="markAllAsRead(event)">
+                        Mark all as read ({{ unread_count }})
+                    </button>
+                    {% endif %}
+                </div>
+                <div class="card-body p-0">
+                    {% if page_obj %}
+                        {% for notification in page_obj %}
+                        <div class="notification-item-full {% if not notification.is_read %}unread{% endif %}">
+                            <div class="d-flex gap-3">
+                                <div class="notification-icon-wrapper">
+                                    {% if notification.sender and notification.sender.avatar %}
+                                    <img src="{{ notification.sender.avatar.url }}" alt="{{ notification.sender.username }}" class="rounded-circle" width="50" height="50">
+                                    {% else %}
+                                    <div class="notification-icon-circle">
+                                        <i class="fas {{ notification.get_icon }}"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">{{ notification.title }}</h6>
+                                    <p class="mb-1 text-muted">{{ notification.message }}</p>
+                                    <small class="text-muted">{{ notification.created_at|timesince }} ago</small>
+                                    {% if notification.link %}
+                                    <a href="{{ notification.link }}" class="btn btn-sm btn-outline-primary mt-2">View</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No notifications yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Notifications pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.notification-item-full {
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    transition: background 0.2s;
+}
+
+.notification-item-full:hover {
+    background: #f8f9fa;
+}
+
+.notification-item-full.unread {
+    background: #f0f8ff;
+    border-left: 3px solid var(--primary-light);
+}
+
+.notification-icon-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+</style>
+{% endblock %}

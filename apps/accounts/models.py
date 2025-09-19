@@ -1238,3 +1238,82 @@ class UserChallengeBadge(models.Model):
 
     def __str__(self):
         return f"{self.user.username} earned {self.badge.name}"
+
+
+class Notification(models.Model):
+    """
+    Universal notification system for all user interactions
+    """
+    NOTIFICATION_TYPES = (
+        ('pal_request', 'Recovery Pal Request'),
+        ('pal_accepted', 'Pal Request Accepted'),
+        ('message', 'New Message'),
+        ('follow', 'New Follower'),
+        ('sponsor_request', 'Sponsor Request'),
+        ('sponsor_accepted', 'Sponsor Request Accepted'),
+        ('challenge_invite', 'Challenge Invitation'),
+        ('challenge_pal', 'Challenge Pal Request'),
+        ('milestone', 'Milestone Achievement'),
+        ('group_invite', 'Group Invitation'),
+        ('comment', 'New Comment'),
+        ('like', 'New Like'),
+    )
+
+    recipient = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='notifications'
+    )
+    sender = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='sent_notifications',
+        null=True, blank=True
+    )
+
+    notification_type = models.CharField(
+        max_length=20, choices=NOTIFICATION_TYPES)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    link = models.CharField(max_length=500, blank=True)
+
+    # Related object (optional)
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, null=True, blank=True
+    )
+    object_id = models.PositiveIntegerField(null=True, blank=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    read_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['recipient', 'is_read']),
+            models.Index(fields=['created_at']),
+        ]
+
+    def __str__(self):
+        return f"{self.notification_type} for {self.recipient.username}"
+
+    def mark_as_read(self):
+        if not self.is_read:
+            self.is_read = True
+            self.read_at = timezone.now()
+            self.save(update_fields=['is_read', 'read_at'])
+
+    def get_icon(self):
+        """Return appropriate icon for notification type"""
+        icons = {
+            'pal_request': 'fa-user-friends',
+            'pal_accepted': 'fa-handshake',
+            'message': 'fa-envelope',
+            'follow': 'fa-user-plus',
+            'sponsor_request': 'fa-hand-holding-heart',
+            'sponsor_accepted': 'fa-heart',
+            'challenge_invite': 'fa-trophy',
+            'challenge_pal': 'fa-users',
+            'milestone': 'fa-award',
+            'group_invite': 'fa-users',
+            'comment': 'fa-comment',
+            'like': 'fa-heart',
+        }
+        return icons.get(self.notification_type, 'fa-bell')

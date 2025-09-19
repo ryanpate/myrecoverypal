@@ -100,4 +100,14 @@ urlpatterns = [
          views.add_challenge_comment, name='add_challenge_comment'),
     path('ajax/encourage/<int:check_in_id>/',
          views.give_encouragement, name='give_encouragement'),
+
+    # Add these notification URLs
+    path('notifications/', views.notifications_page, name='notifications'),
+    path('api/notifications/', views.notifications_api, name='notifications_api'),
+    path('api/notifications/unread-count/',
+         views.unread_count_api, name='unread_count_api'),
+    path('api/notifications/<int:notification_id>/read/',
+         views.mark_notification_read, name='mark_notification_read'),
+    path('api/notifications/mark-all-read/',
+         views.mark_all_notifications_read, name='mark_all_notifications_read'),
 ]
