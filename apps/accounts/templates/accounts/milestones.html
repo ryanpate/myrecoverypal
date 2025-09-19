@@ -187,8 +187,12 @@
         {% for milestone in milestones %}
         <div class="milestone-item">
             <span class="milestone-type">
-                {% if milestone.milestone_type == 'days' and milestone.days_sober %}
+                {% if milestone.milestone_type == 'days' %}
+                {% if milestone.days_sober is not None %}
                 {{ milestone.days_sober }} Days Sober
+                {% else %}
+                Days Sober
+                {% endif %}
                 {% elif milestone.get_milestone_type_display %}
                 {{ milestone.get_milestone_type_display }}
                 {% else %}
@@ -202,9 +206,9 @@
             <div class="milestone-date">
                 <i class="far fa-calendar"></i> {{ milestone.date_achieved|date:"F d, Y" }}
             </div>
-            {% if milestone.days_sober %}
+            {% if milestone.milestone_type == 'days' and milestone.days_sober is not None %}
             <div class="milestone-date">
-                <i class="fas fa-medal"></i> Day {{ milestone.days_sober }} of sobriety
+                <i class="fas fa-medal"></i> Achieved on day {{ milestone.days_sober }} of sobriety
             </div>
             {% endif %}
         </div>
