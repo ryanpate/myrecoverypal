@@ -1,132 +1,519 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Messages - Journey to Recovery{% endblock %}
+{% block title %}Messages - MyRecoveryPal{% endblock %}
 
 {% block extra_css %}
 <style>
-    .messages-container {
-        max-width: 800px;
-        margin: 100px auto 2rem;
-        padding: 0 2rem;
-    }
-    
     .messages-header {
+        background: var(--gradient-primary) !important;
+        padding: 100px 0 50px;
+        color: white !important;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .messages-header h1 {
+        color: white !important;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .messages-header p {
+        color: rgba(255, 255, 255, 0.95) !important;
+        font-size: 1.1rem;
+    }
+
+    .messages-container {
+        max-width: 1200px;
+        margin: -50px auto 2rem;
+        padding: 0 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .messages-wrapper {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .messages-toolbar {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e0e0e0;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
-    
+
+    .toolbar-left {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .search-box {
+        position: relative;
+    }
+
+    .search-box input {
+        padding: 0.5rem 1rem 0.5rem 2.5rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 25px;
+        width: 250px;
+        transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(77, 184, 232, 0.1);
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+    }
+
+    .filter-tabs {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .filter-tab {
+        padding: 0.5rem 1rem;
+        background: transparent;
+        border: 1px solid #e0e0e0;
+        border-radius: 20px;
+        color: #666;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .filter-tab:hover {
+        background: #f8f9fa;
+        color: var(--primary-dark);
+    }
+
+    .filter-tab.active {
+        background: var(--primary-light);
+        color: white;
+        border-color: var(--primary-light);
+    }
+
+    .compose-btn {
+        padding: 0.75rem 1.5rem;
+        background: var(--accent-green);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .compose-btn:hover {
+        background: #45a675;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
+        color: white;
+    }
+
     .message-list {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        overflow: hidden;
+        max-height: 600px;
+        overflow-y: auto;
     }
-    
+
     .message-item {
-        padding: 1.5rem;
+        padding: 1.25rem 1.5rem;
         border-bottom: 1px solid #f0f0f0;
         display: flex;
-        justify-content: space-between;
-        align-items: start;
-        transition: background 0.3s ease;
+        gap: 1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
     }
-    
+
     .message-item:hover {
         background: #f8f9fa;
     }
-    
-    .message-item:last-child {
-        border-bottom: none;
+
+    .message-item.unread {
+        background: #f0f8ff;
+        border-left: 3px solid var(--primary-light);
     }
-    
+
+    .message-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .message-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
     .message-content {
         flex: 1;
+        min-width: 0;
     }
-    
+
     .message-header {
         display: flex;
         justify-content: space-between;
+        align-items: start;
         margin-bottom: 0.5rem;
+        gap: 1rem;
     }
-    
-    .message-participants {
-        font-weight: bold;
-        color: #333;
-    }
-    
-    .message-date {
-        color: #666;
-        font-size: 0.9rem;
-    }
-    
-    .message-subject {
+
+    .message-sender {
         font-weight: 600;
+        color: #333;
+        font-size: 1rem;
+    }
+
+    .message-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-shrink: 0;
+    }
+
+    .message-time {
+        color: #999;
+        font-size: 0.85rem;
+    }
+
+    .message-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.2rem 0.5rem;
+        background: #ff4444;
+        color: white;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .message-subject {
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+        color: #555;
+    }
+
+    .message-preview {
+        color: #777;
+        font-size: 0.9rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .message-actions {
+        display: none;
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        gap: 0.5rem;
+    }
+
+    .message-item:hover .message-actions {
+        display: flex;
+    }
+
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: white;
+        border: 1px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .action-btn:hover {
+        background: var(--primary-light);
+        color: white;
+        border-color: var(--primary-light);
+    }
+
+    .empty-messages {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #999;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        color: #666;
         margin-bottom: 0.5rem;
     }
-    
-    .message-preview {
-        color: #666;
-        font-size: 0.95rem;
+
+    .empty-text {
+        color: #999;
+        margin-bottom: 1.5rem;
     }
-    
-    .message-badge {
-        display: inline-block;
-        padding: 0.25rem 0.5rem;
-        background: var(--primary-color);
-        color: white;
-        border-radius: 3px;
+
+    .sent-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.2rem 0.5rem;
+        background: #e8f5e9;
+        color: #4caf50;
+        border-radius: 10px;
         font-size: 0.75rem;
-        margin-left: 0.5rem;
     }
-    
-    .sent-message {
-        background: #e3f2fd;
+
+    .pagination {
+        padding: 1.5rem;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
     }
-    
-    .no-messages {
-        text-align: center;
-        padding: 3rem;
+
+    .page-btn {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #e0e0e0;
+        background: white;
+        border-radius: 5px;
         color: #666;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .page-btn:hover {
+        background: #f8f9fa;
+        color: var(--primary-dark);
+    }
+
+    .page-btn.active {
+        background: var(--primary-light);
+        color: white;
+        border-color: var(--primary-light);
+    }
+
+    .page-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .messages-container {
+            padding: 0 1rem;
+        }
+
+        .search-box input {
+            width: 150px;
+        }
+
+        .messages-toolbar {
+            padding: 1rem;
+        }
+
+        .filter-tabs {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .message-item {
+            padding: 1rem;
+        }
+
+        .message-header {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .message-meta {
+            width: 100%;
+            justify-content: space-between;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="page-header messages-container">
-    <div class="messages-header">
-        <h1>Messages</h1>
-    </div>
-    
-    <div class="message-list">
-        {% for message in messages %}
-            <div class="message-item {% if message.sender == request.user %}sent-message{% endif %}">
+<div class="messages-header">
+    <h1>Messages</h1>
+    <p>Connect with your recovery community</p>
+</div>
+
+<div class="messages-container">
+    <div class="messages-wrapper">
+        <div class="messages-toolbar">
+            <div class="toolbar-left">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search messages..." id="messageSearch">
+                </div>
+                <div class="filter-tabs">
+                    <a href="?filter=all"
+                        class="filter-tab {% if not request.GET.filter or request.GET.filter == 'all' %}active{% endif %}">
+                        All Messages
+                    </a>
+                    <a href="?filter=unread"
+                        class="filter-tab {% if request.GET.filter == 'unread' %}active{% endif %}">
+                        Unread
+                    </a>
+                    <a href="?filter=sent" class="filter-tab {% if request.GET.filter == 'sent' %}active{% endif %}">
+                        Sent
+                    </a>
+                </div>
+            </div>
+            <a href="{% url 'accounts:community' %}" class="compose-btn">
+                <i class="fas fa-pen"></i> New Message
+            </a>
+        </div>
+
+        <div class="message-list">
+            {% for message in page_obj %}
+            <div class="message-item {% if not message.is_read and message.recipient == request.user %}unread{% endif %}"
+                onclick="window.location.href='#message-{{ message.id }}'">
+                <div class="message-avatar">
+                    {% if message.sender == request.user %}
+                    {% if message.recipient.avatar %}
+                    <img src="{{ message.recipient.avatar.url }}" alt="{{ message.recipient.username }}">
+                    {% else %}
+                    {{ message.recipient.username|first|upper }}
+                    {% endif %}
+                    {% else %}
+                    {% if message.sender.avatar %}
+                    <img src="{{ message.sender.avatar.url }}" alt="{{ message.sender.username }}">
+                    {% else %}
+                    {{ message.sender.username|first|upper }}
+                    {% endif %}
+                    {% endif %}
+                </div>
+
                 <div class="message-content">
                     <div class="message-header">
-                        <div class="message-participants">
+                        <div class="message-sender">
                             {% if message.sender == request.user %}
-                                To: {{ message.recipient.get_full_name|default:message.recipient.username }}
+                            To: {{ message.recipient.get_full_name|default:message.recipient.username }}
                             {% else %}
-                                From: {{ message.sender.get_full_name|default:message.sender.username }}
-                                {% if not message.is_read %}
-                                    <span class="message-badge">New</span>
-                                {% endif %}
+                            {{ message.sender.get_full_name|default:message.sender.username }}
                             {% endif %}
                         </div>
-                        <div class="message-date">{{ message.created_at|date:"M d, g:i A" }}</div>
+                        <div class="message-meta">
+                            {% if message.sender == request.user %}
+                            <span class="sent-indicator">
+                                <i class="fas fa-check"></i> Sent
+                            </span>
+                            {% elif not message.is_read %}
+                            <span class="message-badge">New</span>
+                            {% endif %}
+                            <span class="message-time">{{ message.created_at|timesince }} ago</span>
+                        </div>
                     </div>
                     <div class="message-subject">{{ message.subject }}</div>
                     <div class="message-preview">{{ message.message|truncatewords:20 }}</div>
                 </div>
+
+                <div class="message-actions">
+                    <button class="action-btn" title="Reply">
+                        <i class="fas fa-reply"></i>
+                    </button>
+                    <button class="action-btn" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </div>
-        {% empty %}
-            <div class="no-messages">
-                <p>No messages yet.</p>
-                <p>Connect with other members in the <a href="{% url 'accounts:community' %}">community</a>!</p>
+            {% empty %}
+            <div class="empty-messages">
+                <div class="empty-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <div class="empty-title">No messages yet</div>
+                <div class="empty-text">Start connecting with others in your recovery journey</div>
+                <a href="{% url 'accounts:community' %}" class="compose-btn">
+                    <i class="fas fa-users"></i> Browse Community
+                </a>
             </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
+
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+            <a href="?page=1" class="page-btn">
+                <i class="fas fa-angle-double-left"></i>
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="page-btn">
+                <i class="fas fa-angle-left"></i>
+            </a>
+            {% endif %}
+
+            <span class="page-btn active">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="page-btn">
+                <i class="fas fa-angle-right"></i>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="page-btn">
+                <i class="fas fa-angle-double-right"></i>
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
 </div>
+
+<script>
+    // Search functionality
+    document.getElementById('messageSearch')?.addEventListener('input', function (e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const messages = document.querySelectorAll('.message-item');
+
+        messages.forEach(message => {
+            const content = message.textContent.toLowerCase();
+            if (content.includes(searchTerm)) {
+                message.style.display = 'flex';
+            } else {
+                message.style.display = 'none';
+            }
+        });
+    });
+</script>
 {% endblock %}
