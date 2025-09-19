@@ -186,22 +186,25 @@
     <div class="milestone-timeline">
         {% for milestone in milestones %}
         <div class="milestone-item">
-            {% if milestone.milestone_type == 'days' and milestone.days_sober %}
-            <span class="milestone-type">{{ milestone.days_sober }} Days Sober</span>
-            {% else %}
-            <span class="milestone-type">{{ milestone.get_milestone_type_display|default:"Personal Achievement"
-                }}</span>
-            {% endif %}
+            <span class="milestone-type">
+                {% if milestone.milestone_type == 'days' and milestone.days_sober %}
+                {{ milestone.days_sober }} Days Sober
+                {% elif milestone.get_milestone_type_display %}
+                {{ milestone.get_milestone_type_display }}
+                {% else %}
+                Personal Achievement
+                {% endif %}
+            </span>
             <h3>{{ milestone.title }}</h3>
             {% if milestone.description %}
             <p>{{ milestone.description }}</p>
             {% endif %}
             <div class="milestone-date">
-                {{ milestone.date_achieved|date:"F d, Y" }}
+                <i class="far fa-calendar"></i> {{ milestone.date_achieved|date:"F d, Y" }}
             </div>
             {% if milestone.days_sober %}
             <div class="milestone-date">
-                Day {{ milestone.days_sober }} of sobriety
+                <i class="fas fa-medal"></i> Day {{ milestone.days_sober }} of sobriety
             </div>
             {% endif %}
         </div>
