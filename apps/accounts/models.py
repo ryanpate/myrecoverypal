@@ -203,10 +203,35 @@ class Milestone(models.Model):
     class Meta:
         ordering = ['-date_achieved']
 
+    @property
+    def calculated_days_sober(self):
+        """
+        Dynamically calculate days sober at the time this milestone was achieved
+        based on the milestone date and the user's sobriety date
+        """
+        if self.user.sobriety_date:
+            delta = self.date_achieved - self.user.sobriety_date
+            return max(0, delta.days)  # Ensure we don't get negative days
+        return None
+
+    @property
+    def display_milestone_type(self):
+        """
+        Display the milestone type with calculated days for 'days' type milestones
+        """
+        if self.milestone_type == 'days':
+            days = self.calculated_days_sober
+            if days is not None:
+                if days == 0:
+                    return "Day 1 - Recovery Begins"
+                elif days == 1:
+                    return "1 Day Sober"
+                else:
+                    return f"{days} Days Sober"
+        return self.get_milestone_type_display()
+
     def __str__(self):
         return f"{self.user.username} - {self.title}"
-
-
 class SupportMessage(models.Model):
     sender = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='sent_messages')
