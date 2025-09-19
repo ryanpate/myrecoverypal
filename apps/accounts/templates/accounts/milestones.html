@@ -178,7 +178,7 @@
             <p>Track and celebrate your recovery journey</p>
         </div>
         <a href="{% url 'accounts:add_milestone' %}" class="add-milestone-btn-top">
-            <i class="fas fa-plus-circle"></i> Add Milestone
+            Add Milestone
         </a>
     </div>
 
@@ -192,11 +192,10 @@
             <p>{{ milestone.description }}</p>
             {% endif %}
             <div class="milestone-date">
-                <i class="far fa-calendar"></i> {{ milestone.date_achieved|date:"F d, Y" }}
+                {{ milestone.date_achieved|date:"F d, Y" }}
             </div>
             {% if milestone.milestone_type == 'days' and milestone.calculated_days_sober is not None %}
             <div class="milestone-date">
-                <i class="fas fa-medal"></i>
                 {% if milestone.calculated_days_sober == 0 %}
                 First day of sobriety
                 {% else %}
@@ -215,7 +214,7 @@
         <h3>No milestones yet</h3>
         <p>Start celebrating your achievements and track your recovery journey!</p>
         <a href="{% url 'accounts:add_milestone' %}" class="btn btn-primary">
-            <i class="fas fa-plus-circle"></i> Add Your First Milestone
+            Add Your First Milestone
         </a>
     </div>
     {% endif %}
