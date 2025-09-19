@@ -1,85 +1,733 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Add Milestone - Journey to Recovery{% endblock %}
+{% block title %}Add Milestone - MyRecoveryPal{% endblock %}
 
 {% block extra_css %}
 <style>
-    .milestone-form-container {
-        max-width: 600px;
-        margin: 100px auto 2rem;
+    /* Container and Layout */
+    .milestone-form-wrapper {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    /* Form Card */
+    .milestone-form-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    /* Form Body */
+    .milestone-form-body {
         padding: 2rem;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
-    
-    .form-header {
-        text-align: center;
+
+    /* Quick Suggestions Section */
+    .suggestions-section {
         margin-bottom: 2rem;
     }
-    
-    .form-header h2 {
-        color: var(--primary-color);
+
+    .suggestions-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
     }
-    
-    .milestone-suggestions {
-        background: #f8f9fa;
-        padding: 1.5rem;
-        border-radius: 5px;
-        margin-bottom: 2rem;
+
+    .suggestions-header h4 {
+        color: #1e4d8b;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0;
+        margin-right: 0.5rem;
     }
-    
-    .suggestion-item {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        margin: 0.25rem;
-        background: white;
-        border: 1px solid #ddd;
-        border-radius: 20px;
+
+    .suggestions-header .badge {
+        background: #e3f2fd;
+        color: #1e4d8b;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .suggestions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .suggestion-chip {
+        background: #f8f9fc;
+        border: 2px solid #e9ecef;
+        border-radius: 25px;
+        padding: 0.75rem 1rem;
         cursor: pointer;
         transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: #495057;
+        position: relative;
+        overflow: hidden;
     }
-    
-    .suggestion-item:hover {
-        background: var(--primary-color);
+
+    .suggestion-chip::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .suggestion-chip:hover::before {
+        left: 100%;
+    }
+
+    .suggestion-chip:hover {
+        background: white;
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    }
+
+    .suggestion-chip.selected {
+        background: #667eea;
         color: white;
-        border-color: var(--primary-color);
+        border-color: #667eea;
+    }
+
+    .suggestion-icon {
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+    }
+
+    /* Category Tabs */
+    .category-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 0;
+        overflow-x: auto;
+    }
+
+    .category-tab {
+        background: none;
+        border: none;
+        padding: 0.75rem 1.25rem;
+        color: #6c757d;
+        font-weight: 500;
+        cursor: pointer;
+        position: relative;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .category-tab:hover {
+        color: #495057;
+        background: #f8f9fc;
+    }
+
+    .category-tab.active {
+        color: #667eea;
+        background: white;
+    }
+
+    .category-tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #667eea;
+    }
+
+    /* Form Fields */
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-label .required {
+        color: #dc3545;
+        font-size: 0.9rem;
+    }
+
+    .form-label .optional {
+        color: #6c757d;
+        font-size: 0.85rem;
+        font-weight: normal;
+    }
+
+    .form-control,
+    .form-select,
+    textarea.form-control {
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 0.875rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fc;
+    }
+
+    .form-control:focus,
+    .form-select:focus,
+    textarea.form-control:focus {
+        background: white;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .form-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .character-counter {
+        text-align: right;
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+
+    /* Date Picker Enhancement */
+    .date-input-wrapper {
+        position: relative;
+    }
+
+    .date-input-wrapper .form-control {
+        padding-left: 2.5rem;
+    }
+
+    .date-input-wrapper .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        pointer-events: none;
+    }
+
+    /* Privacy Toggle */
+    .privacy-toggle {
+        background: #f8f9fc;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .form-check-input {
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+    }
+
+    .form-check-input:checked {
+        background-color: #52b788;
+        border-color: #52b788;
+    }
+
+    .form-check-label {
+        cursor: pointer;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
+        padding-top: 1.5rem;
+        border-top: 2px solid #e9ecef;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.875rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #52b788 0%, #45a675 100%);
+        color: white;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(82, 183, 136, 0.3);
+    }
+
+    .btn-secondary {
+        background: #e9ecef;
+        color: #495057;
+        min-width: 120px;
+        justify-content: center;
+    }
+
+    .btn-secondary:hover {
+        background: #dee2e6;
+    }
+
+    /* Help Tips */
+    .help-tip {
+        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        border-left: 4px solid #667eea;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 0.75rem;
+        align-items: start;
+    }
+
+    .help-tip-icon {
+        color: #667eea;
+        font-size: 1.2rem;
+        margin-top: 0.125rem;
+    }
+
+    .help-tip-content {
+        flex: 1;
+    }
+
+    .help-tip-content h5 {
+        color: #495057;
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .help-tip-content p {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    /* Loading State */
+    .btn-loading {
+        position: relative;
+        color: transparent;
+    }
+
+    .btn-loading::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 50%;
+        left: 50%;
+        margin-left: -10px;
+        margin-top: -10px;
+        border: 2px solid white;
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spinner 0.6s linear infinite;
+    }
+
+    @keyframes spinner {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+        .milestone-form-wrapper {
+            margin: 1rem auto;
+            padding: 0 0.5rem;
+        }
+
+        .milestone-form-body {
+            padding: 1.5rem;
+        }
+
+        .suggestions-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .category-tabs {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+    }
+
+    /* Success Animation */
+    @keyframes successPulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(82, 183, 136, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(82, 183, 136, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(82, 183, 136, 0);
+        }
+    }
+
+    .success-animation {
+        animation: successPulse 1.5s;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="page-header milestone-form-container">
-    <div class="form-header">
-        <h2>Add a New Milestone</h2>
-        <p>Celebrate your recovery achievements, big or small</p>
+<!-- Page Header using base.html styles -->
+<div class="page-header">
+    <div class="container">
+        <h1>Add a New Milestone</h1>
+        <p>Celebrate every step forward in your recovery journey</p>
     </div>
-    
-    <div class="milestone-suggestions">
-        <h4>Common Milestones:</h4>
-        <div class="suggestion-item" onclick="fillForm('First AA/NA Meeting')">First AA/NA Meeting</div>
-        <div class="suggestion-item" onclick="fillForm('Found a Sponsor')">Found a Sponsor</div>
-        <div class="suggestion-item" onclick="fillForm('Completed Step 1')">Completed Step 1</div>
-        <div class="suggestion-item" onclick="fillForm('Repaired a Relationship')">Repaired a Relationship</div>
-        <div class="suggestion-item" onclick="fillForm('New Job/Promotion')">New Job/Promotion</div>
-        <div class="suggestion-item" onclick="fillForm('Fitness Goal Achieved')">Fitness Goal Achieved</div>
-    </div>
-    
-    <form method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        
-        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-            <button type="submit" class="btn btn-primary">Save Milestone</button>
-            <a href="{% url 'accounts:milestones' %}" class="btn btn-secondary">Cancel</a>
+</div>
+
+<div class="milestone-form-wrapper">
+    <div class="milestone-form-card">
+        <!-- Form Body -->
+        <div class="milestone-form-body">
+            <!-- Help Tip -->
+            <div class="help-tip">
+                <span class="help-tip-icon">💡</span>
+                <div class="help-tip-content">
+                    <h5>Why Track Milestones?</h5>
+                    <p>Recognizing your achievements, both big and small, reinforces positive behaviors and motivates continued progress in recovery.</p>
+                </div>
+            </div>
+
+            <!-- Quick Suggestions -->
+            <div class="suggestions-section">
+                <div class="suggestions-header">
+                    <h4>Quick Add Suggestions</h4>
+                    <span class="badge">Popular</span>
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="category-tabs">
+                    <button type="button" class="category-tab active" onclick="showCategory('recovery')">
+                        Recovery Steps
+                    </button>
+                    <button type="button" class="category-tab" onclick="showCategory('personal')">
+                        Personal Growth
+                    </button>
+                    <button type="button" class="category-tab" onclick="showCategory('health')">
+                        Health & Wellness
+                    </button>
+                    <button type="button" class="category-tab" onclick="showCategory('relationships')">
+                        Relationships
+                    </button>
+                </div>
+
+                <!-- Suggestions Grid -->
+                <div class="suggestions-grid" id="recovery-suggestions">
+                    <div class="suggestion-chip" onclick="fillForm('First AA/NA Meeting', 'Attended my first support group meeting')">
+                        <span class="suggestion-icon">🏁</span>
+                        <span>First AA/NA Meeting</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('Found a Sponsor', 'Connected with a sponsor to guide my recovery')">
+                        <span class="suggestion-icon">🤝</span>
+                        <span>Found a Sponsor</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('30 Days Clean', 'Celebrating one month of sobriety')">
+                        <span class="suggestion-icon">📅</span>
+                        <span>30 Days Clean</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('Completed Step 1', 'Admitted powerlessness and unmanageability')">
+                        <span class="suggestion-icon">📝</span>
+                        <span>Completed Step 1</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('90 Days Sober', 'Three months of continuous sobriety')">
+                        <span class="suggestion-icon">🏆</span>
+                        <span>90 Days Sober</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('Made Amends', 'Reached out to make amends with someone')">
+                        <span class="suggestion-icon">💝</span>
+                        <span>Made Amends</span>
+                    </div>
+                </div>
+
+                <div class="suggestions-grid" id="personal-suggestions" style="display: none;">
+                    <div class="suggestion-chip" onclick="fillForm('New Job/Promotion', 'Advanced in my career')">
+                        <span class="suggestion-icon">💼</span>
+                        <span>New Job/Promotion</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('Started School', 'Enrolled in educational program')">
+                        <span class="suggestion-icon">🎓</span>
+                        <span>Started School</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('Learned New Skill', 'Developed a new ability or hobby')">
+                        <span class="suggestion-icon">🎨</span>
+                        <span>Learned New Skill</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('Financial Goal Met', 'Achieved a financial milestone')">
+                        <span class="suggestion-icon">💰</span>
+                        <span>Financial Goal Met</span>
+                    </div>
+                </div>
+
+                <div class="suggestions-grid" id="health-suggestions" style="display: none;">
+                    <div class="suggestion-chip" onclick="fillForm('Fitness Goal Achieved', 'Reached a health or fitness milestone')">
+                        <span class="suggestion-icon">💪</span>
+                        <span>Fitness Goal Achieved</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('Healthy Weight', 'Reached target weight goal')">
+                        <span class="suggestion-icon">⚖️</span>
+                        <span>Healthy Weight</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('Quit Smoking', 'Stopped smoking cigarettes')">
+                        <span class="suggestion-icon">🚭</span>
+                        <span>Quit Smoking</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('Regular Sleep Schedule', 'Established healthy sleep routine')">
+                        <span class="suggestion-icon">😴</span>
+                        <span>Regular Sleep Schedule</span>
+                    </div>
+                </div>
+
+                <div class="suggestions-grid" id="relationships-suggestions" style="display: none;">
+                    <div class="suggestion-chip" onclick="fillForm('Repaired Relationship', 'Mended a broken relationship')">
+                        <span class="suggestion-icon">❤️</span>
+                        <span>Repaired Relationship</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('Family Reunion', 'Reconnected with family')">
+                        <span class="suggestion-icon">👨‍👩‍👧‍👦</span>
+                        <span>Family Reunion</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('Helped Others', 'Supported someone else in recovery')">
+                        <span class="suggestion-icon">🤲</span>
+                        <span>Helped Others</span>
+                    </div>
+                    <div class="suggestion-chip" onclick="fillForm('Built Trust', 'Regained trust with loved ones')">
+                        <span class="suggestion-icon">🔐</span>
+                        <span>Built Trust</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Form -->
+            <form method="post" id="milestone-form">
+                {% csrf_token %}
+                
+                <!-- Title Field -->
+                <div class="form-section">
+                    <label for="id_title" class="form-label">
+                        Milestone Title <span class="required">*</span>
+                    </label>
+                    <input type="text" 
+                           id="id_title" 
+                           name="title" 
+                           class="form-control" 
+                           placeholder="e.g., 30 Days Sober, Completed Step 4, New Job"
+                           maxlength="200"
+                           required>
+                    <div class="form-text">
+                        <span>ℹ️</span> Give your milestone a clear, memorable title
+                    </div>
+                </div>
+
+                <!-- Description Field -->
+                <div class="form-section">
+                    <label for="id_description" class="form-label">
+                        Description <span class="optional">(optional)</span>
+                    </label>
+                    <textarea id="id_description" 
+                              name="description" 
+                              class="form-control" 
+                              placeholder="Share more about this achievement and what it means to you..."
+                              rows="4"
+                              maxlength="1000"
+                              oninput="updateCharCount(this)"></textarea>
+                    <div class="character-counter">
+                        <span id="char-count">0</span> / 1000
+                    </div>
+                </div>
+
+                <!-- Date Field -->
+                <div class="form-section">
+                    <label for="id_date_achieved" class="form-label">
+                        Date Achieved <span class="optional">(optional)</span>
+                    </label>
+                    <div class="date-input-wrapper">
+                        <span class="input-icon">📅</span>
+                        <input type="date" 
+                               id="id_date_achieved" 
+                               name="date_achieved" 
+                               class="form-control"
+                               max="{{ today }}">
+                    </div>
+                    <div class="form-text">
+                        <span>💭</span> Leave blank to use today's date
+                    </div>
+                </div>
+
+                <!-- Privacy Toggle -->
+                <div class="privacy-toggle">
+                    <div class="form-check">
+                        <input type="checkbox" 
+                               id="id_is_private" 
+                               name="is_private" 
+                               class="form-check-input">
+                        <label for="id_is_private" class="form-check-label">
+                            <span>🔒</span>
+                            Keep this milestone private
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <a href="{% url 'accounts:milestones' %}" class="btn btn-secondary">
+                        <span>←</span> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary" id="submit-btn">
+                        <span>✨</span> Save Milestone
+                    </button>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 
 <script>
-function fillForm(title) {
-    document.getElementById('id_title').value = title;
+// Category switching
+function showCategory(category) {
+    // Hide all suggestion grids
+    document.querySelectorAll('.suggestions-grid').forEach(grid => {
+        grid.style.display = 'none';
+    });
+    
+    // Show selected category
+    document.getElementById(category + '-suggestions').style.display = 'grid';
+    
+    // Update tab states
+    document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    event.target.classList.add('active');
 }
+
+// Fill form with suggestion
+function fillForm(title, description = '') {
+    document.getElementById('id_title').value = title;
+    if (description && document.getElementById('id_description')) {
+        document.getElementById('id_description').value = description;
+        updateCharCount(document.getElementById('id_description'));
+    }
+    
+    // Scroll to form
+    document.getElementById('milestone-form').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+    });
+    
+    // Highlight the title field briefly
+    const titleField = document.getElementById('id_title');
+    titleField.style.transition = 'all 0.3s ease';
+    titleField.style.boxShadow = '0 0 0 3px rgba(82, 183, 136, 0.3)';
+    setTimeout(() => {
+        titleField.style.boxShadow = '';
+    }, 1500);
+}
+
+// Character counter
+function updateCharCount(textarea) {
+    const count = textarea.value.length;
+    document.getElementById('char-count').textContent = count;
+    
+    // Change color as approaching limit
+    const counter = document.getElementById('char-count');
+    if (count > 900) {
+        counter.style.color = '#dc3545';
+    } else if (count > 750) {
+        counter.style.color = '#ffc107';
+    } else {
+        counter.style.color = '#6c757d';
+    }
+}
+
+// Set max date to today
+document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.getElementById('id_date_achieved');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.max = today;
+    }
+});
+
+// Form submission handling
+document.getElementById('milestone-form').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.classList.add('btn-loading');
+    submitBtn.disabled = true;
+});
+
+// Add visual feedback for suggestion selection
+document.querySelectorAll('.suggestion-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+        // Remove selected class from all chips
+        document.querySelectorAll('.suggestion-chip').forEach(c => {
+            c.classList.remove('selected');
+        });
+        // Add selected class to clicked chip
+        this.classList.add('selected');
+        
+        // Remove it after animation
+        setTimeout(() => {
+            this.classList.remove('selected');
+        }, 800);
+    });
+});
 </script>
 {% endblock %}
