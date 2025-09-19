@@ -227,8 +227,8 @@
 
     .follow-btn {
         flex: 0 0 auto;  /* Don't grow or shrink */
-        min-width: 240px;  /* Minimum width */
-        max-width: 240px;  /* Maximum width */        
+        min-width: 250px;  /* Minimum width */
+        max-width: 250px;  /* Maximum width */        
         padding: 0.75rem;
         border: none;
         border-radius: 8px;
@@ -544,19 +544,19 @@
                     {% endif %}
                 </div>
                 <div class="member-actions">
-                    <a href="{% url 'accounts:send_message' member.username %}" class="action-btn" title="Send Message">
+                    <a href="{% url 'accounts:send_message' member.username %}" class="action-btn" title="Send Message" align-items="center">
                         💬
                     </a>
 
                     {% if member.is_sponsor and not user.get_active_sponsor %}
-                    <a href="{% url 'accounts:request_sponsor' member.username %}" class="action-btn"
+                    <a href="{% url 'accounts:request_sponsor' member.username %}" class="action-btn" align-items="center"
                         title="Request as Sponsor">
                         🎯
                     </a>
                     {% endif %}
 
                     {% if not member.get_recovery_pal and not user.get_recovery_pal %}
-                    <a href="{% url 'accounts:request_pal' member.username %}" class="action-btn"
+                    <a href="{% url 'accounts:request_pal' member.username %}" class="action-btn" align-items="center"
                         title="Request Recovery Pal">
                         🤝
                     </a>
