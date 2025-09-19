@@ -11,6 +11,43 @@
         padding: 0 2rem;
     }
     
+    .milestones-header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .milestones-header-content h2 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .milestones-header-content p {
+        color: #666;
+        margin: 0;
+    }
+    
+    .add-milestone-btn-top {
+        background: var(--accent-color);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+    
+    .add-milestone-btn-top:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    
     .milestone-timeline {
         position: relative;
         padding: 2rem 0;
@@ -74,33 +111,43 @@
     .milestone-date {
         color: #666;
         font-size: 0.9rem;
+        margin-top: 0.5rem;
     }
     
-    .add-milestone-btn {
-        position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        width: 60px;
-        height: 60px;
-        background: var(--accent-color);
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        font-size: 1.5rem;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        transition: all 0.3s ease;
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin: 2rem 0;
     }
     
-    .add-milestone-btn:hover {
-        transform: scale(1.1);
-        background: var(--primary-color);
-        color: white;
+    .empty-state-icon {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state h3 {
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-state p {
+        color: #999;
+        margin-bottom: 1.5rem;
     }
     
     @media (max-width: 768px) {
+        .milestones-header-section {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .milestones-header-content {
+            margin-bottom: 1rem;
+        }
+        
         .milestone-item {
             width: 100%;
             margin-left: 0 !important;
@@ -125,27 +172,47 @@
 </div>
 
 <div class="milestones-container">
-    <div class="milestone-timeline">
-        {% for milestone in milestones %}
-            <div class="milestone-item">
-                <span class="milestone-type">{{ milestone.get_milestone_type_display }}</span>
-                <h3>{{ milestone.title }}</h3>
-                {% if milestone.description %}
-                    <p>{{ milestone.description }}</p>
-                {% endif %}
-                <div class="milestone-date">{{ milestone.date_achieved|date:"F d, Y" }}</div>
-                {% if milestone.days_sober %}
-                    <div class="milestone-date">Day {{ milestone.days_sober }} of sobriety</div>
-                {% endif %}
-            </div>
-        {% empty %}
-            <div style="text-align: center; padding: 3rem;">
-                <p>No milestones yet. Start celebrating your achievements!</p>
-                <a href="{% url 'accounts:add_milestone' %}" class="btn btn-primary">Add Your First Milestone</a>
-            </div>
-        {% endfor %}
+    <div class="milestones-header-section">
+        <div class="milestones-header-content">
+            <h2>Your Achievements</h2>
+            <p>Track and celebrate your recovery journey</p>
+        </div>
+        <a href="{% url 'accounts:add_milestone' %}" class="add-milestone-btn-top">
+            <i class="fas fa-plus-circle"></i> Add Milestone
+        </a>
     </div>
-</div>
 
-<a href="{% url 'accounts:add_milestone' %}" class="add-milestone-btn">+</a>
+    {% if milestones %}
+        <div class="milestone-timeline">
+            {% for milestone in milestones %}
+                <div class="milestone-item">
+                    <span class="milestone-type">{{ milestone.get_milestone_type_display }}</span>
+                    <h3>{{ milestone.title }}</h3>
+                    {% if milestone.description %}
+                        <p>{{ milestone.description }}</p>
+                    {% endif %}
+                    <div class="milestone-date">
+                        <i class="far fa-calendar"></i> {{ milestone.date_achieved|date:"F d, Y" }}
+                    </div>
+                    {% if milestone.days_sober %}
+                        <div class="milestone-date">
+                            <i class="fas fa-medal"></i> Day {{ milestone.days_sober }} of sobriety
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h3>No milestones yet</h3>
+            <p>Start celebrating your achievements and track your recovery journey!</p>
+            <a href="{% url 'accounts:add_milestone' %}" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Add Your First Milestone
+            </a>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
