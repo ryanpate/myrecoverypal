@@ -544,19 +544,19 @@
                     {% endif %}
                 </div>
                 <div class="member-actions">
-                    <a href="{% url 'accounts:send_message' member.username %}" class="action-btn" title="Send Message" align-items="center">
+                    <a href="{% url 'accounts:send_message' member.username %}" class="action-btn" title="Send Message" display="flex" flex-wrap="wrap">
                         💬
                     </a>
 
                     {% if member.is_sponsor and not user.get_active_sponsor %}
-                    <a href="{% url 'accounts:request_sponsor' member.username %}" class="action-btn" align-items="center"
+                    <a href="{% url 'accounts:request_sponsor' member.username %}" class="action-btn" align-items="center" display="flex" flex-wrap="wrap"
                         title="Request as Sponsor">
                         🎯
                     </a>
                     {% endif %}
 
                     {% if not member.get_recovery_pal and not user.get_recovery_pal %}
-                    <a href="{% url 'accounts:request_pal' member.username %}" class="action-btn" align-items="center"
+                    <a href="{% url 'accounts:request_pal' member.username %}" class="action-btn" align-items="center" display="flex" flex-wrap="wrap"
                         title="Request Recovery Pal">
                         🤝
                     </a>
