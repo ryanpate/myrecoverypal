@@ -228,7 +228,8 @@
     .follow-btn {
         flex: 0 0 auto;  /* Don't grow or shrink */
         min-width: 240px;  /* Minimum width */
-        max-width: 240px;  /* Maximum width */        padding: 0.75rem;
+        max-width: 240px;  /* Maximum width */        
+        padding: 0.75rem;
         border: none;
         border-radius: 8px;
         font-weight: 500;
@@ -541,7 +542,8 @@
                         ➕ Follow
                     </button>
                     {% endif %}
-
+                </div>
+                <div class="member-actions">
                     <a href="{% url 'accounts:send_message' member.username %}" class="action-btn" title="Send Message">
                         💬
                     </a>
