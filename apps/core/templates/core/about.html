@@ -1,12 +1,570 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}About - Journey to Recovery{% endblock %}
+{% block title %}About - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* About Page Specific Styles */
+    .about-header {
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        padding: 100px 0 50px;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .about-header::before {
+        content: '';
+        position: absolute;
+        width: 150%;
+        height: 150%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+        background-size: 50px 50px;
+        animation: float 20s infinite linear;
+        top: -50%;
+        left: -50%;
+    }
+
+    @keyframes float {
+        0% {
+            transform: translate(-50px, -50px);
+        }
+
+        100% {
+            transform: translate(0, 0);
+        }
+    }
+
+    .about-content {
+        padding: 4rem 0;
+        background: #f8f9fa;
+    }
+
+    .mission-section {
+        background: white;
+        padding: 4rem 0;
+        margin-bottom: 3rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .mission-card {
+        text-align: center;
+        padding: 2rem;
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .mission-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .mission-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, #4db8e8, #52b788);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+    }
+
+    .story-section {
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 10px;
+        margin-bottom: 3rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .story-content {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .value-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid #52b788;
+        transition: all 0.3s ease;
+    }
+
+    .value-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .value-card h4 {
+        color: #1e4d8b;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .value-card i {
+        color: #52b788;
+    }
+
+    .stats-section {
+        background: linear-gradient(135deg, #1e4d8b, #4db8e8);
+        color: white;
+        padding: 4rem 0;
+        margin: 3rem 0;
+        border-radius: 10px;
+    }
+
+    .stat-box {
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        opacity: 0.95;
+    }
+
+    .team-section {
+        padding: 3rem 0;
+    }
+
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .team-member {
+        text-align: center;
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .team-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        background: linear-gradient(135deg, #4db8e8, #52b788);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+    }
+
+    .team-member h4 {
+        color: #1e4d8b;
+        margin-bottom: 0.5rem;
+    }
+
+    .team-role {
+        color: #666;
+        font-style: italic;
+        margin-bottom: 1rem;
+    }
+
+    .features-section {
+        background: #f8f9fa;
+        padding: 4rem 0;
+        border-radius: 10px;
+        margin: 3rem 0;
+    }
+
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 2rem;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: start;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: white;
+        border-radius: 8px;
+        transition: transform 0.2s ease;
+    }
+
+    .feature-item:hover {
+        transform: translateX(5px);
+    }
+
+    .feature-icon {
+        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+        background: #52b788;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+
+    .cta-section {
+        background: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        border-radius: 10px;
+        margin-top: 3rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+    }
+
+    .btn-primary {
+        background: #52b788;
+        border-color: #52b788;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: #45a675;
+        border-color: #45a675;
+        transform: translateY(-2px);
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 2px solid #1e4d8b;
+        color: #1e4d8b;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline:hover {
+        background: #1e4d8b;
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .about-header h1 {
+            font-size: 2rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+
+        .values-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .cta-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cta-buttons .btn {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div style="padding-top: 80px; min-height: 100vh;">
+<!-- Header Section -->
+<div class="about-header">
     <div class="container">
-        <h1>About Us</h1>
-        <p>Content coming soon...</p>
+        <h1>About MyRecoveryPal</h1>
+        <p>Your trusted companion on the journey to lasting recovery</p>
     </div>
 </div>
+
+<!-- Mission Section -->
+<section class="mission-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center mb-4">
+                <h2>Our Mission</h2>
+                <p class="lead">Creating a social network for recovery that destigmatizes addiction and empowers people
+                    to be their authentic selves while building meaningful connections.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mission-card">
+                    <div class="mission-icon">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <h3>Real Connection</h3>
+                    <p>Bringing together people in recovery, their families, and friends to support each other through
+                        authentic relationships.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mission-card">
+                    <div class="mission-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Community Strength</h3>
+                    <p>Building a network where everyone cheers each other on and finds strength in shared experiences.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mission-card">
+                    <div class="mission-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Authentic Self</h3>
+                    <p>Helping people in recovery gain confidence to be their true selves without shame or stigma.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Story Section -->
+<section class="about-content">
+    <div class="container">
+        <div class="story-section">
+            <div class="story-content">
+                <h2 class="text-center mb-4">Why MyRecoveryPal Exists</h2>
+                <p>MyRecoveryPal was created with a simple but powerful vision: to help people in addiction recovery
+                    connect with each other in meaningful ways. We believe that recovery happens best in community,
+                    where people can share their experience, strength, and hope with others who truly understand the
+                    journey.</p>
+
+                <p>This isn't just another health platform or resource directory. MyRecoveryPal is a social network
+                    specifically designed for the recovery community—a place where people in recovery, those considering
+                    it, those in active addiction, and their loved ones can all come together to support each other.</p>
+
+                <p>We're working to destigmatize addiction by creating a space where people can be their authentic
+                    selves without shame or judgment. Here, vulnerability is strength, honesty is celebrated, and every
+                    day of recovery—whether it's day one or day one thousand—matters.</p>
+
+                <p>Our goal is simple: to make consistent, long-term recovery more possible by facilitating real
+                    connections between people who care about recovery. Because when we recover together, we recover
+                    stronger.</p>
+            </div>
+        </div>
+
+        <!-- Core Values -->
+        <div class="mt-5">
+            <h2 class="text-center mb-4">What We Believe</h2>
+            <div class="values-grid">
+                <div class="value-card">
+                    <h4><i class="fas fa-heart"></i> Connection Over Isolation</h4>
+                    <p>Recovery thrives in community. We're building a social network where real connections help people
+                        stay strong in their recovery journey.</p>
+                </div>
+                <div class="value-card">
+                    <h4><i class="fas fa-ribbon"></i> Breaking the Stigma</h4>
+                    <p>Addiction is not a moral failing. We're creating a judgment-free space where people can be open
+                        about their recovery without shame.</p>
+                </div>
+                <div class="value-card">
+                    <h4><i class="fas fa-hands-helping"></i> Family & Friends Matter</h4>
+                    <p>Recovery affects everyone. We welcome family members and friends who want to understand and
+                        support their loved ones.</p>
+                </div>
+                <div class="value-card">
+                    <h4><i class="fas fa-sun"></i> Authentic Living</h4>
+                    <p>We help people in recovery gain the confidence to be their true selves and live authentically in
+                        their new sober life.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-box">
+                    <span class="stat-number">10,000+</span>
+                    <span class="stat-label">Active Members</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-box">
+                    <span class="stat-number">50,000+</span>
+                    <span class="stat-label">Journal Entries</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-box">
+                    <span class="stat-number">1M+</span>
+                    <span class="stat-label">Days Sober Tracked</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-box">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Support Available</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <h2 class="text-center mb-4">How MyRecoveryPal Helps</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div>
+                            <h5>Community Connection</h5>
+                            <p>Connect with others in recovery, share your story, and find people who understand exactly
+                                what you're going through.</p>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div>
+                            <h5>Share Your Journey</h5>
+                            <p>Document your recovery through personal journals and blogs, sharing your experience,
+                                strength, and hope with others.</p>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div>
+                            <h5>Celebrate Milestones</h5>
+                            <p>Mark your achievements and let the community cheer you on—every day of recovery is worth
+                                celebrating.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <div>
+                            <h5>Family Support</h5>
+                            <p>Resources and connections for family members and friends who want to support their loved
+                                ones in recovery.</p>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-compass"></i>
+                        </div>
+                        <div>
+                            <h5>Guided Recovery</h5>
+                            <p>Journal prompts and resources to help guide you through the recovery process and personal
+                                growth.</p>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div>
+                            <h5>Always Accessible</h5>
+                            <p>Access your recovery community anywhere, anytime—support is always just a tap away.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section (Optional - Uncomment if you want to include team info) -->
+<!--
+<section class="team-section">
+    <div class="container">
+        <h2 class="text-center mb-4">Meet Our Team</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="team-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h4>[Founder Name]</h4>
+                <p class="team-role">Founder & CEO</p>
+                <p>Recovery advocate with [X] years of sobriety, dedicated to making recovery resources accessible to all.</p>
+            </div>
+            <div class="team-member">
+                <div class="team-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h4>[Team Member]</h4>
+                <p class="team-role">Recovery Program Director</p>
+                <p>Certified recovery specialist bringing evidence-based approaches to our platform.</p>
+            </div>
+            <div class="team-member">
+                <div class="team-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h4>[Team Member]</h4>
+                <p class="team-role">Community Manager</p>
+                <p>Ensuring our community remains a safe, supportive space for all members.</p>
+            </div>
+        </div>
+    </div>
+</section>
+-->
+
+<!-- CTA Section -->
+<section class="container">
+    <div class="cta-section">
+        <h2>Join Our Recovery Community</h2>
+        <p class="lead">Whether you're in recovery, supporting someone who is, or just curious about sobriety, you
+            belong here.</p>
+        <div class="cta-buttons">
+            <a href="{% url 'accounts:signup' %}" class="btn btn-primary">Join MyRecoveryPal</a>
+            <a href="mailto:ryan@myrecoverypal.com" class="btn btn-outline">Contact Us</a>
+        </div>
+        <p class="mt-3 text-muted">Free to join • Safe & supportive community • Your recovery, your way</p>
+        <p class="mt-2">
+            <small>Questions? Email us at <a href="mailto:ryan@myrecoverypal.com">ryan@myrecoverypal.com</a></small>
+        </p>
+    </div>
+</section>
+
 {% endblock %}
