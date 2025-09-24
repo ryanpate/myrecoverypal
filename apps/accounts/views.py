@@ -691,6 +691,12 @@ class ProfileView(DetailView):
         
         return context
 
+@login_required
+def update_last_seen(request):
+    """AJAX endpoint to update user's last seen timestamp"""
+    request.user.last_seen = timezone.now()
+    request.user.save(update_fields=['last_seen'])
+    return JsonResponse({'status': 'updated'})
 
 @login_required
 def edit_profile_view(request):
