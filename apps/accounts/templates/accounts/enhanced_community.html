@@ -787,9 +787,7 @@
             token.name = 'csrfmiddlewaretoken';
             token.value = '{{ csrf_token }}';
             document.body.appendChild(token);
-        }
 
-        {
         // Update every 2 minutes while the page is active
         setInterval(() => {
             fetch('/accounts/api/update-last-seen/', {
