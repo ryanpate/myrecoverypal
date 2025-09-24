@@ -1,6 +1,7 @@
-<!-- Updated enhanced_community.html with working header buttons -->
+<!-- Updated enhanced_community.html with working online status indicator -->
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}Recovery Community - MyRecoveryPal{% endblock %}
 
@@ -146,15 +147,51 @@
         object-fit: cover;
     }
 
-    .online-indicator {
+    /* Updated online status indicators */
+    .status-indicator {
         position: absolute;
         bottom: 5px;
         right: 5px;
         width: 16px;
         height: 16px;
-        background: #4caf50;
         border-radius: 50%;
         border: 2px solid white;
+    }
+
+    .status-indicator.online {
+        background: #4caf50;
+        animation: pulse 2s infinite;
+    }
+
+    .status-indicator.recently-active {
+        background: #ffa726;
+    }
+
+    .status-indicator.away {
+        background: #9e9e9e;
+    }
+
+    .status-indicator.offline {
+        background: #e0e0e0;
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+        }
+    }
+
+    .status-text {
+        font-size: 0.75rem;
+        color: #666;
+        text-align: center;
+        margin-top: 0.25rem;
     }
 
     .member-info {
@@ -226,9 +263,9 @@
     }
 
     .follow-btn {
-        flex: 0 0 auto;  /* Don't grow or shrink */
-        min-width: 250px;  /* Minimum width */
-        max-width: 250px;  /* Maximum width */        
+        flex: 0 0 auto;
+        min-width: 250px;
+        max-width: 250px;        
         padding: 0.75rem;
         border: none;
         border-radius: 8px;
@@ -396,8 +433,8 @@
                 <div class="stat-label">Total Members</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">{{ page_obj.paginator.count|default:0 }}</div>
-                <div class="stat-label">Active Today</div>
+                <div class="stat-number">{{ online_count|default:0 }}</div>
+                <div class="stat-label">Online Now</div>
             </div>
         </div>
         {% endif %}
@@ -440,7 +477,7 @@
 
     <!-- Community Filters -->
     <div class="community-filters">
-        <h3>🔍 Discover Members</h3>
+        <h3>🔎 Discover Members</h3>
 
         <div class="filter-tabs">
             <a href="?filter=" class="filter-tab {% if not request.GET.filter %}active{% endif %}">
@@ -456,6 +493,9 @@
             </a>
             <a href="?filter=new" class="filter-tab {% if request.GET.filter == 'new' %}active{% endif %}">
                 ✨ New Members
+            </a>
+            <a href="?filter=online" class="filter-tab {% if request.GET.filter == 'online' %}active{% endif %}">
+                🟢 Online Now
             </a>
         </div>
 
@@ -475,9 +515,29 @@
     <div class="members-grid">
         {% for member in members %}
         <div class="member-card">
-            {% if member.is_active %}
-            <div class="online-indicator" title="Online recently"></div>
+            <!-- Calculate online status based on last_seen -->
+            {% with member.last_seen as last_seen %}
+            {% if last_seen %}
+                {% now "U" as current_timestamp %}
+                {% with last_seen.timestamp as last_seen_timestamp %}
+                {% widthratio current_timestamp|add:"-300" 1 1 as five_minutes_ago %}
+                {% widthratio current_timestamp|add:"-3600" 1 1 as one_hour_ago %}
+                {% widthratio current_timestamp|add:"-86400" 1 1 as one_day_ago %}
+                
+                {% if last_seen_timestamp|floatformat:"0" >= five_minutes_ago|floatformat:"0" %}
+                    <div class="status-indicator online" title="Online now"></div>
+                {% elif last_seen_timestamp|floatformat:"0" >= one_hour_ago|floatformat:"0" %}
+                    <div class="status-indicator recently-active" title="Active {{ last_seen|timesince }} ago"></div>
+                {% elif last_seen_timestamp|floatformat:"0" >= one_day_ago|floatformat:"0" %}
+                    <div class="status-indicator away" title="Last seen {{ last_seen|timesince }} ago"></div>
+                {% else %}
+                    <div class="status-indicator offline" title="Last seen {{ last_seen|date:"M d, Y" }}"></div>
+                {% endif %}
+                {% endwith %}
+            {% else %}
+                <div class="status-indicator offline" title="Never logged in"></div>
             {% endif %}
+            {% endwith %}
 
             <div class="member-avatar">
                 {% if member.avatar %}
@@ -495,6 +555,23 @@
                     </a>
                 </div>
                 <div class="member-username">@{{ member.username }}</div>
+
+                <!-- Show last seen time -->
+                {% if member.last_seen %}
+                <div class="status-text">
+                    {% now "U" as current_timestamp %}
+                    {% with member.last_seen.timestamp as last_seen_timestamp %}
+                    {% widthratio current_timestamp|add:"-300" 1 1 as five_minutes_ago %}
+                    {% if last_seen_timestamp|floatformat:"0" >= five_minutes_ago|floatformat:"0" %}
+                        🟢 Online now
+                    {% else %}
+                        Last seen {{ member.last_seen|timesince }} ago
+                    {% endif %}
+                    {% endwith %}
+                {% else %}
+                    New member
+                {% endif %}
+                </div>
 
                 <div class="member-stats">
                     <div class="member-stat">
@@ -535,7 +612,7 @@
                 <div class="member-actions">
                     {% if member.is_followed %}
                     <button class="follow-btn following" onclick="followUser('{{ member.username }}')">
-                        ✓ Following
+                        ✔ Following
                     </button>
                     {% else %}
                     <button class="follow-btn follow" onclick="followUser('{{ member.username }}')">
@@ -657,7 +734,7 @@
                 buttons.forEach(button => {
                     if (data.is_following) {
                         button.className = 'follow-btn following';
-                        button.innerHTML = '✓ Following';
+                        button.innerHTML = '✔ Following';
                     } else {
                         button.className = 'follow-btn follow';
                         button.innerHTML = '➕ Follow';
@@ -705,6 +782,27 @@
             token.name = 'csrfmiddlewaretoken';
             token.value = '{{ csrf_token }}';
             document.body.appendChild(token);
+        }
+        
+        // Update last seen status periodically
+        if ({{ user.is_authenticated|lower }}) {
+            // Update every 2 minutes while the page is active
+            setInterval(() => {
+                fetch('/accounts/api/update-last-seen/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    }
+                });
+            }, 120000); // 2 minutes
+            
+            // Update immediately on page load
+            fetch('/accounts/api/update-last-seen/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                }
+            });
         }
     });
 </script>

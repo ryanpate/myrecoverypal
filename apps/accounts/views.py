@@ -21,6 +21,7 @@ from django.conf import settings
 import cloudinary.uploader
 from django.core.serializers import serialize
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import (
     GroupChallenge, ChallengeParticipant, ChallengeCheckIn,
@@ -1035,8 +1036,9 @@ def follow_user(request, username):
 # ENHANCED COMMUNITY VIEW WITH CONNECTIONS
 # =============================================================================
 
+# Update the EnhancedCommunityView class
 class EnhancedCommunityView(ListView):
-    """Enhanced community view with follow functionality"""
+    """Enhanced community view with follow functionality and online status"""
     model = User
     template_name = 'accounts/enhanced_community.html'
     context_object_name = 'members'
@@ -1052,7 +1054,6 @@ class EnhancedCommunityView(ListView):
             following_ids = list(
                 self.request.user.get_following().values_list('id', flat=True))
 
-            # Use proper table alias to avoid ambiguous column name
             from django.db.models import Case, When, Value, BooleanField
             queryset = queryset.annotate(
                 is_followed=Case(
@@ -1064,14 +1065,20 @@ class EnhancedCommunityView(ListView):
 
         # Filters
         connection_filter = self.request.GET.get('filter')
-        if connection_filter == 'following' and self.request.user.is_authenticated:
+
+        # NEW: Online filter
+        if connection_filter == 'online':
+            # Show users active in the last 5 minutes
+            five_minutes_ago = timezone.now() - timedelta(minutes=5)
+            queryset = queryset.filter(last_seen__gte=five_minutes_ago)
+        elif connection_filter == 'following' and self.request.user.is_authenticated:
             queryset = queryset.filter(
                 id__in=self.request.user.get_following())
         elif connection_filter == 'sponsors':
             queryset = queryset.filter(is_sponsor=True)
         elif connection_filter == 'new':
             queryset = queryset.filter(
-                date_joined__gte=timezone.now() - timezone.timedelta(days=30)
+                date_joined__gte=timezone.now() - timedelta(days=30)
             )
 
         # Search
@@ -1084,13 +1091,27 @@ class EnhancedCommunityView(ListView):
                 Q(profile__bio__icontains=search)
             )
 
-        return queryset.select_related('profile').order_by('-date_joined')
+        # Order by last_seen to show most recently active first
+        return queryset.select_related('profile').order_by('-last_seen', '-date_joined')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # Calculate online count
+        five_minutes_ago = timezone.now() - timedelta(minutes=5)
+        online_count = User.objects.filter(
+            is_active=True,
+            last_seen__gte=five_minutes_ago
+        ).count()
+
+        context['online_count'] = online_count
+
         if self.request.user.is_authenticated:
             user = self.request.user
+
+            # Update user's last_seen
+            user.last_seen = timezone.now()
+            user.save(update_fields=['last_seen'])
 
             # Get suggested users (excluding followed users)
             excluded_ids = list(
@@ -1110,6 +1131,15 @@ class EnhancedCommunityView(ListView):
 
         return context
 
+
+# Add this new view to handle AJAX updates of last_seen
+@login_required
+@require_POST
+def update_last_seen(request):
+    """AJAX endpoint to update user's last seen timestamp"""
+    request.user.last_seen = timezone.now()
+    request.user.save(update_fields=['last_seen'])
+    return JsonResponse({'status': 'updated', 'timestamp': request.user.last_seen.isoformat()})
 
 class MessageListView(LoginRequiredMixin, ListView):
     model = SupportMessage
