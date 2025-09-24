@@ -165,7 +165,7 @@ def dashboard_view(request):
         'has_checked_in_today': today_checkin is not None,
     }
 
-    return render(request, 'accounts/dashboard.html', context)
+    return render(request, 'accounts/enhanced_dashboard.html', context)
 
 
 @login_required
