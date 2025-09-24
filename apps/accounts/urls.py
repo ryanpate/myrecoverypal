@@ -110,5 +110,4 @@ urlpatterns = [
          views.mark_notification_read, name='mark_notification_read'),
     path('api/notifications/mark-all-read/',
          views.mark_all_notifications_read, name='mark_all_notifications_read'),
-    path('update-last-seen/', views.update_last_seen, name='update_last_seen'),
 ]

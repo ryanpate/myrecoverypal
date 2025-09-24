@@ -100,7 +100,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
-    'apps.accounts.middleware.UpdateLastActivityMiddleware',
 ]
 
 # Add debug toolbar middleware in development
