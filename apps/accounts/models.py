@@ -1140,6 +1140,23 @@ class ChallengeCheckIn(models.Model):
             participant.update_progress()
 
 
+class User(AbstractUser):
+    last_activity = models.DateTimeField(null=True, blank=True)
+
+    @property
+    def is_online(self):
+        """User is considered online if active in last 5 minutes"""
+        if not self.last_activity:
+            return False
+        return timezone.now() - self.last_activity < timedelta(minutes=5)
+
+    @property
+    def is_recently_active(self):
+        """User is considered recently active if active in last 30 minutes"""
+        if not self.last_activity:
+            return False
+        return timezone.now() - self.last_activity < timedelta(minutes=30)
+    
 class ChallengeComment(models.Model):
     """
     Comments and encouragement on challenge check-ins
