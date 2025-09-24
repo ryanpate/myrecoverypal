@@ -106,9 +106,10 @@
 
     .members-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(280px, 320px));
         gap: 1.5rem;
         margin-top: 2rem;
+        justify-content: center;
     }
 
     .member-card {
@@ -118,6 +119,8 @@
         box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s, box-shadow 0.3s;
         position: relative;
+        max-width: 320px;
+        width: 100%;
     }
 
     .member-card:hover {
@@ -179,9 +182,11 @@
         0% {
             box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
         }
+
         70% {
             box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
         }
+
         100% {
             box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
         }
@@ -263,9 +268,7 @@
     }
 
     .follow-btn {
-        flex: 0 0 auto;
-        min-width: 250px;
-        max-width: 250px;        
+        flex: 1;
         padding: 0.75rem;
         border: none;
         border-radius: 8px;
@@ -518,24 +521,24 @@
             <!-- Calculate online status based on last_seen -->
             {% with member.last_seen as last_seen %}
             {% if last_seen %}
-                {% now "U" as current_timestamp %}
-                {% with last_seen.timestamp as last_seen_timestamp %}
-                {% widthratio current_timestamp|add:"-300" 1 1 as five_minutes_ago %}
-                {% widthratio current_timestamp|add:"-3600" 1 1 as one_hour_ago %}
-                {% widthratio current_timestamp|add:"-86400" 1 1 as one_day_ago %}
-                
-                {% if last_seen_timestamp|floatformat:"0" >= five_minutes_ago|floatformat:"0" %}
-                    <div class="status-indicator online" title="Online now"></div>
-                {% elif last_seen_timestamp|floatformat:"0" >= one_hour_ago|floatformat:"0" %}
-                    <div class="status-indicator recently-active" title="Active {{ last_seen|timesince }} ago"></div>
-                {% elif last_seen_timestamp|floatformat:"0" >= one_day_ago|floatformat:"0" %}
-                    <div class="status-indicator away" title="Last seen {{ last_seen|timesince }} ago"></div>
-                {% else %}
-                    <div class="status-indicator offline" title="Last seen {{ last_seen|date:"M d, Y" }}"></div>
-                {% endif %}
-                {% endwith %}
+            {% now "U" as current_timestamp %}
+            {% with last_seen.timestamp as last_seen_timestamp %}
+            {% widthratio current_timestamp|add:"-300" 1 1 as five_minutes_ago %}
+            {% widthratio current_timestamp|add:"-3600" 1 1 as one_hour_ago %}
+            {% widthratio current_timestamp|add:"-86400" 1 1 as one_day_ago %}
+
+            {% if last_seen_timestamp|floatformat:"0" >= five_minutes_ago|floatformat:"0" %}
+            <div class="status-indicator online" title="Online now"></div>
+            {% elif last_seen_timestamp|floatformat:"0" >= one_hour_ago|floatformat:"0" %}
+            <div class="status-indicator recently-active" title="Active {{ last_seen|timesince }} ago"></div>
+            {% elif last_seen_timestamp|floatformat:"0" >= one_day_ago|floatformat:"0" %}
+            <div class="status-indicator away" title="Last seen {{ last_seen|timesince }} ago"></div>
             {% else %}
-                <div class="status-indicator offline" title="Never logged in"></div>
+            <div class="status-indicator offline" title="Last seen {{ last_seen|date:" M d, Y" }}"></div>
+            {% endif %}
+            {% endwith %}
+            {% else %}
+            <div class="status-indicator offline" title="Never logged in"></div>
             {% endif %}
             {% endwith %}
 
@@ -563,14 +566,14 @@
                     {% with member.last_seen.timestamp as last_seen_timestamp %}
                     {% widthratio current_timestamp|add:"-300" 1 1 as five_minutes_ago %}
                     {% if last_seen_timestamp|floatformat:"0" >= five_minutes_ago|floatformat:"0" %}
-                        🟢 Online now
+                    🟢 Online now
                     {% else %}
-                        Last seen {{ member.last_seen|timesince }} ago
+                    Last seen {{ member.last_seen|timesince }} ago
                     {% endif %}
                     {% endwith %}
-                {% else %}
+                    {% else %}
                     New member
-                {% endif %}
+                    {% endif %}
                 </div>
 
                 <div class="member-stats">
@@ -626,8 +629,8 @@
                     </a>
 
                     {% if member.is_sponsor and not user.get_active_sponsor %}
-                    <a href="{% url 'accounts:request_sponsor' member.username %}" class="action-btn" align-items="center"
-                        title="Request as Sponsor">
+                    <a href="{% url 'accounts:request_sponsor' member.username %}" class="action-btn"
+                        align-items="center" title="Request as Sponsor">
                         🎯
                     </a>
                     {% endif %}
@@ -783,27 +786,28 @@
             token.value = '{{ csrf_token }}';
             document.body.appendChild(token);
         }
-        
+
         // Update last seen status periodically
-        if ({{ user.is_authenticated|lower }}) {
-            // Update every 2 minutes while the page is active
-            setInterval(() => {
-                fetch('/accounts/api/update-last-seen/', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}',
-                    }
-                });
-            }, 120000); // 2 minutes
-            
-            // Update immediately on page load
+        if ({{ user.is_authenticated | lower }
+    }) {
+        // Update every 2 minutes while the page is active
+        setInterval(() => {
             fetch('/accounts/api/update-last-seen/', {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}',
                 }
             });
-        }
+        }, 120000); // 2 minutes
+
+        // Update immediately on page load
+        fetch('/accounts/api/update-last-seen/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            }
+        });
+    }
     });
 </script>
 {% endblock %}
