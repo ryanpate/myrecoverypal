@@ -106,12 +106,9 @@
 
     .members-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 1.5rem;
         margin-top: 2rem;
-        max-width: 1400px;
-        margin-left: auto;
-        margin-right: auto;
     }
 
     .member-card {
@@ -268,7 +265,12 @@
     }
 
     .follow-btn {
-        flex: 1;
+        flex: 0 0 auto;
+        /* Don't grow or shrink */
+        min-width: 250px;
+        /* Minimum width */
+        max-width: 250px;
+        /* Maximum width */
         padding: 0.75rem;
         border: none;
         border-radius: 8px;
