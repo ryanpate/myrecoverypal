@@ -124,6 +124,38 @@
         box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
     }
 
+    /* Alternative: Status badge in top corner */
+    .corner-status-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .corner-status-badge.online-now {
+        background: #4caf50;
+        color: white;
+    }
+
+    .corner-status-badge.online-recently {
+        background: #ffa726;
+        color: white;
+    }
+
+    .corner-status-badge .badge-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: white;
+        animation: pulse 2s infinite;
+    }
+
     .member-avatar {
         width: 80px;
         height: 80px;
@@ -146,38 +178,64 @@
         object-fit: cover;
     }
 
-    /* Online status indicators - Fixed implementation */
-    .online-indicator {
-        position: absolute;
-        bottom: 5px;
-        right: 5px;
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        border: 2px solid white;
+    /* Online status indicators - More visible implementation */
+    .online-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
     }
 
-    .online-indicator.online-now {
-        background: #4caf50;  /* Green for online now */
+    .online-status.online-now {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .online-status.online-recently {
+        background: #fff3e0;
+        color: #ef6c00;
+    }
+
+    .online-status.offline {
+        background: #f5f5f5;
+        color: #757575;
+        display: none;
+        /* Hide offline status by default - remove this line if you want to show offline */
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .online-now .status-dot {
+        background: #4caf50;
         animation: pulse 2s infinite;
     }
 
-    .online-indicator.online-recently {
-        background: #ffa726;  /* Orange for recently online */
+    .online-recently .status-dot {
+        background: #ffa726;
     }
 
-    .online-indicator.offline {
-        background: #9e9e9e;  /* Gray for offline */
-        display: none;  /* Hide offline indicator by default */
+    .offline .status-dot {
+        background: #9e9e9e;
     }
 
     @keyframes pulse {
         0% {
             box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
         }
+
         70% {
-            box-shadow: 0 0 0 8px rgba(76, 175, 80, 0);
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0);
         }
+
         100% {
             box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
         }
@@ -252,9 +310,12 @@
     }
 
     .follow-btn {
-        flex: 0 0 auto;  /* Don't grow or shrink */
-        min-width: 250px;  /* Minimum width */
-        max-width: 250px;  /* Maximum width */        
+        flex: 0 0 auto;
+        /* Don't grow or shrink */
+        min-width: 250px;
+        /* Minimum width */
+        max-width: 250px;
+        /* Maximum width */
         padding: 0.75rem;
         border: none;
         border-radius: 8px;
@@ -508,26 +569,32 @@
     <div class="members-grid">
         {% for member in members %}
         <div class="member-card">
+            <!-- Alternative Option: Corner Status Badge (uncomment to use instead of inline status) -->
+            {% if member.last_seen %}
+            {% with member.last_seen.timestamp as member_timestamp %}
+            {% with current_timestamp|add:"-300" as five_minutes_ago %}
+            {% with current_timestamp|add:"-3600" as one_hour_ago %}
+            {% if member_timestamp > five_minutes_ago %}
+            <div class="corner-status-badge online-now">
+                <span class="badge-dot"></span>
+                <span>ONLINE</span>
+            </div>
+            {% elif member_timestamp > one_hour_ago %}
+            <div class="corner-status-badge online-recently">
+                <span class="badge-dot"></span>
+                <span>ACTIVE</span>
+            </div>
+            {% endif %}
+            {% endwith %}
+            {% endwith %}
+            {% endwith %}
+            {% endif %}
+
             <div class="member-avatar">
                 {% if member.avatar %}
                 <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
                 {% else %}
                 👤
-                {% endif %}
-                
-                <!-- Fixed Online Status Indicator -->
-                {% if member.last_seen %}
-                    {% with member.last_seen.timestamp as member_timestamp %}
-                    {% with current_timestamp|add:"-300" as five_minutes_ago %}  <!-- 5 minutes = 300 seconds -->
-                    {% with current_timestamp|add:"-3600" as one_hour_ago %}     <!-- 1 hour = 3600 seconds -->
-                        {% if member_timestamp > five_minutes_ago %}
-                            <div class="online-indicator online-now" title="Online now"></div>
-                        {% elif member_timestamp > one_hour_ago %}
-                            <div class="online-indicator online-recently" title="Online recently"></div>
-                        {% endif %}
-                    {% endwith %}
-                    {% endwith %}
-                    {% endwith %}
                 {% endif %}
             </div>
 
@@ -539,6 +606,33 @@
                     </a>
                 </div>
                 <div class="member-username">@{{ member.username }}</div>
+
+                <!-- Inline Online Status Indicator (comment out if using corner badge) -->
+                {% if member.last_seen %}
+                {% with member.last_seen.timestamp as member_timestamp %}
+                {% with current_timestamp|add:"-300" as five_minutes_ago %} <!-- 5 minutes = 300 seconds -->
+                {% with current_timestamp|add:"-3600" as one_hour_ago %} <!-- 1 hour = 3600 seconds -->
+                {% if member_timestamp > five_minutes_ago %}
+                <div class="online-status online-now">
+                    <span class="status-dot"></span>
+                    <span>Online now</span>
+                </div>
+                {% elif member_timestamp > one_hour_ago %}
+                <div class="online-status online-recently">
+                    <span class="status-dot"></span>
+                    <span>Recently active</span>
+                </div>
+                {% else %}
+                <!-- Optional: Show offline status - uncomment if you want to show it -->
+                <!-- <div class="online-status offline">
+                                <span class="status-dot"></span>
+                                <span>Offline</span>
+                            </div> -->
+                {% endif %}
+                {% endwith %}
+                {% endwith %}
+                {% endwith %}
+                {% endif %}
 
                 <div class="member-stats">
                     <div class="member-stat">
@@ -593,8 +687,8 @@
                     </a>
 
                     {% if member.is_sponsor and not user.get_active_sponsor %}
-                    <a href="{% url 'accounts:request_sponsor' member.username %}" class="action-btn" align-items="center"
-                        title="Request as Sponsor">
+                    <a href="{% url 'accounts:request_sponsor' member.username %}" class="action-btn"
+                        align-items="center" title="Request as Sponsor">
                         🎯
                     </a>
                     {% endif %}
@@ -690,7 +784,7 @@
             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
         }
     });
-    
+
     // Update every 2 minutes while page is open
     setInterval(() => {
         fetch('/accounts/api/update-last-seen/', {
