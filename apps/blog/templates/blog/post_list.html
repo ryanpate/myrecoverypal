@@ -1,104 +1,315 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Blog - Journey to Recovery{% endblock %}
+{% block title %}Recovery Blog - Journey to Recovery{% endblock %}
 
 {% block extra_css %}
 <style>
-    .blog-header {
-        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
-        padding: 100px 0 50px;
-        color: white;
-        text-align: center;
+    /* Header button styles to match community/challenges pages */
+    .header-action-buttons {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
     }
-    
+
+    .header-btn {
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        color: white !important;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+    }
+
+    .header-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        color: white !important;
+        text-decoration: none;
+    }
+
+    .blog-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 10px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: white !important;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-size: 0.85rem;
+    }
+
     .blog-container {
         max-width: 1200px;
         margin: 0 auto;
         padding: 2rem;
     }
-    
-    .blog-grid {
+
+    .filter-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .filter-tabs {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-tab {
+        padding: 0.5rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 25px;
+        text-decoration: none;
+        color: #666;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+    }
+
+    .filter-tab.active {
+        background: #52b788;
+        color: white;
+        border-color: #52b788;
+    }
+
+    .filter-tab:hover {
+        border-color: #52b788;
+        color: #52b788;
+        text-decoration: none;
+    }
+
+    .blog-layout {
         display: grid;
         grid-template-columns: 1fr 300px;
         gap: 2rem;
         margin-top: 2rem;
     }
-    
+
     .posts-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 2rem;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
     }
-    
+
     .post-card {
         background: white;
-        border-radius: 10px;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
     }
-    
+
     .post-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
     }
-    
+
     .post-image {
         width: 100%;
         height: 200px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--gradient-primary);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
         font-size: 3rem;
+        position: relative;
     }
-    
+
     .post-image img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
-    
-    .post-content {
-        padding: 1.5rem;
-    }
-    
-    .post-meta {
-        display: flex;
-        justify-content: space-between;
-        color: #666;
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .post-title {
-        color: #333;
-        text-decoration: none;
-        font-size: 1.3rem;
-        font-weight: bold;
-        line-height: 1.4;
-        display: block;
-        margin-bottom: 0.5rem;
-    }
-    
-    .post-title:hover {
-        color: var(--primary-color);
-    }
-    
-    .post-excerpt {
-        color: #666;
-        line-height: 1.6;
-        margin-bottom: 1rem;
-    }
-    
-    .post-tags {
+
+    .post-badges {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
     }
-    
+
+    .warning-badge, .personal-story-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+    }
+
+    .warning-badge {
+        background: rgba(255, 107, 107, 0.9);
+        color: white;
+    }
+
+    .personal-story-badge {
+        background: rgba(78, 205, 196, 0.9);
+        color: white;
+    }
+
+    .post-content {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .post-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #666;
+        font-size: 0.85rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .post-title {
+        color: #333;
+        text-decoration: none;
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        display: block;
+        margin-bottom: 0.75rem;
+    }
+
+    .post-title:hover {
+        color: var(--primary-dark);
+    }
+
+    .post-excerpt {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        flex: 1;
+    }
+
+    .post-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .post-category {
+        background: #e8f4f8;
+        color: var(--primary-dark);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .post-category:hover {
+        background: var(--primary-dark);
+        color: white;
+    }
+
+    .post-stats {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: #999;
+    }
+
+    .sidebar {
+        position: sticky;
+        top: 80px;
+        height: fit-content;
+    }
+
+    .sidebar-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+    }
+
+    .sidebar-section h5 {
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .category-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .category-list li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .category-list li:last-child {
+        border-bottom: none;
+    }
+
+    .category-list a {
+        color: #666;
+        text-decoration: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: color 0.3s;
+    }
+
+    .category-list a:hover {
+        color: var(--primary-dark);
+    }
+
+    .category-count {
+        background: #f0f0f0;
+        padding: 0.125rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+    }
+
+    .tag-cloud {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
     .tag {
         background: #f0f0f0;
         padding: 0.25rem 0.75rem;
@@ -108,82 +319,77 @@
         text-decoration: none;
         transition: all 0.3s ease;
     }
-    
+
     .tag:hover {
-        background: var(--primary-color);
+        background: var(--accent-green);
         color: white;
     }
-    
-    .sidebar {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        position: sticky;
-        top: 100px;
-    }
-    
-    .sidebar h3 {
-        margin-bottom: 1rem;
-        color: #333;
-    }
-    
-    .category-list, .recent-posts {
-        list-style: none;
-        padding: 0;
-    }
-    
-    .category-list li, .recent-posts li {
-        margin-bottom: 0.5rem;
-    }
-    
-    .category-list a, .recent-posts a {
-        color: #666;
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-    
-    .category-list a:hover, .recent-posts a:hover {
-        color: var(--primary-color);
-    }
-    
+
     .search-box {
-        margin-bottom: 2rem;
+        position: relative;
     }
-    
+
     .search-box input {
         width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 1rem;
+        padding: 0.75rem 1rem;
+        padding-right: 3rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 25px;
+        font-size: 0.95rem;
+        transition: border-color 0.3s;
     }
-    
-    .warning-badge {
-        background: #ff6b6b;
+
+    .search-box input:focus {
+        outline: none;
+        border-color: var(--primary-light);
+    }
+
+    .search-box button {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--accent-green);
+        border: none;
         color: white;
-        padding: 0.25rem 0.5rem;
-        border-radius: 3px;
-        font-size: 0.75rem;
-        margin-left: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background 0.3s;
     }
-    
-    .personal-story-badge {
-        background: #4ecdc4;
-        color: white;
-        padding: 0.25rem 0.5rem;
-        border-radius: 3px;
-        font-size: 0.75rem;
-        margin-left: 0.5rem;
+
+    .search-box button:hover {
+        background: #45a675;
     }
-    
+
     @media (max-width: 768px) {
-        .blog-grid {
+        .blog-layout {
             grid-template-columns: 1fr;
         }
-        
+
         .sidebar {
             position: static;
+        }
+
+        .posts-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-tabs {
+            overflow-x: auto;
+            flex-wrap: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .header-action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-btn {
+            width: 100%;
+            max-width: 250px;
+            justify-content: center;
         }
     }
 </style>
@@ -191,113 +397,255 @@
 
 {% block content %}
 <div class="blog-header">
-    <h1>Recovery Stories & Resources</h1>
-    <p>Inspiring journeys, practical tips, and support for your recovery</p>
-</div>
+    <div class="container">
+        <h1>📝 Recovery Stories & Resources</h1>
+        <p>Inspiring journeys, practical tips, and support for your recovery</p>
 
-<div class="blog-container">
-    <div class="search-box">
-        <form method="get" action="{% url 'blog:post_list' %}">
-            <input type="text" name="search" placeholder="Search posts..." 
-                   value="{{ request.GET.search }}" />
-        </form>
-    </div>
-    
-    <div class="blog-grid">
-        <div class="posts-section">
-            {% if posts %}
-                <div class="posts-grid">
-                    {% for post in posts %}
-                    <div class="post-card">
-                        <div class="post-image">
-                            {% if post.featured_image %}
-                                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
-                            {% else %}
-                                📝
-                            {% endif %}
-                        </div>
-                        <div class="post-content">
-                            <div class="post-meta">
-                                <span>{{ post.published_at|date:"M d, Y" }}</span>
-                                <span>{{ post.reading_time }} min read</span>
-                            </div>
-                            <a href="{{ post.get_absolute_url }}" class="post-title">
-                                {{ post.title }}
-                                {% if post.trigger_warning %}
-                                    <span class="warning-badge">TW</span>
-                                {% endif %}
-                                {% if post.is_personal_story %}
-                                    <span class="personal-story-badge">Personal Story</span>
-                                {% endif %}
-                            </a>
-                            <p class="post-excerpt">
-                                {% if post.excerpt %}
-                                    {{ post.excerpt }}
-                                {% else %}
-                                    {{ post.content|truncatewords:30 }}
-                                {% endif %}
-                            </p>
-                            <div class="post-tags">
-                                {% if post.category %}
-                                    <a href="{% url 'blog:category_posts' post.category.slug %}" class="tag">
-                                        {{ post.category.name }}
-                                    </a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                
-                <!-- Pagination -->
-                {% if is_paginated %}
-                <div class="pagination" style="margin-top: 2rem; text-align: center;">
-                    {% if page_obj.has_previous %}
-                        <a href="?page={{ page_obj.previous_page_number }}" class="btn">Previous</a>
-                    {% endif %}
-                    
-                    <span style="margin: 0 1rem;">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                    </span>
-                    
-                    {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}" class="btn">Next</a>
-                    {% endif %}
-                </div>
-                {% endif %}
-            {% else %}
-                <p>No posts found. Check back soon!</p>
+        <!-- Action buttons in header -->
+        <div class="header-action-buttons">
+            {% if user.is_authenticated %}
+                <a href="{% url 'blog:post_create' %}" class="header-btn">
+                    ✍️ Share Your Story
+                </a>
+                <a href="{% url 'accounts:my_posts' %}" class="header-btn">
+                    📚 My Posts
+                </a>
             {% endif %}
+            <a href="{% url 'resources:list' %}" class="header-btn">
+                📖 Resources
+            </a>
+            <a href="{% url 'accounts:community' %}" class="header-btn">
+                🤝 Community
+            </a>
         </div>
-        
-        <div class="sidebar">
-            <h3>Categories</h3>
-            <ul class="category-list">
-                {% for category in categories %}
-                <li>
-                    <a href="{% url 'blog:category_posts' category.slug %}">
-                        {{ category.name }} ({{ category.posts.count }})
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
-            
-            <h3 style="margin-top: 2rem;">Recent Posts</h3>
-            <ul class="recent-posts">
-                {% for post in recent_posts %}
-                <li>
-                    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-                </li>
-                {% endfor %}
-            </ul>
-            
-            <h3 style="margin-top: 2rem;">Popular Tags</h3>
-            <div class="post-tags">
-                {% for tag in popular_tags %}
-                    <a href="{% url 'blog:tag_posts' tag.slug %}" class="tag">{{ tag.name }}</a>
-                {% endfor %}
+
+        <!-- Blog Stats -->
+        <div class="blog-stats">
+            <div class="stat-card">
+                <div class="stat-number">{{ posts_count|default:0 }}</div>
+                <div class="stat-label">Stories</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ categories.count|default:0 }}</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ authors_count|default:0 }}</div>
+                <div class="stat-label">Contributors</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ comments_count|default:0 }}</div>
+                <div class="stat-label">Comments</div>
             </div>
         </div>
     </div>
 </div>
+
+<div class="blog-container">
+    <!-- Search and Filters -->
+    <div class="filter-section">
+        <div class="search-box">
+            <form method="get" action="{% url 'blog:post_list' %}">
+                <input type="text" name="search" placeholder="Search stories, topics, or authors..." 
+                       value="{{ request.GET.search }}" />
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        
+        <div class="filter-tabs">
+            <a href="{% url 'blog:post_list' %}" class="filter-tab {% if not request.GET.category and not request.GET.tag %}active{% endif %}">
+                🌟 All Posts
+            </a>
+            <a href="?filter=personal" class="filter-tab {% if request.GET.filter == 'personal' %}active{% endif %}">
+                💭 Personal Stories
+            </a>
+            <a href="?filter=recent" class="filter-tab {% if request.GET.filter == 'recent' %}active{% endif %}">
+                🆕 Recent
+            </a>
+            <a href="?filter=popular" class="filter-tab {% if request.GET.filter == 'popular' %}active{% endif %}">
+                🔥 Popular
+            </a>
+            {% if user.is_authenticated %}
+            <a href="?filter=following" class="filter-tab {% if request.GET.filter == 'following' %}active{% endif %}">
+                👥 Following
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="blog-layout">
+        <!-- Posts Section -->
+        <div class="posts-section">
+            <div class="posts-grid">
+                {% for post in posts %}
+                <div class="post-card">
+                    <div class="post-image">
+                        {% if post.featured_image %}
+                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                        {% else %}
+                            📝
+                        {% endif %}
+                        
+                        <div class="post-badges">
+                            {% if post.trigger_warning %}
+                                <span class="warning-badge">⚠️ TW</span>
+                            {% endif %}
+                            {% if post.is_personal_story %}
+                                <span class="personal-story-badge">💭 Personal</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span>{{ post.published_at|date:"M d, Y" }}</span>
+                            <span>{{ post.reading_time }} min read</span>
+                        </div>
+                        
+                        <a href="{{ post.get_absolute_url }}" class="post-title">
+                            {{ post.title }}
+                        </a>
+                        
+                        <p class="post-excerpt">
+                            {% if post.excerpt %}
+                                {{ post.excerpt }}
+                            {% else %}
+                                {{ post.content|truncatewords:30 }}
+                            {% endif %}
+                        </p>
+                        
+                        <div class="post-footer">
+                            {% if post.category %}
+                                <a href="{% url 'blog:category_posts' post.category.slug %}" class="post-category">
+                                    {{ post.category.name }}
+                                </a>
+                            {% endif %}
+                            
+                            <div class="post-stats">
+                                <span>👁 {{ post.views }}</span>
+                                <span>💬 {{ post.comments.count }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                    <h3 style="color: #666;">No posts found</h3>
+                    <p style="color: #999;">Be the first to share your story!</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'blog:post_create' %}" class="btn btn-success mt-3">
+                            ✍️ Write First Post
+                        </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <nav aria-label="Blog pagination" style="margin-top: 2rem;">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                Previous
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                Next
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Categories -->
+            <div class="sidebar-section">
+                <h5>📂 Categories</h5>
+                <ul class="category-list">
+                    {% for category in categories %}
+                    <li>
+                        <a href="{% url 'blog:category_posts' category.slug %}">
+                            <span>{{ category.name }}</span>
+                            <span class="category-count">{{ category.posts.count }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Popular Tags -->
+            <div class="sidebar-section">
+                <h5>🏷️ Popular Tags</h5>
+                <div class="tag-cloud">
+                    {% for tag in popular_tags %}
+                        <a href="{% url 'blog:tag_posts' tag.slug %}" class="tag">
+                            {{ tag.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recent Posts -->
+            {% if recent_posts %}
+            <div class="sidebar-section">
+                <h5>🕐 Recent Posts</h5>
+                <ul style="list-style: none; padding: 0;">
+                    {% for post in recent_posts %}
+                    <li style="padding: 0.5rem 0;">
+                        <a href="{{ post.get_absolute_url }}" style="color: #666; text-decoration: none;">
+                            <strong style="display: block; color: #333;">{{ post.title|truncatewords:8 }}</strong>
+                            <small style="color: #999;">{{ post.published_at|date:"M d" }}</small>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- Call to Action -->
+            {% if user.is_authenticated %}
+            <div class="sidebar-section" style="background: var(--gradient-primary); color: white;">
+                <h5 style="color: white;">✨ Share Your Journey</h5>
+                <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">Your story could inspire someone's recovery today.</p>
+                <a href="{% url 'blog:post_create' %}" class="btn btn-light btn-sm" style="margin-top: 1rem;">
+                    Start Writing
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-submit search form with delay
+    const searchInput = document.querySelector('input[name="search"]');
+    if (searchInput) {
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                if (this.value.length > 2 || this.value.length === 0) {
+                    this.closest('form').submit();
+                }
+            }, 500);
+        });
+    }
+</script>
 {% endblock %}

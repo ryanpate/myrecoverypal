@@ -39,15 +39,23 @@ class PostListView(ListView):
         
         return queryset
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        context['popular_tags'] = Tag.objects.all()[:10]
-        context['recent_posts'] = Post.objects.filter(
-            status='published'
-        ).order_by('-published_at')[:5]
-        return context
+def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['categories'] = Category.objects.all()
+    context['popular_tags'] = Tag.objects.all()[:15]
+    context['recent_posts'] = Post.objects.filter(
+        status='published'
+    ).order_by('-published_at')[:5]
 
+    # Add stats
+    context['posts_count'] = Post.objects.filter(status='published').count()
+    context['authors_count'] = Post.objects.filter(
+        status='published'
+    ).values('author').distinct().count()
+    context['comments_count'] = Comment.objects.filter(
+        is_approved=True).count()
+
+    return context
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post_detail.html'
@@ -198,3 +206,47 @@ def add_comment(request, slug):
                 return JsonResponse({'status': 'success'})
     
     return redirect(post.get_absolute_url())
+class MyPostsView(LoginRequiredMixin, ListView):
+    model = Post
+    template_name = 'blog/my_posts.html'
+    context_object_name = 'posts'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Post.objects.filter(author=self.request.user).order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['draft_count'] = Post.objects.filter(
+            author=self.request.user,
+            status='draft'
+        ).count()
+        context['published_count'] = Post.objects.filter(
+            author=self.request.user,
+            status='published'
+        ).count()
+        return context
+
+class PostEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author or self.request.user.is_staff
+
+    def form_valid(self, form):
+        if form.instance.status == 'published' and not form.instance.published_at:
+            form.instance.published_at = timezone.now()
+        messages.success(
+            self.request, 'Your post has been updated successfully!')
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edit Post'
+        context['button_text'] = 'Update Post'
+        return context
