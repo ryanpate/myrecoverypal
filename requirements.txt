@@ -18,6 +18,8 @@ Pillow==10.2.0
 cloudinary==1.36.0
 django-cloudinary-storage==0.3.0
 django-storages==1.14.2
+django-ckeditor==6.7.0
+django-ckeditor-5==0.2.10
 
 # Production server
 gunicorn==21.2.0

@@ -3,7 +3,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils import timezone
-
+from django.utils.safestring import mark_safe
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -46,7 +46,8 @@ class Post(models.Model):
     slug = models.SlugField(unique=True, max_length=200)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='blog_posts')  # FIXED
-    content = models.TextField()
+
+    content = models.TextField(help_text="Rich text content - HTML allowed")
     excerpt = models.TextField(
         max_length=300, blank=True, help_text="Brief description of the post")
 
@@ -98,6 +99,10 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('blog:post_detail', kwargs={'slug': self.slug})
 
+    def get_safe_content(self):
+        """Return content marked as safe HTML for template rendering"""
+        return mark_safe(self.content)
+    
     @property
     def reading_time(self):
         # Estimate reading time based on word count (200 words per minute)

@@ -73,6 +73,9 @@ INSTALLED_APPS = [
     'apps.store',
     'apps.newsletter',
     'apps.support_services',
+    
+    'ckeditor',
+    'ckeditor_uploader',
 
     # PWA Support (optional - install with: pip install django-pwa)
     # 'pwa',
@@ -248,6 +251,57 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
     'SECURE': True,  # Use HTTPS
 }
+
+# CKEditor Configuration
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 400,
+        'width': '100%',
+        'toolbar_Custom': [
+            {'name': 'document', 'items': [
+                'Source', '-', 'Save', 'Preview', 'Print']},
+            {'name': 'clipboard', 'items': [
+                'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
+            {'name': 'editing', 'items': [
+                'Find', 'Replace', '-', 'SelectAll']},
+            {'name': 'basicstyles', 'items': [
+                'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']},
+            {'name': 'paragraph', 'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-',
+                                            'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+            {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
+            {'name': 'insert', 'items': [
+                'Image', 'Table', 'HorizontalRule', 'SpecialChar', 'PageBreak']},
+            {'name': 'styles', 'items': [
+                'Styles', 'Format', 'Font', 'FontSize']},
+            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
+        ],
+        'extraPlugins': ','.join([
+            'uploadimage',
+            'div',
+            'autolink',
+            'autoembed',
+            'embedsemantic',
+            'autogrow',
+            'widget',
+            'lineutils',
+            'clipboard',
+            'dialog',
+            'dialogui',
+            'elementspath',
+            'pastefromword',
+        ]),
+        'removePlugins': 'stylesheetparser',
+        'allowedContent': True,
+        'autoParagraph': False,
+        'enterMode': 2,  # ENTER_BR
+    }
+}
+
+# Allow iframe and other HTML elements for Medium embeds
+CKEDITOR_ALLOW_NONIMAGE_FILES = True
 
 # Only use Cloudinary if credentials are provided
 if os.environ.get('CLOUDINARY_CLOUD_NAME'):

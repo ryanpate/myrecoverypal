@@ -1,10 +1,15 @@
 from django import forms
+from ckeditor.widgets import CKEditorWidget
 from .models import Post, Comment, Category, Tag
 from django.utils.text import slugify
 
-
 class PostForm(forms.ModelForm):
-    """Form for creating and editing blog posts"""
+    """Form for creating and editing blog posts with rich text editor"""
+
+    content = forms.CharField(
+        widget=CKEditorWidget(config_name='default'),
+        help_text='You can paste content directly from Medium or other sources'
+    )
 
     # Add a field for new tags (comma-separated)
     new_tags = forms.CharField(
@@ -20,7 +25,7 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['title', 'excerpt', 'content', 'category', 'tags',
                   'featured_image', 'is_personal_story', 'trigger_warning',
-                  'trigger_description', 'status']
+                  'trigger_description', 'status', 'meta_description']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -30,11 +35,6 @@ class PostForm(forms.ModelForm):
                 'class': 'form-control',
                 'rows': 2,
                 'placeholder': 'Brief description of your post (optional)'
-            }),
-            'content': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 10,
-                'placeholder': 'Share your story, insights, or recovery journey...'
             }),
             'category': forms.Select(attrs={
                 'class': 'form-control'
@@ -48,6 +48,10 @@ class PostForm(forms.ModelForm):
             }),
             'status': forms.Select(attrs={
                 'class': 'form-control'
+            }),
+            'meta_description': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'SEO description (max 160 characters)'
             }),
         }
 
