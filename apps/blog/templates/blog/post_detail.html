@@ -5,13 +5,14 @@
 
 {% block extra_css %}
 <style>
+    /*
     .post-header {
         background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
         padding: 100px 0 50px;
         color: white;
         text-align: center;
     }
-
+    */
     .post-container {
         max-width: 800px;
         margin: 0 auto;
@@ -251,10 +252,10 @@
     {% if user == post.author or user.is_staff %}
     <div class="post-actions">
         <a href="{% url 'blog:post_edit' post.slug %}" class="btn btn-secondary">
-            <i class="fas fa-edit"></i> Edit Post
+            Edit Post
         </a>
         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-            <i class="fas fa-trash"></i> Delete Post
+            Delete Post
         </button>
     </div>
     {% endif %}
