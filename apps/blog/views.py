@@ -248,3 +248,21 @@ class MyPostsView(LoginRequiredMixin, ListView):
             status='published'
         ).count()
         return context
+
+
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """View for deleting blog posts"""
+    model = Post
+    success_url = reverse_lazy('blog:my_posts')
+
+    def test_func(self):
+        """Check if user is the author of the post"""
+        post = self.get_object()
+        return self.request.user == post.author or self.request.user.is_staff
+
+    def delete(self, request, *args, **kwargs):
+        """Override delete to add success message"""
+        post = self.get_object()
+        messages.success(
+            request, f'Post "{post.title}" has been deleted successfully!')
+        return super().delete(request, *args, **kwargs)
