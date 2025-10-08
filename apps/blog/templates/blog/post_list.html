@@ -39,10 +39,12 @@
 
     .blog-stats {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);  /* Changed to 4 columns for single row */
+        grid-template-columns: repeat(4, 1fr);
+        /* Changed to 4 columns for single row */
         gap: 1rem;
         margin: 2rem auto;
-        max-width: 800px;  /* Increased from 600px */
+        max-width: 800px;
+        /* Increased from 600px */
     }
 
     .stat-card {
@@ -58,7 +60,7 @@
         font-weight: bold;
         color: white !important;
         margin-bottom: 0.25rem;
-        }
+    }
 
     .stat-label {
         color: rgba(255, 255, 255, 0.9) !important;
@@ -69,6 +71,53 @@
         max-width: 1200px;
         margin: 0 auto;
         padding: 2rem;
+    }
+
+    /* Featured CTA Box - NEW */
+    .featured-cta {
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        color: white;
+        padding: 2.5rem 2rem;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .featured-cta h3 {
+        color: white;
+        margin-bottom: 0.75rem;
+        font-size: 1.75rem;
+        font-weight: 700;
+    }
+
+    .featured-cta p {
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 1.5rem;
+        font-size: 1.05rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .featured-cta .cta-btn {
+        background: white;
+        color: #1e4d8b;
+        padding: 0.875rem 2.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        display: inline-block;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .featured-cta .cta-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        text-decoration: none;
+        color: #1e4d8b;
     }
 
     .filter-section {
@@ -83,10 +132,11 @@
         display: flex;
         gap: 0.75rem;
         margin-bottom: 1.5rem;
-        margin-top: 1.5rem;  /* Added space between search and tabs */
+        margin-top: 1.5rem;
+        /* Added space between search and tabs */
         flex-wrap: wrap;
     }
-    
+
     .filter-tab {
         padding: 0.5rem 1rem;
         border: 2px solid #e0e0e0;
@@ -164,7 +214,8 @@
         flex-wrap: wrap;
     }
 
-    .warning-badge, .personal-story-badge {
+    .warning-badge,
+    .personal-story-badge {
         padding: 0.25rem 0.5rem;
         border-radius: 20px;
         font-size: 0.75rem;
@@ -390,6 +441,22 @@
             max-width: 250px;
             justify-content: center;
         }
+
+        .blog-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .featured-cta {
+            padding: 2rem 1.5rem;
+        }
+
+        .featured-cta h3 {
+            font-size: 1.5rem;
+        }
+
+        .featured-cta p {
+            font-size: 1rem;
+        }
     }
 </style>
 {% endblock %}
@@ -403,12 +470,12 @@
         <!-- Action buttons in header -->
         <div class="header-action-buttons">
             {% if user.is_authenticated %}
-                <a href="{% url 'blog:post_create' %}" class="header-btn">
-                    ✍️ Share Your Story
-                </a>
-                <a href="{% url 'blog:my_posts' %}" class="header-btn">
-                    📚 My Posts
-                </a>
+            <a href="{% url 'blog:post_create' %}" class="header-btn">
+                ✏️ Share Your Story
+            </a>
+            <a href="{% url 'blog:my_posts' %}" class="header-btn">
+                📚 My Posts
+            </a>
             {% endif %}
             <a href="{% url 'resources:list' %}" class="header-btn">
                 📖 Resources
@@ -441,18 +508,31 @@
 </div>
 
 <div class="blog-container">
+    <!-- Featured CTA - NEW: Positioned at top for maximum visibility -->
+    {% if user.is_authenticated %}
+    <div class="featured-cta">
+        <h3>✨ Share Your Journey</h3>
+        <p>Your story could inspire someone's recovery today. Join our community of contributors and make a difference
+            in someone's life.</p>
+        <a href="{% url 'blog:post_create' %}" class="cta-btn">
+            Start Writing Your Story
+        </a>
+    </div>
+    {% endif %}
+
     <!-- Search and Filters -->
     <div class="filter-section">
         <div class="search-box">
             <form method="get" action="{% url 'blog:post_list' %}">
-                <input type="text" name="search" placeholder="Search stories, topics, or authors..." 
-                       value="{{ request.GET.search }}" />
+                <input type="text" name="search" placeholder="Search stories, topics, or authors..."
+                    value="{{ request.GET.search }}" />
                 <button type="submit">Search</button>
             </form>
         </div>
-        
+
         <div class="filter-tabs">
-            <a href="{% url 'blog:post_list' %}" class="filter-tab {% if not request.GET.category and not request.GET.tag %}active{% endif %}">
+            <a href="{% url 'blog:post_list' %}"
+                class="filter-tab {% if not request.GET.category and not request.GET.tag %}active{% endif %}">
                 🌟 All Posts
             </a>
             <a href="?filter=personal" class="filter-tab {% if request.GET.filter == 'personal' %}active{% endif %}">
@@ -480,46 +560,46 @@
                 <div class="post-card">
                     <div class="post-image">
                         {% if post.featured_image %}
-                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                        <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
                         {% else %}
-                            📝
+                        📝
                         {% endif %}
-                        
+
                         <div class="post-badges">
                             {% if post.trigger_warning %}
-                                <span class="warning-badge">⚠️ TW</span>
+                            <span class="warning-badge">⚠️ TW</span>
                             {% endif %}
                             {% if post.is_personal_story %}
-                                <span class="personal-story-badge">💭 Personal</span>
+                            <span class="personal-story-badge">💭 Personal</span>
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="post-content">
                         <div class="post-meta">
                             <span>{{ post.published_at|date:"M d, Y" }}</span>
                             <span>{{ post.reading_time }} min read</span>
                         </div>
-                        
+
                         <a href="{{ post.get_absolute_url }}" class="post-title">
                             {{ post.title }}
                         </a>
-                        
+
                         <p class="post-excerpt">
                             {% if post.excerpt %}
-                                {{ post.excerpt }}
+                            {{ post.excerpt }}
                             {% else %}
-                                {{ post.content|truncatewords:30 }}
+                            {{ post.content|truncatewords:30 }}
                             {% endif %}
                         </p>
-                        
+
                         <div class="post-footer">
                             {% if post.category %}
-                                <a href="{% url 'blog:category_posts' post.category.slug %}" class="post-category">
-                                    {{ post.category.name }}
-                                </a>
+                            <a href="{% url 'blog:category_posts' post.category.slug %}" class="post-category">
+                                {{ post.category.name }}
+                            </a>
                             {% endif %}
-                            
+
                             <div class="post-stats">
                                 <span>👁 {{ post.views }}</span>
                                 <span>💬 {{ post.comments.count }}</span>
@@ -532,9 +612,9 @@
                     <h3 style="color: #666;">No posts found</h3>
                     <p style="color: #999;">Be the first to share your story!</p>
                     {% if user.is_authenticated %}
-                        <a href="{% url 'blog:post_create' %}" class="btn btn-success mt-3">
-                            ✍️ Write First Post
-                        </a>
+                    <a href="{% url 'blog:post_create' %}" class="btn btn-success mt-3">
+                        ✏️ Write First Post
+                    </a>
                     {% endif %}
                 </div>
                 {% endfor %}
@@ -545,25 +625,27 @@
             <nav aria-label="Blog pagination" style="margin-top: 2rem;">
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
-                                Previous
-                            </a>
-                        </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                            Previous
+                        </a>
+                    </li>
                     {% endif %}
-                    
+
                     <li class="page-item active">
                         <span class="page-link">
                             Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
                         </span>
                     </li>
-                    
+
                     {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
-                                Next
-                            </a>
-                        </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                            Next
+                        </a>
+                    </li>
                     {% endif %}
                 </ul>
             </nav>
@@ -592,9 +674,9 @@
                 <h5>🏷️ Popular Tags</h5>
                 <div class="tag-cloud">
                     {% for tag in popular_tags %}
-                        <a href="{% url 'blog:tag_posts' tag.slug %}" class="tag">
-                            {{ tag.name }}
-                        </a>
+                    <a href="{% url 'blog:tag_posts' tag.slug %}" class="tag">
+                        {{ tag.name }}
+                    </a>
                     {% endfor %}
                 </div>
             </div>
@@ -615,17 +697,6 @@
                 </ul>
             </div>
             {% endif %}
-
-            <!-- Call to Action -->
-            {% if user.is_authenticated %}
-            <div class="sidebar-section" style="background: var(--gradient-primary); color: white;">
-                <h5 style="color: white;">✨ Share Your Journey</h5>
-                <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">Your story could inspire someone's recovery today.</p>
-                <a href="{% url 'blog:post_create' %}" class="btn btn-light btn-sm" style="margin-top: 1rem;">
-                    Start Writing
-                </a>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>
@@ -637,7 +708,7 @@
     const searchInput = document.querySelector('input[name="search"]');
     if (searchInput) {
         let searchTimeout;
-        searchInput.addEventListener('input', function() {
+        searchInput.addEventListener('input', function () {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 if (this.value.length > 2 || this.value.length === 0) {
