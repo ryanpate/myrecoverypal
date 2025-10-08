@@ -428,30 +428,43 @@
     .blog-pagination {
         margin-top: 3rem;
         margin-bottom: 2rem;
+        padding: 2rem 1rem;
         position: relative;
-        z-index: 1;
+        z-index: 100;
+        background: #f8f9fa;
+        border-radius: 12px;
+        width: 100%;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 
     .blog-pagination .pagination {
-        display: flex;
+        display: flex !important;
         justify-content: center;
         gap: 0.5rem;
         flex-wrap: wrap;
+        margin: 0;
+        padding: 0;
+        list-style: none;
     }
 
     .blog-pagination .page-item {
         list-style: none;
+        display: block !important;
     }
 
     .blog-pagination .page-link {
-        padding: 0.5rem 1rem;
-        border: 2px solid #e0e0e0;
+        padding: 0.75rem 1.5rem;
+        border: 2px solid #1e4d8b;
         border-radius: 8px;
         text-decoration: none;
-        color: #666;
+        color: #1e4d8b;
+        font-weight: 600;
         transition: all 0.3s;
         background: white;
-        display: block;
+        display: block !important;
+        cursor: pointer;
     }
 
     .blog-pagination .page-item.active .page-link {
@@ -461,9 +474,10 @@
     }
 
     .blog-pagination .page-link:hover {
-        border-color: #52b788;
-        color: #52b788;
+        background: #1e4d8b;
+        color: white;
         text-decoration: none;
+        transform: translateY(-2px);
     }
 
     @media (max-width: 768px) {
@@ -707,7 +721,9 @@
 
             <!-- Pagination - Fixed to always show when needed -->
             {% if is_paginated %}
-            <div class="blog-pagination">
+            <div class="blog-pagination"
+                style="background: #ffe5e5; border: 3px solid red; padding: 2rem; margin-top: 2rem;">
+                <h3 style="color: red; text-align: center;">PAGINATION SECTION (Should be visible)</h3>
                 <nav aria-label="Blog pagination">
                     <ul class="pagination">
                         {% if page_obj.has_previous %}
@@ -735,6 +751,10 @@
                         {% endif %}
                     </ul>
                 </nav>
+            </div>
+            {% else %}
+            <div style="background: yellow; border: 3px solid orange; padding: 1rem; margin-top: 2rem;">
+                <strong>NOT PAGINATED</strong> - Only {{ posts|length }} posts
             </div>
             {% endif %}
         </div>
