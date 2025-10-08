@@ -164,6 +164,15 @@
         grid-template-columns: 1fr 300px;
         gap: 2rem;
         margin-top: 2rem;
+        align-items: start;
+        /* Align items to top */
+        position: relative;
+    }
+
+    .posts-section {
+        min-height: 400px;
+        /* Ensure section has minimum height */
+        position: relative;
     }
 
     .posts-grid {
@@ -302,8 +311,11 @@
 
     .sidebar {
         position: sticky;
-        top: 80px;
+        top: 100px;
+        /* Increased from 80px to ensure it clears the header */
         height: fit-content;
+        align-self: flex-start;
+        /* Prevents sidebar from stretching */
     }
 
     .sidebar-section {
@@ -412,6 +424,48 @@
         background: #45a675;
     }
 
+    /* Pagination styles - ensure it stays at bottom */
+    .blog-pagination {
+        margin-top: 3rem;
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .blog-pagination .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .blog-pagination .page-item {
+        list-style: none;
+    }
+
+    .blog-pagination .page-link {
+        padding: 0.5rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #666;
+        transition: all 0.3s;
+        background: white;
+        display: block;
+    }
+
+    .blog-pagination .page-item.active .page-link {
+        background: #52b788;
+        color: white;
+        border-color: #52b788;
+    }
+
+    .blog-pagination .page-link:hover {
+        border-color: #52b788;
+        color: #52b788;
+        text-decoration: none;
+    }
+
     @media (max-width: 768px) {
         .blog-layout {
             grid-template-columns: 1fr;
@@ -456,6 +510,19 @@
 
         .featured-cta p {
             font-size: 1rem;
+        }
+
+        .blog-pagination {
+            margin-top: 2rem;
+        }
+
+        .blog-pagination .pagination {
+            gap: 0.25rem;
+        }
+
+        .blog-pagination .page-link {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.9rem;
         }
     }
 </style>
@@ -620,35 +687,37 @@
                 {% endfor %}
             </div>
 
-            <!-- Pagination -->
+            <!-- Pagination - At bottom of posts -->
             {% if is_paginated %}
-            <nav aria-label="Blog pagination" style="margin-bottom: 2rem;">
-                <ul class="pagination justify-content-center">
-                    {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link"
-                            href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
-                            Previous
-                        </a>
-                    </li>
-                    {% endif %}
+            <div class="blog-pagination">
+                <nav aria-label="Blog pagination">
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                ← Previous
+                            </a>
+                        </li>
+                        {% endif %}
 
-                    <li class="page-item active">
-                        <span class="page-link">
-                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                        </span>
-                    </li>
+                        <li class="page-item active">
+                            <span class="page-link">
+                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                            </span>
+                        </li>
 
-                    {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link"
-                            href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
-                            Next
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </nav>
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                Next →
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
             {% endif %}
         </div>
 
