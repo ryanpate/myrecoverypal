@@ -439,43 +439,54 @@
         opacity: 1 !important;
     }
 
+    .blog-pagination nav {
+        display: block !important;
+        width: 100%;
+    }
+
     .blog-pagination .pagination {
         display: flex !important;
         justify-content: center;
+        align-items: center;
         gap: 0.5rem;
         flex-wrap: wrap;
-        margin: 0;
-        padding: 0;
-        list-style: none;
+        margin: 0 !important;
+        padding: 0 !important;
+        list-style: none !important;
     }
 
     .blog-pagination .page-item {
-        list-style: none;
-        display: block !important;
+        list-style: none !important;
+        display: inline-block !important;
+        margin: 0 !important;
     }
 
-    .blog-pagination .page-link {
-        padding: 0.75rem 1.5rem;
-        border: 2px solid #1e4d8b;
-        border-radius: 8px;
-        text-decoration: none;
-        color: #1e4d8b;
-        font-weight: 600;
+    .blog-pagination .page-link,
+    .blog-pagination .page-link span {
+        padding: 0.75rem 1.5rem !important;
+        border: 2px solid #1e4d8b !important;
+        border-radius: 8px !important;
+        text-decoration: none !important;
+        color: #1e4d8b !important;
+        font-weight: 600 !important;
         transition: all 0.3s;
-        background: white;
-        display: block !important;
+        background: white !important;
+        display: inline-block !important;
         cursor: pointer;
+        min-width: 100px;
+        text-align: center;
     }
 
-    .blog-pagination .page-item.active .page-link {
-        background: #52b788;
-        color: white;
-        border-color: #52b788;
+    .blog-pagination .page-item.active .page-link,
+    .blog-pagination .page-item.active span {
+        background: #52b788 !important;
+        color: white !important;
+        border-color: #52b788 !important;
     }
 
     .blog-pagination .page-link:hover {
-        background: #1e4d8b;
-        color: white;
+        background: #1e4d8b !important;
+        color: white !important;
         text-decoration: none;
         transform: translateY(-2px);
     }
@@ -723,28 +734,33 @@
             {% if is_paginated %}
             <div class="blog-pagination"
                 style="background: #ffe5e5; border: 3px solid red; padding: 2rem; margin-top: 2rem;">
-                <h3 style="color: red; text-align: center;">PAGINATION SECTION (Should be visible)</h3>
+                <h3 style="color: red; text-align: center; margin-bottom: 1.5rem;">PAGINATION SECTION (Should be
+                    visible)</h3>
                 <nav aria-label="Blog pagination">
-                    <ul class="pagination">
+                    <ul class="pagination"
+                        style="display: flex !important; justify-content: center; list-style: none; gap: 1rem; margin: 0; padding: 0;">
                         {% if page_obj.has_previous %}
-                        <li class="page-item">
+                        <li class="page-item" style="display: inline-block !important;">
                             <a class="page-link"
-                                href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                style="display: inline-block !important; padding: 0.75rem 1.5rem; background: white; border: 2px solid #1e4d8b; border-radius: 8px; text-decoration: none; color: #1e4d8b; font-weight: 600;">
                                 ← Previous
                             </a>
                         </li>
                         {% endif %}
 
-                        <li class="page-item active">
-                            <span class="page-link">
+                        <li class="page-item active" style="display: inline-block !important;">
+                            <span class="page-link"
+                                style="display: inline-block !important; padding: 0.75rem 1.5rem; background: #52b788; border: 2px solid #52b788; border-radius: 8px; color: white; font-weight: 600;">
                                 Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
                             </span>
                         </li>
 
                         {% if page_obj.has_next %}
-                        <li class="page-item">
+                        <li class="page-item" style="display: inline-block !important;">
                             <a class="page-link"
-                                href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                style="display: inline-block !important; padding: 0.75rem 1.5rem; background: white; border: 2px solid #1e4d8b; border-radius: 8px; text-decoration: none; color: #1e4d8b; font-weight: 600;">
                                 Next →
                             </a>
                         </li>
