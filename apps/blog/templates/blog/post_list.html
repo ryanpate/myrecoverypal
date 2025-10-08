@@ -575,6 +575,24 @@
 </div>
 
 <div class="blog-container">
+    <!-- DEBUG INFO - TEMPORARY -->
+    <div
+        style="background: #fff3cd; padding: 1rem; margin-bottom: 1rem; border: 2px solid #ffc107; border-radius: 8px;">
+        <strong>🔍 Debug Info:</strong><br>
+        is_paginated: {{ is_paginated }}<br>
+        posts count: {{ posts|length }}<br>
+        {% if page_obj %}
+        page_obj exists: Yes<br>
+        current page: {{ page_obj.number }}<br>
+        total pages: {{ page_obj.paginator.num_pages }}<br>
+        has_previous: {{ page_obj.has_previous }}<br>
+        has_next: {{ page_obj.has_next }}<br>
+        total items: {{ page_obj.paginator.count }}<br>
+        {% else %}
+        page_obj exists: No
+        {% endif %}
+    </div>
+
     <!-- Featured CTA - NEW: Positioned at top for maximum visibility -->
     {% if user.is_authenticated %}
     <div class="featured-cta">
@@ -687,7 +705,7 @@
                 {% endfor %}
             </div>
 
-            <!-- Pagination - At bottom of posts -->
+            <!-- Pagination - Fixed to always show when needed -->
             {% if is_paginated %}
             <div class="blog-pagination">
                 <nav aria-label="Blog pagination">
