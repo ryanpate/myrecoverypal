@@ -654,6 +654,23 @@
 
         <!-- Sidebar -->
         <div class="sidebar">
+            <!-- Recent Posts - Moved to top -->
+            {% if recent_posts %}
+            <div class="sidebar-section">
+                <h5>🕐 Recent Posts</h5>
+                <ul style="list-style: none; padding: 0;">
+                    {% for post in recent_posts %}
+                    <li style="padding: 0.5rem 0;">
+                        <a href="{{ post.get_absolute_url }}" style="color: #666; text-decoration: none;">
+                            <strong style="display: block; color: #333;">{{ post.title|truncatewords:8 }}</strong>
+                            <small style="color: #999;">{{ post.published_at|date:"M d" }}</small>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
             <!-- Categories -->
             <div class="sidebar-section">
                 <h5>📂 Categories</h5>
@@ -680,23 +697,6 @@
                     {% endfor %}
                 </div>
             </div>
-
-            <!-- Recent Posts -->
-            {% if recent_posts %}
-            <div class="sidebar-section">
-                <h5>🕐 Recent Posts</h5>
-                <ul style="list-style: none; padding: 0;">
-                    {% for post in recent_posts %}
-                    <li style="padding: 0.5rem 0;">
-                        <a href="{{ post.get_absolute_url }}" style="color: #666; text-decoration: none;">
-                            <strong style="display: block; color: #333;">{{ post.title|truncatewords:8 }}</strong>
-                            <small style="color: #999;">{{ post.published_at|date:"M d" }}</small>
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>
