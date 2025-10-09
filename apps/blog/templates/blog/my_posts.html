@@ -105,28 +105,35 @@
         {% endfor %}
     </div>
 
+    <!-- Fixed Pagination - Same style as post_list.html -->
     {% if is_paginated %}
-    <nav aria-label="My posts pagination">
-        <ul class="pagination justify-content-center">
+    <div class="my-posts-pagination"
+        style="background: #f8f9fa; border-radius: 12px; padding: 2rem; margin: 3rem 0 2rem 0; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <div style="display: inline-block;">
             {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-            </li>
+            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}"
+                style="background: white; color: #1e4d8b; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; text-decoration: none; border: 2px solid #1e4d8b; border-radius: 8px; display: inline-block; margin: 0 0.5rem; transition: all 0.3s ease;"
+                onmouseover="this.style.background='#1e4d8b'; this.style.color='white';"
+                onmouseout="this.style.background='white'; this.style.color='#1e4d8b';">
+                ← Previous
+            </a>
             {% endif %}
 
-            <li class="page-item active">
-                <span class="page-link">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                </span>
-            </li>
+            <span
+                style="background: #52b788; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; border: 2px solid #52b788; border-radius: 8px; display: inline-block; margin: 0 0.5rem;">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
 
             {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
-            </li>
+            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}"
+                style="background: white; color: #1e4d8b; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; text-decoration: none; border: 2px solid #1e4d8b; border-radius: 8px; display: inline-block; margin: 0 0.5rem; transition: all 0.3s ease;"
+                onmouseover="this.style.background='#1e4d8b'; this.style.color='white';"
+                onmouseout="this.style.background='white'; this.style.color='#1e4d8b';">
+                Next →
+            </a>
             {% endif %}
-        </ul>
-    </nav>
+        </div>
+    </div>
     {% endif %}
 </div>
 
@@ -167,6 +174,29 @@
 
     .modal-header .btn-close {
         filter: invert(1);
+    }
+
+    /* Pagination hover effect */
+    .my-posts-pagination a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Mobile responsive styles */
+    @media (max-width: 768px) {
+        .my-posts-pagination {
+            padding: 1.5rem 1rem !important;
+            margin: 2rem 0 1rem 0 !important;
+        }
+
+        .my-posts-pagination a,
+        .my-posts-pagination span {
+            padding: 0.6rem 1rem !important;
+            font-size: 0.9rem !important;
+            margin: 0.25rem !important;
+            display: block !important;
+            margin-bottom: 0.5rem !important;
+        }
     }
 </style>
 {% endblock %}
