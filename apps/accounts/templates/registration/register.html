@@ -1,80 +1,168 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
+{% load static %}
 
-{% block title %}Join Our Community - Journey to Recovery{% endblock %}
-
-{% block extra_css %}
-<style>
-    .auth-container {
-        max-width: 500px;
-        margin: 100px auto;
-        padding: 2rem;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    
-    .auth-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    
-    .auth-header h2 {
-        color: var(--primary-color);
-        margin-bottom: 0.5rem;
-    }
-    
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-    
-    .btn-primary {
-        background: var(--primary-color);
-        border: none;
-        padding: 0.75rem 2rem;
-        border-radius: 50px;
-        width: 100%;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-primary:hover {
-        background: var(--secondary-color);
-        transform: translateY(-2px);
-    }
-    
-    .auth-links {
-        text-align: center;
-        margin-top: 2rem;
-    }
-    
-    .auth-links a {
-        color: var(--primary-color);
-        text-decoration: none;
-    }
-    
-    .auth-links a:hover {
-        text-decoration: underline;
-    }
-</style>
-{% endblock %}
+{% block title %}Register - MyRecoveryPal{% endblock %}
 
 {% block content %}
-<div class="auth-container">
-    <div class="auth-header">
-        <h2>Join Our Recovery Community</h2>
-        <p>Start your journey with support from others who understand</p>
-    </div>
-    
-    <form method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        
-        <button type="submit" class="btn btn-primary">Create Account</button>
-    </form>
-    
-    <div class="auth-links">
-        <p>Already have an account? <a href="{% url 'accounts:login' %}">Login here</a></p>
+<div class="page-header">
+    <div class="container">
+        <h1>✨ Join MyRecoveryPal</h1>
+        <p>Start your journey with our supportive community</p>
     </div>
 </div>
+
+<div class="container" style="max-width: 600px; margin: 2rem auto; padding: 0 1rem;">
+    <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        
+        {% if invite_only %}
+        <div style="background: #e3f2fd; border-left: 4px solid var(--primary-light); padding: 1rem; margin-bottom: 2rem; border-radius: 8px;">
+            <strong>🎟️ Invite-Only Beta</strong>
+            <p style="margin: 0.5rem 0 0 0; color: #666;">
+                We're currently in invite-only mode. You'll need an invite code to register.
+            </p>
+        </div>
+        {% endif %}
+
+        <h2 style="margin-top: 0; color: var(--primary-dark);">Create Your Account</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" style="margin-bottom: 1.5rem;">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            {% if invite_only %}
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="{{ form.invite_code.id_for_label }}" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+                    Invite Code *
+                </label>
+                {{ form.invite_code }}
+                <small style="color: #666; display: block; margin-top: 0.25rem;">
+                    {{ form.invite_code.help_text }}
+                </small>
+                {% if form.invite_code.errors %}
+                    <div style="color: #dc3545; font-size: 0.9rem; margin-top: 0.25rem;">
+                        {{ form.invite_code.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="{{ form.username.id_for_label }}" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+                    Username *
+                </label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div style="color: #dc3545; font-size: 0.9rem; margin-top: 0.25rem;">
+                        {{ form.username.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="{{ form.email.id_for_label }}" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+                    Email Address *
+                </label>
+                {{ form.email }}
+                <small style="color: #666; display: block; margin-top: 0.25rem;">
+                    {{ form.email.help_text }}
+                </small>
+                {% if form.email.errors %}
+                    <div style="color: #dc3545; font-size: 0.9rem; margin-top: 0.25rem;">
+                        {{ form.email.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="{{ form.password1.id_for_label }}" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+                    Password *
+                </label>
+                {{ form.password1 }}
+                <small style="color: #666; display: block; margin-top: 0.25rem;">
+                    Your password must be at least 8 characters.
+                </small>
+                {% if form.password1.errors %}
+                    <div style="color: #dc3545; font-size: 0.9rem; margin-top: 0.25rem;">
+                        {{ form.password1.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="{{ form.password2.id_for_label }}" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+                    Confirm Password *
+                </label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div style="color: #dc3545; font-size: 0.9rem; margin-top: 0.25rem;">
+                        {{ form.password2.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="{{ form.sobriety_date.id_for_label }}" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+                    Sobriety Date (Optional)
+                </label>
+                {{ form.sobriety_date }}
+                <small style="color: #666; display: block; margin-top: 0.25rem;">
+                    {{ form.sobriety_date.help_text }}
+                </small>
+                {% if form.sobriety_date.errors %}
+                    <div style="color: #dc3545; font-size: 0.9rem; margin-top: 0.25rem;">
+                        {{ form.sobriety_date.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1rem;">
+                Create Account
+            </button>
+        </form>
+
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e0e0e0;">
+            <p style="text-align: center; color: #666; margin: 0;">
+                Already have an account?
+                <a href="{% url 'accounts:login' %}" style="color: var(--primary-light); font-weight: 600;">
+                    Log in
+                </a>
+            </p>
+            
+            {% if invite_only and settings.waitlist_enabled %}
+            <p style="text-align: center; color: #666; margin-top: 1rem;">
+                Don't have an invite code?
+                <a href="{% url 'accounts:request_access' %}" style="color: var(--accent-green); font-weight: 600;">
+                    Request Access
+                </a>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(77, 184, 232, 0.1);
+    }
+    
+    input[type="date"].form-control {
+        font-family: inherit;
+    }
+</style>
 {% endblock %}

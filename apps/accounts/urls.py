@@ -111,4 +111,9 @@ urlpatterns = [
     path('api/notifications/mark-all-read/',
          views.mark_all_notifications_read, name='mark_all_notifications_read'),
     path('api/update-last-seen/', views.update_last_seen, name='update_last_seen'),
+
+    path('request-access/', views.request_access_view, name='request_access'),
+    path('admin/approve-waitlist/<int:request_id>/',
+         views.admin_approve_waitlist, name='admin_approve_waitlist'),
+
 ]

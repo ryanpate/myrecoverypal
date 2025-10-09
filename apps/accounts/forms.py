@@ -6,10 +6,101 @@ from .models import (
     RecoveryPal, RecoveryGroup, GroupMembership, GroupPost,
     GroupChallenge, ChallengeParticipant, ChallengeCheckIn, ChallengeComment
 )
+# CORRECT - no CustomUserCreationForm here
+from .invite_models import WaitlistRequest, InviteCode, SystemSettings
 from django.core.exceptions import ValidationError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML, Field
 from crispy_forms.bootstrap import TabHolder, Tab
+
+class WaitlistRequestForm(forms.ModelForm):
+    """Form for users to request waitlist access"""
+
+    class Meta:
+        model = WaitlistRequest
+        fields = ['first_name', 'last_name',
+                  'email', 'reason', 'referral_source']
+        widgets = {
+            'first_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'John'
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Doe'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'your.email@example.com'
+            }),
+            'reason': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Tell us why you\'d like to join MyRecoveryPal...'
+            }),
+            'referral_source': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Friend, Social Media, Search Engine'
+            }),
+        }
+        help_texts = {
+            'email': 'We\'ll send your invite code to this email',
+            'reason': 'Optional, but helps us understand our community',
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].lower()
+
+        # Check if email already registered
+        from .models import User
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError(
+                'This email is already registered. Please log in instead.'
+            )
+
+        # Check if already on waitlist
+        if WaitlistRequest.objects.filter(email=email).exists():
+            existing = WaitlistRequest.objects.get(email=email)
+            if existing.status == 'pending':
+                raise forms.ValidationError(
+                    'You\'re already on the waitlist! We\'ll review your request soon.'
+                )
+            elif existing.status == 'approved':
+                raise forms.ValidationError(
+                    'You\'ve been approved! Check your email for your invite code.'
+                )
+
+        return email
+
+
+class InviteCodeForm(forms.Form):
+    """Form for entering invite code during registration"""
+
+    invite_code = forms.CharField(
+        max_length=32,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'XXXX-XXXX-XXXX',
+            'style': 'text-transform: uppercase; letter-spacing: 2px;'
+        }),
+        help_text='Enter the invite code you received'
+    )
+
+    def clean_invite_code(self):
+        code = self.cleaned_data['invite_code'].upper().strip()
+
+        try:
+            invite = InviteCode.objects.get(code=code)
+            is_valid, message = invite.is_valid()
+
+            if not is_valid:
+                raise forms.ValidationError(message)
+
+            return code
+        except InviteCode.DoesNotExist:
+            raise forms.ValidationError(
+                'Invalid invite code. Please check and try again.')
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -32,8 +123,60 @@ class CustomUserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+class CustomUserCreationFormWithInvite(UserCreationForm):
+    email = forms.EmailField(
+        required=True,
+        help_text='Required. Enter a valid email address.'
+    )
+    invite_code = forms.CharField(
+        max_length=32,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'XXXX-XXXX-XXXX',
+            'style': 'text-transform: uppercase; letter-spacing: 2px;'
+        }),
+        help_text='Enter your invite code'
+    )
+    sobriety_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        help_text='Optional. You can add this later.'
+    )
 
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'invite_code',
+                  'password1', 'password2', 'sobriety_date')
 
+    def clean_invite_code(self):
+        code = self.cleaned_data['invite_code'].upper().strip()
+        email = self.cleaned_data.get('email', '').lower()
+
+        try:
+            invite = InviteCode.objects.get(code=code)
+            is_valid, message = invite.is_valid(email)
+
+            if not is_valid:
+                raise forms.ValidationError(message)
+
+            # Store invite object for later use in save()
+            self.invite_object = invite
+            return code
+        except InviteCode.DoesNotExist:
+            raise forms.ValidationError(
+                'Invalid invite code. Please check and try again.')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+
+        if commit:
+            user.save()
+            # Mark invite code as used
+            if hasattr(self, 'invite_object'):
+                self.invite_object.mark_as_used(user)
+
+        return user
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User

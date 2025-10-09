@@ -5,6 +5,8 @@ from django.urls import reverse
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from datetime import timedelta
+# At the top of apps/accounts/models.py, add:
+from .invite_models import WaitlistRequest, InviteCode, SystemSettings
 
 class User(AbstractUser):
     # Additional fields for recovery

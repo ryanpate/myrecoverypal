@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, ActivityComment
 from .models import GroupChallenge, ChallengeParticipant, ChallengeCheckIn, ChallengeComment, ChallengeBadge, UserChallengeBadge
-
+# Add to apps/accounts/admin.py
+from .admin_invite import *
 
 class CustomUserAdmin(UserAdmin):
     list_display = ['username', 'email', 'first_name', 'last_name', 'is_active',

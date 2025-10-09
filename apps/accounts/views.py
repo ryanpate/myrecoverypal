@@ -1,7 +1,7 @@
 from django.views.generic import ListView, DetailView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, UpdateView, ListView, CreateView
 from django.contrib import messages
@@ -9,8 +9,7 @@ from django.urls import reverse_lazy
 from django.db.models import Q, Count, Prefetch, Avg
 from django.utils import timezone
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST, require_http_methods
 from .models import GroupPost, User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, ActivityComment, UserConnection, SponsorRelationship, RecoveryPal, RecoveryGroup, GroupMembership
 from .forms import CustomUserCreationForm, UserProfileForm, MilestoneForm, SupportMessageForm, SponsorRequestForm, RecoveryPalForm, RecoveryGroupForm, GroupPostForm, GroupMembershipForm
 from .signals import create_profile_update_activity
@@ -22,7 +21,8 @@ import cloudinary.uploader
 from django.core.serializers import serialize
 import json
 from django.views.decorators.csrf import csrf_exempt
-
+from .invite_models import WaitlistRequest, InviteCode, SystemSettings
+from .forms import WaitlistRequestForm, CustomUserCreationFormWithInvite
 from .models import (
     GroupChallenge, ChallengeParticipant, ChallengeCheckIn,
     ChallengeComment, ChallengeBadge, UserChallengeBadge, Notification
@@ -33,19 +33,67 @@ from .forms import (
 )
 
 def register_view(request):
+    """
+    Registration view with invite code requirement
+    """
+    # Check system settings
+    settings = SystemSettings.get_settings()
+
+    # Check if we've hit user limit
+    if settings.max_users:
+        current_user_count = User.objects.filter(is_active=True).count()
+        if current_user_count >= settings.max_users:
+            messages.error(
+                request,
+                'We\'ve reached our maximum capacity. Please join the waitlist!'
+            )
+            return redirect('accounts:request_access')
+
+    # If not in invite-only mode, use regular registration
+    if not settings.invite_only_mode:
+        if request.method == 'POST':
+            form = CustomUserCreationForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                username = form.cleaned_data.get('username')
+                password = form.cleaned_data.get('password1')
+                messages.success(
+                    request, f'Welcome to the community, {username}!')
+
+                user = authenticate(username=username, password=password)
+                login(request, user)
+
+                if user.sobriety_date:
+                    Milestone.objects.create(
+                        user=user,
+                        title="Started My Recovery Journey",
+                        description="The day I decided to change my life.",
+                        date_achieved=user.sobriety_date,
+                        milestone_type='days',
+                        days_sober=0
+                    )
+
+                return redirect('accounts:dashboard')
+        else:
+            form = CustomUserCreationForm()
+
+        return render(request, 'registration/register.html', {'form': form})
+
+    # Invite-only mode is enabled
+    # Check if invite code is in URL
+    invite_code = request.GET.get('invite', '')
+
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = CustomUserCreationFormWithInvite(request.POST)
         if form.is_valid():
             user = form.save()
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password1')
             messages.success(request, f'Welcome to the community, {username}!')
-            
-            # Auto-login after registration
+
             user = authenticate(username=username, password=password)
             login(request, user)
-            
-            # Create automatic milestone if sobriety date provided
+
             if user.sobriety_date:
                 Milestone.objects.create(
                     user=user,
@@ -55,13 +103,81 @@ def register_view(request):
                     milestone_type='days',
                     days_sober=0
                 )
-            
+
             return redirect('accounts:dashboard')
     else:
-        form = CustomUserCreationForm()
-    
-    return render(request, 'registration/register.html', {'form': form})
+        # Pre-fill invite code if provided in URL
+        initial = {'invite_code': invite_code} if invite_code else {}
+        form = CustomUserCreationFormWithInvite(initial=initial)
 
+    context = {
+        'form': form,
+        'invite_only': True,
+        'settings': settings
+    }
+    return render(request, 'registration/register.html', context)
+
+
+@require_http_methods(["GET", "POST"])
+def request_access_view(request):
+    """
+    Waitlist request form
+    """
+    settings = SystemSettings.get_settings()
+
+    # Check if waitlist is enabled
+    if not settings.waitlist_enabled:
+        messages.error(request, settings.registration_closed_message)
+        return redirect('core:index')
+
+    if request.method == 'POST':
+        form = WaitlistRequestForm(request.POST)
+        if form.is_valid():
+            waitlist_request = form.save()
+
+            # Auto-approve if enabled
+            if settings.auto_approve_waitlist:
+                invite_code = waitlist_request.approve()
+                # Optionally send email here
+                # invite_code.send_invite_email()
+
+                messages.success(
+                    request,
+                    f'You\'ve been approved! Your invite code is: {invite_code.code}'
+                )
+                return redirect('accounts:register')
+            else:
+                messages.success(
+                    request,
+                    'Thank you! We\'ll review your request and send you an invite code soon.'
+                )
+                return redirect('core:index')
+    else:
+        form = WaitlistRequestForm()
+
+    context = {
+        'form': form,
+        'settings': settings
+    }
+    return render(request, 'registration/request_access.html', context)
+
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def admin_approve_waitlist(request, request_id):
+    """
+    Quick approve from admin interface
+    """
+    waitlist_request = get_object_or_404(WaitlistRequest, id=request_id)
+
+    if waitlist_request.status == 'pending':
+        invite_code = waitlist_request.approve(admin_user=request.user)
+        messages.success(
+            request,
+            f'Approved! Invite code {invite_code.code} generated for {waitlist_request.email}'
+        )
+
+    return redirect('admin:accounts_waitlistrequest_changelist')
 
 @login_required
 def dashboard_view(request):
