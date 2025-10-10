@@ -21,11 +21,9 @@ class SystemSettingsAdmin(admin.ModelAdmin):
     )
 
     def has_add_permission(self, request):
-        # Singleton - only one instance allowed
         return not SystemSettings.objects.exists()
 
     def has_delete_permission(self, request, obj=None):
-        # Can't delete settings
         return False
 
 
@@ -63,7 +61,6 @@ class WaitlistRequestAdmin(admin.ModelAdmin):
                 approve_url
             )
         elif obj.status == 'approved':
-            # Find the associated invite code
             try:
                 invite = InviteCode.objects.filter(
                     email=obj.email).latest('created_at')
@@ -79,22 +76,30 @@ class WaitlistRequestAdmin(admin.ModelAdmin):
 
     def approve_requests(self, request, queryset):
         """Approve requests without waiting for email"""
+        import threading
         count = 0
         emails_queued = 0
+
+        def send_email_async(invite_code):
+            try:
+                invite_code.send_invite_email()
+            except Exception as e:
+                import logging
+                logger = logging.getLogger('apps.accounts')
+                logger.error(f"Background email failed: {e}")
 
         for waitlist_request in queryset.filter(status='pending'):
             invite_code = waitlist_request.approve(admin_user=request.user)
             count += 1
 
-            # Queue email sending without blocking
+            # Queue email sending in background thread
             try:
-                from threading import Thread
-                thread = Thread(target=invite_code.send_invite_email)
+                thread = threading.Thread(
+                    target=send_email_async, args=(invite_code,))
                 thread.daemon = True
                 thread.start()
                 emails_queued += 1
             except Exception as e:
-                # Log but don't fail
                 import logging
                 logger = logging.getLogger('apps.accounts')
                 logger.error(f"Failed to queue email: {e}")
@@ -104,7 +109,8 @@ class WaitlistRequestAdmin(admin.ModelAdmin):
             f'{count} request(s) approved. {emails_queued} invite email(s) queued for sending.'
         )
 
-approve_requests.short_description = 'Approve selected requests and send emails'
+    approve_requests.short_description = 'Approve selected requests and send emails'
+
     def reject_requests(self, request, queryset):
         queryset.filter(status='pending').update(
             status='rejected',
@@ -112,11 +118,11 @@ approve_requests.short_description = 'Approve selected requests and send emails'
             reviewed_by=request.user
         )
         self.message_user(request, 'Selected requests have been rejected.')
+
     reject_requests.short_description = 'Reject selected requests'
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        # Show pending requests first
         return qs.order_by('-status', '-requested_at')
 
 
@@ -152,21 +158,39 @@ class InviteCodeAdmin(admin.ModelAdmin):
     def revoke_codes(self, request, queryset):
         queryset.update(status='revoked')
         self.message_user(request, 'Selected codes have been revoked.')
+
     revoke_codes.short_description = 'Revoke selected codes'
 
     def send_invite_emails(self, request, queryset):
+        import threading
         count = 0
+
+        def send_email_async(invite):
+            try:
+                invite.send_invite_email()
+            except Exception as e:
+                import logging
+                logger = logging.getLogger('apps.accounts')
+                logger.error(f"Background email failed: {e}")
+
         for invite in queryset.filter(status='active', email__isnull=False):
-            if invite.send_invite_email():
+            try:
+                thread = threading.Thread(
+                    target=send_email_async, args=(invite,))
+                thread.daemon = True
+                thread.start()
                 count += 1
+            except Exception:
+                pass
 
         self.message_user(
             request,
-            f'Invite emails sent successfully to {count} recipient(s).'
+            f'Invite emails queued for {count} recipient(s).'
         )
+
     send_invite_emails.short_description = 'Send invite emails'
 
     def save_model(self, request, obj, form, change):
-        if not change:  # Creating new invite
+        if not change:
             obj.created_by = request.user
         super().save_model(request, obj, form, change)
