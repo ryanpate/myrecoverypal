@@ -172,16 +172,21 @@ def admin_approve_waitlist(request, request_id):
     if waitlist_request.status == 'pending':
         invite_code = waitlist_request.approve(admin_user=request.user)
 
-        # Send email
-        if invite_code.send_invite_email():
+        # Queue email task with Celery
+        try:
+            from .tasks import send_invite_email_task
+            send_invite_email_task.delay(invite_code.id)
+
             messages.success(
                 request,
-                f'Approved! Invite code {invite_code.code} generated and email sent to {waitlist_request.email}'
+                f'✅ Approved! Invite code {invite_code.code} generated for {waitlist_request.email}. '
+                f'Email is being sent.'
             )
-        else:
+        except Exception as e:
             messages.warning(
                 request,
-                f'Approved! Invite code {invite_code.code} generated for {waitlist_request.email}, but email failed to send.'
+                f'Approved! Invite code {invite_code.code} generated for {waitlist_request.email}, '
+                f'but failed to queue email: {str(e)}'
             )
     else:
         messages.info(request, 'This request has already been processed.')
