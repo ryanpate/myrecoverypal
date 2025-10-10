@@ -78,22 +78,33 @@ class WaitlistRequestAdmin(admin.ModelAdmin):
     action_buttons.short_description = 'Actions'
 
     def approve_requests(self, request, queryset):
+        """Approve requests without waiting for email"""
         count = 0
-        emails_sent = 0
+        emails_queued = 0
+
         for waitlist_request in queryset.filter(status='pending'):
             invite_code = waitlist_request.approve(admin_user=request.user)
             count += 1
 
-            # Automatically send email
-            if invite_code.send_invite_email():
-                emails_sent += 1
+            # Queue email sending without blocking
+            try:
+                from threading import Thread
+                thread = Thread(target=invite_code.send_invite_email)
+                thread.daemon = True
+                thread.start()
+                emails_queued += 1
+            except Exception as e:
+                # Log but don't fail
+                import logging
+                logger = logging.getLogger('apps.accounts')
+                logger.error(f"Failed to queue email: {e}")
 
         self.message_user(
             request,
-            f'{count} request(s) approved. {emails_sent} invite email(s) sent successfully.'
+            f'{count} request(s) approved. {emails_queued} invite email(s) queued for sending.'
         )
-    approve_requests.short_description = 'Approve selected requests and send emails'
 
+approve_requests.short_description = 'Approve selected requests and send emails'
     def reject_requests(self, request, queryset):
         queryset.filter(status='pending').update(
             status='rejected',
