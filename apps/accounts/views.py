@@ -167,26 +167,39 @@ def admin_approve_waitlist(request, request_id):
     """
     Quick approve from admin interface
     """
+    import logging
+
+    logger = logging.getLogger('apps.accounts')
     waitlist_request = get_object_or_404(WaitlistRequest, id=request_id)
 
     if waitlist_request.status == 'pending':
         invite_code = waitlist_request.approve(admin_user=request.user)
 
-        # Queue email task with Celery
+        # Try to send email synchronously with error handling
         try:
-            from .tasks import send_invite_email_task
-            send_invite_email_task.delay(invite_code.id)
+            logger.info(
+                f"Attempting to send invite email to {waitlist_request.email}")
+            success = invite_code.send_invite_email()
 
-            messages.success(
-                request,
-                f'✅ Approved! Invite code {invite_code.code} generated for {waitlist_request.email}. '
-                f'Email is being sent.'
-            )
+            if success:
+                messages.success(
+                    request,
+                    f'✅ Approved! Invite code <strong>{invite_code.code}</strong> generated and emailed to {waitlist_request.email}'
+                )
+            else:
+                messages.warning(
+                    request,
+                    f'⚠️ Approved! Invite code <strong>{invite_code.code}</strong> generated for {waitlist_request.email}. '
+                    f'Email failed to send - please copy this code and send manually.'
+                )
+
         except Exception as e:
+            logger.error(
+                f"Email sending failed for {waitlist_request.email}: {e}", exc_info=True)
             messages.warning(
                 request,
-                f'Approved! Invite code {invite_code.code} generated for {waitlist_request.email}, '
-                f'but failed to queue email: {str(e)}'
+                f'⚠️ Approved! Invite code <strong>{invite_code.code}</strong> generated for {waitlist_request.email}. '
+                f'Email error: {str(e)}. Please copy this code and send manually.'
             )
     else:
         messages.info(request, 'This request has already been processed.')

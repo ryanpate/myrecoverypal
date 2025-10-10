@@ -221,14 +221,18 @@ class InviteCode(models.Model):
     
 
     def send_invite_email(self):
-        """Send invite email to the specified email address"""
+        """Send invite email using SendGrid API (with SMTP fallback)"""
         if not self.email:
             return False
 
         from django.template.loader import render_to_string
         from django.utils.html import strip_tags
+        from django.conf import settings
+        import logging
 
-        # Prepare context for email template
+        logger = logging.getLogger('apps.accounts')
+
+        # Prepare context
         context = {
             'email': self.email,
             'invite_code': self.code,
@@ -238,28 +242,69 @@ class InviteCode(models.Model):
             'expires_at': self.expires_at,
         }
 
-        # Render HTML email
         html_message = render_to_string('emails/invite_code.html', context)
         plain_message = strip_tags(html_message)
-
         subject = '🌟 Welcome to MyRecoveryPal - Your Invite Code'
 
+        # Try SendGrid HTTP API first (more reliable on Railway)
         try:
-            from django.core.mail import EmailMultiAlternatives
+            import requests
 
-            email = EmailMultiAlternatives(
-                subject=subject,
-                body=plain_message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[self.email]
+            sendgrid_api_key = settings.EMAIL_HOST_PASSWORD
+
+            response = requests.post(
+                'https://api.sendgrid.com/v3/mail/send',
+                headers={
+                    'Authorization': f'Bearer {sendgrid_api_key}',
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    'personalizations': [{
+                        'to': [{'email': self.email}],
+                        'subject': subject
+                    }],
+                    'from': {'email': settings.DEFAULT_FROM_EMAIL},
+                    'content': [
+                        {'type': 'text/plain', 'value': plain_message},
+                        {'type': 'text/html', 'value': html_message}
+                    ]
+                },
+                timeout=10
             )
-            email.attach_alternative(html_message, "text/html")
-            email.send(fail_silently=False)
 
-            return True
-        except Exception as e:
-            print(f"Failed to send invite email: {e}")
-            return False
+            if response.status_code in [200, 202]:
+                logger.info(f"✅ SendGrid API: Email sent to {self.email}")
+                return True
+            else:
+                logger.error(
+                    f"❌ SendGrid API failed: {response.status_code} - {response.text}")
+                raise Exception(f"SendGrid API error: {response.status_code}")
+
+        except Exception as api_error:
+            logger.warning(
+                f"⚠️ SendGrid API failed: {api_error}, trying SMTP fallback...")
+
+            # Fallback to SMTP (less reliable on Railway)
+            try:
+                from django.core.mail import EmailMultiAlternatives
+
+                email = EmailMultiAlternatives(
+                    subject=subject,
+                    body=plain_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    to=[self.email]
+                )
+                email.attach_alternative(html_message, "text/html")
+                email.send(fail_silently=False)
+
+                logger.info(f"✅ SMTP: Email sent to {self.email}")
+                return True
+
+            except Exception as smtp_error:
+                logger.error(
+                    f"❌ Both SendGrid API and SMTP failed for {self.email}: {smtp_error}")
+                return False
+
 class SystemSettings(models.Model):
     """
     Global settings for the invite system
