@@ -628,12 +628,17 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'formatter': 'simple',
+            'formatter': 'verbose',  # Changed to verbose for better debugging
         },
         'file': {
             'class': 'logging.FileHandler',
             'filename': BASE_DIR / 'logs' / 'django.log',
             'formatter': 'verbose',
+        },
+        'mail_handler': {  # NEW: Dedicated handler for email logs
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+            'level': 'DEBUG',
         },
     },
     'root': {
@@ -646,14 +651,22 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
-        'pwa': {
+        'django.core.mail': {  # NEW: Email-specific logger
+            'handlers': ['console', 'mail_handler'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'apps.accounts': {  # NEW: Your accounts app logger
             'handlers': ['console'],
-            'level': 'DEBUG' if DEBUG else 'INFO',
+            'level': 'DEBUG',
             'propagate': False,
         },
     },
 }
 
+# Create logs directory if it doesn't exist
+if not os.path.exists(BASE_DIR / 'logs'):
+    os.makedirs(BASE_DIR / 'logs', exist_ok=True)
 # Create logs directory if it doesn't exist
 if not os.path.exists(BASE_DIR / 'logs'):
     os.makedirs(BASE_DIR / 'logs', exist_ok=True)
