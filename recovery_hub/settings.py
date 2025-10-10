@@ -1,6 +1,7 @@
 """
 Django settings for recovery_hub project.
 """
+import ssl
 from celery.schedules import crontab
 import os
 from pathlib import Path
@@ -420,25 +421,32 @@ MOBILE_APP_APPLE_MOBILE_WEB_APP_TITLE = 'RecoveryPal'
 # MOBILE_APP_ANDROID_APP_NAME = 'MyRecoveryPal'
 
 # ========================================
-# Email Configuration for Microsoft 365
+# Email Configuration - Flexible for Any Provider
 # ========================================
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.office365.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False  # Office365 uses TLS, not SSL
-EMAIL_HOST_USER = 'ryan@myrecoverypal.com'
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')  # Set in Railway
-DEFAULT_FROM_EMAIL = 'MyRecoveryPal <ryan@myrecoverypal.com>'
-SERVER_EMAIL = 'ryan@myrecoverypal.com'
+EMAIL_BACKEND = os.environ.get(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.smtp.EmailBackend'
+)
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.sendgrid.net')  # ✅ From env
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))  # ✅ From env
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'  # ✅ From env
+EMAIL_USE_SSL = os.environ.get(
+    'EMAIL_USE_SSL', 'False') == 'True'  # ✅ From env
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'apikey')  # ✅ From env
+EMAIL_HOST_PASSWORD = os.environ.get(
+    'EMAIL_HOST_PASSWORD', '')  # ✅ Correct var name
+DEFAULT_FROM_EMAIL = os.environ.get(
+    'DEFAULT_FROM_EMAIL',
+    'MyRecoveryPal <noreply@myrecoverypal.com>'
+)  # ✅ From env
+SERVER_EMAIL = os.environ.get('SERVER_EMAIL', DEFAULT_FROM_EMAIL)  # ✅ From env
 
-# Email timeout settings (prevents hanging on send)
-EMAIL_TIMEOUT = 30  # 30 seconds timeout
+# Email timeout settings
+EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '30'))
 
-# Site URL for email links - IMPORTANT: Set to Netlify frontend URL in production
-# This is where users click links in emails (your Netlify frontend, NOT Railway backend)
-SITE_URL = os.environ.get('https://myrecoverypal.com', 'http://localhost:8000')
+# Site URL for email links - FIXED
+SITE_URL = os.environ.get('SITE_URL', 'https://myrecoverypal.com')  # ✅ Fixed!
 
 # Email debug settings (only in development)
 if DEBUG:
@@ -448,6 +456,15 @@ if DEBUG:
 
 # Fail silently in development, raise errors in production
 EMAIL_FAIL_SILENTLY = DEBUG
+
+# SSL Configuration for Email
+
+# Try to use certifi for certificate verification
+try:
+    import certifi
+    os.environ['SSL_CERT_FILE'] = certifi.where()
+except ImportError:
+    pass  # certifi not installed, will use system certificates
 
 # ========================================
 # CORS and CSRF Settings
