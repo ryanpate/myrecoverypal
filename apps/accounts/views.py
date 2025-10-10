@@ -161,7 +161,6 @@ def request_access_view(request):
     }
     return render(request, 'registration/request_access.html', context)
 
-
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def admin_approve_waitlist(request, request_id):
@@ -172,10 +171,20 @@ def admin_approve_waitlist(request, request_id):
 
     if waitlist_request.status == 'pending':
         invite_code = waitlist_request.approve(admin_user=request.user)
-        messages.success(
-            request,
-            f'Approved! Invite code {invite_code.code} generated for {waitlist_request.email}'
-        )
+
+        # Send email
+        if invite_code.send_invite_email():
+            messages.success(
+                request,
+                f'Approved! Invite code {invite_code.code} generated and email sent to {waitlist_request.email}'
+            )
+        else:
+            messages.warning(
+                request,
+                f'Approved! Invite code {invite_code.code} generated for {waitlist_request.email}, but email failed to send.'
+            )
+    else:
+        messages.info(request, 'This request has already been processed.')
 
     return redirect('admin:accounts_waitlistrequest_changelist')
 

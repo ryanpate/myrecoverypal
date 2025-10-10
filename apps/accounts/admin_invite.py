@@ -58,35 +58,53 @@ class WaitlistRequestAdmin(admin.ModelAdmin):
         if obj.status == 'pending':
             approve_url = reverse('accounts:admin_approve_waitlist', args=[obj.id])
             return format_html(
-                '<a class="button" href="{}">Approve & Generate Code</a>',
+                '<a class="button" href="{}">Approve & Send Email</a>',
                 approve_url
             )
         elif obj.status == 'approved':
             # Find the associated invite code
             try:
-                invite = InviteCode.objects.filter(email=obj.email).latest('created_at')
+                invite = InviteCode.objects.filter(
+                    email=obj.email).latest('created_at')
                 return format_html(
-                    '<span style="color: green;">✓ Code: {}</span>',
-                    invite.code
+                    '<span style="color: green;">✓ Code: {}</span> | '
+                    '<a class="button" style="font-size: 11px;" href="#" onclick="'
+                    'if(confirm(\'Resend invite email to {}?\')) {{'
+                    '  fetch(\'/admin/accounts/invitecode/{}/resend-email/\', {{'
+                    '    method: \'POST\','
+                    '    headers: {{\'X-CSRFToken\': document.querySelector(\'[name=csrfmiddlewaretoken]\').value}}'
+                    '  }}).then(() => alert(\'Email sent!\'));'
+                    '}} return false;">Resend Email</a>',
+                    invite.code,
+                    obj.email,
+                    invite.id
                 )
             except InviteCode.DoesNotExist:
                 return format_html('<span style="color: orange;">Approved (no code)</span>')
         return format_html('<span style="color: gray;">{}</span>', obj.get_status_display())
-    
+
+
     action_buttons.short_description = 'Actions'
-    
+
     def approve_requests(self, request, queryset):
         count = 0
+        emails_sent = 0
         for waitlist_request in queryset.filter(status='pending'):
-            waitlist_request.approve(admin_user=request.user)
+            invite_code = waitlist_request.approve(admin_user=request.user)
             count += 1
-        
+
+            # Automatically send email
+            if invite_code.send_invite_email():
+                emails_sent += 1
+
         self.message_user(
             request,
-            f'{count} request(s) approved and invite codes generated.'
+            f'{count} request(s) approved. {emails_sent} invite email(s) sent successfully.'
         )
-    approve_requests.short_description = 'Approve selected requests'
-    
+
+
+approve_requests.short_description = 'Approve selected requests and send emails'
+
     def reject_requests(self, request, queryset):
         queryset.filter(status='pending').update(
             status='rejected',

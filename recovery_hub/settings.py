@@ -420,20 +420,34 @@ MOBILE_APP_APPLE_MOBILE_WEB_APP_TITLE = 'RecoveryPal'
 # MOBILE_APP_ANDROID_APP_NAME = 'MyRecoveryPal'
 
 # ========================================
-# Email Configuration
+# Email Configuration for Microsoft 365
 # ========================================
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.office365.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False  # Office365 uses TLS, not SSL
+EMAIL_HOST_USER = 'ryan@myrecoverypal.com'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')  # Set in Railway
+DEFAULT_FROM_EMAIL = 'MyRecoveryPal <ryan@myrecoverypal.com>'
+SERVER_EMAIL = 'ryan@myrecoverypal.com'
+
+# Email timeout settings (prevents hanging on send)
+EMAIL_TIMEOUT = 30  # 30 seconds timeout
+
+# Site URL for email links - IMPORTANT: Set to Netlify frontend URL in production
+# This is where users click links in emails (your Netlify frontend, NOT Railway backend)
+SITE_URL = os.environ.get('https://myrecoverypal.com', 'http://localhost:8000')
+
+# Email debug settings (only in development)
 if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
-    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
-    EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
-    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
-    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
-    DEFAULT_FROM_EMAIL = os.environ.get(
-        'DEFAULT_FROM_EMAIL', 'noreply@myrecoverypal.com')
+    # Uncomment below to print emails to console instead of sending (for testing)
+    # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    pass
+
+# Fail silently in development, raise errors in production
+EMAIL_FAIL_SILENTLY = DEBUG
 
 # ========================================
 # CORS and CSRF Settings

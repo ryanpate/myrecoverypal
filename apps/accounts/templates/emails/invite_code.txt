@@ -1,0 +1,41 @@
+Welcome to MyRecoveryPal!
+
+Great news! You've been approved to join MyRecoveryPal, a supportive community dedicated to helping individuals on their recovery journey.
+
+YOUR INVITE CODE: {{ invite_code }}
+
+HOW TO REGISTER:
+1. Visit: {{ registration_url }}
+2. Enter your invite code: {{ invite_code }}
+3. Fill in your details and create your account
+4. Start your journey with our supportive community!
+
+WHAT YOU'LL GET ACCESS TO:
+📔 Personal Journal - Track your progress with guided prompts
+🏆 Milestone Tracking - Celebrate your achievements
+👥 Community Support - Connect with others who understand
+💪 Recovery Challenges - Join group challenges for motivation
+📚 Resources - Access helpful tools and educational content
+🤝 Sponsor System - Find or become a sponsor
+
+{% if uses_remaining > 1 %}
+This code is valid for {{ uses_remaining }} registrations.
+{% else %}
+This code is valid for one registration.
+{% endif %}
+
+{% if expires_at %}
+⏰ IMPORTANT: This invite code expires on {{ expires_at|date:"F d, Y" }}.
+Please register before this date.
+{% endif %}
+
+Need help? Reply to this email and we'll be happy to assist you.
+
+Visit MyRecoveryPal: {{ site_url }}
+
+© 2025 MyRecoveryPal. All rights reserved.
+Recovery is possible. 💚
+
+---
+You received this email because you requested access to MyRecoveryPal.
+If you didn't request this, you can safely ignore this email.

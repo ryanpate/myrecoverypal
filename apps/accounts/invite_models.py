@@ -219,44 +219,47 @@ class InviteCode(models.Model):
         
         self.save()
     
+
     def send_invite_email(self):
         """Send invite email to the specified email address"""
         if not self.email:
             return False
-        
-        subject = 'Your MyRecoveryPal Invite Code'
-        message = f"""
-        Hello!
 
-        You've been approved to join MyRecoveryPal!
+        from django.template.loader import render_to_string
+        from django.utils.html import strip_tags
 
-        Your invite code is: {self.code}
+        # Prepare context for email template
+        context = {
+            'email': self.email,
+            'invite_code': self.code,
+            'registration_url': f"{settings.SITE_URL}/accounts/register/?invite={self.code}",
+            'site_url': settings.SITE_URL,
+            'uses_remaining': self.uses_remaining,
+            'expires_at': self.expires_at,
+        }
 
-        Use this link to register: {settings.SITE_URL}/accounts/register/?invite={self.code}
+        # Render HTML email
+        html_message = render_to_string('emails/invite_code.html', context)
+        plain_message = strip_tags(html_message)
 
-        This code is valid for {self.uses_remaining} registration(s).
-        {f'It expires on {self.expires_at.strftime("%B %d, %Y")}.' if self.expires_at else ''}
+        subject = '🌟 Welcome to MyRecoveryPal - Your Invite Code'
 
-        Welcome to the community!
-
-        Best regards,
-        The MyRecoveryPal Team
-        """
-        
         try:
-            send_mail(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                [self.email],
-                fail_silently=False,
+            from django.core.mail import EmailMultiAlternatives
+
+            email = EmailMultiAlternatives(
+                subject=subject,
+                body=plain_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[self.email]
             )
+            email.attach_alternative(html_message, "text/html")
+            email.send(fail_silently=False)
+
             return True
         except Exception as e:
             print(f"Failed to send invite email: {e}")
             return False
-
-
 class SystemSettings(models.Model):
     """
     Global settings for the invite system
