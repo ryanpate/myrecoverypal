@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-
+import logging
 class AccountsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.accounts'
@@ -7,7 +7,7 @@ class AccountsConfig(AppConfig):
     
     def ready(self):
         import apps.accounts.signals
-        
+
         from django.conf import settings
         logger = logging.getLogger('apps.accounts')
 
