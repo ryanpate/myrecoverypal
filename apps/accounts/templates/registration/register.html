@@ -15,15 +15,15 @@
 
     {% if invite_only and settings.waitlist_enabled %}
     <div
-        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem; text-align: center; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+        style="background: linear-gradient(135deg, #4db8e8 0%, #6dd5a8 100%); padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem; text-align: center; box-shadow: 0 2px 10px rgba(77, 184, 232, 0.2);">
         <h3 style="color: white; margin: 0 0 0.5rem 0; font-size: 1.3rem;">🎟️ Don't Have an Invite Code?</h3>
-        <p style="color: rgba(255, 255, 255, 0.9); margin: 0 0 1rem 0;">
+        <p style="color: white; margin: 0 0 1rem 0; font-size: 0.95rem;">
             Join our waitlist to get early access to MyRecoveryPal
         </p>
         <a href="{% url 'accounts:request_access' %}"
-            style="display: inline-block; background: white; color: #667eea; padding: 0.75rem 2rem; border-radius: 25px; font-weight: 600; text-decoration: none; transition: transform 0.2s ease, box-shadow 0.2s ease;"
-            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.15)'"
-            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+            style="display: inline-block; background: white; color: #4db8e8; padding: 0.75rem 2rem; border-radius: 8px; font-weight: 600; text-decoration: none; transition: all 0.2s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.1);"
+            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.1)'">
             Request Access Now →
         </a>
     </div>
