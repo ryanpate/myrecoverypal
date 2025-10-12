@@ -31,6 +31,39 @@
         flex-wrap: wrap;
     }
 
+    .post-actions .btn {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .post-actions .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .post-actions .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .post-actions .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .post-actions .btn-danger:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+    }
+
     .post-content {
         background: white;
         padding: 3rem 4rem;
@@ -270,6 +303,14 @@
         .post-content-wrapper h3 {
             font-size: 22px;
         }
+
+        .post-actions {
+            flex-direction: column;
+        }
+
+        .post-actions .btn {
+            width: 100%;
+        }
     }
 </style>
 {% endblock %}
@@ -284,14 +325,18 @@
         <span>{{ post.views }} views</span>
     </div>
 
-    {% if user == post.author or user.is_staff %}
+    {% if user.is_authenticated and user == post.author or user.is_staff %}
     <div class="post-actions">
         <a href="{% url 'blog:post_edit' post.slug %}" class="btn btn-secondary">
-            Edit Post
+            ✏️ Edit Post
         </a>
-        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-            Delete Post
-        </button>
+        <form method="post" action="{% url 'blog:post_delete' post.slug %}" style="display: inline;"
+            onsubmit="return confirm('Are you sure you want to delete this post? This action cannot be undone.');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                🗑️ Delete Post
+            </button>
+        </form>
     </div>
     {% endif %}
 </div>
@@ -348,7 +393,7 @@
             </form>
         </div>
         {% else %}
-        <p><a href="/admin/login/?next={{ request.path }}">Login</a> to leave a comment.</p>
+        <p><a href="{% url 'accounts:login' %}?next={{ request.path }}">Login</a> to leave a comment.</p>
         {% endif %}
 
         <div class="comments-list" style="margin-top: 2rem;">
@@ -382,30 +427,4 @@
     </div>
     {% endif %}
 </div>
-
-<!-- Delete Confirmation Modal -->
-{% if user == post.author or user.is_staff %}
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">⚠️ Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete <strong>"{{ post.title }}"</strong>?</p>
-                <p class="text-danger"><small>This action cannot be undone. All comments and data will be permanently
-                        deleted.</small></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="post" action="{% url 'blog:post_delete' post.slug %}" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Delete Permanently</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-{% endif %}
 {% endblock %}
