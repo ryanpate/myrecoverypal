@@ -5,18 +5,12 @@
 
 {% block extra_css %}
 <style>
-    /*
-    .post-header {
-        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
-        padding: 100px 0 50px;
-        color: white;
-        text-align: center;
-    }
-    */
     .post-container {
-        max-width: 800px;
+        max-width: 1100px;
+        /* Increased from 800px */
         margin: 0 auto;
-        padding: 2rem;
+        padding: 2rem 3rem;
+        /* Added more horizontal padding */
     }
 
     .post-meta {
@@ -39,7 +33,8 @@
 
     .post-content {
         background: white;
-        padding: 3rem;
+        padding: 3rem 4rem;
+        /* Increased horizontal padding */
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         margin-top: -50px;
@@ -117,7 +112,7 @@
 
     .related-posts-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 1.5rem;
         margin-top: 1.5rem;
     }
@@ -136,13 +131,15 @@
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
 
-    /* Medium-style content formatting */
+    /* Medium-style content formatting with optimized width */
     .post-content-wrapper {
         font-family: Georgia, 'Times New Roman', serif;
         font-size: 21px;
         line-height: 1.58;
         letter-spacing: -0.003em;
         color: rgba(0, 0, 0, 0.84);
+        max-width: 100%;
+        /* Use full available width */
     }
 
     .post-content-wrapper h1 {
@@ -235,6 +232,44 @@
 
     .modal-header .btn-close {
         filter: invert(1);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1200px) {
+        .post-container {
+            max-width: 95%;
+            padding: 2rem;
+        }
+
+        .post-content {
+            padding: 2.5rem 3rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .post-container {
+            padding: 1rem;
+        }
+
+        .post-content {
+            padding: 2rem 1.5rem;
+        }
+
+        .post-content-wrapper {
+            font-size: 18px;
+        }
+
+        .post-content-wrapper h1 {
+            font-size: 32px;
+        }
+
+        .post-content-wrapper h2 {
+            font-size: 26px;
+        }
+
+        .post-content-wrapper h3 {
+            font-size: 22px;
+        }
     }
 </style>
 {% endblock %}
