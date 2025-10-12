@@ -15,8 +15,7 @@ urlpatterns = [
     path('newsletter/', include('apps.newsletter.urls', namespace='newsletter')),
     path('store/', include('apps.store.urls', namespace='store')),
     path('support/', include('apps.support_services.urls')),
-    path('ckeditor/', include('ckeditor_uploader.urls')),
-    
+    path('summernote/', include('django_summernote.urls')),
     # Add allauth URLs if using django-allauth
     path('accounts/', include('allauth.urls')),
 ]

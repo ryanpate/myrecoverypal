@@ -75,8 +75,7 @@ INSTALLED_APPS = [
     'apps.newsletter',
     'apps.support_services',
     
-    'ckeditor',
-    'ckeditor_uploader',
+    'django_summernote',
 
     # PWA Support (optional - install with: pip install django-pwa)
     # 'pwa',
@@ -303,6 +302,41 @@ CKEDITOR_CONFIGS = {
 
 # Allow iframe and other HTML elements for Medium embeds
 CKEDITOR_ALLOW_NONIMAGE_FILES = True
+
+SUMMERNOTE_CONFIG = {
+    'summernote': {
+        'width': '100%',
+        'height': '400',
+        'toolbar': [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'italic', 'clear']],
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video', 'hr']],
+            ['view', ['fullscreen', 'codeview', 'help']],
+            ['misc', ['undo', 'redo']],
+        ],
+        'styleTags': ['p', 'blockquote', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+        'fontNames': ['Arial', 'Georgia', 'Times New Roman', 'Verdana'],
+        'codemirror': {
+            'mode': 'htmlmixed',
+            'lineNumbers': True,
+            'theme': 'monokai',
+        },
+        'cleaner': {
+            'notTimeOut': 2400,
+            'action': 'paste',
+            'keepHtml': True,
+            'keepClasses': True,
+            'badTags': ['script', 'applet'],
+            'badAttributes': ['onclick', 'onerror'],
+        },
+    }
+}
 
 # Only use Cloudinary if credentials are provided
 if os.environ.get('CLOUDINARY_CLOUD_NAME'):

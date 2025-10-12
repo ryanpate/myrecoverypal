@@ -1,20 +1,20 @@
-from django.urls import path
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
-from .views import (
-    PostListView, PostDetailView, PostCreateView, PostUpdateView,
-    CategoryListView, TagListView, MyPostsView, PostDeleteView, add_comment
-)
 
 app_name = 'blog'
 
 urlpatterns = [
-    path('', PostListView.as_view(), name='post_list'),
-    path('write/', PostCreateView.as_view(), name='post_create'),
-    path('my-posts/', MyPostsView.as_view(), name='my_posts'),
-    path('category/<slug:slug>/', CategoryListView.as_view(), name='category_posts'),
-    path('tag/<slug:slug>/', TagListView.as_view(), name='tag_posts'),
-    path('post/<slug:slug>/', PostDetailView.as_view(), name='post_detail'),
-    path('post/<slug:slug>/edit/', PostUpdateView.as_view(), name='post_edit'),
-    path('post/<slug:slug>/delete/', PostDeleteView.as_view(), name='post_delete'),
-    path('post/<slug:slug>/comment/', add_comment, name='add_comment'),
+    path('', views.PostListView.as_view(), name='post_list'),
+    path('write/', views.PostCreateView.as_view(), name='post_create'),
+    path('my-posts/', views.MyPostsView.as_view(), name='my_posts'),
+    path('category/<slug:slug>/',
+         views.CategoryListView.as_view(), name='category_posts'),
+    path('tag/<slug:slug>/', views.TagListView.as_view(), name='tag_posts'),
+    path('post/<slug:slug>/', views.PostDetailView.as_view(), name='post_detail'),
+    path('post/<slug:slug>/edit/', views.PostUpdateView.as_view(), name='post_edit'),
+    path('post/<slug:slug>/delete/',
+         views.PostDeleteView.as_view(), name='post_delete'),
+    path('post/<slug:slug>/comment/', views.add_comment, name='add_comment'),
 ]

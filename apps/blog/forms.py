@@ -1,17 +1,13 @@
 from django import forms
-from ckeditor.widgets import CKEditorWidget
+from django_summernote.widgets import SummernoteWidget
 from .models import Post, Comment, Category, Tag
 from django.utils.text import slugify
+
 
 class PostForm(forms.ModelForm):
     """Form for creating and editing blog posts with rich text editor"""
 
-    content = forms.CharField(
-        widget=CKEditorWidget(config_name='default'),
-        help_text='You can paste content directly from Medium or other sources'
-    )
-
-    # Add a field for new tags (comma-separated)
+    # Add this field definition
     new_tags = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
@@ -21,6 +17,15 @@ class PostForm(forms.ModelForm):
         help_text='Add tags separated by commas'
     )
 
+    content = forms.CharField(
+        widget=SummernoteWidget(attrs={
+            'summernote': {
+                'width': '100%',
+                'height': '400',
+            }
+        }),
+        help_text='You can paste content directly from Medium or other sources'
+    )
     class Meta:
         model = Post
         fields = ['title', 'excerpt', 'content', 'category', 'tags',
