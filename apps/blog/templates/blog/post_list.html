@@ -494,24 +494,24 @@
 {% block content %}
 <div class="blog-header">
     <div class="container">
-        <h1>📝 Recovery Stories & Resources</h1>
+        <h1>Recovery Stories & Resources</h1>
         <p>Inspiring journeys, practical tips, and support for your recovery</p>
 
         <!-- Action buttons in header -->
         <div class="header-action-buttons">
             {% if user.is_authenticated %}
             <a href="{% url 'blog:post_create' %}" class="header-btn">
-                ✏️ Share Your Story
+                Share Your Story
             </a>
             <a href="{% url 'blog:my_posts' %}" class="header-btn">
-                📚 My Posts
+                My Posts
             </a>
             {% endif %}
             <a href="{% url 'resources:list' %}" class="header-btn">
-                📖 Resources
+                Resources
             </a>
             <a href="{% url 'accounts:community' %}" class="header-btn">
-                🤝 Community
+                Community
             </a>
         </div>
 
@@ -541,7 +541,7 @@
     <!-- Featured CTA - NEW: Positioned at top for maximum visibility -->
     {% if user.is_authenticated %}
     <div class="featured-cta">
-        <h3>✨ Share Your Journey</h3>
+        <h3>Share Your Journey</h3>
         <p>Your story could inspire someone's recovery today. Join our community of contributors and make a difference
             in someone's life.</p>
         <a href="{% url 'blog:post_create' %}" class="cta-btn">
@@ -563,16 +563,16 @@
         <div class="filter-tabs">
             <a href="{% url 'blog:post_list' %}"
                 class="filter-tab {% if not request.GET.category and not request.GET.tag %}active{% endif %}">
-                🌟 All Posts
+                All Posts
             </a>
             <a href="?filter=personal" class="filter-tab {% if request.GET.filter == 'personal' %}active{% endif %}">
-                💭 Personal Stories
+                Personal Stories
             </a>
             <a href="?filter=recent" class="filter-tab {% if request.GET.filter == 'recent' %}active{% endif %}">
-                🆕 Recent
+                Recent
             </a>
             <a href="?filter=popular" class="filter-tab {% if request.GET.filter == 'popular' %}active{% endif %}">
-                🔥 Popular
+                Popular
             </a>
             {% if user.is_authenticated %}
             <a href="?filter=following" class="filter-tab {% if request.GET.filter == 'following' %}active{% endif %}">
@@ -592,15 +592,15 @@
                         {% if post.featured_image %}
                         <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
                         {% else %}
-                        📝
+                        
                         {% endif %}
 
                         <div class="post-badges">
                             {% if post.trigger_warning %}
-                            <span class="warning-badge">⚠️ TW</span>
+                            <span class="warning-badge">TW</span>
                             {% endif %}
                             {% if post.is_personal_story %}
-                            <span class="personal-story-badge">💭 Personal</span>
+                            <span class="personal-story-badge">Personal</span>
                             {% endif %}
                         </div>
                     </div>
@@ -643,7 +643,7 @@
                     <p style="color: #999;">Be the first to share your story!</p>
                     {% if user.is_authenticated %}
                     <a href="{% url 'blog:post_create' %}" class="btn btn-success mt-3">
-                        ✏️ Write First Post
+                        Write First Post
                     </a>
                     {% endif %}
                 </div>
@@ -687,7 +687,7 @@
             <!-- Recent Posts - Moved to top -->
             {% if recent_posts %}
             <div class="sidebar-section">
-                <h5>🕐 Recent Posts</h5>
+                <h5>Recent Posts</h5>
                 <ul style="list-style: none; padding: 0;">
                     {% for post in recent_posts %}
                     <li style="padding: 0.5rem 0;">
@@ -703,7 +703,7 @@
 
             <!-- Categories -->
             <div class="sidebar-section">
-                <h5>📂 Categories</h5>
+                <h5>Categories</h5>
                 <ul class="category-list">
                     {% for category in categories %}
                     <li>
@@ -718,7 +718,7 @@
 
             <!-- Popular Tags -->
             <div class="sidebar-section">
-                <h5>🏷️ Popular Tags</h5>
+                <h5>Popular Tags</h5>
                 <div class="tag-cloud">
                     {% for tag in popular_tags %}
                     <a href="{% url 'blog:tag_posts' tag.slug %}" class="tag">
