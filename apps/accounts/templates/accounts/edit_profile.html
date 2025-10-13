@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Edit Profile - Journey to Recovery{% endblock %}
+{% block title %}Edit Profile - MyRecoveryPal{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -24,6 +24,10 @@
     .profile-header h1 {
         color: var(--primary-color);
         margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
     }
 
     .current-avatar {
@@ -47,6 +51,11 @@
         object-fit: cover;
     }
 
+    .current-avatar i {
+        font-size: 3rem;
+        color: #999;
+    }
+
     .form-section {
         margin-bottom: 2rem;
         padding-bottom: 2rem;
@@ -61,6 +70,9 @@
         color: var(--primary-color);
         margin-bottom: 1rem;
         font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .form-section p {
@@ -76,6 +88,12 @@
         justify-content: center;
     }
 
+    .btn-group .btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
     .privacy-note {
         background: #f8f9fa;
         padding: 1rem;
@@ -83,11 +101,14 @@
         margin-bottom: 1rem;
         font-size: 0.9rem;
         color: #666;
+        display: flex;
+        align-items: start;
+        gap: 0.5rem;
     }
 
     .privacy-note i {
         color: var(--primary-color);
-        margin-right: 0.5rem;
+        margin-top: 0.2rem;
     }
 
     .recovery-info {
@@ -100,6 +121,9 @@
     .recovery-info h4 {
         color: var(--primary-color);
         margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     /* Custom checkbox styling */
@@ -121,6 +145,9 @@
         font-size: 0.85rem;
         color: #6c757d;
         margin-top: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     @media (max-width: 768px) {
@@ -143,7 +170,7 @@
 {% block content %}
 <div class="edit-profile-container">
     <div class="profile-header">
-        <h1>Edit Profile</h1>
+        <h1><i class="fas fa-user-edit"></i> Edit Profile</h1>
         <p>Update your profile information and recovery settings</p>
 
         {% if user.avatar %}
@@ -152,7 +179,7 @@
         </div>
         {% else %}
         <div class="current-avatar">
-            {{ user.username|first|upper }}
+            <i class="fas fa-user"></i>
         </div>
         {% endif %}
     </div>
@@ -162,7 +189,7 @@
 
         <!-- Basic Information -->
         <div class="form-section">
-            <h3>Basic Information</h3>
+            <h3><i class="fas fa-id-card"></i> Basic Information</h3>
             <div class="row">
                 <div class="col-md-6">
                     {{ form.first_name|as_crispy_field }}
@@ -176,20 +203,24 @@
             {{ form.bio|as_crispy_field }}
             {{ form.avatar|as_crispy_field }}
             {% if user.avatar %}
-            <p class="help-text">Current avatar shown above. Upload a new image to change it.</p>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                Current avatar shown above. Upload a new image to change it.
+            </p>
             {% endif %}
         </div>
 
         <!-- Recovery Information -->
         <div class="form-section">
-            <h3>Recovery Information</h3>
+            <h3><i class="fas fa-heart"></i> Recovery Information</h3>
             <div class="recovery-info">
-                <h4>Your Recovery Journey</h4>
+                <h4><i class="fas fa-route"></i> Your Recovery Journey</h4>
                 <p>Sharing your recovery information can inspire and help others in the community.</p>
             </div>
             {{ form.sobriety_date|as_crispy_field }}
             {% if user.sobriety_date %}
             <p class="help-text">
+                <i class="fas fa-trophy"></i>
                 <strong>{{ user.get_days_sober }}</strong> days of sobriety
                 ({{ user.get_sobriety_milestone }})
             </p>
@@ -200,9 +231,10 @@
 
         <!-- Privacy Settings -->
         <div class="form-section">
-            <h3>Privacy Settings</h3>
+            <h3><i class="fas fa-shield-alt"></i> Privacy Settings</h3>
             <div class="privacy-note">
-                Control what information other members can see on your profile.
+                <i class="fas fa-lock"></i>
+                <span>Control what information other members can see on your profile.</span>
             </div>
             {{ form.is_profile_public|as_crispy_field }}
             {{ form.show_sobriety_date|as_crispy_field }}
@@ -211,7 +243,7 @@
 
         <!-- Email Preferences -->
         <div class="form-section">
-            <h3>Email Preferences</h3>
+            <h3><i class="fas fa-envelope"></i> Email Preferences</h3>
             <p>Manage how we communicate with you</p>
             {{ form.email_notifications|as_crispy_field }}
             {{ form.newsletter_subscriber|as_crispy_field }}
@@ -219,10 +251,10 @@
 
         <div class="btn-group">
             <button type="submit" class="btn btn-primary btn-lg">
-                Save Changes
+                <i class="fas fa-save"></i> Save Changes
             </button>
             <a href="{% url 'accounts:profile' request.user.username %}" class="btn btn-secondary btn-lg">
-                Cancel
+                <i class="fas fa-times"></i> Cancel
             </a>
         </div>
     </form>
@@ -254,7 +286,7 @@
             const maxLength = 500;
             const counter = document.createElement('div');
             counter.className = 'help-text text-end';
-            counter.innerHTML = `<span id="bio-counter">0</span> / ${maxLength} characters`;
+            counter.innerHTML = `<i class="fas fa-keyboard"></i> <span id="bio-counter">0</span> / ${maxLength} characters`;
             bioField.parentNode.appendChild(counter);
 
             function updateCounter() {
