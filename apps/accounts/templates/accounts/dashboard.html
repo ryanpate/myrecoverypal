@@ -226,6 +226,11 @@
         color: #666;
     }
 
+    .engagement-count {
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-left: 0.25rem;
+    }
     .group-item {
         display: flex;
         align-items: center;
@@ -587,16 +592,16 @@
                     </div>
 
                     <div class="activity-engagement">
-                        <button class="engagement-btn" onclick="likeActivity({{ activity.id }})">
-                            <i class="fas fa-heart"></i> {{ activity.likes_count }} Like{{
-                            activity.likes_count|pluralize }}
+                        <button class="engagement-btn" onclick="likeActivity({{ activity.id }})" title="Like">
+                            <i class="fas fa-heart"></i>
+                            <span class="engagement-count">{{ activity.likes_count }}</span>
                         </button>
-                        <button class="engagement-btn" onclick="toggleComments({{ activity.id }})">
-                            <i class="fas fa-comment"></i> {{ activity.comments.count }} Comment{{
-                            activity.comments.count|pluralize }}
+                        <button class="engagement-btn" onclick="toggleComments({{ activity.id }})" title="Comment">
+                            <i class="fas fa-comment"></i>
+                            <span class="engagement-count">{{ activity.comments.count }}</span>
                         </button>
-                        <button class="engagement-btn">
-                            <i class="fas fa-share"></i> Share
+                        <button class="engagement-btn" title="Share">
+                            <i class="fas fa-share"></i>
                         </button>
                     </div>
 
