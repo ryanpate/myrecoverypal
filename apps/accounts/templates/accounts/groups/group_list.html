@@ -1,4 +1,4 @@
-<!-- Updated apps/accounts/templates/accounts/groups/group_list.html -->
+<!-- Updated apps/accounts/templates/accounts/groups/group_list.html - No emojis -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -370,24 +370,24 @@
 {% block content %}
 <div class="page-header groups-header">
     <div class="container">
-        <h1>👥 Recovery Groups</h1>
+        <h1>Recovery Groups</h1>
         <p>Find your community and support system</p>
 
         <!-- Action buttons in header -->
         <div class="header-action-buttons">
             {% if user.is_authenticated %}
             <a href="{% url 'accounts:my_groups' %}" class="header-btn">
-                📊 My Groups
+                <i class="fas fa-chart-bar"></i> My Groups
             </a>
             <a href="{% url 'accounts:create_group' %}" class="header-btn">
-                ➕ Create Group
+                <i class="fas fa-plus"></i> Create Group
             </a>
             <a href="{% url 'accounts:community' %}" class="header-btn">
-                🤝 Community Hub
+                <i class="fas fa-handshake"></i> Community Hub
             </a>
             {% else %}
             <a href="{% url 'accounts:login' %}" class="header-btn">
-                🔐 Login to Join
+                <i class="fas fa-sign-in-alt"></i> Login to Join
             </a>
             {% endif %}
         </div>
@@ -399,7 +399,7 @@
     <!-- My Groups Section -->
     <div class="my-groups-section">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>🏠 My Groups</h3>
+            <h3><i class="fas fa-home"></i> My Groups</h3>
             <a href="{% url 'accounts:my_groups' %}" class="btn btn-outline-primary">View All</a>
         </div>
 
@@ -412,7 +412,7 @@
                         <img src="{{ group.group_image.url }}"
                             style="width:100%; height:100%; object-fit:cover; border-radius:10px;">
                         {% else %}
-                        👥
+                        <i class="fas fa-users"></i>
                         {% endif %}
                     </div>
                     <div class="flex-grow-1">
@@ -429,26 +429,26 @@
 
     <!-- Group Filters -->
     <div class="group-filters">
-        <h3>🔍 Find Groups</h3>
+        <h3><i class="fas fa-search"></i> Find Groups</h3>
 
         <!-- Group Type Filter -->
         <div class="filter-section">
             <h5>By Category</h5>
             <div class="filter-chips">
                 <a href="?" class="filter-chip {% if not request.GET.type %}active{% endif %}">
-                    🌟 All Groups
+                    <i class="fas fa-star"></i> All Groups
                 </a>
                 {% for type_code, type_name in group_types %}
                 <a href="?type={{ type_code }}"
                     class="filter-chip {% if request.GET.type == type_code %}active{% endif %}">
-                    {% if type_code == 'addiction_type' %}🎯
-                    {% elif type_code == 'location' %}📍
-                    {% elif type_code == 'recovery_stage' %}⭐
-                    {% elif type_code == 'interest' %}💡
-                    {% elif type_code == 'age_group' %}👥
-                    {% elif type_code == 'gender' %}🚻
-                    {% elif type_code == 'family' %}👨‍👩‍👧‍👦
-                    {% elif type_code == 'professional' %}💼
+                    {% if type_code == 'addiction_type' %}<i class="fas fa-bullseye"></i>
+                    {% elif type_code == 'location' %}<i class="fas fa-map-marker-alt"></i>
+                    {% elif type_code == 'recovery_stage' %}<i class="fas fa-star"></i>
+                    {% elif type_code == 'interest' %}<i class="fas fa-lightbulb"></i>
+                    {% elif type_code == 'age_group' %}<i class="fas fa-users"></i>
+                    {% elif type_code == 'gender' %}<i class="fas fa-restroom"></i>
+                    {% elif type_code == 'family' %}<i class="fas fa-home"></i>
+                    {% elif type_code == 'professional' %}<i class="fas fa-briefcase"></i>
                     {% endif %}
                     {{ type_name }}
                 </a>
@@ -463,9 +463,9 @@
                 {% for privacy_code, privacy_name in privacy_levels %}
                 <a href="?{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}privacy={{ privacy_code }}"
                     class="filter-chip {% if request.GET.privacy == privacy_code %}active{% endif %}">
-                    {% if privacy_code == 'public' %}🌍
-                    {% elif privacy_code == 'private' %}🔒
-                    {% elif privacy_code == 'secret' %}🤐
+                    {% if privacy_code == 'public' %}<i class="fas fa-globe"></i>
+                    {% elif privacy_code == 'private' %}<i class="fas fa-lock"></i>
+                    {% elif privacy_code == 'secret' %}<i class="fas fa-user-secret"></i>
                     {% endif %}
                     {{ privacy_name }}
                 </a>
@@ -486,7 +486,9 @@
                     placeholder="Search groups by name or description..." value="{{ request.GET.search }}">
             </div>
             <div class="col-md-3">
-                <button type="submit" class="btn btn-success btn-lg w-100">Search</button>
+                <button type="submit" class="btn btn-success btn-lg w-100">
+                    <i class="fas fa-search"></i> Search
+                </button>
             </div>
         </form>
     </div>
@@ -496,10 +498,12 @@
         {% if user.is_authenticated %}
         <!-- Create Group Card -->
         <div class="group-card create-group-card">
-            <div class="create-icon">➕</div>
+            <div class="create-icon"><i class="fas fa-plus"></i></div>
             <h4>Start Your Own Group</h4>
             <p>Create a support group for your specific needs and interests</p>
-            <a href="{% url 'accounts:create_group' %}" class="btn btn-success btn-lg">Create Group</a>
+            <a href="{% url 'accounts:create_group' %}" class="btn btn-success btn-lg">
+                <i class="fas fa-plus"></i> Create Group
+            </a>
         </div>
         {% endif %}
 
@@ -510,15 +514,15 @@
                 <img src="{{ group.group_image.url }}" alt="{{ group.name }}" class="group-image">
                 {% endif %}
                 <div class="group-icon">
-                    {% if group.group_type == 'addiction_type' %}🎯
-                    {% elif group.group_type == 'location' %}📍
-                    {% elif group.group_type == 'recovery_stage' %}⭐
-                    {% elif group.group_type == 'interest' %}💡
-                    {% elif group.group_type == 'age_group' %}👥
-                    {% elif group.group_type == 'gender' %}🚻
-                    {% elif group.group_type == 'family' %}👨‍👩‍👧‍👦
-                    {% elif group.group_type == 'professional' %}💼
-                    {% else %}👥
+                    {% if group.group_type == 'addiction_type' %}<i class="fas fa-bullseye"></i>
+                    {% elif group.group_type == 'location' %}<i class="fas fa-map-marker-alt"></i>
+                    {% elif group.group_type == 'recovery_stage' %}<i class="fas fa-star"></i>
+                    {% elif group.group_type == 'interest' %}<i class="fas fa-lightbulb"></i>
+                    {% elif group.group_type == 'age_group' %}<i class="fas fa-users"></i>
+                    {% elif group.group_type == 'gender' %}<i class="fas fa-restroom"></i>
+                    {% elif group.group_type == 'family' %}<i class="fas fa-home"></i>
+                    {% elif group.group_type == 'professional' %}<i class="fas fa-briefcase"></i>
+                    {% else %}<i class="fas fa-users"></i>
                     {% endif %}
                 </div>
             </div>
@@ -529,17 +533,18 @@
 
                 <div class="group-meta">
                     <div class="group-meta-item">
-                        👥 {{ group.active_member_count|default:group.member_count|default:0 }} member{{
+                        <i class="fas fa-users"></i> {{ group.active_member_count|default:group.member_count|default:0
+                        }} member{{
                         group.active_member_count|default:group.member_count|default:0|pluralize }}
                     </div>
                     {% if group.location %}
                     <div class="group-meta-item">
-                        📍 {{ group.location }}
+                        <i class="fas fa-map-marker-alt"></i> {{ group.location }}
                     </div>
                     {% endif %}
                     {% if group.meeting_schedule %}
                     <div class="group-meta-item">
-                        📅 {{ group.meeting_schedule }}
+                        <i class="fas fa-calendar"></i> {{ group.meeting_schedule }}
                     </div>
                     {% endif %}
                 </div>
@@ -568,9 +573,9 @@
                     {% else %}
                     <button class="join-btn primary" onclick="joinGroup({{ group.id }})">
                         {% if group.privacy_level == 'private' %}
-                        🔒 Request to Join
+                        <i class="fas fa-lock"></i> Request to Join
                         {% else %}
-                        ➕ Join Group
+                        <i class="fas fa-plus"></i> Join Group
                         {% endif %}
                     </button>
                     {% endif %}
@@ -581,7 +586,7 @@
                     {% endif %}
 
                     <a href="{% url 'accounts:group_detail' group.id %}" class="view-btn">
-                        👁️
+                        <i class="fas fa-eye"></i>
                     </a>
                 </div>
             </div>
@@ -589,11 +594,13 @@
         {% empty %}
         <div class="col-12">
             <div class="empty-state">
-                <div class="empty-icon">🔍</div>
+                <div class="empty-icon"><i class="fas fa-search"></i></div>
                 <h3>No groups found</h3>
                 <p>Try adjusting your search criteria or create a new group.</p>
                 {% if user.is_authenticated %}
-                <a href="{% url 'accounts:create_group' %}" class="btn btn-success btn-lg">Create the First Group</a>
+                <a href="{% url 'accounts:create_group' %}" class="btn btn-success btn-lg">
+                    <i class="fas fa-plus"></i> Create the First Group
+                </a>
                 {% endif %}
             </div>
         </div>
@@ -645,18 +652,30 @@
         <div class="dropdown dropup">
             <button class="btn btn-primary btn-lg rounded-circle" type="button" data-bs-toggle="dropdown"
                 style="width: 60px; height: 60px; background: var(--accent-green); border-color: var(--accent-green);">
-                ➕
+                <i class="fas fa-plus"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="{% url 'accounts:create_group' %}">➕ Create New Group</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:my_groups' %}">📊 My Groups</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:create_group' %}">
+                        <i class="fas fa-plus"></i> Create New Group</a>
+                </li>
+                <li><a class="dropdown-item" href="{% url 'accounts:my_groups' %}">
+                        <i class="fas fa-chart-bar"></i> My Groups</a>
+                </li>
                 <li>
                     <hr class="dropdown-divider">
                 </li>
-                <li><a class="dropdown-item" href="{% url 'accounts:community' %}">🤝 Community Hub</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:challenges_home' %}">🏆 View Challenges</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">🎯 Sponsor Hub</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:pal_dashboard' %}">🤝 Pal Hub</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:community' %}">
+                        <i class="fas fa-handshake"></i> Community Hub</a>
+                </li>
+                <li><a class="dropdown-item" href="{% url 'accounts:challenges_home' %}">
+                        <i class="fas fa-trophy"></i> View Challenges</a>
+                </li>
+                <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">
+                        <i class="fas fa-star"></i> Sponsor Hub</a>
+                </li>
+                <li><a class="dropdown-item" href="{% url 'accounts:pal_dashboard' %}">
+                        <i class="fas fa-handshake"></i> Pal Hub</a>
+                </li>
             </ul>
         </div>
     </div>

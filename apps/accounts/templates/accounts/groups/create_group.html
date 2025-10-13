@@ -1,4 +1,4 @@
-<!-- apps/accounts/templates/accounts/groups/create_group.html -->
+<!-- apps/accounts/templates/accounts/groups/create_group.html - Updated with Font Awesome icons -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -122,7 +122,7 @@
             </div>
             <div class="col-md-4 text-md-end">
                 <a href="{% url 'accounts:groups_list' %}" class="btn btn-light">
-                    ← Back to Groups
+                    <i class="fas fa-arrow-left"></i> Back to Groups
                 </a>
             </div>
         </div>
@@ -134,26 +134,27 @@
         <div class="col-md-8">
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                
+
                 <div class="form-card">
                     <!-- Basic Information -->
                     <div class="form-section">
                         <h4 class="section-title">
-                            📝 Basic Information
+                            <i class="fas fa-edit"></i> Basic Information
                         </h4>
-                        
+
                         <div class="mb-3">
                             <label for="name" class="form-label">Group Name *</label>
-                            <input type="text" class="form-control" id="name" name="name" 
-                                   placeholder="Enter a descriptive name for your group" required>
-                            <div class="help-text">Choose a clear, welcoming name that describes your group's purpose</div>
+                            <input type="text" class="form-control" id="name" name="name"
+                                placeholder="Enter a descriptive name for your group" required>
+                            <div class="help-text">Choose a clear, welcoming name that describes your group's purpose
+                            </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="description" class="form-label">Description *</label>
                             <textarea class="form-control" id="description" name="description" rows="4"
-                                      placeholder="Describe what your group is about, who it's for, and what members can expect..."
-                                      required></textarea>
+                                placeholder="Describe what your group is about, who it's for, and what members can expect..."
+                                required></textarea>
                             <div class="help-text">Help people understand if this group is right for them</div>
                         </div>
                     </div>
@@ -161,9 +162,9 @@
                     <!-- Group Settings -->
                     <div class="form-section">
                         <h4 class="section-title">
-                            ⚙️ Group Settings
+                            <i class="fas fa-cog"></i> Group Settings
                         </h4>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -198,7 +199,7 @@
                                 <div class="mb-3">
                                     <label for="location" class="form-label">Location (Optional)</label>
                                     <input type="text" class="form-control" id="location" name="location"
-                                           placeholder="City, State or 'Online'">
+                                        placeholder="City, State or 'Online'">
                                     <div class="help-text">Leave blank if location doesn't matter</div>
                                 </div>
                             </div>
@@ -206,7 +207,7 @@
                                 <div class="mb-3">
                                     <label for="max_members" class="form-label">Max Members (Optional)</label>
                                     <input type="number" class="form-control" id="max_members" name="max_members"
-                                           placeholder="Leave blank for unlimited">
+                                        placeholder="Leave blank for unlimited">
                                     <div class="help-text">Set a limit to keep discussions intimate</div>
                                 </div>
                             </div>
@@ -215,7 +216,7 @@
                         <div class="mb-3">
                             <label for="meeting_schedule" class="form-label">Meeting Schedule (Optional)</label>
                             <input type="text" class="form-control" id="meeting_schedule" name="meeting_schedule"
-                                   placeholder="e.g., 'Mondays 7 PM EST' or 'First Friday of each month'">
+                                placeholder="e.g., 'Mondays 7 PM EST' or 'First Friday of each month'">
                             <div class="help-text">When do you plan to meet or have group activities?</div>
                         </div>
                     </div>
@@ -223,15 +224,15 @@
                     <!-- Appearance -->
                     <div class="form-section">
                         <h4 class="section-title">
-                            🎨 Appearance
+                            <i class="fas fa-palette"></i> Appearance
                         </h4>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="group_image" class="form-label">Group Image (Optional)</label>
                                     <input type="file" class="form-control" id="group_image" name="group_image"
-                                           accept="image/*">
+                                        accept="image/*">
                                     <div class="help-text">Upload a banner image that represents your group</div>
                                 </div>
                             </div>
@@ -239,7 +240,8 @@
                                 <div class="mb-3">
                                     <label for="group_color" class="form-label">Group Color</label>
                                     <div class="d-flex align-items-center gap-3">
-                                        <input type="color" class="color-picker" id="group_color" name="group_color" value="#52b788">
+                                        <input type="color" class="color-picker" id="group_color" name="group_color"
+                                            value="#52b788">
                                         <span class="help-text">Choose a color theme for your group</span>
                                     </div>
                                 </div>
@@ -253,7 +255,7 @@
                             Cancel
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            Create Group
+                            <i class="fas fa-plus"></i> Create Group
                         </button>
                     </div>
                 </div>
@@ -263,8 +265,8 @@
         <!-- Tips Sidebar -->
         <div class="col-md-4">
             <div class="tips-card">
-                <h5>💡 Tips for Creating a Great Group</h5>
-                
+                <h5><i class="fas fa-lightbulb"></i> Tips for Creating a Great Group</h5>
+
                 <div class="mb-3">
                     <strong>Choose a Clear Purpose</strong>
                     <p class="small mb-2">Be specific about what your group offers and who it's for</p>
@@ -287,7 +289,8 @@
 
                 <div class="mb-3">
                     <strong>Consider Privacy Carefully</strong>
-                    <p class="small mb-2">Public groups grow faster, but private groups feel safer for sensitive topics</p>
+                    <p class="small mb-2">Public groups grow faster, but private groups feel safer for sensitive topics
+                    </p>
                 </div>
             </div>
 
@@ -295,7 +298,7 @@
             <div class="preview-card">
                 <h6>Group Preview</h6>
                 <div class="icon-preview" id="preview-icon">
-                    👥
+                    <i class="fas fa-users"></i>
                 </div>
                 <div>
                     <strong id="preview-name">Your Group Name</strong>
@@ -310,51 +313,51 @@
 
 {% block extra_js %}
 <script>
-// Live preview updates
-document.addEventListener('DOMContentLoaded', function() {
-    const nameInput = document.getElementById('name');
-    const descriptionInput = document.getElementById('description');
-    const typeSelect = document.getElementById('group_type');
-    const colorInput = document.getElementById('group_color');
-    
-    const previewName = document.getElementById('preview-name');
-    const previewDescription = document.getElementById('preview-description');
-    const previewType = document.getElementById('preview-type');
-    const previewIcon = document.getElementById('preview-icon');
-    
-    // Group type icons
-    const typeIcons = {
-        'addiction_type': '🎯',
-        'location': '📍',
-        'recovery_stage': '⭐',
-        'interest': '💡',
-        'age_group': '👥',
-        'gender': '🚻',
-        'family': '👨‍👩‍👧‍👦',
-        'professional': '💼'
-    };
+    // Live preview updates
+    document.addEventListener('DOMContentLoaded', function () {
+        const nameInput = document.getElementById('name');
+        const descriptionInput = document.getElementById('description');
+        const typeSelect = document.getElementById('group_type');
+        const colorInput = document.getElementById('group_color');
 
-    function updatePreview() {
-        previewName.textContent = nameInput.value || 'Your Group Name';
-        previewDescription.textContent = descriptionInput.value || 'Your group description will appear here...';
-        
-        const selectedType = typeSelect.value;
-        if (selectedType) {
-            previewType.textContent = typeSelect.options[typeSelect.selectedIndex].text;
-            previewIcon.textContent = typeIcons[selectedType] || '👥';
-        } else {
-            previewType.textContent = 'Group Type';
-            previewIcon.textContent = '👥';
+        const previewName = document.getElementById('preview-name');
+        const previewDescription = document.getElementById('preview-description');
+        const previewType = document.getElementById('preview-type');
+        const previewIcon = document.getElementById('preview-icon');
+
+        // Group type icons
+        const typeIcons = {
+            'addiction_type': '<i class="fas fa-bullseye"></i>',
+            'location': '<i class="fas fa-map-marker-alt"></i>',
+            'recovery_stage': '<i class="fas fa-star"></i>',
+            'interest': '<i class="fas fa-lightbulb"></i>',
+            'age_group': '<i class="fas fa-users"></i>',
+            'gender': '<i class="fas fa-restroom"></i>',
+            'family': '<i class="fas fa-home"></i>',
+            'professional': '<i class="fas fa-briefcase"></i>'
+        };
+
+        function updatePreview() {
+            previewName.textContent = nameInput.value || 'Your Group Name';
+            previewDescription.textContent = descriptionInput.value || 'Your group description will appear here...';
+
+            const selectedType = typeSelect.value;
+            if (selectedType) {
+                previewType.textContent = typeSelect.options[typeSelect.selectedIndex].text;
+                previewIcon.innerHTML = typeIcons[selectedType] || '<i class="fas fa-users"></i>';
+            } else {
+                previewType.textContent = 'Group Type';
+                previewIcon.innerHTML = '<i class="fas fa-users"></i>';
+            }
+
+            previewIcon.style.background = colorInput.value + '20';
+            previewIcon.style.borderColor = colorInput.value;
         }
-        
-        previewIcon.style.background = colorInput.value + '20';
-        previewIcon.style.borderColor = colorInput.value;
-    }
 
-    nameInput.addEventListener('input', updatePreview);
-    descriptionInput.addEventListener('input', updatePreview);
-    typeSelect.addEventListener('change', updatePreview);
-    colorInput.addEventListener('change', updatePreview);
-});
+        nameInput.addEventListener('input', updatePreview);
+        descriptionInput.addEventListener('input', updatePreview);
+        typeSelect.addEventListener('change', updatePreview);
+        colorInput.addEventListener('change', updatePreview);
+    });
 </script>
 {% endblock %}

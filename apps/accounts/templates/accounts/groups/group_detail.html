@@ -1,4 +1,4 @@
-<!-- apps/accounts/templates/accounts/groups/group_detail.html -->
+<!-- apps/accounts/templates/accounts/groups/group_detail.html - Updated with Font Awesome icons -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -213,22 +213,22 @@
 {% block content %}
 <div class="page-header group-header">
     {% if group.group_image %}
-        <img src="{{ group.group_image.url }}" alt="{{ group.name }}" class="group-image">
+    <img src="{{ group.group_image.url }}" alt="{{ group.name }}" class="group-image">
     {% endif %}
-    
+
     <div class="container group-content">
         <div class="row align-items-center">
             <div class="col-md-8">
                 <div class="group-avatar">
-                    {% if group.group_type == 'addiction_type' %}🎯
-                    {% elif group.group_type == 'location' %}📍
-                    {% elif group.group_type == 'recovery_stage' %}⭐
-                    {% elif group.group_type == 'interest' %}💡
-                    {% elif group.group_type == 'age_group' %}👥
-                    {% elif group.group_type == 'gender' %}🚻
-                    {% elif group.group_type == 'family' %}👨‍👩‍👧‍👦
-                    {% elif group.group_type == 'professional' %}💼
-                    {% else %}👥
+                    {% if group.group_type == 'addiction_type' %}<i class="fas fa-bullseye"></i>
+                    {% elif group.group_type == 'location' %}<i class="fas fa-map-marker-alt"></i>
+                    {% elif group.group_type == 'recovery_stage' %}<i class="fas fa-star"></i>
+                    {% elif group.group_type == 'interest' %}<i class="fas fa-lightbulb"></i>
+                    {% elif group.group_type == 'age_group' %}<i class="fas fa-users"></i>
+                    {% elif group.group_type == 'gender' %}<i class="fas fa-restroom"></i>
+                    {% elif group.group_type == 'family' %}<i class="fas fa-home"></i>
+                    {% elif group.group_type == 'professional' %}<i class="fas fa-briefcase"></i>
+                    {% else %}<i class="fas fa-users"></i>
                     {% endif %}
                 </div>
                 <h1>{{ group.name }}</h1>
@@ -236,52 +236,53 @@
                 <div class="d-flex gap-3 align-items-center">
                     <span class="badge bg-light text-dark">{{ group.get_group_type_display }}</span>
                     <span class="badge bg-light text-dark">{{ group.get_privacy_level_display }}</span>
-                    <span>👥 {{ group.active_member_count|default:group.member_count }} members</span>
+                    <span><i class="fas fa-users"></i> {{ group.active_member_count|default:group.member_count }}
+                        members</span>
                 </div>
             </div>
             <div class="col-md-4 text-md-end">
                 {% if user.is_authenticated %}
-                    {% if membership %}
-                        {% if membership.status == 'active' %}
-                            <button class="join-btn secondary">
-                                ✓ Member
-                            </button>
-                        {% elif membership.status == 'pending' %}
-                            <button class="join-btn disabled">
-                                ⏳ Pending Approval
-                            </button>
-                        {% elif membership.status == 'admin' %}
-                            <button class="join-btn secondary">
-                                👑 Administrator
-                            </button>
-                        {% elif membership.status == 'moderator' %}
-                            <button class="join-btn secondary">
-                                🛡️ Moderator
-                            </button>
-                        {% endif %}
-                    {% else %}
-                        {% if group.is_full %}
-                            <button class="join-btn disabled">
-                                Group Full
-                            </button>
-                        {% elif group.privacy_level == 'secret' %}
-                            <button class="join-btn disabled">
-                                Invitation Only
-                            </button>
-                        {% else %}
-                            <button class="join-btn primary" onclick="joinGroup({{ group.id }})">
-                                {% if group.privacy_level == 'private' %}
-                                    🔒 Request to Join
-                                {% else %}
-                                    ➕ Join Group
-                                {% endif %}
-                            </button>
-                        {% endif %}
-                    {% endif %}
+                {% if membership %}
+                {% if membership.status == 'active' %}
+                <button class="join-btn secondary">
+                    <i class="fas fa-check"></i> Member
+                </button>
+                {% elif membership.status == 'pending' %}
+                <button class="join-btn disabled">
+                    <i class="fas fa-clock"></i> Pending Approval
+                </button>
+                {% elif membership.status == 'admin' %}
+                <button class="join-btn secondary">
+                    <i class="fas fa-crown"></i> Administrator
+                </button>
+                {% elif membership.status == 'moderator' %}
+                <button class="join-btn secondary">
+                    <i class="fas fa-shield-alt"></i> Moderator
+                </button>
+                {% endif %}
                 {% else %}
-                    <a href="{% url 'accounts:login' %}" class="join-btn primary">
-                        Sign in to Join
-                    </a>
+                {% if group.is_full %}
+                <button class="join-btn disabled">
+                    Group Full
+                </button>
+                {% elif group.privacy_level == 'secret' %}
+                <button class="join-btn disabled">
+                    Invitation Only
+                </button>
+                {% else %}
+                <button class="join-btn primary" onclick="joinGroup({{ group.id }})">
+                    {% if group.privacy_level == 'private' %}
+                    <i class="fas fa-lock"></i> Request to Join
+                    {% else %}
+                    <i class="fas fa-plus"></i> Join Group
+                    {% endif %}
+                </button>
+                {% endif %}
+                {% endif %}
+                {% else %}
+                <a href="{% url 'accounts:login' %}" class="join-btn primary">
+                    Sign in to Join
+                </a>
                 {% endif %}
             </div>
         </div>
@@ -296,15 +297,15 @@
             <div class="info-card">
                 <h3>About This Group</h3>
                 <p>{{ group.description }}</p>
-                
+
                 {% if group.location %}
-                <p><strong>📍 Location:</strong> {{ group.location }}</p>
+                <p><strong><i class="fas fa-map-marker-alt"></i> Location:</strong> {{ group.location }}</p>
                 {% endif %}
-                
+
                 {% if group.meeting_schedule %}
-                <p><strong>📅 Meeting Schedule:</strong> {{ group.meeting_schedule }}</p>
+                <p><strong><i class="fas fa-calendar"></i> Meeting Schedule:</strong> {{ group.meeting_schedule }}</p>
                 {% endif %}
-                
+
                 <div class="group-stats">
                     <div class="stat-item">
                         <div class="stat-number">{{ group.active_member_count|default:group.member_count }}</div>
@@ -330,9 +331,9 @@
                     <div class="post-header">
                         <div class="post-avatar">
                             {% if post.author.avatar %}
-                                <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username }}">
+                            <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username }}">
                             {% else %}
-                                👤
+                            <i class="fas fa-user"></i>
                             {% endif %}
                         </div>
                         <div>
@@ -346,8 +347,8 @@
                     <h5>{{ post.title }}</h5>
                     <p>{{ post.content|truncatewords:20 }}</p>
                     <div class="d-flex gap-3 text-muted">
-                        <span>👍 {{ post.likes_count }}</span>
-                        <span>💬 Comments</span>
+                        <span><i class="fas fa-thumbs-up"></i> {{ post.likes_count }}</span>
+                        <span><i class="fas fa-comment"></i> Comments</span>
                     </div>
                 </div>
                 {% endfor %}
@@ -356,7 +357,7 @@
             <div class="info-card">
                 <h3>Group Discussion</h3>
                 <div class="text-center py-4">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"><i class="fas fa-comments"></i></div>
                     <h5>No posts yet</h5>
                     <p>Be the first to start a discussion in this group!</p>
                     <button class="btn btn-primary">Create Post</button>
@@ -373,9 +374,9 @@
                 <div class="d-flex align-items-center gap-3">
                     <div class="member-avatar" style="width: 50px; height: 50px; font-size: 1.25rem;">
                         {% if group.creator.avatar %}
-                            <img src="{{ group.creator.avatar.url }}" alt="{{ group.creator.username }}">
+                        <img src="{{ group.creator.avatar.url }}" alt="{{ group.creator.username }}">
                         {% else %}
-                            👤
+                        <i class="fas fa-user"></i>
                         {% endif %}
                     </div>
                     <div>
@@ -390,18 +391,19 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5>Members ({{ group.active_member_count|default:group.member_count }})</h5>
                     {% if group.active_member_count > 12 %}
-                    <small class="text-muted">Showing 12 of {{ group.active_member_count|default:group.member_count }}</small>
+                    <small class="text-muted">Showing 12 of {{ group.active_member_count|default:group.member_count
+                        }}</small>
                     {% endif %}
                 </div>
-                
+
                 <div class="member-grid">
                     {% for member in members %}
                     <div class="member-card">
                         <div class="member-avatar">
                             {% if member.avatar %}
-                                <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
+                            <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
                             {% else %}
-                                👤
+                            <i class="fas fa-user"></i>
                             {% endif %}
                         </div>
                         <div>
@@ -434,61 +436,61 @@
 
 {% block extra_js %}
 <script>
-async function joinGroup(groupId) {
-    try {
-        const response = await fetch(`/accounts/groups/${groupId}/join/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                'Content-Type': 'application/json',
-            },
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast(`Successfully ${data.action} group!`, 'success');
-            
-            // Reload page after delay
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        } else {
-            showToast(data.error || 'Something went wrong', 'error');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        showToast('Network error', 'error');
-    }
-}
+    async function joinGroup(groupId) {
+        try {
+            const response = await fetch(`/accounts/groups/${groupId}/join/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
+            });
 
-function showToast(message, type) {
-    const toast = document.createElement('div');
-    toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible`;
-    toast.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
-    toast.innerHTML = `
+            const data = await response.json();
+
+            if (data.success) {
+                showToast(`Successfully ${data.action} group!`, 'success');
+
+                // Reload page after delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showToast(data.error || 'Something went wrong', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Network error', 'error');
+        }
+    }
+
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible`;
+        toast.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+        toast.innerHTML = `
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     `;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        if (toast.parentNode) {
-            toast.parentNode.removeChild(toast);
-        }
-    }, 3000);
-}
 
-// Add CSRF token
-document.addEventListener('DOMContentLoaded', function() {
-    if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
-        const token = document.createElement('input');
-        token.type = 'hidden';
-        token.name = 'csrfmiddlewaretoken';
-        token.value = '{{ csrf_token }}';
-        document.body.appendChild(token);
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 3000);
     }
-});
+
+    // Add CSRF token
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
+            const token = document.createElement('input');
+            token.type = 'hidden';
+            token.name = 'csrfmiddlewaretoken';
+            token.value = '{{ csrf_token }}';
+            document.body.appendChild(token);
+        }
+    });
 </script>
 {% endblock %}
