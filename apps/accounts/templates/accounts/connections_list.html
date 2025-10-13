@@ -1,334 +1,567 @@
+<!-- Updated community.html with Font Awesome icons instead of emojis -->
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}
-    {% if is_following_page %}
-        Following - {{ user.username }} - MyRecoveryPal
-    {% elif is_followers_page %}
-        Followers - {{ user.username }} - MyRecoveryPal
-    {% else %}
-        Connections - {{ user.username }} - MyRecoveryPal
-    {% endif %}
+{% block title %}Recovery Community - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .community-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 10px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .community-filters {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .filter-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-tab {
+        padding: 0.5rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 25px;
+        text-decoration: none;
+        color: #666;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-tab.active {
+        background: #52b788;
+        color: white;
+        border-color: #52b788;
+    }
+
+    .filter-tab:hover {
+        border-color: #52b788;
+        color: #52b788;
+        text-decoration: none;
+    }
+
+    .members-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .member-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        position: relative;
+    }
+
+    .member-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .member-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        background: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #666;
+        overflow: hidden;
+        border: 3px solid #f0f0f0;
+    }
+
+    .member-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .member-info {
+        text-align: center;
+    }
+
+    .member-name {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+
+    .member-username {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .member-stats {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 1rem 0;
+        font-size: 0.85rem;
+        color: #777;
+    }
+
+    .member-stat {
+        text-align: center;
+    }
+
+    .member-stat-number {
+        font-weight: bold;
+        color: #52b788;
+    }
+
+    .recovery-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+        margin: 1rem 0;
+    }
+
+    .recovery-badge {
+        background: #e8f4f8;
+        color: #1e4d8b;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .recovery-badge.sponsor {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .member-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .follow-btn {
+        flex: 1;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .follow-btn.follow {
+        background: #52b788;
+        color: white;
+    }
+
+    .follow-btn.following {
+        background: #e8f4f8;
+        color: #1e4d8b;
+        border: 1px solid #1e4d8b;
+    }
+
+    .follow-btn:hover {
+        transform: translateY(-1px);
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .action-btn {
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: white;
+        color: #666;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+
+    .action-btn:hover {
+        background: #f8f9fa;
+        color: #52b788;
+        text-decoration: none;
+    }
+
+    /* Header button styles */
+    .header-action-buttons {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .header-btn {
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+    }
+
+    .header-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .community-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .members-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-tabs {
+            flex-direction: column;
+        }
+
+        .member-actions {
+            flex-direction: column;
+        }
+
+        .header-action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-btn {
+            width: 100%;
+            max-width: 250px;
+            justify-content: center;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="connections-header">
-        <h2>
-            {% if is_following_page %}
-                People {{ user.username }} Follows
-            {% elif is_followers_page %}
-                {{ user.username }}'s Followers
-            {% else %}
-                Connections
-            {% endif %}
-        </h2>
+<div class="page-header community-header">
+    <div class="container">
+        <h1>Recovery Community</h1>
+        <p class="lead">Connect with others on their recovery journey</p>
 
-        <!-- Connection Stats -->
-        <div class="connection-stats mb-4">
-            <a href="{% url 'accounts:followers_list' user.username %}" 
-               class="stat-link {% if is_followers_page %}active{% endif %}">
-                <strong>{{ user.followers_count|default:0 }}</strong> Followers
+        <!-- Action buttons in header -->
+        <div class="header-action-buttons">
+            <a href="{% url 'accounts:groups_list' %}" class="header-btn">
+                <i class="fas fa-users"></i> Browse Groups
             </a>
-            <a href="{% url 'accounts:following_list' user.username %}" 
-               class="stat-link {% if is_following_page %}active{% endif %}">
-                <strong>{{ user.following_count|default:0 }}</strong> Following
+            {% if user.is_authenticated %}
+            <a href="{% url 'accounts:create_group' %}" class="header-btn">
+                <i class="fas fa-plus-circle"></i> Create Group
+            </a>
+            <a href="{% url 'accounts:suggested_users' %}" class="header-btn">
+                <i class="fas fa-user-plus"></i> Find Connections
+            </a>
+            {% endif %}
+        </div>
+
+        {% if user.is_authenticated %}
+        <div class="community-stats">
+            <div class="stat-card">
+                <div class="stat-number">{{ following_count|default:0 }}</div>
+                <div class="stat-label">Following</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ followers_count|default:0 }}</div>
+                <div class="stat-label">Followers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ total_members }}</div>
+                <div class="stat-label">Total Members</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ sponsors_count }}</div>
+                <div class="stat-label">Sponsors</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container">
+    <!-- Community Filters -->
+    <div class="community-filters">
+        <h3>Discover Members</h3>
+
+        <div class="filter-tabs">
+            <a href="?filter=" class="filter-tab {% if not request.GET.filter %}active{% endif %}">
+                <i class="fas fa-users"></i> All Members
+            </a>
+            {% if user.is_authenticated %}
+            <a href="?filter=following" class="filter-tab {% if request.GET.filter == 'following' %}active{% endif %}">
+                <i class="fas fa-user-check"></i> Following
+            </a>
+            {% endif %}
+            <a href="?sponsors_only=1" class="filter-tab {% if request.GET.sponsors_only %}active{% endif %}">
+                <i class="fas fa-star"></i> Sponsors
+            </a>
+            <a href="?filter=new" class="filter-tab {% if request.GET.filter == 'new' %}active{% endif %}">
+                <i class="fas fa-user-plus"></i> New Members
             </a>
         </div>
+
+        <!-- Search Form -->
+        <form method="get" class="row">
+            <div class="col-md-8">
+                <input type="text" name="search" class="form-control"
+                    placeholder="Search members by name, username, or interests..." value="{{ request.GET.search }}">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </form>
     </div>
 
-    <!-- Connections List -->
-    <div class="connections-grid">
-        {% if is_following_page %}
-            {% for connection in following %}
-                <div class="connection-card">
-                    <div class="connection-avatar">
-                        {% if connection.profile.avatar %}
-                            <img src="{{ connection.profile.avatar.url }}" alt="{{ connection.username }}">
-                        {% else %}
-                            <div class="default-avatar">{{ connection.username|first|upper }}</div>
-                        {% endif %}
+    <!-- Members Grid -->
+    <div class="members-grid">
+        {% for member in members %}
+        <div class="member-card">
+            <div class="member-avatar">
+                {% if member.avatar %}
+                <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
+                {% else %}
+                <i class="fas fa-user"></i>
+                {% endif %}
+            </div>
+
+            <div class="member-info">
+                <div class="member-name">
+                    <a href="{% url 'accounts:profile' member.username %}"
+                        style="text-decoration: none; color: inherit;">
+                        {{ member.get_full_name|default:member.username }}
+                    </a>
+                </div>
+                <div class="member-username">@{{ member.username }}</div>
+
+                <div class="member-stats">
+                    <div class="member-stat">
+                        <div class="member-stat-number">{{ member.followers_count|default:0 }}</div>
+                        <div>Followers</div>
                     </div>
-                    <div class="connection-info">
-                        <h5>
-                            <a href="{% url 'accounts:profile' connection.username %}">
-                                {{ connection.get_full_name|default:connection.username }}
-                            </a>
-                        </h5>
-                        <p class="username">@{{ connection.username }}</p>
-                        {% if connection.profile.bio %}
-                            <p class="bio">{{ connection.profile.bio|truncatewords:15 }}</p>
-                        {% endif %}
-                        {% if connection.profile.recovery_date %}
-                            <p class="recovery-info">
-                                Recovery since: {{ connection.profile.recovery_date|date:"F Y" }}
-                            </p>
-                        {% endif %}
+                    <div class="member-stat">
+                        <div class="member-stat-number">{{ member.following_count|default:0 }}</div>
+                        <div>Following</div>
                     </div>
-                    {% if request.user.is_authenticated and request.user != connection %}
-                        <div class="connection-actions">
-                            {% if connection.id in request.user.get_following.values_list.id %}
-                                <button class="btn btn-outline-primary btn-sm" onclick="followUser('{{ connection.username }}')">
-                                    Following
-                                </button>
-                            {% else %}
-                                <button class="btn btn-primary btn-sm" onclick="followUser('{{ connection.username }}')">
-                                    Follow
-                                </button>
-                            {% endif %}
-                            <a href="{% url 'accounts:send_message' connection.username %}" class="btn btn-outline-secondary btn-sm">
-                                Message
-                            </a>
-                        </div>
+                    {% if member.get_days_sober > 0 %}
+                    <div class="member-stat">
+                        <div class="member-stat-number">{{ member.get_days_sober }}</div>
+                        <div>Days</div>
+                    </div>
                     {% endif %}
                 </div>
-            {% empty %}
-                <div class="col-12 text-center py-5">
-                    <p class="text-muted">
-                        {% if is_following_page %}
-                            {{ user.username }} isn't following anyone yet.
-                        {% else %}
-                            No connections found.
-                        {% endif %}
-                    </p>
-                    {% if request.user == user %}
-                        <a href="{% url 'accounts:community' %}" class="btn btn-primary mt-3">
-                            Find People to Follow
-                        </a>
+
+                <div class="recovery-badges">
+                    {% if member.is_sponsor %}
+                    <span class="recovery-badge sponsor">
+                        <i class="fas fa-award"></i> Sponsor
+                    </span>
+                    {% endif %}
+                    {% if member.get_days_sober > 30 %}
+                    <span class="recovery-badge">
+                        <i class="fas fa-calendar-check"></i> {{ member.get_days_sober }} Days
+                    </span>
                     {% endif %}
                 </div>
-            {% endfor %}
-        {% elif is_followers_page %}
-            {% for connection in followers %}
-                <div class="connection-card">
-                    <div class="connection-avatar">
-                        {% if connection.profile.avatar %}
-                            <img src="{{ connection.profile.avatar.url }}" alt="{{ connection.username }}">
-                        {% else %}
-                            <div class="default-avatar">{{ connection.username|first|upper }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="connection-info">
-                        <h5>
-                            <a href="{% url 'accounts:profile' connection.username %}">
-                                {{ connection.get_full_name|default:connection.username }}
-                            </a>
-                        </h5>
-                        <p class="username">@{{ connection.username }}</p>
-                        {% if connection.profile.bio %}
-                            <p class="bio">{{ connection.profile.bio|truncatewords:15 }}</p>
-                        {% endif %}
-                        {% if connection.profile.recovery_date %}
-                            <p class="recovery-info">
-                                Recovery since: {{ connection.profile.recovery_date|date:"F Y" }}
-                            </p>
-                        {% endif %}
-                    </div>
-                    {% if request.user.is_authenticated and request.user != connection %}
-                        <div class="connection-actions">
-                            <button class="btn btn-primary btn-sm" onclick="followUser('{{ connection.username }}')">
-                                Follow Back
-                            </button>
-                            <a href="{% url 'accounts:send_message' connection.username %}" class="btn btn-outline-secondary btn-sm">
-                                Message
-                            </a>
-                        </div>
+
+                {% if member.bio %}
+                <p style="font-size: 0.9rem; color: #666; margin: 1rem 0;">
+                    {{ member.bio|truncatewords:20 }}
+                </p>
+                {% endif %}
+
+                {% if user.is_authenticated and user != member %}
+                <div class="member-actions">
+                    {% if member.is_followed %}
+                    <button class="follow-btn following" onclick="followUser('{{ member.username }}')">
+                        <i class="fas fa-check"></i> Following
+                    </button>
+                    {% else %}
+                    <button class="follow-btn follow" onclick="followUser('{{ member.username }}')">
+                        <i class="fas fa-user-plus"></i> Follow
+                    </button>
                     {% endif %}
+
+                    <a href="{% url 'accounts:send_message' member.username %}" class="action-btn" title="Send Message">
+                        <i class="fas fa-envelope"></i>
+                    </a>
                 </div>
-            {% empty %}
-                <div class="col-12 text-center py-5">
-                    <p class="text-muted">
-                        {{ user.username }} doesn't have any followers yet.
-                    </p>
-                    {% if request.user != user %}
-                        <button class="btn btn-primary mt-3" onclick="followUser('{{ user.username }}')">
-                            Be the first to follow!
-                        </button>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <h4 style="color: #666;">No members found</h4>
+            <p>Try adjusting your search criteria or check back later.</p>
+        </div>
+        {% endfor %}
     </div>
 
     <!-- Pagination -->
-    {% if page_obj %}
-    {% if page_obj.has_other_pages %}
-    <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}
+    {% if is_paginated %}
+    <div class="d-flex justify-content-center mt-4">
+        <nav aria-label="Members pagination">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    <a class="page-link"
+                        href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.filter %}filter={{ request.GET.filter }}&{% endif %}page=1">First</a>
                 </li>
-            {% endif %}
-
-            <li class="page-item active">
-                <span class="page-link">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                </span>
-            </li>
-
-            {% if page_obj.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    <a class="page-link"
+                        href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.filter %}filter={{ request.GET.filter }}&{% endif %}page={{ page_obj.previous_page_number }}">Previous</a>
                 </li>
-            {% endif %}
-        </ul>
-    </nav>
-    {% endif %}
+                {% endif %}
+
+                <li class="page-item active">
+                    <span class="page-link">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                </li>
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.filter %}filter={{ request.GET.filter }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.filter %}filter={{ request.GET.filter }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Last</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
     {% endif %}
 </div>
+{% endblock %}
 
-<style>
-.connections-header {
-    background: white;
-    padding: 2rem;
-    border-radius: 10px;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.connection-stats {
-    display: flex;
-    gap: 2rem;
-    margin-top: 1rem;
-}
-
-.stat-link {
-    color: #666;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    transition: all 0.3s;
-}
-
-.stat-link:hover {
-    background: #f0f0f0;
-    color: #333;
-}
-
-.stat-link.active {
-    background: var(--primary, #007bff);
-    color: white;
-}
-
-.connections-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
-.connection-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: transform 0.3s;
-}
-
-.connection-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.connection-avatar {
-    width: 60px;
-    height: 60px;
-    margin-bottom: 1rem;
-    border-radius: 50%;
-    overflow: hidden;
-    background: #f0f0f0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.connection-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.default-avatar {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--primary, #007bff);
-}
-
-.connection-info h5 {
-    margin-bottom: 0.25rem;
-}
-
-.connection-info h5 a {
-    color: #333;
-    text-decoration: none;
-}
-
-.connection-info h5 a:hover {
-    color: var(--primary, #007bff);
-}
-
-.username {
-    color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-}
-
-.bio {
-    color: #555;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-}
-
-.recovery-info {
-    font-size: 0.85rem;
-    color: #28a745;
-    margin-bottom: 0.5rem;
-}
-
-.connection-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
-
-.connection-actions .btn {
-    flex: 1;
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    .connections-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .connection-stats {
-        justify-content: space-around;
-    }
-}
-</style>
-
+{% block extra_js %}
 <script>
-async function followUser(username) {
-    try {
-        const response = await fetch(`/accounts/follow/${username}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-                'Content-Type': 'application/json',
-            },
-        });
-        
-        if (response.ok) {
+    async function followUser(username) {
+        try {
+            const response = await fetch(`/accounts/follow/${username}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
+            });
+
             const data = await response.json();
+
             if (data.success) {
-                // Reload to update the UI
-                location.reload();
+                // Find all follow buttons for this user
+                const buttons = document.querySelectorAll(`button[onclick="followUser('${username}')"]`);
+
+                buttons.forEach(button => {
+                    if (data.is_following) {
+                        button.className = 'follow-btn following';
+                        button.innerHTML = '<i class="fas fa-check"></i> Following';
+                    } else {
+                        button.className = 'follow-btn follow';
+                        button.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+                    }
+                });
+
+                // Show success message
+                showToast(data.is_following ? 'Now following!' : 'Unfollowed', 'success');
+            } else {
+                showToast(data.error || 'Something went wrong', 'error');
             }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Network error', 'error');
         }
-    } catch (error) {
-        console.error('Error following user:', error);
-        alert('There was an error. Please try again.');
     }
-}
+
+    function showToast(message, type) {
+        // Create toast notification
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible`;
+        toast.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+        toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+
+        document.body.appendChild(toast);
+
+        // Auto-remove after 3 seconds
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 3000);
+    }
+
+    // Add CSRF token to all forms
+    document.addEventListener('DOMContentLoaded', function () {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (!csrfToken) {
+            // Add CSRF token if not present
+            const token = document.createElement('input');
+            token.type = 'hidden';
+            token.name = 'csrfmiddlewaretoken';
+            token.value = '{{ csrf_token }}';
+            document.body.appendChild(token);
+        }
+    });
 </script>
 {% endblock %}
