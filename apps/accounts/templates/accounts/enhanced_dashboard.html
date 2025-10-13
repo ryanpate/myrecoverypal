@@ -423,7 +423,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h1>Welcome back, {{ user.get_full_name|default:user.username }}! 👋</h1>
+                <h1>Welcome back, {{ user.get_full_name|default:user.username }}!</h1>
                 <p class="lead">
                     {% if user.get_days_sober > 0 %}
                         {{ user.get_days_sober }} days strong in your recovery journey
@@ -447,10 +447,10 @@
         <div class="main-feed">
             <div class="feed-header">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>🌊 Community Activity</h3>
+                    <h3>Community Activity</h3>
                     <div class="d-flex gap-2">
                         <a href="{% url 'accounts:community' %}" class="btn btn-outline-primary btn-sm">
-                            👥 Browse Community
+                            Browse Community
                         </a>
                         <a href="{% url 'blog:post_create' %}" class="btn btn-primary btn-sm">
                             Share Story
@@ -520,15 +520,12 @@
                         </div>
                         {% if activity.activity_type == 'milestone_created' %}
                             <div style="background: #fff3cd; padding: 0.5rem; border-radius: 50%; color: #856404;">
-                                🏆
                             </div>
                         {% elif activity.activity_type == 'blog_post_published' %}
                             <div style="background: #d1ecf1; padding: 0.5rem; border-radius: 50%; color: #0c5460;">
-                                📝
                             </div>
                         {% elif activity.activity_type == 'check_in_posted' %}
                             <div style="background: #d4edda; padding: 0.5rem; border-radius: 50%; color: #155724;">
-                                ✅
                             </div>
                         {% endif %}
                     </div>
@@ -708,7 +705,7 @@
             <!-- Recent Milestones -->
             <div class="sidebar-section">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3>🏆 Recent Milestones</h3>
+                    <h3>Recent Milestones</h3>
                     <a href="{% url 'accounts:add_milestone' %}" class="btn btn-outline-success btn-sm">Add</a>
                 </div>
                 {% for milestone in recent_milestones|slice:":3" %}

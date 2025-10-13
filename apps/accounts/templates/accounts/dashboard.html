@@ -443,10 +443,10 @@
         <div class="main-feed">
             <div class="feed-header">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>🌊 Community Activity</h3>
+                    <h3>Community Activity</h3>
                     <div class="d-flex gap-2">
                         <a href="{% url 'accounts:community' %}" class="btn btn-outline-primary btn-sm">
-                            👥 Browse Community
+                            Browse Community
                         </a>
                         <a href="{% url 'blog:post_create' %}" class="btn btn-primary btn-sm">
                             Share Story
@@ -516,15 +516,12 @@
                         </div>
                         {% if activity.activity_type == 'milestone_created' %}
                             <div style="background: #fff3cd; padding: 0.5rem; border-radius: 50%; color: #856404;">
-                                🏆
                             </div>
                         {% elif activity.activity_type == 'blog_post_published' %}
                             <div style="background: #d1ecf1; padding: 0.5rem; border-radius: 50%; color: #0c5460;">
-                                📝
                             </div>
                         {% elif activity.activity_type == 'check_in_posted' %}
                             <div style="background: #d4edda; padding: 0.5rem; border-radius: 50%; color: #155724;">
-                                ✅
                             </div>
                         {% endif %}
                     </div>
@@ -568,7 +565,7 @@
                 </div>
                 {% empty %}
                 <div class="empty-feed">
-                    <div class="empty-feed-icon">🌱</div>
+                    <div class="empty-feed-icon"></div>
                     <h4>Your community feed is growing!</h4>
                     <p>Follow other members to see their recovery updates and milestones here.</p>
                     <a href="{% url 'accounts:community' %}" class="btn btn-primary">Discover Community</a>
@@ -659,16 +656,16 @@
 
                 <div class="quick-actions">
                     <a href="{% url 'accounts:sponsor_dashboard' %}" class="action-btn">
-                        🎯 Sponsors
+                        Sponsors
                     </a>
                     <a href="{% url 'accounts:pal_dashboard' %}" class="action-btn">
-                        🤝 Pals
+                        Pals
                     </a>
                     <a href="{% url 'accounts:following_list' user.username %}" class="action-btn">
-                        👥 Following
+                        Following
                     </a>
                     <a href="{% url 'accounts:followers_list' user.username %}" class="action-btn">
-                        👥 Followers
+                        Followers
                     </a>
                 </div>
             </div>
@@ -721,7 +718,7 @@
             {% if user.get_joined_groups %}
             <div class="sidebar-section">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3>👥 My Groups</h3>
+                    <h3>My Groups</h3>
                     <a href="{% url 'accounts:my_groups' %}" class="btn btn-outline-primary btn-sm">All</a>
                 </div>
                 {% for group in user.get_joined_groups|slice:":3" %}
@@ -750,19 +747,19 @@
                         Edit Profile
                     </a>
                     <a href="{% url 'accounts:messages' %}" class="action-btn">
-                        📬 Messages
+                        Messages
                         {% if unread_messages > 0 %}
                         <span style="background: red; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">{{ unread_messages }}</span>
                         {% endif %}
                     </a>
                     <a href="{% url 'journal:dashboard' %}" class="action-btn">
-                        📓 Journal
+                        Journal
                     </a>
                     <a href="{% url 'blog:post_list' %}" class="action-btn">
-                        📖 Read Blog
+                        Read Blog
                     </a>
                     <a href="{% url 'resources:list' %}" class="action-btn">
-                        📚 Resources
+                        Resources
                     </a>
                     <a href="{% url 'accounts:groups_list' %}" class="action-btn">
                         🏗️ Create Group
