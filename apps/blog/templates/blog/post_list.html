@@ -37,14 +37,16 @@
         text-decoration: none;
     }
 
+    .header-btn i {
+        font-size: 1rem;
+    }
+
     .blog-stats {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        /* Changed to 4 columns for single row */
         gap: 1rem;
         margin: 2rem auto;
         max-width: 800px;
-        /* Increased from 600px */
     }
 
     .stat-card {
@@ -73,7 +75,7 @@
         padding: 2rem;
     }
 
-    /* Featured CTA Box - NEW */
+    /* Featured CTA Box */
     .featured-cta {
         background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
         color: white;
@@ -133,7 +135,6 @@
         gap: 0.75rem;
         margin-bottom: 1.5rem;
         margin-top: 1.5rem;
-        /* Added space between search and tabs */
         flex-wrap: wrap;
     }
 
@@ -144,6 +145,13 @@
         text-decoration: none;
         color: #666;
         transition: all 0.3s;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-tab i {
         font-size: 0.9rem;
     }
 
@@ -165,13 +173,11 @@
         gap: 2rem;
         margin-top: 2rem;
         align-items: start;
-        /* Align items to top */
         position: relative;
     }
 
     .posts-section {
         min-height: 400px;
-        /* Ensure section has minimum height */
         position: relative;
     }
 
@@ -309,13 +315,22 @@
         color: #999;
     }
 
+    .post-stats span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .post-stats i {
+        font-size: 0.9rem;
+        color: #bbb;
+    }
+
     .sidebar {
         position: sticky;
         top: 100px;
-        /* Increased from 80px to ensure it clears the header */
         height: fit-content;
         align-self: flex-start;
-        /* Prevents sidebar from stretching */
     }
 
     .sidebar-section {
@@ -424,7 +439,6 @@
         background: #45a675;
     }
 
-    /* Pagination wrapper styles */
     .blog-pagination-wrapper a:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -501,16 +515,20 @@
         <div class="header-action-buttons">
             {% if user.is_authenticated %}
             <a href="{% url 'blog:post_create' %}" class="header-btn">
+                <i class="fas fa-pen"></i>
                 Share Your Story
             </a>
             <a href="{% url 'blog:my_posts' %}" class="header-btn">
+                <i class="fas fa-folder-open"></i>
                 My Posts
             </a>
             {% endif %}
             <a href="{% url 'resources:list' %}" class="header-btn">
+                <i class="fas fa-book"></i>
                 Resources
             </a>
             <a href="{% url 'accounts:community' %}" class="header-btn">
+                <i class="fas fa-users"></i>
                 Community
             </a>
         </div>
@@ -538,7 +556,7 @@
 </div>
 
 <div class="blog-container">
-    <!-- Featured CTA - NEW: Positioned at top for maximum visibility -->
+    <!-- Featured CTA -->
     {% if user.is_authenticated %}
     <div class="featured-cta">
         <h3>Share Your Journey</h3>
@@ -556,7 +574,7 @@
             <form method="get" action="{% url 'blog:post_list' %}">
                 <input type="text" name="search" placeholder="Search stories, topics, or authors..."
                     value="{{ request.GET.search }}" />
-                <button type="submit">Search</button>
+                <button type="submit"><i class="fas fa-search"></i></button>
             </form>
         </div>
 
@@ -576,7 +594,8 @@
             </a>
             {% if user.is_authenticated %}
             <a href="?filter=following" class="filter-tab {% if request.GET.filter == 'following' %}active{% endif %}">
-                👥 Following
+                <i class="fas fa-user-friends"></i>
+                Following
             </a>
             {% endif %}
         </div>
@@ -592,7 +611,7 @@
                         {% if post.featured_image %}
                         <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
                         {% else %}
-                        
+                        <i class="fas fa-book-open"></i>
                         {% endif %}
 
                         <div class="post-badges">
@@ -631,8 +650,8 @@
                             {% endif %}
 
                             <div class="post-stats">
-                                <span>{{ post.views }}</span>
-                                <span>{{ post.comments.count }}</span>
+                                <span><i class="fas fa-eye"></i> {{ post.views }}</span>
+                                <span><i class="fas fa-comment"></i> {{ post.comments.count }}</span>
                             </div>
                         </div>
                     </div>
@@ -650,7 +669,7 @@
                 {% endfor %}
             </div>
 
-            <!-- Pagination - Clean production version -->
+            <!-- Pagination -->
             {% if is_paginated %}
             <div class="blog-pagination-wrapper"
                 style="background: #f8f9fa; border-radius: 12px; padding: 2rem; margin: 3rem 0 2rem 0; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
@@ -684,7 +703,7 @@
 
         <!-- Sidebar -->
         <div class="sidebar">
-            <!-- Recent Posts - Moved to top -->
+            <!-- Recent Posts -->
             {% if recent_posts %}
             <div class="sidebar-section">
                 <h5>Recent Posts</h5>

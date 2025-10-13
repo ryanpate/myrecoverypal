@@ -29,7 +29,7 @@
         </div>
         <div class="col-md-4 text-end">
             <a href="{% url 'blog:post_create' %}" class="btn btn-success">
-                New Post
+                <i class="fas fa-plus"></i> New Post
             </a>
         </div>
     </div>
@@ -53,18 +53,22 @@
                     {% if post.status == 'published' %}
                     <div class="mb-2">
                         <small class="text-muted">
-                            👁 {{ post.views }} views •
-                            💬 {{ post.comments.count }} comments
+                            <i class="fas fa-eye"></i> {{ post.views }} views •
+                            <i class="fas fa-comment"></i> {{ post.comments.count }} comments
                         </small>
                     </div>
                     {% endif %}
 
                     <div class="d-flex gap-2">
-                        <a href="{{ post.get_absolute_url }}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="{% url 'blog:post_edit' post.slug %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <a href="{{ post.get_absolute_url }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                        <a href="{% url 'blog:post_edit' post.slug %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
                         <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
                             data-bs-target="#deleteModal{{ post.id }}" title="Delete post">
-                            Delete
+                            <i class="fas fa-trash"></i>
                         </button>
                     </div>
                 </div>
@@ -99,13 +103,13 @@
             <h4 class="text-muted">You haven't written any posts yet</h4>
             <p>Share your recovery journey with the community!</p>
             <a href="{% url 'blog:post_create' %}" class="btn btn-success mt-3">
-                Write Your First Post
+                <i class="fas fa-pen"></i> Write Your First Post
             </a>
         </div>
         {% endfor %}
     </div>
 
-    <!-- Fixed Pagination - Same style as post_list.html -->
+    <!-- Pagination -->
     {% if is_paginated %}
     <div class="my-posts-pagination"
         style="background: #f8f9fa; border-radius: 12px; padding: 2rem; margin: 3rem 0 2rem 0; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
@@ -176,13 +180,11 @@
         filter: invert(1);
     }
 
-    /* Pagination hover effect */
     .my-posts-pagination a:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    /* Mobile responsive styles */
     @media (max-width: 768px) {
         .my-posts-pagination {
             padding: 1.5rem 1rem !important;
