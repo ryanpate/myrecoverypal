@@ -180,7 +180,7 @@
                             {% if user.get_days_sober and pal_user.get_days_sober %}
                                 {% with days_diff=user.get_days_sober|add:pal_user.get_days_sober|floatformat:0 %}
                                 <div class="compatibility-item">
-                                    <span class="compatibility-icon">📅</span>
+                                    <span class="compatibility-icon"></span>
                                     <span>Similar recovery timeline</span>
                                 </div>
                                 {% endwith %}
@@ -188,14 +188,14 @@
                             
                             {% if user.location and pal_user.location and user.location == pal_user.location %}
                             <div class="compatibility-item">
-                                <span class="compatibility-icon">📍</span>
+                                <span class="compatibility-icon"></span>
                                 <span>Same location</span>
                             </div>
                             {% endif %}
                             
                             {% if pal_user.allow_messages %}
                             <div class="compatibility-item">
-                                <span class="compatibility-icon">💬</span>
+                                <span class="compatibility-icon"></span>
                                 <span>Open to messages</span>
                             </div>
                             {% endif %}
@@ -203,14 +203,14 @@
                         <div class="col-md-6">
                             {% if not pal_user.get_recovery_pal %}
                             <div class="compatibility-item">
-                                <span class="compatibility-icon">🤝</span>
+                                <span class="compatibility-icon"></span>
                                 <span>Available for pal partnership</span>
                             </div>
                             {% endif %}
                             
                             {% if pal_user.is_profile_public %}
                             <div class="compatibility-item">
-                                <span class="compatibility-icon">👁️</span>
+                                <span class="compatibility-icon"></span>
                                 <span>Open profile</span>
                             </div>
                             {% endif %}
@@ -263,7 +263,7 @@
         <!-- Guidelines Sidebar -->
         <div class="col-md-4">
             <div class="info-card">
-                <h6>🤝 What is a Recovery Pal?</h6>
+                <h6>What is a Recovery Pal?</h6>
                 <p class="small">A recovery pal is a peer who:</p>
                 <ul class="small">
                     <li>Provides mutual support and accountability</li>
@@ -275,7 +275,7 @@
             </div>
 
             <div class="info-card">
-                <h6>💡 Making a Good Request</h6>
+                <h6>Making a Good Request</h6>
                 <ul class="small">
                     <li>Be genuine about your recovery journey</li>
                     <li>Explain what you can offer in return</li>
@@ -286,7 +286,7 @@
             </div>
 
             <div class="info-card">
-                <h6>🌟 Pal Best Practices</h6>
+                <h6>Pal Best Practices</h6>
                 <ul class="small">
                     <li>Maintain regular communication</li>
                     <li>Be honest and supportive</li>
@@ -297,7 +297,7 @@
             </div>
 
             <div class="info-card">
-                <h6>⚠️ Remember</h6>
+                <h6>Remember</h6>
                 <p class="small">A recovery pal is a peer support relationship, not professional therapy or medical advice. Always consult healthcare providers for medical concerns.</p>
             </div>
         </div>

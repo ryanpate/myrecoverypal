@@ -449,7 +449,7 @@
                             👥 Browse Community
                         </a>
                         <a href="{% url 'blog:post_create' %}" class="btn btn-primary btn-sm">
-                            ✍️ Share Story
+                            Share Story
                         </a>
                     </div>
                 </div>
@@ -581,7 +581,7 @@
         <div class="sidebar">
             <!-- Quick Stats -->
             <div class="sidebar-section">
-                <h3>📊 Your Progress</h3>
+                <h3>Your Progress</h3>
                 <div class="quick-stats">
                     <div class="stat-item">
                         <div class="stat-number">{{ user.get_days_sober }}</div>
@@ -604,7 +604,7 @@
 
             <!-- Recovery Connections -->
             <div class="sidebar-section">
-                <h3>🤝 Your Network</h3>
+                <h3>Your Network</h3>
                 
                 {% if user.get_active_sponsor %}
                 <div class="connection-item">
@@ -676,7 +676,7 @@
             <!-- Suggested Connections -->
             {% if suggested_users %}
             <div class="sidebar-section">
-                <h3>💡 Suggested for You</h3>
+                <h3>Suggested for You</h3>
                 {% for suggested_user in suggested_users|slice:":2" %}
                 <div class="suggested-connection">
                     <div class="suggestion-avatar">
@@ -704,7 +704,7 @@
             <!-- Recent Milestones -->
             <div class="sidebar-section">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3>🏆 Recent Milestones</h3>
+                    <h3>Recent Milestones</h3>
                     <a href="{% url 'accounts:add_milestone' %}" class="btn btn-outline-success btn-sm">Add</a>
                 </div>
                 {% for milestone in recent_milestones|slice:":3" %}
@@ -727,9 +727,9 @@
                 {% for group in user.get_joined_groups|slice:":3" %}
                 <a href="{% url 'accounts:group_detail' group.id %}" class="group-item">
                     <div class="group-icon" style="background: {{ group.group_color }};">
-                        {% if group.group_type == 'addiction_type' %}🎯
-                        {% elif group.group_type == 'location' %}📍
-                        {% elif group.group_type == 'recovery_stage' %}⭐
+                        {% if group.group_type == 'addiction_type' %}
+                        {% elif group.group_type == 'location' %}
+                        {% elif group.group_type == 'recovery_stage' %}
                         {% else %}👥
                         {% endif %}
                     </div>
@@ -747,7 +747,7 @@
                 <h3>⚡ Quick Actions</h3>
                 <div class="quick-actions" style="grid-template-columns: 1fr;">
                     <a href="{% url 'accounts:edit_profile' %}" class="action-btn">
-                        ✏️ Edit Profile
+                        Edit Profile
                     </a>
                     <a href="{% url 'accounts:messages' %}" class="action-btn">
                         📬 Messages

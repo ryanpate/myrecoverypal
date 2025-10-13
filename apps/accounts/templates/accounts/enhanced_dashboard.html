@@ -426,7 +426,7 @@
                 <h1>Welcome back, {{ user.get_full_name|default:user.username }}! 👋</h1>
                 <p class="lead">
                     {% if user.get_days_sober > 0 %}
-                        🌟 {{ user.get_days_sober }} days strong in your recovery journey
+                        {{ user.get_days_sober }} days strong in your recovery journey
                     {% else %}
                         Your recovery journey starts here
                     {% endif %}
@@ -434,7 +434,7 @@
             </div>
             <div class="col-md-4 text-md-end">
                 <a href="{% url 'accounts:daily_checkin' %}" class="btn btn-light btn-lg">
-                    ✅ Daily Check-in
+                    Daily Check-in
                 </a>
             </div>
         </div>
@@ -453,7 +453,7 @@
                             👥 Browse Community
                         </a>
                         <a href="{% url 'blog:post_create' %}" class="btn btn-primary btn-sm">
-                            ✍️ Share Story
+                            Share Story
                         </a>
                     </div>
                 </div>
@@ -585,7 +585,7 @@
         <div class="sidebar">
             <!-- Quick Stats -->
             <div class="sidebar-section">
-                <h3>📊 Your Progress</h3>
+                <h3>Your Progress</h3>
                 <div class="quick-stats">
                     <div class="stat-item">
                         <div class="stat-number">{{ user.get_days_sober }}</div>
@@ -608,7 +608,7 @@
 
             <!-- Recovery Connections -->
             <div class="sidebar-section">
-                <h3>🤝 Your Network</h3>
+                <h3>Your Network</h3>
                 
                 {% if user.get_active_sponsor %}
                 <div class="connection-item">
@@ -663,16 +663,16 @@
 
                 <div class="quick-actions">
                     <a href="{% url 'accounts:sponsor_dashboard' %}" class="action-btn">
-                        🎯 Sponsors
+                        Sponsors
                     </a>
                     <a href="{% url 'accounts:pal_dashboard' %}" class="action-btn">
-                        🤝 Pals
+                        Pals
                     </a>
                     <a href="{% url 'accounts:following_list' user.username %}" class="action-btn">
-                        👥 Following
+                        Following
                     </a>
                     <a href="{% url 'accounts:followers_list' user.username %}" class="action-btn">
-                        👥 Followers
+                        Followers
                     </a>
                 </div>
             </div>
@@ -680,7 +680,7 @@
             <!-- Suggested Connections -->
             {% if suggested_users %}
             <div class="sidebar-section">
-                <h3>💡 Suggested for You</h3>
+                <h3>Suggested for You</h3>
                 {% for suggested_user in suggested_users|slice:":2" %}
                 <div class="suggested-connection">
                     <div class="suggestion-avatar">
@@ -751,25 +751,25 @@
                 <h3>⚡ Quick Actions</h3>
                 <div class="quick-actions" style="grid-template-columns: 1fr;">
                     <a href="{% url 'accounts:edit_profile' %}" class="action-btn">
-                        ✏️ Edit Profile
+                        Edit Profile
                     </a>
                     <a href="{% url 'accounts:messages' %}" class="action-btn">
-                        📬 Messages
+                        Messages
                         {% if unread_messages > 0 %}
                         <span style="background: red; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">{{ unread_messages }}</span>
                         {% endif %}
                     </a>
                     <a href="{% url 'journal:dashboard' %}" class="action-btn">
-                        📓 Journal
+                        Journal
                     </a>
                     <a href="{% url 'blog:post_list' %}" class="action-btn">
-                        📖 Read Blog
+                        Read Blog
                     </a>
                     <a href="{% url 'resources:list' %}" class="action-btn">
-                        📚 Resources
+                        Resources
                     </a>
                     <a href="{% url 'accounts:groups_list' %}" class="action-btn">
-                        🏗️ Create Group
+                        Create Group
                     </a>
                 </div>
             </div>

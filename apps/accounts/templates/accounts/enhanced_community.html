@@ -448,26 +448,26 @@
 
 <div class="page-header community-header">
     <div class="container">
-        <h1>🤝 Recovery Community</h1>
+        <h1>Recovery Community</h1>
         <p>Connect with others on their recovery journey</p>
 
         <!-- Action buttons in header -->
         <div class="header-action-buttons">
             <a href="{% url 'accounts:groups_list' %}" class="header-btn">
-                👥 Browse Groups
+                Browse Groups
             </a>
             {% if user.is_authenticated %}
             <a href="{% url 'accounts:create_group' %}" class="header-btn">
-                ➕ Create Group
+                Create Group
             </a>
             <a href="{% url 'accounts:suggested_users' %}" class="header-btn">
-                💡 Find Connections
+                Find Connections
             </a>
             <a href="{% url 'accounts:sponsor_dashboard' %}" class="header-btn">
-                🎯 Sponsor Hub
+                Sponsor Hub
             </a>
             <a href="{% url 'accounts:pal_dashboard' %}" class="header-btn">
-                🤝 Pal Hub
+                Pal Hub
             </a>
             {% endif %}
         </div>
@@ -500,7 +500,7 @@
     <!-- Suggested Users -->
     {% if suggested_users %}
     <div class="suggested-users">
-        <h3>💡 Suggested for You</h3>
+        <h3>Suggested for You</h3>
         <p class="text-muted">Based on your interests and mutual connections</p>
 
         {% for suggested_user in suggested_users %}
@@ -521,7 +521,7 @@
                 {% endif %}
             </div>
             <button class="follow-btn follow" onclick="followUser('{{ suggested_user.username }}')">
-                ➕ Follow
+                Follow
             </button>
         </div>
         {% endfor %}
@@ -531,25 +531,25 @@
 
     <!-- Community Filters -->
     <div class="community-filters">
-        <h3>🔍 Discover Members</h3>
+        <h3>Discover Members</h3>
 
         <div class="filter-tabs">
             <a href="?filter=" class="filter-tab {% if not request.GET.filter %}active{% endif %}">
-                🌟 All Members
+                All Members
             </a>
             {% if user.is_authenticated %}
             <a href="?filter=following" class="filter-tab {% if request.GET.filter == 'following' %}active{% endif %}">
-                👥 Following
+                Following
             </a>
             {% endif %}
             <a href="?filter=online" class="filter-tab {% if request.GET.filter == 'online' %}active{% endif %}">
-                🟢 Online Now
+                Online Now
             </a>
             <a href="?filter=sponsors" class="filter-tab {% if request.GET.filter == 'sponsors' %}active{% endif %}">
-                🎯 Sponsors
+                Sponsors
             </a>
             <a href="?filter=new" class="filter-tab {% if request.GET.filter == 'new' %}active{% endif %}">
-                ✨ New Members
+                New Members
             </a>
         </div>
 
@@ -679,7 +679,7 @@
                     </button>
                     {% else %}
                     <button class="follow-btn follow" onclick="followUser('{{ member.username }}')">
-                        ➕ Follow
+                        Follow
                     </button>
                     {% endif %}
                 </div>

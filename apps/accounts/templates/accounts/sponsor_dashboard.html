@@ -117,7 +117,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h1>🎯 Sponsor Dashboard</h1>
+                <h1>Sponsor Dashboard</h1>
                 <p class="lead">Manage your sponsorship relationships and mentorship journey</p>
             </div>
             <div class="col-md-4 text-md-end">
@@ -167,7 +167,7 @@
                 </div>
                 {% else %}
                 <div class="empty-state">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
                     <h5>No Active Sponsor</h5>
                     <p>You don't currently have a sponsor. Browse the community to find someone who can guide your recovery journey.</p>
                     <a href="{% url 'accounts:community' %}?filter=sponsors" class="btn btn-primary">Find Sponsors</a>
@@ -179,7 +179,7 @@
         <!-- My Sponsorships -->
         <div class="col-md-6">
             <div class="dashboard-card">
-                <h3>🤝 My Sponsorships</h3>
+                <h3>My Sponsorships</h3>
                 {% if sponsorships %}
                 {% for sponsorship in sponsorships %}
                 <div class="sponsor-card">
@@ -211,7 +211,7 @@
                 {% endfor %}
                 {% else %}
                 <div class="empty-state">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">🌱</div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
                     <h5>No Active Sponsorships</h5>
                     <p>You're not currently sponsoring anyone. When someone requests you as their sponsor, they'll appear here.</p>
                 </div>
@@ -251,14 +251,14 @@
                         {% csrf_token %}
                         <input type="hidden" name="action" value="accept">
                         <button type="submit" class="action-btn btn-accept">
-                            ✓ Accept
+                            Accept
                         </button>
                     </form>
                     <form method="post" action="{% url 'accounts:respond_sponsor_request' request.id %}" style="display: inline;">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="decline">
                         <button type="submit" class="action-btn btn-decline">
-                            ✗ Decline
+                            Decline
                         </button>
                     </form>
                     <a href="{% url 'accounts:profile' request.sponsee.username %}" class="action-btn btn-primary">

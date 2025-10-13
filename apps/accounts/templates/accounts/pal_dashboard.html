@@ -195,20 +195,20 @@
 {% block content %}
 <div class="page-header pal-header">
     <div class="container">
-        <h1>🤝 Recovery Pal Dashboard</h1>
+        <h1>Recovery Pal Dashboard</h1>
         <p>Connect with a recovery partner for mutual support and accountability</p>
 
         <!-- Action buttons in header -->
         <div class="header-action-buttons">
             <a href="{% url 'accounts:community' %}" class="header-btn">
-                🔍 Find Pals
+                Find Pals
             </a>
             <a href="{% url 'accounts:suggested_users' %}" class="header-btn">
-                💡 Suggested Connections
+                Suggested Connections
             </a>
             {% if current_pal %}
             <a href="{% url 'accounts:send_message' current_pal.username %}" class="header-btn">
-                💬 Message My Pal
+                Message My Pal
             </a>
             {% endif %}
         </div>
@@ -220,7 +220,7 @@
         <!-- Current Pal -->
         <div class="col-md-8">
             <div class="dashboard-card">
-                <h3>👥 My Recovery Pal</h3>
+                <h3>My Recovery Pal</h3>
                 {% if current_pal %}
                 <div class="pal-card">
                     <div class="d-flex align-items-center">
@@ -243,11 +243,11 @@
                         </div>
                         <div class="d-flex flex-column gap-2">
                             <a href="{% url 'accounts:profile' current_pal.username %}" class="action-btn btn-primary">
-                                👁️ View Profile
+                                View Profile
                             </a>
                             <a href="{% url 'accounts:send_message' current_pal.username %}"
                                 class="action-btn btn-message">
-                                💬 Send Message
+                                Send Message
                             </a>
                         </div>
                     </div>
@@ -262,29 +262,29 @@
                 <!-- Pal Features -->
                 <div class="pal-features">
                     <div class="feature-card">
-                        <div class="feature-icon">📅</div>
+                        <div class="feature-icon"></div>
                         <h6>Daily Check-ins</h6>
                         <p class="small text-muted">Share your daily progress and support each other</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">🎯</div>
+                        <div class="feature-icon"></div>
                         <h6>Shared Goals</h6>
                         <p class="small text-muted">Work together toward recovery milestones</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">💪</div>
+                        <div class="feature-icon"></div>
                         <h6>Accountability</h6>
                         <p class="small text-muted">Keep each other motivated and on track</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">🤗</div>
+                        <div class="feature-icon"></div>
                         <h6>Peer Support</h6>
                         <p class="small text-muted">Someone who understands your journey</p>
                     </div>
                 </div>
                 {% else %}
                 <div class="empty-state">
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">🤝</div>
+                    <div style="font-size: 4rem; margin-bottom: 1rem;"></div>
                     <h5>No Recovery Pal Yet</h5>
                     <p>A recovery pal is someone going through a similar journey who can provide mutual support,
                         accountability, and encouragement.</p>
@@ -346,7 +346,7 @@
             <!-- Sent Requests -->
             {% if sent_requests %}
             <div class="dashboard-card">
-                <h5>📤 Sent Requests</h5>
+                <h5>Sent Requests</h5>
                 <p class="small text-muted">Pal requests you've sent</p>
 
                 {% for request in sent_requests %}
@@ -378,7 +378,7 @@
             <!-- Getting Started -->
             {% if not current_pal and not received_requests and not sent_requests %}
             <div class="dashboard-card">
-                <h5>🚀 Getting Started</h5>
+                <h5>Getting Started</h5>
                 <p class="small">A recovery pal is a peer who:</p>
                 <ul class="small">
                     <li>Shares similar experiences</li>
@@ -398,32 +398,32 @@
     <!-- Tips Section -->
     {% if not current_pal %}
     <div class="dashboard-card">
-        <h3>💡 Tips for Finding a Recovery Pal</h3>
+        <h3>Tips for Finding a Recovery Pal</h3>
         <div class="row">
             <div class="col-md-3">
                 <div class="text-center">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
                     <h6>Similar Goals</h6>
                     <p class="small">Look for someone with similar recovery goals and timeline</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="text-center">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
                     <h6>Good Communication</h6>
                     <p class="small">Find someone who communicates regularly and honestly</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="text-center">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">⚖️</div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
                     <h6>Mutual Support</h6>
                     <p class="small">The relationship should benefit both people equally</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="text-center">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
                     <h6>Positive Influence</h6>
                     <p class="small">Choose someone who motivates and inspires you</p>
                 </div>
@@ -443,15 +443,15 @@
                 ➕
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="{% url 'accounts:community' %}">🔍 Find Recovery Pals</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:suggested_users' %}">💡 Suggested Connections</a>
+                <li><a class="dropdown-item" href="{% url 'accounts:community' %}">Find Recovery Pals</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:suggested_users' %}">Suggested Connections</a>
                 </li>
                 <li>
                     <hr class="dropdown-divider">
                 </li>
-                <li><a class="dropdown-item" href="{% url 'accounts:groups_list' %}">👥 Browse Groups</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:challenges_home' %}">🏆 View Challenges</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">🎯 Sponsor Hub</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:groups_list' %}">Browse Groups</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:challenges_home' %}">View Challenges</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">Sponsor Hub</a></li>
             </ul>
         </div>
     </div>

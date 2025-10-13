@@ -16,11 +16,11 @@
     <div class="connections-header">
         <h2>
             {% if is_following_page %}
-                👥 People {{ user.username }} Follows
+                People {{ user.username }} Follows
             {% elif is_followers_page %}
-                👥 {{ user.username }}'s Followers
+                {{ user.username }}'s Followers
             {% else %}
-                👥 Connections
+                Connections
             {% endif %}
         </h2>
 
@@ -61,7 +61,7 @@
                         {% endif %}
                         {% if connection.profile.recovery_date %}
                             <p class="recovery-info">
-                                🗓️ Recovery since: {{ connection.profile.recovery_date|date:"F Y" }}
+                                Recovery since: {{ connection.profile.recovery_date|date:"F Y" }}
                             </p>
                         {% endif %}
                     </div>
@@ -120,7 +120,7 @@
                         {% endif %}
                         {% if connection.profile.recovery_date %}
                             <p class="recovery-info">
-                                🗓️ Recovery since: {{ connection.profile.recovery_date|date:"F Y" }}
+                                Recovery since: {{ connection.profile.recovery_date|date:"F Y" }}
                             </p>
                         {% endif %}
                     </div>
