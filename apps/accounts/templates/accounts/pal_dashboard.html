@@ -201,14 +201,14 @@
         <!-- Action buttons in header -->
         <div class="header-action-buttons">
             <a href="{% url 'accounts:community' %}" class="header-btn">
-                Find Pals
+                <i class="fas fa-search"></i> Find Pals
             </a>
             <a href="{% url 'accounts:suggested_users' %}" class="header-btn">
-                Suggested Connections
+                <i class="fas fa-user-plus"></i> Suggested Connections
             </a>
             {% if current_pal %}
             <a href="{% url 'accounts:send_message' current_pal.username %}" class="header-btn">
-                Message My Pal
+                <i class="fas fa-envelope"></i> Message My Pal
             </a>
             {% endif %}
         </div>
@@ -228,7 +228,7 @@
                             {% if current_pal.avatar %}
                             <img src="{{ current_pal.avatar.url }}" alt="{{ current_pal.username }}">
                             {% else %}
-                            👤
+                            <i class="fas fa-user"></i>
                             {% endif %}
                         </div>
                         <div class="flex-grow-1">
@@ -243,11 +243,11 @@
                         </div>
                         <div class="d-flex flex-column gap-2">
                             <a href="{% url 'accounts:profile' current_pal.username %}" class="action-btn btn-primary">
-                                View Profile
+                                <i class="fas fa-eye"></i> View Profile
                             </a>
                             <a href="{% url 'accounts:send_message' current_pal.username %}"
                                 class="action-btn btn-message">
-                                Send Message
+                                <i class="fas fa-comment"></i> Send Message
                             </a>
                         </div>
                     </div>
@@ -262,33 +262,35 @@
                 <!-- Pal Features -->
                 <div class="pal-features">
                     <div class="feature-card">
-                        <div class="feature-icon"></div>
+                        <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
                         <h6>Daily Check-ins</h6>
                         <p class="small text-muted">Share your daily progress and support each other</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon"></div>
+                        <div class="feature-icon"><i class="fas fa-bullseye"></i></div>
                         <h6>Shared Goals</h6>
                         <p class="small text-muted">Work together toward recovery milestones</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon"></div>
+                        <div class="feature-icon"><i class="fas fa-tasks"></i></div>
                         <h6>Accountability</h6>
                         <p class="small text-muted">Keep each other motivated and on track</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon"></div>
+                        <div class="feature-icon"><i class="fas fa-hands-helping"></i></div>
                         <h6>Peer Support</h6>
                         <p class="small text-muted">Someone who understands your journey</p>
                     </div>
                 </div>
                 {% else %}
                 <div class="empty-state">
-                    <div style="font-size: 4rem; margin-bottom: 1rem;"></div>
+                    <div style="font-size: 4rem; margin-bottom: 1rem;"><i class="fas fa-handshake"></i></div>
                     <h5>No Recovery Pal Yet</h5>
                     <p>A recovery pal is someone going through a similar journey who can provide mutual support,
                         accountability, and encouragement.</p>
-                    <a href="{% url 'accounts:community' %}" class="btn btn-success btn-lg">Find a Recovery Pal</a>
+                    <a href="{% url 'accounts:community' %}" class="btn btn-success btn-lg">
+                        <i class="fas fa-search"></i> Find a Recovery Pal
+                    </a>
                 </div>
                 {% endif %}
             </div>
@@ -299,7 +301,7 @@
             <!-- Received Requests -->
             {% if received_requests %}
             <div class="dashboard-card">
-                <h5>📬 Pal Requests</h5>
+                <h5><i class="fas fa-inbox"></i> Pal Requests</h5>
                 <p class="small text-muted">People who want to be your recovery pal</p>
 
                 {% for request in received_requests %}
@@ -315,7 +317,7 @@
                             {% if pal_user.avatar %}
                             <img src="{{ pal_user.avatar.url }}" alt="{{ pal_user.username }}">
                             {% else %}
-                            👤
+                            <i class="fas fa-user"></i>
                             {% endif %}
                         </div>
                         <h6>{{ pal_user.get_full_name|default:pal_user.username }}</h6>
@@ -326,13 +328,13 @@
                             <form method="post" style="display: inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="action-btn btn-accept btn-sm">
-                                    ✓ Accept
+                                    <i class="fas fa-check"></i> Accept
                                 </button>
                             </form>
                             <form method="post" style="display: inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="action-btn btn-decline btn-sm">
-                                    ✗ Decline
+                                    <i class="fas fa-times"></i> Decline
                                 </button>
                             </form>
                         </div>
@@ -346,7 +348,7 @@
             <!-- Sent Requests -->
             {% if sent_requests %}
             <div class="dashboard-card">
-                <h5>Sent Requests</h5>
+                <h5><i class="fas fa-paper-plane"></i> Sent Requests</h5>
                 <p class="small text-muted">Pal requests you've sent</p>
 
                 {% for request in sent_requests %}
@@ -362,7 +364,7 @@
                             {% if pal_user.avatar %}
                             <img src="{{ pal_user.avatar.url }}" alt="{{ pal_user.username }}">
                             {% else %}
-                            👤
+                            <i class="fas fa-user"></i>
                             {% endif %}
                         </div>
                         <h6>{{ pal_user.get_full_name|default:pal_user.username }}</h6>
@@ -378,7 +380,7 @@
             <!-- Getting Started -->
             {% if not current_pal and not received_requests and not sent_requests %}
             <div class="dashboard-card">
-                <h5>Getting Started</h5>
+                <h5><i class="fas fa-info-circle"></i> Getting Started</h5>
                 <p class="small">A recovery pal is a peer who:</p>
                 <ul class="small">
                     <li>Shares similar experiences</li>
@@ -388,7 +390,7 @@
                     <li>Helps during tough times</li>
                 </ul>
                 <a href="{% url 'accounts:community' %}" class="btn btn-outline-primary w-100">
-                    Browse Community
+                    <i class="fas fa-users"></i> Browse Community
                 </a>
             </div>
             {% endif %}
@@ -398,32 +400,32 @@
     <!-- Tips Section -->
     {% if not current_pal %}
     <div class="dashboard-card">
-        <h3>Tips for Finding a Recovery Pal</h3>
+        <h3><i class="fas fa-lightbulb"></i> Tips for Finding a Recovery Pal</h3>
         <div class="row">
             <div class="col-md-3">
                 <div class="text-center">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"><i class="fas fa-crosshairs"></i></div>
                     <h6>Similar Goals</h6>
                     <p class="small">Look for someone with similar recovery goals and timeline</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="text-center">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"><i class="fas fa-comments"></i></div>
                     <h6>Good Communication</h6>
                     <p class="small">Find someone who communicates regularly and honestly</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="text-center">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"><i class="fas fa-balance-scale"></i></div>
                     <h6>Mutual Support</h6>
                     <p class="small">The relationship should benefit both people equally</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="text-center">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"><i class="fas fa-star"></i></div>
                     <h6>Positive Influence</h6>
                     <p class="small">Choose someone who motivates and inspires you</p>
                 </div>
@@ -440,18 +442,27 @@
         <div class="dropdown dropup">
             <button class="btn btn-primary btn-lg rounded-circle" type="button" data-bs-toggle="dropdown"
                 style="width: 60px; height: 60px; background: var(--accent-green); border-color: var(--accent-green);">
-                ➕
+                <i class="fas fa-plus"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="{% url 'accounts:community' %}">Find Recovery Pals</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:suggested_users' %}">Suggested Connections</a>
-                </li>
+                <li><a class="dropdown-item" href="{% url 'accounts:community' %}">
+                        <i class="fas fa-search"></i> Find Recovery Pals
+                    </a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:suggested_users' %}">
+                        <i class="fas fa-user-plus"></i> Suggested Connections
+                    </a></li>
                 <li>
                     <hr class="dropdown-divider">
                 </li>
-                <li><a class="dropdown-item" href="{% url 'accounts:groups_list' %}">Browse Groups</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:challenges_home' %}">View Challenges</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">Sponsor Hub</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:groups_list' %}">
+                        <i class="fas fa-users"></i> Browse Groups
+                    </a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:challenges_home' %}">
+                        <i class="fas fa-trophy"></i> View Challenges
+                    </a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">
+                        <i class="fas fa-star"></i> Sponsor Hub
+                    </a></li>
             </ul>
         </div>
     </div>

@@ -19,6 +19,12 @@
         transform: translateY(-2px);
     }
 
+    .dashboard-card h3 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
     .sponsor-card {
         background: white;
         border-radius: 15px;
@@ -76,6 +82,12 @@
         color: #666;
     }
 
+    .empty-state i {
+        font-size: 3rem;
+        color: #52b788;
+        margin-bottom: 1rem;
+    }
+
     .action-btn {
         padding: 0.5rem 1rem;
         border: none;
@@ -109,11 +121,23 @@
         text-decoration: none;
         color: inherit;
     }
+
+    .badge.bg-light {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .text-success {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="page-headersponsor-header">
+<div class="page-header sponsor-header">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8">
@@ -122,7 +146,9 @@
             </div>
             <div class="col-md-4 text-md-end">
                 {% if can_be_sponsor %}
-                <span class="badge bg-light text-dark fs-6">Available as Sponsor</span>
+                <span class="badge bg-light text-dark fs-6">
+                    <i class="fas fa-star"></i> Available as Sponsor
+                </span>
                 {% endif %}
             </div>
         </div>
@@ -134,19 +160,22 @@
         <!-- Current Sponsor -->
         <div class="col-md-6">
             <div class="dashboard-card">
-                <h3>👤 My Sponsor</h3>
+                <h3><i class="fas fa-user-tie"></i> My Sponsor</h3>
                 {% if sponsor_relationship %}
                 <div class="sponsor-card">
                     <div class="d-flex align-items-center">
                         <div class="sponsor-avatar">
                             {% if sponsor_relationship.sponsor.avatar %}
-                                <img src="{{ sponsor_relationship.sponsor.avatar.url }}" alt="{{ sponsor_relationship.sponsor.username }}">
+                            <img src="{{ sponsor_relationship.sponsor.avatar.url }}"
+                                alt="{{ sponsor_relationship.sponsor.username }}">
                             {% else %}
-                                👤
+                            <i class="fas fa-user"></i>
                             {% endif %}
                         </div>
                         <div class="flex-grow-1">
-                            <h5>{{ sponsor_relationship.sponsor.get_full_name|default:sponsor_relationship.sponsor.username }}</h5>
+                            <h5>{{
+                                sponsor_relationship.sponsor.get_full_name|default:sponsor_relationship.sponsor.username
+                                }}</h5>
                             <p class="text-muted mb-1">@{{ sponsor_relationship.sponsor.username }}</p>
                             <span class="status-badge status-active">Active</span>
                             {% if sponsor_relationship.started_date %}
@@ -154,8 +183,9 @@
                             {% endif %}
                         </div>
                         <div>
-                            <a href="{% url 'accounts:profile' sponsor_relationship.sponsor.username %}" class="action-btn btn-primary">
-                                View Profile
+                            <a href="{% url 'accounts:profile' sponsor_relationship.sponsor.username %}"
+                                class="action-btn btn-primary">
+                                <i class="fas fa-eye"></i> View Profile
                             </a>
                         </div>
                     </div>
@@ -167,10 +197,13 @@
                 </div>
                 {% else %}
                 <div class="empty-state">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
+                    <i class="fas fa-user-tie"></i>
                     <h5>No Active Sponsor</h5>
-                    <p>You don't currently have a sponsor. Browse the community to find someone who can guide your recovery journey.</p>
-                    <a href="{% url 'accounts:community' %}?filter=sponsors" class="btn btn-primary">Find Sponsors</a>
+                    <p>You don't currently have a sponsor. Browse the community to find someone who can guide your
+                        recovery journey.</p>
+                    <a href="{% url 'accounts:community' %}?filter=sponsors" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Find Sponsors
+                    </a>
                 </div>
                 {% endif %}
             </div>
@@ -179,22 +212,23 @@
         <!-- My Sponsorships -->
         <div class="col-md-6">
             <div class="dashboard-card">
-                <h3>My Sponsorships</h3>
+                <h3><i class="fas fa-users"></i> My Sponsorships</h3>
                 {% if sponsorships %}
                 {% for sponsorship in sponsorships %}
                 <div class="sponsor-card">
                     <div class="d-flex align-items-center">
                         <div class="sponsor-avatar">
                             {% if sponsorship.sponsee.avatar %}
-                                <img src="{{ sponsorship.sponsee.avatar.url }}" alt="{{ sponsorship.sponsee.username }}">
+                            <img src="{{ sponsorship.sponsee.avatar.url }}" alt="{{ sponsorship.sponsee.username }}">
                             {% else %}
-                                👤
+                            <i class="fas fa-user"></i>
                             {% endif %}
                         </div>
                         <div class="flex-grow-1">
                             <h5>{{ sponsorship.sponsee.get_full_name|default:sponsorship.sponsee.username }}</h5>
                             <p class="text-muted mb-1">@{{ sponsorship.sponsee.username }}</p>
-                            <span class="status-badge {% if sponsorship.status == 'active' %}status-active{% else %}status-pending{% endif %}">
+                            <span
+                                class="status-badge {% if sponsorship.status == 'active' %}status-active{% else %}status-pending{% endif %}">
                                 {{ sponsorship.get_status_display }}
                             </span>
                             {% if sponsorship.started_date %}
@@ -202,8 +236,9 @@
                             {% endif %}
                         </div>
                         <div>
-                            <a href="{% url 'accounts:profile' sponsorship.sponsee.username %}" class="action-btn btn-primary">
-                                View Profile
+                            <a href="{% url 'accounts:profile' sponsorship.sponsee.username %}"
+                                class="action-btn btn-primary">
+                                <i class="fas fa-eye"></i> View Profile
                             </a>
                         </div>
                     </div>
@@ -211,9 +246,10 @@
                 {% endfor %}
                 {% else %}
                 <div class="empty-state">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
+                    <i class="fas fa-hands-helping"></i>
                     <h5>No Active Sponsorships</h5>
-                    <p>You're not currently sponsoring anyone. When someone requests you as their sponsor, they'll appear here.</p>
+                    <p>You're not currently sponsoring anyone. When someone requests you as their sponsor, they'll
+                        appear here.</p>
                 </div>
                 {% endif %}
             </div>
@@ -223,17 +259,17 @@
     <!-- Sponsor Requests -->
     {% if sponsor_requests %}
     <div class="dashboard-card">
-        <h3>📬 Sponsor Requests</h3>
+        <h3><i class="fas fa-inbox"></i> Sponsor Requests</h3>
         <p class="text-muted">People who would like you to be their sponsor</p>
-        
+
         {% for request in sponsor_requests %}
         <div class="sponsor-card">
             <div class="d-flex align-items-center">
                 <div class="sponsor-avatar">
                     {% if request.sponsee.avatar %}
-                        <img src="{{ request.sponsee.avatar.url }}" alt="{{ request.sponsee.username }}">
+                    <img src="{{ request.sponsee.avatar.url }}" alt="{{ request.sponsee.username }}">
                     {% else %}
-                        👤
+                    <i class="fas fa-user"></i>
                     {% endif %}
                 </div>
                 <div class="flex-grow-1">
@@ -247,22 +283,24 @@
                     {% endif %}
                 </div>
                 <div class="d-flex gap-2">
-                    <form method="post" action="{% url 'accounts:respond_sponsor_request' request.id %}" style="display: inline;">
+                    <form method="post" action="{% url 'accounts:respond_sponsor_request' request.id %}"
+                        style="display: inline;">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="accept">
                         <button type="submit" class="action-btn btn-accept">
-                            Accept
+                            <i class="fas fa-check"></i> Accept
                         </button>
                     </form>
-                    <form method="post" action="{% url 'accounts:respond_sponsor_request' request.id %}" style="display: inline;">
+                    <form method="post" action="{% url 'accounts:respond_sponsor_request' request.id %}"
+                        style="display: inline;">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="decline">
                         <button type="submit" class="action-btn btn-decline">
-                            Decline
+                            <i class="fas fa-times"></i> Decline
                         </button>
                     </form>
                     <a href="{% url 'accounts:profile' request.sponsee.username %}" class="action-btn btn-primary">
-                        View Profile
+                        <i class="fas fa-eye"></i> View Profile
                     </a>
                 </div>
             </div>
@@ -274,21 +312,24 @@
     <!-- Getting Started Section -->
     {% if not sponsor_relationship and not sponsorships %}
     <div class="dashboard-card">
-        <h3>🚀 Getting Started with Sponsorship</h3>
+        <h3><i class="fas fa-rocket"></i> Getting Started with Sponsorship</h3>
         <div class="row">
             <div class="col-md-6">
-                <h5>Finding a Sponsor</h5>
-                <p>A sponsor is someone further along in recovery who can guide and support you. Look for someone with:</p>
+                <h5><i class="fas fa-search"></i> Finding a Sponsor</h5>
+                <p>A sponsor is someone further along in recovery who can guide and support you. Look for someone with:
+                </p>
                 <ul>
                     <li>Solid recovery time</li>
                     <li>Experience you relate to</li>
                     <li>Availability for regular contact</li>
                     <li>A positive recovery story</li>
                 </ul>
-                <a href="{% url 'accounts:community' %}?filter=sponsors" class="btn btn-primary">Browse Sponsors</a>
+                <a href="{% url 'accounts:community' %}?filter=sponsors" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Browse Sponsors
+                </a>
             </div>
             <div class="col-md-6">
-                <h5>Becoming a Sponsor</h5>
+                <h5><i class="fas fa-star"></i> Becoming a Sponsor</h5>
                 <p>Ready to help others? Consider becoming a sponsor if you have:</p>
                 <ul>
                     <li>Significant recovery time</li>
@@ -297,9 +338,13 @@
                     <li>Desire to give back</li>
                 </ul>
                 {% if not can_be_sponsor %}
-                <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-primary">Enable Sponsor Status</a>
+                <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-edit"></i> Enable Sponsor Status
+                </a>
                 {% else %}
-                <span class="text-success">✓ You're available as a sponsor</span>
+                <span class="text-success">
+                    <i class="fas fa-check-circle"></i> You're available as a sponsor
+                </span>
                 {% endif %}
             </div>
         </div>

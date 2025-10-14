@@ -75,6 +75,13 @@
         margin-bottom: 2rem;
     }
 
+    .info-card h6 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #1e4d8b;
+    }
+
     .pal-stats {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -107,6 +114,17 @@
 
     .compatibility-icon {
         font-size: 1.2rem;
+        color: #52b788;
+    }
+
+    @media (max-width: 768px) {
+        .request-form {
+            padding: 1.5rem;
+        }
+
+        .info-card {
+            padding: 1rem;
+        }
     }
 </style>
 {% endblock %}
@@ -125,14 +143,14 @@
                 <div class="text-center">
                     <div class="pal-avatar">
                         {% if pal_user.avatar %}
-                            <img src="{{ pal_user.avatar.url }}" alt="{{ pal_user.username }}">
+                        <img src="{{ pal_user.avatar.url }}" alt="{{ pal_user.username }}">
                         {% else %}
-                            <span style="font-size: 2.5rem;">👤</span>
+                        <i class="fas fa-user"></i>
                         {% endif %}
                     </div>
                     <h3>{{ pal_user.get_full_name|default:pal_user.username }}</h3>
                     <p class="text-muted">@{{ pal_user.username }}</p>
-                    
+
                     <div class="pal-stats">
                         {% if pal_user.get_days_sober > 0 %}
                         <div class="stat-item">
@@ -149,24 +167,24 @@
                             <div>Following</div>
                         </div>
                     </div>
-                    
+
                     {% if pal_user.bio %}
                     <div class="mt-3">
-                        <h6>About</h6>
+                        <h6><i class="fas fa-user-circle"></i> About</h6>
                         <p>{{ pal_user.bio|truncatewords:50 }}</p>
                     </div>
                     {% endif %}
-                    
+
                     {% if pal_user.recovery_goals %}
                     <div class="mt-3">
-                        <h6>Recovery Goals</h6>
+                        <h6><i class="fas fa-bullseye"></i> Recovery Goals</h6>
                         <p>{{ pal_user.recovery_goals|truncatewords:30 }}</p>
                     </div>
                     {% endif %}
 
                     {% if pal_user.location %}
                     <div class="mt-3">
-                        <h6>Location</h6>
+                        <h6><i class="fas fa-map-marker-alt"></i> Location</h6>
                         <p>{{ pal_user.location }}</p>
                     </div>
                     {% endif %}
@@ -174,28 +192,28 @@
 
                 <!-- Compatibility Indicators -->
                 <div class="mt-4">
-                    <h6>Potential Compatibility</h6>
+                    <h6><i class="fas fa-check-circle"></i> Potential Compatibility</h6>
                     <div class="row">
                         <div class="col-md-6">
                             {% if user.get_days_sober and pal_user.get_days_sober %}
-                                {% with days_diff=user.get_days_sober|add:pal_user.get_days_sober|floatformat:0 %}
-                                <div class="compatibility-item">
-                                    <span class="compatibility-icon"></span>
-                                    <span>Similar recovery timeline</span>
-                                </div>
-                                {% endwith %}
+                            {% with days_diff=user.get_days_sober|add:pal_user.get_days_sober|floatformat:0 %}
+                            <div class="compatibility-item">
+                                <i class="fas fa-calendar-check compatibility-icon"></i>
+                                <span>Similar recovery timeline</span>
+                            </div>
+                            {% endwith %}
                             {% endif %}
-                            
+
                             {% if user.location and pal_user.location and user.location == pal_user.location %}
                             <div class="compatibility-item">
-                                <span class="compatibility-icon"></span>
+                                <i class="fas fa-map-marker-alt compatibility-icon"></i>
                                 <span>Same location</span>
                             </div>
                             {% endif %}
-                            
+
                             {% if pal_user.allow_messages %}
                             <div class="compatibility-item">
-                                <span class="compatibility-icon"></span>
+                                <i class="fas fa-comment compatibility-icon"></i>
                                 <span>Open to messages</span>
                             </div>
                             {% endif %}
@@ -203,14 +221,14 @@
                         <div class="col-md-6">
                             {% if not pal_user.get_recovery_pal %}
                             <div class="compatibility-item">
-                                <span class="compatibility-icon"></span>
+                                <i class="fas fa-handshake compatibility-icon"></i>
                                 <span>Available for pal partnership</span>
                             </div>
                             {% endif %}
-                            
+
                             {% if pal_user.is_profile_public %}
                             <div class="compatibility-item">
-                                <span class="compatibility-icon"></span>
+                                <i class="fas fa-globe compatibility-icon"></i>
                                 <span>Open profile</span>
                             </div>
                             {% endif %}
@@ -221,39 +239,38 @@
 
             <!-- Request Form -->
             <div class="request-form">
-                <h3>Send Pal Request</h3>
-                <p class="text-muted mb-4">Tell {{ pal_user.get_full_name|default:pal_user.username }} why you'd like to be recovery pals and how you'd like to support each other.</p>
-                
+                <h3><i class="fas fa-paper-plane"></i> Send Pal Request</h3>
+                <p class="text-muted mb-4">Tell {{ pal_user.get_full_name|default:pal_user.username }} why you'd like to
+                    be recovery pals and how you'd like to support each other.</p>
+
                 <form method="post">
                     {% csrf_token %}
-                    
+
                     <div class="mb-3">
-                        <label for="check_in_frequency" class="form-label">How often would you like to check in?</label>
-                        <input type="text" 
-                               class="form-control" 
-                               id="check_in_frequency" 
-                               name="check_in_frequency"
-                               placeholder="e.g., Daily, Weekly, Bi-weekly, As needed">
+                        <label for="check_in_frequency" class="form-label">
+                            <i class="fas fa-clock"></i> How often would you like to check in?
+                        </label>
+                        <input type="text" class="form-control" id="check_in_frequency" name="check_in_frequency"
+                            placeholder="e.g., Daily, Weekly, Bi-weekly, As needed">
                         <div class="form-text">Regular check-ins help maintain accountability and support.</div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="shared_goals" class="form-label">What goals would you like to work on together? *</label>
-                        <textarea class="form-control" 
-                                  id="shared_goals" 
-                                  name="shared_goals" 
-                                  rows="5"
-                                  placeholder="Share what you're hoping to achieve together as recovery pals. What specific goals, challenges, or areas of growth would you like to support each other with?"
-                                  required></textarea>
+                        <label for="shared_goals" class="form-label">
+                            <i class="fas fa-bullseye"></i> What goals would you like to work on together? *
+                        </label>
+                        <textarea class="form-control" id="shared_goals" name="shared_goals" rows="5"
+                            placeholder="Share what you're hoping to achieve together as recovery pals. What specific goals, challenges, or areas of growth would you like to support each other with?"
+                            required></textarea>
                         <div class="form-text">Be specific about what kind of mutual support you're looking for.</div>
                     </div>
 
                     <div class="d-flex gap-3 justify-content-end mt-4">
                         <a href="{% url 'accounts:profile' pal_user.username %}" class="btn btn-outline-secondary">
-                            Cancel
+                            <i class="fas fa-times"></i> Cancel
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            Send Pal Request
+                            <i class="fas fa-paper-plane"></i> Send Pal Request
                         </button>
                     </div>
                 </form>
@@ -263,7 +280,7 @@
         <!-- Guidelines Sidebar -->
         <div class="col-md-4">
             <div class="info-card">
-                <h6>What is a Recovery Pal?</h6>
+                <h6><i class="fas fa-question-circle"></i> What is a Recovery Pal?</h6>
                 <p class="small">A recovery pal is a peer who:</p>
                 <ul class="small">
                     <li>Provides mutual support and accountability</li>
@@ -275,7 +292,7 @@
             </div>
 
             <div class="info-card">
-                <h6>Making a Good Request</h6>
+                <h6><i class="fas fa-lightbulb"></i> Making a Good Request</h6>
                 <ul class="small">
                     <li>Be genuine about your recovery journey</li>
                     <li>Explain what you can offer in return</li>
@@ -286,7 +303,7 @@
             </div>
 
             <div class="info-card">
-                <h6>Pal Best Practices</h6>
+                <h6><i class="fas fa-star"></i> Pal Best Practices</h6>
                 <ul class="small">
                     <li>Maintain regular communication</li>
                     <li>Be honest and supportive</li>
@@ -297,8 +314,9 @@
             </div>
 
             <div class="info-card">
-                <h6>Remember</h6>
-                <p class="small">A recovery pal is a peer support relationship, not professional therapy or medical advice. Always consult healthcare providers for medical concerns.</p>
+                <h6><i class="fas fa-info-circle"></i> Remember</h6>
+                <p class="small">A recovery pal is a peer support relationship, not professional therapy or medical
+                    advice. Always consult healthcare providers for medical concerns.</p>
             </div>
         </div>
     </div>

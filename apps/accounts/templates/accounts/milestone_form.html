@@ -373,7 +373,9 @@
     }
 
     @keyframes spinner {
-        to { transform: rotate(360deg); }
+        to {
+            transform: rotate(360deg);
+        }
     }
 
     /* Mobile Responsiveness */
@@ -411,9 +413,11 @@
         0% {
             box-shadow: 0 0 0 0 rgba(82, 183, 136, 0.7);
         }
+
         70% {
             box-shadow: 0 0 0 10px rgba(82, 183, 136, 0);
         }
+
         100% {
             box-shadow: 0 0 0 0 rgba(82, 183, 136, 0);
         }
@@ -440,10 +444,11 @@
         <div class="milestone-form-body">
             <!-- Help Tip -->
             <div class="help-tip">
-                <span class="help-tip-icon"></span>
+                <i class="fas fa-lightbulb help-tip-icon"></i>
                 <div class="help-tip-content">
                     <h5>Why Track Milestones?</h5>
-                    <p>Recognizing your achievements, both big and small, reinforces positive behaviors and motivates continued progress in recovery.</p>
+                    <p>Recognizing your achievements, both big and small, reinforces positive behaviors and motivates
+                        continued progress in recovery.</p>
                 </div>
             </div>
 
@@ -472,85 +477,98 @@
 
                 <!-- Suggestions Grid -->
                 <div class="suggestions-grid" id="recovery-suggestions">
-                    <div class="suggestion-chip" onclick="fillForm('First AA/NA Meeting', 'Attended my first support group meeting')">
-                        <span class="suggestion-icon"></span>
+                    <div class="suggestion-chip"
+                        onclick="fillForm('First AA/NA Meeting', 'Attended my first support group meeting')">
+                        <i class="fas fa-users suggestion-icon"></i>
                         <span>First AA/NA Meeting</span>
                     </div>
-                    <div class="suggestion-chip" onclick="fillForm('Found a Sponsor', 'Connected with a sponsor to guide my recovery')">
-                        <span class="suggestion-icon"></span>
+                    <div class="suggestion-chip"
+                        onclick="fillForm('Found a Sponsor', 'Connected with a sponsor to guide my recovery')">
+                        <i class="fas fa-user-tie suggestion-icon"></i>
                         <span>Found a Sponsor</span>
                     </div>
-                    <div class="suggestion-chip" onclick="fillForm('30 Days Clean', 'Celebrating one month of sobriety')">
-                        <span class="suggestion-icon"></span>
+                    <div class="suggestion-chip"
+                        onclick="fillForm('30 Days Clean', 'Celebrating one month of sobriety')">
+                        <i class="fas fa-calendar-check suggestion-icon"></i>
                         <span>30 Days Clean</span>
                     </div>
-                    <div class="suggestion-chip" onclick="fillForm('Completed Step 1', 'Admitted powerlessness and unmanageability')">
-                        <span class="suggestion-icon"></span>
+                    <div class="suggestion-chip"
+                        onclick="fillForm('Completed Step 1', 'Admitted powerlessness and unmanageability')">
+                        <i class="fas fa-tasks suggestion-icon"></i>
                         <span>Completed Step 1</span>
                     </div>
-                    <div class="suggestion-chip" onclick="fillForm('90 Days Sober', 'Three months of continuous sobriety')">
-                        <span class="suggestion-icon"></span>
+                    <div class="suggestion-chip"
+                        onclick="fillForm('90 Days Sober', 'Three months of continuous sobriety')">
+                        <i class="fas fa-award suggestion-icon"></i>
                         <span>90 Days Sober</span>
                     </div>
-                    <div class="suggestion-chip" onclick="fillForm('Made Amends', 'Reached out to make amends with someone')">
-                        <span class="suggestion-icon"></span>
+                    <div class="suggestion-chip"
+                        onclick="fillForm('Made Amends', 'Reached out to make amends with someone')">
+                        <i class="fas fa-handshake suggestion-icon"></i>
                         <span>Made Amends</span>
                     </div>
                 </div>
 
                 <div class="suggestions-grid" id="personal-suggestions" style="display: none;">
                     <div class="suggestion-chip" onclick="fillForm('New Job/Promotion', 'Advanced in my career')">
-                        <span class="suggestion-icon"></span>
+                        <i class="fas fa-briefcase suggestion-icon"></i>
                         <span>New Job/Promotion</span>
                     </div>
-                    <div class="suggestion-chip" onclick="fillForm('Started School', 'Enrolled in educational program')">
-                        <span class="suggestion-icon"></span>
+                    <div class="suggestion-chip"
+                        onclick="fillForm('Started School', 'Enrolled in educational program')">
+                        <i class="fas fa-graduation-cap suggestion-icon"></i>
                         <span>Started School</span>
                     </div>
-                    <div class="suggestion-chip" onclick="fillForm('Learned New Skill', 'Developed a new ability or hobby')">
-                        <span class="suggestion-icon"></span>
+                    <div class="suggestion-chip"
+                        onclick="fillForm('Learned New Skill', 'Developed a new ability or hobby')">
+                        <i class="fas fa-book-reader suggestion-icon"></i>
                         <span>Learned New Skill</span>
                     </div>
-                    <div class="suggestion-chip" onclick="fillForm('Financial Goal Met', 'Achieved a financial milestone')">
-                        <span class="suggestion-icon"></span>
+                    <div class="suggestion-chip"
+                        onclick="fillForm('Financial Goal Met', 'Achieved a financial milestone')">
+                        <i class="fas fa-dollar-sign suggestion-icon"></i>
                         <span>Financial Goal Met</span>
                     </div>
                 </div>
 
                 <div class="suggestions-grid" id="health-suggestions" style="display: none;">
-                    <div class="suggestion-chip" onclick="fillForm('Fitness Goal Achieved', 'Reached a health or fitness milestone')">
-                        <span class="suggestion-icon"></span>
+                    <div class="suggestion-chip"
+                        onclick="fillForm('Fitness Goal Achieved', 'Reached a health or fitness milestone')">
+                        <i class="fas fa-dumbbell suggestion-icon"></i>
                         <span>Fitness Goal Achieved</span>
                     </div>
                     <div class="suggestion-chip" onclick="fillForm('Healthy Weight', 'Reached target weight goal')">
-                        <span class="suggestion-icon"></span>
+                        <i class="fas fa-weight suggestion-icon"></i>
                         <span>Healthy Weight</span>
                     </div>
                     <div class="suggestion-chip" onclick="fillForm('Quit Smoking', 'Stopped smoking cigarettes')">
-                        <span class="suggestion-icon"></span>
+                        <i class="fas fa-smoking-ban suggestion-icon"></i>
                         <span>Quit Smoking</span>
                     </div>
-                    <div class="suggestion-chip" onclick="fillForm('Regular Sleep Schedule', 'Established healthy sleep routine')">
-                        <span class="suggestion-icon"></span>
+                    <div class="suggestion-chip"
+                        onclick="fillForm('Regular Sleep Schedule', 'Established healthy sleep routine')">
+                        <i class="fas fa-bed suggestion-icon"></i>
                         <span>Regular Sleep Schedule</span>
                     </div>
                 </div>
 
                 <div class="suggestions-grid" id="relationships-suggestions" style="display: none;">
-                    <div class="suggestion-chip" onclick="fillForm('Repaired Relationship', 'Mended a broken relationship')">
-                        <span class="suggestion-icon"></span>
+                    <div class="suggestion-chip"
+                        onclick="fillForm('Repaired Relationship', 'Mended a broken relationship')">
+                        <i class="fas fa-heart suggestion-icon"></i>
                         <span>Repaired Relationship</span>
                     </div>
                     <div class="suggestion-chip" onclick="fillForm('Family Reunion', 'Reconnected with family')">
-                        <span class="suggestion-icon"></span>
+                        <i class="fas fa-home suggestion-icon"></i>
                         <span>Family Reunion</span>
                     </div>
-                    <div class="suggestion-chip" onclick="fillForm('Helped Others', 'Supported someone else in recovery')">
-                        <span class="suggestion-icon"></span>
+                    <div class="suggestion-chip"
+                        onclick="fillForm('Helped Others', 'Supported someone else in recovery')">
+                        <i class="fas fa-hands-helping suggestion-icon"></i>
                         <span>Helped Others</span>
                     </div>
                     <div class="suggestion-chip" onclick="fillForm('Built Trust', 'Regained trust with loved ones')">
-                        <span class="suggestion-icon"></span>
+                        <i class="fas fa-shield-alt suggestion-icon"></i>
                         <span>Built Trust</span>
                     </div>
                 </div>
@@ -559,21 +577,16 @@
             <!-- Main Form -->
             <form method="post" id="milestone-form">
                 {% csrf_token %}
-                
+
                 <!-- Title Field -->
                 <div class="form-section">
                     <label for="id_title" class="form-label">
                         Milestone Title <span class="required">*</span>
                     </label>
-                    <input type="text" 
-                           id="id_title" 
-                           name="title" 
-                           class="form-control" 
-                           placeholder="e.g., 30 Days Sober, Completed Step 4, New Job"
-                           maxlength="200"
-                           required>
+                    <input type="text" id="id_title" name="title" class="form-control"
+                        placeholder="e.g., 30 Days Sober, Completed Step 4, New Job" maxlength="200" required>
                     <div class="form-text">
-                        <span>ℹ</span> Give your milestone a clear, memorable title
+                        <i class="fas fa-info-circle"></i> Give your milestone a clear, memorable title
                     </div>
                 </div>
 
@@ -582,13 +595,9 @@
                     <label for="id_description" class="form-label">
                         Description <span class="optional">(optional)</span>
                     </label>
-                    <textarea id="id_description" 
-                              name="description" 
-                              class="form-control" 
-                              placeholder="Share more about this achievement and what it means to you..."
-                              rows="4"
-                              maxlength="1000"
-                              oninput="updateCharCount(this)"></textarea>
+                    <textarea id="id_description" name="description" class="form-control"
+                        placeholder="Share more about this achievement and what it means to you..." rows="4"
+                        maxlength="1000" oninput="updateCharCount(this)"></textarea>
                     <div class="character-counter">
                         <span id="char-count">0</span> / 1000
                     </div>
@@ -600,27 +609,21 @@
                         Date Achieved <span class="optional">(optional)</span>
                     </label>
                     <div class="date-input-wrapper">
-                        <span class="input-icon"></span>
-                        <input type="date" 
-                               id="id_date_achieved" 
-                               name="date_achieved" 
-                               class="form-control"
-                               max="{{ today }}">
+                        <i class="fas fa-calendar-alt input-icon"></i>
+                        <input type="date" id="id_date_achieved" name="date_achieved" class="form-control"
+                            max="{{ today }}">
                     </div>
                     <div class="form-text">
-                        <span></span> Leave blank to use today's date
+                        <i class="fas fa-clock"></i> Leave blank to use today's date
                     </div>
                 </div>
 
                 <!-- Privacy Toggle -->
                 <div class="privacy-toggle">
                     <div class="form-check">
-                        <input type="checkbox" 
-                               id="id_is_private" 
-                               name="is_private" 
-                               class="form-check-input">
+                        <input type="checkbox" id="id_is_private" name="is_private" class="form-check-input">
                         <label for="id_is_private" class="form-check-label">
-                            <span></span>
+                            <i class="fas fa-lock"></i>
                             Keep this milestone private
                         </label>
                     </div>
@@ -629,10 +632,10 @@
                 <!-- Form Actions -->
                 <div class="form-actions">
                     <a href="{% url 'accounts:milestones' %}" class="btn btn-secondary">
-                        <span>←</span> Cancel
+                        <i class="fas fa-arrow-left"></i> Cancel
                     </a>
                     <button type="submit" class="btn btn-primary" id="submit-btn">
-                        <span>✨</span> Save Milestone
+                        <i class="fas fa-save"></i> Save Milestone
                     </button>
                 </div>
             </form>
@@ -641,93 +644,93 @@
 </div>
 
 <script>
-// Category switching
-function showCategory(category) {
-    // Hide all suggestion grids
-    document.querySelectorAll('.suggestions-grid').forEach(grid => {
-        grid.style.display = 'none';
-    });
-    
-    // Show selected category
-    document.getElementById(category + '-suggestions').style.display = 'grid';
-    
-    // Update tab states
-    document.querySelectorAll('.category-tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    event.target.classList.add('active');
-}
-
-// Fill form with suggestion
-function fillForm(title, description = '') {
-    document.getElementById('id_title').value = title;
-    if (description && document.getElementById('id_description')) {
-        document.getElementById('id_description').value = description;
-        updateCharCount(document.getElementById('id_description'));
-    }
-    
-    // Scroll to form
-    document.getElementById('milestone-form').scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center' 
-    });
-    
-    // Highlight the title field briefly
-    const titleField = document.getElementById('id_title');
-    titleField.style.transition = 'all 0.3s ease';
-    titleField.style.boxShadow = '0 0 0 3px rgba(82, 183, 136, 0.3)';
-    setTimeout(() => {
-        titleField.style.boxShadow = '';
-    }, 1500);
-}
-
-// Character counter
-function updateCharCount(textarea) {
-    const count = textarea.value.length;
-    document.getElementById('char-count').textContent = count;
-    
-    // Change color as approaching limit
-    const counter = document.getElementById('char-count');
-    if (count > 900) {
-        counter.style.color = '#dc3545';
-    } else if (count > 750) {
-        counter.style.color = '#ffc107';
-    } else {
-        counter.style.color = '#6c757d';
-    }
-}
-
-// Set max date to today
-document.addEventListener('DOMContentLoaded', function() {
-    const dateInput = document.getElementById('id_date_achieved');
-    if (dateInput) {
-        const today = new Date().toISOString().split('T')[0];
-        dateInput.max = today;
-    }
-});
-
-// Form submission handling
-document.getElementById('milestone-form').addEventListener('submit', function(e) {
-    const submitBtn = document.getElementById('submit-btn');
-    submitBtn.classList.add('btn-loading');
-    submitBtn.disabled = true;
-});
-
-// Add visual feedback for suggestion selection
-document.querySelectorAll('.suggestion-chip').forEach(chip => {
-    chip.addEventListener('click', function() {
-        // Remove selected class from all chips
-        document.querySelectorAll('.suggestion-chip').forEach(c => {
-            c.classList.remove('selected');
+    // Category switching
+    function showCategory(category) {
+        // Hide all suggestion grids
+        document.querySelectorAll('.suggestions-grid').forEach(grid => {
+            grid.style.display = 'none';
         });
-        // Add selected class to clicked chip
-        this.classList.add('selected');
-        
-        // Remove it after animation
+
+        // Show selected category
+        document.getElementById(category + '-suggestions').style.display = 'grid';
+
+        // Update tab states
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        event.target.classList.add('active');
+    }
+
+    // Fill form with suggestion
+    function fillForm(title, description = '') {
+        document.getElementById('id_title').value = title;
+        if (description && document.getElementById('id_description')) {
+            document.getElementById('id_description').value = description;
+            updateCharCount(document.getElementById('id_description'));
+        }
+
+        // Scroll to form
+        document.getElementById('milestone-form').scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
+
+        // Highlight the title field briefly
+        const titleField = document.getElementById('id_title');
+        titleField.style.transition = 'all 0.3s ease';
+        titleField.style.boxShadow = '0 0 0 3px rgba(82, 183, 136, 0.3)';
         setTimeout(() => {
-            this.classList.remove('selected');
-        }, 800);
+            titleField.style.boxShadow = '';
+        }, 1500);
+    }
+
+    // Character counter
+    function updateCharCount(textarea) {
+        const count = textarea.value.length;
+        document.getElementById('char-count').textContent = count;
+
+        // Change color as approaching limit
+        const counter = document.getElementById('char-count');
+        if (count > 900) {
+            counter.style.color = '#dc3545';
+        } else if (count > 750) {
+            counter.style.color = '#ffc107';
+        } else {
+            counter.style.color = '#6c757d';
+        }
+    }
+
+    // Set max date to today
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateInput = document.getElementById('id_date_achieved');
+        if (dateInput) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.max = today;
+        }
     });
-});
+
+    // Form submission handling
+    document.getElementById('milestone-form').addEventListener('submit', function (e) {
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.classList.add('btn-loading');
+        submitBtn.disabled = true;
+    });
+
+    // Add visual feedback for suggestion selection
+    document.querySelectorAll('.suggestion-chip').forEach(chip => {
+        chip.addEventListener('click', function () {
+            // Remove selected class from all chips
+            document.querySelectorAll('.suggestion-chip').forEach(c => {
+                c.classList.remove('selected');
+            });
+            // Add selected class to clicked chip
+            this.classList.add('selected');
+
+            // Remove it after animation
+            setTimeout(() => {
+                this.classList.remove('selected');
+            }, 800);
+        });
+    });
 </script>
 {% endblock %}

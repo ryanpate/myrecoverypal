@@ -1,54 +1,204 @@
 <!-- Create this file: apps/accounts/templates/accounts/suggested_users.html -->
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Suggested Users - MyRecoveryPal{% endblock %}
 
+{% block extra_css %}
+<style>
+    .user-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+        transition: all 0.3s;
+        height: 100%;
+    }
+
+    .user-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .user-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+        font-weight: bold;
+        overflow: hidden;
+        margin: 0 auto 1rem;
+    }
+
+    .user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .user-card h5 {
+        color: #1e4d8b;
+        margin-bottom: 0.5rem;
+    }
+
+    .user-username {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .user-bio {
+        color: #495057;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        min-height: 60px;
+    }
+
+    .btn-follow {
+        width: 100%;
+        background: #52b788;
+        color: white;
+        border: none;
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-follow:hover {
+        background: #45a374;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: #52b788;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="fas fa-user-plus"></i> Suggested for You</h1>
+        <p>Discover new connections in the recovery community</p>
+    </div>
+</div>
+
 <div class="container">
-    <h2>Suggested for You</h2>
-    <p>Discover new connections in the recovery community</p>
-    
+    {% if suggested_users %}
     <div class="row">
         {% for user in suggested_users %}
-        <div class="col-md-4 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5>{{ user.get_full_name|default:user.username }}</h5>
-                    <p class="text-muted">@{{ user.username }}</p>
-                    {% if user.bio %}
-                    <p>{{ user.bio|truncatewords:15 }}</p>
+        <div class="col-md-4 mb-4">
+            <div class="user-card text-center">
+                <div class="user-avatar">
+                    {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="{{ user.username }}">
+                    {% else %}
+                    {{ user.username|first|upper }}
                     {% endif %}
-                    <button class="btn btn-primary" onclick="followUser('{{ user.username }}')">
-                        Follow
-                    </button>
                 </div>
+                <h5>{{ user.get_full_name|default:user.username }}</h5>
+                <p class="user-username">@{{ user.username }}</p>
+                {% if user.bio %}
+                <p class="user-bio">{{ user.bio|truncatewords:15 }}</p>
+                {% else %}
+                <p class="user-bio text-muted"><i class="fas fa-info-circle"></i> No bio available</p>
+                {% endif %}
+                <button class="btn btn-follow" onclick="followUser('{{ user.username }}', this)">
+                    <i class="fas fa-user-plus"></i> Follow
+                </button>
             </div>
         </div>
         {% endfor %}
     </div>
-    
-    <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-user-friends"></i>
+        <h3>No Suggestions Available</h3>
+        <p>Check back later for personalized connection recommendations.</p>
+        <a href="{% url 'accounts:community' %}" class="btn btn-primary">
+            <i class="fas fa-users"></i> Browse Community
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="text-center mt-4 mb-5">
+        <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
 </div>
 
 <script>
-async function followUser(username) {
-    try {
-        const response = await fetch(`/accounts/follow/${username}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-                'Content-Type': 'application/json',
-            },
-        });
-        
-        const data = await response.json();
-        if (data.success) {
-            alert(data.is_following ? 'Now following!' : 'Unfollowed');
-            location.reload();
+    async function followUser(username, button) {
+        try {
+            const response = await fetch(`/accounts/follow/${username}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                if (data.is_following) {
+                    button.innerHTML = '<i class="fas fa-check"></i> Following';
+                    button.style.background = '#6c757d';
+                    button.disabled = true;
+
+                    // Show success message
+                    showToast('Now following ' + username + '!', 'success');
+                } else {
+                    button.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+                    button.style.background = '#52b788';
+                    button.disabled = false;
+                }
+            } else {
+                showToast('Failed to follow user', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('An error occurred', 'error');
         }
-    } catch (error) {
-        console.error('Error:', error);
     }
-}
+
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible`;
+        toast.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+        toast.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 3000);
+    }
 </script>
 {% endblock %}

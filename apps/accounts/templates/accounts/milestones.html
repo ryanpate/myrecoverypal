@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}My Milestones - Journey to Recovery{% endblock %}
+{% block title %}My Milestones - MyRecoveryPal{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -38,7 +38,9 @@
         text-decoration: none;
         font-weight: 600;
         transition: all 0.3s ease;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .add-milestone-btn-top:hover {
@@ -112,6 +114,9 @@
         color: #666;
         font-size: 0.9rem;
         margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .empty-state {
@@ -124,7 +129,7 @@
 
     .empty-state-icon {
         font-size: 3rem;
-        color: #ddd;
+        color: #52b788;
         margin-bottom: 1rem;
     }
 
@@ -178,7 +183,7 @@
             <p>Track and celebrate your recovery journey</p>
         </div>
         <a href="{% url 'accounts:add_milestone' %}" class="add-milestone-btn-top">
-            Add Milestone
+            <i class="fas fa-plus"></i> Add Milestone
         </a>
     </div>
 
@@ -192,10 +197,12 @@
             <p>{{ milestone.description }}</p>
             {% endif %}
             <div class="milestone-date">
+                <i class="fas fa-calendar"></i>
                 {{ milestone.date_achieved|date:"F d, Y" }}
             </div>
             {% if milestone.milestone_type == 'days' and milestone.calculated_days_sober is not None %}
             <div class="milestone-date">
+                <i class="fas fa-trophy"></i>
                 {% if milestone.calculated_days_sober == 0 %}
                 First day of sobriety
                 {% else %}
@@ -214,7 +221,7 @@
         <h3>No milestones yet</h3>
         <p>Start celebrating your achievements and track your recovery journey!</p>
         <a href="{% url 'accounts:add_milestone' %}" class="btn btn-primary">
-            Add Your First Milestone
+            <i class="fas fa-plus"></i> Add Your First Milestone
         </a>
     </div>
     {% endif %}

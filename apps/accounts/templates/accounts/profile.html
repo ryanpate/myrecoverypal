@@ -282,6 +282,7 @@
     .milestone-icon {
         font-size: 2rem;
         margin-bottom: 0.5rem;
+        color: #52b788;
     }
 
     .milestone-title {
@@ -328,6 +329,11 @@
         margin-top: 0.25rem;
     }
 
+    .post-meta-separator {
+        margin: 0 0.5rem;
+        color: #999;
+    }
+
     /* Private Profile */
     .private-profile {
         text-align: center;
@@ -349,6 +355,19 @@
     }
 
     .info-section a:hover {
+        color: #4db8e8;
+    }
+
+    .view-all-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #1e4d8b;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .view-all-link:hover {
         color: #4db8e8;
     }
 
@@ -413,7 +432,7 @@
     <p><i class="fas fa-map-marker-alt"></i> {{ profile_user.location }}</p>
     {% endif %}
     {% if profile_user.is_sponsor %}
-    <span class="badge badge-sponsor">Available as Sponsor</span>
+    <span class="badge badge-sponsor"><i class="fas fa-star"></i> Available as Sponsor</span>
     {% endif %}
 
     <div class="profile-avatar-container">
@@ -431,16 +450,16 @@
     {% if profile_user == request.user %}
     <div class="profile-actions">
         <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">
-            Edit Profile
+            <i class="fas fa-edit"></i> Edit Profile
         </a>
         <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary">
-            Dashboard
+            <i class="fas fa-tachometer-alt"></i> Dashboard
         </a>
     </div>
     {% elif request.user.is_authenticated and profile_user.allow_messages %}
     <div class="profile-actions">
         <a href="{% url 'accounts:send_message' profile_user.username %}" class="message-btn">
-            Send Message
+            <i class="fas fa-envelope"></i> Send Message
         </a>
     </div>
     {% endif %}
@@ -452,7 +471,7 @@
         <div class="sobriety-days">{{ profile_user.get_days_sober }}</div>
         <div class="sobriety-label">Days of Sobriety</div>
         <p style="margin-top: 1rem; opacity: 0.95;">
-            Clean since {{ profile_user.sobriety_date|date:"F d, Y" }}
+            <i class="fas fa-calendar-check"></i> Clean since {{ profile_user.sobriety_date|date:"F d, Y" }}
         </p>
     </div>
     {% endif %}
@@ -460,7 +479,7 @@
     <!-- Bio Section -->
     {% if profile_user.bio %}
     <div class="bio-section">
-        <h3>About</h3>
+        <h3><i class="fas fa-user-circle"></i> About</h3>
         <p>{{ profile_user.bio|linebreaks }}</p>
     </div>
     {% endif %}
@@ -468,7 +487,7 @@
     <div class="profile-info">
         <!-- Basic Information -->
         <div class="info-section">
-            <h3>Profile Information</h3>
+            <h3><i class="fas fa-info-circle"></i> Profile Information</h3>
             <div class="info-row">
                 <span class="info-label">Member Since</span>
                 <span class="info-value">{{ profile_user.date_joined|date:"F Y" }}</span>
@@ -483,9 +502,9 @@
                 <span class="info-label">Profile Status</span>
                 <span class="info-value">
                     {% if profile_user.is_profile_public %}
-                    <span class="badge badge-public">Public</span>
+                    <span class="badge badge-public"><i class="fas fa-globe"></i> Public</span>
                     {% else %}
-                    <span class="badge badge-private">Private</span>
+                    <span class="badge badge-private"><i class="fas fa-lock"></i> Private</span>
                     {% endif %}
                 </span>
             </div>
@@ -494,7 +513,7 @@
         <!-- Recovery Goals -->
         {% if profile_user.recovery_goals %}
         <div class="info-section">
-            <h3>Recovery Goals</h3>
+            <h3><i class="fas fa-bullseye"></i> Recovery Goals</h3>
             <p style="color: #444; line-height: 1.6;">{{ profile_user.recovery_goals|linebreaks }}</p>
         </div>
         {% endif %}
@@ -502,11 +521,11 @@
         <!-- Recent Milestones -->
         {% if milestones %}
         <div class="info-section">
-            <h3>Recent Milestones</h3>
+            <h3><i class="fas fa-trophy"></i> Recent Milestones</h3>
             <div class="milestone-grid">
                 {% for milestone in milestones %}
                 <div class="milestone-card">
-                    <div class="milestone-icon"></div>
+                    <div class="milestone-icon"><i class="fas fa-award"></i></div>
                     <div class="milestone-title">{{ milestone.title }}</div>
                     <div class="milestone-date">{{ milestone.date_achieved|date:"M d, Y" }}</div>
                 </div>
@@ -514,8 +533,8 @@
             </div>
             {% if profile_user == request.user %}
             <div style="text-align: center; margin-top: 1rem;">
-                <a href="{% url 'accounts:milestones' %}">
-                    View All Milestones →
+                <a href="{% url 'accounts:milestones' %}" class="view-all-link">
+                    View All Milestones <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
             {% endif %}
@@ -525,13 +544,14 @@
         <!-- Recent Blog Posts -->
         {% if recent_posts %}
         <div class="info-section">
-            <h3>Recent Blog Posts</h3>
+            <h3><i class="fas fa-newspaper"></i> Recent Blog Posts</h3>
             <ul class="recent-posts">
                 {% for post in recent_posts %}
                 <li>
                     <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
                     <div class="post-meta">
-                        {{ post.published_at|date:"M d, Y" }} • {{ post.views }} views
+                        {{ post.published_at|date:"M d, Y" }} <span class="post-meta-separator"><i class="fas fa-circle"
+                                style="font-size: 0.3rem;"></i></span> {{ post.views }} views
                     </div>
                 </li>
                 {% endfor %}
