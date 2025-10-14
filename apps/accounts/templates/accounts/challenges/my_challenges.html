@@ -350,20 +350,20 @@
 {% block content %}
 <div class="page-header challenges-header">
     <div class="container">
-        <h1>🏆 My Challenge Dashboard</h1>
+        <h1><i class="fas fa-trophy"></i> My Challenge Dashboard</h1>
         <p>Track your progress and celebrate your achievements</p>
 
         <!-- Action buttons in header -->
         <div class="header-action-buttons">
             <a href="{% url 'accounts:challenges_home' %}" class="header-btn">
-                🔍 Browse Challenges
+                <i class="fas fa-search"></i> Browse Challenges
             </a>
             {% if user.is_authenticated %}
             <a href="{% url 'accounts:create_challenge' %}" class="header-btn">
-                ➕ Create Challenge
+                <i class="fas fa-plus"></i> Create Challenge
             </a>
             <a href="{% url 'accounts:community' %}" class="header-btn">
-                🤝 Community Hub
+                <i class="fas fa-user-friends"></i> Community Hub
             </a>
             {% endif %}
         </div>
@@ -373,7 +373,7 @@
 <div class="container">
     <!-- Stats Overview -->
     <div class="stats-overview">
-        <h4 class="mb-3">📊 Your Challenge Statistics</h4>
+        <h4 class="mb-3"><i class="fas fa-chart-bar"></i> Your Challenge Statistics</h4>
         <div class="row">
             <div class="col-lg-3 col-md-6">
                 <div class="stat-card">
@@ -405,7 +405,7 @@
     <!-- Check-in Alerts -->
     {% if pending_checkins %}
     <div class="check-in-alerts">
-        <h5 class="mb-3">⏰ Check-ins Needed Today</h5>
+        <h5 class="mb-3"><i class="fas fa-clock"></i> Check-ins Needed Today</h5>
         {% for participation in pending_checkins %}
         <div class="alert-item">
             <div>
@@ -423,7 +423,7 @@
     <!-- Active Challenges -->
     {% if active_participations %}
     <div class="active-challenges">
-        <h4 class="mb-3">🔥 Active Challenges</h4>
+        <h4 class="mb-3"><i class="fas fa-fire"></i> Active Challenges</h4>
         {% for participation in active_participations %}
         <div class="challenge-card">
             <div class="challenge-header">
@@ -457,7 +457,7 @@
 
             <div class="action-buttons">
                 <a href="{% url 'accounts:challenge_check_in' participation.challenge.id %}" class="btn-check-in">
-                    ✅ Check In
+                    <i class="fas fa-check-circle"></i> Check In
                 </a>
                 <a href="{% url 'accounts:challenge_detail' participation.challenge.id %}" class="btn-view">
                     View Details
@@ -468,7 +468,7 @@
     </div>
     {% else %}
     <div class="empty-state">
-        <div class="empty-state-icon">🎯</div>
+        <div class="empty-state-icon"><i class="fas fa-bullseye"></i></div>
         <h4>No Active Challenges</h4>
         <p>Start your journey by joining a challenge!</p>
         <a href="{% url 'accounts:challenges_home' %}" class="btn btn-success btn-lg">
@@ -482,11 +482,11 @@
         {% if badges %}
         <div class="col-lg-6">
             <div class="badges-earned">
-                <h4 class="mb-3">🏅 Recent Badges</h4>
+                <h4 class="mb-3"><i class="fas fa-medal"></i> Recent Badges</h4>
                 {% for badge in badges|slice:":5" %}
                 <div class="badge-item rarity-{{ badge.rarity|default:1 }}">
                     <div class="badge-icon">
-                        {{ badge.icon|default:"🏆" }}
+                        <i class="fas fa-trophy"></i>
                     </div>
                     <div class="badge-info">
                         <div class="badge-name">{{ badge.name }}</div>
@@ -502,18 +502,18 @@
         {% if completed_participations %}
         <div class="col-lg-6">
             <div class="completed-challenges">
-                <h4 class="mb-3">✅ Completed Challenges</h4>
+                <h4 class="mb-3"><i class="fas fa-check-circle"></i> Completed Challenges</h4>
                 {% for participation in completed_participations|slice:":5" %}
                 <div class="completed-challenge-item">
                     <div class="completion-badge">
-                        ✓
+                        <i class="fas fa-check"></i>
                     </div>
                     <div>
                         <strong>{{ participation.challenge.title }}</strong>
                         <small class="d-block text-muted">
                             Completed {{ participation.completed_date|date:"M d, Y" }}
                             {% if participation.longest_streak %}
-                            • 🔥{{ participation.longest_streak }} best streak
+                            • <i class="fas fa-fire"></i>{{ participation.longest_streak }} best streak
                             {% endif %}
                         </small>
                     </div>
@@ -543,18 +543,24 @@
         <div class="dropdown dropup">
             <button class="btn btn-primary btn-lg rounded-circle" type="button" data-bs-toggle="dropdown"
                 style="width: 60px; height: 60px; background: var(--accent-green); border-color: var(--accent-green);">
-                ➕
+                <i class="fas fa-plus"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="{% url 'accounts:create_challenge' %}">➕ Create Challenge</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:challenges_home' %}">🔍 Browse Challenges</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:create_challenge' %}"><i class="fas fa-plus"></i>
+                        Create Challenge</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:challenges_home' %}"><i class="fas fa-search"></i>
+                        Browse Challenges</a></li>
                 <li>
                     <hr class="dropdown-divider">
                 </li>
-                <li><a class="dropdown-item" href="{% url 'accounts:groups_list' %}">👥 Browse Groups</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:community' %}">🤝 Community Hub</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">🎯 Sponsor Hub</a></li>
-                <li><a class="dropdown-item" href="{% url 'accounts:pal_dashboard' %}">🤝 Pal Hub</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:groups_list' %}"><i class="fas fa-users"></i> Browse
+                        Groups</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:community' %}"><i class="fas fa-user-friends"></i>
+                        Community Hub</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}"><i class="fas fa-star"></i>
+                        Sponsor Hub</a></li>
+                <li><a class="dropdown-item" href="{% url 'accounts:pal_dashboard' %}"><i class="fas fa-handshake"></i>
+                        Pal Hub</a></li>
             </ul>
         </div>
     </div>

@@ -4,7 +4,7 @@
 {% block title %}{{ title }} - MyRecoveryPal{% endblock %}
 
 {% block extra_css %}
-<style>    
+<style>
     .form-container {
         background: white;
         border-radius: 12px;
@@ -12,18 +12,18 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         margin-bottom: 2rem;
     }
-    
+
     .form-section {
         margin-bottom: 2rem;
         padding-bottom: 2rem;
         border-bottom: 1px solid #e9ecef;
     }
-    
+
     .form-section:last-child {
         border-bottom: none;
         margin-bottom: 0;
     }
-    
+
     .section-title {
         color: #667eea;
         font-size: 1.2rem;
@@ -32,50 +32,50 @@
         display: flex;
         align-items: center;
     }
-    
+
     .section-icon {
         margin-right: 0.5rem;
         font-size: 1.5rem;
     }
-    
+
     .form-group {
         margin-bottom: 1.5rem;
     }
-    
+
     .form-label {
         font-weight: 600;
         color: #495057;
         margin-bottom: 0.5rem;
     }
-    
+
     .form-control {
         border-radius: 8px;
         border: 1px solid #ced4da;
         padding: 0.75rem;
         transition: all 0.3s ease;
     }
-    
+
     .form-control:focus {
         border-color: #667eea;
         box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
     }
-    
+
     .form-check {
         margin-bottom: 1rem;
     }
-    
+
     .form-check-input:checked {
         background-color: #667eea;
         border-color: #667eea;
     }
-    
+
     .challenge-type-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1rem;
         margin-bottom: 1rem;
     }
-    
+
     .challenge-type-option {
         border: 2px solid #e9ecef;
         border-radius: 8px;
@@ -85,30 +85,30 @@
         transition: all 0.3s ease;
         background: white;
     }
-    
+
     .challenge-type-option:hover {
         border-color: #667eea;
         background: #f8f9fc;
     }
-    
+
     .challenge-type-option.selected {
         border-color: #667eea;
         background: #667eea;
         color: white;
     }
-    
+
     .challenge-type-icon {
         font-size: 2rem;
         margin-bottom: 0.5rem;
     }
-    
+
     .duration-options {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
         gap: 0.5rem;
         margin-bottom: 1rem;
     }
-    
+
     .duration-option {
         border: 1px solid #ced4da;
         border-radius: 6px;
@@ -118,59 +118,59 @@
         transition: all 0.3s ease;
         background: white;
     }
-    
+
     .duration-option:hover {
         border-color: #667eea;
         background: #f8f9fc;
     }
-    
+
     .duration-option.selected {
         border-color: #667eea;
         background: #667eea;
         color: white;
     }
-    
+
     .tips-section {
         background: #f8f9fc;
         border-radius: 8px;
         padding: 1.5rem;
         margin-bottom: 2rem;
     }
-    
+
     .tip-item {
         display: flex;
         align-items: flex-start;
         margin-bottom: 1rem;
     }
-    
+
     .tip-item:last-child {
         margin-bottom: 0;
     }
-    
+
     .tip-icon {
         margin-right: 0.75rem;
         margin-top: 0.25rem;
         font-size: 1.2rem;
     }
-    
+
     .preview-section {
         background: #e8f4f8;
         border-radius: 8px;
         padding: 1.5rem;
         margin-top: 1rem;
     }
-    
+
     .char-counter {
         font-size: 0.8rem;
         color: #6c757d;
         text-align: right;
         margin-top: 0.25rem;
     }
-    
+
     .char-counter.warning {
         color: #ffc107;
     }
-    
+
     .char-counter.danger {
         color: #dc3545;
     }
@@ -187,7 +187,7 @@
                 {% if group %}
                 <div class="mt-3">
                     <span class="badge bg-light text-dark fs-6">
-                        👥 {{ group.name }}
+                        <i class="fas fa-users"></i> {{ group.name }}
                     </span>
                 </div>
                 {% endif %}
@@ -201,27 +201,29 @@
         <div class="col-lg-8 mx-auto">
             <!-- Tips Section -->
             <div class="tips-section">
-                <h5 class="mb-3">💡 Tips for Creating Successful Challenges</h5>
+                <h5 class="mb-3"><i class="fas fa-lightbulb"></i> Tips for Creating Successful Challenges</h5>
                 <div class="tip-item">
-                    <div class="tip-icon">🎯</div>
+                    <div class="tip-icon"><i class="fas fa-bullseye text-success"></i></div>
                     <div>
-                        <strong>Be specific:</strong> Clear, actionable daily goals work best (e.g., "10 minutes of meditation" vs "practice mindfulness")
+                        <strong>Be specific:</strong> Clear, actionable daily goals work best (e.g., "10 minutes of
+                        meditation" vs "practice mindfulness")
                     </div>
                 </div>
                 <div class="tip-item">
-                    <div class="tip-icon">📅</div>
+                    <div class="tip-icon"><i class="fas fa-calendar-alt text-primary"></i></div>
                     <div>
-                        <strong>Start small:</strong> 7-21 day challenges often have higher completion rates than longer ones
+                        <strong>Start small:</strong> 7-21 day challenges often have higher completion rates than longer
+                        ones
                     </div>
                 </div>
                 <div class="tip-item">
-                    <div class="tip-icon">🤝</div>
+                    <div class="tip-icon"><i class="fas fa-handshake text-info"></i></div>
                     <div>
                         <strong>Encourage community:</strong> Enable leaderboards and pal systems to boost engagement
                     </div>
                 </div>
                 <div class="tip-item">
-                    <div class="tip-icon">🏆</div>
+                    <div class="tip-icon"><i class="fas fa-trophy text-warning"></i></div>
                     <div>
                         <strong>Celebrate completion:</strong> Create a meaningful badge name and completion message
                     </div>
@@ -231,14 +233,14 @@
             <!-- Form -->
             <form method="post" class="form-container">
                 {% csrf_token %}
-                
+
                 <!-- Basic Information -->
                 <div class="form-section">
                     <h3 class="section-title">
-                        <span class="section-icon">📝</span>
+                        <span class="section-icon"><i class="fas fa-edit"></i></span>
                         Basic Information
                     </h3>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.title.id_for_label }}" class="form-label">
                             Challenge Title *
@@ -254,7 +256,7 @@
                         <div class="text-danger small">{{ form.title.errors.0 }}</div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.description.id_for_label }}" class="form-label">
                             Description *
@@ -275,26 +277,26 @@
                 <!-- Challenge Type -->
                 <div class="form-section">
                     <h3 class="section-title">
-                        <span class="section-icon">🎯</span>
+                        <span class="section-icon"><i class="fas fa-bullseye"></i></span>
                         Challenge Type & Duration
                     </h3>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Challenge Type *</label>
                         <div class="challenge-type-grid">
                             {% for value, label in form.challenge_type.field.choices %}
                             <div class="challenge-type-option" data-value="{{ value }}">
                                 <div class="challenge-type-icon">
-                                    {% if value == 'sobriety' %}🎯
-                                    {% elif value == 'wellness' %}💪
-                                    {% elif value == 'mindfulness' %}🧘
-                                    {% elif value == 'community' %}🤝
-                                    {% elif value == 'self_care' %}🌿
-                                    {% elif value == 'gratitude' %}🙏
-                                    {% elif value == 'exercise' %}🏃
-                                    {% elif value == 'learning' %}📚
-                                    {% elif value == 'service' %}🤲
-                                    {% elif value == 'creativity' %}🎨
+                                    {% if value == 'sobriety' %}<i class="fas fa-bullseye"></i>
+                                    {% elif value == 'wellness' %}<i class="fas fa-heartbeat"></i>
+                                    {% elif value == 'mindfulness' %}<i class="fas fa-om"></i>
+                                    {% elif value == 'community' %}<i class="fas fa-handshake"></i>
+                                    {% elif value == 'self_care' %}<i class="fas fa-spa"></i>
+                                    {% elif value == 'gratitude' %}<i class="fas fa-praying-hands"></i>
+                                    {% elif value == 'exercise' %}<i class="fas fa-running"></i>
+                                    {% elif value == 'learning' %}<i class="fas fa-book"></i>
+                                    {% elif value == 'service' %}<i class="fas fa-hands-helping"></i>
+                                    {% elif value == 'creativity' %}<i class="fas fa-palette"></i>
                                     {% endif %}
                                 </div>
                                 <div>{{ label|slice:"2:" }}</div>
@@ -306,7 +308,7 @@
                         <div class="text-danger small">{{ form.challenge_type.errors.0 }}</div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Duration *</label>
                         <div class="duration-options">
@@ -321,7 +323,7 @@
                         <div class="text-danger small">{{ form.duration_days.errors.0 }}</div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.start_date.id_for_label }}" class="form-label">
                             Start Date *
@@ -339,10 +341,10 @@
                 <!-- Daily Goal -->
                 <div class="form-section">
                     <h3 class="section-title">
-                        <span class="section-icon">📋</span>
+                        <span class="section-icon"><i class="fas fa-clipboard-list"></i></span>
                         Daily Goal & Rules
                     </h3>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.daily_goal_description.id_for_label }}" class="form-label">
                             Daily Goal Description *
@@ -358,7 +360,7 @@
                         <div class="text-danger small">{{ form.daily_goal_description.errors.0 }}</div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.rules_and_guidelines.id_for_label }}" class="form-label">
                             Rules & Guidelines
@@ -379,10 +381,10 @@
                 <!-- Settings -->
                 <div class="form-section">
                     <h3 class="section-title">
-                        <span class="section-icon">⚙️</span>
+                        <span class="section-icon"><i class="fas fa-cogs"></i></span>
                         Challenge Settings
                     </h3>
-                    
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -410,13 +412,13 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-check">
                                 {{ form.enable_daily_check_in }}
                                 <label class="form-check-label" for="{{ form.enable_daily_check_in.id_for_label }}">
-                                    📝 Enable daily check-ins
+                                    <i class="fas fa-clipboard-check"></i> Enable daily check-ins
                                 </label>
                             </div>
                         </div>
@@ -424,7 +426,7 @@
                             <div class="form-check">
                                 {{ form.enable_leaderboard }}
                                 <label class="form-check-label" for="{{ form.enable_leaderboard.id_for_label }}">
-                                    🏆 Show leaderboard
+                                    <i class="fas fa-trophy"></i> Show leaderboard
                                 </label>
                             </div>
                         </div>
@@ -432,7 +434,7 @@
                             <div class="form-check">
                                 {{ form.allow_pal_system }}
                                 <label class="form-check-label" for="{{ form.allow_pal_system.id_for_label }}">
-                                    🤝 Allow pal partnerships
+                                    <i class="fas fa-handshake"></i> Allow pal partnerships
                                 </label>
                             </div>
                         </div>
@@ -442,10 +444,10 @@
                 <!-- Completion Rewards -->
                 <div class="form-section">
                     <h3 class="section-title">
-                        <span class="section-icon">🏆</span>
+                        <span class="section-icon"><i class="fas fa-trophy"></i></span>
                         Completion Rewards
                     </h3>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.completion_badge_name.id_for_label }}" class="form-label">
                             Badge Name
@@ -458,7 +460,7 @@
                         <div class="text-danger small">{{ form.completion_badge_name.errors.0 }}</div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.completion_message.id_for_label }}" class="form-label">
                             Completion Message
@@ -478,13 +480,14 @@
 
                 <!-- Preview -->
                 <div class="preview-section">
-                    <h5>📱 Challenge Preview</h5>
+                    <h5><i class="fas fa-mobile-alt"></i> Challenge Preview</h5>
                     <div id="challenge-preview">
                         <div class="card">
                             <div class="card-body">
                                 <div class="challenge-type-badge" id="preview-type">Select a type</div>
                                 <h5 class="card-title" id="preview-title">Challenge Title</h5>
-                                <p class="card-text" id="preview-description">Challenge description will appear here...</p>
+                                <p class="card-text" id="preview-description">Challenge description will appear here...
+                                </p>
                                 <div class="d-flex justify-content-between text-muted">
                                     <small id="preview-duration">Duration</small>
                                     <small id="preview-start">Start date</small>
@@ -496,12 +499,12 @@
 
                 <!-- Submit Buttons -->
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                    <a href="{% if group %}{% url 'accounts:group_detail' group.id %}{% else %}{% url 'accounts:challenges_home' %}{% endif %}" 
-                       class="btn btn-outline-secondary me-md-2">
+                    <a href="{% if group %}{% url 'accounts:group_detail' group.id %}{% else %}{% url 'accounts:challenges_home' %}{% endif %}"
+                        class="btn btn-outline-secondary me-md-2">
                         Cancel
                     </a>
                     <button type="submit" class="btn btn-primary btn-lg">
-                        🚀 Create Challenge
+                        <i class="fas fa-rocket"></i> Create Challenge
                     </button>
                 </div>
             </form>
@@ -512,123 +515,123 @@
 
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Challenge type selection
-    const challengeTypeInput = document.getElementById('id_challenge_type');
-    const challengeTypeOptions = document.querySelectorAll('.challenge-type-option');
-    
-    challengeTypeOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            challengeTypeOptions.forEach(opt => opt.classList.remove('selected'));
-            this.classList.add('selected');
-            challengeTypeInput.value = this.dataset.value;
-            updatePreview();
+    document.addEventListener('DOMContentLoaded', function () {
+        // Challenge type selection
+        const challengeTypeInput = document.getElementById('id_challenge_type');
+        const challengeTypeOptions = document.querySelectorAll('.challenge-type-option');
+
+        challengeTypeOptions.forEach(option => {
+            option.addEventListener('click', function () {
+                challengeTypeOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                challengeTypeInput.value = this.dataset.value;
+                updatePreview();
+            });
         });
-    });
-    
-    // Duration selection
-    const durationInput = document.getElementById('id_duration_days');
-    const durationOptions = document.querySelectorAll('.duration-option');
-    
-    durationOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            durationOptions.forEach(opt => opt.classList.remove('selected'));
-            this.classList.add('selected');
-            durationInput.value = this.dataset.value;
-            updatePreview();
+
+        // Duration selection
+        const durationInput = document.getElementById('id_duration_days');
+        const durationOptions = document.querySelectorAll('.duration-option');
+
+        durationOptions.forEach(option => {
+            option.addEventListener('click', function () {
+                durationOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                durationInput.value = this.dataset.value;
+                updatePreview();
+            });
         });
-    });
-    
-    // Character counters
-    function setupCharCounter(fieldName, maxLength) {
-        const field = document.getElementById(`id_${fieldName}`);
-        const counter = document.querySelector(`[data-field="${fieldName}"] .current`);
-        const counterElement = document.querySelector(`[data-field="${fieldName}"]`);
-        
-        if (field && counter) {
-            function updateCounter() {
-                const currentLength = field.value.length;
-                counter.textContent = currentLength;
-                
-                counterElement.classList.remove('warning', 'danger');
-                if (currentLength > maxLength * 0.9) {
-                    counterElement.classList.add('danger');
-                } else if (currentLength > maxLength * 0.75) {
-                    counterElement.classList.add('warning');
+
+        // Character counters
+        function setupCharCounter(fieldName, maxLength) {
+            const field = document.getElementById(`id_${fieldName}`);
+            const counter = document.querySelector(`[data-field="${fieldName}"] .current`);
+            const counterElement = document.querySelector(`[data-field="${fieldName}"]`);
+
+            if (field && counter) {
+                function updateCounter() {
+                    const currentLength = field.value.length;
+                    counter.textContent = currentLength;
+
+                    counterElement.classList.remove('warning', 'danger');
+                    if (currentLength > maxLength * 0.9) {
+                        counterElement.classList.add('danger');
+                    } else if (currentLength > maxLength * 0.75) {
+                        counterElement.classList.add('warning');
+                    }
                 }
+
+                field.addEventListener('input', updateCounter);
+                updateCounter(); // Initial count
             }
-            
-            field.addEventListener('input', updateCounter);
-            updateCounter(); // Initial count
         }
-    }
-    
-    setupCharCounter('title', 200);
-    setupCharCounter('description', 1000);
-    setupCharCounter('daily_goal_description', 500);
-    setupCharCounter('rules_and_guidelines', 1000);
-    setupCharCounter('completion_message', 500);
-    
-    // Live preview
-    function updatePreview() {
-        const title = document.getElementById('id_title').value || 'Challenge Title';
-        const description = document.getElementById('id_description').value || 'Challenge description will appear here...';
-        const challengeType = document.getElementById('id_challenge_type').value;
-        const duration = document.getElementById('id_duration_days').value;
-        const startDate = document.getElementById('id_start_date').value;
-        
-        document.getElementById('preview-title').textContent = title;
-        document.getElementById('preview-description').textContent = description;
-        
-        // Update type display
-        const typeDisplay = {
-            'sobriety': '🎯 Sobriety Challenge',
-            'wellness': '💪 Wellness Challenge',
-            'mindfulness': '🧘 Mindfulness Challenge',
-            'community': '🤝 Community Engagement',
-            'self_care': '🌿 Self-Care Challenge',
-            'gratitude': '🙏 Gratitude Challenge',
-            'exercise': '🏃 Exercise Challenge',
-            'learning': '📚 Learning Challenge',
-            'service': '🤲 Service Challenge',
-            'creativity': '🎨 Creative Challenge'
-        };
-        
-        document.getElementById('preview-type').textContent = typeDisplay[challengeType] || 'Select a type';
-        
-        const durationDisplay = {
-            '7': '7 Days',
-            '14': '14 Days', 
-            '21': '21 Days',
-            '30': '30 Days',
-            '60': '60 Days',
-            '90': '90 Days'
-        };
-        
-        document.getElementById('preview-duration').textContent = durationDisplay[duration] || 'Duration';
-        
-        if (startDate) {
-            const date = new Date(startDate);
-            document.getElementById('preview-start').textContent = `Starts ${date.toLocaleDateString()}`;
-        } else {
-            document.getElementById('preview-start').textContent = 'Start date';
+
+        setupCharCounter('title', 200);
+        setupCharCounter('description', 1000);
+        setupCharCounter('daily_goal_description', 500);
+        setupCharCounter('rules_and_guidelines', 1000);
+        setupCharCounter('completion_message', 500);
+
+        // Live preview
+        function updatePreview() {
+            const title = document.getElementById('id_title').value || 'Challenge Title';
+            const description = document.getElementById('id_description').value || 'Challenge description will appear here...';
+            const challengeType = document.getElementById('id_challenge_type').value;
+            const duration = document.getElementById('id_duration_days').value;
+            const startDate = document.getElementById('id_start_date').value;
+
+            document.getElementById('preview-title').textContent = title;
+            document.getElementById('preview-description').textContent = description;
+
+            // Update type display
+            const typeDisplay = {
+                'sobriety': 'Sobriety Challenge',
+                'wellness': 'Wellness Challenge',
+                'mindfulness': 'Mindfulness Challenge',
+                'community': 'Community Engagement',
+                'self_care': 'Self-Care Challenge',
+                'gratitude': 'Gratitude Challenge',
+                'exercise': 'Exercise Challenge',
+                'learning': 'Learning Challenge',
+                'service': 'Service Challenge',
+                'creativity': 'Creative Challenge'
+            };
+
+            document.getElementById('preview-type').textContent = typeDisplay[challengeType] || 'Select a type';
+
+            const durationDisplay = {
+                '7': '7 Days',
+                '14': '14 Days',
+                '21': '21 Days',
+                '30': '30 Days',
+                '60': '60 Days',
+                '90': '90 Days'
+            };
+
+            document.getElementById('preview-duration').textContent = durationDisplay[duration] || 'Duration';
+
+            if (startDate) {
+                const date = new Date(startDate);
+                document.getElementById('preview-start').textContent = `Starts ${date.toLocaleDateString()}`;
+            } else {
+                document.getElementById('preview-start').textContent = 'Start date';
+            }
         }
-    }
-    
-    // Add listeners for preview updates
-    ['id_title', 'id_description', 'id_start_date'].forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (field) {
-            field.addEventListener('input', updatePreview);
-        }
+
+        // Add listeners for preview updates
+        ['id_title', 'id_description', 'id_start_date'].forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('input', updatePreview);
+            }
+        });
+
+        // Initial preview update
+        updatePreview();
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('id_start_date').setAttribute('min', today);
     });
-    
-    // Initial preview update
-    updatePreview();
-    
-    // Set minimum date to today
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('id_start_date').setAttribute('min', today);
-});
 </script>
 {% endblock %}
