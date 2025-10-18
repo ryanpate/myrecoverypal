@@ -1818,8 +1818,6 @@
                             class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Home</a></li>
                     <li><a href="{% url 'blog:post_list' %}"
                             class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">Blog</a></li>
-                    <li><a href="{% url 'resources:list' %}"
-                            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">Resources</a>
                     </li>
                     {% if user.is_authenticated %}
                     <li><a href="{% url 'journal:entry_list' %}"
@@ -1989,10 +1987,6 @@
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     Blog
                 </a>
-                <a href="{% url 'resources:list' %}"
-                    class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
-                    Resources
-                </a>
                 <a href="{% url 'store:product_list' %}"
                     class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
                     Store
@@ -2081,10 +2075,6 @@
             class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
             <span>Journal</span>
         </a>
-        <a href="{% url 'resources:list' %}"
-            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
-            <span>Resources</span>
-        </a>
         <a href="{% url 'accounts:community' %}"
             class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
             <span>Community</span>
@@ -2102,10 +2092,6 @@
         <a href="{% url 'blog:post_list' %}"
             class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
             <span>Blog</span>
-        </a>
-        <a href="{% url 'resources:list' %}"
-            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
-            <span>Resources</span>
         </a>
         <a href="{% url 'store:product_list' %}"
             class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
@@ -2143,14 +2129,6 @@
                     <li><a href="{% url 'core:about' %}">Our Mission</a></li>
                     <li><a href="{% url 'core:team' %}">Team</a></li>
                     <li><a href="{% url 'core:contact' %}">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Resources</h3>
-                <ul>
-                    <li><a href="{% url 'resources:list' %}">Recovery Tools</a></li>
-                    <li><a href="{% url 'blog:post_list' %}">Blog</a></li>
-                    <li><a href="#">Crisis Support</a></li>
                 </ul>
             </div>
             <div class="footer-section">
