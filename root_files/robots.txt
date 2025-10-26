@@ -1,0 +1,34 @@
+# robots.txt for MyRecoveryPal
+# This file tells search engines which pages they can and cannot crawl
+
+User-agent: *
+
+# Allow crawling of main pages
+Allow: /
+Allow: /blog/
+Allow: /resources/
+
+# Disallow private/user content
+Disallow: /accounts/
+Disallow: /journal/
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /profile/
+Disallow: /messages/
+Disallow: /api/
+
+# Disallow system pages
+Disallow: /media/private/
+Disallow: /__debug__/
+Disallow: /static/
+
+# Allow static assets for rendering
+Allow: /static/*.css
+Allow: /static/*.js
+Allow: /static/images/
+
+# Sitemap location
+Sitemap: https://www.myrecoverypal.com/sitemap.xml
+
+# Crawl delay (optional - helps prevent server overload)
+Crawl-delay: 1

@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     'apps.store',
     'apps.newsletter',
     'apps.support_services',
-    
+    'django.contrib.sitemaps',
     'django_summernote',
 
     # PWA Support (optional - install with: pip install django-pwa)
@@ -91,6 +91,18 @@ if DEBUG:
         pass  # These packages might not be installed
 
 SITE_ID = 1
+SITE_DOMAIN = 'www.myrecoverypal.com'
+SITE_URL = f'https://{SITE_DOMAIN}'
+
+# SEO Defaults
+SEO_DEFAULT_TITLE = "MyRecoveryPal - Your Recovery Support Community"
+SEO_DEFAULT_DESCRIPTION = "Join MyRecoveryPal, a supportive community for individuals in recovery. Track milestones, connect with peers, journal your journey, and access recovery resources."
+SEO_DEFAULT_KEYWORDS = "recovery support, addiction recovery, sobriety tracker, recovery community, peer support"
+
+# Social Media
+TWITTER_HANDLE = "@myrecoverypal"
+FACEBOOK_PAGE = "https://www.facebook.com/myrecoverypal"
+INSTAGRAM_HANDLE = "@myrecoverypal"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
