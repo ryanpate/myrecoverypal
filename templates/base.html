@@ -287,7 +287,7 @@
         .support-header h6,
         .support-header p,
         .about-header h1,
-        .about-header h2,   
+        .about-header h2,
         .about-header h3,
         .about-header h4,
         .about-header h5,
@@ -1537,19 +1537,23 @@
         ======================================== */
         .messages {
             position: fixed;
-            top: 70px; /* Below the navigation */
+            top: 70px;
+            /* Below the navigation */
             left: 50%;
             transform: translateX(-50%);
-            z-index: 9999; /* High z-index to appear above everything */
+            z-index: 9999;
+            /* High z-index to appear above everything */
             max-width: 800px;
             width: 90%;
             padding: 0;
             margin: 0;
-            pointer-events: none; /* Allow clicking through the container */
+            pointer-events: none;
+            /* Allow clicking through the container */
         }
 
         .messages .alert {
-            pointer-events: auto; /* But make the alerts themselves clickable */
+            pointer-events: auto;
+            /* But make the alerts themselves clickable */
             margin-bottom: 1rem;
             padding: 1rem 1.5rem;
             border-radius: 12px;
@@ -1564,6 +1568,7 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1615,6 +1620,7 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+
             to {
                 opacity: 0;
                 transform: translateY(-20px);
@@ -1627,13 +1633,13 @@
                 top: 60px;
                 width: 95%;
             }
-            
+
             .messages .alert {
                 padding: 0.875rem 1rem;
                 font-size: 0.9rem;
             }
         }
-        
+
         /* ========================================
            COMPONENTS
            ======================================== */
@@ -2038,7 +2044,8 @@
                     class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
                     Dashboard
                 </a>
-                <a href="{% url 'accounts:profile' username=user.username %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                <a href="{% url 'accounts:profile' username=user.username %}"
+                    class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
                     Profile
                 </a>
                 <a href="{% url 'accounts:edit_profile' %}"
@@ -2048,7 +2055,7 @@
             </div>
             {% endif %}
         </nav>
-    
+
         <div class="mobile-menu-footer">
             {% if user.is_authenticated %}
             <form method="post" action="{% url 'accounts:logout' %}">
@@ -2301,22 +2308,22 @@
     <script>
         // Notification System
         let notificationCheckInterval;
-        const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+        const isAuthenticated = {% if user.is_authenticated %}true{% else %} false{% endif %};
 
         // Initialize notifications on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             if (isAuthenticated) {
                 checkNotifications();
                 // Check for new notifications every 30 seconds
                 notificationCheckInterval = setInterval(checkNotifications, 30000);
-                
+
                 // Close dropdowns when clicking outside
-                document.addEventListener('click', function(event) {
+                document.addEventListener('click', function (event) {
                     const notifDropdown = document.getElementById('notificationDropdown');
                     const notifIndicator = document.getElementById('notificationIndicator');
                     const userMenu = document.querySelector('.user-menu');
-                    
-                    if (notifDropdown && !notifDropdown.contains(event.target) && 
+
+                    if (notifDropdown && !notifDropdown.contains(event.target) &&
                         !notifIndicator.contains(event.target)) {
                         notifDropdown.classList.remove('active');
                     }
@@ -2327,14 +2334,14 @@
         function toggleNotifications() {
             const dropdown = document.getElementById('notificationDropdown');
             const userDropdown = document.getElementById('userDropdown');
-            
+
             // Close user dropdown if open
             if (userDropdown) {
                 userDropdown.classList.remove('active');
             }
-            
+
             dropdown.classList.toggle('active');
-            
+
             if (dropdown.classList.contains('active')) {
                 loadNotifications();
             }
@@ -2382,7 +2389,7 @@
 
         function renderNotifications(notifications) {
             const listElement = document.getElementById('notificationList');
-            
+
             if (notifications.length === 0) {
                 listElement.innerHTML = `
                     <div class="empty-notifications">
@@ -2392,15 +2399,15 @@
                 `;
                 return;
             }
-            
+
             listElement.innerHTML = notifications.map(notification => `
                 <a href="${notification.link || '#'}" class="notification-item ${notification.is_read ? '' : 'unread'}" 
                    onclick="handleNotificationClick(event, ${notification.id}, '${notification.link || ''}')">
                     <div class="notification-avatar">
-                        ${notification.sender_avatar ? 
-                            `<img src="${notification.sender_avatar}" alt="${notification.sender_name}">` :
-                            `<i class="fas ${notification.icon}"></i>`
-                        }
+                        ${notification.sender_avatar ?
+                    `<img src="${notification.sender_avatar}" alt="${notification.sender_name}">` :
+                    `<i class="fas ${notification.icon}"></i>`
+                }
                     </div>
                     <div class="notification-content">
                         <div class="notification-title">${notification.title}</div>
@@ -2416,10 +2423,10 @@
             if (!link || link === '#') {
                 event.preventDefault();
             }
-            
+
             // Mark as read
             await markNotificationAsRead(notificationId);
-            
+
             // If there's a link and we prevented default, navigate manually
             if (link && link !== '#' && event.defaultPrevented) {
                 window.location.href = link;
@@ -2435,7 +2442,7 @@
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                 });
-                
+
                 if (response.ok) {
                     // Refresh notification count
                     checkNotifications();
@@ -2447,7 +2454,7 @@
 
         async function markAllAsRead(event) {
             event.preventDefault();
-            
+
             try {
                 const response = await fetch('{% url "accounts:mark_all_notifications_read" %}', {
                     method: 'POST',
@@ -2456,7 +2463,7 @@
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                 });
-                
+
                 if (response.ok) {
                     loadNotifications();
                     checkNotifications();
