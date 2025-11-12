@@ -13,41 +13,63 @@ from apps.blog.models import Post  # Assuming you have a Post model
 
 class StaticViewSitemap(Sitemap):
     """Sitemap for static pages"""
-    priority = 0.8
     changefreq = 'weekly'
 
     def items(self):
-        # List all your public static pages
+        # List all your public static pages with priorities
         return [
-            'core:index',  # Home page
-            'accounts:login',
-            'accounts:signup',
-            'blog:post_list',  # Blog listing
-            # Add more static pages as needed
-            # 'core:about',
-            # 'core:contact',
-            # 'core:privacy',
-            # 'core:terms',
+            ('core:index', 1.0),  # Home page - highest priority
+            ('blog:post_list', 0.9),  # Blog listing
+            ('core:about', 0.8),  # About page
+            ('core:contact', 0.7),  # Contact page
+            ('accounts:login', 0.6),  # Login
+            ('accounts:signup', 0.6),  # Signup
+            ('core:privacy', 0.5),  # Privacy policy
+            ('core:terms', 0.5),  # Terms of service
+            ('core:cookies', 0.4),  # Cookie policy
+            ('core:guidelines', 0.6),  # Community guidelines
+            ('core:success_stories', 0.7),  # Success stories
+            ('core:team', 0.6),  # Team page
+            ('core:crisis', 0.8),  # Crisis resources - important
+            ('store:product_list', 0.5),  # Store
         ]
 
     def location(self, item):
-        return reverse(item)
+        url_name, priority = item
+        return reverse(url_name)
+
+    def priority(self, item):
+        url_name, priority = item
+        return priority
 
 
 class BlogPostSitemap(Sitemap):
     """Sitemap for blog posts"""
-    changefreq = "monthly"
-    priority = 0.7
+    changefreq = "weekly"
+    priority = 0.8
 
     def items(self):
-        # Return published blog posts only
-        return Post.objects.filter(status='published').order_by('-created_at')
+        # Return published blog posts only, ordered by most recent
+        return Post.objects.filter(status='published').order_by('-published_at')
 
     def lastmod(self, obj):
         return obj.updated_at if hasattr(obj, 'updated_at') else obj.created_at
 
     def location(self, obj):
         return obj.get_absolute_url()
+
+    def priority(self, obj):
+        # Higher priority for recent posts
+        import datetime
+        from django.utils import timezone
+
+        age_days = (timezone.now() - obj.published_at).days
+        if age_days < 7:
+            return 0.9  # Very recent posts
+        elif age_days < 30:
+            return 0.8  # Recent posts
+        else:
+            return 0.7  # Older posts
 
 
 # Uncomment if you have resources and want them in sitemap
