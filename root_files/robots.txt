@@ -3,32 +3,60 @@
 
 User-agent: *
 
-# Allow crawling of main pages
+# Allow crawling of public pages
 Allow: /
 Allow: /blog/
+Allow: /about/
+Allow: /contact/
+Allow: /privacy/
+Allow: /terms/
+Allow: /cookies/
+Allow: /guidelines/
+Allow: /success-stories/
+Allow: /team/
+Allow: /crisis/
+Allow: /store/
 Allow: /resources/
+Allow: /support/
+
+# Allow public account pages (login, signup)
+Allow: /accounts/login/
+Allow: /accounts/signup/
+Allow: /accounts/password-reset/
 
 # Disallow private/user content
-Disallow: /accounts/
+Disallow: /accounts/dashboard/
+Disallow: /accounts/profile/
+Disallow: /accounts/edit-profile/
+Disallow: /accounts/messages/
+Disallow: /accounts/notifications/
+Disallow: /accounts/milestones/
+Disallow: /accounts/groups/
+Disallow: /accounts/challenges/
+Disallow: /accounts/community/
 Disallow: /journal/
 Disallow: /admin/
-Disallow: /dashboard/
-Disallow: /profile/
-Disallow: /messages/
 Disallow: /api/
 
 # Disallow system pages
 Disallow: /media/private/
 Disallow: /__debug__/
-Disallow: /static/
+Disallow: /summernote/
 
-# Allow static assets for rendering
+# Allow static assets for rendering (important for SEO)
 Allow: /static/*.css
 Allow: /static/*.js
 Allow: /static/images/
+Allow: /static/manifest.json
+Allow: /media/*.jpg
+Allow: /media/*.jpeg
+Allow: /media/*.png
+Allow: /media/*.gif
+Allow: /media/*.svg
+Allow: /media/*.webp
 
 # Sitemap location
 Sitemap: https://www.myrecoverypal.com/sitemap.xml
 
-# Crawl delay (optional - helps prevent server overload)
+# Crawl delay to be respectful of server resources
 Crawl-delay: 1

@@ -11,13 +11,50 @@
     <meta name="theme-color" content="#1e4d8b">
     <meta name="mobile-web-app-capable" content="yes">
 
+    <!-- Page Title -->
+    <title>{% block title %}{{ seo_title|default:"MyRecoveryPal - Your Recovery Support Community" }}{% endblock %}</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{% block meta_description %}{{ seo_description|default:'Join MyRecoveryPal, a supportive community for addiction recovery. Track your sobriety, connect with sponsors, join support groups, and access recovery resources 24/7.' }}{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}{{ seo_keywords|default:'recovery support, addiction recovery, sobriety tracker, recovery community, support groups, sponsor, recovery journey, mental health, substance abuse recovery, 12 step program, recovery resources' }}{% endblock %}">
+    <meta name="author" content="MyRecoveryPal">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{% block canonical_url %}{{ seo_url|default:'https://www.myrecoverypal.com' }}{% endblock %}">
+
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:site_name" content="MyRecoveryPal">
+    <meta property="og:title" content="{% block og_title %}{{ seo_title|default:'MyRecoveryPal - Your Recovery Support Community' }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ seo_description|default:'Join a supportive community for addiction recovery. Track sobriety, connect with sponsors, and access 24/7 recovery resources.' }}{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}{{ seo_url|default:'https://www.myrecoverypal.com' }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ seo_image|default:'https://www.myrecoverypal.com/static/images/og-image.png' }}{% endblock %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="MyRecoveryPal - Recovery Support Community">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="{{ twitter_site|default:'@myrecoverypal' }}">
+    <meta name="twitter:creator" content="{{ twitter_creator|default:'@myrecoverypal' }}">
+    <meta name="twitter:title" content="{% block twitter_title %}{{ seo_title|default:'MyRecoveryPal - Your Recovery Support Community' }}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{{ seo_description|default:'Join a supportive community for addiction recovery. Track sobriety, connect with sponsors, and access recovery resources.' }}{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ seo_image|default:'https://www.myrecoverypal.com/static/images/og-image.png' }}{% endblock %}">
+    <meta name="twitter:image:alt" content="MyRecoveryPal - Recovery Support Community">
+
+    <!-- Additional SEO Meta Tags -->
+    <meta name="rating" content="General">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="{% static 'manifest.json' %}">
 
     <!-- iOS Icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/icon-180.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/icon-32.png' %}">
-    <title>{% block title %}My Recovery Pal{% endblock %}</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
@@ -33,6 +70,48 @@
 
     <!-- Additional CSS -->
     {% block extra_css %}{% endblock %}
+
+    <!-- JSON-LD Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "MyRecoveryPal",
+        "url": "https://www.myrecoverypal.com",
+        "logo": "https://www.myrecoverypal.com/static/images/logo.svg",
+        "description": "A supportive online community for addiction recovery, providing tools for sobriety tracking, peer support, and recovery resources.",
+        "foundingDate": "2024",
+        "sameAs": [
+            "https://www.facebook.com/myrecoverypal",
+            "https://twitter.com/myrecoverypal",
+            "https://www.instagram.com/myrecoverypal"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Customer Support",
+            "email": "support@myrecoverypal.com",
+            "availableLanguage": ["English"]
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "MyRecoveryPal",
+        "url": "https://www.myrecoverypal.com",
+        "description": "Your Recovery Support Community - Track sobriety, connect with sponsors, join support groups, and access recovery resources.",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://www.myrecoverypal.com/blog/?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    {% block structured_data %}{% endblock %}
 
     <style>
         :root {

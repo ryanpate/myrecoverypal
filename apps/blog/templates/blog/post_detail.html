@@ -1,7 +1,57 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ post.title }} - Journey to Recovery{% endblock %}
+{% block title %}{{ post.title }} | MyRecoveryPal Recovery Stories{% endblock %}
+
+{% block meta_description %}{{ post.meta_description|default:post.excerpt|default:post.content|striptags|truncatewords:30 }}{% endblock %}
+
+{% block meta_keywords %}{{ post.title }}, recovery story, addiction recovery, sobriety, {% if post.category %}{{ post.category.name }}, {% endif %}{% for tag in post.tags.all %}{{ tag.name }}, {% endfor %}recovery support{% endblock %}
+
+{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock %}
+
+{% block og_type %}article{% endblock %}
+{% block og_title %}{{ post.title }}{% endblock %}
+{% block og_description %}{{ post.meta_description|default:post.excerpt|default:post.content|striptags|truncatewords:30 }}{% endblock %}
+{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}
+{% block og_image %}{% if post.featured_image %}{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-image.png' %}{% endif %}{% endblock %}
+
+{% block twitter_title %}{{ post.title }}{% endblock %}
+{% block twitter_description %}{{ post.meta_description|default:post.excerpt|default:post.content|striptags|truncatewords:30 }}{% endblock %}
+{% block twitter_image %}{% if post.featured_image %}{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-image.png' %}{% endif %}{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{{ post.title|escapejs }}",
+    "description": "{{ post.meta_description|default:post.excerpt|default:post.content|striptags|truncatewords:30|escapejs }}",
+    "image": {% if post.featured_image %}"{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.url }}"{% else %}"{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-image.png' %}"{% endif %},
+    "author": {
+        "@type": "Person",
+        "name": "{{ post.author.get_full_name|default:post.author.username|escapejs }}"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "MyRecoveryPal",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.svg' %}"
+        }
+    },
+    "datePublished": "{{ post.published_at|date:'c' }}",
+    "dateModified": "{{ post.updated_at|date:'c' }}",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ request.build_absolute_uri }}"
+    },
+    "articleSection": "{% if post.category %}{{ post.category.name }}{% else %}Recovery{% endif %}",
+    "keywords": "{% for tag in post.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}",
+    "wordCount": {{ post.content|striptags|wordcount }},
+    "timeRequired": "PT{{ post.reading_time }}M"
+}
+</script>
+{% endblock %}
 
 {% block extra_css %}
 <style>

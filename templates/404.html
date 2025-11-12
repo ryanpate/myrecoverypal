@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Page Not Found - MyRecoveryPal{% endblock %}
+
+{% block meta_description %}The page you're looking for could not be found. Return to MyRecoveryPal to continue your recovery journey.{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="fas fa-search"></i> Page Not Found</h1>
+        <p>We couldn't find the page you're looking for</p>
+    </div>
+</div>
+
+<div class="container" style="padding: 3rem 1rem; max-width: 800px; margin: 0 auto; text-align: center;">
+    <div style="margin-bottom: 2rem;">
+        <i class="fas fa-map-signs" style="font-size: 5rem; color: var(--primary-light); opacity: 0.5;"></i>
+    </div>
+
+    <h2 style="margin-bottom: 1rem; color: var(--primary-dark);">Oops! This Path Doesn't Exist</h2>
+
+    <p style="font-size: 1.1rem; color: #666; margin-bottom: 2rem;">
+        The page you're looking for may have been moved, deleted, or never existed.
+        But don't worry - your recovery journey continues.
+    </p>
+
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem;">
+        <a href="{% url 'core:index' %}" class="btn btn-primary" style="background: var(--accent-green); padding: 1rem 2rem; border-radius: 8px; color: white; text-decoration: none; font-weight: 600;">
+            <i class="fas fa-home"></i> Go to Homepage
+        </a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary" style="background: var(--primary-light); padding: 1rem 2rem; border-radius: 8px; color: white; text-decoration: none; font-weight: 600;">
+            <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+        </a>
+        {% endif %}
+    </div>
+
+    <div style="background: var(--bg-light); padding: 2rem; border-radius: 12px; margin-top: 2rem;">
+        <h3 style="margin-bottom: 1rem; color: var(--primary-dark);">
+            <i class="fas fa-lightbulb"></i> Helpful Links
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; text-align: left;">
+            <div>
+                <h4 style="color: var(--primary-dark); margin-bottom: 0.5rem;">Resources</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li><a href="{% url 'blog:post_list' %}" style="color: var(--primary-light);">Blog Posts</a></li>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'journal:entry_list' %}" style="color: var(--primary-light);">Journal</a></li>
+                    <li><a href="{% url 'accounts:community' %}" style="color: var(--primary-light);">Community</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: var(--primary-dark); margin-bottom: 0.5rem;">Support</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li><a href="{% url 'core:about' %}" style="color: var(--primary-light);">About Us</a></li>
+                    <li><a href="{% url 'core:contact' %}" style="color: var(--primary-light);">Contact</a></li>
+                    <li><a href="{% url 'core:crisis' %}" style="color: var(--primary-light);">Crisis Resources</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div style="margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%); border-radius: 12px; color: white;">
+        <h3 style="margin-bottom: 0.5rem; color: white;">
+            <i class="fas fa-heart"></i> Remember: Every Step Forward Counts
+        </h3>
+        <p style="color: rgba(255,255,255,0.9); margin: 0;">
+            Even when you hit a dead end, you're still moving forward in your journey.
+        </p>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}
