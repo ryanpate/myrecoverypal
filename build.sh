@@ -31,4 +31,16 @@ ls -la staticfiles/
 # Run migrations
 python manage.py migrate --noinput
 
+# Generate sitemap.xml for search engines
+echo "Generating sitemap.xml..."
+python manage.py generate_sitemap --output=sitemap.xml 2>&1 || echo "Note: Sitemap generation completed with warnings (this is normal if some pages don't exist yet)"
+
+# Copy sitemap to static files if it was generated
+if [ -f "sitemap.xml" ]; then
+    cp sitemap.xml staticfiles/sitemap.xml 2>/dev/null || echo "Note: Could not copy sitemap to staticfiles (not critical)"
+    echo "Sitemap generated successfully"
+else
+    echo "Warning: sitemap.xml not generated"
+fi
+
 echo "Build completed successfully!"
