@@ -35,12 +35,18 @@ python manage.py migrate --noinput
 echo "Generating sitemap.xml..."
 python manage.py generate_sitemap --output=sitemap.xml 2>&1 || echo "Note: Sitemap generation completed with warnings (this is normal if some pages don't exist yet)"
 
-# Copy sitemap to static files if it was generated
+# Copy SEO files to static files directory (optional backup)
 if [ -f "sitemap.xml" ]; then
     cp sitemap.xml staticfiles/sitemap.xml 2>/dev/null || echo "Note: Could not copy sitemap to staticfiles (not critical)"
     echo "Sitemap generated successfully"
 else
     echo "Warning: sitemap.xml not generated"
+fi
+
+# Copy robots.txt if it exists
+if [ -f "root_files/robots.txt" ]; then
+    cp root_files/robots.txt staticfiles/robots.txt 2>/dev/null || echo "Note: Could not copy robots.txt to staticfiles (not critical)"
+    echo "Robots.txt copied"
 fi
 
 echo "Build completed successfully!"
