@@ -7,6 +7,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from datetime import timedelta
 # At the top of apps/accounts/models.py, add:
 from .invite_models import WaitlistRequest, InviteCode, SystemSettings
+from .payment_models import Subscription, Transaction, PaymentMethod, Invoice, SubscriptionPlan
 
 class User(AbstractUser):
     # Additional fields for recovery

@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Subscription - MyRecoveryPal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="mb-4">Manage Your Subscription</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Current Plan -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-crown"></i> Current Plan</h5>
+                </div>
+                <div class="card-body">
+                    {% if subscription %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h3>{{ subscription.get_tier_display }}</h3>
+                                <p class="text-muted">
+                                    Status: <span class="badge
+                                        {% if subscription.status == 'active' %}badge-success
+                                        {% elif subscription.status == 'trialing' %}badge-info
+                                        {% elif subscription.status == 'past_due' %}badge-warning
+                                        {% else %}badge-secondary{% endif %}">
+                                        {{ subscription.get_status_display }}
+                                    </span>
+                                </p>
+                                {% if subscription.billing_period %}
+                                    <p>Billing: {{ subscription.get_billing_period_display }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 text-md-right">
+                                {% if subscription.current_period_end %}
+                                    <p class="mb-1"><strong>Next Billing Date:</strong></p>
+                                    <p class="text-muted">{{ subscription.current_period_end|date:"F d, Y" }}</p>
+                                    <p class="text-muted">
+                                        <small>({{ subscription.days_until_renewal }} days remaining)</small>
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if subscription.is_premium or subscription.is_pro %}
+                            <hr>
+                            <div class="btn-group-vertical btn-group-sm w-100" role="group">
+                                {% if subscription.can_upgrade %}
+                                    <a href="{% url 'accounts:pricing' %}" class="btn btn-primary">
+                                        <i class="fas fa-arrow-up"></i> Upgrade Plan
+                                    </a>
+                                {% endif %}
+
+                                <a href="{% url 'accounts:customer_portal' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-credit-card"></i> Update Payment Method
+                                </a>
+
+                                {% if subscription.canceled_at %}
+                                    <form method="post" action="{% url 'accounts:reactivate_subscription' %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success btn-block">
+                                            <i class="fas fa-redo"></i> Reactivate Subscription
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#cancelModal">
+                                        <i class="fas fa-times"></i> Cancel Subscription
+                                    </button>
+                                {% endif %}
+                            </div>
+
+                            {% if subscription.canceled_at %}
+                                <div class="alert alert-warning mt-3">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Your subscription will end on {{ subscription.current_period_end|date:"F d, Y" }}.
+                                    You can reactivate it anytime before then.
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        <p class="lead">You're currently on the <strong>Free</strong> plan.</p>
+                        <p>Upgrade to Premium or Pro to unlock advanced features!</p>
+                        <a href="{% url 'accounts:pricing' %}" class="btn btn-primary">
+                            <i class="fas fa-crown"></i> View Pricing
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Billing History -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-history"></i> Billing History</h5>
+                </div>
+                <div class="card-body">
+                    {% if transactions %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for transaction in transactions %}
+                                        <tr>
+                                            <td>{{ transaction.created_at|date:"M d, Y" }}</td>
+                                            <td>{{ transaction.description }}</td>
+                                            <td>${{ transaction.amount }}</td>
+                                            <td>
+                                                <span class="badge
+                                                    {% if transaction.status == 'succeeded' %}badge-success
+                                                    {% else %}badge-secondary{% endif %}">
+                                                    {{ transaction.get_status_display }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No billing history yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Plan Features -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-list-check"></i> Your Features</h5>
+                </div>
+                <div class="card-body">
+                    {% if subscription and subscription.is_premium %}
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited groups</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited messaging</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Advanced journaling</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Private groups</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Ad-free experience</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Custom themes</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Priority support</li>
+                        </ul>
+                    {% elif subscription and subscription.is_pro %}
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> All Premium features</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Sponsor up to 10</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited challenges</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Professional badge</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Group analytics</li>
+                        </ul>
+                    {% else %}
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Basic profile</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Join 2 groups</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> 10 messages/month</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Basic journaling</li>
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow-sm bg-light">
+                <div class="card-body text-center">
+                    <h6 class="mb-3">Need Help?</h6>
+                    <p class="small text-muted">Have questions about your subscription?</p>
+                    <a href="mailto:support@myrecoverypal.com" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-envelope"></i> Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Confirmation Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cancel Subscription?</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel your subscription?</p>
+                <p class="text-muted">
+                    You'll continue to have access until {{ subscription.current_period_end|date:"F d, Y" }},
+                    and you can reactivate anytime before then.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    Keep Subscription
+                </button>
+                <form method="post" action="{% url 'accounts:cancel_subscription' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        Yes, Cancel Subscription
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

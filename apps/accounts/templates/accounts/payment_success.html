@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Successful - MyRecoveryPal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg text-center">
+                <div class="card-body py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+                    </div>
+                    <h1 class="display-4 mb-3">Welcome to Premium!</h1>
+                    <p class="lead mb-4">
+                        Your payment was successful and your subscription is now active.
+                    </p>
+
+                    <div class="alert alert-info my-4">
+                        <i class="fas fa-info-circle"></i>
+                        You now have access to all premium features including unlimited groups, messaging, and advanced journaling!
+                    </div>
+
+                    <div class="row mt-5">
+                        <div class="col-md-6 mb-3">
+                            <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary btn-lg btn-block">
+                                <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a href="{% url 'accounts:subscription_management' %}" class="btn btn-outline-secondary btn-lg btn-block">
+                                <i class="fas fa-credit-card"></i> View Subscription
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h5>What's Next?</h5>
+                        <ul class="list-unstyled text-left">
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Join unlimited recovery groups</li>
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Start advanced journaling with mood tracking</li>
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Create your own private group</li>
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Connect with unlimited members</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    A receipt has been sent to your email address. You can manage your subscription anytime from your account settings.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
