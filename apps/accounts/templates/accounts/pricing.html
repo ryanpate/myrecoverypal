@@ -61,8 +61,10 @@
                         <h3 class="my-3" style="color: white !important;">Premium</h3>
                         <h2 class="display-4" style="color: white !important;">${{ plan.price|floatformat:2 }}</h2>
                         <p style="color: white !important;">per {{ plan.billing_period }}</p>
-                        {% if plan.billing_period == 'yearly' %}
-                            <small class="text-white-50" style="color: rgba(255,255,255,0.7) !important;">Save $20/year!</small>
+                        {% if plan.billing_period == 'yearly' and plan.tier == 'premium' %}
+                            <small class="text-white-50" style="color: rgba(255,255,255,0.7) !important;">Save $22/year!</small>
+                        {% elif plan.billing_period == 'yearly' and plan.tier == 'pro' %}
+                            <small class="text-white-50" style="color: rgba(255,255,255,0.7) !important;">Save $42/year!</small>
                         {% endif %}
                     </div>
                     <div class="card-body text-dark bg-white">
