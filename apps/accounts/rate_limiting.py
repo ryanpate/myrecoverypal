@@ -63,20 +63,29 @@ class RateLimitMiddleware:
         Returns:
             True if request is allowed, False if rate limit exceeded
         """
-        cache_key = f'rate_limit:{action}:{hashlib.md5(identifier.encode()).hexdigest()}'
+        try:
+            cache_key = f'rate_limit:{action}:{hashlib.md5(identifier.encode()).hexdigest()}'
 
-        # Get current count
-        current = cache.get(cache_key, 0)
+            # Get current count
+            current = cache.get(cache_key, 0)
 
-        if current >= max_requests:
-            return False
+            if current >= max_requests:
+                return False
 
-        # Increment counter
-        if current == 0:
-            # First request - set with expiry
-            cache.set(cache_key, 1, window)
-        else:
-            # Increment existing counter
-            cache.incr(cache_key)
+            # Increment counter
+            if current == 0:
+                # First request - set with expiry
+                cache.set(cache_key, 1, window)
+            else:
+                # Increment existing counter
+                cache.incr(cache_key)
 
-        return True
+            return True
+        except Exception as e:
+            # If cache fails (Redis not available), allow the request through
+            # This ensures the site stays functional even if cache backend is down
+            # Log the error for monitoring
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f'Rate limiting cache error: {e}. Allowing request through.')
+            return True
