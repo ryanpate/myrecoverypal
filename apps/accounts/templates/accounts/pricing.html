@@ -4,14 +4,15 @@
 {% block title %}Pricing - MyRecoveryPal{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row">
-        <div class="col-lg-12 text-center mb-5">
-            <h1 class="display-4">Choose Your Plan</h1>
-            <p class="lead">Support your recovery journey with premium features</p>
-        </div>
+<!-- Pricing Page Header -->
+<div class="page-header">
+    <div class="container">
+        <h1>Choose Your Plan</h1>
+        <p>Support your recovery journey with premium features</p>
     </div>
+</div>
 
+<div class="container py-5">
     {% if user_subscription and user_subscription.is_active %}
     <div class="alert alert-success text-center mb-4">
         <i class="fas fa-check-circle"></i> You're currently on the <strong>{{ user_subscription.get_tier_display }}</strong> plan.
@@ -25,10 +26,10 @@
         <!-- Free Tier -->
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-header text-center bg-light">
-                    <h3 class="my-3">Free</h3>
-                    <h2 class="display-4">$0</h2>
-                    <p class="text-muted">Forever</p>
+                <div class="card-header text-center bg-light" style="background-color: #f8f9fa !important;">
+                    <h3 class="my-3" style="color: #1e4d8b !important;">Free</h3>
+                    <h2 class="display-4" style="color: #1e4d8b !important;">$0</h2>
+                    <p class="text-muted" style="color: #6c757d !important;">Forever</p>
                 </div>
                 <div class="card-body text-dark bg-white">
                     <ul class="list-unstyled">
@@ -55,13 +56,13 @@
             {% if plan.tier == 'premium' %}
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card h-100 shadow-lg border-primary" style="transform: scale(1.05);">
-                    <div class="card-header text-center bg-primary text-white">
+                    <div class="card-header text-center bg-primary text-white" style="background-color: #1e4d8b !important;">
                         <span class="badge badge-warning mb-2">MOST POPULAR</span>
-                        <h3 class="my-3">Premium</h3>
-                        <h2 class="display-4">${{ plan.price|floatformat:2 }}</h2>
-                        <p>per {{ plan.billing_period }}</p>
+                        <h3 class="my-3" style="color: white !important;">Premium</h3>
+                        <h2 class="display-4" style="color: white !important;">${{ plan.price|floatformat:2 }}</h2>
+                        <p style="color: white !important;">per {{ plan.billing_period }}</p>
                         {% if plan.billing_period == 'yearly' %}
-                            <small class="text-white-50">Save $20/year!</small>
+                            <small class="text-white-50" style="color: rgba(255,255,255,0.7) !important;">Save $20/year!</small>
                         {% endif %}
                     </div>
                     <div class="card-body text-dark bg-white">
@@ -102,10 +103,10 @@
             {% if plan.tier == 'pro' %}
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card h-100 shadow-sm">
-                    <div class="card-header text-center bg-dark text-white">
-                        <h3 class="my-3">Professional</h3>
-                        <h2 class="display-4">${{ plan.price|floatformat:2 }}</h2>
-                        <p>per {{ plan.billing_period }}</p>
+                    <div class="card-header text-center bg-dark text-white" style="background-color: #343a40 !important;">
+                        <h3 class="my-3" style="color: white !important;">Professional</h3>
+                        <h2 class="display-4" style="color: white !important;">${{ plan.price|floatformat:2 }}</h2>
+                        <p style="color: white !important;">per {{ plan.billing_period }}</p>
                     </div>
                     <div class="card-body text-dark bg-white">
                         <ul class="list-unstyled">
