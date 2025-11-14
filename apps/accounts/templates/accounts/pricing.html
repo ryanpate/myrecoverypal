@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Pricing - MyRecoveryPal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-12 text-center mb-5">
+            <h1 class="display-4">Choose Your Plan</h1>
+            <p class="lead">Support your recovery journey with premium features</p>
+        </div>
+    </div>
+
+    {% if user_subscription and user_subscription.is_active %}
+    <div class="alert alert-success text-center mb-4">
+        <i class="fas fa-check-circle"></i> You're currently on the <strong>{{ user_subscription.get_tier_display }}</strong> plan.
+        {% if user_subscription.current_period_end %}
+            Next billing date: {{ user_subscription.current_period_end|date:"F d, Y" }}
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="row justify-content-center">
+        <!-- Free Tier -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header text-center bg-light">
+                    <h3 class="my-3">Free</h3>
+                    <h2 class="display-4">$0</h2>
+                    <p class="text-muted">Forever</p>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Basic profile</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Join up to 2 groups</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> 10 messages/month</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Basic journaling</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Read blog posts</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Browse resources</li>
+                    </ul>
+                </div>
+                <div class="card-footer text-center bg-light">
+                    {% if not user_subscription or user_subscription.tier == 'free' %}
+                        <button class="btn btn-outline-secondary btn-block" disabled>Current Plan</button>
+                    {% else %}
+                        <a href="{% url 'accounts:subscription_management' %}" class="btn btn-outline-primary btn-block">Manage</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Tier -->
+        {% for plan in plans %}
+            {% if plan.tier == 'premium' %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-lg border-primary" style="transform: scale(1.05);">
+                    <div class="card-header text-center bg-primary text-white">
+                        <span class="badge badge-warning mb-2">MOST POPULAR</span>
+                        <h3 class="my-3">Premium</h3>
+                        <h2 class="display-4">${{ plan.price|floatformat:2 }}</h2>
+                        <p>per {{ plan.billing_period }}</p>
+                        {% if plan.billing_period == 'yearly' %}
+                            <small class="text-white-50">Save $20/year!</small>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> <strong>All Free features</strong></li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited groups</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited messages</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Advanced journaling</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Create private groups</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Ad-free experience</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Custom themes</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Priority support</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Progress reports</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer text-center bg-primary">
+                        {% if user_subscription.tier == 'premium' and user_subscription.is_active %}
+                            <button class="btn btn-light btn-block" disabled>Current Plan</button>
+                        {% else %}
+                            <button class="btn btn-light btn-block subscribe-btn"
+                                    data-plan-id="{{ plan.id }}"
+                                    data-plan-name="{{ plan.name }}">
+                                {% if user.is_authenticated %}
+                                    Upgrade Now
+                                {% else %}
+                                    Get Started
+                                {% endif %}
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Pro Tier -->
+        {% for plan in plans %}
+            {% if plan.tier == 'pro' %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header text-center bg-dark text-white">
+                        <h3 class="my-3">Professional</h3>
+                        <h2 class="display-4">${{ plan.price|floatformat:2 }}</h2>
+                        <p>per {{ plan.billing_period }}</p>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> <strong>All Premium features</strong></li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Sponsor up to 10 people</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Create unlimited challenges</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Professional badge</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Group analytics</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Custom branding</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Early access features</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer text-center bg-dark">
+                        {% if user_subscription.tier == 'pro' and user_subscription.is_active %}
+                            <button class="btn btn-light btn-block" disabled>Current Plan</button>
+                        {% else %}
+                            <button class="btn btn-light btn-block subscribe-btn"
+                                    data-plan-id="{{ plan.id }}"
+                                    data-plan-name="{{ plan.name }}">
+                                {% if user.is_authenticated %}
+                                    Upgrade to Pro
+                                {% else %}
+                                    Get Started
+                                {% endif %}
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="row mt-5">
+        <div class="col-lg-12">
+            <h2 class="text-center mb-4">Frequently Asked Questions</h2>
+            <div class="accordion" id="faqAccordion">
+                <div class="card">
+                    <div class="card-header" id="faq1">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse1">
+                                Can I cancel anytime?
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse1" class="collapse show" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            Yes! You can cancel your subscription at any time. You'll continue to have access until the end of your billing period.
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="faq2">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse2">
+                                Is there a free trial?
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse2" class="collapse" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            The Free tier is available forever with no credit card required. Premium features are available immediately upon upgrading.
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="faq3">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse3">
+                                What payment methods do you accept?
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse3" class="collapse" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            We accept all major credit cards (Visa, Mastercard, American Express, Discover) through our secure payment processor, Stripe.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stripe Checkout Integration -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe('{{ stripe_publishable_key }}');
+
+    document.querySelectorAll('.subscribe-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const planId = this.getAttribute('data-plan-id');
+            const planName = this.getAttribute('data-plan-name');
+
+            // Disable button and show loading
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Loading...';
+
+            try {
+                // Create checkout session
+                const response = await fetch('{% url "accounts:create_checkout_session" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: `plan_id=${planId}`
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    this.disabled = false;
+                    this.innerHTML = 'Upgrade Now';
+                    return;
+                }
+
+                // Redirect to Stripe Checkout
+                window.location.href = data.url;
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                this.disabled = false;
+                this.innerHTML = 'Upgrade Now';
+            }
+        });
+    });
+</script>
+{% endblock %}

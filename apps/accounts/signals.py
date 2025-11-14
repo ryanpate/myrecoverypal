@@ -2,6 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
 from .models import User, Milestone, ActivityFeed, DailyCheckIn
+from .payment_models import Subscription
 
 
 @receiver(post_save, sender=User)
@@ -15,6 +16,19 @@ def create_user_joined_activity(sender, instance, created, **kwargs):
             description=f"Welcome {instance.get_full_name() or instance.username} to our recovery community!",
             is_public=True,
             extra_data={'join_date': instance.date_joined.isoformat()}
+        )
+
+
+@receiver(post_save, sender=User)
+def create_user_subscription(sender, instance, created, **kwargs):
+    """Create a free subscription for new users"""
+    if created:
+        Subscription.objects.get_or_create(
+            user=instance,
+            defaults={
+                'tier': 'free',
+                'status': 'active',
+            }
         )
 
 

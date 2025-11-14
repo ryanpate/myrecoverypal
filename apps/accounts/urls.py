@@ -3,6 +3,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from . import payment_views
 
 app_name = 'accounts'
 
@@ -115,5 +116,16 @@ urlpatterns = [
     path('request-access/', views.request_access_view, name='request_access'),
     path('admin/approve-waitlist/<int:request_id>/',
          views.admin_approve_waitlist, name='admin_approve_waitlist'),
+
+    # Payment and Subscription URLs
+    path('pricing/', payment_views.pricing, name='pricing'),
+    path('checkout/create-session/', payment_views.create_checkout_session, name='create_checkout_session'),
+    path('payment/success/', payment_views.payment_success, name='payment_success'),
+    path('payment/canceled/', payment_views.payment_canceled, name='payment_canceled'),
+    path('subscription/', payment_views.subscription_management, name='subscription_management'),
+    path('subscription/cancel/', payment_views.cancel_subscription, name='cancel_subscription'),
+    path('subscription/reactivate/', payment_views.reactivate_subscription, name='reactivate_subscription'),
+    path('subscription/portal/', payment_views.create_customer_portal_session, name='customer_portal'),
+    path('webhook/stripe/', payment_views.stripe_webhook, name='stripe_webhook'),
 
 ]
