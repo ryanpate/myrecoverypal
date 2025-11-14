@@ -1,0 +1,68 @@
+<!-- Upgrade Prompt Component -->
+{% load static %}
+
+<div class="upgrade-prompt-card" style="background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%); border-radius: 12px; padding: 2rem; margin: 2rem 0; box-shadow: 0 4px 20px rgba(30, 77, 139, 0.2);">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <div style="color: white;">
+                <h3 style="color: white !important; margin-bottom: 1rem;">
+                    <i class="fas fa-star" style="color: #ffc107;"></i>
+                    {% if prompt_title %}{{ prompt_title }}{% else %}Upgrade to Premium{% endif %}
+                </h3>
+                <p style="color: rgba(255,255,255,0.95); margin-bottom: 1.5rem; font-size: 1.1rem;">
+                    {% if prompt_message %}
+                        {{ prompt_message }}
+                    {% else %}
+                        Unlock unlimited access to groups, messages, advanced journaling, and more premium features.
+                    {% endif %}
+                </p>
+                <ul class="list-unstyled" style="color: rgba(255,255,255,0.9); margin-bottom: 1.5rem;">
+                    {% if features %}
+                        {% for feature in features %}
+                        <li style="margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> {{ feature }}</li>
+                        {% endfor %}
+                    {% else %}
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> Unlimited groups & messages</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> Advanced journaling tools</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> Create private groups</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> Ad-free experience</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-4 text-center">
+            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 10px; backdrop-filter: blur(10px);">
+                <div style="color: white; margin-bottom: 1rem;">
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Starting at</div>
+                    <div style="font-size: 2.5rem; font-weight: 700; line-height: 1;">$9.99</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">per month</div>
+                </div>
+                <a href="{% url 'accounts:pricing' %}" class="btn btn-light btn-lg" style="width: 100%; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <i class="fas fa-arrow-right"></i> View Plans
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.upgrade-prompt-card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.upgrade-prompt-card:hover {
+    box-shadow: 0 8px 30px rgba(30, 77, 139, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+</style>

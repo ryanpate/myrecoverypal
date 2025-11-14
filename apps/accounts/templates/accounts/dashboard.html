@@ -489,6 +489,11 @@
 </div>
 
 <div class="container">
+    <!-- Upgrade Prompt for Free Users -->
+    {% if is_free_user %}
+    {% include 'accounts/components/upgrade_prompt.html' with prompt_title="Unlock Your Full Recovery Journey" prompt_message="Get unlimited access to all features and support your recovery with Premium membership." %}
+    {% endif %}
+
     <div class="dashboard-grid">
         <!-- Main Activity Feed -->
         <div class="main-feed">
