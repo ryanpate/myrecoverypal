@@ -21,13 +21,19 @@ def create_user_joined_activity(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def create_user_subscription(sender, instance, created, **kwargs):
-    """Create a free subscription for new users"""
+    """Create a 14-day Premium trial subscription for new users"""
     if created:
+        from django.utils import timezone
+        from datetime import timedelta
+
+        trial_end = timezone.now() + timedelta(days=14)
+
         Subscription.objects.get_or_create(
             user=instance,
             defaults={
-                'tier': 'free',
-                'status': 'active',
+                'tier': 'premium',
+                'status': 'trialing',
+                'trial_end': trial_end,
             }
         )
 
