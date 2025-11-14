@@ -4,6 +4,7 @@ from .models import User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn,
 from .models import GroupChallenge, ChallengeParticipant, ChallengeCheckIn, ChallengeComment, ChallengeBadge, UserChallengeBadge
 # Add to apps/accounts/admin.py
 from .admin_invite import *
+from .payment_models import Subscription, SubscriptionPlan, Transaction, PaymentMethod, Invoice
 
 class CustomUserAdmin(UserAdmin):
     list_display = ['username', 'email', 'first_name', 'last_name', 'is_active',
@@ -315,6 +316,182 @@ class UserChallengeBadgeAdmin(admin.ModelAdmin):
         return super().get_queryset(request).select_related(
             'user', 'badge', 'challenge'
         )
+
+
+# Payment and Subscription Admin
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = [
+        'user', 'tier', 'status', 'billing_period',
+        'current_period_end', 'created_at'
+    ]
+    list_filter = ['tier', 'status', 'billing_period', 'created_at']
+    search_fields = [
+        'user__username', 'user__email',
+        'stripe_customer_id', 'stripe_subscription_id'
+    ]
+    readonly_fields = ['created_at', 'updated_at', 'stripe_customer_id', 'stripe_subscription_id']
+    date_hierarchy = 'created_at'
+
+    fieldsets = (
+        ('User & Plan', {
+            'fields': ('user', 'tier', 'status', 'billing_period')
+        }),
+        ('Stripe Information', {
+            'fields': ('stripe_customer_id', 'stripe_subscription_id', 'stripe_price_id')
+        }),
+        ('Billing Dates', {
+            'fields': ('current_period_start', 'current_period_end', 'trial_end', 'canceled_at')
+        }),
+        ('Metadata', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(SubscriptionPlan)
+class SubscriptionPlanAdmin(admin.ModelAdmin):
+    list_display = [
+        'name', 'tier', 'billing_period', 'price',
+        'currency', 'is_active', 'sort_order'
+    ]
+    list_filter = ['tier', 'billing_period', 'is_active', 'currency']
+    search_fields = ['name', 'description', 'stripe_price_id', 'stripe_product_id']
+    ordering = ['sort_order', 'tier', 'billing_period']
+
+    fieldsets = (
+        ('Plan Details', {
+            'fields': ('name', 'tier', 'billing_period', 'description')
+        }),
+        ('Pricing', {
+            'fields': ('price', 'currency')
+        }),
+        ('Stripe Integration', {
+            'fields': ('stripe_price_id', 'stripe_product_id')
+        }),
+        ('Features', {
+            'fields': ('features',),
+            'description': 'Enter features as a JSON array, e.g., ["Feature 1", "Feature 2"]'
+        }),
+        ('Display Settings', {
+            'fields': ('is_active', 'sort_order')
+        }),
+        ('Metadata', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    readonly_fields = ['created_at', 'updated_at']
+
+
+@admin.register(Transaction)
+class TransactionAdmin(admin.ModelAdmin):
+    list_display = [
+        'user', 'transaction_type', 'status', 'amount',
+        'currency', 'payment_method_brand', 'created_at'
+    ]
+    list_filter = ['transaction_type', 'status', 'currency', 'created_at']
+    search_fields = [
+        'user__username', 'user__email', 'stripe_payment_intent_id',
+        'stripe_charge_id', 'stripe_invoice_id', 'description'
+    ]
+    readonly_fields = [
+        'created_at', 'updated_at', 'stripe_payment_intent_id',
+        'stripe_charge_id', 'stripe_invoice_id'
+    ]
+    date_hierarchy = 'created_at'
+
+    fieldsets = (
+        ('Transaction Info', {
+            'fields': ('user', 'subscription', 'transaction_type', 'status')
+        }),
+        ('Amount', {
+            'fields': ('amount', 'currency', 'description')
+        }),
+        ('Payment Method', {
+            'fields': ('payment_method_brand', 'payment_method_last4')
+        }),
+        ('Stripe Information', {
+            'fields': ('stripe_payment_intent_id', 'stripe_charge_id', 'stripe_invoice_id')
+        }),
+        ('Additional Data', {
+            'fields': ('metadata', 'failure_reason'),
+            'classes': ('collapse',)
+        }),
+        ('Metadata', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(PaymentMethod)
+class PaymentMethodAdmin(admin.ModelAdmin):
+    list_display = [
+        'user', 'card_brand', 'card_last4',
+        'card_exp_month', 'card_exp_year', 'is_default', 'is_active'
+    ]
+    list_filter = ['card_brand', 'is_default', 'is_active', 'created_at']
+    search_fields = ['user__username', 'user__email', 'stripe_payment_method_id', 'card_last4']
+    readonly_fields = ['created_at', 'updated_at', 'stripe_payment_method_id']
+
+    fieldsets = (
+        ('User', {
+            'fields': ('user',)
+        }),
+        ('Card Details', {
+            'fields': ('card_brand', 'card_last4', 'card_exp_month', 'card_exp_year')
+        }),
+        ('Stripe Information', {
+            'fields': ('stripe_payment_method_id',)
+        }),
+        ('Status', {
+            'fields': ('is_default', 'is_active')
+        }),
+        ('Metadata', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(Invoice)
+class InvoiceAdmin(admin.ModelAdmin):
+    list_display = [
+        'invoice_number', 'user', 'status', 'amount_due',
+        'amount_paid', 'currency', 'invoice_date', 'paid_at'
+    ]
+    list_filter = ['status', 'currency', 'invoice_date', 'paid_at']
+    search_fields = [
+        'user__username', 'user__email', 'invoice_number',
+        'stripe_invoice_id', 'description'
+    ]
+    readonly_fields = ['created_at', 'updated_at', 'stripe_invoice_id', 'stripe_invoice_pdf']
+    date_hierarchy = 'invoice_date'
+
+    fieldsets = (
+        ('Invoice Info', {
+            'fields': ('user', 'subscription', 'invoice_number', 'status')
+        }),
+        ('Amounts', {
+            'fields': ('amount_due', 'amount_paid', 'currency')
+        }),
+        ('Dates', {
+            'fields': ('invoice_date', 'due_date', 'paid_at')
+        }),
+        ('Stripe Information', {
+            'fields': ('stripe_invoice_id', 'stripe_invoice_pdf')
+        }),
+        ('Description', {
+            'fields': ('description',)
+        }),
+        ('Metadata', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
 
 # Register the custom user admin
 admin.site.register(User, CustomUserAdmin)
