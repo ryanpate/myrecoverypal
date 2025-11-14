@@ -13,6 +13,43 @@ import cloudinary.api
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ========================================
+# Sentry Error Monitoring
+# ========================================
+# Initialize Sentry for error tracking in production
+SENTRY_DSN = os.environ.get('SENTRY_DSN', '')
+if SENTRY_DSN:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.integrations.redis import RedisIntegration
+    from sentry_sdk.integrations.celery import CeleryIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[
+            DjangoIntegration(),
+            RedisIntegration(),
+            CeleryIntegration(),
+        ],
+        # Set traces_sample_rate to 1.0 to capture 100% of transactions for performance monitoring.
+        # Adjust this value in production to reduce costs
+        traces_sample_rate=0.1 if not os.environ.get('DEBUG', 'False').lower() == 'true' else 1.0,
+
+        # Capture 10% of errors for issue tracking
+        # Set to 1.0 to capture all errors (may increase costs)
+        sample_rate=1.0,
+
+        # Send default PII (Personally Identifiable Information)
+        send_default_pii=False,  # Set to False to avoid sending user data
+
+        # Environment name (production, staging, development)
+        environment=os.environ.get('SENTRY_ENVIRONMENT', 'production'),
+
+        # Release tracking (useful for tracking which code version has issues)
+        # Format: 'myrecoverypal@1.0.0' or use git commit SHA
+        release=os.environ.get('RAILWAY_GIT_COMMIT_SHA', 'unknown'),
+    )
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get(
     'SECRET_KEY', 'django-insecure-change-this-in-production')
@@ -115,6 +152,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'apps.accounts.rate_limiting.RateLimitMiddleware',  # Rate limiting protection
 ]
 
 # Add debug toolbar middleware in development
@@ -202,8 +240,8 @@ LOGOUT_REDIRECT_URL = 'core:index'
 # Django-allauth settings
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
-# Set to 'mandatory' when email is configured
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
+# SECURITY: Email verification mandatory for production
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory' if not DEBUG else 'optional'
 ACCOUNT_USERNAME_REQUIRED = False
 
 # Internationalization
@@ -560,17 +598,14 @@ if not DEBUG:
     SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
     SECURE_REFERRER_POLICY = 'same-origin'
 
-# Content Security Policy (CSP) for PWA
-# Only enable if you need strict CSP (may break some features)
-# CSP_DEFAULT_SRC = ("'self'",)
-# CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", 'cdn.jsdelivr.net', 'kit.fontawesome.com')
-# CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", 'cdn.jsdelivr.net', 'fonts.googleapis.com')
-# CSP_FONT_SRC = ("'self'", 'fonts.gstatic.com', 'kit.fontawesome.com')
-# CSP_IMG_SRC = ("'self'", 'data:', 'https:')
-# CSP_CONNECT_SRC = ("'self'",)
-# CSP_FRAME_ANCESTORS = ("'none'",)
-# CSP_BASE_URI = ("'self'",)
-# CSP_FORM_ACTION = ("'self'",)
+# Content Security Policy (CSP) for enhanced security
+# Enabled in production for better security
+if not DEBUG:
+    # Basic CSP - adjust as needed for your third-party integrations
+    # Note: Some features may require additional CSP directives
+    SECURE_CONTENT_TYPE_OPTIONS_HEADER = True  # X-Content-Type-Options: nosniff
+    SECURE_BROWSER_XSS_FILTER = True  # X-XSS-Protection: 1; mode=block
+    X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking
 
 # ========================================
 # Cache Configuration
@@ -629,11 +664,7 @@ CELERY_BEAT_SCHEDULE = {
 # API Keys and External Services
 # ========================================
 
-# API Keys from environment
-GOOGLE_API_KEY = os.environ.get(
-    'GOOGLE_API_KEY', 'AIzaSyAKFMk5grddW39DgsQ9NZ0CI62emQaleys')
-MAPBOX_API_KEY = os.environ.get(
-    'MAPBOX_API_KEY', 'pk.eyJ1IjoicnlhbnBhdGUxIiwiYSI6ImNtZXd6cTQ1ejB4ajgyam9uZzNxazhvanMifQ.9oqD8jZ6rrhEjQtnO6TsgA')
+# Payment Processing
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
 
@@ -727,9 +758,6 @@ LOGGING = {
     },
 }
 
-# Create logs directory if it doesn't exist
-if not os.path.exists(BASE_DIR / 'logs'):
-    os.makedirs(BASE_DIR / 'logs', exist_ok=True)
 # Create logs directory if it doesn't exist
 if not os.path.exists(BASE_DIR / 'logs'):
     os.makedirs(BASE_DIR / 'logs', exist_ok=True)

@@ -50,8 +50,6 @@ def meeting_finder(request):
     context = {
         # You can pass configuration from Django settings if needed
         'tsml_data_source': getattr(settings, 'TSML_DATA_SOURCE', None),
-        'mapbox_api_key': getattr(settings, 'MAPBOX_API_KEY', None),
-        'google_maps_api_key': getattr(settings, 'GOOGLE_MAPS_API_KEY', None),
     }
     return render(request, 'support_services/meeting_finder.html', context)
 
@@ -415,22 +413,12 @@ def nearby_meetings(request):
     if not (lat and lng) and not address:
         return JsonResponse({'error': 'Please provide coordinates or address'}, status=400)
 
-    # If address provided, geocode it
+    # If address provided, geocoding would be needed here
+    # Note: Geocoding functionality has been removed
     if address and not (lat and lng):
-        # Use Google Geocoding API or similar
-        if hasattr(settings, 'GOOGLE_API_KEY'):
-            geocode_url = f"https://maps.googleapis.com/maps/api/geocode/json"
-            params = {
-                'address': address,
-                'key': settings.GOOGLE_API_KEY
-            }
-            response = requests.get(geocode_url, params=params)
-            if response.status_code == 200:
-                data = response.json()
-                if data['status'] == 'OK' and data['results']:
-                    location = data['results'][0]['geometry']['location']
-                    lat = location['lat']
-                    lng = location['lng']
+        return JsonResponse({
+            'error': 'Address geocoding is not currently supported. Please provide coordinates.'
+        }, status=400)
 
     if lat and lng:
         # Find nearby meetings using Haversine formula
