@@ -378,6 +378,13 @@
     <p>Connect with your recovery community</p>
 </div>
 
+<div class="container" style="max-width: 1200px;">
+    <!-- Upgrade Prompt for Free Users -->
+    {% if is_free_user %}
+    {% include 'accounts/components/upgrade_prompt.html' with prompt_title="Send Unlimited Messages" prompt_message="You're limited to 10 messages per month on the free plan. Upgrade to Premium for unlimited messaging and connect freely with your recovery community." features="Unlimited messaging,Private messaging,Message history,Priority support" %}
+    {% endif %}
+</div>
+
 <div class="messages-container">
     <div class="messages-wrapper">
         <div class="messages-toolbar">

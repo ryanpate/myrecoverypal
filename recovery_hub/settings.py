@@ -177,6 +177,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Subscription context for premium feature gating
+                'apps.accounts.context_processors.subscription_context',
                 # Add PWA context processor if using django-pwa
                 # 'pwa.context_processors.pwa',
             ],

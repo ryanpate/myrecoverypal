@@ -779,10 +779,22 @@ def create_group(request):
     if request.method == 'POST':
         name = request.POST.get('name', '')
         description = request.POST.get('description', '')
+        privacy_level = request.POST.get('privacy_level', 'public')
+
+        # Check if user is trying to create a private/secret group
+        if privacy_level in ['private', 'secret']:
+            if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
+                messages.warning(
+                    request,
+                    'Creating private groups is a Premium feature. Upgrade now to create private groups!'
+                )
+                return redirect('accounts:pricing')
+
         if name and description:
             group = RecoveryGroup.objects.create(
                 name=name,
                 description=description,
+                privacy_level=privacy_level,
                 creator=request.user
             )
             messages.success(request, f'Group "{name}" created successfully!')
@@ -1081,12 +1093,28 @@ class CommunityView(ListView):
 @login_required
 def send_message_view(request, username):
     recipient = get_object_or_404(User, username=username)
-    
+
     # Check if recipient allows messages
     if not recipient.allow_messages and not request.user.is_staff:
         messages.error(request, 'This user has disabled messages.')
         return redirect('accounts:profile', username=username)
-    
+
+    # Check message limit for free users
+    if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
+        from datetime import datetime
+        messages_this_month = request.user.sent_messages.filter(
+            sent_at__month=datetime.now().month,
+            sent_at__year=datetime.now().year
+        ).count()
+
+        if messages_this_month >= 10:
+            messages.warning(
+                request,
+                'You\'ve reached the free tier limit of 10 messages per month. '
+                'Upgrade to Premium for unlimited messaging!'
+            )
+            return redirect('accounts:pricing')
+
     if request.method == 'POST':
         form = SupportMessageForm(request.POST)
         if form.is_valid():
