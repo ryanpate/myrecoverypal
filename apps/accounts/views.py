@@ -814,8 +814,71 @@ def my_groups(request):
 @require_POST
 def join_group(request, group_id):
     """Join a recovery group"""
-    messages.info(request, 'Group joining feature coming soon!')
-    return JsonResponse({'success': True, 'message': 'Feature coming soon'})
+    from .models import RecoveryGroup, GroupMembership
+    from django.utils import timezone
+
+    try:
+        group = get_object_or_404(RecoveryGroup, id=group_id)
+
+        # Check if user is already a member
+        existing = GroupMembership.objects.filter(
+            user=request.user,
+            group=group,
+            status__in=['active', 'moderator', 'admin', 'pending']
+        ).first()
+
+        if existing:
+            return JsonResponse({
+                'success': False,
+                'message': 'You are already a member of this group.'
+            })
+
+        # Check group limit for free users
+        if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
+            current_groups = GroupMembership.objects.filter(
+                user=request.user,
+                status__in=['active', 'moderator', 'admin']
+            ).count()
+
+            if current_groups >= 2:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'You\'ve reached the free tier limit of 2 groups. Upgrade to Premium for unlimited groups!',
+                    'redirect': '/accounts/pricing/'
+                })
+
+        # Check if group is full
+        if group.is_full:
+            return JsonResponse({
+                'success': False,
+                'message': 'This group has reached its maximum capacity.'
+            })
+
+        # Create membership
+        status = 'pending' if group.privacy_level == 'private' else 'active'
+        membership = GroupMembership.objects.create(
+            user=request.user,
+            group=group,
+            status=status,
+            joined_date=timezone.now().date() if status == 'active' else None
+        )
+
+        if status == 'active':
+            message = f'You have successfully joined {group.name}!'
+        else:
+            message = f'Your request to join {group.name} is pending approval.'
+
+        return JsonResponse({
+            'success': True,
+            'message': message,
+            'status': status
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'An error occurred: {str(e)}'
+        }, status=400)
 
 
 class ProfileView(DetailView):
@@ -1466,6 +1529,28 @@ def challenge_detail(request, challenge_id):
 @login_required
 def create_challenge(request, group_id=None):
     """Create a new group challenge"""
+
+    # Check challenge creation limits
+    if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
+        # Free users can't create challenges
+        messages.warning(
+            request,
+            'Creating challenges is a Premium feature. Upgrade to Premium or Pro to create and lead your own challenges!'
+        )
+        return redirect('accounts:pricing')
+    elif hasattr(request.user, 'subscription') and request.user.subscription.tier == 'premium':
+        # Premium users limited to 3 active challenges
+        active_challenges = GroupChallenge.objects.filter(
+            creator=request.user,
+            status__in=['active', 'upcoming']
+        ).count()
+
+        if active_challenges >= 3:
+            messages.warning(
+                request,
+                'You\'ve reached the Premium limit of 3 active challenges. Upgrade to Pro for unlimited challenge creation!'
+            )
+            return redirect('accounts:pricing')
 
     group = None
     if group_id:

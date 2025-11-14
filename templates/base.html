@@ -1938,7 +1938,13 @@
                                 {{ user.username|first|upper }}
                                 {% endif %}
                             </div>
-                            <span>{{ user.username }}</span>
+                            <span>{{ user.username }}
+                                {% if is_pro_user %}
+                                <span class="badge badge-warning" style="background: linear-gradient(135deg, #ffd700, #ffed4e); color: #000; font-size: 0.65rem; padding: 2px 6px; border-radius: 3px; margin-left: 4px;">PRO</span>
+                                {% elif is_premium_user %}
+                                <span class="badge badge-primary" style="background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 3px; margin-left: 4px;">PREMIUM</span>
+                                {% endif %}
+                            </span>
 
                             <!-- Notification Dot Indicator -->
                             <div class="notification-indicator" id="notificationIndicator"
@@ -2047,7 +2053,13 @@
                     {% endif %}
                 </div>
                 <div class="mobile-menu-user-info">
-                    <h3>{{ user.username }}</h3>
+                    <h3>{{ user.username }}
+                        {% if is_pro_user %}
+                        <span class="badge badge-warning" style="background: linear-gradient(135deg, #ffd700, #ffed4e); color: #000; font-size: 0.65rem; padding: 2px 6px; border-radius: 3px; margin-left: 4px;">PRO</span>
+                        {% elif is_premium_user %}
+                        <span class="badge badge-primary" style="background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 3px; margin-left: 4px;">PREMIUM</span>
+                        {% endif %}
+                    </h3>
                     <p>{{ user.email }}</p>
                 </div>
             </div>
