@@ -246,8 +246,8 @@ INSTALLED_APPS = [
     'apps.support_services',
 ]
 
-# Add Google API key (for geocoding)
-GOOGLE_API_KEY = 'your-google-api-key-here'  # Get from Google Cloud Console
+# Note: Google API key for geocoding has been removed
+# Geocoding functionality is no longer supported
 
 # ============================================
 # 5. UPDATE recovery_hub/urls.py

@@ -44,6 +44,9 @@ certifi==2024.2.2
 # Utilities
 Pillow==10.2.0
 
+# Error Monitoring
+sentry-sdk==1.40.0
+
 # WSGI Server (for Railway deployment)
 gunicorn==21.2.0
 whitenoise==6.6.0
