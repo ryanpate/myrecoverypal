@@ -1982,6 +1982,9 @@
                                 Milestones
                             </a>
                             <hr>
+                            <a href="{% url 'accounts:subscription_management' %}">
+                                My Subscription
+                            </a>
                             <a href="{% url 'accounts:edit_profile' %}">
                                 Settings
                             </a>
@@ -2126,6 +2129,10 @@
                 <a href="{% url 'accounts:profile' username=user.username %}"
                     class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
                     Profile
+                </a>
+                <a href="{% url 'accounts:subscription_management' %}"
+                    class="{% if request.resolver_match.url_name == 'subscription_management' %}active{% endif %}">
+                    My Subscription
                 </a>
                 <a href="{% url 'accounts:edit_profile' %}"
                     class="{% if request.resolver_match.url_name == 'edit_profile' %}active{% endif %}">
