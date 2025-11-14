@@ -8,12 +8,21 @@
 <div class="page-header">
     <div class="container">
         <h1>Choose Your Plan</h1>
-        <p>Support your recovery journey with premium features</p>
+        <p>Start with a 14-day free trial of Premium features</p>
     </div>
 </div>
 
 <div class="container py-5">
-    {% if user_subscription and user_subscription.is_active %}
+    <!-- Trial Status Alert -->
+    {% if user_subscription and user_subscription.status == 'trialing' %}
+    <div class="alert alert-info text-center mb-4" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white;">
+        <i class="fas fa-clock"></i> <strong>You're on a Premium trial!</strong>
+        {% if user_subscription.trial_end %}
+            Your trial ends on {{ user_subscription.trial_end|date:"F d, Y" }}.
+            Upgrade now to continue enjoying Premium features.
+        {% endif %}
+    </div>
+    {% elif user_subscription and user_subscription.is_active and user_subscription.tier != 'free' %}
     <div class="alert alert-success text-center mb-4">
         <i class="fas fa-check-circle"></i> You're currently on the <strong>{{ user_subscription.get_tier_display }}</strong> plan.
         {% if user_subscription.current_period_end %}
@@ -58,6 +67,7 @@
                 <div class="card h-100 shadow-lg border-primary" style="transform: scale(1.05);">
                     <div class="card-header text-center bg-primary text-white" style="background-color: #1e4d8b !important;">
                         <span class="badge badge-warning mb-2">MOST POPULAR</span>
+                        <span class="badge badge-success mb-2 ml-1" style="background: linear-gradient(135deg, #52b788, #40916c);">14-DAY FREE TRIAL</span>
                         <h3 class="my-3" style="color: white !important;">Premium</h3>
                         <h2 class="display-4" style="color: white !important;">${{ plan.price|floatformat:2 }}</h2>
                         <p style="color: white !important;">per {{ plan.billing_period }}</p>
