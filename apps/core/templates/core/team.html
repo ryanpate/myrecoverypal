@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Our Team - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .team-header {
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        padding: 100px 0 50px;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .team-content {
+        padding: 4rem 0;
+        background: #f8f9fa;
+    }
+
+    .team-section {
+        padding: 3rem 0;
+    }
+
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .team-member {
+        text-align: center;
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .team-member:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .team-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        background: linear-gradient(135deg, #4db8e8, #52b788);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+        font-weight: bold;
+    }
+
+    .team-member h4 {
+        color: #1e4d8b;
+        margin-bottom: 0.5rem;
+    }
+
+    .team-role {
+        color: #52b788;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .team-bio {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .team-intro {
+        background: white;
+        padding: 3rem 2rem;
+        border-radius: 10px;
+        margin-bottom: 3rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-section {
+        background: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        border-radius: 10px;
+        margin-top: 3rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-primary {
+        background: #52b788;
+        border-color: #52b788;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: #45a675;
+        border-color: #45a675;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .team-header h1 {
+            font-size: 2rem;
+        }
+
+        .team-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="team-header">
+    <div class="container">
+        <h1>Our Team</h1>
+        <p class="lead">Meet the people dedicated to supporting your recovery journey</p>
+    </div>
+</div>
+
+<!-- Main Content -->
+<section class="team-content">
+    <div class="container">
+        <!-- Introduction -->
+        <div class="team-intro">
+            <h2 class="text-center mb-4">Building a Community for Recovery</h2>
+            <p class="lead text-center">MyRecoveryPal is built by a passionate team committed to destigmatizing addiction and creating a supportive social network for people in recovery, their families, and friends.</p>
+        </div>
+
+        <!-- Team Members -->
+        <div class="team-section">
+            <h2 class="text-center mb-4">Meet Our Team</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="team-avatar">
+                        R
+                    </div>
+                    <h4>Ryan Pate</h4>
+                    <p class="team-role">Founder & Developer</p>
+                    <p class="team-bio">Dedicated to creating technology that supports recovery and helps people connect with the community they need to thrive in their sobriety journey.</p>
+                </div>
+
+                <!-- Add more team members as needed -->
+                <div class="team-member">
+                    <div class="team-avatar">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4>Community Team</h4>
+                    <p class="team-role">Community Support</p>
+                    <p class="team-bio">Our dedicated community moderators and support staff work to ensure MyRecoveryPal remains a safe, welcoming, and supportive space for all members.</p>
+                </div>
+
+                <div class="team-member">
+                    <div class="team-avatar">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h4>Recovery Advisors</h4>
+                    <p class="team-role">Program Guidance</p>
+                    <p class="team-bio">Recovery professionals and peers with lived experience who help guide our platform's features and resources to best serve the recovery community.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Join Us Section -->
+        <div class="cta-section">
+            <h2>Join Our Growing Community</h2>
+            <p class="lead">We're building something special together. Whether you're in recovery, supporting someone who is, or exploring sobriety, you belong here.</p>
+            <div class="mt-4">
+                <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">Join MyRecoveryPal</a>
+            </div>
+            <p class="mt-3 text-muted">Questions? Reach out to us at <a href="mailto:ryan@myrecoverypal.com">ryan@myrecoverypal.com</a></p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
