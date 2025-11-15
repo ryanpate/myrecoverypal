@@ -14,142 +14,47 @@
         overflow: hidden;
     }
 
-    .success-header::before {
-        content: '';
-        position: absolute;
-        width: 150%;
-        height: 150%;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-        background-size: 50px 50px;
-        animation: float 20s infinite linear;
-        top: -50%;
-        left: -50%;
-    }
-
-    @keyframes float {
-        0% {
-            transform: translate(-50px, -50px);
-        }
-        100% {
-            transform: translate(0, 0);
-        }
-    }
-
     .success-content {
         padding: 4rem 0;
         background: #f8f9fa;
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
     }
 
-    .success-intro {
+    .coming-soon-container {
         background: white;
-        padding: 3rem 2rem;
+        padding: 4rem 2rem;
         border-radius: 10px;
-        margin-bottom: 3rem;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        max-width: 900px;
-        margin-left: auto;
-        margin-right: auto;
+        max-width: 700px;
+        margin: 0 auto;
         text-align: center;
     }
 
-    .story-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 2rem;
-        margin: 2rem 0;
-    }
-
-    .story-card {
-        background: white;
-        padding: 2.5rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border-left: 4px solid #52b788;
-    }
-
-    .story-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .story-header {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
+    .coming-soon-container h2 {
+        color: #1e4d8b;
         margin-bottom: 1.5rem;
     }
 
-    .story-avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
+    .coming-soon-container p {
+        color: #666;
+        line-height: 1.8;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .coming-soon-icon {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 2rem;
         background: linear-gradient(135deg, #4db8e8, #52b788);
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 2rem;
-        font-weight: bold;
-        flex-shrink: 0;
-    }
-
-    .story-info h4 {
-        color: #1e4d8b;
-        margin-bottom: 0.25rem;
-    }
-
-    .story-sobriety {
-        color: #52b788;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-
-    .story-quote {
-        font-style: italic;
-        color: #666;
-        line-height: 1.8;
-        margin: 1.5rem 0;
-        padding: 1rem;
-        background: #f8f9fa;
-        border-left: 3px solid #52b788;
-        border-radius: 5px;
-    }
-
-    .story-text {
-        color: #666;
-        line-height: 1.8;
-        margin-bottom: 1rem;
-    }
-
-    .story-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 1.5rem;
-    }
-
-    .story-tag {
-        background: #e7f3ff;
-        color: #1e4d8b;
-        padding: 0.25rem 0.75rem;
-        border-radius: 15px;
-        font-size: 0.85rem;
-        font-weight: 500;
-    }
-
-    .cta-section {
-        background: white;
-        padding: 4rem 2rem;
-        text-align: center;
-        border-radius: 10px;
-        margin-top: 3rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    .cta-section h2 {
-        color: #1e4d8b;
-        margin-bottom: 1rem;
+        font-size: 3rem;
     }
 
     .btn-primary {
@@ -159,6 +64,7 @@
         font-size: 1.1rem;
         border-radius: 5px;
         transition: all 0.3s ease;
+        margin-top: 2rem;
     }
 
     .btn-primary:hover {
@@ -167,54 +73,13 @@
         transform: translateY(-2px);
     }
 
-    .stats-section {
-        background: white;
-        padding: 3rem 2rem;
-        border-radius: 10px;
-        margin-bottom: 3rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 2rem;
-        margin-top: 2rem;
-    }
-
-    .stat-item {
-        text-align: center;
-    }
-
-    .stat-number {
-        font-size: 3rem;
-        font-weight: bold;
-        color: #52b788;
-        line-height: 1;
-        margin-bottom: 0.5rem;
-    }
-
-    .stat-label {
-        color: #666;
-        font-size: 1rem;
-    }
-
     @media (max-width: 768px) {
         .success-header h1 {
             font-size: 2rem;
         }
 
-        .story-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .story-header {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2rem;
+        .coming-soon-container {
+            padding: 2rem 1.5rem;
         }
     }
 </style>
@@ -225,191 +90,30 @@
 <div class="success-header">
     <div class="container">
         <h1>Success Stories</h1>
-        <p class="lead">Real people, real recovery, real hope</p>
+        <p class="lead">Coming Soon</p>
     </div>
 </div>
 
 <!-- Main Content -->
 <section class="success-content">
     <div class="container">
-        <!-- Introduction -->
-        <div class="success-intro">
-            <h2 class="mb-4">Recovery is Possible</h2>
-            <p class="lead">These are the stories of real people who found hope, connection, and lasting recovery through the MyRecoveryPal community. Their journeys remind us that no matter where you are in your recovery, you're not alone.</p>
-        </div>
-
-        <!-- Community Stats -->
-        <div class="stats-section">
-            <h3 class="text-center mb-4">Our Growing Community</h3>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number">500+</div>
-                    <div class="stat-label">Active Members</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10,000+</div>
-                    <div class="stat-label">Days of Sobriety Tracked</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">1,000+</div>
-                    <div class="stat-label">Support Connections Made</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">Community Support</div>
-                </div>
+        <div class="coming-soon-container">
+            <div class="coming-soon-icon">
+                <i class="fas fa-heart"></i>
             </div>
-        </div>
+            <h2>Your Stories Will Be Here</h2>
+            <p>MyRecoveryPal is a brand new community, and we're excited to grow together with you.</p>
+            <p>As our members progress in their recovery journeys, we'll share inspiring success stories that demonstrate the power of community support and connection.</p>
+            <p>If you're in recovery and would like to share your story in the future, we'd love to hear from you!</p>
 
-        <!-- Success Stories Grid -->
-        <div class="story-grid">
-            <!-- Story 1 -->
-            <div class="story-card">
-                <div class="story-header">
-                    <div class="story-avatar">S</div>
-                    <div class="story-info">
-                        <h4>Sarah M.</h4>
-                        <div class="story-sobriety">2 Years Sober</div>
-                    </div>
-                </div>
-                <div class="story-quote">
-                    "MyRecoveryPal gave me a place where I could be myself without judgment. The connections I've made here have been instrumental in my recovery."
-                </div>
-                <p class="story-text">
-                    After struggling with addiction for over a decade, Sarah found MyRecoveryPal during her first month of sobriety. The daily check-ins and supportive community helped her stay accountable and connected during the hardest days of early recovery.
-                </p>
-                <div class="story-tags">
-                    <span class="story-tag">Peer Support</span>
-                    <span class="story-tag">Daily Accountability</span>
-                </div>
-            </div>
+            {% if user.is_authenticated %}
+                <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+            {% else %}
+                <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">Join Our Community</a>
+            {% endif %}
 
-            <!-- Story 2 -->
-            <div class="story-card">
-                <div class="story-header">
-                    <div class="story-avatar">M</div>
-                    <div class="story-info">
-                        <h4>Michael R.</h4>
-                        <div class="story-sobriety">6 Months Sober</div>
-                    </div>
-                </div>
-                <div class="story-quote">
-                    "Finding a recovery community that understands and doesn't judge has been life-changing. I'm finally proud of who I'm becoming."
-                </div>
-                <p class="story-text">
-                    Michael was hesitant to share his story at first, but the welcoming nature of the MyRecoveryPal community helped him open up. Through group challenges and connecting with a sponsor, he's built a strong foundation for his recovery.
-                </p>
-                <div class="story-tags">
-                    <span class="story-tag">Group Challenges</span>
-                    <span class="story-tag">Sponsor Connection</span>
-                </div>
-            </div>
-
-            <!-- Story 3 -->
-            <div class="story-card">
-                <div class="story-header">
-                    <div class="story-avatar">J</div>
-                    <div class="story-info">
-                        <h4>Jennifer L.</h4>
-                        <div class="story-sobriety">1 Year Sober</div>
-                    </div>
-                </div>
-                <div class="story-quote">
-                    "I never thought I could find real friendships in recovery. MyRecoveryPal proved me wrong. These connections saved my life."
-                </div>
-                <p class="story-text">
-                    Jennifer joined MyRecoveryPal after relapsing for the third time. The 24/7 access to supportive peers and the ability to reach out during difficult moments gave her the safety net she needed to maintain her sobriety.
-                </p>
-                <div class="story-tags">
-                    <span class="story-tag">Recovery Pals</span>
-                    <span class="story-tag">24/7 Support</span>
-                </div>
-            </div>
-
-            <!-- Story 4 -->
-            <div class="story-card">
-                <div class="story-header">
-                    <div class="story-avatar">D</div>
-                    <div class="story-info">
-                        <h4>David K.</h4>
-                        <div class="story-sobriety">3 Years Sober</div>
-                    </div>
-                </div>
-                <div class="story-quote">
-                    "Being able to give back and support others in their recovery journey has strengthened my own sobriety in ways I never expected."
-                </div>
-                <p class="story-text">
-                    After finding success in his own recovery, David became an active member of the community, offering support to newcomers and leading recovery challenges. Helping others has become a cornerstone of his continued sobriety.
-                </p>
-                <div class="story-tags">
-                    <span class="story-tag">Giving Back</span>
-                    <span class="story-tag">Community Leader</span>
-                </div>
-            </div>
-
-            <!-- Story 5 -->
-            <div class="story-card">
-                <div class="story-header">
-                    <div class="story-avatar">L</div>
-                    <div class="story-info">
-                        <h4>Lisa T.</h4>
-                        <div class="story-sobriety">18 Months Sober</div>
-                    </div>
-                </div>
-                <div class="story-quote">
-                    "As a family member, MyRecoveryPal helped me understand addiction better and connect with others who truly get what I'm going through."
-                </div>
-                <p class="story-text">
-                    Lisa joined MyRecoveryPal to better support her brother in recovery. Through the community, she found resources for family members and connected with others navigating similar challenges, helping her provide better support.
-                </p>
-                <div class="story-tags">
-                    <span class="story-tag">Family Support</span>
-                    <span class="story-tag">Understanding Addiction</span>
-                </div>
-            </div>
-
-            <!-- Story 6 -->
-            <div class="story-card">
-                <div class="story-header">
-                    <div class="story-avatar">C</div>
-                    <div class="story-info">
-                        <h4>Carlos G.</h4>
-                        <div class="story-sobriety">9 Months Sober</div>
-                    </div>
-                </div>
-                <div class="story-quote">
-                    "The journal feature helped me process my emotions and track my progress. Looking back at where I started keeps me motivated."
-                </div>
-                <p class="story-text">
-                    Carlos credits the journaling feature and daily check-ins with helping him stay mindful of his recovery. The ability to track milestones and reflect on his journey has been a powerful tool in maintaining his sobriety.
-                </p>
-                <div class="story-tags">
-                    <span class="story-tag">Journaling</span>
-                    <span class="story-tag">Milestone Tracking</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Share Your Story Section -->
-        <div class="cta-section">
-            <h2>Your Story Matters</h2>
-            <p class="lead">Every recovery journey is unique and valuable. Whether you're on day one or year ten, your story can inspire others and strengthen the community.</p>
-            <div class="mt-4">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary btn-lg">Share Your Journey</a>
-                {% else %}
-                    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">Join Our Community</a>
-                {% endif %}
-            </div>
-            <p class="mt-3 text-muted">
-                Join thousands of people finding hope, connection, and lasting recovery
-            </p>
-        </div>
-
-        <!-- Disclaimer -->
-        <div class="success-intro mt-4">
-            <p class="text-muted small">
-                <strong>Note:</strong> Stories shared represent individual experiences. Names have been changed to protect privacy. Results may vary, and these stories should not be considered typical or guaranteed outcomes. If you're struggling with addiction, please consult with a healthcare professional or contact a crisis helpline.
+            <p class="mt-4 text-muted">
+                <small>Be part of building a supportive recovery community from the ground up.</small>
             </p>
         </div>
     </div>
