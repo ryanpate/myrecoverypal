@@ -6,6 +6,12 @@ This guide explains how to set up automated trial expiration using GitHub Action
 
 The `.github/workflows/expire_trials.yml` workflow automatically runs the `expire_trials` management command daily at midnight UTC to downgrade expired trial subscriptions from Premium to Free tier.
 
+**How it works:**
+- Uses Railway CLI with environment variables (`RAILWAY_TOKEN` and `RAILWAY_PROJECT_ID`)
+- Runs the Django management command via `railway run`
+- Automatically targets your MyRecoveryPal project on Railway
+- Executes daily at midnight UTC (configurable)
+
 ## Setup Instructions
 
 ### Step 1: Get Your Railway API Token
@@ -109,26 +115,18 @@ GitHub will email you if a workflow fails. To configure notifications:
 
 ## Troubleshooting
 
-### Workflow Fails with "Project Token not found" or "Authentication Failed"
+### Workflow Fails with "Authentication Failed" or "Project Not Found"
 
 **Problem:** Railway token is invalid, expired, or project ID is missing/incorrect
 
 **Solution:**
 1. Verify both `RAILWAY_TOKEN` and `RAILWAY_PROJECT_ID` secrets are set in GitHub
-2. Confirm the project ID is correct (copy from Railway dashboard → Project Settings)
-3. Generate a new Railway token if needed
-4. Update the secrets in GitHub Settings → Secrets and variables → Actions
-5. Re-run the workflow
-
-### Workflow Fails During "Link to Railway Project" Step
-
-**Problem:** Invalid project ID or token doesn't have access to the project
-
-**Solution:**
-1. Double-check your Railway project ID in Railway dashboard → Project Settings
-2. Ensure the Railway token has access to the MyRecoveryPal project
-3. Try creating a new token with full project access
-4. Verify the project ID doesn't have extra spaces or characters
+2. Confirm the project ID is correct (copy from Railway dashboard → Project Settings → General → Project ID)
+3. Ensure the Railway token has access to the MyRecoveryPal project
+4. Generate a new Railway token if needed (with full project access)
+5. Update the secrets in GitHub Settings → Secrets and variables → Actions
+6. Verify the project ID doesn't have extra spaces or characters
+7. Re-run the workflow
 
 ### Workflow Runs But Doesn't Expire Trials
 
