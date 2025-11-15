@@ -6,6 +6,11 @@ on:
     - cron: '0 0 * * *'
   workflow_dispatch:  # Allows manual triggering
 
+# Required secrets:
+# - RAILWAY_TOKEN: Your Railway API token
+# - RAILWAY_PROJECT_ID: Your Railway project ID
+# - RAILWAY_SERVICE_NAME: The name of your Railway service
+
 jobs:
   expire-trials:
     runs-on: ubuntu-latest
@@ -18,5 +23,7 @@ jobs:
       - name: Run expire_trials command on Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE_NAME }}
         run: |
-          railway run --service ${{ secrets.RAILWAY_SERVICE_NAME }} -- python manage.py expire_trials
+          railway run -- python manage.py expire_trials
