@@ -722,7 +722,7 @@ def respond_sponsor_request(request, relationship_id):
 
 
 # Group views
-class RecoveryGroupListView(ListView):
+class RecoveryGroupListView(LoginRequiredMixin, ListView):
     """List all recovery groups"""
     model = RecoveryGroup
     template_name = 'accounts/groups/group_list.html'
@@ -766,7 +766,7 @@ class RecoveryGroupListView(ListView):
 
         return context
 
-class RecoveryGroupDetailView(DetailView):
+class RecoveryGroupDetailView(LoginRequiredMixin, DetailView):
     """Detailed view of a recovery group"""
     model = RecoveryGroup
     template_name = 'accounts/groups/group_detail.html'
@@ -1271,7 +1271,7 @@ def follow_user(request, username):
 # =============================================================================
 
 # Update the EnhancedCommunityView class
-class EnhancedCommunityView(ListView):
+class EnhancedCommunityView(LoginRequiredMixin, ListView):
     """Enhanced community view with follow functionality and online status"""
     model = User
     template_name = 'accounts/enhanced_community.html'
