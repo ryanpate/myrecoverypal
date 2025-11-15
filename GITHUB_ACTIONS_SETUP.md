@@ -28,28 +28,51 @@ The `.github/workflows/expire_trials.yml` workflow automatically runs the `expir
 
 **Note:** This is different from account tokens found in Account Settings. Project tokens are scoped to a specific project and are required for CI/CD workflows.
 
-### Step 2: Add Railway Token to GitHub Secrets
+### Step 2: Get Your Railway Service Name
+
+Your Railway project likely has multiple services (web app, database, Redis, etc.). You need to identify which service runs your Django application.
+
+1. In your Railway project, look at the **Services** section
+2. Find the service that runs your Django web application
+3. The service name is usually displayed at the top of the service card
+4. Common names: `web`, `myrecoverypal`, `django`, or your GitHub repo name
+5. Copy the exact service name (case-sensitive)
+
+**Quick way to find it:**
+- Click on the service that shows your web deployment
+- The service name is in the breadcrumb at the top or in the service settings
+
+### Step 3: Add Railway Secrets to GitHub
+
+You need to add **two secrets** to your GitHub repository:
 
 1. Go to your GitHub repository: `https://github.com/ryanpate/myrecoverypal`
 2. Click on **Settings** tab
 3. In the left sidebar, click **Secrets and variables** → **Actions**
+
+**Add the Railway Token:**
 4. Click **New repository secret**
 5. Enter:
    - **Name:** `RAILWAY_TOKEN`
    - **Secret:** Paste the project token from Step 1
 6. Click **Add secret**
 
-You should now see `RAILWAY_TOKEN` in your secrets list.
+**Add the Railway Service Name:**
+7. Click **New repository secret** again
+8. Enter:
+   - **Name:** `RAILWAY_SERVICE_NAME`
+   - **Secret:** Enter the service name from Step 2 (e.g., `web` or `myrecoverypal`)
+9. Click **Add secret**
 
-**Important:** Make sure you're using a **project token** (from your project's Settings → Tokens), not an account token. Project tokens are already scoped to your MyRecoveryPal project, so you don't need to specify a project ID.
+You should now see both `RAILWAY_TOKEN` and `RAILWAY_SERVICE_NAME` in your secrets list.
 
-### Step 3: Verify Workflow is Enabled
+### Step 4: Verify Workflow is Enabled
 
 1. In your GitHub repository, go to the **Actions** tab
 2. You should see "Expire Trial Subscriptions" in the workflows list
 3. If you see a message about workflows being disabled, click **Enable workflows**
 
-### Step 4: Test the Workflow Manually
+### Step 5: Test the Workflow Manually
 
 Before waiting for the scheduled run, test it manually:
 
@@ -61,7 +84,7 @@ Before waiting for the scheduled run, test it manually:
 6. Watch the workflow run and check for any errors
 7. Review the logs to see if trials were expired
 
-### Step 5: Verify It's Working
+### Step 6: Verify It's Working
 
 After the workflow runs (either manually or on schedule):
 
@@ -99,6 +122,17 @@ GitHub will email you if a workflow fails. To configure notifications:
 
 ## Troubleshooting
 
+### Workflow Fails with "Multiple services found"
+
+**Problem:** Railway project has multiple services and doesn't know which one to use
+
+**Solution:**
+1. Find your Django service name in Railway dashboard
+2. Add `RAILWAY_SERVICE_NAME` secret in GitHub (see Step 3 above)
+3. Common service names: `web`, `myrecoverypal`, `django`
+4. Service name is case-sensitive - copy it exactly
+5. Re-run the workflow
+
 ### Workflow Fails with "Project Token not found" or "Authentication Failed"
 
 **Problem:** Using wrong token type or invalid token
@@ -110,8 +144,7 @@ GitHub will email you if a workflow fails. To configure notifications:
 2. Delete the old `RAILWAY_TOKEN` secret in GitHub if it was an account token
 3. Generate a new project token from MyRecoveryPal project settings
 4. Update the `RAILWAY_TOKEN` secret in GitHub with the new project token
-5. Remove `RAILWAY_PROJECT_ID` secret if it exists (not needed with project tokens)
-6. Re-run the workflow
+5. Re-run the workflow
 
 ### Workflow Runs But Doesn't Expire Trials
 
