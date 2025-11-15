@@ -7,65 +7,49 @@ This guide explains how to set up automated trial expiration using GitHub Action
 The `.github/workflows/expire_trials.yml` workflow automatically runs the `expire_trials` management command daily at midnight UTC to downgrade expired trial subscriptions from Premium to Free tier.
 
 **How it works:**
-- Uses Railway CLI with environment variables (`RAILWAY_TOKEN` and `RAILWAY_PROJECT_ID`)
+- Uses Railway CLI with a project-scoped token (`RAILWAY_TOKEN`)
 - Runs the Django management command via `railway run`
-- Automatically targets your MyRecoveryPal project on Railway
+- Project token automatically targets your MyRecoveryPal project
 - Executes daily at midnight UTC (configurable)
 
 ## Setup Instructions
 
-### Step 1: Get Your Railway API Token
+### Step 1: Get Your Railway Project Token
 
-1. Go to [Railway Dashboard](https://railway.app/)
-2. Click on your profile icon in the top right
-3. Go to **Account Settings**
-4. Navigate to **Tokens** section
-5. Click **Create Token**
-6. Give it a name like "GitHub Actions - MyRecoveryPal"
-7. Copy the token (it will only be shown once!)
-
-### Step 2: Get Your Railway Project ID
+**IMPORTANT:** You need a **project token**, not an account token. Project tokens are specific to your MyRecoveryPal project.
 
 1. Go to [Railway Dashboard](https://railway.app/)
 2. Click on your **MyRecoveryPal** project
-3. Go to **Settings** tab
-4. Under **General** section, find **Project ID**
-5. Copy the project ID (it looks like: `a1b2c3d4-e5f6-7890-abcd-ef1234567890`)
+3. Click on the **Settings** tab
+4. Scroll down to the **Tokens** section
+5. Click **Create Token** (or **New Token**)
+6. Give it a name like "GitHub Actions - Trial Expiration"
+7. Copy the token immediately (it will only be shown once!)
 
-Alternatively, you can find it in the URL when viewing your project:
-- URL format: `https://railway.app/project/{PROJECT_ID}`
+**Note:** This is different from account tokens found in Account Settings. Project tokens are scoped to a specific project and are required for CI/CD workflows.
 
-### Step 3: Add Railway Secrets to GitHub
-
-You need to add **two secrets** to your GitHub repository:
+### Step 2: Add Railway Token to GitHub Secrets
 
 1. Go to your GitHub repository: `https://github.com/ryanpate/myrecoverypal`
 2. Click on **Settings** tab
 3. In the left sidebar, click **Secrets and variables** → **Actions**
-
-**Add the Railway Token:**
 4. Click **New repository secret**
 5. Enter:
    - **Name:** `RAILWAY_TOKEN`
-   - **Secret:** Paste the API token from Step 1
+   - **Secret:** Paste the project token from Step 1
 6. Click **Add secret**
 
-**Add the Railway Project ID:**
-7. Click **New repository secret** again
-8. Enter:
-   - **Name:** `RAILWAY_PROJECT_ID`
-   - **Secret:** Paste the project ID from Step 2
-9. Click **Add secret**
+You should now see `RAILWAY_TOKEN` in your secrets list.
 
-You should now see both `RAILWAY_TOKEN` and `RAILWAY_PROJECT_ID` in your secrets list.
+**Important:** Make sure you're using a **project token** (from your project's Settings → Tokens), not an account token. Project tokens are already scoped to your MyRecoveryPal project, so you don't need to specify a project ID.
 
-### Step 4: Verify Workflow is Enabled
+### Step 3: Verify Workflow is Enabled
 
 1. In your GitHub repository, go to the **Actions** tab
 2. You should see "Expire Trial Subscriptions" in the workflows list
 3. If you see a message about workflows being disabled, click **Enable workflows**
 
-### Step 5: Test the Workflow Manually
+### Step 4: Test the Workflow Manually
 
 Before waiting for the scheduled run, test it manually:
 
@@ -77,7 +61,7 @@ Before waiting for the scheduled run, test it manually:
 6. Watch the workflow run and check for any errors
 7. Review the logs to see if trials were expired
 
-### Step 6: Verify It's Working
+### Step 5: Verify It's Working
 
 After the workflow runs (either manually or on schedule):
 
@@ -115,18 +99,19 @@ GitHub will email you if a workflow fails. To configure notifications:
 
 ## Troubleshooting
 
-### Workflow Fails with "Authentication Failed" or "Project Not Found"
+### Workflow Fails with "Project Token not found" or "Authentication Failed"
 
-**Problem:** Railway token is invalid, expired, or project ID is missing/incorrect
+**Problem:** Using wrong token type or invalid token
 
 **Solution:**
-1. Verify both `RAILWAY_TOKEN` and `RAILWAY_PROJECT_ID` secrets are set in GitHub
-2. Confirm the project ID is correct (copy from Railway dashboard → Project Settings → General → Project ID)
-3. Ensure the Railway token has access to the MyRecoveryPal project
-4. Generate a new Railway token if needed (with full project access)
-5. Update the secrets in GitHub Settings → Secrets and variables → Actions
-6. Verify the project ID doesn't have extra spaces or characters
-7. Re-run the workflow
+1. **Verify you're using a PROJECT token, not an account token**
+   - Project tokens: Project Settings → Tokens (✅ Correct)
+   - Account tokens: Account Settings → Tokens (❌ Wrong)
+2. Delete the old `RAILWAY_TOKEN` secret in GitHub if it was an account token
+3. Generate a new project token from MyRecoveryPal project settings
+4. Update the `RAILWAY_TOKEN` secret in GitHub with the new project token
+5. Remove `RAILWAY_PROJECT_ID` secret if it exists (not needed with project tokens)
+6. Re-run the workflow
 
 ### Workflow Runs But Doesn't Expire Trials
 
