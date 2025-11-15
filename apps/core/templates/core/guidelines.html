@@ -1,0 +1,388 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Community Guidelines - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .guidelines-header {
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        padding: 100px 0 50px;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .guidelines-content {
+        padding: 4rem 0;
+        background: #f8f9fa;
+    }
+
+    .guidelines-intro {
+        background: white;
+        padding: 3rem 2rem;
+        border-radius: 10px;
+        margin-bottom: 3rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .guideline-section {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .guideline-section h3 {
+        color: #1e4d8b;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .guideline-section h3 i {
+        color: #52b788;
+        font-size: 1.5rem;
+    }
+
+    .guideline-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .guideline-list li {
+        padding: 1rem 0;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: start;
+        gap: 1rem;
+    }
+
+    .guideline-list li:last-child {
+        border-bottom: none;
+    }
+
+    .guideline-list li i {
+        color: #52b788;
+        margin-top: 0.25rem;
+        flex-shrink: 0;
+    }
+
+    .guideline-text {
+        flex: 1;
+    }
+
+    .guideline-text strong {
+        color: #1e4d8b;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .important-note {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-radius: 5px;
+    }
+
+    .important-note h4 {
+        color: #856404;
+        margin-bottom: 0.5rem;
+    }
+
+    .important-note p {
+        color: #856404;
+        margin: 0;
+    }
+
+    .reporting-section {
+        background: #e7f3ff;
+        border-left: 4px solid #1e4d8b;
+        padding: 2rem;
+        border-radius: 5px;
+        margin-top: 2rem;
+    }
+
+    .reporting-section h4 {
+        color: #1e4d8b;
+        margin-bottom: 1rem;
+    }
+
+    .cta-section {
+        background: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        border-radius: 10px;
+        margin-top: 3rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-primary {
+        background: #52b788;
+        border-color: #52b788;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: #45a675;
+        border-color: #45a675;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .guidelines-header h1 {
+            font-size: 2rem;
+        }
+
+        .guideline-section {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="guidelines-header">
+    <div class="container">
+        <h1>Community Guidelines</h1>
+        <p class="lead">Creating a safe, supportive space for everyone in recovery</p>
+    </div>
+</div>
+
+<!-- Main Content -->
+<section class="guidelines-content">
+    <div class="container">
+        <!-- Introduction -->
+        <div class="guidelines-intro">
+            <h2 class="text-center mb-4">Welcome to MyRecoveryPal</h2>
+            <p class="lead">MyRecoveryPal is a community built on mutual respect, support, and understanding. These guidelines help us maintain a safe and welcoming environment for everyone in recovery, their families, and friends.</p>
+            <p>By participating in our community, you agree to follow these guidelines. Violations may result in content removal, warnings, or account suspension.</p>
+        </div>
+
+        <!-- Core Values -->
+        <div class="guideline-section">
+            <h3><i class="fas fa-heart"></i> Our Core Values</h3>
+            <ul class="guideline-list">
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <div class="guideline-text">
+                        <strong>Respect & Compassion</strong>
+                        Treat all members with kindness and understanding. Everyone's recovery journey is unique.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <div class="guideline-text">
+                        <strong>Authenticity</strong>
+                        Be genuine and honest in your interactions. Share your real experiences and support others authentically.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <div class="guideline-text">
+                        <strong>Confidentiality</strong>
+                        What's shared in the community stays in the community. Respect everyone's privacy and anonymity.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <div class="guideline-text">
+                        <strong>Support Over Judgment</strong>
+                        We're here to lift each other up, not tear each other down. Keep criticism constructive and compassionate.
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Expected Behavior -->
+        <div class="guideline-section">
+            <h3><i class="fas fa-thumbs-up"></i> Expected Behavior</h3>
+            <ul class="guideline-list">
+                <li>
+                    <i class="fas fa-check"></i>
+                    <div class="guideline-text">
+                        <strong>Be Supportive</strong>
+                        Offer encouragement, share your experience, and celebrate others' successes.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    <div class="guideline-text">
+                        <strong>Respect Boundaries</strong>
+                        Honor others' comfort levels with sharing. Don't pressure anyone to share more than they're ready to.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    <div class="guideline-text">
+                        <strong>Stay On Topic</strong>
+                        Keep discussions relevant to recovery, wellness, and supporting each other.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    <div class="guideline-text">
+                        <strong>Welcome Everyone</strong>
+                        Whether someone is on day one or year ten, in active addiction or long-term recovery, everyone deserves respect and support.
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Prohibited Behavior -->
+        <div class="guideline-section">
+            <h3><i class="fas fa-ban"></i> Prohibited Behavior</h3>
+            <ul class="guideline-list">
+                <li>
+                    <i class="fas fa-times-circle"></i>
+                    <div class="guideline-text">
+                        <strong>Harassment or Bullying</strong>
+                        Any form of harassment, bullying, hate speech, or discriminatory behavior is strictly prohibited.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-times-circle"></i>
+                    <div class="guideline-text">
+                        <strong>Promoting Substance Use</strong>
+                        Do not glorify, promote, or provide information on how to obtain or use substances.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-times-circle"></i>
+                    <div class="guideline-text">
+                        <strong>Sharing Personal Information</strong>
+                        Don't share others' personal information without their explicit consent.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-times-circle"></i>
+                    <div class="guideline-text">
+                        <strong>Spam or Self-Promotion</strong>
+                        No commercial advertising, spam, or excessive self-promotion without moderator approval.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-times-circle"></i>
+                    <div class="guideline-text">
+                        <strong>Graphic Content</strong>
+                        Avoid sharing graphic descriptions of drug use, self-harm, or other potentially triggering content without appropriate warnings.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-times-circle"></i>
+                    <div class="guideline-text">
+                        <strong>Medical or Legal Advice</strong>
+                        Don't provide medical or legal advice. Share experiences, but encourage members to consult professionals.
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Crisis Support -->
+        <div class="important-note">
+            <h4><i class="fas fa-exclamation-triangle"></i> If You're in Crisis</h4>
+            <p>If you or someone you know is in immediate danger or experiencing a mental health crisis, please contact emergency services (911) or the National Suicide Prevention Lifeline at 988. MyRecoveryPal is a peer support community, not a crisis intervention service.</p>
+        </div>
+
+        <!-- Content Guidelines -->
+        <div class="guideline-section">
+            <h3><i class="fas fa-file-alt"></i> Content Guidelines</h3>
+            <ul class="guideline-list">
+                <li>
+                    <i class="fas fa-check"></i>
+                    <div class="guideline-text">
+                        <strong>Appropriate Content</strong>
+                        Keep all content appropriate for a supportive recovery community. Use content warnings when discussing sensitive topics.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    <div class="guideline-text">
+                        <strong>Respect Intellectual Property</strong>
+                        Only share content you have the right to share. Give credit to original sources when appropriate.
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    <div class="guideline-text">
+                        <strong>Language</strong>
+                        Use respectful language. Avoid excessive profanity or inflammatory rhetoric.
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Reporting -->
+        <div class="guideline-section">
+            <div class="reporting-section">
+                <h4><i class="fas fa-flag"></i> Reporting Violations</h4>
+                <p>If you see content or behavior that violates these guidelines, please report it to our moderation team. You can report issues by contacting us at <a href="mailto:ryan@myrecoverypal.com">ryan@myrecoverypal.com</a>.</p>
+                <p class="mt-2">All reports are reviewed promptly and kept confidential.</p>
+            </div>
+        </div>
+
+        <!-- Consequences -->
+        <div class="guideline-section">
+            <h3><i class="fas fa-gavel"></i> Consequences of Violations</h3>
+            <p class="mb-3">Depending on the severity and frequency of violations, consequences may include:</p>
+            <ul class="guideline-list">
+                <li>
+                    <i class="fas fa-info-circle"></i>
+                    <div class="guideline-text">
+                        <strong>First Violation</strong>
+                        Warning and content removal
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-info-circle"></i>
+                    <div class="guideline-text">
+                        <strong>Repeated Violations</strong>
+                        Temporary account suspension
+                    </div>
+                </li>
+                <li>
+                    <i class="fas fa-info-circle"></i>
+                    <div class="guideline-text">
+                        <strong>Severe Violations</strong>
+                        Permanent account termination
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Updates -->
+        <div class="guideline-section">
+            <h3><i class="fas fa-sync-alt"></i> Guideline Updates</h3>
+            <p>These guidelines may be updated periodically to reflect the evolving needs of our community. We'll notify members of significant changes. Continued use of MyRecoveryPal constitutes acceptance of the current guidelines.</p>
+            <p class="mt-3 text-muted"><small>Last updated: November 2024</small></p>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h2>Thank You for Being Part of Our Community</h2>
+            <p class="lead">Together, we're creating a supportive space where everyone can find connection, encouragement, and hope in their recovery journey.</p>
+            <div class="mt-4">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+                {% else %}
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">Join Our Community</a>
+                {% endif %}
+            </div>
+            <p class="mt-3 text-muted">Questions about these guidelines? Contact us at <a href="mailto:ryan@myrecoverypal.com">ryan@myrecoverypal.com</a></p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
