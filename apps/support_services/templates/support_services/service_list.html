@@ -1,0 +1,390 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Support Services Directory - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .service-header {
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        padding: 80px 0 40px;
+        color: white;
+        text-align: center;
+    }
+
+    .service-filters {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .filter-section {
+        margin-bottom: 20px;
+    }
+
+    .filter-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .service-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-left: 4px solid #52b788;
+    }
+
+    .service-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .service-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #1e4d8b;
+        margin-bottom: 5px;
+    }
+
+    .service-organization {
+        font-size: 0.95rem;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .service-description {
+        color: #4B5563;
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+
+    .service-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .service-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .badge-type {
+        background: #EDE9FE;
+        color: #7C3AED;
+    }
+
+    .badge-category {
+        background: #DBEAFE;
+        color: #1E40AF;
+    }
+
+    .badge-cost {
+        background: #DCFCE7;
+        color: #166534;
+    }
+
+    .badge-featured {
+        background: #FEF3C7;
+        color: #92400E;
+        font-weight: 600;
+    }
+
+    .service-contact {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #E5E7EB;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #52b788;
+        font-weight: 500;
+    }
+
+    .contact-item i {
+        font-size: 1rem;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 10px;
+    }
+
+    .no-results i {
+        font-size: 4rem;
+        color: #D1D5DB;
+        margin-bottom: 20px;
+    }
+
+    .pagination {
+        margin-top: 30px;
+    }
+
+    .search-stats {
+        background: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    @media (max-width: 768px) {
+        .service-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .service-contact {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="service-header">
+    <div class="container">
+        <h1><i class="fas fa-hands-helping"></i> Support Services Directory</h1>
+        <p class="lead">Find helplines, treatment facilities, and recovery resources</p>
+    </div>
+</div>
+
+<div class="container my-5">
+    <!-- Search & Filters -->
+    <div class="service-filters">
+        <form method="get" action="{% url 'support_services:service_list' %}">
+            <div class="row">
+                <div class="col-md-12 filter-section">
+                    <label for="search" class="form-label"><i class="fas fa-search"></i> Search</label>
+                    <input type="text"
+                           class="form-control"
+                           id="search"
+                           name="q"
+                           placeholder="Search by name, organization, or description..."
+                           value="{{ search_query }}">
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-4 filter-section">
+                    <label for="type" class="form-label"><i class="fas fa-layer-group"></i> Service Type</label>
+                    <select class="form-select" id="type" name="type">
+                        <option value="">All Types</option>
+                        {% for value, label in service_types %}
+                        <option value="{{ value }}" {% if selected_type == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-4 filter-section">
+                    <label for="category" class="form-label"><i class="fas fa-map-marker-alt"></i> Category</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">All Categories</option>
+                        {% for value, label in categories %}
+                        <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-4 filter-section">
+                    <label for="cost" class="form-label"><i class="fas fa-dollar-sign"></i> Cost</label>
+                    <select class="form-select" id="cost" name="cost">
+                        <option value="">All Costs</option>
+                        {% for value, label in cost_options %}
+                        <option value="{{ value }}" {% if selected_cost == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <a href="{% url 'support_services:service_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-redo"></i> Clear Filters
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Search Stats -->
+    {% if services %}
+    <div class="search-stats">
+        <strong>{{ services.paginator.count }}</strong> service{{ services.paginator.count|pluralize }} found
+        {% if search_query %}matching "{{ search_query }}"{% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Services List -->
+    {% if services %}
+        {% for service in services %}
+        <div class="service-card">
+            <div class="d-flex justify-content-between align-items-start flex-wrap">
+                <div class="flex-grow-1">
+                    <h3 class="service-name">
+                        <a href="{% url 'support_services:service_detail' service.service_id %}" class="text-decoration-none">
+                            {{ service.name }}
+                        </a>
+                    </h3>
+                    {% if service.organization %}
+                    <div class="service-organization">
+                        <i class="fas fa-building"></i> {{ service.organization }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% if service.is_featured %}
+                <span class="service-badge badge-featured">
+                    <i class="fas fa-star"></i> Featured
+                </span>
+                {% endif %}
+            </div>
+
+            <p class="service-description">{{ service.description|truncatewords:50 }}</p>
+
+            <!-- Service Meta -->
+            <div class="service-meta">
+                <span class="service-badge badge-type">
+                    <i class="fas fa-tag"></i> {{ service.get_type_display }}
+                </span>
+                <span class="service-badge badge-category">
+                    <i class="fas fa-map-pin"></i> {{ service.get_category_display }}
+                </span>
+                <span class="service-badge badge-cost">
+                    <i class="fas fa-dollar-sign"></i> {{ service.get_cost_display }}
+                </span>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="service-contact">
+                {% if service.phone %}
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:{{ service.phone }}">{{ service.phone_display|default:service.phone }}</a>
+                </div>
+                {% endif %}
+
+                {% if service.text_support %}
+                <div class="contact-item">
+                    <i class="fas fa-comment"></i>
+                    <span>Text: {{ service.text_support }}</span>
+                </div>
+                {% endif %}
+
+                {% if service.website %}
+                <div class="contact-item">
+                    <i class="fas fa-globe"></i>
+                    <a href="{{ service.website }}" target="_blank" rel="noopener">Website</a>
+                </div>
+                {% endif %}
+
+                {% if service.chat_support %}
+                <div class="contact-item">
+                    <i class="fas fa-comments"></i>
+                    <a href="{{ service.chat_support }}" target="_blank" rel="noopener">Live Chat</a>
+                </div>
+                {% endif %}
+
+                {% if service.email %}
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:{{ service.email }}">Email</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- View Details Link -->
+            <div class="mt-3">
+                <a href="{% url 'support_services:service_detail' service.service_id %}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-info-circle"></i> View Full Details
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Pagination -->
+        {% if services.has_other_pages %}
+        <nav aria-label="Service pagination">
+            <ul class="pagination justify-content-center">
+                {% if services.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ services.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_cost %}&cost={{ selected_cost }}{% endif %}">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in services.paginator.page_range %}
+                {% if services.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > services.number|add:'-3' and num < services.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_cost %}&cost={{ selected_cost }}{% endif %}">
+                        {{ num }}
+                    </a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if services.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ services.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_cost %}&cost={{ selected_cost }}{% endif %}">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+    {% else %}
+        <!-- No Results -->
+        <div class="no-results">
+            <i class="fas fa-search"></i>
+            <h3>No Services Found</h3>
+            <p class="text-muted">Try adjusting your filters or search terms.</p>
+            <a href="{% url 'support_services:service_list' %}" class="btn btn-primary mt-3">
+                <i class="fas fa-redo"></i> Clear All Filters
+            </a>
+        </div>
+    {% endif %}
+
+    <!-- Help Section -->
+    <div class="alert alert-info mt-4">
+        <h5><i class="fas fa-info-circle"></i> Need Help Right Now?</h5>
+        <p class="mb-0">
+            If you're in crisis, please call the <strong>National Suicide Prevention Lifeline</strong> at
+            <a href="tel:988"><strong>988</strong></a> or the
+            <strong>SAMHSA National Helpline</strong> at <a href="tel:1-800-662-4357"><strong>1-800-662-HELP (4357)</strong></a>.
+        </p>
+    </div>
+</div>
+
+{% endblock %}
