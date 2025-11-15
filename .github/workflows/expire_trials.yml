@@ -23,7 +23,5 @@ jobs:
       - name: Run expire_trials command on Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE_NAME }}
         run: |
-          railway run -- python manage.py expire_trials
+          railway run --service "${{ secrets.RAILWAY_SERVICE_NAME }}" --project "${{ secrets.RAILWAY_PROJECT_ID }}" -- python manage.py expire_trials
