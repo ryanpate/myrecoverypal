@@ -23,6 +23,12 @@ jobs:
         run: |
           npm install -g @railway/cli
 
+      - name: Link to Railway Project
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          railway link ${{ secrets.RAILWAY_PROJECT_ID }}
+
       - name: Run expire_trials command
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
