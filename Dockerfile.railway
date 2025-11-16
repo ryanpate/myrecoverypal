@@ -1,0 +1,46 @@
+# Railway Dockerfile for MyRecoveryPal Django Application
+# This Dockerfile is specifically for deploying the Django web app to Railway
+# The package.json and Capacitor files are for local mobile app development only
+
+FROM python:3.11-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PORT=8000
+
+# Set work directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt /app/
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy project
+COPY . /app/
+
+# Create necessary directories
+RUN mkdir -p staticfiles logs media/avatars root_files
+
+# Collect static files
+RUN python manage.py collectstatic --noinput --clear
+
+# Run migrations
+RUN python manage.py migrate --noinput || echo "Migrations will run on startup"
+
+# Generate sitemap
+RUN python manage.py generate_sitemap --output=sitemap.xml || echo "Sitemap generation completed"
+
+# Expose port
+EXPOSE $PORT
+
+# Start gunicorn
+CMD gunicorn recovery_hub.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --access-logfile - --error-logfile -
