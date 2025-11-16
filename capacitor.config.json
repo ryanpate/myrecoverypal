@@ -1,0 +1,20 @@
+{
+  "appId": "com.myrecoverypal.app",
+  "appName": "MyRecoveryPal",
+  "webDir": "www",
+  "server": {
+    "url": "https://www.myrecoverypal.com",
+    "cleartext": true
+  },
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    },
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#1e4d8b",
+      "showSpinner": true,
+      "spinnerColor": "#ffffff"
+    }
+  }
+}
