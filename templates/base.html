@@ -971,16 +971,46 @@
             right: 1rem;
             background: var(--primary-dark);
             color: white;
-            padding: 1rem;
-            border-radius: 12px;
+            padding: 0.65rem 0.85rem;
+            border-radius: 8px;
             display: none;
             z-index: 999;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            font-size: 0.85rem;
         }
 
         .install-prompt.show {
             display: block;
             animation: slideUp 0.3s ease;
+        }
+
+        .install-prompt strong {
+            font-size: 0.9rem;
+        }
+
+        .install-prompt p {
+            font-size: 0.8rem !important;
+        }
+
+        .install-prompt-close {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.8;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s;
+            margin-left: 0.5rem;
+        }
+
+        .install-prompt-close:hover {
+            opacity: 1;
         }
 
         @keyframes slideUp {
@@ -992,6 +1022,15 @@
             to {
                 transform: translateY(0);
                 opacity: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .install-prompt {
+                bottom: 1rem;
+                left: auto;
+                right: 1rem;
+                max-width: 400px;
             }
         }
 
@@ -1921,12 +1960,13 @@
 
     <!-- PWA Install Prompt -->
     <div class="install-prompt" id="installBanner">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;">
+            <div style="flex: 1; min-width: 0;">
                 <strong>Install MyRecoveryPal</strong>
-                <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">Add to your home screen for quick access</p>
+                <p style="margin: 0; opacity: 0.9;">Add to home screen for quick access</p>
             </div>
-            <button id="installBtn" class="btn btn-light btn-sm" style="margin-left: 1rem;">Install</button>
+            <button id="installBtn" class="btn btn-light btn-sm" style="white-space: nowrap; font-size: 0.8rem; padding: 0.35rem 0.75rem;">Install</button>
+            <button class="install-prompt-close" id="closeInstallBanner" aria-label="Close">&times;</button>
         </div>
     </div>
 
@@ -2362,22 +2402,35 @@
         const isFirefoxAndroid = isFirefox && /Android/i.test(navigator.userAgent);
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
-        // Show install prompt for iOS users who haven't installed
-        if (isIOS && !isStandalone) {
+        // Check if user has dismissed the install banner
+        const installBannerDismissed = localStorage.getItem('pwa-install-banner-dismissed') === 'true';
+
+        // Function to close and dismiss the install banner
+        function closeInstallBanner() {
+            const installBanner = document.getElementById('installBanner');
+            if (installBanner) {
+                installBanner.classList.remove('show');
+                localStorage.setItem('pwa-install-banner-dismissed', 'true');
+            }
+        }
+
+        // Show install prompt for iOS users who haven't installed or dismissed
+        if (isIOS && !isStandalone && !installBannerDismissed) {
             const installBanner = document.getElementById('installBanner');
             if (installBanner) {
                 // Update banner for iOS
                 installBanner.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                        <div style="flex: 1; min-width: 200px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;">
+                        <div style="flex: 1; min-width: 0;">
                             <strong>Install MyRecoveryPal</strong>
-                            <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">
+                            <p style="margin: 0; opacity: 0.9;">
                                 Tap <i class="fas fa-share" style="margin: 0 4px;"></i> then "Add to Home Screen"
                             </p>
                         </div>
-                        <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="margin-left: 1rem; white-space: nowrap;">
-                            Show Me How
+                        <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="white-space: nowrap; font-size: 0.8rem; padding: 0.35rem 0.75rem;">
+                            Guide
                         </a>
+                        <button class="install-prompt-close" onclick="closeInstallBanner()" aria-label="Close">&times;</button>
                     </div>
                 `;
                 installBanner.classList.add('show');
@@ -2385,37 +2438,39 @@
         }
 
         // Show install prompt for Firefox users
-        if (isFirefox && !isStandalone && !isIOS) {
+        if (isFirefox && !isStandalone && !isIOS && !installBannerDismissed) {
             const installBanner = document.getElementById('installBanner');
             if (installBanner) {
                 if (isFirefoxAndroid) {
                     // Firefox Android supports PWA installation via menu
                     installBanner.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                            <div style="flex: 1; min-width: 200px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;">
+                            <div style="flex: 1; min-width: 0;">
                                 <strong>Install MyRecoveryPal</strong>
-                                <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">
+                                <p style="margin: 0; opacity: 0.9;">
                                     Tap menu <i class="fas fa-ellipsis-v" style="margin: 0 4px;"></i> then "Install"
                                 </p>
                             </div>
-                            <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="margin-left: 1rem; white-space: nowrap;">
-                                Show Me How
+                            <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="white-space: nowrap; font-size: 0.8rem; padding: 0.35rem 0.75rem;">
+                                Guide
                             </a>
+                            <button class="install-prompt-close" onclick="closeInstallBanner()" aria-label="Close">&times;</button>
                         </div>
                     `;
                 } else {
                     // Firefox Desktop has limited PWA support
                     installBanner.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                            <div style="flex: 1; min-width: 200px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;">
+                            <div style="flex: 1; min-width: 0;">
                                 <strong>Install MyRecoveryPal</strong>
-                                <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">
+                                <p style="margin: 0; opacity: 0.9;">
                                     For best PWA experience, use Chrome, Edge, or Safari
                                 </p>
                             </div>
-                            <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="margin-left: 1rem; white-space: nowrap;">
+                            <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="white-space: nowrap; font-size: 0.8rem; padding: 0.35rem 0.75rem;">
                                 Learn More
                             </a>
+                            <button class="install-prompt-close" onclick="closeInstallBanner()" aria-label="Close">&times;</button>
                         </div>
                     `;
                 }
@@ -2428,11 +2483,12 @@
             e.preventDefault();
             deferredPrompt = e;
             const installBanner = document.getElementById('installBanner');
-            if (installBanner && !isIOS && !isFirefox) {
+            if (installBanner && !isIOS && !isFirefox && !installBannerDismissed) {
                 installBanner.classList.add('show');
             }
         });
 
+        // Handle install button click
         const installBtn = document.getElementById('installBtn');
         if (installBtn) {
             installBtn.addEventListener('click', async () => {
@@ -2442,12 +2498,21 @@
                     deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
                     console.log(`User response to install prompt: ${outcome}`);
+                    if (outcome === 'accepted') {
+                        localStorage.setItem('pwa-install-banner-dismissed', 'true');
+                    }
                     deferredPrompt = null;
                 } else if (isIOS) {
                     // Redirect iOS users to install guide
                     window.location.href = '{% url "core:install_guide" %}';
                 }
             });
+        }
+
+        // Handle close button click
+        const closeBtn = document.getElementById('closeInstallBanner');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeInstallBanner);
         }
 
         // Register Service Worker
