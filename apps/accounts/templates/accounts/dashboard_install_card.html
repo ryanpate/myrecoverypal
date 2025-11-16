@@ -33,11 +33,15 @@
 </style>
 
 <script>
-    // PWA Install Card Logic
+    // PWA Install Card Logic with iOS Support
     (function() {
         const installCard = document.getElementById('pwa-install-card');
         const installBtn = document.getElementById('dashboardInstallBtn');
         let deferredPrompt;
+
+        // Detect iOS
+        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
         // Check if already dismissed
         if (localStorage.getItem('pwa-install-dismissed') === 'true') {
@@ -45,11 +49,33 @@
         }
 
         // Check if already installed
-        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+        if (isStandalone) {
             return;
         }
 
-        // Show card when install prompt is available
+        // Show card for iOS users with special messaging
+        if (isIOS) {
+            const cardContent = installCard.querySelector('div[style*="text-align: center"]');
+            cardContent.innerHTML = `
+                <div style="width: 80px; height: 80px; margin: 0 auto 1rem; background: rgba(255,255,255,0.2); border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fab fa-apple" style="font-size: 2.5rem;"></i>
+                </div>
+                <h3 style="color: white; margin-bottom: 0.5rem;"><i class="fas fa-download"></i> Install on iPhone</h3>
+                <p style="margin-bottom: 1.5rem; font-size: 0.95rem; opacity: 0.95;">
+                    Tap <i class="fas fa-share" style="margin: 0 4px;"></i> then "Add to Home Screen"
+                </p>
+                <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="padding: 0.6rem 1.5rem; font-weight: 600; width: 100%; margin-bottom: 0.75rem; text-decoration: none; display: inline-block;">
+                    <i class="fas fa-info-circle"></i> Show Me How
+                </a>
+                <button onclick="dismissInstallCard()" style="background: none; border: none; color: rgba(255,255,255,0.9); font-size: 0.85rem; text-decoration: underline; cursor: pointer; padding: 0;">
+                    Maybe Later
+                </button>
+            `;
+            installCard.style.display = 'block';
+            return; // Exit early for iOS
+        }
+
+        // Show card when install prompt is available (Chrome/Edge/Android)
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;

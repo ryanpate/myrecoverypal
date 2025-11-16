@@ -2355,13 +2355,39 @@
             document.body.classList.add('is-mobile');
         }
 
-        // PWA Install prompt
+        // PWA Install prompt with iOS support
         let deferredPrompt;
+        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+        // Show install prompt for iOS users who haven't installed
+        if (isIOS && !isStandalone) {
+            const installBanner = document.getElementById('installBanner');
+            if (installBanner) {
+                // Update banner for iOS
+                installBanner.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <strong>Install MyRecoveryPal</strong>
+                            <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">
+                                Tap <i class="fas fa-share" style="margin: 0 4px;"></i> then "Add to Home Screen"
+                            </p>
+                        </div>
+                        <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="margin-left: 1rem; white-space: nowrap;">
+                            Show Me How
+                        </a>
+                    </div>
+                `;
+                installBanner.classList.add('show');
+            }
+        }
+
+        // Standard install prompt for Chrome/Edge/Android
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             const installBanner = document.getElementById('installBanner');
-            if (installBanner) {
+            if (installBanner && !isIOS) {
                 installBanner.classList.add('show');
             }
         });
@@ -2370,12 +2396,15 @@
         if (installBtn) {
             installBtn.addEventListener('click', async () => {
                 const installBanner = document.getElementById('installBanner');
-                installBanner.classList.remove('show');
                 if (deferredPrompt) {
+                    installBanner.classList.remove('show');
                     deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
                     console.log(`User response to install prompt: ${outcome}`);
                     deferredPrompt = null;
+                } else if (isIOS) {
+                    // Redirect iOS users to install guide
+                    window.location.href = '{% url "core:install_guide" %}';
                 }
             });
         }
