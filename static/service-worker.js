@@ -1,5 +1,5 @@
 // MyRecoveryPal Service Worker
-// Version 2.0 - Enhanced caching and offline support
+// Version 2.1 - Enhanced caching and offline support
 
 const CACHE_VERSION = 'myrecoverypal-v2';
 const CACHE_NAMES = {
@@ -200,12 +200,19 @@ async function syncPosts() {
   // Implementation for syncing offline posts when back online
 }
 
-// Push notification handler
+// Push notification handler with permission check
 self.addEventListener('push', event => {
   console.log('[ServiceWorker] Push received');
 
-  const options = {
-    body: event.data ? event.data.text() : 'New update available',
+  // Check if we have notification permission
+  if (Notification.permission !== 'granted') {
+    console.log('[ServiceWorker] Notification permission not granted');
+    return;
+  }
+
+  let notificationTitle = 'MyRecoveryPal';
+  let notificationOptions = {
+    body: 'New update available',
     icon: '/static/images/favicon_192.png',
     badge: '/static/images/favicon_192.png',
     vibrate: [200, 100, 200],
@@ -227,8 +234,24 @@ self.addEventListener('push', event => {
     ]
   };
 
+  // Parse push event data if available
+  if (event.data) {
+    try {
+      const data = event.data.json();
+      notificationTitle = data.title || notificationTitle;
+      notificationOptions.body = data.body || notificationOptions.body;
+      notificationOptions.data = { ...notificationOptions.data, ...data };
+    } catch (e) {
+      // If not JSON, use text
+      notificationOptions.body = event.data.text();
+    }
+  }
+
   event.waitUntil(
-    self.registration.showNotification('MyRecoveryPal', options)
+    self.registration.showNotification(notificationTitle, notificationOptions)
+      .catch(error => {
+        console.error('[ServiceWorker] Error showing notification:', error);
+      })
   );
 });
 
@@ -237,9 +260,21 @@ self.addEventListener('notificationclick', event => {
   console.log('[ServiceWorker] Notification clicked');
   event.notification.close();
 
-  if (event.action === 'explore') {
-    event.waitUntil(
-      clients.openWindow('/')
-    );
-  }
+  const urlToOpen = event.notification.data?.url || '/';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then(windowClients => {
+        // Check if there's already a window open
+        for (let client of windowClients) {
+          if (client.url === urlToOpen && 'focus' in client) {
+            return client.focus();
+          }
+        }
+        // If no window is open, open a new one
+        if (clients.openWindow) {
+          return clients.openWindow(urlToOpen);
+        }
+      })
+  );
 });
