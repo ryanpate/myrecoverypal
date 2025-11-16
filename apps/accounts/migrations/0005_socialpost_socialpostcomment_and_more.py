@@ -78,51 +78,6 @@ class Migration(migrations.Migration):
                 "ordering": ["created_at"],
             },
         ),
-        migrations.RenameIndex(
-            model_name="invoice",
-            new_name="invoices_user_id_e82a6a_idx",
-            old_name="invoices_user_invoice_idx",
-        ),
-        migrations.RenameIndex(
-            model_name="invoice",
-            new_name="invoices_stripe__83e0c8_idx",
-            old_name="invoices_stripe_invoice_idx",
-        ),
-        migrations.RenameIndex(
-            model_name="subscription",
-            new_name="subscriptio_user_id_aa8bc6_idx",
-            old_name="subscriptions_user_idx",
-        ),
-        migrations.RenameIndex(
-            model_name="subscription",
-            new_name="subscriptio_stripe__84f275_idx",
-            old_name="subscriptions_stripe_customer_idx",
-        ),
-        migrations.RenameIndex(
-            model_name="subscription",
-            new_name="subscriptio_stripe__aa726e_idx",
-            old_name="subscriptions_stripe_subscription_idx",
-        ),
-        migrations.RenameIndex(
-            model_name="subscription",
-            new_name="subscriptio_status_572d44_idx",
-            old_name="subscriptions_status_idx",
-        ),
-        migrations.RenameIndex(
-            model_name="transaction",
-            new_name="transaction_user_id_ced08a_idx",
-            old_name="transactions_user_created_idx",
-        ),
-        migrations.RenameIndex(
-            model_name="transaction",
-            new_name="transaction_stripe__60a00e_idx",
-            old_name="transactions_stripe_payment_idx",
-        ),
-        migrations.RenameIndex(
-            model_name="transaction",
-            new_name="transaction_status_505a2f_idx",
-            old_name="transactions_status_idx",
-        ),
         migrations.AddField(
             model_name="socialpost",
             name="author",
