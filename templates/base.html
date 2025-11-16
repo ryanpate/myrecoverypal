@@ -2355,9 +2355,11 @@
             document.body.classList.add('is-mobile');
         }
 
-        // PWA Install prompt with iOS support
+        // PWA Install prompt with iOS and Firefox support
         let deferredPrompt;
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+        const isFirefoxAndroid = isFirefox && /Android/i.test(navigator.userAgent);
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
         // Show install prompt for iOS users who haven't installed
@@ -2382,12 +2384,51 @@
             }
         }
 
+        // Show install prompt for Firefox users
+        if (isFirefox && !isStandalone && !isIOS) {
+            const installBanner = document.getElementById('installBanner');
+            if (installBanner) {
+                if (isFirefoxAndroid) {
+                    // Firefox Android supports PWA installation via menu
+                    installBanner.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <strong>Install MyRecoveryPal</strong>
+                                <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">
+                                    Tap menu <i class="fas fa-ellipsis-v" style="margin: 0 4px;"></i> then "Install"
+                                </p>
+                            </div>
+                            <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="margin-left: 1rem; white-space: nowrap;">
+                                Show Me How
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    // Firefox Desktop has limited PWA support
+                    installBanner.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <strong>Install MyRecoveryPal</strong>
+                                <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">
+                                    For best PWA experience, use Chrome, Edge, or Safari
+                                </p>
+                            </div>
+                            <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="margin-left: 1rem; white-space: nowrap;">
+                                Learn More
+                            </a>
+                        </div>
+                    `;
+                }
+                installBanner.classList.add('show');
+            }
+        }
+
         // Standard install prompt for Chrome/Edge/Android
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             const installBanner = document.getElementById('installBanner');
-            if (installBanner && !isIOS) {
+            if (installBanner && !isIOS && !isFirefox) {
                 installBanner.classList.add('show');
             }
         });
