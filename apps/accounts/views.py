@@ -2038,10 +2038,11 @@ def create_social_post(request):
     visibility = request.POST.get('visibility', 'public')
     image = request.FILES.get('image')
 
-    if not content:
-        return JsonResponse({'error': 'Post content is required'}, status=400)
+    # Require either content or image
+    if not content and not image:
+        return JsonResponse({'error': 'Post must have either text or an image'}, status=400)
 
-    if len(content) > 1000:
+    if content and len(content) > 1000:
         return JsonResponse({'error': 'Post is too long (max 1000 characters)'}, status=400)
 
     # Create the post
