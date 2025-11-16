@@ -1,0 +1,27 @@
+# Nixpacks configuration for Railway
+# This ensures Python is the primary build environment
+# Note: Capacitor/Node.js files (package.json) are for mobile app builds only
+# and are not needed for the Django web deployment
+
+[phases.setup]
+nixPkgs = ['python311', 'postgresql']
+
+[phases.install]
+cmds = [
+    'pip install --upgrade pip',
+    'pip install -r requirements.txt'
+]
+
+[phases.build]
+cmds = [
+    'mkdir -p staticfiles',
+    'mkdir -p logs',
+    'mkdir -p media/avatars',
+    'mkdir -p root_files',
+    'python manage.py collectstatic --noinput --clear',
+    'python manage.py migrate --noinput',
+    'python manage.py generate_sitemap --output=sitemap.xml || echo "Sitemap generation completed"'
+]
+
+[start]
+cmd = "gunicorn recovery_hub.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --access-logfile - --error-logfile -"
