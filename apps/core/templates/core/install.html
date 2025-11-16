@@ -1,0 +1,544 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Install MyRecoveryPal - Get the App{% endblock %}
+
+{% block extra_css %}
+<style>
+    .install-header {
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        padding: 100px 0 50px;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .install-content {
+        padding: 4rem 0;
+        background: #f8f9fa;
+    }
+
+    .install-intro {
+        background: white;
+        padding: 3rem 2rem;
+        border-radius: 10px;
+        margin-bottom: 3rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    .platform-tabs {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 3rem;
+        flex-wrap: wrap;
+    }
+
+    .platform-tab {
+        background: white;
+        border: 2px solid #e9ecef;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 600;
+    }
+
+    .platform-tab:hover {
+        border-color: #52b788;
+        transform: translateY(-2px);
+    }
+
+    .platform-tab.active {
+        background: #52b788;
+        color: white;
+        border-color: #52b788;
+    }
+
+    .platform-tab i {
+        font-size: 1.5rem;
+    }
+
+    .platform-instructions {
+        display: none;
+        background: white;
+        padding: 3rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .platform-instructions.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .instruction-step {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2.5rem;
+        align-items: start;
+    }
+
+    .step-number {
+        flex-shrink: 0;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #4db8e8, #52b788);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .step-content h4 {
+        color: #1e4d8b;
+        margin-bottom: 0.75rem;
+    }
+
+    .step-content p {
+        color: #666;
+        line-height: 1.8;
+        margin-bottom: 1rem;
+    }
+
+    .step-image {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+        margin-top: 1rem;
+        text-align: center;
+        color: #999;
+        font-style: italic;
+    }
+
+    .benefits-section {
+        background: white;
+        padding: 3rem 2rem;
+        border-radius: 10px;
+        margin-top: 3rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .benefit-item {
+        text-align: center;
+    }
+
+    .benefit-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1rem;
+        background: linear-gradient(135deg, #4db8e8, #52b788);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+    }
+
+    .benefit-item h4 {
+        color: #1e4d8b;
+        margin-bottom: 0.5rem;
+    }
+
+    .benefit-item p {
+        color: #666;
+    }
+
+    .install-button-section {
+        text-align: center;
+        margin: 3rem 0;
+    }
+
+    .btn-install-large {
+        background: #52b788;
+        border-color: #52b788;
+        color: white;
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .btn-install-large:hover {
+        background: #45a675;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(82, 183, 136, 0.3);
+    }
+
+    .btn-install-large i {
+        font-size: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .install-header h1 {
+            font-size: 2rem;
+        }
+
+        .platform-instructions {
+            padding: 2rem 1.5rem;
+        }
+
+        .instruction-step {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="install-header">
+    <div class="container">
+        <h1>Install MyRecoveryPal</h1>
+        <p class="lead">Get the app for quick access and offline support</p>
+    </div>
+</div>
+
+<!-- Main Content -->
+<section class="install-content">
+    <div class="container">
+        <!-- Introduction -->
+        <div class="install-intro">
+            <h2 class="mb-4">Your Recovery Companion, Always Available</h2>
+            <p class="lead">Install MyRecoveryPal on your device for instant access to your recovery community, journal, and support resources - even when you're offline.</p>
+
+            <div class="install-button-section" id="quickInstallSection">
+                <button class="btn-install-large" id="quickInstallBtn">
+                    <i class="fas fa-download"></i>
+                    Install Now
+                </button>
+                <p class="mt-3 text-muted"><small>One-click installation on supported browsers</small></p>
+            </div>
+        </div>
+
+        <!-- Platform Selection Tabs -->
+        <div class="platform-tabs">
+            <div class="platform-tab active" data-platform="android">
+                <i class="fab fa-android"></i>
+                <span>Android</span>
+            </div>
+            <div class="platform-tab" data-platform="ios">
+                <i class="fab fa-apple"></i>
+                <span>iPhone/iPad</span>
+            </div>
+            <div class="platform-tab" data-platform="desktop">
+                <i class="fas fa-desktop"></i>
+                <span>Desktop</span>
+            </div>
+        </div>
+
+        <!-- Android Instructions -->
+        <div class="platform-instructions active" id="android-instructions">
+            <h3 class="mb-4">Installing on Android</h3>
+
+            <div class="instruction-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Visit MyRecoveryPal.com</h4>
+                    <p>Open Chrome or your preferred browser and navigate to <strong>www.myrecoverypal.com</strong></p>
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Look for the Install Banner</h4>
+                    <p>After visiting the site, you'll see a banner at the bottom of the screen saying "Install MyRecoveryPal". Tap the <strong>Install</strong> button.</p>
+                    <div class="step-image">Screenshot: Install banner appearing at bottom of screen</div>
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Alternative: Use Browser Menu</h4>
+                    <p>If you don't see the banner, tap the menu button (three dots) in the top-right corner, then select <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong>.</p>
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>Confirm Installation</h4>
+                    <p>A popup will appear asking you to confirm. Tap <strong>Install</strong> or <strong>Add</strong>.</p>
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h4>Find the App Icon</h4>
+                    <p>MyRecoveryPal will now appear on your home screen just like any other app. Tap it to open!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- iOS Instructions -->
+        <div class="platform-instructions" id="ios-instructions">
+            <h3 class="mb-4">Installing on iPhone/iPad</h3>
+
+            <div class="instruction-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Open Safari</h4>
+                    <p><strong>Important:</strong> You must use Safari browser on iOS. Chrome and other browsers don't support app installation on iOS.</p>
+                    <p>Navigate to <strong>www.myrecoverypal.com</strong></p>
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Tap the Share Button</h4>
+                    <p>Look for the Share button at the bottom of Safari (square with an arrow pointing up) and tap it.</p>
+                    <div class="step-image">Screenshot: Safari share button location</div>
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Select "Add to Home Screen"</h4>
+                    <p>In the share menu, scroll down and tap <strong>"Add to Home Screen"</strong>. You may need to scroll down to find this option.</p>
+                    <div class="step-image">Screenshot: Add to Home Screen option in share menu</div>
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>Name the App</h4>
+                    <p>You'll see a preview of the app icon and name. You can edit the name if you'd like, or keep it as "MyRecoveryPal".</p>
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h4>Tap "Add"</h4>
+                    <p>Tap the <strong>Add</strong> button in the top-right corner. The app will now appear on your home screen!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Instructions -->
+        <div class="platform-instructions" id="desktop-instructions">
+            <h3 class="mb-4">Installing on Desktop (Windows/Mac/Linux)</h3>
+
+            <div class="instruction-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Visit MyRecoveryPal.com</h4>
+                    <p>Open Chrome, Edge, or another Chromium-based browser and navigate to <strong>www.myrecoverypal.com</strong></p>
+                    <p><em>Note: Firefox and Safari on desktop don't currently support PWA installation.</em></p>
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Click the Install Icon</h4>
+                    <p>Look for the install icon in your browser's address bar (usually a ⊕ plus sign or computer icon with a down arrow).</p>
+                    <div class="step-image">Screenshot: Install icon in Chrome address bar</div>
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Or Use the Install Banner</h4>
+                    <p>Alternatively, click the <strong>Install</strong> button on the banner that appears at the bottom of the page.</p>
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>Confirm Installation</h4>
+                    <p>A dialog will appear asking you to confirm. Click <strong>Install</strong>.</p>
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h4>Access Your App</h4>
+                    <p>MyRecoveryPal will open in its own window and appear in your applications menu. You can pin it to your taskbar or dock for quick access!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="benefits-section">
+            <h3 class="text-center mb-4">Why Install the App?</h3>
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h4>Instant Access</h4>
+                    <p>Launch directly from your home screen - no need to open a browser</p>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-wifi-slash"></i>
+                    </div>
+                    <h4>Works Offline</h4>
+                    <p>Access cached content and previously viewed pages without internet</p>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h4>Push Notifications</h4>
+                    <p>Stay updated with community messages and milestone reminders</p>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <h4>Faster Performance</h4>
+                    <p>Smart caching makes the app load almost instantly</p>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h4>App-Like Experience</h4>
+                    <p>Full-screen mode without browser navigation bars</p>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-sync"></i>
+                    </div>
+                    <h4>Always Up-to-Date</h4>
+                    <p>Automatically updates when you're online - no app store updates needed</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="benefits-section">
+            <h3 class="mb-4">Troubleshooting</h3>
+            <div style="max-width: 800px; margin: 0 auto;">
+                <h5 style="color: #1e4d8b; margin-top: 1.5rem;">I don't see the install button</h5>
+                <p style="color: #666;">Try visiting the site a few times. Most browsers require 2-3 visits before showing the install prompt. Also make sure you're using a supported browser (Chrome, Edge, Safari on iOS).</p>
+
+                <h5 style="color: #1e4d8b; margin-top: 1.5rem;">How do I uninstall the app?</h5>
+                <p style="color: #666;"><strong>Android:</strong> Long-press the app icon → Uninstall<br>
+                <strong>iOS:</strong> Long-press the app icon → Remove App<br>
+                <strong>Desktop:</strong> Right-click the app icon → Uninstall</p>
+
+                <h5 style="color: #1e4d8b; margin-top: 1.5rem;">Will this use a lot of storage?</h5>
+                <p style="color: #666;">No! The app uses minimal storage (typically under 50MB) and automatically manages cache size.</p>
+
+                <h5 style="color: #1e4d8b; margin-top: 1.5rem;">Need more help?</h5>
+                <p style="color: #666;">Contact us at <a href="mailto:ryan@myrecoverypal.com">ryan@myrecoverypal.com</a> and we'll help you get set up!</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Platform tab switching
+    document.querySelectorAll('.platform-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active from all tabs
+            document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.platform-instructions').forEach(i => i.classList.remove('active'));
+
+            // Add active to clicked tab
+            tab.classList.add('active');
+            const platform = tab.dataset.platform;
+            document.getElementById(`${platform}-instructions`).classList.add('active');
+        });
+    });
+
+    // Quick install button functionality
+    let deferredInstallPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        // Show the quick install button
+        document.getElementById('quickInstallSection').style.display = 'block';
+    });
+
+    document.getElementById('quickInstallBtn').addEventListener('click', async () => {
+        if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            const { outcome } = await deferredInstallPrompt.userChoice;
+            console.log(`User response to install prompt: ${outcome}`);
+            deferredInstallPrompt = null;
+
+            if (outcome === 'accepted') {
+                document.getElementById('quickInstallSection').innerHTML = `
+                    <div style="color: #52b788;">
+                        <i class="fas fa-check-circle" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3">App Installed Successfully!</h4>
+                        <p>You can now find MyRecoveryPal on your home screen.</p>
+                    </div>
+                `;
+            }
+        } else {
+            // If no install prompt, scroll to platform instructions
+            document.querySelector('.platform-tabs').scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+    // Hide quick install if already installed or not supported
+    window.addEventListener('appinstalled', () => {
+        document.getElementById('quickInstallSection').style.display = 'none';
+    });
+
+    // Check if already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        document.getElementById('quickInstallSection').innerHTML = `
+            <div style="color: #52b788;">
+                <i class="fas fa-check-circle" style="font-size: 3rem;"></i>
+                <h4 class="mt-3">You're Already Using the App!</h4>
+                <p>MyRecoveryPal is installed on this device.</p>
+            </div>
+        `;
+    }
+</script>
+{% endblock %}

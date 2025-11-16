@@ -46,6 +46,14 @@ class OfflineView(TemplateView):
     template_name = 'core/offline.html'
 
 
+class InstallGuideView(TemplateView):
+    template_name = 'core/install.html'
+
+
+class GetAppView(TemplateView):
+    template_name = 'core/get_app.html'
+
+
 # Sitemap View - serves static sitemap.xml
 def sitemap_view(request):
     """

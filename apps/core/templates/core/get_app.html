@@ -1,0 +1,319 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Get MyRecoveryPal - Install the App{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        min-height: 100vh;
+    }
+
+    .get-app-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .get-app-card {
+        background: white;
+        padding: 3rem 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        max-width: 500px;
+        text-align: center;
+        animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .app-logo {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 2rem;
+        background: linear-gradient(135deg, #4db8e8, #52b788);
+        border-radius: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 5px 20px rgba(82, 183, 136, 0.3);
+    }
+
+    .app-logo img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .get-app-card h1 {
+        color: #1e4d8b;
+        margin-bottom: 1rem;
+        font-size: 2rem;
+    }
+
+    .get-app-card p {
+        color: #666;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+
+    .install-btn-large {
+        background: #52b788;
+        border: none;
+        color: white;
+        padding: 18px 40px;
+        font-size: 1.3rem;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 5px 20px rgba(82, 183, 136, 0.3);
+        width: 100%;
+        justify-content: center;
+        max-width: 350px;
+    }
+
+    .install-btn-large:hover {
+        background: #45a675;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(82, 183, 136, 0.4);
+    }
+
+    .install-btn-large i {
+        font-size: 1.5rem;
+    }
+
+    .features-list {
+        list-style: none;
+        padding: 0;
+        margin: 2rem 0;
+        text-align: left;
+    }
+
+    .features-list li {
+        padding: 0.75rem 0;
+        color: #666;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .features-list li i {
+        color: #52b788;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .manual-install-link {
+        color: #1e4d8b;
+        text-decoration: none;
+        margin-top: 1.5rem;
+        display: inline-block;
+        font-size: 0.95rem;
+    }
+
+    .manual-install-link:hover {
+        text-decoration: underline;
+    }
+
+    .device-detect {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .pulse-animation {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .get-app-card {
+            padding: 2rem 1.5rem;
+        }
+
+        .get-app-card h1 {
+            font-size: 1.5rem;
+        }
+
+        .app-logo {
+            width: 100px;
+            height: 100px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="get-app-container">
+    <div class="get-app-card">
+        <div class="app-logo">
+            <img src="{% static 'images/logo.svg' %}" alt="MyRecoveryPal" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-heart\' style=\'font-size:4rem;color:white;\'></i>'">
+        </div>
+
+        <h1>Get MyRecoveryPal</h1>
+        <p>Your recovery companion, always with you</p>
+
+        <div class="device-detect" id="deviceInfo">
+            <i class="fas fa-mobile-alt"></i> Detected: <span id="deviceType">Loading...</span>
+        </div>
+
+        <button class="install-btn-large pulse-animation" id="mainInstallBtn">
+            <i class="fas fa-download"></i>
+            <span>Install App</span>
+        </button>
+
+        <ul class="features-list">
+            <li>
+                <i class="fas fa-check-circle"></i>
+                <span>Works offline</span>
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                <span>Instant access from home screen</span>
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                <span>Push notifications for support</span>
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                <span>Fast, app-like experience</span>
+            </li>
+        </ul>
+
+        <a href="{% url 'core:install_guide' %}" class="manual-install-link">
+            Need help installing? View detailed instructions →
+        </a>
+
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e9ecef;">
+            <p style="font-size: 0.9rem; color: #999; margin: 0;">
+                Free • Safe • Secure<br>
+                <small>No app store required</small>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Detect device type
+    function detectDevice() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        if (/android/i.test(userAgent)) {
+            return 'Android Device';
+        }
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            return 'iOS Device (iPhone/iPad)';
+        }
+        if (/Windows/.test(userAgent)) {
+            return 'Windows Desktop';
+        }
+        if (/Mac/.test(userAgent)) {
+            return 'Mac Desktop';
+        }
+        if (/Linux/.test(userAgent)) {
+            return 'Linux Desktop';
+        }
+        return 'Desktop Computer';
+    }
+
+    document.getElementById('deviceType').textContent = detectDevice();
+
+    // Install button functionality
+    let deferredPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        console.log('Install prompt ready');
+    });
+
+    document.getElementById('mainInstallBtn').addEventListener('click', async () => {
+        const btn = document.getElementById('mainInstallBtn');
+
+        if (deferredPrompt) {
+            // Use the install prompt
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+
+            if (outcome === 'accepted') {
+                btn.innerHTML = '<i class="fas fa-check-circle"></i><span>App Installed!</span>';
+                btn.style.background = '#52b788';
+                btn.classList.remove('pulse-animation');
+
+                setTimeout(() => {
+                    window.location.href = '/accounts/dashboard/';
+                }, 2000);
+            }
+
+            deferredPrompt = null;
+        } else {
+            // No install prompt available, redirect to instructions
+            window.location.href = '{% url "core:install_guide" %}';
+        }
+    });
+
+    // Check if already installed
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+        document.querySelector('.get-app-card').innerHTML = `
+            <div class="app-logo">
+                <i class="fas fa-check-circle" style="font-size: 4rem; color: white;"></i>
+            </div>
+            <h1>App Already Installed!</h1>
+            <p>MyRecoveryPal is installed on this device.</p>
+            <a href="/" class="install-btn-large" style="text-decoration: none;">
+                <i class="fas fa-home"></i>
+                <span>Open App</span>
+            </a>
+        `;
+    }
+
+    // Handle successful installation
+    window.addEventListener('appinstalled', () => {
+        document.getElementById('mainInstallBtn').innerHTML =
+            '<i class="fas fa-check-circle"></i><span>Installed Successfully!</span>';
+        document.getElementById('mainInstallBtn').style.background = '#52b788';
+
+        setTimeout(() => {
+            window.location.href = '/accounts/dashboard/';
+        }, 1500);
+    });
+
+    // iOS Safari specific message
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+        const iosMessage = document.createElement('div');
+        iosMessage.style.cssText = 'background: #e7f3ff; padding: 1rem; border-radius: 8px; margin-top: 1rem; font-size: 0.9rem; color: #1e4d8b;';
+        iosMessage.innerHTML = `
+            <strong><i class="fab fa-apple"></i> iOS Users:</strong><br>
+            Tap the Share button <i class="fas fa-share"></i> in Safari, then select "Add to Home Screen"
+        `;
+        document.querySelector('.get-app-card').appendChild(iosMessage);
+    }
+</script>
+{% endblock %}
