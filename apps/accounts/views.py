@@ -10,7 +10,7 @@ from django.db.models import Q, Count, Prefetch, Avg
 from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
-from .models import GroupPost, User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, ActivityComment, UserConnection, SponsorRelationship, RecoveryPal, RecoveryGroup, GroupMembership
+from .models import GroupPost, User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, ActivityComment, UserConnection, SponsorRelationship, RecoveryPal, RecoveryGroup, GroupMembership, SocialPost, SocialPostComment
 from .forms import CustomUserCreationForm, UserProfileForm, MilestoneForm, SupportMessageForm, SponsorRequestForm, RecoveryPalForm, RecoveryGroupForm, GroupPostForm, GroupMembershipForm
 from .signals import create_profile_update_activity
 from django.core.paginator import Paginator
@@ -308,6 +308,20 @@ def dashboard_view(request):
         'today_checkin': today_checkin,
         'has_checked_in_today': today_checkin is not None,
     }
+
+    # Social posts for mobile feed
+    social_posts = SocialPost.objects.select_related('author').prefetch_related(
+        'likes',
+        'comments__author'
+    ).all()[:10]
+
+    # Filter posts based on visibility
+    visible_social_posts = []
+    for post in social_posts:
+        if post.is_visible_to(user):
+            visible_social_posts.append(post)
+
+    context['social_posts'] = visible_social_posts
 
     return render(request, 'accounts/dashboard.html', context)
 
@@ -1985,3 +1999,169 @@ def create_notification(recipient, sender, notification_type, title, message, li
         content_object=content_object
     )
     return notification
+
+
+# Social Feed Views
+
+@login_required
+def social_feed_view(request):
+    """Display the social media feed"""
+    # Get posts visible to the current user
+    posts = SocialPost.objects.select_related('author').prefetch_related(
+        'likes',
+        'comments__author'
+    ).all()
+
+    # Filter posts based on visibility
+    visible_posts = []
+    for post in posts:
+        if post.is_visible_to(request.user):
+            visible_posts.append(post)
+
+    # Pagination
+    paginator = Paginator(visible_posts, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+        'posts': page_obj,
+    }
+    return render(request, 'accounts/social_feed.html', context)
+
+
+@login_required
+@require_POST
+def create_social_post(request):
+    """Create a new social post via AJAX"""
+    content = request.POST.get('content', '').strip()
+    visibility = request.POST.get('visibility', 'public')
+    image = request.FILES.get('image')
+
+    if not content:
+        return JsonResponse({'error': 'Post content is required'}, status=400)
+
+    if len(content) > 1000:
+        return JsonResponse({'error': 'Post is too long (max 1000 characters)'}, status=400)
+
+    # Create the post
+    post = SocialPost.objects.create(
+        author=request.user,
+        content=content,
+        visibility=visibility,
+        image=image
+    )
+
+    # Return post data for dynamic update
+    return JsonResponse({
+        'success': True,
+        'post': {
+            'id': post.id,
+            'author': {
+                'username': post.author.username,
+                'full_name': post.author.get_full_name(),
+                'avatar_url': post.author.avatar.url if post.author.avatar else None,
+            },
+            'content': post.content,
+            'image_url': post.image.url if post.image else None,
+            'visibility': post.get_visibility_display(),
+            'created_at': post.created_at.strftime('%B %d, %Y at %I:%M %p'),
+            'likes_count': 0,
+            'comments_count': 0,
+        }
+    })
+
+
+@login_required
+@require_POST
+def like_social_post(request, post_id):
+    """Toggle like on a social post"""
+    post = get_object_or_404(SocialPost, id=post_id)
+
+    # Check if post is visible to user
+    if not post.is_visible_to(request.user):
+        return JsonResponse({'error': 'Post not found'}, status=404)
+
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+        liked = False
+    else:
+        post.likes.add(request.user)
+        liked = True
+
+        # Create notification for post author
+        if post.author != request.user:
+            create_notification(
+                recipient=post.author,
+                sender=request.user,
+                notification_type='like',
+                title='New Like',
+                message=f'{request.user.get_full_name() or request.user.username} liked your post',
+                link=f'/accounts/social-feed/'
+            )
+
+    return JsonResponse({
+        'success': True,
+        'liked': liked,
+        'likes_count': post.likes.count()
+    })
+
+
+@login_required
+@require_POST
+def comment_social_post(request, post_id):
+    """Add a comment to a social post"""
+    post = get_object_or_404(SocialPost, id=post_id)
+
+    # Check if post is visible to user
+    if not post.is_visible_to(request.user):
+        return JsonResponse({'error': 'Post not found'}, status=404)
+
+    content = request.POST.get('content', '').strip()
+    if not content:
+        return JsonResponse({'error': 'Comment content is required'}, status=400)
+
+    if len(content) > 500:
+        return JsonResponse({'error': 'Comment is too long (max 500 characters)'}, status=400)
+
+    # Create comment
+    comment = SocialPostComment.objects.create(
+        post=post,
+        author=request.user,
+        content=content
+    )
+
+    # Create notification for post author
+    if post.author != request.user:
+        create_notification(
+            recipient=post.author,
+            sender=request.user,
+            notification_type='comment',
+            title='New Comment',
+            message=f'{request.user.get_full_name() or request.user.username} commented on your post',
+            link=f'/accounts/social-feed/'
+        )
+
+    return JsonResponse({
+        'success': True,
+        'comment': {
+            'id': comment.id,
+            'author': {
+                'username': comment.author.username,
+                'full_name': comment.author.get_full_name(),
+                'avatar_url': comment.author.avatar.url if comment.author.avatar else None,
+            },
+            'content': comment.content,
+            'created_at': comment.created_at.strftime('%B %d, %Y at %I:%M %p'),
+        }
+    })
+
+
+@login_required
+@require_POST
+def delete_social_post(request, post_id):
+    """Delete a social post (only by author)"""
+    post = get_object_or_404(SocialPost, id=post_id, author=request.user)
+    post.delete()
+
+    return JsonResponse({'success': True})
