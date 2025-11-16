@@ -2044,24 +2044,24 @@ def social_feed_view(request):
 @require_POST
 def create_social_post(request):
     """Create a new social post via AJAX"""
-    try:
-        content = request.POST.get('content', '').strip()
-        visibility = request.POST.get('visibility', 'public')
-        image = request.FILES.get('image')
+    content = request.POST.get('content', '').strip()
+    visibility = request.POST.get('visibility', 'public')
+    image = request.FILES.get('image')
 
-        if not content:
-            return JsonResponse({'error': 'Post content is required'}, status=400)
+    # Require either content or image
+    if not content and not image:
+        return JsonResponse({'error': 'Post must have either text or an image'}, status=400)
 
-        if len(content) > 1000:
-            return JsonResponse({'error': 'Post is too long (max 1000 characters)'}, status=400)
+    if content and len(content) > 1000:
+        return JsonResponse({'error': 'Post is too long (max 1000 characters)'}, status=400)
 
-        # Create the post
-        post = SocialPost.objects.create(
-            author=request.user,
-            content=content,
-            visibility=visibility,
-            image=image
-        )
+    # Create the post
+    post = SocialPost.objects.create(
+        author=request.user,
+        content=content,
+        visibility=visibility,
+        image=image
+    )
 
         # Return post data for dynamic update
         return JsonResponse({

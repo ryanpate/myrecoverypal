@@ -337,8 +337,23 @@
                 placeholder="Share your journey, wins, or words of encouragement..."
                 maxlength="1000"
             ></textarea>
+
+            <!-- Image Preview -->
+            <div id="image-preview-container" style="display: none; padding: 0.5rem; margin-top: 0.5rem;">
+                <div style="position: relative; display: inline-block;">
+                    <img id="image-preview" src="" alt="Preview" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
+                    <button type="button" id="remove-image-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
             <div class="post-actions">
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="file" name="image" id="post-image-input" accept="image/*" style="display: none;">
+                    <button type="button" id="add-photo-btn" class="action-btn" style="padding: 0.25rem 0.75rem; margin: 0;">
+                        <i class="fas fa-image"></i>
+                    </button>
                     <select name="visibility" class="visibility-select">
                         <option value="public">🌍 Everyone</option>
                         <option value="friends">👥 Friends</option>
@@ -474,7 +489,61 @@ document.addEventListener('DOMContentLoaded', function() {
             charCounter.classList.remove('warning');
         }
 
-        submitBtn.disabled = length === 0;
+        // Enable submit button if there's content or an image
+        const hasImage = document.getElementById('post-image-input').files.length > 0;
+        submitBtn.disabled = length === 0 && !hasImage;
+    });
+
+    // Image upload handlers
+    const addPhotoBtn = document.getElementById('add-photo-btn');
+    const imageInput = document.getElementById('post-image-input');
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const imagePreview = document.getElementById('image-preview');
+    const removeImageBtn = document.getElementById('remove-image-btn');
+
+    addPhotoBtn.addEventListener('click', function() {
+        imageInput.click();
+    });
+
+    imageInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file');
+                this.value = '';
+                return;
+            }
+
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image size must be less than 5MB');
+                this.value = '';
+                return;
+            }
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                imagePreviewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+
+            // Enable submit button if image is selected
+            const hasContent = textarea.value.trim().length > 0;
+            submitBtn.disabled = false;
+        }
+    });
+
+    removeImageBtn.addEventListener('click', function() {
+        imageInput.value = '';
+        imagePreviewContainer.style.display = 'none';
+        imagePreview.src = '';
+
+        // Disable submit button if no content
+        const hasContent = textarea.value.trim().length > 0;
+        submitBtn.disabled = !hasContent;
     });
 
     // Create post form submission
@@ -498,15 +567,24 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (data.success) {
+                // Clear form
+                textarea.value = '';
+                imageInput.value = '';
+                imagePreviewContainer.style.display = 'none';
+                imagePreview.src = '';
+                charCounter.textContent = '0/1000';
+                submitBtn.disabled = true;
+
                 // Reload page to show new post
                 window.location.reload();
             } else {
                 alert(data.error || 'Failed to create post');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Post';
             }
         } catch (error) {
             console.error('Error:', error);
             alert('Failed to create post');
-        } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Post';
         }
