@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}You're Offline - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .offline-container {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background: #f8f9fa;
+    }
+
+    .offline-content {
+        text-align: center;
+        max-width: 600px;
+        background: white;
+        padding: 3rem 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .offline-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 2rem;
+        background: linear-gradient(135deg, #4db8e8, #52b788);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 4rem;
+    }
+
+    .offline-content h1 {
+        color: #1e4d8b;
+        margin-bottom: 1rem;
+        font-size: 2rem;
+    }
+
+    .offline-content p {
+        color: #666;
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    .retry-btn {
+        background: #52b788;
+        border-color: #52b788;
+        color: white;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .retry-btn:hover {
+        background: #45a675;
+        border-color: #45a675;
+        transform: translateY(-2px);
+    }
+
+    .offline-tips {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .offline-tips h3 {
+        color: #1e4d8b;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .offline-tips ul {
+        list-style: none;
+        padding: 0;
+        text-align: left;
+    }
+
+    .offline-tips li {
+        padding: 0.5rem 0;
+        color: #666;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .offline-tips li i {
+        color: #52b788;
+        font-size: 1.2rem;
+    }
+
+    @media (max-width: 768px) {
+        .offline-content {
+            padding: 2rem 1.5rem;
+        }
+
+        .offline-content h1 {
+            font-size: 1.5rem;
+        }
+
+        .offline-icon {
+            width: 100px;
+            height: 100px;
+            font-size: 3rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="offline-container">
+    <div class="offline-content">
+        <div class="offline-icon">
+            <i class="fas fa-wifi-slash"></i>
+        </div>
+
+        <h1>You're Offline</h1>
+        <p>It looks like you've lost your internet connection. Don't worry, some features may still work while you're offline.</p>
+
+        <button class="retry-btn" onclick="window.location.reload()">
+            <i class="fas fa-sync-alt"></i> Try Again
+        </button>
+
+        <div class="offline-tips">
+            <h3>While You're Offline</h3>
+            <ul>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>Previously viewed pages may still be accessible</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>Your data will sync when you're back online</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>Check your WiFi or cellular connection</span>
+                </li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <a href="/" style="color: #1e4d8b; text-decoration: none;">
+                <i class="fas fa-home"></i> Go to Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto-retry when connection is restored
+    window.addEventListener('online', () => {
+        console.log('Connection restored');
+        // Show a brief message before reloading
+        const btn = document.querySelector('.retry-btn');
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Connection Restored!';
+            btn.style.background = '#52b788';
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+    });
+
+    // Update UI based on current online status
+    if (navigator.onLine) {
+        document.querySelector('.offline-content p').textContent =
+            'Unable to reach MyRecoveryPal servers. Please try again in a moment.';
+    }
+</script>
+{% endblock %}

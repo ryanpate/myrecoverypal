@@ -16,4 +16,5 @@ urlpatterns = [
     path('success-stories/', views.SuccessStoriesView.as_view(),name='success_stories'),
     path('cookies/', views.CookiesView.as_view(), name='cookies'),
     path('crisis/', views.CrisisView.as_view(), name='crisis'),
+    path('offline/', views.OfflineView.as_view(), name='offline'),
 ]
