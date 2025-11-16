@@ -2029,6 +2029,9 @@
                                 Milestones
                             </a>
                             <hr>
+                            <a href="{% url 'core:install_guide' %}" id="navInstallLink" style="background: linear-gradient(135deg, #4db8e8, #52b788); color: white;">
+                                <i class="fas fa-download"></i> Install App
+                            </a>
                             <a href="{% url 'accounts:subscription_management' %}">
                                 My Subscription
                             </a>
@@ -2182,6 +2185,9 @@
                 <a href="{% url 'accounts:profile' username=user.username %}"
                     class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
                     Profile
+                </a>
+                <a href="{% url 'core:install_guide' %}" id="mobileInstallLink" style="background: linear-gradient(135deg, #4db8e8, #52b788); color: white;">
+                    <i class="fas fa-download"></i> Install App
                 </a>
                 <a href="{% url 'accounts:subscription_management' %}"
                     class="{% if request.resolver_match.url_name == 'subscription_management' %}active{% endif %}">

@@ -17,4 +17,6 @@ urlpatterns = [
     path('cookies/', views.CookiesView.as_view(), name='cookies'),
     path('crisis/', views.CrisisView.as_view(), name='crisis'),
     path('offline/', views.OfflineView.as_view(), name='offline'),
+    path('install/', views.InstallGuideView.as_view(), name='install_guide'),
+    path('get-app/', views.GetAppView.as_view(), name='get_app'),
 ]
