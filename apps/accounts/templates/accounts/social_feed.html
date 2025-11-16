@@ -1,0 +1,640 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Social Feed - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Mobile-first social feed styles */
+    .social-feed-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+
+    /* Post creation box */
+    .create-post-box {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 80px;
+        z-index: 100;
+    }
+
+    .create-post-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .avatar-small {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .post-textarea {
+        width: 100%;
+        border: none;
+        resize: none;
+        font-size: 1rem;
+        padding: 0.5rem;
+        min-height: 60px;
+        font-family: inherit;
+        outline: none;
+    }
+
+    .post-textarea:focus {
+        outline: 2px solid var(--primary-light);
+        border-radius: 8px;
+    }
+
+    .post-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 0.75rem;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .visibility-select {
+        padding: 0.5rem;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    .post-btn {
+        background: var(--accent-green);
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .post-btn:hover {
+        background: #45a372;
+        transform: translateY(-2px);
+    }
+
+    .post-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* Individual posts */
+    .post-card {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .post-header {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .avatar-medium {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .post-author-info {
+        flex: 1;
+    }
+
+    .post-author-name {
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0;
+    }
+
+    .post-meta {
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+    .post-content {
+        padding: 0 1rem 1rem 1rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: var(--text-dark);
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    .post-image {
+        width: 100%;
+        max-height: 500px;
+        object-fit: cover;
+    }
+
+    .post-engagement {
+        padding: 0.5rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: #666;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .post-actions-bar {
+        padding: 0.75rem 1rem;
+        display: flex;
+        gap: 1rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .action-btn {
+        background: none;
+        border: none;
+        color: #666;
+        font-size: 0.95rem;
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .action-btn:hover {
+        background: #f5f5f5;
+    }
+
+    .action-btn.liked {
+        color: #e74c3c;
+    }
+
+    .action-btn i {
+        font-size: 1.2rem;
+    }
+
+    /* Comments section */
+    .comments-section {
+        padding: 0 1rem 1rem 1rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .comment {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+    }
+
+    .comment-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .comment-content {
+        flex: 1;
+        background: #f5f5f5;
+        padding: 0.5rem 0.75rem;
+        border-radius: 12px;
+    }
+
+    .comment-author {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .comment-text {
+        font-size: 0.9rem;
+        color: var(--text-dark);
+    }
+
+    .comment-time {
+        font-size: 0.75rem;
+        color: #999;
+        margin-top: 0.25rem;
+    }
+
+    .comment-form {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+    }
+
+    .comment-input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        outline: none;
+    }
+
+    .comment-input:focus {
+        border-color: var(--primary-light);
+    }
+
+    .comment-submit {
+        background: var(--primary-light);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #666;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+
+    /* Loading spinner */
+    .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid var(--primary-light);
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive adjustments */
+    @media (min-width: 768px) {
+        .social-feed-container {
+            padding: 2rem 1rem;
+        }
+
+        .create-post-box {
+            top: 100px;
+        }
+    }
+
+    /* Character counter */
+    .char-counter {
+        font-size: 0.85rem;
+        color: #999;
+    }
+
+    .char-counter.warning {
+        color: #e74c3c;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="social-feed-container">
+    <!-- Create Post Box -->
+    <div class="create-post-box">
+        <div class="create-post-header">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="avatar-small">
+            {% else %}
+                <img src="{% static 'images/default-avatar.png' %}" alt="{{ user.username }}" class="avatar-small">
+            {% endif %}
+            <span style="font-weight: 500;">What's on your mind, {{ user.get_full_name|default:user.username }}?</span>
+        </div>
+        <form id="create-post-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <textarea
+                class="post-textarea"
+                name="content"
+                id="post-content"
+                placeholder="Share your journey, wins, or words of encouragement..."
+                maxlength="1000"
+            ></textarea>
+            <div class="post-actions">
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select name="visibility" class="visibility-select">
+                        <option value="public">🌍 Everyone</option>
+                        <option value="friends">👥 Friends</option>
+                        <option value="private">🔒 Only Me</option>
+                    </select>
+                    <span class="char-counter" id="char-counter">0/1000</span>
+                </div>
+                <button type="submit" class="post-btn" id="post-submit-btn" disabled>Post</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Feed Posts -->
+    <div id="posts-container">
+        {% if posts %}
+            {% for post in posts %}
+            <div class="post-card" data-post-id="{{ post.id }}">
+                <!-- Post Header -->
+                <div class="post-header">
+                    {% if post.author.avatar %}
+                        <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username }}" class="avatar-medium">
+                    {% else %}
+                        <img src="{% static 'images/default-avatar.png' %}" alt="{{ post.author.username }}" class="avatar-medium">
+                    {% endif %}
+                    <div class="post-author-info">
+                        <h3 class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</h3>
+                        <p class="post-meta">
+                            {{ post.created_at|timesince }} ago • {{ post.get_visibility_display }}
+                        </p>
+                    </div>
+                    {% if post.author == user %}
+                    <button class="action-btn delete-post-btn" data-post-id="{{ post.id }}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    {% endif %}
+                </div>
+
+                <!-- Post Content -->
+                <div class="post-content">{{ post.content }}</div>
+
+                <!-- Post Image -->
+                {% if post.image %}
+                <img src="{{ post.image.url }}" alt="Post image" class="post-image">
+                {% endif %}
+
+                <!-- Engagement Stats -->
+                <div class="post-engagement">
+                    <span class="likes-count">{{ post.likes.count }} like{{ post.likes.count|pluralize }}</span>
+                    <span class="comments-count">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="post-actions-bar">
+                    <button class="action-btn like-btn {% if user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
+                        <i class="{% if user in post.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                        <span>Like</span>
+                    </button>
+                    <button class="action-btn comment-toggle-btn" data-post-id="{{ post.id }}">
+                        <i class="far fa-comment"></i>
+                        <span>Comment</span>
+                    </button>
+                </div>
+
+                <!-- Comments Section -->
+                <div class="comments-section" id="comments-{{ post.id }}" style="display: none;">
+                    <div class="comments-list">
+                        {% for comment in post.comments.all %}
+                        <div class="comment">
+                            {% if comment.author.avatar %}
+                                <img src="{{ comment.author.avatar.url }}" alt="{{ comment.author.username }}" class="comment-avatar">
+                            {% else %}
+                                <img src="{% static 'images/default-avatar.png' %}" alt="{{ comment.author.username }}" class="comment-avatar">
+                            {% endif %}
+                            <div class="comment-content">
+                                <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</div>
+                                <div class="comment-text">{{ comment.content }}</div>
+                                <div class="comment-time">{{ comment.created_at|timesince }} ago</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Comment Form -->
+                    <form class="comment-form" data-post-id="{{ post.id }}">
+                        {% csrf_token %}
+                        <input type="text" class="comment-input" placeholder="Write a comment..." name="content" required>
+                        <button type="submit" class="comment-submit">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <div style="text-align: center; margin: 2rem 0;">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline">Previous</a>
+                {% endif %}
+                <span style="margin: 0 1rem; color: #666;">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline">Next</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-comments"></i>
+                <h3>No posts yet</h3>
+                <p>Be the first to share something with the community!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Character counter
+    const textarea = document.getElementById('post-content');
+    const charCounter = document.getElementById('char-counter');
+    const submitBtn = document.getElementById('post-submit-btn');
+
+    textarea.addEventListener('input', function() {
+        const length = this.value.length;
+        charCounter.textContent = `${length}/1000`;
+
+        if (length > 900) {
+            charCounter.classList.add('warning');
+        } else {
+            charCounter.classList.remove('warning');
+        }
+
+        submitBtn.disabled = length === 0;
+    });
+
+    // Create post form submission
+    const createPostForm = document.getElementById('create-post-form');
+    createPostForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<div class="spinner"></div>';
+
+        try {
+            const response = await fetch('{% url "accounts:create_social_post" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Reload page to show new post
+                window.location.reload();
+            } else {
+                alert(data.error || 'Failed to create post');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to create post');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Post';
+        }
+    });
+
+    // Like button handlers
+    document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const postId = this.dataset.postId;
+            const postCard = this.closest('.post-card');
+
+            try {
+                const response = await fetch(`/accounts/social-feed/post/${postId}/like/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const icon = this.querySelector('i');
+                    if (data.liked) {
+                        this.classList.add('liked');
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                    } else {
+                        this.classList.remove('liked');
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                    }
+
+                    // Update likes count
+                    const likesCount = postCard.querySelector('.likes-count');
+                    likesCount.textContent = `${data.likes_count} like${data.likes_count !== 1 ? 's' : ''}`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    // Comment toggle
+    document.querySelectorAll('.comment-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const postId = this.dataset.postId;
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+        });
+    });
+
+    // Comment form submission
+    document.querySelectorAll('.comment-form').forEach(form => {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const postId = this.dataset.postId;
+            const formData = new FormData(this);
+            const input = this.querySelector('.comment-input');
+
+            try {
+                const response = await fetch(`/accounts/social-feed/post/${postId}/comment/`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': formData.get('csrftoken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Reload to show new comment
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Failed to post comment');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to post comment');
+            }
+        });
+    });
+
+    // Delete post
+    document.querySelectorAll('.delete-post-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            if (!confirm('Are you sure you want to delete this post?')) return;
+
+            const postId = this.dataset.postId;
+            const postCard = this.closest('.post-card');
+
+            try {
+                const response = await fetch(`/accounts/social-feed/post/${postId}/delete/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    postCard.remove();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to delete post');
+            }
+        });
+    });
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
+{% endblock %}

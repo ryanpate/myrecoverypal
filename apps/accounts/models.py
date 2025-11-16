@@ -1320,3 +1320,78 @@ class Notification(models.Model):
             'like': 'fa-heart',
         }
         return icons.get(self.notification_type, 'fa-bell')
+
+
+class SocialPost(models.Model):
+    """User-generated social media posts for the community feed"""
+    VISIBILITY_CHOICES = [
+        ('public', 'Everyone'),
+        ('friends', 'Friends Only'),
+        ('private', 'Only Me'),
+    ]
+
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='social_posts')
+    content = models.TextField(max_length=1000, help_text="Share your thoughts, wins, or encouragement")
+    image = models.ImageField(upload_to='social_posts/', blank=True, null=True)
+    visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='public')
+
+    # Engagement
+    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Social Post'
+        verbose_name_plural = 'Social Posts'
+        indexes = [
+            models.Index(fields=['-created_at']),
+            models.Index(fields=['author', '-created_at']),
+        ]
+
+    def __str__(self):
+        return f"{self.author.username} - {self.content[:50]}"
+
+    @property
+    def likes_count(self):
+        return self.likes.count()
+
+    def is_visible_to(self, user):
+        """Check if a post is visible to a specific user"""
+        if self.visibility == 'public':
+            return True
+        if self.visibility == 'private':
+            return user == self.author
+        if self.visibility == 'friends':
+            # Visible to author and their followers/following (mutual connections)
+            if user == self.author:
+                return True
+            return UserConnection.objects.filter(
+                follower=self.author,
+                following=user,
+                connection_type='follow'
+            ).exists() or UserConnection.objects.filter(
+                follower=user,
+                following=self.author,
+                connection_type='follow'
+            ).exists()
+        return False
+
+
+class SocialPostComment(models.Model):
+    """Comments on social posts"""
+    post = models.ForeignKey(SocialPost, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_comments')
+    content = models.TextField(max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['created_at']
+        verbose_name = 'Social Post Comment'
+        verbose_name_plural = 'Social Post Comments'
+
+    def __str__(self):
+        return f"{self.author.username} on {self.post.id}"

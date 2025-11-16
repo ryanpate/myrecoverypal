@@ -439,6 +439,11 @@
         font-size: 1rem;
     }
 
+    /* Mobile Social Feed Styles */
+    .mobile-social-feed {
+        display: none; /* Hidden on desktop */
+    }
+
     @media (max-width: 1024px) {
         .dashboard-grid {
             grid-template-columns: 1fr;
@@ -446,6 +451,213 @@
 
         .sidebar {
             order: -1;
+        }
+
+        /* Show mobile social feed */
+        .mobile-social-feed {
+            display: block;
+            order: 1; /* Show after sidebar but before main feed */
+            margin-bottom: 2rem;
+        }
+
+        .mobile-feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-feed-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+        }
+
+        .mobile-create-post {
+            background: white;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-post-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .mobile-avatar-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .mobile-post-textarea {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            resize: none;
+            font-size: 1rem;
+            padding: 0.75rem;
+            min-height: 80px;
+            font-family: inherit;
+            outline: none;
+            margin-bottom: 0.75rem;
+        }
+
+        .mobile-post-textarea:focus {
+            border-color: var(--primary-light);
+        }
+
+        .mobile-post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-visibility-select {
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .mobile-post-btn {
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mobile-post-btn:hover {
+            background: #45a372;
+        }
+
+        .mobile-post-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .mobile-social-posts {
+            background: white;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem;
+        }
+
+        .mobile-post-card {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .mobile-post-card:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-post-header-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .mobile-avatar-medium {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .mobile-post-author-info {
+            flex: 1;
+        }
+
+        .mobile-post-author-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.2rem;
+        }
+
+        .mobile-post-meta {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .mobile-post-content {
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .mobile-post-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .mobile-post-engagement {
+            display: flex;
+            gap: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .mobile-action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 0.95rem;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mobile-action-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .mobile-action-btn.liked {
+            color: #e74c3c;
+        }
+
+        .mobile-action-btn i {
+            font-size: 1.1rem;
+        }
+
+        .mobile-empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+        }
+
+        .mobile-empty-state i {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+
+        /* Hide main feed daily check-in on mobile to avoid duplication */
+        .main-feed {
+            margin-top: 1rem;
         }
     }
 
@@ -853,6 +1065,86 @@
                 </div>
             </div>
         </div>
+
+        <!-- Mobile Social Feed Section -->
+        <div class="mobile-social-feed">
+            <div class="mobile-feed-header">
+                <h3><i class="fas fa-fire"></i> Community Feed</h3>
+                <a href="{% url 'accounts:social_feed' %}" class="btn btn-sm btn-outline-primary">
+                    View All
+                </a>
+            </div>
+
+            <!-- Create Post Box for Mobile -->
+            <div class="mobile-create-post">
+                <div class="mobile-post-header">
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="mobile-avatar-small">
+                    {% else %}
+                        <img src="{% static 'images/default-avatar.png' %}" alt="{{ user.username }}" class="mobile-avatar-small">
+                    {% endif %}
+                    <span>Share with the community...</span>
+                </div>
+                <form id="mobile-create-post-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <textarea
+                        class="mobile-post-textarea"
+                        name="content"
+                        id="mobile-post-content"
+                        placeholder="Share your journey, wins, or encouragement..."
+                        maxlength="1000"
+                    ></textarea>
+                    <div class="mobile-post-actions">
+                        <select name="visibility" class="mobile-visibility-select">
+                            <option value="public">🌍 Everyone</option>
+                            <option value="friends">👥 Friends</option>
+                            <option value="private">🔒 Only Me</option>
+                        </select>
+                        <button type="submit" class="mobile-post-btn" id="mobile-post-submit-btn" disabled>Post</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Mobile Social Posts -->
+            <div class="mobile-social-posts">
+                {% if social_posts %}
+                    {% for post in social_posts|slice:":5" %}
+                    <div class="mobile-post-card" data-post-id="{{ post.id }}">
+                        <div class="mobile-post-header-info">
+                            {% if post.author.avatar %}
+                                <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username }}" class="mobile-avatar-medium">
+                            {% else %}
+                                <img src="{% static 'images/default-avatar.png' %}" alt="{{ post.author.username }}" class="mobile-avatar-medium">
+                            {% endif %}
+                            <div class="mobile-post-author-info">
+                                <div class="mobile-post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
+                                <div class="mobile-post-meta">{{ post.created_at|timesince }} ago</div>
+                            </div>
+                        </div>
+                        <div class="mobile-post-content">{{ post.content }}</div>
+                        {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="Post image" class="mobile-post-image">
+                        {% endif %}
+                        <div class="mobile-post-engagement">
+                            <button class="mobile-action-btn mobile-like-btn {% if user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
+                                <i class="{% if user in post.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                                <span>{{ post.likes.count }}</span>
+                            </button>
+                            <button class="mobile-action-btn" onclick="window.location.href='{% url 'accounts:social_feed' %}'">
+                                <i class="far fa-comment"></i>
+                                <span>{{ post.comments.count }}</span>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="mobile-empty-state">
+                        <i class="fas fa-comments"></i>
+                        <p>Be the first to share!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -967,5 +1259,106 @@
             document.body.appendChild(token);
         }
     });
+
+    // Mobile Social Feed JavaScript
+    const mobileTextarea = document.getElementById('mobile-post-content');
+    const mobileSubmitBtn = document.getElementById('mobile-post-submit-btn');
+
+    if (mobileTextarea && mobileSubmitBtn) {
+        mobileTextarea.addEventListener('input', function() {
+            mobileSubmitBtn.disabled = this.value.trim().length === 0;
+        });
+
+        // Mobile create post form submission
+        const mobileCreatePostForm = document.getElementById('mobile-create-post-form');
+        if (mobileCreatePostForm) {
+            mobileCreatePostForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                mobileSubmitBtn.disabled = true;
+                mobileSubmitBtn.textContent = 'Posting...';
+
+                try {
+                    const response = await fetch('{% url "accounts:create_social_post" %}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Reload page to show new post
+                        window.location.reload();
+                    } else {
+                        alert(data.error || 'Failed to create post');
+                        mobileSubmitBtn.disabled = false;
+                        mobileSubmitBtn.textContent = 'Post';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to create post');
+                    mobileSubmitBtn.disabled = false;
+                    mobileSubmitBtn.textContent = 'Post';
+                }
+            });
+        }
+    }
+
+    // Mobile like button handlers
+    document.querySelectorAll('.mobile-like-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const postId = this.dataset.postId;
+
+            try {
+                const response = await fetch(`/accounts/social-feed/post/${postId}/like/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const icon = this.querySelector('i');
+                    const count = this.querySelector('span');
+
+                    if (data.liked) {
+                        this.classList.add('liked');
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                    } else {
+                        this.classList.remove('liked');
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                    }
+
+                    count.textContent = data.likes_count;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 </script>
 {% endblock %}
