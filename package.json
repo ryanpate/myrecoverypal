@@ -1,0 +1,33 @@
+{
+  "name": "myrecoverypal",
+  "version": "1.0.0",
+  "description": "A Django-based web application designed to support individuals in addiction recovery through blogging, journaling, resources, and community features.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cap:sync": "npx cap sync",
+    "cap:sync:android": "npx cap sync android",
+    "cap:sync:ios": "npx cap sync ios",
+    "cap:open:android": "npx cap open android",
+    "cap:open:ios": "npx cap open ios",
+    "cap:run:android": "npx cap run android",
+    "cap:run:ios": "npx cap run ios",
+    "build:android:debug": "cd android && ./gradlew assembleDebug",
+    "build:android:release": "cd android && ./gradlew bundleRelease",
+    "icons:setup": "./setup-app-icons.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:49445/git/ryanpate/myrecoverypal"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/android": "^7.4.4",
+    "@capacitor/cli": "^7.4.4",
+    "@capacitor/core": "^7.4.4",
+    "@capacitor/ios": "^7.4.4",
+    "@capacitor/push-notifications": "^7.0.3"
+  }
+}
