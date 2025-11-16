@@ -42,6 +42,10 @@ class CrisisView(TemplateView):
     template_name = 'resources/crisis.html'
 
 
+class OfflineView(TemplateView):
+    template_name = 'core/offline.html'
+
+
 # Sitemap View - serves static sitemap.xml
 def sitemap_view(request):
     """
