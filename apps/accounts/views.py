@@ -2055,13 +2055,14 @@ def create_social_post(request):
     if content and len(content) > 1000:
         return JsonResponse({'error': 'Post is too long (max 1000 characters)'}, status=400)
 
-    # Create the post
-    post = SocialPost.objects.create(
-        author=request.user,
-        content=content,
-        visibility=visibility,
-        image=image
-    )
+    try:
+        # Create the post
+        post = SocialPost.objects.create(
+            author=request.user,
+            content=content,
+            visibility=visibility,
+            image=image
+        )
 
         # Return post data for dynamic update
         return JsonResponse({
