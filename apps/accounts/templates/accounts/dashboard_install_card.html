@@ -33,14 +33,16 @@
 </style>
 
 <script>
-    // PWA Install Card Logic with iOS Support
+    // PWA Install Card Logic with iOS and Firefox Support
     (function() {
         const installCard = document.getElementById('pwa-install-card');
         const installBtn = document.getElementById('dashboardInstallBtn');
         let deferredPrompt;
 
-        // Detect iOS
+        // Detect browser and platform
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+        const isFirefoxAndroid = isFirefox && /Android/i.test(navigator.userAgent);
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
         // Check if already dismissed
@@ -73,6 +75,48 @@
             `;
             installCard.style.display = 'block';
             return; // Exit early for iOS
+        }
+
+        // Show card for Firefox users with special messaging
+        if (isFirefox) {
+            const cardContent = installCard.querySelector('div[style*="text-align: center"]');
+            if (isFirefoxAndroid) {
+                // Firefox Android supports PWA installation
+                cardContent.innerHTML = `
+                    <div style="width: 80px; height: 80px; margin: 0 auto 1rem; background: rgba(255,255,255,0.2); border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fab fa-firefox-browser" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h3 style="color: white; margin-bottom: 0.5rem;"><i class="fas fa-download"></i> Install the App</h3>
+                    <p style="margin-bottom: 1.5rem; font-size: 0.95rem; opacity: 0.95;">
+                        Tap menu <i class="fas fa-ellipsis-v" style="margin: 0 4px;"></i> then "Install"
+                    </p>
+                    <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="padding: 0.6rem 1.5rem; font-weight: 600; width: 100%; margin-bottom: 0.75rem; text-decoration: none; display: inline-block;">
+                        <i class="fas fa-info-circle"></i> Show Me How
+                    </a>
+                    <button onclick="dismissInstallCard()" style="background: none; border: none; color: rgba(255,255,255,0.9); font-size: 0.85rem; text-decoration: underline; cursor: pointer; padding: 0;">
+                        Maybe Later
+                    </button>
+                `;
+            } else {
+                // Firefox Desktop has limited PWA support
+                cardContent.innerHTML = `
+                    <div style="width: 80px; height: 80px; margin: 0 auto 1rem; background: rgba(255,255,255,0.2); border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fab fa-firefox-browser" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h3 style="color: white; margin-bottom: 0.5rem;"><i class="fas fa-download"></i> Get the App</h3>
+                    <p style="margin-bottom: 1.5rem; font-size: 0.95rem; opacity: 0.95;">
+                        For best PWA experience, use Chrome, Edge, or Safari
+                    </p>
+                    <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="padding: 0.6rem 1.5rem; font-weight: 600; width: 100%; margin-bottom: 0.75rem; text-decoration: none; display: inline-block;">
+                        <i class="fas fa-info-circle"></i> Learn More
+                    </a>
+                    <button onclick="dismissInstallCard()" style="background: none; border: none; color: rgba(255,255,255,0.9); font-size: 0.85rem; text-decoration: underline; cursor: pointer; padding: 0;">
+                        Maybe Later
+                    </button>
+                `;
+            }
+            installCard.style.display = 'block';
+            return; // Exit early for Firefox
         }
 
         // Show card when install prompt is available (Chrome/Edge/Android)
