@@ -1986,6 +1986,9 @@
                             class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">Blog</a></li>
                     </li>
                     {% if user.is_authenticated %}
+                    <li><a href="{% url 'accounts:social_feed' %}"
+                            class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">Recovery Circle</a>
+                    </li>
                     <li><a href="{% url 'journal:entry_list' %}"
                             class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">Journal</a>
                     </li>
@@ -2036,6 +2039,9 @@
 
                         <!-- User Dropdown Menu -->
                         <div class="user-dropdown" id="userDropdown">
+                            <a href="{% url 'accounts:social_feed' %}">
+                                <i class="fas fa-circle-nodes"></i> Recovery Circle
+                            </a>
                             <a href="{% url 'accounts:dashboard' %}">
                                 Dashboard
                             </a>
@@ -2199,6 +2205,10 @@
 
             <div class="mobile-menu-section">
                 <div class="mobile-menu-label">Community</div>
+                <a href="{% url 'accounts:social_feed' %}"
+                    class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">
+                    <i class="fas fa-circle-nodes"></i> Recovery Circle
+                </a>
                 <a href="{% url 'accounts:community' %}"
                     class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
                     Members
@@ -2260,8 +2270,8 @@
     <!-- Mobile Bottom Navigation Bar -->
     {% if user.is_authenticated %}
     <nav class="mobile-bottom-nav" id="mobileBottomNav">
-        <a href="{% url 'core:index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
-            <span>Home</span>
+        <a href="{% url 'accounts:social_feed' %}" class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">
+            <span>Circle</span>
         </a>
         <a href="{% url 'journal:entry_list' %}"
             class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
