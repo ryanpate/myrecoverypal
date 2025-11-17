@@ -73,7 +73,7 @@ def register_view(request):
                         days_sober=0
                     )
 
-                return redirect('accounts:dashboard')
+                return redirect('accounts:social_feed')
         else:
             form = CustomUserCreationForm()
 
@@ -104,7 +104,7 @@ def register_view(request):
                     days_sober=0
                 )
 
-            return redirect('accounts:dashboard')
+            return redirect('accounts:social_feed')
     else:
         # Pre-fill invite code if provided in URL
         initial = {'invite_code': invite_code} if invite_code else {}
