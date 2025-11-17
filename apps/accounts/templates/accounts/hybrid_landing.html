@@ -1,0 +1,1087 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - MyRecoveryPal{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hybrid Landing Page - Desktop shows stats + feed, Mobile stacks them */
+    .hybrid-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+
+    .hybrid-grid {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    /* Left Sidebar - User Stats */
+    .stats-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .stats-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-card h3 {
+        margin-bottom: 1rem;
+        color: #333;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .stats-card h3 i {
+        color: #52b788;
+    }
+
+    .quick-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .stat-box {
+        text-align: center;
+        padding: 1rem;
+        background: linear-gradient(135deg, #52b788 0%, #45a374 100%);
+        border-radius: 12px;
+        color: white;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        opacity: 0.9;
+    }
+
+    .connection-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        border-radius: 8px;
+        transition: background 0.3s;
+    }
+
+    .connection-item:hover {
+        background: #f8f9fa;
+    }
+
+    .connection-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+        color: #999;
+        font-size: 1.2rem;
+    }
+
+    .connection-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .connection-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .connection-name {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 0.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .connection-status {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .milestone-item {
+        padding: 0.75rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        border-left: 4px solid #52b788;
+    }
+
+    .milestone-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+    }
+
+    .milestone-date {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .quick-actions-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .action-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: white;
+        color: #666;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+    }
+
+    .action-link:hover {
+        background: #f8f9fa;
+        color: #52b788;
+        border-color: #52b788;
+        text-decoration: none;
+        transform: translateX(2px);
+    }
+
+    .action-link i {
+        font-size: 1rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    /* Right Column - Social Feed */
+    .feed-column {
+        max-width: 650px;
+        margin: 0 auto;
+    }
+
+    .welcome-header {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .welcome-header h2 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 1.5rem;
+    }
+
+    .welcome-header p {
+        color: #666;
+        margin: 0;
+        font-size: 1.1rem;
+    }
+
+    .days-highlight {
+        color: #52b788;
+        font-weight: bold;
+        font-size: 1.3rem;
+    }
+
+    /* Create Post Box */
+    .create-post-box {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .create-post-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .avatar-small {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .post-textarea {
+        width: 100%;
+        border: none;
+        resize: none;
+        font-size: 1rem;
+        padding: 0.5rem;
+        min-height: 60px;
+        font-family: inherit;
+        outline: none;
+    }
+
+    .post-textarea:focus {
+        outline: 2px solid #52b788;
+        border-radius: 8px;
+    }
+
+    .post-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 0.75rem;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .visibility-select {
+        padding: 0.5rem;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    .post-btn {
+        background: #52b788;
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .post-btn:hover {
+        background: #45a374;
+        transform: translateY(-2px);
+    }
+
+    .post-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .char-counter {
+        font-size: 0.85rem;
+        color: #999;
+        margin-left: 0.5rem;
+    }
+
+    .char-counter.warning {
+        color: #e74c3c;
+    }
+
+    /* Social Posts */
+    .post-card {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .social-post-header {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1rem 0.75rem 1rem;
+        gap: 0.75rem;
+    }
+
+    .avatar-medium {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .post-author-info {
+        flex: 1;
+    }
+
+    .post-author-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.2rem;
+    }
+
+    .post-meta {
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+    .post-content {
+        padding: 0 1rem 1rem 1rem;
+        line-height: 1.5;
+        color: #333;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    .post-image {
+        width: 100%;
+        max-height: 500px;
+        object-fit: cover;
+    }
+
+    .post-engagement {
+        padding: 0.5rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: #666;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .post-actions-bar {
+        padding: 0.75rem 1rem;
+        display: flex;
+        gap: 1rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .post-action-btn {
+        background: none;
+        border: none;
+        color: #666;
+        font-size: 0.95rem;
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .post-action-btn:hover {
+        background: #f5f5f5;
+    }
+
+    .post-action-btn.liked {
+        color: #e74c3c;
+    }
+
+    .post-action-btn i {
+        font-size: 1.2rem;
+    }
+
+    .comments-section {
+        padding: 0 1rem 1rem 1rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .comment {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+    }
+
+    .comment-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .comment-content {
+        flex: 1;
+        background: #f5f5f5;
+        padding: 0.5rem 0.75rem;
+        border-radius: 12px;
+    }
+
+    .comment-author {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .comment-text {
+        font-size: 0.9rem;
+        color: #333;
+    }
+
+    .comment-time {
+        font-size: 0.75rem;
+        color: #999;
+        margin-top: 0.25rem;
+    }
+
+    .comment-form {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+    }
+
+    .comment-input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        outline: none;
+    }
+
+    .comment-input:focus {
+        border-color: #52b788;
+    }
+
+    .comment-submit {
+        background: #52b788;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #666;
+        background: white;
+        border-radius: 12px;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .hybrid-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-sidebar {
+            order: -1;
+        }
+
+        .quick-stats-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .stats-card {
+            padding: 1rem;
+        }
+
+        .welcome-header {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hybrid-container {
+            padding: 0.5rem;
+        }
+
+        .hybrid-grid {
+            gap: 1rem;
+        }
+
+        .quick-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+        }
+
+        .connection-item,
+        .milestone-item {
+            padding: 0.5rem;
+        }
+
+        .stats-card h3 {
+            font-size: 1rem;
+        }
+    }
+
+    /* Loading spinner */
+    .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #52b788;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hybrid-container">
+    <div class="hybrid-grid">
+        <!-- Left Sidebar - User Stats -->
+        <div class="stats-sidebar">
+            <!-- Quick Stats -->
+            <div class="stats-card">
+                <h3><i class="fas fa-chart-line"></i> Your Progress</h3>
+                <div class="quick-stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number">{{ user.get_days_sober }}</div>
+                        <div class="stat-label">Days Sober</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">{{ user.followers_count }}</div>
+                        <div class="stat-label">Followers</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">{{ user.following_count }}</div>
+                        <div class="stat-label">Following</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">{{ user.get_joined_groups.count }}</div>
+                        <div class="stat-label">Groups</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recovery Network -->
+            {% if user.get_active_sponsor or user.get_recovery_pal or user.get_active_sponsorships %}
+            <div class="stats-card">
+                <h3><i class="fas fa-user-friends"></i> Your Network</h3>
+
+                {% if user.get_active_sponsor %}
+                <div class="connection-item">
+                    <div class="connection-avatar">
+                        {% if user.get_active_sponsor.avatar %}
+                        <img src="{{ user.get_active_sponsor.avatar.url }}" alt="Sponsor">
+                        {% else %}
+                        <i class="fas fa-star"></i>
+                        {% endif %}
+                    </div>
+                    <div class="connection-info">
+                        <div class="connection-name">{{ user.get_active_sponsor.get_full_name|default:user.get_active_sponsor.username }}</div>
+                        <div class="connection-status">Your Sponsor</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if user.get_recovery_pal %}
+                <div class="connection-item">
+                    <div class="connection-avatar">
+                        {% if user.get_recovery_pal.avatar %}
+                        <img src="{{ user.get_recovery_pal.avatar.url }}" alt="Pal">
+                        {% else %}
+                        <i class="fas fa-handshake"></i>
+                        {% endif %}
+                    </div>
+                    <div class="connection-info">
+                        <div class="connection-name">{{ user.get_recovery_pal.get_full_name|default:user.get_recovery_pal.username }}</div>
+                        <div class="connection-status">Recovery Pal</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if user.get_active_sponsorships %}
+                {% for sponsorship in user.get_active_sponsorships|slice:":2" %}
+                <div class="connection-item">
+                    <div class="connection-avatar">
+                        {% if sponsorship.sponsee.avatar %}
+                        <img src="{{ sponsorship.sponsee.avatar.url }}" alt="Sponsee">
+                        {% else %}
+                        <i class="fas fa-user"></i>
+                        {% endif %}
+                    </div>
+                    <div class="connection-info">
+                        <div class="connection-name">{{ sponsorship.sponsee.get_full_name|default:sponsorship.sponsee.username }}</div>
+                        <div class="connection-status">Sponsee</div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Recent Milestones -->
+            <div class="stats-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h3 style="margin: 0;"><i class="fas fa-trophy"></i> Milestones</h3>
+                    <a href="{% url 'accounts:add_milestone' %}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-plus"></i>
+                    </a>
+                </div>
+                {% for milestone in recent_milestones|slice:":3" %}
+                <div class="milestone-item">
+                    <div class="milestone-title">{{ milestone.title }}</div>
+                    <div class="milestone-date">{{ milestone.date_achieved|date:"M j, Y" }}</div>
+                </div>
+                {% empty %}
+                <p class="text-muted" style="font-size: 0.9rem;">No milestones yet. <a href="{% url 'accounts:add_milestone' %}">Add your first!</a></p>
+                {% endfor %}
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="stats-card">
+                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                <div class="quick-actions-grid">
+                    <a href="{% url 'accounts:edit_profile' %}" class="action-link">
+                        <i class="fas fa-user-edit"></i> Edit Profile
+                    </a>
+                    <a href="{% url 'accounts:messages' %}" class="action-link">
+                        <i class="fas fa-envelope"></i> Messages
+                        {% if unread_messages > 0 %}
+                        <span style="background: red; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; margin-left: auto;">{{ unread_messages }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'journal:dashboard' %}" class="action-link">
+                        <i class="fas fa-book"></i> Journal
+                    </a>
+                    <a href="{% url 'blog:post_list' %}" class="action-link">
+                        <i class="fas fa-newspaper"></i> Blog
+                    </a>
+                    <a href="{% url 'accounts:community' %}" class="action-link">
+                        <i class="fas fa-users"></i> Community
+                    </a>
+                    <a href="{% url 'accounts:groups_list' %}" class="action-link">
+                        <i class="fas fa-layer-group"></i> Groups
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Social Feed -->
+        <div class="feed-column">
+            <!-- Welcome Header (Desktop Only) -->
+            <div class="welcome-header">
+                <h2>Welcome back, {{ user.get_full_name|default:user.username }}!</h2>
+                <p>
+                    {% if user.get_days_sober > 0 %}
+                    <span class="days-highlight">{{ user.get_days_sober }} days</span> strong in your recovery journey
+                    {% else %}
+                    Your recovery journey starts here
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Create Post Box -->
+            <div class="create-post-box">
+                <div class="create-post-header">
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="avatar-small">
+                    {% else %}
+                        <img src="{% static 'images/default-avatar.png' %}" alt="{{ user.username }}" class="avatar-small">
+                    {% endif %}
+                    <span style="font-weight: 500; color: #666;">Share your journey...</span>
+                </div>
+                <form id="create-post-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <textarea
+                        class="post-textarea"
+                        name="content"
+                        id="post-content"
+                        placeholder="What's on your mind? Share a win, ask for support, or encourage others..."
+                        maxlength="1000"
+                    ></textarea>
+
+                    <!-- Image Preview -->
+                    <div id="image-preview-container" style="display: none; padding: 0.5rem; margin-top: 0.5rem;">
+                        <div style="position: relative; display: inline-block;">
+                            <img id="image-preview" src="" alt="Preview" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
+                            <button type="button" id="remove-image-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="post-actions">
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <input type="file" name="image" id="post-image-input" accept="image/*" style="display: none;">
+                            <button type="button" id="add-photo-btn" class="post-action-btn" style="padding: 0.25rem 0.75rem; margin: 0;">
+                                <i class="fas fa-image"></i>
+                            </button>
+                            <select name="visibility" class="visibility-select">
+                                <option value="public">🌍 Everyone</option>
+                                <option value="friends">👥 Friends</option>
+                                <option value="private">🔒 Only Me</option>
+                            </select>
+                            <span class="char-counter" id="char-counter">0/1000</span>
+                        </div>
+                        <button type="submit" class="post-btn" id="post-submit-btn" disabled>Post</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Feed Posts -->
+            <div id="posts-container">
+                {% if posts %}
+                    {% for post in posts %}
+                    <div class="post-card" data-post-id="{{ post.id }}">
+                        <!-- Post Header -->
+                        <div class="social-post-header">
+                            {% if post.author.avatar %}
+                                <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username }}" class="avatar-medium">
+                            {% else %}
+                                <img src="{% static 'images/default-avatar.png' %}" alt="{{ post.author.username }}" class="avatar-medium">
+                            {% endif %}
+                            <div class="post-author-info">
+                                <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
+                                <div class="post-meta">{{ post.created_at|timesince }} ago</div>
+                            </div>
+                            {% if post.author == user %}
+                            <button class="post-action-btn delete-post-btn" data-post-id="{{ post.id }}" style="margin-left: auto;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+
+                        <!-- Post Content -->
+                        <div class="post-content">{{ post.content }}</div>
+
+                        <!-- Post Image -->
+                        {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="Post image" class="post-image">
+                        {% endif %}
+
+                        <!-- Engagement Stats -->
+                        <div class="post-engagement">
+                            <span class="likes-count">{{ post.likes.count }} like{{ post.likes.count|pluralize }}</span>
+                            <span class="comments-count">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="post-actions-bar">
+                            <button class="post-action-btn like-btn {% if user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
+                                <i class="{% if user in post.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                                <span>Like</span>
+                            </button>
+                            <button class="post-action-btn comment-toggle-btn" data-post-id="{{ post.id }}">
+                                <i class="far fa-comment"></i>
+                                <span>Comment</span>
+                            </button>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div class="comments-section" id="comments-{{ post.id }}" style="display: none;">
+                            <div class="comments-list">
+                                {% for comment in post.comments.all %}
+                                <div class="comment">
+                                    {% if comment.author.avatar %}
+                                        <img src="{{ comment.author.avatar.url }}" alt="{{ comment.author.username }}" class="comment-avatar">
+                                    {% else %}
+                                        <img src="{% static 'images/default-avatar.png' %}" alt="{{ comment.author.username }}" class="comment-avatar">
+                                    {% endif %}
+                                    <div class="comment-content">
+                                        <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</div>
+                                        <div class="comment-text">{{ comment.content }}</div>
+                                        <div class="comment-time">{{ comment.created_at|timesince }} ago</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Comment Form -->
+                            <form class="comment-form" data-post-id="{{ post.id }}">
+                                {% csrf_token %}
+                                <input type="text" class="comment-input" placeholder="Write a comment..." name="content" required>
+                                <button type="submit" class="comment-submit">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Pagination -->
+                    {% if page_obj.has_other_pages %}
+                    <div style="text-align: center; margin: 2rem 0;">
+                        {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary">Previous</a>
+                        {% endif %}
+                        <span style="margin: 0 1rem; color: #666;">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                        {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-primary">Next</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-comments"></i>
+                        <h3>Welcome to MyRecoveryCircle!</h3>
+                        <p>Be the first to share something with the community.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Character counter
+    const textarea = document.getElementById('post-content');
+    const charCounter = document.getElementById('char-counter');
+    const submitBtn = document.getElementById('post-submit-btn');
+
+    textarea.addEventListener('input', function() {
+        const length = this.value.length;
+        charCounter.textContent = `${length}/1000`;
+
+        if (length > 900) {
+            charCounter.classList.add('warning');
+        } else {
+            charCounter.classList.remove('warning');
+        }
+
+        const hasImage = document.getElementById('post-image-input').files.length > 0;
+        submitBtn.disabled = length === 0 && !hasImage;
+    });
+
+    // Image upload handlers
+    const addPhotoBtn = document.getElementById('add-photo-btn');
+    const imageInput = document.getElementById('post-image-input');
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const imagePreview = document.getElementById('image-preview');
+    const removeImageBtn = document.getElementById('remove-image-btn');
+
+    addPhotoBtn.addEventListener('click', function() {
+        imageInput.click();
+    });
+
+    imageInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file');
+                this.value = '';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image size must be less than 5MB');
+                this.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                imagePreviewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+
+            submitBtn.disabled = false;
+        }
+    });
+
+    removeImageBtn.addEventListener('click', function() {
+        imageInput.value = '';
+        imagePreviewContainer.style.display = 'none';
+        imagePreview.src = '';
+
+        const hasContent = textarea.value.trim().length > 0;
+        submitBtn.disabled = !hasContent;
+    });
+
+    // Create post form submission
+    const createPostForm = document.getElementById('create-post-form');
+    createPostForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<div class="spinner"></div>';
+
+        try {
+            const response = await fetch('{% url "accounts:create_social_post" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                textarea.value = '';
+                imageInput.value = '';
+                imagePreviewContainer.style.display = 'none';
+                imagePreview.src = '';
+                charCounter.textContent = '0/1000';
+                submitBtn.disabled = true;
+                window.location.reload();
+            } else {
+                alert(data.error || 'Failed to create post');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Post';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to create post');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Post';
+        }
+    });
+
+    // Like button handlers
+    document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const postId = this.dataset.postId;
+            const postCard = this.closest('.post-card');
+
+            try {
+                const response = await fetch(`/accounts/social-feed/post/${postId}/like/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const icon = this.querySelector('i');
+                    if (data.liked) {
+                        this.classList.add('liked');
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                    } else {
+                        this.classList.remove('liked');
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                    }
+
+                    const likesCount = postCard.querySelector('.likes-count');
+                    likesCount.textContent = `${data.likes_count} like${data.likes_count !== 1 ? 's' : ''}`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    // Comment toggle
+    document.querySelectorAll('.comment-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const postId = this.dataset.postId;
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+        });
+    });
+
+    // Comment form submission
+    document.querySelectorAll('.comment-form').forEach(form => {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const postId = this.dataset.postId;
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch(`/accounts/social-feed/post/${postId}/comment/`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': formData.get('csrftoken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Failed to post comment');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to post comment');
+            }
+        });
+    });
+
+    // Delete post
+    document.querySelectorAll('.delete-post-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            if (!confirm('Are you sure you want to delete this post?')) return;
+
+            const postId = this.dataset.postId;
+            const postCard = this.closest('.post-card');
+
+            try {
+                const response = await fetch(`/accounts/social-feed/post/${postId}/delete/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    postCard.remove();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to delete post');
+            }
+        });
+    });
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
+{% endblock %}

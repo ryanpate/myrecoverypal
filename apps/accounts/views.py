@@ -2041,6 +2041,82 @@ def social_feed_view(request):
 
 
 @login_required
+def hybrid_landing_view(request):
+    """
+    Hybrid landing page combining dashboard stats with social feed
+    """
+    user = request.user
+
+    try:
+        # Dashboard data
+        days_sober = user.get_days_sober()
+        recent_milestones = user.milestones.all()[:5]
+        unread_messages = user.received_messages.filter(is_read=False).count()
+
+        # User's connection stats
+        followers_count = user.followers_count
+        following_count = user.following_count
+
+        # User's recovery connections
+        active_sponsor = user.get_active_sponsor()
+        recovery_pal = user.get_recovery_pal()
+        active_sponsorships = user.get_active_sponsorships()[:3]
+
+        # User's groups
+        user_groups = user.get_joined_groups()[:3]
+
+        # Social feed data - Get posts visible to the current user
+        posts = SocialPost.objects.select_related('author').prefetch_related(
+            'likes',
+            'comments__author'
+        ).all()
+
+        # Filter posts based on visibility
+        visible_posts = []
+        for post in posts:
+            if post.is_visible_to(user):
+                visible_posts.append(post)
+
+        # Pagination
+        paginator = Paginator(visible_posts, 15)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context = {
+            # User basics
+            'user': user,
+            'days_sober': days_sober,
+            'unread_messages': unread_messages,
+
+            # Milestones
+            'recent_milestones': recent_milestones,
+
+            # User connections
+            'followers_count': followers_count,
+            'following_count': following_count,
+
+            # Recovery connections
+            'active_sponsor': active_sponsor,
+            'recovery_pal': recovery_pal,
+            'active_sponsorships': active_sponsorships,
+
+            # Groups
+            'user_groups': user_groups,
+
+            # Social feed
+            'page_obj': page_obj,
+            'posts': page_obj,
+        }
+
+        return render(request, 'accounts/hybrid_landing.html', context)
+    except Exception:
+        # Fallback to dashboard if there's an error
+        from django.contrib import messages
+        messages.warning(request, 'Loading your personalized dashboard...')
+        return redirect('accounts:dashboard')
+
+
+@login_required
 @require_POST
 def create_social_post(request):
     """Create a new social post via AJAX"""

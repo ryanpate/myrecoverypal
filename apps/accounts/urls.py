@@ -32,6 +32,7 @@ urlpatterns = [
          name='password_reset_complete'),
 
     # User dashboard and profile
+    path('', views.hybrid_landing_view, name='hybrid_landing'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('profile/<str:username>/', views.ProfileView.as_view(), name='profile'),
     path('edit-profile/', views.edit_profile_view, name='edit_profile'),
