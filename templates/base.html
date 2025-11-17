@@ -778,6 +778,32 @@
             width: 100%;
         }
 
+        /* MyRecoveryCircle button styling - more prominent */
+        .nav-links a.myrecoverycircle-btn {
+            background: var(--accent-green);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a.myrecoverycircle-btn:hover {
+            background: #45a372;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(82, 183, 136, 0.4);
+        }
+
+        .nav-links a.myrecoverycircle-btn::after {
+            display: none;
+        }
+
+        .nav-links a.myrecoverycircle-btn.active {
+            background: #45a372;
+            color: white;
+        }
+
         /* User Menu Styles */
         .user-menu {
             position: relative;
@@ -1986,9 +2012,6 @@
                             class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">Blog</a></li>
                     </li>
                     {% if user.is_authenticated %}
-                    <li><a href="{% url 'accounts:social_feed' %}"
-                            class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">Recovery Circle</a>
-                    </li>
                     <li><a href="{% url 'journal:entry_list' %}"
                             class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">Journal</a>
                     </li>
@@ -2004,6 +2027,11 @@
                     {% endif %}
                     <li><a href="{% url 'store:product_list' %}"
                             class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">Store</a></li>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'accounts:social_feed' %}"
+                            class="myrecoverycircle-btn {% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">MyRecoveryCircle</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
 
@@ -2040,7 +2068,7 @@
                         <!-- User Dropdown Menu -->
                         <div class="user-dropdown" id="userDropdown">
                             <a href="{% url 'accounts:social_feed' %}">
-                                <i class="fas fa-circle-nodes"></i> Recovery Circle
+                                <i class="fas fa-circle-nodes"></i> MyRecoveryCircle
                             </a>
                             <a href="{% url 'accounts:dashboard' %}">
                                 Dashboard
@@ -2207,7 +2235,7 @@
                 <div class="mobile-menu-label">Community</div>
                 <a href="{% url 'accounts:social_feed' %}"
                     class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">
-                    <i class="fas fa-circle-nodes"></i> Recovery Circle
+                    <i class="fas fa-circle-nodes"></i> MyRecoveryCircle
                 </a>
                 <a href="{% url 'accounts:community' %}"
                     class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
