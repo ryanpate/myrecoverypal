@@ -5,9 +5,9 @@ class IndexView(TemplateView):
     template_name = 'core/index.html'
 
     def dispatch(self, request, *args, **kwargs):
-        # If user is authenticated, redirect to dashboard
+        # If user is authenticated, redirect to myrecoverycircle
         if request.user.is_authenticated:
-            return redirect('accounts:dashboard')
+            return redirect('accounts:social_feed')
         # Otherwise, show the home page
         return super().dispatch(request, *args, **kwargs)
 class AboutView(TemplateView):

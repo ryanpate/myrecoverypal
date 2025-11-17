@@ -106,7 +106,7 @@ CACHES = {
 # Authentication
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = 'account_login'
-LOGIN_REDIRECT_URL = 'accounts:dashboard'
+LOGIN_REDIRECT_URL = 'accounts:social_feed'
 LOGOUT_REDIRECT_URL = 'core:index'
 
 AUTHENTICATION_BACKENDS = [
