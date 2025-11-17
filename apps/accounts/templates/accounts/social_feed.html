@@ -122,12 +122,14 @@
     .post-author-name {
         font-weight: 600;
         color: var(--text-dark);
-        margin: 0 0 0.2rem 0;
+        margin-bottom: 0.2rem;
+        font-size: 1rem;
     }
 
     .post-meta {
         font-size: 0.85rem;
         color: #666;
+        margin: 0;
     }
 
     .post-content {
@@ -379,10 +381,8 @@
                         <img src="{% static 'images/default-avatar.png' %}" alt="{{ post.author.username }}" class="avatar-medium">
                     {% endif %}
                     <div class="post-author-info">
-                        <h3 class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</h3>
-                        <p class="post-meta">
-                            {{ post.created_at|timesince }} ago • {{ post.get_visibility_display }}
-                        </p>
+                        <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
+                        <div class="post-meta">{{ post.created_at|timesince }} ago</div>
                     </div>
                     {% if post.author == user %}
                     <button class="action-btn delete-post-btn" data-post-id="{{ post.id }}">
