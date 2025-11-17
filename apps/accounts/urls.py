@@ -2,6 +2,7 @@
 
 from django.urls import path
 from django.contrib.auth import views as auth_views
+from django.shortcuts import redirect
 from . import views
 from . import payment_views
 
@@ -32,7 +33,7 @@ urlpatterns = [
          name='password_reset_complete'),
 
     # User dashboard and profile
-    path('', views.hybrid_landing_view, name='hybrid_landing'),
+    path('', lambda request: redirect('accounts:social_feed'), name='hybrid_landing'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('profile/<str:username>/', views.ProfileView.as_view(), name='profile'),
     path('edit-profile/', views.edit_profile_view, name='edit_profile'),
@@ -56,8 +57,8 @@ urlpatterns = [
     path('like-activity/<int:activity_id>/', views.like_activity, name='like_activity'),
     path('comment-on-activity/<int:activity_id>/', views.comment_on_activity, name='comment_on_activity'),
 
-    # Social Feed URLs
-    path('social-feed/', views.social_feed_view, name='social_feed'),
+    # Social Feed URLs (MyRecoveryCircle)
+    path('social-feed/', views.hybrid_landing_view, name='social_feed'),
     path('social-feed/create/', views.create_social_post, name='create_social_post'),
     path('social-feed/post/<int:post_id>/like/', views.like_social_post, name='like_social_post'),
     path('social-feed/post/<int:post_id>/comment/', views.comment_social_post, name='comment_social_post'),
