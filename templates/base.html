@@ -1642,6 +1642,240 @@
             }
         }
 
+        /* ========================================
+           LANDSCAPE ORIENTATION STYLES
+           ======================================== */
+        @media (max-width: 768px) and (orientation: landscape) {
+            body {
+                padding-top: 50px;
+                padding-bottom: 44px;
+            }
+
+            /* Compact top navigation in landscape */
+            nav {
+                height: 50px;
+            }
+
+            .nav-container {
+                padding: 0.25rem 0.75rem;
+            }
+
+            .logo-img {
+                height: 28px;
+            }
+
+            .logo-text {
+                font-size: 0.9rem;
+            }
+
+            /* Compact CTA button in landscape */
+            .cta-button {
+                padding: 0.35rem 0.6rem;
+                font-size: 0.75rem;
+                min-height: 36px;
+            }
+
+            /* Smaller hamburger in landscape */
+            .hamburger {
+                width: 40px;
+                height: 40px;
+                padding: 8px;
+                min-height: 40px;
+                min-width: 40px;
+            }
+
+            .hamburger-line {
+                width: 20px;
+                height: 2px;
+                margin: 4px 0;
+            }
+
+            /* Compact bottom navigation in landscape */
+            .mobile-bottom-nav {
+                height: 44px;
+                padding: 2px 0;
+            }
+
+            .mobile-bottom-nav a {
+                font-size: 0.55rem;
+                padding: 1px;
+            }
+
+            .mobile-bottom-nav i {
+                font-size: 0.9rem;
+                margin-bottom: 0;
+            }
+
+            /* Slide-out menu optimizations for landscape */
+            .mobile-slide-menu {
+                width: 320px;
+                right: -320px;
+            }
+
+            .mobile-slide-menu.active {
+                transform: translateX(-320px);
+            }
+
+            /* Compact menu header in landscape */
+            .mobile-menu-header {
+                padding: 0.75rem 1rem;
+            }
+
+            .mobile-menu-user {
+                margin-top: 0.5rem;
+                gap: 0.75rem;
+            }
+
+            .mobile-menu-avatar {
+                width: 36px;
+                height: 36px;
+                font-size: 0.9rem;
+            }
+
+            .mobile-menu-user-info h3 {
+                font-size: 0.95rem;
+            }
+
+            .mobile-menu-user-info p {
+                font-size: 0.8rem;
+            }
+
+            .mobile-menu-close {
+                top: 0.5rem;
+                right: 0.5rem;
+                width: 28px;
+                height: 28px;
+            }
+
+            .mobile-menu-close svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            /* Scrollable menu nav area - maximize space in landscape */
+            .mobile-menu-nav {
+                max-height: calc(100vh - 120px);
+                padding: 0.5rem 0;
+            }
+
+            .mobile-menu-section {
+                padding: 0.75rem 0;
+            }
+
+            .mobile-menu-label {
+                padding: 0.25rem 1rem;
+                font-size: 0.7rem;
+            }
+
+            .mobile-menu-nav a {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .mobile-menu-nav a i {
+                width: 20px;
+                margin-right: 0.75rem;
+                font-size: 0.85rem;
+            }
+
+            /* Compact footer in landscape */
+            .mobile-menu-footer {
+                padding: 0.5rem 1rem;
+            }
+
+            .mobile-logout-btn {
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            /* User menu dropdown adjustments */
+            .user-menu-toggle {
+                padding: 0.35rem;
+            }
+
+            .user-avatar {
+                width: 26px;
+                height: 26px;
+            }
+
+            .user-dropdown {
+                top: 50px;
+                bottom: 44px;
+            }
+
+            /* Notification dropdown */
+            .notification-dropdown {
+                top: 50px;
+            }
+
+            /* Page headers more compact in landscape */
+            .page-header,
+            .dashboard-header,
+            .blog-header,
+            .resources-header,
+            .journal-header,
+            .community-header,
+            .profile-header,
+            .milestones-header,
+            .stats-header,
+            .entries-header,
+            .prompts-header,
+            .category-header,
+            .educational-resources-header,
+            .support-header,
+            .groups-header,
+            .group-detail-header,
+            .challenges-header,
+            .challenge-detail-header,
+            .pal-header,
+            .sponsor-header,
+            .my-groups-header,
+            .my-challenges-header,
+            .hero-section {
+                padding: 60px 1rem 20px;
+            }
+
+            .page-header h1,
+            .dashboard-header h1,
+            .blog-header h1,
+            .resources-header h1,
+            .journal-header h1,
+            .community-header h1,
+            .profile-header h1,
+            .milestones-header h1,
+            .stats-header h1,
+            .entries-header h1,
+            .prompts-header h1,
+            .category-header h1,
+            .educational-resources-header h1,
+            .support-header h1,
+            .hero-section h1 {
+                font-size: 1.4rem;
+            }
+
+            /* Main content area adjustment */
+            main {
+                min-height: calc(100vh - 94px);
+            }
+
+            /* Install prompt positioning in landscape */
+            .install-prompt {
+                bottom: 50px;
+            }
+        }
+
+        /* Larger landscape screens (tablets in landscape) */
+        @media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+            /* Ensure navigation stays compact on landscape tablets */
+            .nav-container {
+                padding: 0.5rem 1.5rem;
+            }
+
+            .logo-img {
+                height: 40px;
+            }
+        }
+
         /* Touch device optimizations */
         @media (hover: none) and (pointer: coarse) {
 
