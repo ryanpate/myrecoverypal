@@ -1,7 +1,7 @@
 // MyRecoveryPal Service Worker
 // Version 2.1 - Enhanced caching and offline support
 
-const CACHE_VERSION = 'myrecoverypal-v6';
+const CACHE_VERSION = 'myrecoverypal-v7';
 const CACHE_NAMES = {
   static: `${CACHE_VERSION}-static`,
   dynamic: `${CACHE_VERSION}-dynamic`,
