@@ -1662,7 +1662,8 @@
         /* ========================================
            LANDSCAPE ORIENTATION STYLES
            ======================================== */
-        @media (max-width: 768px) and (orientation: landscape) {
+        /* Use max-height to target phones in landscape - most phones have ~375-430px height in landscape */
+        @media (max-height: 500px) and (orientation: landscape) {
             body {
                 padding-top: 50px;
                 padding-bottom: 44px;
