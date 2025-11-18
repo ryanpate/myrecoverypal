@@ -63,6 +63,8 @@ urlpatterns = [
     path('social-feed/post/<int:post_id>/like/', views.like_social_post, name='like_social_post'),
     path('social-feed/post/<int:post_id>/comment/', views.comment_social_post, name='comment_social_post'),
     path('social-feed/post/<int:post_id>/delete/', views.delete_social_post, name='delete_social_post'),
+    path('social-feed/comment/<int:comment_id>/like/', views.like_comment, name='like_comment'),
+    path('social-feed/comment/<int:comment_id>/reply/', views.reply_to_comment, name='reply_to_comment'),
 
     # Follow/Following System
     path('follow/<str:username>/', views.follow_user, name='follow_user'),

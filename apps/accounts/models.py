@@ -1385,6 +1385,8 @@ class SocialPostComment(models.Model):
     post = models.ForeignKey(SocialPost, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_comments')
     content = models.TextField(max_length=500)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
+    likes = models.ManyToManyField(User, related_name='liked_comments', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -1395,3 +1397,11 @@ class SocialPostComment(models.Model):
 
     def __str__(self):
         return f"{self.author.username} on {self.post.id}"
+
+    @property
+    def likes_count(self):
+        return self.likes.count()
+
+    @property
+    def replies_count(self):
+        return self.replies.count()

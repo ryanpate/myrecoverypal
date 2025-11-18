@@ -2264,3 +2264,96 @@ def delete_social_post(request, post_id):
         return JsonResponse({'success': True})
     except Exception:
         return JsonResponse({'error': 'Social feed is being set up. Please try again later.'}, status=503)
+
+
+@login_required
+@require_POST
+def like_comment(request, comment_id):
+    """Toggle like on a comment"""
+    try:
+        comment = get_object_or_404(SocialPostComment, id=comment_id)
+
+        # Check if the post is visible to user
+        if not comment.post.is_visible_to(request.user):
+            return JsonResponse({'error': 'Comment not found'}, status=404)
+
+        if request.user in comment.likes.all():
+            comment.likes.remove(request.user)
+            liked = False
+        else:
+            comment.likes.add(request.user)
+            liked = True
+
+            # Create notification for comment author
+            if comment.author != request.user:
+                create_notification(
+                    recipient=comment.author,
+                    sender=request.user,
+                    notification_type='like',
+                    title='Comment Liked',
+                    message=f'{request.user.get_full_name() or request.user.username} liked your comment',
+                    link=f'/accounts/social-feed/'
+                )
+
+        return JsonResponse({
+            'success': True,
+            'liked': liked,
+            'likes_count': comment.likes_count
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=503)
+
+
+@login_required
+@require_POST
+def reply_to_comment(request, comment_id):
+    """Reply to a comment"""
+    try:
+        parent_comment = get_object_or_404(SocialPostComment, id=comment_id)
+
+        # Check if the post is visible to user
+        if not parent_comment.post.is_visible_to(request.user):
+            return JsonResponse({'error': 'Comment not found'}, status=404)
+
+        content = request.POST.get('content', '').strip()
+        if not content:
+            return JsonResponse({'error': 'Reply content is required'}, status=400)
+
+        if len(content) > 500:
+            return JsonResponse({'error': 'Reply is too long (max 500 characters)'}, status=400)
+
+        # Create reply
+        reply = SocialPostComment.objects.create(
+            post=parent_comment.post,
+            author=request.user,
+            content=content,
+            parent=parent_comment
+        )
+
+        # Create notification for comment author
+        if parent_comment.author != request.user:
+            create_notification(
+                recipient=parent_comment.author,
+                sender=request.user,
+                notification_type='comment',
+                title='New Reply',
+                message=f'{request.user.get_full_name() or request.user.username} replied to your comment',
+                link=f'/accounts/social-feed/'
+            )
+
+        return JsonResponse({
+            'success': True,
+            'reply': {
+                'id': reply.id,
+                'author': {
+                    'username': reply.author.username,
+                    'full_name': reply.author.get_full_name(),
+                    'avatar_url': reply.author.avatar.url if reply.author.avatar else None,
+                },
+                'content': reply.content,
+                'created_at': reply.created_at.strftime('%B %d, %Y at %I:%M %p'),
+                'likes_count': 0,
+            }
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=503)
