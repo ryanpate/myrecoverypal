@@ -1370,7 +1370,8 @@
         /* ========================================
            MOBILE STYLES
            ======================================== */
-        @media (max-width: 768px) {
+        /* Apply mobile layout for: narrow screens OR phones in landscape (detected by short height) */
+        @media (max-width: 768px), (max-height: 500px) and (orientation: landscape) {
             body {
                 padding-top: 70px;
                 padding-bottom: 56px;
@@ -1645,7 +1646,7 @@
         /* ========================================
            LANDSCAPE ORIENTATION STYLES
            ======================================== */
-        /* Use max-height to target phones in landscape - most phones have ~375-430px height in landscape */
+        /* Compact adjustments for phones in landscape - reduce sizes for limited vertical space */
         @media (max-height: 500px) and (orientation: landscape) {
             body {
                 padding-top: 50px;
@@ -1653,10 +1654,6 @@
             }
 
             /* Compact top navigation in landscape */
-            nav {
-                height: 50px;
-            }
-
             .nav-container {
                 padding: 0.25rem 0.75rem;
             }
@@ -1669,14 +1666,8 @@
                 font-size: 0.9rem;
             }
 
-            /* CRITICAL: Hide desktop nav links and use mobile hamburger menu in landscape */
-            .nav-links {
-                display: none !important;
-            }
-
-            /* Show hamburger menu in landscape */
+            /* Compact hamburger in landscape */
             .hamburger {
-                display: block !important;
                 width: 40px;
                 height: 40px;
                 padding: 8px;
@@ -1684,9 +1675,14 @@
                 min-width: 40px;
             }
 
-            /* Show mobile bottom navigation in landscape */
+            .hamburger-line {
+                width: 20px;
+                height: 2px;
+                margin: 4px 0;
+            }
+
+            /* Compact bottom navigation in landscape */
             .mobile-bottom-nav {
-                display: flex !important;
                 height: 44px;
                 padding: 2px 0;
             }
@@ -1696,12 +1692,6 @@
                 padding: 0.35rem 0.6rem;
                 font-size: 0.75rem;
                 min-height: 36px;
-            }
-
-            .hamburger-line {
-                width: 20px;
-                height: 2px;
-                margin: 4px 0;
             }
 
             .mobile-bottom-nav a {
