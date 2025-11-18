@@ -436,7 +436,111 @@
     .comment-time {
         font-size: 0.75rem;
         color: #999;
-        margin-top: 0.25rem;
+    }
+
+    .comment-content-wrapper {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .comment-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .comment-action-btn {
+        background: none;
+        border: none;
+        color: #666;
+        font-size: 0.8rem;
+        cursor: pointer;
+        padding: 0;
+        transition: color 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .comment-action-btn:hover {
+        color: #52b788;
+    }
+
+    .comment-action-btn.liked {
+        color: #e74c3c;
+    }
+
+    .comment-action-btn i {
+        font-size: 0.9rem;
+    }
+
+    .comment-likes-count {
+        font-size: 0.8rem;
+    }
+
+    .comment-toggle-link:hover {
+        text-decoration: underline;
+        color: #52b788;
+    }
+
+    .replies-container {
+        margin-left: 2.5rem;
+        margin-top: 0.5rem;
+        border-left: 2px solid #e0e0e0;
+        padding-left: 1rem;
+    }
+
+    .comment.reply {
+        margin-top: 0.75rem;
+    }
+
+    .reply-form {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        align-items: center;
+    }
+
+    .reply-input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        outline: none;
+    }
+
+    .reply-input:focus {
+        border-color: #52b788;
+    }
+
+    .reply-submit {
+        background: #52b788;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+    }
+
+    .reply-cancel {
+        background: #ccc;
+        color: #333;
+        border: none;
+        border-radius: 16px;
+        padding: 0.4rem 0.8rem;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+
+    .reply-cancel:hover {
+        background: #b3b3b3;
     }
 
     .comment-form {
@@ -786,7 +890,7 @@
                         <!-- Engagement Stats -->
                         <div class="post-engagement">
                             <span class="likes-count">{{ post.likes.count }} like{{ post.likes.count|pluralize }}</span>
-                            <span class="comments-count">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
+                            <span class="comments-count comment-toggle-link" data-post-id="{{ post.id }}" style="cursor: pointer; user-select: none;">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
                         </div>
 
                         <!-- Action Buttons -->
@@ -805,18 +909,69 @@
                         <div class="comments-section" id="comments-{{ post.id }}" style="display: none;">
                             <div class="comments-list">
                                 {% for comment in post.comments.all %}
-                                <div class="comment">
+                                {% if not comment.parent %}
+                                <div class="comment" data-comment-id="{{ comment.id }}">
                                     {% if comment.author.avatar %}
                                         <img src="{{ comment.author.avatar.url }}" alt="{{ comment.author.username }}" class="comment-avatar">
                                     {% else %}
                                         <img src="{% static 'images/default-avatar.png' %}" alt="{{ comment.author.username }}" class="comment-avatar">
                                     {% endif %}
-                                    <div class="comment-content">
-                                        <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</div>
-                                        <div class="comment-text">{{ comment.content }}</div>
-                                        <div class="comment-time">{{ comment.created_at|timesince }} ago</div>
+                                    <div class="comment-content-wrapper">
+                                        <div class="comment-content">
+                                            <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</div>
+                                            <div class="comment-text">{{ comment.content }}</div>
+                                        </div>
+                                        <div class="comment-actions">
+                                            <button class="comment-action-btn like-comment-btn {% if user in comment.likes.all %}liked{% endif %}" data-comment-id="{{ comment.id }}">
+                                                <i class="{% if user in comment.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                                                <span class="comment-likes-count">{% if comment.likes_count > 0 %}{{ comment.likes_count }}{% endif %}</span>
+                                            </button>
+                                            <button class="comment-action-btn reply-comment-btn" data-comment-id="{{ comment.id }}">
+                                                <i class="fas fa-reply"></i> Reply
+                                            </button>
+                                            <span class="comment-time">{{ comment.created_at|timesince }} ago</span>
+                                        </div>
+
+                                        <!-- Reply Form (hidden by default) -->
+                                        <form class="reply-form" data-comment-id="{{ comment.id }}" style="display: none;">
+                                            {% csrf_token %}
+                                            <input type="text" class="reply-input" placeholder="Write a reply..." name="content" required>
+                                            <button type="submit" class="reply-submit">
+                                                <i class="fas fa-paper-plane"></i>
+                                            </button>
+                                            <button type="button" class="reply-cancel">Cancel</button>
+                                        </form>
+
+                                        <!-- Nested Replies -->
+                                        {% if comment.replies.all %}
+                                        <div class="replies-container">
+                                            {% for reply in comment.replies.all %}
+                                            <div class="comment reply" data-comment-id="{{ reply.id }}">
+                                                {% if reply.author.avatar %}
+                                                    <img src="{{ reply.author.avatar.url }}" alt="{{ reply.author.username }}" class="comment-avatar">
+                                                {% else %}
+                                                    <img src="{% static 'images/default-avatar.png' %}" alt="{{ reply.author.username }}" class="comment-avatar">
+                                                {% endif %}
+                                                <div class="comment-content-wrapper">
+                                                    <div class="comment-content">
+                                                        <div class="comment-author">{{ reply.author.get_full_name|default:reply.author.username }}</div>
+                                                        <div class="comment-text">{{ reply.content }}</div>
+                                                    </div>
+                                                    <div class="comment-actions">
+                                                        <button class="comment-action-btn like-comment-btn {% if user in reply.likes.all %}liked{% endif %}" data-comment-id="{{ reply.id }}">
+                                                            <i class="{% if user in reply.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                                                            <span class="comment-likes-count">{% if reply.likes_count > 0 %}{{ reply.likes_count }}{% endif %}</span>
+                                                        </button>
+                                                        <span class="comment-time">{{ reply.created_at|timesince }} ago</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
                                     </div>
                                 </div>
+                                {% endif %}
                                 {% endfor %}
                             </div>
 
@@ -1003,12 +1158,115 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Comment toggle
+    // Comment toggle (button)
     document.querySelectorAll('.comment-toggle-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const postId = this.dataset.postId;
             const commentsSection = document.getElementById(`comments-${postId}`);
             commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+        });
+    });
+
+    // Comment toggle (count link)
+    document.querySelectorAll('.comment-toggle-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const postId = this.dataset.postId;
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+        });
+    });
+
+    // Like comment
+    document.querySelectorAll('.like-comment-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const commentId = this.dataset.commentId;
+            const icon = this.querySelector('i');
+            const likesCount = this.querySelector('.comment-likes-count');
+
+            try {
+                const response = await fetch(`/accounts/social-feed/comment/${commentId}/like/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    if (data.liked) {
+                        this.classList.add('liked');
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                    } else {
+                        this.classList.remove('liked');
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                    }
+                    likesCount.textContent = data.likes_count > 0 ? data.likes_count : '';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    // Reply to comment
+    document.querySelectorAll('.reply-comment-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const commentId = this.dataset.commentId;
+            const comment = this.closest('.comment');
+            const replyForm = comment.querySelector('.reply-form');
+
+            // Toggle reply form
+            if (replyForm.style.display === 'none' || !replyForm.style.display) {
+                replyForm.style.display = 'flex';
+                replyForm.querySelector('.reply-input').focus();
+            } else {
+                replyForm.style.display = 'none';
+            }
+        });
+    });
+
+    // Cancel reply
+    document.querySelectorAll('.reply-cancel').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const replyForm = this.closest('.reply-form');
+            replyForm.style.display = 'none';
+            replyForm.querySelector('.reply-input').value = '';
+        });
+    });
+
+    // Submit reply
+    document.querySelectorAll('.reply-form').forEach(form => {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const commentId = this.dataset.commentId;
+            const formData = new FormData(this);
+            const input = this.querySelector('.reply-input');
+
+            try {
+                const response = await fetch(`/accounts/social-feed/comment/${commentId}/reply/`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Reload to show new reply
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Failed to post reply');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to post reply');
+            }
         });
     });
 
