@@ -1686,15 +1686,14 @@
                 font-size: 0.9rem;
             }
 
-            /* Compact CTA button in landscape */
-            .cta-button {
-                padding: 0.35rem 0.6rem;
-                font-size: 0.75rem;
-                min-height: 36px;
+            /* CRITICAL: Hide desktop nav links and use mobile hamburger menu in landscape */
+            .nav-links {
+                display: none !important;
             }
 
-            /* Smaller hamburger in landscape */
+            /* Show hamburger menu in landscape */
             .hamburger {
+                display: block !important;
                 width: 40px;
                 height: 40px;
                 padding: 8px;
@@ -1702,16 +1701,24 @@
                 min-width: 40px;
             }
 
+            /* Show mobile bottom navigation in landscape */
+            .mobile-bottom-nav {
+                display: flex !important;
+                height: 44px;
+                padding: 2px 0;
+            }
+
+            /* Compact CTA button in landscape */
+            .cta-button {
+                padding: 0.35rem 0.6rem;
+                font-size: 0.75rem;
+                min-height: 36px;
+            }
+
             .hamburger-line {
                 width: 20px;
                 height: 2px;
                 margin: 4px 0;
-            }
-
-            /* Compact bottom navigation in landscape */
-            .mobile-bottom-nav {
-                height: 44px;
-                padding: 2px 0;
             }
 
             .mobile-bottom-nav a {
