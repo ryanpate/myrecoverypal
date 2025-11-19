@@ -1664,7 +1664,8 @@
            LANDSCAPE ORIENTATION STYLES
            ======================================== */
         /* Force mobile layout in landscape - even on tablets/larger screens */
-        @media (max-height: 500px) and (orientation: landscape) {
+        /* Using 600px to account for Safari toolbar */
+        @media (max-height: 600px) and (orientation: landscape) {
             /* Force mobile navigation in landscape */
             .nav-links {
                 display: none !important;
@@ -1672,10 +1673,6 @@
 
             .hamburger {
                 display: block !important;
-            }
-
-            .mobile-bottom-nav {
-                display: flex !important;
             }
 
             body {
@@ -1734,8 +1731,16 @@
 
             /* Compact bottom navigation in landscape */
             .mobile-bottom-nav {
+                display: flex !important;
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
                 height: 44px;
                 padding: 2px 0;
+                background: white;
+                border-top: 1px solid #e5e7eb;
+                z-index: 1000;
             }
 
             /* Compact CTA button in landscape */
