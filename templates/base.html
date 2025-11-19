@@ -1658,9 +1658,14 @@
                 display: block !important;
             }
 
+            /* Hide bottom navigation in landscape */
+            .mobile-bottom-nav {
+                display: none !important;
+            }
+
             body {
                 padding-top: 50px;
-                padding-bottom: 44px;
+                padding-bottom: 0;
             }
 
             /* Ensure nav fits within viewport width */
@@ -1712,35 +1717,11 @@
                 margin: 4px 0;
             }
 
-            /* Compact bottom navigation in landscape */
-            .mobile-bottom-nav {
-                display: flex !important;
-                position: fixed !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                height: 44px;
-                padding: 2px 0;
-                background: white;
-                border-top: 1px solid #e5e7eb;
-                z-index: 1000;
-            }
-
             /* Compact CTA button in landscape */
             .cta-button {
                 padding: 0.35rem 0.6rem;
                 font-size: 0.75rem;
                 min-height: 36px;
-            }
-
-            .mobile-bottom-nav a {
-                font-size: 0.55rem;
-                padding: 1px;
-            }
-
-            .mobile-bottom-nav i {
-                font-size: 0.9rem;
-                margin-bottom: 0;
             }
 
             /* Slide-out menu optimizations for landscape */
