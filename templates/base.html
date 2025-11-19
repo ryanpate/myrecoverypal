@@ -842,6 +842,8 @@
         .user-avatar {
             width: 30px;
             height: 30px;
+            min-width: 30px;
+            min-height: 30px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
             display: flex;
@@ -849,6 +851,8 @@
             justify-content: center;
             color: white;
             font-weight: bold;
+            flex-shrink: 0;
+            overflow: visible;
         }
 
         .user-dropdown {
@@ -1675,12 +1679,13 @@
             /* Ensure nav-container fits screen width in landscape */
             .nav-container {
                 width: 100%;
-                max-width: none;
+                max-width: 100%;
                 padding: 0.5rem 1rem;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 box-sizing: border-box;
+                overflow: hidden;
             }
 
             /* Compact navigation for landscape */
@@ -1709,12 +1714,33 @@
                 display: none;
             }
 
-            /* Ensure hamburger menu is always visible */
+            /* Ensure hamburger menu is always visible - override inline styles */
             .nav-right {
-                display: flex;
+                display: flex !important;
                 align-items: center;
                 gap: 0.5rem;
                 flex-shrink: 0;
+                margin-left: 0.5rem !important;
+            }
+
+            /* User menu compact in landscape */
+            .user-menu-toggle {
+                padding: 0.4rem 0.6rem;
+                gap: 0.5rem;
+            }
+
+            .user-menu-toggle span {
+                display: none;
+            }
+
+            .user-avatar {
+                width: 28px;
+                height: 28px;
+                flex-shrink: 0;
+            }
+
+            .notification-indicator {
+                padding: 4px;
             }
 
             .mobile-menu,
