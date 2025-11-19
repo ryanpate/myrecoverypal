@@ -647,6 +647,82 @@ celebrate milestones. 100% free recovery support platform.{% endblock %}
             }
         }
 
+        /* Landscape Mode - Mobile devices */
+        @media (max-height: 500px) and (orientation: landscape) {
+            /* Ensure nav-container fits screen width in landscape */
+            .nav-container {
+                width: 100%;
+                max-width: 100%;
+                padding: 0.5rem 1rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-sizing: border-box;
+            }
+
+            /* Prevent overflow on the nav element */
+            nav {
+                width: 100%;
+                overflow-x: hidden;
+            }
+
+            /* Compact logo for landscape */
+            .logo-text {
+                font-size: 1rem;
+            }
+
+            .logo-svg {
+                width: 35px;
+                height: 35px;
+            }
+
+            /* Hide desktop nav links in landscape mobile */
+            .nav-links {
+                display: none;
+            }
+
+            /* Ensure hamburger menu is always visible */
+            .mobile-menu {
+                display: flex !important;
+                flex-shrink: 0;
+            }
+
+            /* Mobile menu dropdown positioning for landscape */
+            .nav-links.active {
+                display: flex;
+                position: fixed;
+                top: 50px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(255, 255, 255, 0.98);
+                flex-direction: column;
+                padding: 1rem;
+                overflow-y: auto;
+                z-index: 999;
+            }
+
+            /* Compact hero for landscape */
+            .hero {
+                min-height: auto;
+                padding: 80px 1rem 2rem;
+            }
+
+            .hero h1 {
+                font-size: 1.75rem;
+            }
+
+            .hero p {
+                font-size: 0.9rem;
+            }
+
+            .hero-logo {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 1rem;
+            }
+        }
+
         /* Animations */
         .fade-in {
             opacity: 0;
