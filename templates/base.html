@@ -1663,8 +1663,21 @@
         /* ========================================
            LANDSCAPE ORIENTATION STYLES
            ======================================== */
-        /* Compact adjustments for phones in landscape - reduce sizes for limited vertical space */
+        /* Force mobile layout in landscape - even on tablets/larger screens */
         @media (max-height: 500px) and (orientation: landscape) {
+            /* Force mobile navigation in landscape */
+            .nav-links {
+                display: none !important;
+            }
+
+            .hamburger {
+                display: block !important;
+            }
+
+            .mobile-bottom-nav {
+                display: flex !important;
+            }
+
             body {
                 padding-top: 50px;
                 padding-bottom: 44px;
@@ -1701,7 +1714,7 @@
 
             .nav-right {
                 flex-shrink: 0;
-                margin-left: 0.5rem !important;
+                margin-left: 0.5rem;
             }
 
             /* Compact hamburger in landscape */
