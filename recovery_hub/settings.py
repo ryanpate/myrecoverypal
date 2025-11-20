@@ -128,8 +128,9 @@ if DEBUG:
         pass  # These packages might not be installed
 
 SITE_ID = 1
-SITE_DOMAIN = 'www.myrecoverypal.com'
-SITE_URL = f'https://{SITE_DOMAIN}'
+# Get site domain from environment or use default
+SITE_DOMAIN = os.environ.get('SITE_DOMAIN', 'myrecoverypal.com')
+SITE_URL = os.environ.get('SITE_URL', f'https://{SITE_DOMAIN}')
 
 # SEO Defaults
 SEO_DEFAULT_TITLE = "MyRecoveryPal - Your Recovery Support Community"
@@ -533,8 +534,8 @@ SERVER_EMAIL = os.environ.get('SERVER_EMAIL', DEFAULT_FROM_EMAIL)  # ✅ From en
 # Email timeout settings
 EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '30'))
 
-# Site URL for email links - FIXED
-SITE_URL = os.environ.get('SITE_URL', 'https://myrecoverypal.com')  # ✅ Fixed!
+# Site URL is now configured at the top of settings.py (line ~132)
+# Removed duplicate definition to avoid confusion
 
 # Email debug settings (only in development)
 if DEBUG:

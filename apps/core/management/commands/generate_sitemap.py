@@ -35,12 +35,13 @@ class Command(BaseCommand):
 
         self.stdout.write(f'Generating sitemap at: {output_path}')
 
-        # Get site domain
-        try:
-            site = Site.objects.get_current()
-            domain = site.domain
-        except:
-            domain = 'www.myrecoverypal.com'
+        # Get site domain from settings instead of Site model
+        # This ensures we always use the correct production domain
+        site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
+        # Extract domain from SITE_URL (remove https:// and trailing slash)
+        domain = site_url.replace('https://', '').replace('http://', '').rstrip('/')
+
+        self.stdout.write(f'Using domain: {domain}')
 
         # Start building sitemap XML
         xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
