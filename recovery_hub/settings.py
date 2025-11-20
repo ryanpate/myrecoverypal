@@ -179,6 +179,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # Subscription context for premium feature gating
                 'apps.accounts.context_processors.subscription_context',
+                # SEO defaults for better search engine visibility
+                'apps.core.context_processors.seo_defaults',
                 # Add PWA context processor if using django-pwa
                 # 'pwa.context_processors.pwa',
             ],

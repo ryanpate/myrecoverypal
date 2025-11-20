@@ -20,17 +20,18 @@ class StaticViewSitemap(Sitemap):
         return [
             ('core:index', 1.0),  # Home page - highest priority
             ('blog:post_list', 0.9),  # Blog listing
+            ('core:demo', 0.8),  # Demo/tour page - important for discovery
             ('core:about', 0.8),  # About page
+            ('core:crisis', 0.8),  # Crisis resources - important
             ('core:contact', 0.7),  # Contact page
-            ('accounts:login', 0.6),  # Login
-            ('accounts:signup', 0.6),  # Signup
+            ('core:success_stories', 0.7),  # Success stories
+            ('core:team', 0.6),  # Team page
+            ('core:guidelines', 0.6),  # Community guidelines
+            ('accounts:login', 0.5),  # Login
+            ('accounts:register', 0.6),  # Signup - use register instead of signup
             ('core:privacy', 0.5),  # Privacy policy
             ('core:terms', 0.5),  # Terms of service
             ('core:cookies', 0.4),  # Cookie policy
-            ('core:guidelines', 0.6),  # Community guidelines
-            ('core:success_stories', 0.7),  # Success stories
-            ('core:team', 0.6),  # Team page
-            ('core:crisis', 0.8),  # Crisis resources - important
             ('store:product_list', 0.5),  # Store
         ]
 

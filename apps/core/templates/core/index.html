@@ -1,7 +1,73 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}MyRecoveryPal - Heal Together in a Supportive Social Community{% endblock %}
+{% block title %}MyRecoveryPal - Free Recovery Support Community & Sobriety Tracker{% endblock %}
+{% block meta_description %}Join MyRecoveryPal's free social community for addiction recovery, sobriety support, and mental health. Connect with others in recovery, track milestones, share your journey, and find hope. 100% free forever.{% endblock %}
+{% block meta_keywords %}addiction recovery community, sobriety support group, recovery social network, alcohol recovery app, drug addiction help, mental health support, sober living community, recovery tracker, addiction support forum, peer support recovery, free sobriety app, 12 step alternative, recovery journey, substance abuse support{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "MyRecoveryPal - Free Recovery Support Community",
+  "description": "Join MyRecoveryPal's free social community for addiction recovery, sobriety support, and mental health. Connect with others in recovery, track milestones, and find hope.",
+  "url": "https://www.myrecoverypal.com",
+  "mainEntity": {
+    "@type": "SoftwareApplication",
+    "name": "MyRecoveryPal",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "Web Browser, iOS, Android",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "150"
+    },
+    "featureList": [
+      "Sobriety tracking and milestone celebrations",
+      "Social community for recovery support",
+      "Private journaling and daily check-ins",
+      "Recovery challenges and group support",
+      "Connect with others in recovery",
+      "Mobile-friendly access anywhere"
+    ],
+    "about": {
+      "@type": "MedicalWebPage",
+      "medicalAudience": [
+        {
+          "@type": "MedicalAudience",
+          "name": "People in addiction recovery"
+        },
+        {
+          "@type": "MedicalAudience",
+          "name": "Individuals in active addiction"
+        },
+        {
+          "@type": "MedicalAudience",
+          "name": "Family and friends of people with addiction"
+        }
+      ]
+    }
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.myrecoverypal.com"
+      }
+    ]
+  }
+}
+</script>
+{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -420,6 +486,50 @@
                 <h3>Safe Space for Everyone</h3>
                 <p>Whether you're in recovery, actively struggling, or supporting a loved one—you belong here. This community welcomes all paths to healing.</p>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- SEO Content Section -->
+<section style="padding: 4rem 2rem; background: white;">
+    <div class="container" style="max-width: 900px; margin: 0 auto;">
+        <h2 style="text-align: center; color: #1e4d8b; margin-bottom: 2rem; font-size: 2rem;">A Free Online Recovery Community for Everyone</h2>
+
+        <div style="color: #666; line-height: 1.8; font-size: 1.05rem;">
+            <p style="margin-bottom: 1.5rem;">
+                MyRecoveryPal is a <strong>free online community</strong> designed for individuals seeking <strong>addiction recovery support</strong>,
+                <strong>sobriety help</strong>, and <strong>mental health resources</strong>. Whether you're in active recovery from alcohol or drugs,
+                supporting a loved one struggling with addiction, or looking for alternatives to traditional 12-step programs, you'll find a
+                welcoming space here.
+            </p>
+
+            <h3 style="color: #1e4d8b; margin: 2rem 0 1rem; font-size: 1.4rem;">What Makes MyRecoveryPal Different</h3>
+            <p style="margin-bottom: 1.5rem;">
+                Unlike other recovery apps or addiction forums, MyRecoveryPal combines the best features of <strong>social media</strong>
+                with <strong>recovery-focused tools</strong>. Our platform offers <strong>sobriety tracking</strong>,
+                <strong>milestone celebrations</strong>, private journaling, and real-time connection with others who understand your journey.
+                It's completely free—no subscriptions, no hidden fees, no paywalls.
+            </p>
+
+            <h3 style="color: #1e4d8b; margin: 2rem 0 1rem; font-size: 1.4rem;">Who MyRecoveryPal Serves</h3>
+            <ul style="margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                <li style="margin-bottom: 0.5rem;"><strong>People in recovery</strong> from alcohol, drugs, or behavioral addictions</li>
+                <li style="margin-bottom: 0.5rem;"><strong>Individuals in active addiction</strong> seeking support and hope</li>
+                <li style="margin-bottom: 0.5rem;"><strong>Family members and friends</strong> supporting loved ones through recovery</li>
+                <li style="margin-bottom: 0.5rem;"><strong>Anyone seeking mental health support</strong> and peer connection</li>
+                <li style="margin-bottom: 0.5rem;"><strong>Those looking for 12-step alternatives</strong> or complementary support</li>
+            </ul>
+
+            <h3 style="color: #1e4d8b; margin: 2rem 0 1rem; font-size: 1.4rem;">Recovery Support Features</h3>
+            <p style="margin-bottom: 1.5rem;">
+                Track your <strong>days sober</strong>, celebrate recovery milestones with your community, share your story through posts and photos,
+                join <strong>recovery challenges</strong>, participate in supportive groups, and build genuine friendships with others who understand.
+                Our mobile-friendly platform ensures your support network is always accessible, whether you're at home or on the go.
+            </p>
+
+            <p style="margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 600; text-align: center; color: #1e4d8b;">
+                Join thousands of people healing together. Your journey to recovery starts here.
+            </p>
         </div>
     </div>
 </section>
