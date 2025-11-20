@@ -1,8 +1,38 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Product Tour - MyRecoveryPal{% endblock %}
-{% block meta_description %}Take a tour of MyRecoveryPal and see how our social community supports people in recovery, active addiction, and their loved ones.{% endblock %}
+{% block title %}MyRecoveryPal Tour - See Our Recovery Support Community in Action{% endblock %}
+{% block meta_description %}Explore MyRecoveryPal's features: sobriety tracking, social feed, milestone celebrations, recovery groups, and supportive community. See how thousands connect, share, and heal together. Free forever.{% endblock %}
+{% block meta_keywords %}recovery app tour, sobriety tracker demo, addiction support community features, recovery social network, free recovery app, addiction help platform{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "MyRecoveryPal Product Tour",
+  "description": "Take a comprehensive tour of MyRecoveryPal's recovery support features including sobriety tracking, community connections, and milestone celebrations.",
+  "url": "https://www.myrecoverypal.com/demo/",
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.myrecoverypal.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Product Tour",
+        "item": "https://www.myrecoverypal.com/demo/"
+      }
+    ]
+  }
+}
+</script>
+{% endblock %}
 
 {% block extra_css %}
 <style>
