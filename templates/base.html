@@ -2172,6 +2172,9 @@
                 <ul class="nav-links" id="navLinks">
                     <li><a href="{% url 'core:index' %}"
                             class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Home</a></li>
+                    <li><a href="{% url 'accounts:social_feed' %}"
+                            class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">MyRecoveryCircle</a>
+                    </li>
                     <li><a href="{% url 'blog:post_list' %}"
                             class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">Blog</a></li>
                     </li>
@@ -2365,6 +2368,10 @@
                     class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
                     Home
                 </a>
+                <a href="{% url 'accounts:social_feed' %}"
+                    class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">
+                    MyRecoveryCircle
+                </a>
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     Blog
@@ -2483,16 +2490,15 @@
         <a href="{% url 'core:index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
             <span>Home</span>
         </a>
+        <a href="{% url 'accounts:social_feed' %}" class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">
+            <span>Circle</span>
+        </a>
         <a href="{% url 'blog:post_list' %}"
             class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
             <span>Blog</span>
         </a>
-        <a href="{% url 'store:product_list' %}"
-            class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
-            <span>Store</span>
-        </a>
         <a href="{% url 'accounts:login' %}">
-            Login
+            <span>Login</span>
         </a>
     </nav>
     {% endif %}
