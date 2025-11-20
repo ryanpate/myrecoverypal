@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Home - MyRecoveryPal{% endblock %}
-{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block title %}MyRecoveryCircle - Social Community for Recovery{% endblock %}
+{% block meta_robots %}{% if not user.is_authenticated %}index, follow{% else %}noindex, nofollow{% endif %}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -22,6 +22,11 @@
         margin-left: auto;
         margin-right: auto;
         justify-content: center;
+    }
+
+    /* Single column layout for unauthenticated users */
+    .hybrid-grid:not(:has(.stats-sidebar)) {
+        grid-template-columns: 700px;
     }
 
     /* Left Sidebar - User Stats */
@@ -665,7 +670,8 @@
 {% block content %}
 <div class="hybrid-container">
     <div class="hybrid-grid">
-        <!-- Left Sidebar - User Stats -->
+        <!-- Left Sidebar - User Stats (Authenticated Users Only) -->
+        {% if user.is_authenticated %}
         <div class="stats-sidebar">
             <!-- Quick Stats -->
             <div class="stats-card">
@@ -793,9 +799,11 @@
                 </div>
             </div>
         </div>
+        {% endif %}
 
         <!-- Right Column - Social Feed -->
         <div class="feed-column">
+            {% if user.is_authenticated %}
             <!-- Welcome Header (Desktop Only) -->
             <div class="welcome-header">
                 <h2>Welcome back, {{ user.get_full_name|default:user.username }}!</h2>
@@ -855,6 +863,24 @@
                     </div>
                 </form>
             </div>
+            {% else %}
+            <!-- Welcome Message for Unauthenticated Users -->
+            <div class="stats-card" style="text-align: center; padding: 2rem; margin-bottom: 1rem;">
+                <h2 style="color: #1e4d8b; margin-bottom: 1rem;">Welcome to MyRecoveryCircle</h2>
+                <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.6;">
+                    Join our supportive community where people in recovery, active addiction, and their loved ones come together to heal.
+                    Share your journey, celebrate milestones, and build meaningful connections.
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="{% url 'accounts:register' %}" class="cta-button" style="text-decoration: none; padding: 0.75rem 2rem; background: #52b788; color: white; border-radius: 50px; font-weight: 600;">
+                        Join the Community
+                    </a>
+                    <a href="{% url 'accounts:login' %}" class="cta-button" style="text-decoration: none; padding: 0.75rem 2rem; background: transparent; color: #1e4d8b; border: 2px solid #1e4d8b; border-radius: 50px; font-weight: 600;">
+                        Sign In
+                    </a>
+                </div>
+            </div>
+            {% endif %}
 
             <!-- Feed Posts -->
             <div id="posts-container">
@@ -890,10 +916,11 @@
                         <!-- Engagement Stats -->
                         <div class="post-engagement">
                             <span class="likes-count">{{ post.likes.count }} like{{ post.likes.count|pluralize }}</span>
-                            <span class="comments-count comment-toggle-link" data-post-id="{{ post.id }}" style="cursor: pointer; user-select: none;">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
+                            <span class="comments-count {% if user.is_authenticated %}comment-toggle-link{% endif %}" data-post-id="{{ post.id }}" style="{% if user.is_authenticated %}cursor: pointer; user-select: none;{% endif %}">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
                         </div>
 
-                        <!-- Action Buttons -->
+                        {% if user.is_authenticated %}
+                        <!-- Action Buttons (Authenticated Users Only) -->
                         <div class="post-actions-bar">
                             <button class="post-action-btn like-btn {% if user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
                                 <i class="{% if user in post.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
@@ -904,6 +931,7 @@
                                 <span>Comment</span>
                             </button>
                         </div>
+                        {% endif %}
 
                         <!-- Comments Section -->
                         <div class="comments-section" id="comments-{{ post.id }}" style="display: none;">
@@ -922,6 +950,7 @@
                                             <div class="comment-text">{{ comment.content }}</div>
                                         </div>
                                         <div class="comment-actions">
+                                            {% if user.is_authenticated %}
                                             <button class="comment-action-btn like-comment-btn {% if user in comment.likes.all %}liked{% endif %}" data-comment-id="{{ comment.id }}">
                                                 <i class="{% if user in comment.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
                                                 <span class="comment-likes-count">{% if comment.likes_count > 0 %}{{ comment.likes_count }}{% endif %}</span>
@@ -929,9 +958,11 @@
                                             <button class="comment-action-btn reply-comment-btn" data-comment-id="{{ comment.id }}">
                                                 <i class="fas fa-reply"></i> Reply
                                             </button>
+                                            {% endif %}
                                             <span class="comment-time">{{ comment.created_at|timesince }} ago</span>
                                         </div>
 
+                                        {% if user.is_authenticated %}
                                         <!-- Reply Form (hidden by default) -->
                                         <form class="reply-form" data-comment-id="{{ comment.id }}" style="display: none;">
                                             {% csrf_token %}
@@ -941,6 +972,7 @@
                                             </button>
                                             <button type="button" class="reply-cancel">Cancel</button>
                                         </form>
+                                        {% endif %}
 
                                         <!-- Nested Replies -->
                                         {% if comment.replies.all %}
@@ -958,10 +990,12 @@
                                                         <div class="comment-text">{{ reply.content }}</div>
                                                     </div>
                                                     <div class="comment-actions">
+                                                        {% if user.is_authenticated %}
                                                         <button class="comment-action-btn like-comment-btn {% if user in reply.likes.all %}liked{% endif %}" data-comment-id="{{ reply.id }}">
                                                             <i class="{% if user in reply.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
                                                             <span class="comment-likes-count">{% if reply.likes_count > 0 %}{{ reply.likes_count }}{% endif %}</span>
                                                         </button>
+                                                        {% endif %}
                                                         <span class="comment-time">{{ reply.created_at|timesince }} ago</span>
                                                     </div>
                                                 </div>
@@ -975,7 +1009,8 @@
                                 {% endfor %}
                             </div>
 
-                            <!-- Comment Form -->
+                            {% if user.is_authenticated %}
+                            <!-- Comment Form (Authenticated Users Only) -->
                             <form class="comment-form" data-post-id="{{ post.id }}">
                                 {% csrf_token %}
                                 <input type="text" class="comment-input" placeholder="Write a comment..." name="content" required>
@@ -983,6 +1018,7 @@
                                     <i class="fas fa-paper-plane"></i>
                                 </button>
                             </form>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
