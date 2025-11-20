@@ -31,6 +31,10 @@ ls -la staticfiles/
 # Run migrations
 python manage.py migrate --noinput
 
+# Fix Site model domain for sitemaps
+echo "Fixing Site model domain..."
+python manage.py fix_site_domain || echo "Note: Could not update Site domain (not critical)"
+
 # Generate sitemap.xml for search engines
 echo "Generating sitemap.xml..."
 python manage.py generate_sitemap --output=sitemap.xml 2>&1 || echo "Note: Sitemap generation completed with warnings (this is normal if some pages don't exist yet)"
