@@ -2172,9 +2172,6 @@
                 <ul class="nav-links" id="navLinks">
                     <li><a href="{% url 'core:index' %}"
                             class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Home</a></li>
-                    <li><a href="{% url 'accounts:social_feed' %}"
-                            class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">MyRecoveryCircle</a>
-                    </li>
                     <li><a href="{% url 'blog:post_list' %}"
                             class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">Blog</a></li>
                     </li>
@@ -2194,11 +2191,9 @@
                     {% endif %}
                     <li><a href="{% url 'store:product_list' %}"
                             class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">Store</a></li>
-                    {% if user.is_authenticated %}
                     <li><a href="{% url 'accounts:social_feed' %}"
                             class="myrecoverycircle-btn {% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">MyRecoveryCircle</a>
                     </li>
-                    {% endif %}
                 </ul>
             </div>
 
@@ -2368,10 +2363,6 @@
                     class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
                     Home
                 </a>
-                <a href="{% url 'accounts:social_feed' %}"
-                    class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">
-                    MyRecoveryCircle
-                </a>
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     Blog
@@ -2379,6 +2370,11 @@
                 <a href="{% url 'store:product_list' %}"
                     class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
                     Store
+                </a>
+                <a href="{% url 'accounts:social_feed' %}"
+                    class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}"
+                    style="background: var(--accent-green); color: white; font-weight: 600;">
+                    MyRecoveryCircle
                 </a>
             </div>
 
