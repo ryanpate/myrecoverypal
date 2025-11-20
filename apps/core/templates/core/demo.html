@@ -6,25 +6,6 @@
 
 {% block extra_css %}
 <style>
-    .demo-hero {
-        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
-        padding: 4rem 2rem;
-        text-align: center;
-        color: white;
-    }
-
-    .demo-hero h1 {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-
-    .demo-hero p {
-        font-size: 1.2rem;
-        max-width: 700px;
-        margin: 0 auto 2rem;
-        color: rgba(255, 255, 255, 0.9);
-    }
-
     .demo-section {
         padding: 4rem 2rem;
     }
@@ -191,11 +172,13 @@
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="demo-hero">
-    <h1>See How MyRecoveryPal Works</h1>
-    <p>Discover how our social platform brings people together to support, share, and heal as a community</p>
-</section>
+<!-- Header Section -->
+<div class="page-header demo-header">
+    <div class="container">
+        <h1>See How MyRecoveryPal Works</h1>
+        <p class="lead">Discover how our social platform brings people together to support, share, and heal as a community</p>
+    </div>
+</div>
 
 <!-- Feature 1: Share Your Story -->
 <section class="demo-section">
