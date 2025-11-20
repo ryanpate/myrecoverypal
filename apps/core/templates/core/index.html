@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}MyRecoveryPal - Your Journey to Recovery{% endblock %}
+{% block title %}MyRecoveryPal - Heal Together in a Supportive Social Community{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -374,12 +374,12 @@
         <!-- Add Logo Image -->
         <img src="{% static 'images/logo-white.svg' %}" alt="MyRecoveryPal" class="hero-logo floating">
 
-        <h1>Your Journey to Recovery Starts Here</h1>
-        <p>Find support, resources, and community on your path to healing</p>
+        <h1>Heal Together, Grow Together</h1>
+        <p>A social community where people in recovery, active addiction, and their loved ones come together to support, share, and heal as one.</p>
         {% if user.is_authenticated %}
         <a href="{% url 'accounts:dashboard' %}" class="cta-button">Go to Dashboard</a>
         {% else %}
-        <a href="{% url 'accounts:register' %}" class="cta-button">Join Our Community</a>
+        <a href="{% url 'accounts:register' %}" class="cta-button">Join the Community</a>
         {% endif %}
     </div>
 </section>
@@ -387,39 +387,38 @@
 <!-- Features Section -->
 <section class="features" id="features">
     <div class="container">
-        <h2 class="section-title">What We Offer</h2>
+        <h2 class="section-title">Connect, Share, and Heal Together</h2>
+        <p style="text-align: center; color: #666; font-size: 1.1rem; margin-bottom: 3rem;">A social platform built for connection, support, and collective healing</p>
         <div class="features-grid">
             <div class="feature-card">
                 <div class="feature-icon"></div>
-                <h3>Recovery Blog</h3>
-                <p>Read inspiring stories, practical tips, and evidence-based strategies from those who understand your
-                    journey.</p>
+                <h3>Share Your Story</h3>
+                <p>Express yourself through personal posts and journal entries. Share your journey, your struggles, and your victories with a supportive community that understands.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon"></div>
-                <h3>Resources & Tools</h3>
-                <p>Access comprehensive guides, worksheets, and recovery tools designed to support your healing process.
-                </p>
+                <h3>Celebrate Together</h3>
+                <p>Share your milestones and celebrate achievements with friends who truly understand. Every step forward is acknowledged and celebrated by the community.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon"></div>
-                <h3>Personal Journal</h3>
-                <p>Track your progress with guided prompts and reflections tailored specifically for recovery.</p>
+                <h3>Build Real Connections</h3>
+                <p>Follow others, make friends, and create meaningful relationships with people in recovery, active addiction, and their loved ones. This is where understanding meets connection.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon"></div>
-                <h3>Recovery Store</h3>
-                <p>Shop meaningful apparel and items that celebrate your journey and inspire continued growth.</p>
+                <h3>Supportive Conversations</h3>
+                <p>Engage in meaningful discussions, comment on posts, and offer support to others. Every interaction creates a ripple of healing throughout the community.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon"></div>
-                <h3>Community Support</h3>
-                <p>Connect with others who understand your experience in a safe, supportive environment.</p>
+                <h3>Stay Connected Anywhere</h3>
+                <p>Keep your community in your pocket. Share moments, respond to friends, and stay connected to your support network wherever life takes you.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon"></div>
-                <h3>Newsletter</h3>
-                <p>Stay connected with weekly inspiration, recovery tips, and community updates.</p>
+                <h3>Safe Space for Everyone</h3>
+                <p>Whether you're in recovery, actively struggling, or supporting a loved one—you belong here. This community welcomes all paths to healing.</p>
             </div>
         </div>
     </div>
