@@ -6,6 +6,7 @@ This creates a dynamic sitemap.xml that updates automatically
 
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
+from django.conf import settings
 from apps.blog.models import Post  # Assuming you have a Post model
 # from resources.models import Resource  # Uncomment if you have resources
 # from apps.journal.models import JournalEntry  # Don't include private entries
@@ -13,6 +14,7 @@ from apps.blog.models import Post  # Assuming you have a Post model
 
 class StaticViewSitemap(Sitemap):
     """Sitemap for static pages"""
+    protocol = 'https'
     changefreq = 'weekly'
 
     def items(self):
@@ -43,9 +45,18 @@ class StaticViewSitemap(Sitemap):
         url_name, priority = item
         return priority
 
+    def get_urls(self, page=1, site=None, protocol=None):
+        # Override to use the correct domain from settings
+        from django.contrib.sites.models import Site
+        if site is None:
+            # Use the domain from settings instead of database
+            site = Site(domain=settings.SITE_DOMAIN, name=settings.SITE_DOMAIN)
+        return super().get_urls(page=page, site=site, protocol='https')
+
 
 class BlogPostSitemap(Sitemap):
     """Sitemap for blog posts"""
+    protocol = 'https'
     changefreq = "weekly"
     priority = 0.8
 
@@ -71,6 +82,14 @@ class BlogPostSitemap(Sitemap):
             return 0.8  # Recent posts
         else:
             return 0.7  # Older posts
+
+    def get_urls(self, page=1, site=None, protocol=None):
+        # Override to use the correct domain from settings
+        from django.contrib.sites.models import Site
+        if site is None:
+            # Use the domain from settings instead of database
+            site = Site(domain=settings.SITE_DOMAIN, name=settings.SITE_DOMAIN)
+        return super().get_urls(page=page, site=site, protocol='https')
 
 
 # Uncomment if you have resources and want them in sitemap
