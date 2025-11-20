@@ -424,6 +424,24 @@
     </div>
 </section>
 
+<!-- Community Preview Section -->
+<section class="community-preview" style="padding: 5rem 2rem; background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%); text-align: center; color: white;">
+    <div class="container" style="max-width: 800px; margin: 0 auto;">
+        <h2 style="font-size: 2.5rem; margin-bottom: 1rem; color: white;">See Our Community in Action</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 2rem; line-height: 1.8; color: rgba(255, 255, 255, 0.9);">
+            Browse real posts from our members. See how people support each other, share milestones, and build meaningful connections every day.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'accounts:social_feed' %}" class="cta-button" style="background: var(--accent-green); color: white; text-decoration: none;">
+                Browse MyRecoveryCircle
+            </a>
+            <a href="{% url 'core:demo' %}" class="cta-button" style="background: transparent; border: 2px solid white; color: white; text-decoration: none;">
+                Take a Tour
+            </a>
+        </div>
+    </div>
+</section>
+
 <!-- About Section -->
 <section class="about" id="about">
     <div class="container">
