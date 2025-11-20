@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Product Tour - MyRecoveryPal{% endblock %}
+{% block meta_description %}Take a tour of MyRecoveryPal and see how our social community supports people in recovery, active addiction, and their loved ones.{% endblock %}
+
+{% block extra_css %}
+<style>
+    .demo-hero {
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .demo-hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .demo-hero p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto 2rem;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .demo-section {
+        padding: 4rem 2rem;
+    }
+
+    .demo-section:nth-child(even) {
+        background: #f8f9fa;
+    }
+
+    .demo-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: center;
+    }
+
+    .demo-content.reverse {
+        direction: rtl;
+    }
+
+    .demo-content.reverse > * {
+        direction: ltr;
+    }
+
+    .demo-text h2 {
+        color: var(--primary-dark);
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .demo-text p {
+        color: #666;
+        line-height: 1.8;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .demo-text ul {
+        list-style: none;
+        padding: 0;
+        margin: 1.5rem 0;
+    }
+
+    .demo-text ul li {
+        padding: 0.75rem 0;
+        color: #666;
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .demo-text ul li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--accent-green);
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .demo-image {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        padding: 2rem;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #e0e0e0;
+    }
+
+    .demo-image-placeholder {
+        text-align: center;
+        color: #999;
+    }
+
+    .demo-image-placeholder i {
+        font-size: 4rem;
+        color: var(--primary-light);
+        margin-bottom: 1rem;
+    }
+
+    .cta-section {
+        background: linear-gradient(135deg, #52b788 0%, #45a374 100%);
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .cta-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: white;
+    }
+
+    .cta-section p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .cta-button {
+        padding: 1rem 2.5rem;
+        background: white;
+        color: var(--accent-green);
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+
+    .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .cta-button-secondary {
+        background: transparent;
+        border: 2px solid white;
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .demo-hero h1 {
+            font-size: 2rem;
+        }
+
+        .demo-content {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .demo-content.reverse {
+            direction: ltr;
+        }
+
+        .demo-text h2 {
+            font-size: 1.5rem;
+        }
+
+        .cta-section h2 {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="demo-hero">
+    <h1>See How MyRecoveryPal Works</h1>
+    <p>Discover how our social platform brings people together to support, share, and heal as a community</p>
+</section>
+
+<!-- Feature 1: Share Your Story -->
+<section class="demo-section">
+    <div class="demo-content">
+        <div class="demo-text">
+            <h2>Share Your Journey</h2>
+            <p>Express yourself through personal posts, journal entries, and updates. Share your struggles, victories, and everyday moments with a community that truly understands.</p>
+            <ul>
+                <li>Post updates about your recovery journey</li>
+                <li>Share photos and milestones</li>
+                <li>Choose who sees your posts (public, friends, or private)</li>
+                <li>Get support through likes and comments</li>
+            </ul>
+        </div>
+        <div class="demo-image">
+            <div class="demo-image-placeholder">
+                <i class="fas fa-edit"></i>
+                <p>Create and share posts with your community</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature 2: Build Connections -->
+<section class="demo-section">
+    <div class="demo-content reverse">
+        <div class="demo-text">
+            <h2>Build Real Connections</h2>
+            <p>Follow others who inspire you, make friends, and build a network of support. Connect with people in recovery, active addiction, and loved ones who understand your experience.</p>
+            <ul>
+                <li>Follow members and see their updates in your feed</li>
+                <li>Build friendships with people who understand</li>
+                <li>Send private messages for one-on-one support</li>
+                <li>Join groups based on shared interests</li>
+            </ul>
+        </div>
+        <div class="demo-image">
+            <div class="demo-image-placeholder">
+                <i class="fas fa-users"></i>
+                <p>Connect with a supportive community</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature 3: Celebrate Milestones -->
+<section class="demo-section">
+    <div class="demo-content">
+        <div class="demo-text">
+            <h2>Celebrate Every Victory</h2>
+            <p>Track your progress and share your milestones with friends who celebrate every step forward. Whether it's one day or one year, every milestone matters.</p>
+            <ul>
+                <li>Track your sobriety days</li>
+                <li>Share milestone achievements</li>
+                <li>Receive encouragement from the community</li>
+                <li>Celebrate others' victories</li>
+            </ul>
+        </div>
+        <div class="demo-image">
+            <div class="demo-image-placeholder">
+                <i class="fas fa-trophy"></i>
+                <p>Track and celebrate your milestones</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature 4: Safe & Supportive -->
+<section class="demo-section">
+    <div class="demo-content reverse">
+        <div class="demo-text">
+            <h2>A Safe Space for Everyone</h2>
+            <p>Whether you're in recovery, actively struggling, or supporting a loved one, you're welcome here. Our community guidelines ensure a respectful, judgment-free environment.</p>
+            <ul>
+                <li>Moderated community for safety</li>
+                <li>Report inappropriate content</li>
+                <li>Block users if needed</li>
+                <li>Control your privacy settings</li>
+            </ul>
+        </div>
+        <div class="demo-image">
+            <div class="demo-image-placeholder">
+                <i class="fas fa-shield-alt"></i>
+                <p>Safe, moderated community space</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature 5: Join Challenges & Groups -->
+<section class="demo-section">
+    <div class="demo-content">
+        <div class="demo-text">
+            <h2>Participate in Challenges & Groups</h2>
+            <p>Join recovery challenges to stay accountable, or find groups that match your interests and recovery path. From meditation to fitness to specific programs, there's a place for everyone.</p>
+            <ul>
+                <li>Join 30-day, 60-day, or 90-day challenges</li>
+                <li>Daily check-ins with accountability partners</li>
+                <li>Create or join interest-based groups</li>
+                <li>Share resources within your groups</li>
+            </ul>
+        </div>
+        <div class="demo-image">
+            <div class="demo-image-placeholder">
+                <i class="fas fa-medal"></i>
+                <p>Join challenges and groups</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature 6: Mobile Access -->
+<section class="demo-section">
+    <div class="demo-content reverse">
+        <div class="demo-text">
+            <h2>Stay Connected Anywhere</h2>
+            <p>Access your support network from any device. Whether you're on your phone, tablet, or computer, your community is always with you.</p>
+            <ul>
+                <li>Responsive design works on all devices</li>
+                <li>Get notifications for new interactions</li>
+                <li>Post updates on the go</li>
+                <li>Never miss important messages</li>
+            </ul>
+        </div>
+        <div class="demo-image">
+            <div class="demo-image-placeholder">
+                <i class="fas fa-mobile-alt"></i>
+                <p>Access from any device</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <h2>Ready to Join Our Community?</h2>
+    <p>Start connecting with thousands of others on their healing journey. It's free to join!</p>
+    <div class="cta-buttons">
+        <a href="{% url 'accounts:register' %}" class="cta-button">Join Free Today</a>
+        <a href="{% url 'accounts:social_feed' %}" class="cta-button cta-button-secondary">Browse Community First</a>
+    </div>
+</section>
+
+{% endblock %}

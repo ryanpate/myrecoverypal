@@ -54,6 +54,10 @@ class GetAppView(TemplateView):
     template_name = 'core/get_app.html'
 
 
+class DemoView(TemplateView):
+    template_name = 'core/demo.html'
+
+
 # Sitemap View - serves static sitemap.xml
 def sitemap_view(request):
     """
