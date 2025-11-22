@@ -1,3 +1,7 @@
+"""
+Accounts app views for MyRecoveryPal.
+Handles user authentication, profiles, social features, and recovery tracking.
+"""
 from django.views.generic import ListView, DetailView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
