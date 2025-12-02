@@ -239,16 +239,25 @@
         /* Brighter border on hover */
     }
 
+    /* Hero CTA Container - ensures proper alignment */
+    .hero-cta-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+    }
+
     /* Founding Member Badge */
     .founding-badge {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 0.5rem;
         background: rgba(255, 255, 255, 0.15);
         backdrop-filter: blur(10px);
         padding: 0.5rem 1.25rem;
         border-radius: 50px;
-        margin-bottom: 1.25rem;
+        margin-bottom: 1rem;
         font-size: 0.95rem;
         color: white;
         border: 1px solid rgba(255, 255, 255, 0.3);
@@ -487,17 +496,20 @@
         {% if user.is_authenticated %}
         <a href="{% url 'accounts:dashboard' %}" class="cta-button">Go to Dashboard</a>
         {% else %}
-        <!-- Founding Member Badge -->
-        <div class="founding-badge">
-            <span class="badge-icon">&#9733;</span>
-            <span>Founding Member Access</span>
+        <!-- CTA Container for proper alignment -->
+        <div class="hero-cta-container">
+            <!-- Founding Member Badge -->
+            <div class="founding-badge">
+                <span class="badge-icon">&#9733;</span>
+                <span>Founding Member Access</span>
+            </div>
+            <a href="{% url 'accounts:register' %}" class="cta-button cta-button-pulse">Claim Your Free Premium Spot</a>
+            {% if founding_spots_remaining > 0 %}
+            <p class="cta-subtext"><strong>{{ founding_spots_remaining }} of {{ founding_member_limit }} spots left</strong> - First {{ founding_member_limit }} members get Premium free forever</p>
+            {% else %}
+            <p class="cta-subtext">Join our supportive recovery community</p>
+            {% endif %}
         </div>
-        <a href="{% url 'accounts:register' %}" class="cta-button cta-button-pulse">Claim Your Free Premium Spot</a>
-        {% if founding_spots_remaining > 0 %}
-        <p class="cta-subtext"><strong>{{ founding_spots_remaining }} of {{ founding_member_limit }} spots left</strong> - First {{ founding_member_limit }} members get Premium free forever</p>
-        {% else %}
-        <p class="cta-subtext">Join our supportive recovery community</p>
-        {% endif %}
         {% endif %}
     </div>
 </section>
