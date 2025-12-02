@@ -239,7 +239,7 @@ AUTH_USER_MODEL = 'accounts.User'
 
 # Login URLs
 LOGIN_URL = 'accounts:login'
-LOGIN_REDIRECT_URL = 'accounts:social_feed'
+LOGIN_REDIRECT_URL = 'accounts:hybrid_landing'
 LOGOUT_REDIRECT_URL = 'core:index'
 
 # Django-allauth settings
