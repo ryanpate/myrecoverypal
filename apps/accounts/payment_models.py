@@ -8,6 +8,9 @@ from django.conf import settings
 from django.utils import timezone
 from decimal import Decimal
 
+# Founding member limit - first N users get premium free
+FOUNDING_MEMBER_LIMIT = 200
+
 
 class Subscription(models.Model):
     """
@@ -67,6 +70,12 @@ class Subscription(models.Model):
     trial_end = models.DateTimeField(null=True, blank=True)
     canceled_at = models.DateTimeField(null=True, blank=True)
 
+    # Founding member status
+    is_founding_member = models.BooleanField(
+        default=False,
+        help_text="Early adopter with lifetime premium access"
+    )
+
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -90,7 +99,9 @@ class Subscription(models.Model):
         return self.status in ['active', 'trialing']
 
     def is_premium(self):
-        """Check if user has Premium tier or higher"""
+        """Check if user has Premium tier or higher (includes founding members)"""
+        if self.is_founding_member:
+            return True
         return self.tier in ['premium', 'pro'] and self.is_active()
 
     def is_pro(self):
@@ -119,6 +130,22 @@ class Subscription(models.Model):
     def can_downgrade(self):
         """Check if user can downgrade their subscription"""
         return self.tier in ['premium', 'pro'] and self.is_active()
+
+    @classmethod
+    def get_founding_member_count(cls):
+        """Get the number of founding members"""
+        return cls.objects.filter(is_founding_member=True).count()
+
+    @classmethod
+    def get_founding_member_spots_remaining(cls):
+        """Get the number of founding member spots remaining"""
+        count = cls.get_founding_member_count()
+        return max(0, FOUNDING_MEMBER_LIMIT - count)
+
+    @classmethod
+    def founding_member_spots_available(cls):
+        """Check if founding member spots are still available"""
+        return cls.get_founding_member_spots_remaining() > 0
 
 
 class Transaction(models.Model):

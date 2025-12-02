@@ -492,8 +492,12 @@
             <span class="badge-icon">&#9733;</span>
             <span>Founding Member Access</span>
         </div>
-        <a href="{% url 'accounts:register' %}" class="cta-button cta-button-pulse">Claim Your Free Spot</a>
-        <p class="cta-subtext">Join our founding community - Limited spots available</p>
+        <a href="{% url 'accounts:register' %}" class="cta-button cta-button-pulse">Claim Your Free Premium Spot</a>
+        {% if founding_spots_remaining > 0 %}
+        <p class="cta-subtext"><strong>{{ founding_spots_remaining }} of {{ founding_member_limit }} spots left</strong> - First {{ founding_member_limit }} members get Premium free forever</p>
+        {% else %}
+        <p class="cta-subtext">Join our supportive recovery community</p>
+        {% endif %}
         {% endif %}
     </div>
 </section>
@@ -590,11 +594,17 @@
             Connect with others who understand your journey. Share your story, celebrate milestones, and find the support you deserve.
         </p>
         {% if not user.is_authenticated %}
+        {% if founding_spots_remaining > 0 %}
         <p style="font-size: 1rem; margin-bottom: 2rem; color: rgba(255, 255, 255, 0.8);">
-            <strong>Founding members</strong> get lifetime free access to all features.
+            <strong>First {{ founding_member_limit }} members get Premium free forever.</strong> Only {{ founding_spots_remaining }} spots remaining!
         </p>
+        {% else %}
+        <p style="font-size: 1rem; margin-bottom: 2rem; color: rgba(255, 255, 255, 0.8);">
+            Join our supportive recovery community today.
+        </p>
+        {% endif %}
         <a href="{% url 'accounts:register' %}" class="cta-button" style="background: var(--accent-green); color: white; text-decoration: none; font-size: 1.2rem; padding: 1rem 2.5rem;">
-            Become a Founding Member
+            {% if founding_spots_remaining > 0 %}Get Free Premium Access{% else %}Join Free{% endif %}
         </a>
         {% else %}
         <a href="{% url 'accounts:social_feed' %}" class="cta-button" style="background: var(--accent-green); color: white; text-decoration: none;">
