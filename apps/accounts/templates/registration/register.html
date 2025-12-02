@@ -31,10 +31,24 @@
 
     <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
 
+        {% if founding_spots_remaining > 0 %}
+        <!-- Founding Member Premium Offer -->
+        <div style="background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%); padding: 1.5rem; margin-bottom: 2rem; border-radius: 12px; text-align: center; border: 2px solid #e6ac00;">
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.3); padding: 0.25rem 0.75rem; border-radius: 20px; margin-bottom: 0.75rem;">
+                <span style="color: #8b6914;">★</span>
+                <span style="color: #5c4a0e; font-weight: 600; font-size: 0.85rem;">FOUNDING MEMBER OFFER</span>
+            </div>
+            <h3 style="color: #5c4a0e; margin: 0 0 0.5rem 0; font-size: 1.4rem;">Get Premium FREE Forever</h3>
+            <p style="color: #6b5a1e; margin: 0; font-size: 1rem;">
+                <strong>{{ founding_spots_remaining }} spots left</strong> out of {{ founding_member_limit }} - Sign up now to lock in lifetime Premium!
+            </p>
+        </div>
+        {% else %}
         <div style="background: linear-gradient(135deg, #52b788 0%, #45a374 100%); padding: 1.5rem; margin-bottom: 2rem; border-radius: 12px; text-align: center;">
             <h3 style="color: white; margin: 0 0 0.5rem 0; font-size: 1.4rem;">🎉 Join 100% Free</h3>
             <p style="color: white; margin: 0; font-size: 1rem;">No credit card required. No hidden fees. Just support.</p>
         </div>
+        {% endif %}
 
         {% if invite_only %}
         <div
@@ -151,7 +165,7 @@
 
             <button type="submit" class="btn btn-success"
                 style="width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1rem;">
-                Create Account
+                {% if founding_spots_remaining > 0 %}Claim My Free Premium Account{% else %}Create Account{% endif %}
             </button>
         </form>
 

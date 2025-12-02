@@ -482,7 +482,7 @@
     <div class="guest-welcome-banner">
         <div class="guest-welcome-content">
             <h3>Welcome to MyRecoveryCircle</h3>
-            <p>See what our community is sharing. Join free to connect, post, and support others.</p>
+            <p>See what our community is sharing. First 200 members get <strong>Premium free forever!</strong></p>
         </div>
     </div>
     {% endif %}
@@ -588,12 +588,12 @@
                 <div class="signup-gate-fade"></div>
                 <div class="signup-gate-content">
                     <div class="signup-gate-icon">
-                        <i class="fas fa-users"></i>
+                        <i class="fas fa-crown" style="color: #ffd700;"></i>
                     </div>
-                    <h3>Join the Conversation</h3>
-                    <p>Sign up free to see all {{ total_posts_count }} posts, share your journey, and connect with others in recovery.</p>
+                    <h3>Get Premium Free Forever</h3>
+                    <p>First 200 members get lifetime Premium access. See all {{ total_posts_count }} posts, share your journey, and unlock all features.</p>
                     <a href="{% url 'accounts:register' %}" class="signup-gate-btn">
-                        Become a Founding Member
+                        Claim My Free Premium
                     </a>
                     <p class="signup-gate-subtext">
                         Already have an account? <a href="{% url 'accounts:login' %}">Log in</a>
