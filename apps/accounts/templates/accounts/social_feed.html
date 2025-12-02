@@ -315,12 +315,122 @@
     .char-counter.warning {
         color: #e74c3c;
     }
+
+    /* Guest Welcome Banner */
+    .guest-welcome-banner {
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
+        color: white;
+        box-shadow: 0 4px 15px rgba(30, 77, 139, 0.2);
+    }
+
+    .guest-welcome-content h3 {
+        color: white;
+        margin: 0 0 0.5rem 0;
+        font-size: 1.2rem;
+    }
+
+    .guest-welcome-content p {
+        margin: 0;
+        font-size: 0.95rem;
+        opacity: 0.9;
+    }
+
+    /* Signup Gate Overlay */
+    .signup-gate {
+        position: relative;
+        margin-top: -80px;
+        padding-top: 80px;
+    }
+
+    .signup-gate-fade {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100px;
+        background: linear-gradient(to bottom, transparent 0%, white 100%);
+        pointer-events: none;
+    }
+
+    .signup-gate-content {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        border: 2px solid #52b788;
+        position: relative;
+    }
+
+    .signup-gate-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #52b788 0%, #45a374 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.25rem;
+    }
+
+    .signup-gate-icon i {
+        font-size: 1.75rem;
+        color: white;
+    }
+
+    .signup-gate-content h3 {
+        color: var(--primary-dark);
+        margin: 0 0 0.75rem 0;
+        font-size: 1.5rem;
+    }
+
+    .signup-gate-content p {
+        color: #666;
+        margin: 0 0 1.5rem 0;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .signup-gate-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, #52b788 0%, #45a374 100%);
+        color: white;
+        padding: 0.9rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(82, 183, 136, 0.3);
+    }
+
+    .signup-gate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(82, 183, 136, 0.4);
+        color: white;
+    }
+
+    .signup-gate-subtext {
+        margin-top: 1.25rem !important;
+        margin-bottom: 0 !important;
+        font-size: 0.9rem !important;
+        color: #888 !important;
+    }
+
+    .signup-gate-subtext a {
+        color: var(--primary-light);
+        font-weight: 600;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="social-feed-container">
-    <!-- Create Post Box -->
+    {% if user.is_authenticated %}
+    <!-- Create Post Box (Only for authenticated users) -->
     <div class="create-post-box">
         <div class="create-post-header">
             {% if user.avatar %}
@@ -367,6 +477,15 @@
             </div>
         </form>
     </div>
+    {% else %}
+    <!-- Welcome Banner for Anonymous Users -->
+    <div class="guest-welcome-banner">
+        <div class="guest-welcome-content">
+            <h3>Welcome to MyRecoveryCircle</h3>
+            <p>See what our community is sharing. Join free to connect, post, and support others.</p>
+        </div>
+    </div>
+    {% endif %}
 
     <!-- Feed Posts -->
     <div id="posts-container">
@@ -448,7 +567,8 @@
             </div>
             {% endfor %}
 
-            <!-- Pagination -->
+            {% if user.is_authenticated %}
+            <!-- Pagination (Only for authenticated users) -->
             {% if page_obj.has_other_pages %}
             <div style="text-align: center; margin: 2rem 0;">
                 {% if page_obj.has_previous %}
@@ -460,11 +580,37 @@
                 {% endif %}
             </div>
             {% endif %}
+            {% endif %}
+
+            {% if is_gated %}
+            <!-- Signup Gate for Anonymous Users -->
+            <div class="signup-gate">
+                <div class="signup-gate-fade"></div>
+                <div class="signup-gate-content">
+                    <div class="signup-gate-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Join the Conversation</h3>
+                    <p>Sign up free to see all {{ total_posts_count }} posts, share your journey, and connect with others in recovery.</p>
+                    <a href="{% url 'accounts:register' %}" class="signup-gate-btn">
+                        Become a Founding Member
+                    </a>
+                    <p class="signup-gate-subtext">
+                        Already have an account? <a href="{% url 'accounts:login' %}">Log in</a>
+                    </p>
+                </div>
+            </div>
+            {% endif %}
         {% else %}
             <div class="empty-state">
                 <i class="fas fa-comments"></i>
                 <h3>No posts yet</h3>
+                {% if user.is_authenticated %}
                 <p>Be the first to share something with the community!</p>
+                {% else %}
+                <p>Join as a founding member and be the first to share!</p>
+                <a href="{% url 'accounts:register' %}" class="btn btn-success" style="margin-top: 1rem;">Join Free</a>
+                {% endif %}
             </div>
         {% endif %}
     </div>

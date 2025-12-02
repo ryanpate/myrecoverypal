@@ -239,6 +239,48 @@
         /* Brighter border on hover */
     }
 
+    /* Founding Member Badge */
+    .founding-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        padding: 0.5rem 1.25rem;
+        border-radius: 50px;
+        margin-bottom: 1.25rem;
+        font-size: 0.95rem;
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .founding-badge .badge-icon {
+        color: #ffd700;
+        font-size: 1.1rem;
+    }
+
+    /* Pulsing CTA button */
+    .cta-button-pulse {
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+        0%, 100% {
+            box-shadow: 0 4px 15px rgba(82, 183, 136, 0.3);
+        }
+        50% {
+            box-shadow: 0 4px 30px rgba(82, 183, 136, 0.6), 0 0 20px rgba(82, 183, 136, 0.4);
+        }
+    }
+
+    /* CTA subtext */
+    .cta-subtext {
+        font-size: 0.95rem !important;
+        color: rgba(255, 255, 255, 0.85) !important;
+        margin-top: 1rem !important;
+        margin-bottom: 0 !important;
+    }
+
     /* Features Section */
     .features {
         padding: 5rem 2rem;
@@ -445,7 +487,13 @@
         {% if user.is_authenticated %}
         <a href="{% url 'accounts:dashboard' %}" class="cta-button">Go to Dashboard</a>
         {% else %}
-        <a href="{% url 'accounts:register' %}" class="cta-button">Join Free Today</a>
+        <!-- Founding Member Badge -->
+        <div class="founding-badge">
+            <span class="badge-icon">&#9733;</span>
+            <span>Founding Member Access</span>
+        </div>
+        <a href="{% url 'accounts:register' %}" class="cta-button cta-button-pulse">Claim Your Free Spot</a>
+        <p class="cta-subtext">Join our founding community - Limited spots available</p>
         {% endif %}
     </div>
 </section>
@@ -537,18 +585,22 @@
 <!-- Community Preview Section -->
 <section class="community-preview" style="padding: 5rem 2rem; background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%); text-align: center; color: white;">
     <div class="container" style="max-width: 800px; margin: 0 auto;">
-        <h2 style="font-size: 2.5rem; margin-bottom: 1rem; color: white;">See Our Community in Action</h2>
-        <p style="font-size: 1.2rem; margin-bottom: 2rem; line-height: 1.8; color: rgba(255, 255, 255, 0.9);">
-            Browse real posts from our members. See how people support each other, share milestones, and build meaningful connections every day.
+        <h2 style="font-size: 2.5rem; margin-bottom: 1rem; color: white;">Join Our Growing Community</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 0.75rem; line-height: 1.8; color: rgba(255, 255, 255, 0.9);">
+            Connect with others who understand your journey. Share your story, celebrate milestones, and find the support you deserve.
         </p>
-        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-            <a href="{% url 'accounts:social_feed' %}" class="cta-button" style="background: var(--accent-green); color: white; text-decoration: none;">
-                Browse MyRecoveryCircle
-            </a>
-            <a href="{% url 'core:demo' %}" class="cta-button" style="background: transparent; border: 2px solid white; color: white; text-decoration: none;">
-                Take a Tour
-            </a>
-        </div>
+        {% if not user.is_authenticated %}
+        <p style="font-size: 1rem; margin-bottom: 2rem; color: rgba(255, 255, 255, 0.8);">
+            <strong>Founding members</strong> get lifetime free access to all features.
+        </p>
+        <a href="{% url 'accounts:register' %}" class="cta-button" style="background: var(--accent-green); color: white; text-decoration: none; font-size: 1.2rem; padding: 1rem 2.5rem;">
+            Become a Founding Member
+        </a>
+        {% else %}
+        <a href="{% url 'accounts:social_feed' %}" class="cta-button" style="background: var(--accent-green); color: white; text-decoration: none;">
+            Go to MyRecoveryCircle
+        </a>
+        {% endif %}
     </div>
 </section>
 
@@ -564,7 +616,7 @@
             {% if user.is_authenticated %}
             <a href="{% url 'blog:post_list' %}" class="cta-button">Read Recovery Stories</a>
             {% else %}
-            <a href="{% url 'accounts:register' %}" class="cta-button">Start Your Journey</a>
+            <a href="{% url 'accounts:register' %}" class="cta-button">Join as a Founding Member</a>
             {% endif %}
         </div>
     </div>
