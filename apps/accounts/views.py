@@ -35,7 +35,7 @@ from .forms import (
     GroupChallengeForm, JoinChallengeForm, ChallengeCheckInForm,
     ChallengeCommentForm, PalRequestForm, ChallengeFilterForm
 )
-from .payment_models import Subscription, FOUNDING_MEMBER_LIMIT
+from .payment_models import Subscription
 
 def register_view(request):
     """
@@ -63,31 +63,17 @@ def register_view(request):
                 username = form.cleaned_data.get('username')
                 password = form.cleaned_data.get('password1')
 
-                # Check if user qualifies as founding member (first 200 signups)
-                is_founding = Subscription.founding_member_spots_available()
-
-                # Create or update subscription with founding member status
-                subscription, created = Subscription.objects.get_or_create(
+                # Create subscription for user
+                Subscription.objects.get_or_create(
                     user=user,
                     defaults={
-                        'tier': 'premium' if is_founding else 'free',
+                        'tier': 'free',
                         'status': 'active',
-                        'is_founding_member': is_founding,
                     }
                 )
-                if not created and is_founding:
-                    subscription.tier = 'premium'
-                    subscription.is_founding_member = True
-                    subscription.save()
 
-                if is_founding:
-                    messages.success(
-                        request,
-                        f'Welcome {username}! You\'re a Founding Member with lifetime Premium access!'
-                    )
-                else:
-                    messages.success(
-                        request, f'Welcome to the community, {username}!')
+                messages.success(
+                    request, f'Welcome to the community, {username}!')
 
                 user = authenticate(username=username, password=password)
                 login(request, user)
@@ -106,12 +92,8 @@ def register_view(request):
         else:
             form = CustomUserCreationForm()
 
-        # Get founding member info for template
-        spots_remaining = Subscription.get_founding_member_spots_remaining()
         return render(request, 'registration/register.html', {
             'form': form,
-            'founding_spots_remaining': spots_remaining,
-            'founding_member_limit': FOUNDING_MEMBER_LIMIT,
         })
 
     # Invite-only mode is enabled
@@ -125,30 +107,16 @@ def register_view(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password1')
 
-            # Check if user qualifies as founding member (first 200 signups)
-            is_founding = Subscription.founding_member_spots_available()
-
-            # Create or update subscription with founding member status
-            subscription, created = Subscription.objects.get_or_create(
+            # Create subscription for user
+            Subscription.objects.get_or_create(
                 user=user,
                 defaults={
-                    'tier': 'premium' if is_founding else 'free',
+                    'tier': 'free',
                     'status': 'active',
-                    'is_founding_member': is_founding,
                 }
             )
-            if not created and is_founding:
-                subscription.tier = 'premium'
-                subscription.is_founding_member = True
-                subscription.save()
 
-            if is_founding:
-                messages.success(
-                    request,
-                    f'Welcome {username}! You\'re a Founding Member with lifetime Premium access!'
-                )
-            else:
-                messages.success(request, f'Welcome to the community, {username}!')
+            messages.success(request, f'Welcome to the community, {username}!')
 
             user = authenticate(username=username, password=password)
             login(request, user)
@@ -169,14 +137,10 @@ def register_view(request):
         initial = {'invite_code': invite_code} if invite_code else {}
         form = CustomUserCreationFormWithInvite(initial=initial)
 
-    # Get founding member info for template
-    spots_remaining = Subscription.get_founding_member_spots_remaining()
     context = {
         'form': form,
         'invite_only': True,
         'settings': settings,
-        'founding_spots_remaining': spots_remaining,
-        'founding_member_limit': FOUNDING_MEMBER_LIMIT,
     }
     return render(request, 'registration/register.html', context)
 

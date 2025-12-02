@@ -2,7 +2,6 @@
 """
 Context processors for making subscription data available in all templates
 """
-from django.db import transaction
 
 
 def subscription_context(request):
@@ -18,17 +17,15 @@ def subscription_context(request):
 
     try:
         if request.user.is_authenticated and hasattr(request.user, 'subscription'):
-            # Use atomic to ensure failed queries don't poison the transaction
-            with transaction.atomic():
-                subscription = request.user.subscription
-                context.update({
-                    'user_subscription': subscription,
-                    'is_premium_user': subscription.is_premium(),
-                    'is_pro_user': subscription.is_pro(),
-                    'is_free_user': subscription.tier == 'free',
-                })
+            subscription = request.user.subscription
+            context.update({
+                'user_subscription': subscription,
+                'is_premium_user': subscription.is_premium(),
+                'is_pro_user': subscription.is_pro(),
+                'is_free_user': subscription.tier == 'free',
+            })
     except Exception:
-        # Handle case where database schema is out of sync (e.g., missing columns)
+        # Handle case where subscription doesn't exist
         pass
 
     return context

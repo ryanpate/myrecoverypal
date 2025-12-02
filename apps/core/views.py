@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
-from apps.accounts.payment_models import Subscription, FOUNDING_MEMBER_LIMIT
 
 
 class IndexView(TemplateView):
@@ -12,13 +11,6 @@ class IndexView(TemplateView):
             return redirect('accounts:social_feed')
         # Otherwise, show the home page
         return super().dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Add founding member info
-        context['founding_spots_remaining'] = Subscription.get_founding_member_spots_remaining()
-        context['founding_member_limit'] = FOUNDING_MEMBER_LIMIT
-        return context
 class AboutView(TemplateView):
     template_name = 'core/about.html'
 

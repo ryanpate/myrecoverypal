@@ -482,7 +482,7 @@
     <div class="guest-welcome-banner">
         <div class="guest-welcome-content">
             <h3>Welcome to MyRecoveryCircle</h3>
-            <p>See what our community is sharing. First 200 members get <strong>Premium free forever!</strong></p>
+            <p>See what our community is sharing. Join free to connect with others in recovery.</p>
         </div>
     </div>
     {% endif %}
@@ -588,12 +588,12 @@
                 <div class="signup-gate-fade"></div>
                 <div class="signup-gate-content">
                     <div class="signup-gate-icon">
-                        <i class="fas fa-crown" style="color: #ffd700;"></i>
+                        <i class="fas fa-users" style="color: #52b788;"></i>
                     </div>
-                    <h3>Get Premium Free Forever</h3>
-                    <p>First 200 members get lifetime Premium access. See all {{ total_posts_count }} posts, share your journey, and unlock all features.</p>
+                    <h3>Join Our Community</h3>
+                    <p>See all {{ total_posts_count }} posts, share your journey, and connect with others in recovery.</p>
                     <a href="{% url 'accounts:register' %}" class="signup-gate-btn">
-                        Claim My Free Premium
+                        Join Free
                     </a>
                     <p class="signup-gate-subtext">
                         Already have an account? <a href="{% url 'accounts:login' %}">Log in</a>
@@ -608,7 +608,7 @@
                 {% if user.is_authenticated %}
                 <p>Be the first to share something with the community!</p>
                 {% else %}
-                <p>Join as a founding member and be the first to share!</p>
+                <p>Join our community and be the first to share!</p>
                 <a href="{% url 'accounts:register' %}" class="btn btn-success" style="margin-top: 1rem;">Join Free</a>
                 {% endif %}
             </div>
