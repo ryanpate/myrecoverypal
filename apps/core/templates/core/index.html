@@ -291,6 +291,25 @@
         margin-bottom: 0 !important;
     }
 
+    /* Demo link */
+    .demo-link {
+        display: inline-block;
+        margin-top: 1.25rem;
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        font-size: 0.95rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 25px;
+        transition: all 0.3s ease;
+    }
+
+    .demo-link:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.7);
+        color: white;
+    }
+
     /* Features Section */
     .features {
         padding: 5rem 2rem;
@@ -510,6 +529,7 @@
             {% else %}
             <p class="cta-subtext">Join our supportive recovery community</p>
             {% endif %}
+            <a href="{% url 'core:demo' %}" class="demo-link">See how it works &rarr;</a>
         </div>
         {% endif %}
     </div>
