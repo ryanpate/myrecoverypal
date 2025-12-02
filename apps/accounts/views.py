@@ -2011,7 +2011,6 @@ def create_notification(recipient, sender, notification_type, title, message, li
 
 # Social Feed Views
 
-@login_required
 def social_feed_view(request):
     """Display the social media feed"""
     try:
@@ -2027,14 +2026,26 @@ def social_feed_view(request):
             if post.is_visible_to(request.user):
                 visible_posts.append(post)
 
-        # Pagination
-        paginator = Paginator(visible_posts, 20)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
+        # For anonymous users, limit to 3 posts to encourage signup
+        is_gated = False
+        total_posts_count = len(visible_posts)
+        if not request.user.is_authenticated and len(visible_posts) > 3:
+            visible_posts = visible_posts[:3]
+            is_gated = True
+
+        # Pagination (only for authenticated users)
+        if request.user.is_authenticated:
+            paginator = Paginator(visible_posts, 20)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+        else:
+            page_obj = None
 
         context = {
             'page_obj': page_obj,
-            'posts': page_obj,
+            'posts': visible_posts if not request.user.is_authenticated else page_obj,
+            'is_gated': is_gated,
+            'total_posts_count': total_posts_count,
         }
         return render(request, 'accounts/social_feed.html', context)
     except Exception:
