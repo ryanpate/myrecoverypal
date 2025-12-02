@@ -134,18 +134,30 @@ class Subscription(models.Model):
     @classmethod
     def get_founding_member_count(cls):
         """Get the number of founding members"""
-        return cls.objects.filter(is_founding_member=True).count()
+        try:
+            return cls.objects.filter(is_founding_member=True).count()
+        except Exception:
+            # Column may not exist yet (pre-migration)
+            return 0
 
     @classmethod
     def get_founding_member_spots_remaining(cls):
         """Get the number of founding member spots remaining"""
-        count = cls.get_founding_member_count()
-        return max(0, FOUNDING_MEMBER_LIMIT - count)
+        try:
+            count = cls.get_founding_member_count()
+            return max(0, FOUNDING_MEMBER_LIMIT - count)
+        except Exception:
+            # Column may not exist yet (pre-migration)
+            return FOUNDING_MEMBER_LIMIT
 
     @classmethod
     def founding_member_spots_available(cls):
         """Check if founding member spots are still available"""
-        return cls.get_founding_member_spots_remaining() > 0
+        try:
+            return cls.get_founding_member_spots_remaining() > 0
+        except Exception:
+            # Column may not exist yet (pre-migration)
+            return True
 
 
 class Transaction(models.Model):
