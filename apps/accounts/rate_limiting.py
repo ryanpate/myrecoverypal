@@ -3,10 +3,22 @@
 Rate limiting middleware for MyRecoveryPal
 Protects against brute force attacks and API abuse
 """
-from django.core.cache import cache
+from django.core.cache import caches
 from django.http import HttpResponseForbidden
 from django.utils import timezone
 import hashlib
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Use dedicated rate_limiting cache to avoid Redis dependency
+# Falls back to default cache if rate_limiting cache not configured
+def get_rate_limit_cache():
+    """Get the rate limiting cache, falling back to default if not available."""
+    try:
+        return caches['rate_limiting']
+    except Exception:
+        return caches['default']
 
 
 class RateLimitMiddleware:
@@ -64,10 +76,12 @@ class RateLimitMiddleware:
             True if request is allowed, False if rate limit exceeded
         """
         try:
+            # Use dedicated rate limiting cache (local memory, not Redis)
+            rate_cache = get_rate_limit_cache()
             cache_key = f'rate_limit:{action}:{hashlib.md5(identifier.encode()).hexdigest()}'
 
             # Get current count
-            current = cache.get(cache_key, 0)
+            current = rate_cache.get(cache_key, 0)
 
             if current >= max_requests:
                 return False
@@ -75,17 +89,18 @@ class RateLimitMiddleware:
             # Increment counter
             if current == 0:
                 # First request - set with expiry
-                cache.set(cache_key, 1, window)
+                rate_cache.set(cache_key, 1, window)
             else:
                 # Increment existing counter
-                cache.incr(cache_key)
+                try:
+                    rate_cache.incr(cache_key)
+                except ValueError:
+                    # Key expired between get and incr, reset it
+                    rate_cache.set(cache_key, 1, window)
 
             return True
         except Exception as e:
-            # If cache fails (Redis not available), allow the request through
+            # If cache fails, allow the request through
             # This ensures the site stays functional even if cache backend is down
-            # Log the error for monitoring
-            import logging
-            logger = logging.getLogger(__name__)
             logger.warning(f'Rate limiting cache error: {e}. Allowing request through.')
             return True
