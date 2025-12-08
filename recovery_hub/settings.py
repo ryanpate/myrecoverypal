@@ -199,11 +199,10 @@ if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
-            # Reduced from 600s - Railway may terminate idle connections sooner
-            # conn_max_age=0 disables persistent connections (safest but less performant)
-            # conn_max_age=60 keeps connections for 1 minute (good balance)
-            conn_max_age=60,
-            conn_health_checks=True,  # Verify connection is alive before reuse (Django 4.1+)
+            # conn_max_age=0 disables persistent connections - each request gets fresh connection
+            # This prevents "connection already closed" errors from Railway terminating idle connections
+            # Slight performance overhead but much more reliable
+            conn_max_age=0,
         )
     }
     # Merge PostgreSQL options (don't overwrite existing options from dj-database-url)
