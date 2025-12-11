@@ -143,6 +143,53 @@
         margin-bottom: 1.5rem;
     }
 
+    /* Share buttons */
+    .milestone-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .share-label {
+        font-size: 0.85rem;
+        color: #666;
+        margin-right: 0.25rem;
+    }
+
+    .share-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        text-decoration: none;
+        color: white;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+    .share-btn:hover {
+        transform: scale(1.1);
+        color: white;
+    }
+
+    .share-btn.facebook { background: #1877f2; }
+    .share-btn.twitter { background: #1da1f2; }
+    .share-btn.linkedin { background: #0077b5; }
+    .share-btn.copy {
+        background: #52b788;
+        cursor: pointer;
+        border: none;
+    }
+
+    .share-btn.copy.copied {
+        background: #333;
+    }
+
     @media (max-width: 768px) {
         .milestones-header-section {
             flex-direction: column;
@@ -210,6 +257,31 @@
                 {% endif %}
             </div>
             {% endif %}
+
+            <!-- Share buttons -->
+            <div class="milestone-actions">
+                <span class="share-label">Share:</span>
+                {% with share_text="I just achieved a milestone in my recovery journey: "|add:milestone.title|add:" on MyRecoveryPal!" %}
+                <a href="https://www.facebook.com/sharer/sharer.php?quote={{ share_text|urlencode }}"
+                   target="_blank" rel="noopener"
+                   class="share-btn facebook" title="Share on Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://twitter.com/intent/tweet?text={{ share_text|urlencode }}"
+                   target="_blank" rel="noopener"
+                   class="share-btn twitter" title="Share on Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}"
+                   target="_blank" rel="noopener"
+                   class="share-btn linkedin" title="Share on LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <button class="share-btn copy" onclick="copyMilestoneText('{{ milestone.title|escapejs }}', this)" title="Copy to clipboard">
+                    <i class="fas fa-link"></i>
+                </button>
+                {% endwith %}
+            </div>
         </div>
         {% endfor %}
     </div>
@@ -226,4 +298,39 @@
     </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyMilestoneText(milestoneTitle, button) {
+    const shareText = `I just achieved a milestone in my recovery journey: ${milestoneTitle} on MyRecoveryPal! Join the supportive community at ${window.location.origin}`;
+
+    navigator.clipboard.writeText(shareText).then(() => {
+        // Show success state
+        button.classList.add('copied');
+        button.innerHTML = '<i class="fas fa-check"></i>';
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.classList.remove('copied');
+            button.innerHTML = '<i class="fas fa-link"></i>';
+        }, 2000);
+    }).catch(err => {
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = shareText;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+
+        button.classList.add('copied');
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+            button.classList.remove('copied');
+            button.innerHTML = '<i class="fas fa-link"></i>';
+        }, 2000);
+    });
+}
+</script>
 {% endblock %}
