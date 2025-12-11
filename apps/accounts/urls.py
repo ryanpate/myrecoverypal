@@ -39,6 +39,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('profile/<str:username>/', views.ProfileView.as_view(), name='profile'),
     path('edit-profile/', views.edit_profile_view, name='edit_profile'),
+    path('invite-friends/', views.invite_friends_view, name='invite_friends'),
 
     # Milestones
     path('milestones/', views.MilestoneListView.as_view(), name='milestones'),

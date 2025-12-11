@@ -1,0 +1,469 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Invite Friends - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .invite-container {
+        max-width: 700px;
+        margin: 80px auto 2rem;
+        padding: 1rem;
+    }
+
+    .invite-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .invite-header h1 {
+        color: #333;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .invite-header p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    .invite-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .invite-card h2 {
+        font-size: 1.3rem;
+        color: #333;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .invite-card h2 i {
+        color: #4db8e8;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, #f8f9fa, #fff);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        border: 1px solid #e8e8e8;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #4db8e8, #52b788);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Invite Link Section */
+    .invite-link-section {
+        background: linear-gradient(135deg, #e8f7f0, #e0f4fc);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .invite-link-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+
+    .invite-link-box {
+        display: flex;
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+
+    .invite-link-input {
+        flex: 1;
+        padding: 0.875rem 1rem;
+        border: 2px solid #d0e8d8;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        background: white;
+        color: #333;
+        font-family: monospace;
+    }
+
+    .invite-link-input:focus {
+        outline: none;
+        border-color: #52b788;
+    }
+
+    .btn-copy {
+        padding: 0.875rem 1.25rem;
+        background: #52b788;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-copy:hover {
+        background: #45a078;
+        transform: translateY(-1px);
+    }
+
+    .btn-copy.copied {
+        background: #333;
+    }
+
+    /* Share Buttons */
+    .share-buttons {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .share-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .share-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .share-btn.facebook {
+        background: #1877f2;
+        color: white;
+    }
+
+    .share-btn.twitter {
+        background: #1da1f2;
+        color: white;
+    }
+
+    .share-btn.whatsapp {
+        background: #25d366;
+        color: white;
+    }
+
+    .share-btn.email {
+        background: #666;
+        color: white;
+    }
+
+    .share-btn.sms {
+        background: #52b788;
+        color: white;
+    }
+
+    /* Invite Code Display */
+    .invite-code-display {
+        text-align: center;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+
+    .invite-code {
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        color: #333;
+        font-family: monospace;
+    }
+
+    .invite-code-label {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .uses-remaining {
+        display: inline-block;
+        background: #e8f7f0;
+        color: #52b788;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-top: 0.75rem;
+    }
+
+    /* Generate Button */
+    .generate-section {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .btn-generate {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #4db8e8, #52b788);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-generate:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(77, 184, 232, 0.4);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: #666;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Tips Section */
+    .tips-section {
+        background: #fff8e6;
+        border-left: 4px solid #ffc107;
+        padding: 1rem 1.5rem;
+        border-radius: 0 8px 8px 0;
+    }
+
+    .tips-section h3 {
+        color: #856404;
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .tips-section ul {
+        margin: 0;
+        padding-left: 1.25rem;
+        color: #856404;
+    }
+
+    .tips-section li {
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    /* Back Link */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #666;
+        text-decoration: none;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+    }
+
+    .back-link:hover {
+        color: #4db8e8;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+        .invite-container {
+            margin-top: 60px;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .invite-link-box {
+            flex-direction: column;
+        }
+
+        .share-buttons {
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="invite-container">
+    <a href="{% url 'accounts:edit_profile' %}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Settings
+    </a>
+
+    <div class="invite-header">
+        <h1>Invite Friends to MyRecoveryPal</h1>
+        <p>Help grow our supportive community by inviting people you trust</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ people_invited }}</div>
+            <div class="stat-label">Friends Invited</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{% if primary_code %}{{ primary_code.uses_remaining }}{% else %}0{% endif %}</div>
+            <div class="stat-label">Invites Remaining</div>
+        </div>
+    </div>
+
+    {% if primary_code %}
+    <!-- Has Invite Code -->
+    <div class="invite-card">
+        <h2><i class="fas fa-link"></i> Your Personal Invite Link</h2>
+
+        <div class="invite-link-section">
+            <label class="invite-link-label">Share this link with friends:</label>
+            <div class="invite-link-box">
+                <input type="text" class="invite-link-input" id="invite-link" value="{{ invite_url }}" readonly>
+                <button class="btn-copy" onclick="copyInviteLink()" id="copy-btn">
+                    <i class="fas fa-copy"></i>
+                    <span>Copy</span>
+                </button>
+            </div>
+
+            <div class="share-buttons">
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ invite_url|urlencode }}" target="_blank" class="share-btn facebook">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </a>
+                <a href="https://twitter.com/intent/tweet?text=Join%20me%20on%20MyRecoveryPal%20-%20a%20supportive%20community%20for%20recovery!&url={{ invite_url|urlencode }}" target="_blank" class="share-btn twitter">
+                    <i class="fab fa-twitter"></i> Twitter
+                </a>
+                <a href="https://wa.me/?text=Join%20me%20on%20MyRecoveryPal%20-%20a%20supportive%20community%20for%20recovery!%20{{ invite_url|urlencode }}" target="_blank" class="share-btn whatsapp">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+                <a href="sms:?body=Join%20me%20on%20MyRecoveryPal%20-%20a%20supportive%20community%20for%20recovery!%20{{ invite_url }}" class="share-btn sms">
+                    <i class="fas fa-sms"></i> Text
+                </a>
+                <a href="mailto:?subject=Join%20MyRecoveryPal&body=I%20wanted%20to%20invite%20you%20to%20join%20MyRecoveryPal%2C%20a%20supportive%20community%20for%20recovery.%0A%0AUse%20this%20link%20to%20sign%20up%3A%20{{ invite_url|urlencode }}" class="share-btn email">
+                    <i class="fas fa-envelope"></i> Email
+                </a>
+            </div>
+        </div>
+
+        <div class="invite-code-display">
+            <div class="invite-code">{{ primary_code.code }}</div>
+            <div class="invite-code-label">Your invite code</div>
+            <div class="uses-remaining">
+                <i class="fas fa-ticket-alt"></i> {{ primary_code.uses_remaining }} invites remaining
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- No Invite Code Yet -->
+    <div class="invite-card">
+        <div class="empty-state">
+            <i class="fas fa-user-plus"></i>
+            <h3>No invite code yet</h3>
+            <p>Generate your personal invite code to start inviting friends to join our community.</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="generate">
+                <button type="submit" class="btn-generate">
+                    <i class="fas fa-magic"></i>
+                    Generate My Invite Code
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tips -->
+    <div class="invite-card">
+        <div class="tips-section">
+            <h3><i class="fas fa-lightbulb"></i> Tips for Inviting</h3>
+            <ul>
+                <li>Only invite people you know and trust who could benefit from our community</li>
+                <li>Share your personal experience when inviting - why this community matters to you</li>
+                <li>Be there to welcome them when they join and help them get started</li>
+                <li>Respect people's privacy - don't share their recovery status without permission</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyInviteLink() {
+    const input = document.getElementById('invite-link');
+    const btn = document.getElementById('copy-btn');
+
+    // Select and copy
+    input.select();
+    input.setSelectionRange(0, 99999); // For mobile
+
+    navigator.clipboard.writeText(input.value).then(() => {
+        // Show success state
+        btn.classList.add('copied');
+        btn.innerHTML = '<i class="fas fa-check"></i> <span>Copied!</span>';
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = '<i class="fas fa-copy"></i> <span>Copy</span>';
+        }, 2000);
+    }).catch(err => {
+        // Fallback for older browsers
+        document.execCommand('copy');
+        btn.innerHTML = '<i class="fas fa-check"></i> <span>Copied!</span>';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-copy"></i> <span>Copy</span>';
+        }, 2000);
+    });
+}
+</script>
+{% endblock %}

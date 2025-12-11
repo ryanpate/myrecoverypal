@@ -279,6 +279,74 @@ def skip_onboarding(request):
     return redirect('accounts:social_feed')
 
 
+@login_required
+def invite_friends_view(request):
+    """
+    Allow users to generate and share invite codes to grow the community.
+    """
+    user = request.user
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'generate':
+            # Check if user already has an active multi-use code
+            existing_code = InviteCode.objects.filter(
+                created_by=user,
+                status='active',
+                max_uses__gt=1,
+                uses_remaining__gt=0
+            ).first()
+
+            if existing_code:
+                messages.info(request, "You already have an active invite code!")
+            else:
+                # Generate a new multi-use invite code for this user
+                invite_code = InviteCode.objects.create(
+                    created_by=user,
+                    max_uses=10,  # Each user can invite up to 10 people
+                    uses_remaining=10,
+                    notes=f"Personal invite code for {user.username}"
+                )
+                messages.success(request, "Your invite code has been created! Share it with friends.")
+
+        return redirect('accounts:invite_friends')
+
+    # Get user's active invite codes
+    my_codes = InviteCode.objects.filter(
+        created_by=user,
+        status='active',
+        uses_remaining__gt=0
+    ).order_by('-created_at')
+
+    # Get stats on successful invites
+    successful_invites = InviteCode.objects.filter(
+        created_by=user,
+        status='used'
+    ).count()
+
+    # Count people who used any of user's codes
+    people_invited = User.objects.filter(
+        used_invite_codes__created_by=user
+    ).distinct().count()
+
+    # Build the invite URL for the first active code
+    invite_url = None
+    primary_code = my_codes.first()
+    if primary_code:
+        invite_url = f"{settings.SITE_URL}/accounts/register/?invite={primary_code.code}"
+
+    context = {
+        'my_codes': my_codes,
+        'primary_code': primary_code,
+        'invite_url': invite_url,
+        'successful_invites': successful_invites,
+        'people_invited': people_invited,
+    }
+
+    return render(request, 'accounts/invite_friends.html', context)
+
+
 @require_http_methods(["GET", "POST"])
 def request_access_view(request):
     """
