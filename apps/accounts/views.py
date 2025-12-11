@@ -2365,6 +2365,22 @@ def hybrid_landing_view(request):
             'posts': page_obj,
         })
 
+        # Add suggested users if feed is empty (for authenticated users)
+        if user.is_authenticated and len(visible_posts) == 0:
+            excluded_ids = list(user.get_following().values_list('id', flat=True))
+            excluded_ids.append(user.id)
+
+            # Get active users with public profiles to suggest
+            suggested_for_empty_feed = User.objects.filter(
+                is_active=True,
+                is_profile_public=True,
+            ).exclude(
+                id__in=excluded_ids
+            ).order_by('-last_seen', '-date_joined')[:8]
+
+            context['suggested_users_for_feed'] = suggested_for_empty_feed
+            context['feed_is_empty'] = True
+
         return render(request, 'accounts/hybrid_landing.html', context)
     except Exception:
         # Fallback behavior
