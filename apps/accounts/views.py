@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, UpdateView, ListView, CreateView
 from django.contrib import messages
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.db.models import Q, Count, Prefetch, Avg
 from django.utils import timezone
 from django.http import JsonResponse
@@ -88,7 +88,8 @@ def register_view(request):
                         days_sober=0
                     )
 
-                return redirect('accounts:social_feed')
+                # Redirect to onboarding for new users
+                return redirect('accounts:onboarding')
         else:
             form = CustomUserCreationForm()
 
@@ -131,7 +132,8 @@ def register_view(request):
                     days_sober=0
                 )
 
-            return redirect('accounts:social_feed')
+            # Redirect to onboarding for new users
+            return redirect('accounts:onboarding')
     else:
         # Pre-fill invite code if provided in URL
         initial = {'invite_code': invite_code} if invite_code else {}
@@ -143,6 +145,206 @@ def register_view(request):
         'settings': settings,
     }
     return render(request, 'registration/register.html', context)
+
+
+@login_required
+def onboarding_view(request):
+    """
+    Multi-step onboarding wizard for new users.
+    Step 1: Profile photo + bio
+    Step 2: Recovery info (goals, sobriety date)
+    Step 3: Follow suggested users
+    """
+    user = request.user
+
+    # If already completed onboarding, redirect to social feed
+    if user.has_completed_onboarding:
+        return redirect('accounts:social_feed')
+
+    # Get current step from query param (default to 1)
+    step = int(request.GET.get('step', 1))
+
+    if request.method == 'POST':
+        if step == 1:
+            # Handle profile photo and bio
+            bio = request.POST.get('bio', '').strip()
+            location = request.POST.get('location', '').strip()
+
+            user.bio = bio[:500]  # Max 500 chars
+            user.location = location[:100]
+
+            # Handle avatar upload
+            if 'avatar' in request.FILES:
+                try:
+                    avatar_file = request.FILES['avatar']
+                    # Upload to Cloudinary
+                    result = cloudinary.uploader.upload(
+                        avatar_file,
+                        folder='avatars/',
+                        transformation=[
+                            {'width': 300, 'height': 300, 'crop': 'fill', 'gravity': 'face'}
+                        ]
+                    )
+                    user.avatar = result['secure_url']
+                except Exception as e:
+                    messages.warning(request, 'Could not upload photo. You can add it later in settings.')
+
+            user.save()
+            return redirect(reverse('accounts:onboarding') + '?step=2')
+
+        elif step == 2:
+            # Handle recovery info
+            recovery_goals = request.POST.get('recovery_goals', '').strip()
+            sobriety_date = request.POST.get('sobriety_date', '').strip()
+            is_profile_public = request.POST.get('is_profile_public') == 'on'
+
+            user.recovery_goals = recovery_goals
+            user.is_profile_public = is_profile_public
+
+            if sobriety_date:
+                try:
+                    from datetime import datetime
+                    user.sobriety_date = datetime.strptime(sobriety_date, '%Y-%m-%d').date()
+                except ValueError:
+                    pass
+
+            user.save()
+            return redirect(reverse('accounts:onboarding') + '?step=3')
+
+        elif step == 3:
+            # Handle following users
+            users_to_follow = request.POST.getlist('follow_users')
+
+            for user_id in users_to_follow:
+                try:
+                    user_to_follow = User.objects.get(id=user_id)
+                    if user_to_follow != user:
+                        user.follow_user(user_to_follow)
+                except User.DoesNotExist:
+                    pass
+
+            # Mark onboarding as complete
+            user.has_completed_onboarding = True
+            user.save()
+
+            messages.success(request, "Welcome to MyRecoveryPal! Your profile is all set up.")
+            return redirect('accounts:social_feed')
+
+    # GET request - show appropriate step
+    context = {
+        'step': step,
+        'total_steps': 3,
+        'progress_percent': int((step / 3) * 100),
+    }
+
+    if step == 3:
+        # Get suggested users for step 3
+        excluded_ids = list(user.get_following().values_list('id', flat=True))
+        excluded_ids.append(user.id)
+
+        # Get active users with profiles
+        suggested = User.objects.filter(
+            is_active=True,
+            is_profile_public=True,
+        ).exclude(
+            id__in=excluded_ids
+        ).exclude(
+            bio=''
+        ).order_by('-date_joined')[:10]
+
+        # If not enough users with bios, get any active public users
+        if suggested.count() < 5:
+            more_users = User.objects.filter(
+                is_active=True,
+                is_profile_public=True,
+            ).exclude(
+                id__in=excluded_ids
+            ).exclude(
+                id__in=suggested.values_list('id', flat=True)
+            ).order_by('-last_seen', '-date_joined')[:10 - suggested.count()]
+            suggested = list(suggested) + list(more_users)
+
+        context['suggested_users'] = suggested
+
+    return render(request, 'accounts/onboarding.html', context)
+
+
+@login_required
+def skip_onboarding(request):
+    """Allow users to skip onboarding and complete it later"""
+    user = request.user
+    user.has_completed_onboarding = True
+    user.save()
+    messages.info(request, "You can complete your profile anytime in Settings.")
+    return redirect('accounts:social_feed')
+
+
+@login_required
+def invite_friends_view(request):
+    """
+    Allow users to generate and share invite codes to grow the community.
+    """
+    user = request.user
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'generate':
+            # Check if user already has an active multi-use code
+            existing_code = InviteCode.objects.filter(
+                created_by=user,
+                status='active',
+                max_uses__gt=1,
+                uses_remaining__gt=0
+            ).first()
+
+            if existing_code:
+                messages.info(request, "You already have an active invite code!")
+            else:
+                # Generate a new multi-use invite code for this user
+                invite_code = InviteCode.objects.create(
+                    created_by=user,
+                    max_uses=10,  # Each user can invite up to 10 people
+                    uses_remaining=10,
+                    notes=f"Personal invite code for {user.username}"
+                )
+                messages.success(request, "Your invite code has been created! Share it with friends.")
+
+        return redirect('accounts:invite_friends')
+
+    # Get user's active invite codes
+    my_codes = InviteCode.objects.filter(
+        created_by=user,
+        status='active',
+        uses_remaining__gt=0
+    ).order_by('-created_at')
+
+    # Get stats on successful invites
+    successful_invites = InviteCode.objects.filter(
+        created_by=user,
+        status='used'
+    ).count()
+
+    # Count people who used any of user's codes
+    people_invited = User.objects.filter(
+        used_invite_codes__created_by=user
+    ).distinct().count()
+
+    # Build the invite URL for the first active code
+    invite_url = None
+    primary_code = my_codes.first()
+    if primary_code:
+        invite_url = f"{settings.SITE_URL}/accounts/register/?invite={primary_code.code}"
+
+    context = {
+        'my_codes': my_codes,
+        'primary_code': primary_code,
+        'invite_url': invite_url,
+        'successful_invites': successful_invites,
+        'people_invited': people_invited,
+    }
+
+    return render(request, 'accounts/invite_friends.html', context)
 
 
 @require_http_methods(["GET", "POST"])
@@ -2086,6 +2288,10 @@ def hybrid_landing_view(request):
     """
     user = request.user
 
+    # Redirect to onboarding if not completed (for authenticated users)
+    if user.is_authenticated and hasattr(user, 'has_completed_onboarding') and not user.has_completed_onboarding:
+        return redirect('accounts:onboarding')
+
     try:
         # Initialize context
         context = {}
@@ -2158,6 +2364,22 @@ def hybrid_landing_view(request):
             'page_obj': page_obj,
             'posts': page_obj,
         })
+
+        # Add suggested users if feed is empty (for authenticated users)
+        if user.is_authenticated and len(visible_posts) == 0:
+            excluded_ids = list(user.get_following().values_list('id', flat=True))
+            excluded_ids.append(user.id)
+
+            # Get active users with public profiles to suggest
+            suggested_for_empty_feed = User.objects.filter(
+                is_active=True,
+                is_profile_public=True,
+            ).exclude(
+                id__in=excluded_ids
+            ).order_by('-last_seen', '-date_joined')[:8]
+
+            context['suggested_users_for_feed'] = suggested_for_empty_feed
+            context['feed_is_empty'] = True
 
         return render(request, 'accounts/hybrid_landing.html', context)
     except Exception:

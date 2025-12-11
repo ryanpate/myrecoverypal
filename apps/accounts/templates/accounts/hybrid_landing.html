@@ -595,6 +595,139 @@
         margin-bottom: 1rem;
     }
 
+    /* Suggested Users on Empty Feed */
+    .suggested-users-section {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .suggested-users-section h3 {
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .suggested-users-section h3 i {
+        color: #4db8e8;
+        font-size: 1rem;
+    }
+
+    .suggested-users-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .suggested-user-card {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+    }
+
+    .suggested-user-card:hover {
+        background: #e8f7f0;
+        transform: translateY(-2px);
+    }
+
+    .suggested-user-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .suggested-user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .suggested-user-avatar i {
+        font-size: 1.25rem;
+        color: #999;
+    }
+
+    .suggested-user-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .suggested-user-name {
+        font-weight: 600;
+        color: #333;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .suggested-user-bio {
+        font-size: 0.8rem;
+        color: #666;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .suggested-user-days {
+        font-size: 0.75rem;
+        color: #52b788;
+        font-weight: 500;
+    }
+
+    .btn-follow-small {
+        padding: 0.375rem 0.75rem;
+        background: linear-gradient(135deg, #4db8e8, #52b788);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .btn-follow-small:hover {
+        transform: scale(1.05);
+        box-shadow: 0 2px 8px rgba(77, 184, 232, 0.4);
+    }
+
+    .view-all-link {
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        color: #4db8e8;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .view-all-link:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+        .suggested-users-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
     /* Responsive Design */
     @media (max-width: 1024px) {
         .hybrid-grid {
@@ -1039,8 +1172,47 @@
                     <div class="empty-state">
                         <i class="fas fa-comments"></i>
                         <h3>Welcome to MyRecoveryCircle!</h3>
-                        <p>Be the first to share something with the community.</p>
+                        <p>Your feed is empty. Follow some community members to see their posts here!</p>
                     </div>
+
+                    {% if suggested_users_for_feed %}
+                    <div class="suggested-users-section">
+                        <h3><i class="fas fa-user-plus"></i> People to Follow</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 1rem;">Connect with these community members to fill your feed</p>
+
+                        <div class="suggested-users-grid">
+                            {% for member in suggested_users_for_feed %}
+                            <div class="suggested-user-card" id="suggested-user-{{ member.username }}">
+                                <a href="{% url 'accounts:profile' member.username %}" class="suggested-user-avatar">
+                                    {% if member.avatar %}
+                                        <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
+                                    {% else %}
+                                        <i class="fas fa-user"></i>
+                                    {% endif %}
+                                </a>
+                                <div class="suggested-user-info">
+                                    <a href="{% url 'accounts:profile' member.username %}" style="text-decoration: none;">
+                                        <div class="suggested-user-name">{{ member.get_full_name|default:member.username }}</div>
+                                    </a>
+                                    {% if member.bio %}
+                                        <div class="suggested-user-bio">{{ member.bio|truncatewords:8 }}</div>
+                                    {% endif %}
+                                    {% if member.sobriety_date and member.show_sobriety_date %}
+                                        <div class="suggested-user-days">{{ member.get_days_sober }} days</div>
+                                    {% endif %}
+                                </div>
+                                <button class="btn-follow-small" onclick="followUserFromFeed('{{ member.username }}', this)">
+                                    Follow
+                                </button>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <a href="{% url 'accounts:community' %}" class="view-all-link">
+                            View All Community Members <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -1381,5 +1553,64 @@ document.addEventListener('DOMContentLoaded', function() {
         return cookieValue;
     }
 });
+
+// Follow user from empty feed suggestions
+function followUserFromFeed(username, button) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+        (function() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 'csrftoken'.length + 1) === 'csrftoken=') {
+                        cookieValue = decodeURIComponent(cookie.substring('csrftoken'.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        })();
+
+    // Disable button and show loading state
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    fetch(`/accounts/follow/${username}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'followed' || data.success) {
+            // Update button to show followed state
+            button.innerHTML = '<i class="fas fa-check"></i> Following';
+            button.style.background = '#52b788';
+            button.disabled = true;
+
+            // Optionally fade out the card after a moment
+            setTimeout(() => {
+                const card = document.getElementById(`suggested-user-${username}`);
+                if (card) {
+                    card.style.opacity = '0.6';
+                }
+            }, 1000);
+        } else {
+            button.innerHTML = 'Follow';
+            button.disabled = false;
+            alert(data.error || 'Could not follow user. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        button.innerHTML = 'Follow';
+        button.disabled = false;
+        alert('Could not follow user. Please try again.');
+    });
+}
 </script>
 {% endblock %}

@@ -11,6 +11,8 @@ app_name = 'accounts'
 urlpatterns = [
     # Authentication
     path('register/', views.register_view, name='register'),
+    path('onboarding/', views.onboarding_view, name='onboarding'),
+    path('onboarding/skip/', views.skip_onboarding, name='skip_onboarding'),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='core:index'), name='logout'),
 
@@ -37,6 +39,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('profile/<str:username>/', views.ProfileView.as_view(), name='profile'),
     path('edit-profile/', views.edit_profile_view, name='edit_profile'),
+    path('invite-friends/', views.invite_friends_view, name='invite_friends'),
 
     # Milestones
     path('milestones/', views.MilestoneListView.as_view(), name='milestones'),
