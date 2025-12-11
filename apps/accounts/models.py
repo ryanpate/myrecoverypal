@@ -39,6 +39,10 @@ class User(AbstractUser):
     # Timestamps
     last_seen = models.DateTimeField(null=True, blank=True)
 
+    # Onboarding tracking
+    has_completed_onboarding = models.BooleanField(
+        default=False, help_text="Has the user completed the onboarding wizard?")
+
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
