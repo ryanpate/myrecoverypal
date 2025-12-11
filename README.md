@@ -27,3 +27,4 @@ A Django-based web application designed to support individuals in addiction reco
 ```bash
 git clone <repository-url>
 cd recovery_website# myrecoverypal
+# Trigger deploy Thu Dec 11 09:17:53 CST 2025
