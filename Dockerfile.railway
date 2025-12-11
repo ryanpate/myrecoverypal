@@ -30,17 +30,14 @@ COPY . /app/
 # Create necessary directories
 RUN mkdir -p staticfiles logs media/avatars root_files
 
-# Collect static files
+# Collect static files (doesn't need database)
 RUN python manage.py collectstatic --noinput --clear
 
-# Run migrations
-RUN python manage.py migrate --noinput || echo "Migrations will run on startup"
-
-# Generate sitemap
-RUN python manage.py generate_sitemap --output=sitemap.xml || echo "Sitemap generation completed"
+# Make start script executable
+RUN chmod +x /app/start.sh
 
 # Expose port
 EXPOSE $PORT
 
-# Start gunicorn
-CMD gunicorn recovery_hub.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --access-logfile - --error-logfile -
+# Start with script that runs migrations then gunicorn
+CMD ["/app/start.sh"]
