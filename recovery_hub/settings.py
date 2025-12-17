@@ -144,6 +144,7 @@ INSTAGRAM_HANDLE = "@myrecoverypal"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'apps.accounts.middleware.DatabaseConnectionMiddleware',  # Fix stale DB connections
     'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static files
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
