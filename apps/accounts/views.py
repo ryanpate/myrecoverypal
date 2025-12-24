@@ -1026,6 +1026,8 @@ class RecoveryGroupDetailView(LoginRequiredMixin, DetailView):
         # Get user's membership status
         membership = None
         is_member = False
+        is_admin = False
+        is_moderator = False
         if self.request.user.is_authenticated:
             membership = GroupMembership.objects.filter(
                 user=self.request.user,
@@ -1033,15 +1035,28 @@ class RecoveryGroupDetailView(LoginRequiredMixin, DetailView):
                 status__in=['active', 'moderator', 'admin', 'pending']
             ).first()
             is_member = membership and membership.status in ['active', 'moderator', 'admin']
+            is_admin = membership and membership.status == 'admin'
+            is_moderator = membership and membership.status in ['admin', 'moderator']
 
         context['membership'] = membership
         context['is_member'] = is_member
+        context['is_admin'] = is_admin
+        context['is_moderator'] = is_moderator
 
         # Get group members (limit to 12 for display)
         context['members'] = User.objects.filter(
             group_memberships__group=group,
             group_memberships__status__in=['active', 'moderator', 'admin']
         ).distinct()[:12]
+
+        # Get pending members for admins/moderators
+        if is_moderator:
+            context['pending_members'] = GroupMembership.objects.filter(
+                group=group,
+                status='pending'
+            ).select_related('user').order_by('-created_at')
+        else:
+            context['pending_members'] = []
 
         # Get recent posts if user is a member
         if is_member:
@@ -1280,6 +1295,152 @@ def leave_group(request, group_id):
         'success': True,
         'message': f'You have left {group.name}.'
     })
+
+
+@login_required
+@require_POST
+def approve_member(request, group_id, user_id):
+    """Approve a pending member request"""
+    from .models import RecoveryGroup, GroupMembership
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if current user is admin or moderator
+    admin_membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['admin', 'moderator']
+    ).first()
+
+    if not admin_membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'You do not have permission to approve members.'
+        }, status=403)
+
+    # Get the pending membership
+    pending_membership = GroupMembership.objects.filter(
+        user_id=user_id,
+        group=group,
+        status='pending'
+    ).first()
+
+    if not pending_membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'No pending request found for this user.'
+        }, status=404)
+
+    # Approve the membership
+    pending_membership.status = 'active'
+    pending_membership.joined_date = timezone.now().date()
+    pending_membership.save()
+
+    return JsonResponse({
+        'success': True,
+        'message': f'{pending_membership.user.username} has been approved to join the group.'
+    })
+
+
+@login_required
+@require_POST
+def reject_member(request, group_id, user_id):
+    """Reject a pending member request"""
+    from .models import RecoveryGroup, GroupMembership
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if current user is admin or moderator
+    admin_membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['admin', 'moderator']
+    ).first()
+
+    if not admin_membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'You do not have permission to reject members.'
+        }, status=403)
+
+    # Get the pending membership
+    pending_membership = GroupMembership.objects.filter(
+        user_id=user_id,
+        group=group,
+        status='pending'
+    ).first()
+
+    if not pending_membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'No pending request found for this user.'
+        }, status=404)
+
+    # Delete the membership request
+    username = pending_membership.user.username
+    pending_membership.delete()
+
+    return JsonResponse({
+        'success': True,
+        'message': f'{username}\'s request has been rejected.'
+    })
+
+
+@login_required
+def edit_group(request, group_id):
+    """Edit group settings - only for group admin"""
+    from .models import RecoveryGroup, GroupMembership
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if current user is admin
+    admin_membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status='admin'
+    ).first()
+
+    if not admin_membership:
+        messages.error(request, 'You do not have permission to edit this group.')
+        return redirect('accounts:group_detail', pk=group_id)
+
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        description = request.POST.get('description', '').strip()
+        group_type = request.POST.get('group_type', '')
+        privacy_level = request.POST.get('privacy_level', 'public')
+        location = request.POST.get('location', '').strip()
+        meeting_schedule = request.POST.get('meeting_schedule', '').strip()
+        max_members = request.POST.get('max_members', '')
+        group_color = request.POST.get('group_color', '#52b788')
+
+        # Check premium for private/secret groups
+        if privacy_level in ['private', 'secret'] and group.privacy_level == 'public':
+            if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
+                messages.warning(request, 'Private groups require a Premium subscription.')
+                return redirect('accounts:edit_group', group_id=group_id)
+
+        if name and description and group_type:
+            group.name = name
+            group.description = description
+            group.group_type = group_type
+            group.privacy_level = privacy_level
+            group.location = location
+            group.meeting_schedule = meeting_schedule
+            group.max_members = int(max_members) if max_members else None
+            group.group_color = group_color
+            group.save()
+
+            messages.success(request, 'Group settings updated successfully!')
+            return redirect('accounts:group_detail', pk=group_id)
+        else:
+            messages.error(request, 'Please fill in all required fields.')
+
+    context = {
+        'group': group,
+        'group_types': RecoveryGroup.GROUP_TYPES,
+    }
+    return render(request, 'accounts/groups/edit_group.html', context)
 
 
 class ProfileView(DetailView):
