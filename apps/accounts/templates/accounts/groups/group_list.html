@@ -417,8 +417,7 @@
                     </div>
                     <div class="flex-grow-1">
                         <strong>{{ group.name }}</strong>
-                        <small class="text-muted d-block">{{
-                            group.active_member_count|default:group.member_count|default:0 }} members</small>
+                        <small class="text-muted d-block">{{ group.member_count }} members</small>
                     </div>
                 </div>
             </div>
@@ -533,9 +532,7 @@
 
                 <div class="group-meta">
                     <div class="group-meta-item">
-                        <i class="fas fa-users"></i> {{ group.active_member_count|default:group.member_count|default:0
-                        }} member{{
-                        group.active_member_count|default:group.member_count|default:0|pluralize }}
+                        <i class="fas fa-users"></i> {{ group.member_count }} member{{ group.member_count|pluralize }}
                     </div>
                     {% if group.location %}
                     <div class="group-meta-item">
