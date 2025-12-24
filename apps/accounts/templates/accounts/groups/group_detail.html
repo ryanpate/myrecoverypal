@@ -406,7 +406,7 @@
                     <div style="font-size: 3rem; margin-bottom: 1rem;"><i class="fas fa-comments"></i></div>
                     <h5>No posts yet</h5>
                     <p>Be the first to start a discussion in this group!</p>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                    <button class="btn btn-primary" onclick="document.getElementById('createPostForm').scrollIntoView({behavior: 'smooth'}); document.getElementById('post_title').focus();">
                         <i class="fas fa-plus"></i> Create Post
                     </button>
                 </div>
