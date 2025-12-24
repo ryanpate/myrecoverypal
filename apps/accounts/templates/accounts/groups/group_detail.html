@@ -252,9 +252,9 @@
                     <i class="fas fa-clock"></i> Pending Approval
                 </button>
                 {% elif membership.status == 'admin' %}
-                <button class="join-btn secondary">
-                    <i class="fas fa-crown"></i> Administrator
-                </button>
+                <a href="{% url 'accounts:edit_group' group_id=group.id %}" class="join-btn secondary">
+                    <i class="fas fa-cog"></i> Edit Settings
+                </a>
                 {% elif membership.status == 'moderator' %}
                 <button class="join-btn secondary">
                     <i class="fas fa-shield-alt"></i> Moderator
@@ -313,11 +313,11 @@
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">{{ recent_posts|length|default:0 }}</div>
-                        <div>Recent Posts</div>
+                        <div>Posts</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">{{ group.created_at|timesince|truncatewords:1 }}</div>
-                        <div>Age</div>
+                        <div class="stat-number">{{ group.created_at|date:"M Y" }}</div>
+                        <div>Created</div>
                     </div>
                 </div>
             </div>
@@ -460,6 +460,42 @@
                 </div>
             </div>
 
+            <!-- Pending Members (Admin/Moderator only) -->
+            {% if is_moderator and pending_members %}
+            <div class="info-card" style="border: 2px solid #ffc107;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5><i class="fas fa-user-clock text-warning"></i> Pending Requests</h5>
+                    <span class="badge bg-warning text-dark">{{ pending_members|length }}</span>
+                </div>
+
+                {% for pending in pending_members %}
+                <div class="d-flex align-items-center justify-content-between mb-3 p-2" style="background: #f8f9fa; border-radius: 8px;">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="member-avatar" style="width: 40px; height: 40px; font-size: 1rem;">
+                            {% if pending.user.avatar %}
+                            <img src="{{ pending.user.avatar.url }}" alt="{{ pending.user.username }}">
+                            {% else %}
+                            <i class="fas fa-user"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <strong>{{ pending.user.get_full_name|default:pending.user.username }}</strong>
+                            <small class="text-muted d-block">Requested {{ pending.created_at|timesince }} ago</small>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-1">
+                        <button onclick="approveMember({{ group.id }}, {{ pending.user.id }})" class="btn btn-sm btn-success" title="Approve">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button onclick="rejectMember({{ group.id }}, {{ pending.user.id }})" class="btn btn-sm btn-danger" title="Reject">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <!-- Group Guidelines -->
             {% if group.rules_and_guidelines %}
             <div class="info-card">
@@ -515,6 +551,56 @@
             if (data.success) {
                 showToast(data.message || 'You have left the group.', 'success');
                 setTimeout(() => window.location.href = '/accounts/groups/', 1500);
+            } else {
+                showToast(data.message || 'Something went wrong', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Network error', 'error');
+        }
+    }
+
+    async function approveMember(groupId, userId) {
+        try {
+            const response = await fetch(`/accounts/groups/${groupId}/approve/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showToast(data.message || 'Member approved!', 'success');
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                showToast(data.message || 'Something went wrong', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Network error', 'error');
+        }
+    }
+
+    async function rejectMember(groupId, userId) {
+        if (!confirm('Are you sure you want to reject this request?')) return;
+
+        try {
+            const response = await fetch(`/accounts/groups/${groupId}/reject/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showToast(data.message || 'Request rejected.', 'success');
+                setTimeout(() => window.location.reload(), 1500);
             } else {
                 showToast(data.message || 'Something went wrong', 'error');
             }

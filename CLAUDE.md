@@ -352,24 +352,28 @@ The groups system had several critical bugs that have been fixed:
 3. **create_group()** - Was not extracting `group_type` from POST data (required field)
 4. **No group posting** - Added `create_group_post()` view and URL
 5. **No leave group** - Added `leave_group()` view and URL
+6. **Approve pending members** - Added approve/reject views with UI for admins/moderators
+7. **Edit group settings** - Added edit_group view and template for group admins
+8. **Age display bug** - Fixed "21" showing without context, now shows "Dec 2024" format
 
 ### Group URLs
 ```
-/accounts/groups/                    # List all groups
-/accounts/groups/create/             # Create new group
-/accounts/groups/<id>/               # Group detail
-/accounts/groups/my-groups/          # User's joined groups
-/accounts/groups/<id>/join/          # Join group (AJAX)
-/accounts/groups/<id>/leave/         # Leave group (AJAX)
-/accounts/groups/<id>/post/          # Create post in group (AJAX)
+/accounts/groups/                           # List all groups
+/accounts/groups/create/                    # Create new group
+/accounts/groups/<id>/                      # Group detail
+/accounts/groups/my-groups/                 # User's joined groups
+/accounts/groups/<id>/join/                 # Join group (AJAX)
+/accounts/groups/<id>/leave/                # Leave group (AJAX)
+/accounts/groups/<id>/post/                 # Create post in group (AJAX)
+/accounts/groups/<id>/edit/                 # Edit group settings (admin only)
+/accounts/groups/<id>/approve/<user_id>/    # Approve pending member (AJAX)
+/accounts/groups/<id>/reject/<user_id>/     # Reject pending member (AJAX)
 ```
 
 ### Remaining Group TODOs
 
 | Feature | Priority | Notes |
 |---------|----------|-------|
-| Approve pending members | HIGH | Admin/moderators need UI to approve private group requests |
-| Edit group settings | HIGH | Creator should be able to edit group after creation |
 | Delete/archive groups | MEDIUM | Creator should be able to archive or delete groups |
 | Transfer ownership | MEDIUM | Allow admin to transfer ownership before leaving |
 | Group notifications | MEDIUM | Notify when someone posts, comments, joins |
@@ -400,6 +404,7 @@ GroupPost:
 
 ## Changelog
 
+- **2025-12-24:** Added approve/reject pending members, edit group settings, fixed age display bug
 - **2025-12-24:** Fixed groups system bugs (my_groups context, group detail context, create_group missing group_type), added group posting and leave functionality
 - **2025-12-11:** Streamlined for social-first focus, added beta growth priorities
 - **2025-11-20:** Initial comprehensive documentation
