@@ -1019,14 +1019,53 @@ class RecoveryGroupDetailView(LoginRequiredMixin, DetailView):
     template_name = 'accounts/groups/group_detail.html'
     context_object_name = 'group'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        group = self.get_object()
+
+        # Get user's membership status
+        membership = None
+        is_member = False
+        if self.request.user.is_authenticated:
+            membership = GroupMembership.objects.filter(
+                user=self.request.user,
+                group=group,
+                status__in=['active', 'moderator', 'admin', 'pending']
+            ).first()
+            is_member = membership and membership.status in ['active', 'moderator', 'admin']
+
+        context['membership'] = membership
+        context['is_member'] = is_member
+
+        # Get group members (limit to 12 for display)
+        context['members'] = User.objects.filter(
+            group_memberships__group=group,
+            group_memberships__status__in=['active', 'moderator', 'admin']
+        ).distinct()[:12]
+
+        # Get recent posts if user is a member
+        if is_member:
+            context['recent_posts'] = group.posts.select_related('author').order_by(
+                '-is_pinned', '-created_at'
+            )[:5]
+        else:
+            context['recent_posts'] = []
+
+        return context
+
 
 @login_required
 def create_group(request):
     """Create a new recovery group"""
     if request.method == 'POST':
-        name = request.POST.get('name', '')
-        description = request.POST.get('description', '')
+        name = request.POST.get('name', '').strip()
+        description = request.POST.get('description', '').strip()
+        group_type = request.POST.get('group_type', '')
         privacy_level = request.POST.get('privacy_level', 'public')
+        location = request.POST.get('location', '').strip()
+        meeting_schedule = request.POST.get('meeting_schedule', '').strip()
+        max_members = request.POST.get('max_members', '')
+        group_color = request.POST.get('group_color', '#52b788')
 
         # Check if user is trying to create a private/secret group
         if privacy_level in ['private', 'secret']:
@@ -1037,24 +1076,50 @@ def create_group(request):
                 )
                 return redirect('accounts:pricing')
 
-        if name and description:
+        if name and description and group_type:
             group = RecoveryGroup.objects.create(
                 name=name,
                 description=description,
+                group_type=group_type,
                 privacy_level=privacy_level,
+                location=location,
+                meeting_schedule=meeting_schedule,
+                max_members=int(max_members) if max_members else None,
+                group_color=group_color,
                 creator=request.user
             )
-            messages.success(request, f'Group "{name}" created successfully!')
-            return redirect('accounts:groups_list')
 
-    return render(request, 'accounts/groups/create_group.html')
+            # Auto-add creator as admin member
+            GroupMembership.objects.create(
+                user=request.user,
+                group=group,
+                status='admin',
+                joined_date=timezone.now().date()
+            )
+
+            messages.success(request, f'Group "{name}" created successfully!')
+            return redirect('accounts:group_detail', pk=group.id)
+        else:
+            messages.error(request, 'Please fill in all required fields (name, description, and group type).')
+
+    context = {
+        'group_types': RecoveryGroup.GROUP_TYPES,
+    }
+    return render(request, 'accounts/groups/create_group.html', context)
 
 
 @login_required
 def my_groups(request):
     """User's joined groups"""
-    groups = request.user.get_joined_groups()
-    return render(request, 'accounts/groups/my_groups.html', {'groups': groups})
+    from .models import GroupMembership
+
+    # Get memberships (not groups) - template expects membership objects with .group attribute
+    memberships = GroupMembership.objects.filter(
+        user=request.user,
+        status__in=['active', 'moderator', 'admin']
+    ).select_related('group', 'group__creator').order_by('-last_active', '-joined_date')
+
+    return render(request, 'accounts/groups/my_groups.html', {'memberships': memberships})
 
 
 @login_required
@@ -1126,6 +1191,95 @@ def join_group(request, group_id):
             'success': False,
             'message': f'An error occurred: {str(e)}'
         }, status=400)
+
+
+@login_required
+@require_POST
+def create_group_post(request, group_id):
+    """Create a post within a recovery group"""
+    from .models import RecoveryGroup, GroupMembership, GroupPost
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if user is a member
+    membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['active', 'moderator', 'admin']
+    ).first()
+
+    if not membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'You must be a member of this group to post.'
+        }, status=403)
+
+    post_type = request.POST.get('post_type', 'discussion')
+    title = request.POST.get('title', '').strip()
+    content = request.POST.get('content', '').strip()
+    is_anonymous = request.POST.get('is_anonymous') == 'on'
+
+    if not title or not content:
+        return JsonResponse({
+            'success': False,
+            'message': 'Title and content are required.'
+        }, status=400)
+
+    post = GroupPost.objects.create(
+        author=request.user,
+        group=group,
+        post_type=post_type,
+        title=title,
+        content=content,
+        is_anonymous=is_anonymous
+    )
+
+    # Update membership last_active
+    membership.last_active = timezone.now()
+    membership.save(update_fields=['last_active'])
+
+    return JsonResponse({
+        'success': True,
+        'message': 'Post created successfully!',
+        'post_id': post.id
+    })
+
+
+@login_required
+@require_POST
+def leave_group(request, group_id):
+    """Leave a recovery group"""
+    from .models import RecoveryGroup, GroupMembership
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['active', 'moderator']
+    ).first()
+
+    if not membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'You are not a member of this group.'
+        }, status=400)
+
+    # Prevent admin from leaving (they must transfer ownership first)
+    if membership.status == 'admin':
+        return JsonResponse({
+            'success': False,
+            'message': 'As the group administrator, you cannot leave. Transfer ownership first.'
+        }, status=400)
+
+    membership.status = 'left'
+    membership.left_date = timezone.now().date()
+    membership.save()
+
+    return JsonResponse({
+        'success': True,
+        'message': f'You have left {group.name}.'
+    })
 
 
 class ProfileView(DetailView):
