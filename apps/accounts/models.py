@@ -795,6 +795,35 @@ class GroupPost(models.Model):
     def likes_count(self):
         return self.likes.count()
 
+    @property
+    def comments_count(self):
+        return self.comments.count()
+
+
+class GroupPostComment(models.Model):
+    """
+    Comments on group posts
+    """
+    post = models.ForeignKey(
+        GroupPost, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='group_post_comments')
+    content = models.TextField()
+    is_anonymous = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['created_at']
+        indexes = [
+            models.Index(fields=['post', 'created_at']),
+        ]
+
+    def __str__(self):
+        return f"Comment by {self.author.username} on {self.post.title}"
+
+
 class GroupChallenge(models.Model):
     """
     Group challenges for recovery milestones and wellness goals
@@ -1262,6 +1291,9 @@ class Notification(models.Model):
         ('challenge_pal', 'Challenge Pal Request'),
         ('milestone', 'Milestone Achievement'),
         ('group_invite', 'Group Invitation'),
+        ('group_post', 'New Group Post'),
+        ('group_comment', 'New Group Comment'),
+        ('group_join', 'New Group Member'),
         ('comment', 'New Comment'),
         ('like', 'New Like'),
     )

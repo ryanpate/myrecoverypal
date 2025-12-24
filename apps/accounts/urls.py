@@ -95,6 +95,9 @@ urlpatterns = [
     path('groups/<int:group_id>/edit/', views.edit_group, name='edit_group'),
     path('groups/<int:group_id>/approve/<int:user_id>/', views.approve_member, name='approve_member'),
     path('groups/<int:group_id>/reject/<int:user_id>/', views.reject_member, name='reject_member'),
+    path('groups/<int:group_id>/post/<int:post_id>/comment/', views.comment_group_post, name='comment_group_post'),
+    path('groups/<int:group_id>/transfer/', views.transfer_group_ownership, name='transfer_group_ownership'),
+    path('groups/<int:group_id>/members-for-transfer/', views.get_group_members_for_transfer, name='get_group_members_for_transfer'),
 
     # Challenge System URLs
     path('challenges/', views.challenges_home, name='challenges_home'),

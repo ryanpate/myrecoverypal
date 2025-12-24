@@ -234,6 +234,21 @@
                 </div>
             </form>
 
+            <!-- Transfer Ownership -->
+            <div class="form-card" style="border: 2px solid #ffc107; background: #fffbeb;">
+                <h5 class="text-warning"><i class="fas fa-exchange-alt"></i> Transfer Ownership</h5>
+                <p class="text-muted mb-3">Transfer this group to another member. You will become a regular member.</p>
+                <div class="mb-3">
+                    <label for="new_owner" class="form-label">Select New Owner</label>
+                    <select class="form-select" id="new_owner">
+                        <option value="">-- Select a member --</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-warning" id="transferOwnershipBtn" disabled>
+                    <i class="fas fa-exchange-alt"></i> Transfer Ownership
+                </button>
+            </div>
+
             <!-- Danger Zone -->
             <div class="danger-zone">
                 <h5 class="text-danger"><i class="fas fa-exclamation-triangle"></i> Danger Zone</h5>
@@ -279,4 +294,74 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    const newOwnerSelect = document.getElementById('new_owner');
+    const transferBtn = document.getElementById('transferOwnershipBtn');
+
+    // Load members for transfer
+    try {
+        const response = await fetch('/accounts/groups/{{ group.id }}/members-for-transfer/');
+        const data = await response.json();
+
+        if (data.success && data.members.length > 0) {
+            data.members.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.id;
+                option.textContent = `${member.name} (@${member.username})${member.status === 'moderator' ? ' - Moderator' : ''}`;
+                newOwnerSelect.appendChild(option);
+            });
+        } else {
+            newOwnerSelect.innerHTML = '<option value="">No eligible members</option>';
+        }
+    } catch (error) {
+        console.error('Error loading members:', error);
+        newOwnerSelect.innerHTML = '<option value="">Error loading members</option>';
+    }
+
+    // Enable/disable transfer button based on selection
+    newOwnerSelect.addEventListener('change', function() {
+        transferBtn.disabled = !this.value;
+    });
+
+    // Handle transfer
+    transferBtn.addEventListener('click', async function() {
+        const newOwnerId = newOwnerSelect.value;
+        if (!newOwnerId) return;
+
+        const selectedOption = newOwnerSelect.options[newOwnerSelect.selectedIndex];
+        if (!confirm(`Are you sure you want to transfer ownership to ${selectedOption.textContent}? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('new_owner_id', newOwnerId);
+
+            const response = await fetch('/accounts/groups/{{ group.id }}/transfer/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert(data.message);
+                window.location.href = '/accounts/groups/{{ group.id }}/';
+            } else {
+                alert(data.message || 'Something went wrong');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Network error occurred');
+        }
+    });
+});
+</script>
 {% endblock %}

@@ -327,28 +327,67 @@
             <div class="info-card">
                 <h3>Recent Discussions</h3>
                 {% for post in recent_posts %}
-                <div class="post-item">
+                <div class="post-item" style="border-bottom: 1px solid #eee; padding-bottom: 1rem; margin-bottom: 1rem;">
                     <div class="post-header">
                         <div class="post-avatar">
-                            {% if post.author.avatar %}
+                            {% if post.is_anonymous %}
+                            <i class="fas fa-user-secret"></i>
+                            {% elif post.author.avatar %}
                             <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username }}">
                             {% else %}
                             <i class="fas fa-user"></i>
                             {% endif %}
                         </div>
                         <div>
-                            <strong>{{ post.author.get_full_name|default:post.author.username }}</strong>
+                            <strong>{% if post.is_anonymous %}Anonymous{% else %}{{ post.author.get_full_name|default:post.author.username }}{% endif %}</strong>
                             <small class="text-muted d-block">{{ post.created_at|timesince }} ago</small>
                         </div>
                         <div class="ms-auto">
                             <span class="badge bg-secondary">{{ post.get_post_type_display }}</span>
+                            {% if post.is_pinned %}<span class="badge bg-warning text-dark"><i class="fas fa-thumbtack"></i></span>{% endif %}
                         </div>
                     </div>
                     <h5>{{ post.title }}</h5>
-                    <p>{{ post.content|truncatewords:20 }}</p>
-                    <div class="d-flex gap-3 text-muted">
+                    <p>{{ post.content }}</p>
+                    <div class="d-flex gap-3 text-muted mb-2">
                         <span><i class="fas fa-thumbs-up"></i> {{ post.likes_count }}</span>
-                        <span><i class="fas fa-comment"></i> Comments</span>
+                        <span><i class="fas fa-comment"></i> {{ post.comments_count }} comment{{ post.comments_count|pluralize }}</span>
+                    </div>
+
+                    <!-- Comments Section -->
+                    {% if post.comments.all %}
+                    <div class="comments-section" style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-top: 0.5rem;">
+                        <small class="text-muted d-block mb-2"><strong>Comments:</strong></small>
+                        {% for comment in post.comments.all|slice:":3" %}
+                        <div class="comment-item d-flex gap-2 mb-2" style="font-size: 0.9rem;">
+                            <div class="comment-avatar" style="width: 24px; height: 24px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; font-size: 0.7rem;">
+                                {% if comment.is_anonymous %}
+                                <i class="fas fa-user-secret"></i>
+                                {% elif comment.author.avatar %}
+                                <img src="{{ comment.author.avatar.url }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                                {% else %}
+                                <i class="fas fa-user"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <strong>{% if comment.is_anonymous %}Anonymous{% else %}{{ comment.author.get_full_name|default:comment.author.username }}{% endif %}</strong>
+                                <span class="text-muted">{{ comment.created_at|timesince }} ago</span>
+                                <p class="mb-0">{{ comment.content }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% if post.comments.count > 3 %}
+                        <small class="text-muted">+ {{ post.comments.count|add:"-3" }} more comment{{ post.comments.count|add:"-3"|pluralize }}</small>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Add Comment Form -->
+                    <div class="add-comment mt-2">
+                        <form class="comment-form d-flex gap-2" data-post-id="{{ post.id }}">
+                            <input type="text" class="form-control form-control-sm" name="content" placeholder="Write a comment..." required>
+                            <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-paper-plane"></i></button>
+                        </form>
                     </div>
                 </div>
                 {% endfor %}
@@ -671,6 +710,44 @@
                 }
             });
         }
+
+        // Comment form handlers
+        document.querySelectorAll('.comment-form').forEach(form => {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const postId = this.dataset.postId;
+                const input = this.querySelector('input[name="content"]');
+                const content = input.value.trim();
+
+                if (!content) return;
+
+                try {
+                    const formData = new FormData();
+                    formData.append('content', content);
+
+                    const response = await fetch(`/accounts/groups/{{ group.id }}/post/${postId}/comment/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showToast(data.message || 'Comment added!', 'success');
+                        input.value = '';
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        showToast(data.message || 'Something went wrong', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Network error', 'error');
+                }
+            });
+        });
     });
 </script>
 {% endblock %}

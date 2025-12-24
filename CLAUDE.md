@@ -368,6 +368,9 @@ The groups system had several critical bugs that have been fixed:
 /accounts/groups/<id>/edit/                 # Edit group settings (admin only)
 /accounts/groups/<id>/approve/<user_id>/    # Approve pending member (AJAX)
 /accounts/groups/<id>/reject/<user_id>/     # Reject pending member (AJAX)
+/accounts/groups/<id>/post/<post_id>/comment/  # Add comment to post (AJAX)
+/accounts/groups/<id>/transfer/              # Transfer ownership (AJAX)
+/accounts/groups/<id>/members-for-transfer/  # Get members for transfer (AJAX)
 ```
 
 ### Remaining Group TODOs
@@ -375,13 +378,9 @@ The groups system had several critical bugs that have been fixed:
 | Feature | Priority | Notes |
 |---------|----------|-------|
 | Delete/archive groups | MEDIUM | Creator should be able to archive or delete groups |
-| Transfer ownership | MEDIUM | Allow admin to transfer ownership before leaving |
-| Group notifications | MEDIUM | Notify when someone posts, comments, joins |
-| Comment on group posts | MEDIUM | GroupPost model has comments but no view |
 | Like group posts | LOW | Model supports it, needs AJAX endpoint |
 | Pin posts | LOW | Admin/moderator can pin important posts |
 | Group invite links | LOW | Generate shareable invite links for secret groups |
-| Group activity feed | LOW | Show recent activity (new members, posts) |
 
 ### Group Models Reference
 ```python
@@ -398,12 +397,23 @@ GroupMembership:
 GroupPost:
     - post_type: discussion, milestone, resource, question, support, event
     - is_anonymous, is_pinned, likes
+
+GroupPostComment:
+    - post, author, content, is_anonymous
+    - created_at, updated_at
+
+Notification (group types):
+    - group_invite: Group invitation
+    - group_post: New post in group
+    - group_comment: Comment on post
+    - group_join: New member joined
 ```
 
 ---
 
 ## Changelog
 
+- **2025-12-24:** Added group notifications, comments on posts, transfer ownership feature
 - **2025-12-24:** Added approve/reject pending members, edit group settings, fixed age display bug
 - **2025-12-24:** Fixed groups system bugs (my_groups context, group detail context, create_group missing group_type), added group posting and leave functionality
 - **2025-12-11:** Streamlined for social-first focus, added beta growth priorities
