@@ -342,7 +342,64 @@ static/                   # CSS, JS, images
 
 ---
 
+## Recovery Groups System
+
+### Fixed Issues (2025-12-24)
+The groups system had several critical bugs that have been fixed:
+
+1. **my_groups() view** - Was passing `groups` instead of `memberships`, causing template to display incorrectly
+2. **RecoveryGroupDetailView** - Was missing `get_context_data()`, so templates didn't receive `membership`, `is_member`, `members`, or `recent_posts`
+3. **create_group()** - Was not extracting `group_type` from POST data (required field)
+4. **No group posting** - Added `create_group_post()` view and URL
+5. **No leave group** - Added `leave_group()` view and URL
+
+### Group URLs
+```
+/accounts/groups/                    # List all groups
+/accounts/groups/create/             # Create new group
+/accounts/groups/<id>/               # Group detail
+/accounts/groups/my-groups/          # User's joined groups
+/accounts/groups/<id>/join/          # Join group (AJAX)
+/accounts/groups/<id>/leave/         # Leave group (AJAX)
+/accounts/groups/<id>/post/          # Create post in group (AJAX)
+```
+
+### Remaining Group TODOs
+
+| Feature | Priority | Notes |
+|---------|----------|-------|
+| Approve pending members | HIGH | Admin/moderators need UI to approve private group requests |
+| Edit group settings | HIGH | Creator should be able to edit group after creation |
+| Delete/archive groups | MEDIUM | Creator should be able to archive or delete groups |
+| Transfer ownership | MEDIUM | Allow admin to transfer ownership before leaving |
+| Group notifications | MEDIUM | Notify when someone posts, comments, joins |
+| Comment on group posts | MEDIUM | GroupPost model has comments but no view |
+| Like group posts | LOW | Model supports it, needs AJAX endpoint |
+| Pin posts | LOW | Admin/moderator can pin important posts |
+| Group invite links | LOW | Generate shareable invite links for secret groups |
+| Group activity feed | LOW | Show recent activity (new members, posts) |
+
+### Group Models Reference
+```python
+RecoveryGroup:
+    - group_type: 8 types (addiction_type, location, recovery_stage, interest, age_group, gender, family, professional)
+    - privacy_level: public, private, secret
+    - creator, moderators, max_members
+    - group_image, group_color
+
+GroupMembership:
+    - status: pending, active, moderator, admin, banned, left
+    - joined_date, left_date, last_active
+
+GroupPost:
+    - post_type: discussion, milestone, resource, question, support, event
+    - is_anonymous, is_pinned, likes
+```
+
+---
+
 ## Changelog
 
+- **2025-12-24:** Fixed groups system bugs (my_groups context, group detail context, create_group missing group_type), added group posting and leave functionality
 - **2025-12-11:** Streamlined for social-first focus, added beta growth priorities
 - **2025-11-20:** Initial comprehensive documentation

@@ -360,8 +360,46 @@
                     <div style="font-size: 3rem; margin-bottom: 1rem;"><i class="fas fa-comments"></i></div>
                     <h5>No posts yet</h5>
                     <p>Be the first to start a discussion in this group!</p>
-                    <button class="btn btn-primary">Create Post</button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                        <i class="fas fa-plus"></i> Create Post
+                    </button>
                 </div>
+            </div>
+            {% endif %}
+
+            <!-- Create Post Form for Members -->
+            {% if is_member %}
+            <div class="info-card">
+                <h3><i class="fas fa-edit"></i> Start a Discussion</h3>
+                <form id="createPostForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="post_type" class="form-label">Post Type</label>
+                        <select class="form-select" id="post_type" name="post_type">
+                            <option value="discussion">Discussion</option>
+                            <option value="question">Question</option>
+                            <option value="support">Support Request</option>
+                            <option value="milestone">Milestone Share</option>
+                            <option value="resource">Resource Share</option>
+                            <option value="event">Event/Meeting</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="post_title" class="form-label">Title *</label>
+                        <input type="text" class="form-control" id="post_title" name="title" placeholder="Give your post a title..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="post_content" class="form-label">Content *</label>
+                        <textarea class="form-control" id="post_content" name="content" rows="4" placeholder="Share your thoughts with the group..." required></textarea>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="is_anonymous" name="is_anonymous">
+                        <label class="form-check-label" for="is_anonymous">Post anonymously</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Share with Group
+                    </button>
+                </form>
             </div>
             {% endif %}
         </div>
@@ -449,14 +487,36 @@
             const data = await response.json();
 
             if (data.success) {
-                showToast(`Successfully ${data.action} group!`, 'success');
-
-                // Reload page after delay
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
+                showToast(data.message || 'Successfully joined group!', 'success');
+                setTimeout(() => window.location.reload(), 1500);
             } else {
-                showToast(data.error || 'Something went wrong', 'error');
+                showToast(data.message || 'Something went wrong', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Network error', 'error');
+        }
+    }
+
+    async function leaveGroup(groupId) {
+        if (!confirm('Are you sure you want to leave this group?')) return;
+
+        try {
+            const response = await fetch(`/accounts/groups/${groupId}/leave/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showToast(data.message || 'You have left the group.', 'success');
+                setTimeout(() => window.location.href = '/accounts/groups/', 1500);
+            } else {
+                showToast(data.message || 'Something went wrong', 'error');
             }
         } catch (error) {
             console.error('Error:', error);
@@ -482,14 +542,48 @@
         }, 3000);
     }
 
-    // Add CSRF token
+    // Handle post form submission
     document.addEventListener('DOMContentLoaded', function () {
+        // Add CSRF token
         if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
             const token = document.createElement('input');
             token.type = 'hidden';
             token.name = 'csrfmiddlewaretoken';
             token.value = '{{ csrf_token }}';
             document.body.appendChild(token);
+        }
+
+        // Post form handler
+        const postForm = document.getElementById('createPostForm');
+        if (postForm) {
+            postForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(postForm);
+
+                try {
+                    const response = await fetch('/accounts/groups/{{ group.id }}/post/', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showToast(data.message || 'Post created successfully!', 'success');
+                        postForm.reset();
+                        setTimeout(() => window.location.reload(), 1500);
+                    } else {
+                        showToast(data.message || 'Something went wrong', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Network error', 'error');
+                }
+            });
         }
     });
 </script>

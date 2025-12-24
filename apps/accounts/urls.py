@@ -90,6 +90,8 @@ urlpatterns = [
     path('groups/<int:pk>/', views.RecoveryGroupDetailView.as_view(), name='group_detail'),
     path('groups/my-groups/', views.my_groups, name='my_groups'),
     path('groups/<int:group_id>/join/', views.join_group, name='join_group'),
+    path('groups/<int:group_id>/leave/', views.leave_group, name='leave_group'),
+    path('groups/<int:group_id>/post/', views.create_group_post, name='create_group_post'),
 
     # Challenge System URLs
     path('challenges/', views.challenges_home, name='challenges_home'),
