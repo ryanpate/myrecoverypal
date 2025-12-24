@@ -1687,6 +1687,216 @@ def get_group_members_for_transfer(request, group_id):
     return JsonResponse({'success': True, 'members': member_list})
 
 
+@login_required
+@require_POST
+def archive_group(request, group_id):
+    """Archive a group (soft delete) - only for group admin"""
+    from .models import RecoveryGroup, GroupMembership
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if current user is admin
+    admin_membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status='admin'
+    ).first()
+
+    if not admin_membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'Only the group admin can archive this group.'
+        }, status=403)
+
+    # Archive the group (set is_active to False)
+    group.is_active = False
+    group.save()
+
+    # Notify all members that the group has been archived
+    notify_group_members(
+        group=group,
+        sender=request.user,
+        notification_type='group_invite',
+        title=f'{group.name} has been archived',
+        message=f'The group "{group.name}" has been archived by its administrator.',
+        link='/accounts/groups/',
+        exclude_user=request.user
+    )
+
+    return JsonResponse({
+        'success': True,
+        'message': f'Group "{group.name}" has been archived successfully.'
+    })
+
+
+@login_required
+@require_POST
+def like_group_post(request, group_id, post_id):
+    """Like or unlike a group post"""
+    from .models import RecoveryGroup, GroupMembership, GroupPost
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+    post = get_object_or_404(GroupPost, id=post_id, group=group)
+
+    # Check if user is a member
+    membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['active', 'moderator', 'admin']
+    ).first()
+
+    if not membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'You must be a member of this group to like posts.'
+        }, status=403)
+
+    # Toggle like
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+        liked = False
+        message = 'Post unliked'
+    else:
+        post.likes.add(request.user)
+        liked = True
+        message = 'Post liked'
+
+        # Notify post author (if not liking own post and not anonymous)
+        if post.author != request.user and not post.is_anonymous:
+            from .models import Notification
+            Notification.objects.create(
+                recipient=post.author,
+                sender=request.user,
+                notification_type='like',
+                title='Someone liked your post',
+                message=f'{request.user.get_full_name() or request.user.username} liked your post "{post.title}" in {group.name}',
+                link=f'/accounts/groups/{group.id}/'
+            )
+
+    return JsonResponse({
+        'success': True,
+        'message': message,
+        'liked': liked,
+        'likes_count': post.likes.count()
+    })
+
+
+@login_required
+@require_POST
+def pin_group_post(request, group_id, post_id):
+    """Pin or unpin a group post - admin/moderator only"""
+    from .models import RecoveryGroup, GroupMembership, GroupPost
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+    post = get_object_or_404(GroupPost, id=post_id, group=group)
+
+    # Check if user is admin or moderator
+    membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['admin', 'moderator']
+    ).first()
+
+    if not membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'Only admins and moderators can pin posts.'
+        }, status=403)
+
+    # Toggle pin
+    post.is_pinned = not post.is_pinned
+    post.save()
+
+    return JsonResponse({
+        'success': True,
+        'message': f'Post {"pinned" if post.is_pinned else "unpinned"} successfully.',
+        'is_pinned': post.is_pinned
+    })
+
+
+@login_required
+def generate_group_invite(request, group_id):
+    """Generate or get invite link for a group"""
+    from .models import RecoveryGroup, GroupMembership
+    import hashlib
+    import time
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if user is admin or moderator
+    membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['admin', 'moderator']
+    ).first()
+
+    if not membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'Only admins and moderators can generate invite links.'
+        }, status=403)
+
+    # Generate a simple invite code based on group id and a secret
+    # In production, you'd want to store these in a model with expiry
+    invite_code = hashlib.md5(f"{group.id}-{group.created_at}".encode()).hexdigest()[:12]
+
+    # Build the invite URL
+    invite_url = request.build_absolute_uri(f'/accounts/groups/{group.id}/join-invite/{invite_code}/')
+
+    return JsonResponse({
+        'success': True,
+        'invite_url': invite_url,
+        'invite_code': invite_code,
+        'group_name': group.name
+    })
+
+
+@login_required
+def join_group_via_invite(request, group_id, invite_code):
+    """Join a group via invite link"""
+    from .models import RecoveryGroup, GroupMembership
+    import hashlib
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Verify invite code
+    expected_code = hashlib.md5(f"{group.id}-{group.created_at}".encode()).hexdigest()[:12]
+
+    if invite_code != expected_code:
+        messages.error(request, 'Invalid or expired invite link.')
+        return redirect('accounts:groups_list')
+
+    # Check if already a member
+    existing = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['active', 'moderator', 'admin', 'pending']
+    ).first()
+
+    if existing:
+        if existing.status == 'pending':
+            messages.info(request, 'Your membership is pending approval.')
+        else:
+            messages.info(request, 'You are already a member of this group.')
+        return redirect('accounts:group_detail', pk=group.id)
+
+    # Check group capacity
+    if group.is_full:
+        messages.error(request, 'This group has reached its maximum capacity.')
+        return redirect('accounts:groups_list')
+
+    # Create membership (bypasses private group approval for invite links)
+    GroupMembership.objects.create(
+        user=request.user,
+        group=group,
+        status='active',
+        joined_date=timezone.now().date()
+    )
+
+    messages.success(request, f'Welcome to {group.name}!')
+    return redirect('accounts:group_detail', pk=group.id)
+
+
 class ProfileView(DetailView):
     model = User
     template_name = 'accounts/profile.html'

@@ -349,9 +349,16 @@
                     </div>
                     <h5>{{ post.title }}</h5>
                     <p>{{ post.content }}</p>
-                    <div class="d-flex gap-3 text-muted mb-2">
-                        <span><i class="fas fa-thumbs-up"></i> {{ post.likes_count }}</span>
-                        <span><i class="fas fa-comment"></i> {{ post.comments_count }} comment{{ post.comments_count|pluralize }}</span>
+                    <div class="d-flex gap-3 align-items-center mb-2">
+                        <button class="btn btn-sm {% if request.user in post.likes.all %}btn-primary{% else %}btn-outline-secondary{% endif %}" onclick="likePost({{ post.id }})" data-post-id="{{ post.id }}">
+                            <i class="fas fa-thumbs-up"></i> <span class="likes-count">{{ post.likes_count }}</span>
+                        </button>
+                        <span class="text-muted"><i class="fas fa-comment"></i> {{ post.comments_count }} comment{{ post.comments_count|pluralize }}</span>
+                        {% if is_moderator %}
+                        <button class="btn btn-sm {% if post.is_pinned %}btn-warning{% else %}btn-outline-warning{% endif %} ms-auto" onclick="pinPost({{ post.id }})" title="{% if post.is_pinned %}Unpin{% else %}Pin{% endif %} post">
+                            <i class="fas fa-thumbtack"></i>
+                        </button>
+                        {% endif %}
                     </div>
 
                     <!-- Comments Section -->
@@ -640,6 +647,58 @@
             if (data.success) {
                 showToast(data.message || 'Request rejected.', 'success');
                 setTimeout(() => window.location.reload(), 1500);
+            } else {
+                showToast(data.message || 'Something went wrong', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Network error', 'error');
+        }
+    }
+
+    async function likePost(postId) {
+        try {
+            const response = await fetch(`/accounts/groups/{{ group.id }}/post/${postId}/like/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const btn = document.querySelector(`button[data-post-id="${postId}"]`);
+                if (btn) {
+                    btn.classList.toggle('btn-primary', data.liked);
+                    btn.classList.toggle('btn-outline-secondary', !data.liked);
+                    btn.querySelector('.likes-count').textContent = data.likes_count;
+                }
+            } else {
+                showToast(data.message || 'Something went wrong', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Network error', 'error');
+        }
+    }
+
+    async function pinPost(postId) {
+        try {
+            const response = await fetch(`/accounts/groups/{{ group.id }}/post/${postId}/pin/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showToast(data.message, 'success');
+                setTimeout(() => window.location.reload(), 1000);
             } else {
                 showToast(data.message || 'Something went wrong', 'error');
             }
