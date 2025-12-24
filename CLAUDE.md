@@ -369,18 +369,27 @@ The groups system had several critical bugs that have been fixed:
 /accounts/groups/<id>/approve/<user_id>/    # Approve pending member (AJAX)
 /accounts/groups/<id>/reject/<user_id>/     # Reject pending member (AJAX)
 /accounts/groups/<id>/post/<post_id>/comment/  # Add comment to post (AJAX)
-/accounts/groups/<id>/transfer/              # Transfer ownership (AJAX)
-/accounts/groups/<id>/members-for-transfer/  # Get members for transfer (AJAX)
+/accounts/groups/<id>/post/<post_id>/like/     # Like/unlike post (AJAX)
+/accounts/groups/<id>/post/<post_id>/pin/      # Pin/unpin post (AJAX, mod/admin)
+/accounts/groups/<id>/transfer/                # Transfer ownership (AJAX)
+/accounts/groups/<id>/members-for-transfer/    # Get members for transfer (AJAX)
+/accounts/groups/<id>/archive/                 # Archive group (AJAX, admin only)
+/accounts/groups/<id>/invite/                  # Generate invite link (AJAX)
+/accounts/groups/<id>/join-invite/<code>/      # Join via invite link
 ```
 
-### Remaining Group TODOs
+### Group Features Complete
 
-| Feature | Priority | Notes |
-|---------|----------|-------|
-| Delete/archive groups | MEDIUM | Creator should be able to archive or delete groups |
-| Like group posts | LOW | Model supports it, needs AJAX endpoint |
-| Pin posts | LOW | Admin/moderator can pin important posts |
-| Group invite links | LOW | Generate shareable invite links for secret groups |
+All group features have been implemented:
+- Create, edit, and archive groups
+- Join (public), request to join (private), invite links (secret/private)
+- Post discussions with 6 types
+- Like/unlike posts with notifications
+- Pin/unpin posts (moderator/admin)
+- Comment on posts with anonymous option
+- Approve/reject pending members
+- Transfer ownership
+- Group notifications for joins, posts, comments
 
 ### Group Models Reference
 ```python
@@ -413,6 +422,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2025-12-24:** Completed all group features: archive groups, like/unlike posts, pin posts, invite links
 - **2025-12-24:** Added group notifications, comments on posts, transfer ownership feature
 - **2025-12-24:** Added approve/reject pending members, edit group settings, fixed age display bug
 - **2025-12-24:** Fixed groups system bugs (my_groups context, group detail context, create_group missing group_type), added group posting and leave functionality

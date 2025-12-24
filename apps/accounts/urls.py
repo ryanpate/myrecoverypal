@@ -96,8 +96,13 @@ urlpatterns = [
     path('groups/<int:group_id>/approve/<int:user_id>/', views.approve_member, name='approve_member'),
     path('groups/<int:group_id>/reject/<int:user_id>/', views.reject_member, name='reject_member'),
     path('groups/<int:group_id>/post/<int:post_id>/comment/', views.comment_group_post, name='comment_group_post'),
+    path('groups/<int:group_id>/post/<int:post_id>/like/', views.like_group_post, name='like_group_post'),
+    path('groups/<int:group_id>/post/<int:post_id>/pin/', views.pin_group_post, name='pin_group_post'),
     path('groups/<int:group_id>/transfer/', views.transfer_group_ownership, name='transfer_group_ownership'),
     path('groups/<int:group_id>/members-for-transfer/', views.get_group_members_for_transfer, name='get_group_members_for_transfer'),
+    path('groups/<int:group_id>/archive/', views.archive_group, name='archive_group'),
+    path('groups/<int:group_id>/invite/', views.generate_group_invite, name='generate_group_invite'),
+    path('groups/<int:group_id>/join-invite/<str:invite_code>/', views.join_group_via_invite, name='join_group_via_invite'),
 
     # Challenge System URLs
     path('challenges/', views.challenges_home, name='challenges_home'),

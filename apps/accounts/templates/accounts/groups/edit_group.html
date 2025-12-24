@@ -249,13 +249,29 @@
                 </button>
             </div>
 
+            <!-- Invite Links -->
+            <div class="form-card" style="border: 2px solid #17a2b8; background: #e7f5ff;">
+                <h5 class="text-info"><i class="fas fa-link"></i> Invite Link</h5>
+                <p class="text-muted mb-3">Generate a shareable link to invite members directly (bypasses approval for private groups).</p>
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inviteLink" readonly placeholder="Click Generate to create link">
+                    <button class="btn btn-info" type="button" id="copyInviteBtn" disabled>
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <button type="button" class="btn btn-info" id="generateInviteBtn">
+                    <i class="fas fa-magic"></i> Generate Invite Link
+                </button>
+            </div>
+
             <!-- Danger Zone -->
             <div class="danger-zone">
                 <h5 class="text-danger"><i class="fas fa-exclamation-triangle"></i> Danger Zone</h5>
                 <p class="text-muted mb-3">These actions cannot be undone. Please proceed with caution.</p>
-                <button class="btn btn-outline-danger" disabled>
-                    <i class="fas fa-archive"></i> Archive Group (Coming Soon)
+                <button type="button" class="btn btn-outline-danger" id="archiveGroupBtn">
+                    <i class="fas fa-archive"></i> Archive Group
                 </button>
+                <small class="text-muted d-block mt-2">Archiving will hide the group from listings and notify all members.</small>
             </div>
         </div>
 
@@ -361,6 +377,69 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.error('Error:', error);
             alert('Network error occurred');
         }
+    });
+
+    // Archive group handler
+    const archiveBtn = document.getElementById('archiveGroupBtn');
+    archiveBtn.addEventListener('click', async function() {
+        if (!confirm('Are you sure you want to archive this group? This will hide it from all listings and notify all members. This action cannot be easily undone.')) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/accounts/groups/{{ group.id }}/archive/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert(data.message);
+                window.location.href = '/accounts/groups/';
+            } else {
+                alert(data.message || 'Something went wrong');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Network error occurred');
+        }
+    });
+
+    // Generate invite link handler
+    const generateInviteBtn = document.getElementById('generateInviteBtn');
+    const inviteLinkInput = document.getElementById('inviteLink');
+    const copyInviteBtn = document.getElementById('copyInviteBtn');
+
+    generateInviteBtn.addEventListener('click', async function() {
+        try {
+            const response = await fetch('/accounts/groups/{{ group.id }}/invite/');
+            const data = await response.json();
+
+            if (data.success) {
+                inviteLinkInput.value = data.invite_url;
+                copyInviteBtn.disabled = false;
+                generateInviteBtn.innerHTML = '<i class="fas fa-check"></i> Link Generated';
+                generateInviteBtn.classList.replace('btn-info', 'btn-success');
+            } else {
+                alert(data.message || 'Could not generate invite link');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Network error occurred');
+        }
+    });
+
+    // Copy invite link handler
+    copyInviteBtn.addEventListener('click', function() {
+        inviteLinkInput.select();
+        document.execCommand('copy');
+        copyInviteBtn.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+            copyInviteBtn.innerHTML = '<i class="fas fa-copy"></i>';
+        }, 2000);
     });
 });
 </script>
