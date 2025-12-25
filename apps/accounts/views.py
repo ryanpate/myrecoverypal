@@ -3403,3 +3403,151 @@ def reply_to_comment(request, comment_id):
         })
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=503)
+
+
+@login_required
+@require_POST
+def edit_social_post(request, post_id):
+    """Edit a social post (only by author or admin)"""
+    try:
+        post = get_object_or_404(SocialPost, id=post_id)
+
+        # Check permissions - author or admin
+        if post.author != request.user and not request.user.is_staff:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
+
+        content = request.POST.get('content', '').strip()
+        if not content:
+            return JsonResponse({'error': 'Content is required'}, status=400)
+
+        if len(content) > 1000:
+            return JsonResponse({'error': 'Content is too long (max 1000 characters)'}, status=400)
+
+        post.content = content
+        post.save()
+
+        return JsonResponse({
+            'success': True,
+            'content': post.content
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_POST
+def delete_group_post(request, group_id, post_id):
+    """Delete a group post (by author, moderator, or admin)"""
+    try:
+        group = get_object_or_404(RecoveryGroup, id=group_id)
+        post = get_object_or_404(GroupPost, id=post_id, group=group)
+
+        # Check permissions - author, group moderator/admin, or site admin
+        is_author = post.author == request.user
+        membership = group.memberships.filter(user=request.user).first()
+        is_group_mod = membership and membership.status in ['moderator', 'admin']
+        is_site_admin = request.user.is_staff
+
+        if not (is_author or is_group_mod or is_site_admin):
+            return JsonResponse({'error': 'Permission denied'}, status=403)
+
+        post.delete()
+
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_POST
+def edit_group_post(request, group_id, post_id):
+    """Edit a group post (by author or moderator/admin)"""
+    try:
+        group = get_object_or_404(RecoveryGroup, id=group_id)
+        post = get_object_or_404(GroupPost, id=post_id, group=group)
+
+        # Check permissions - author, group moderator/admin, or site admin
+        is_author = post.author == request.user
+        membership = group.memberships.filter(user=request.user).first()
+        is_group_mod = membership and membership.status in ['moderator', 'admin']
+        is_site_admin = request.user.is_staff
+
+        if not (is_author or is_group_mod or is_site_admin):
+            return JsonResponse({'error': 'Permission denied'}, status=403)
+
+        title = request.POST.get('title', '').strip()
+        content = request.POST.get('content', '').strip()
+
+        if not title or not content:
+            return JsonResponse({'error': 'Title and content are required'}, status=400)
+
+        post.title = title
+        post.content = content
+        post.save()
+
+        return JsonResponse({
+            'success': True,
+            'title': post.title,
+            'content': post.content
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_POST
+def delete_challenge_checkin(request, challenge_id, checkin_id):
+    """Delete a challenge check-in (by author or admin)"""
+    try:
+        challenge = get_object_or_404(GroupChallenge, id=challenge_id)
+        checkin = get_object_or_404(ChallengeCheckIn, id=checkin_id)
+
+        # Verify the check-in belongs to this challenge
+        if checkin.participant.challenge != challenge:
+            return JsonResponse({'error': 'Check-in not found'}, status=404)
+
+        # Check permissions - author or site admin
+        is_author = checkin.participant.user == request.user
+        is_site_admin = request.user.is_staff
+
+        # Also check if user is group moderator/admin
+        membership = challenge.group.memberships.filter(user=request.user).first()
+        is_group_mod = membership and membership.status in ['moderator', 'admin']
+
+        if not (is_author or is_group_mod or is_site_admin):
+            return JsonResponse({'error': 'Permission denied'}, status=403)
+
+        checkin.delete()
+
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_POST
+def edit_challenge_checkin(request, challenge_id, checkin_id):
+    """Edit a challenge check-in (by author only)"""
+    try:
+        challenge = get_object_or_404(GroupChallenge, id=challenge_id)
+        checkin = get_object_or_404(ChallengeCheckIn, id=checkin_id)
+
+        # Verify the check-in belongs to this challenge
+        if checkin.participant.challenge != challenge:
+            return JsonResponse({'error': 'Check-in not found'}, status=404)
+
+        # Check permissions - only author can edit their own check-in
+        if checkin.participant.user != request.user:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
+
+        progress_note = request.POST.get('progress_note', '').strip()
+
+        checkin.progress_note = progress_note
+        checkin.save()
+
+        return JsonResponse({
+            'success': True,
+            'progress_note': checkin.progress_note
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

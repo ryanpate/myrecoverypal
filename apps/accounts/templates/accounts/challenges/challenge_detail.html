@@ -418,6 +418,129 @@
         font-weight: bold;
         margin: 0 auto 1rem;
     }
+
+    /* Post menu dropdown */
+    .post-menu {
+        position: relative;
+    }
+
+    .post-menu-btn {
+        padding: 0.25rem 0.5rem;
+        border-radius: 50%;
+    }
+
+    .post-menu-dropdown {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        min-width: 140px;
+        z-index: 100;
+        overflow: hidden;
+    }
+
+    .post-menu-dropdown.show {
+        display: block;
+    }
+
+    .post-menu-dropdown button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: none;
+        background: none;
+        text-align: left;
+        cursor: pointer;
+        font-size: 0.9rem;
+        color: #333;
+        transition: background 0.2s;
+    }
+
+    .post-menu-dropdown button:hover {
+        background: #f5f5f5;
+    }
+
+    .post-menu-dropdown button.delete-btn {
+        color: #dc3545;
+    }
+
+    .post-menu-dropdown button.delete-btn:hover {
+        background: #fff5f5;
+    }
+
+    /* Edit modal */
+    .edit-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .edit-modal.show {
+        display: flex;
+    }
+
+    .edit-modal-content {
+        background: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .edit-modal-header {
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .edit-modal-header h5 {
+        margin: 0;
+    }
+
+    .edit-modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .edit-modal-body {
+        padding: 1rem;
+    }
+
+    .edit-modal-body textarea {
+        width: 100%;
+        min-height: 120px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-size: 1rem;
+        resize: vertical;
+    }
+
+    .edit-modal-footer {
+        padding: 1rem;
+        border-top: 1px solid #eee;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
 </style>
 {% endblock %}
 
@@ -594,6 +717,21 @@
                             <div class="post-meta">{{ check_in.created_at|timesince }} ago</div>
                         </div>
                         <span class="mood-badge mood-{{ check_in.mood }}">{{ check_in.get_mood_display }}</span>
+                        {% if check_in.participant.user == user or user.is_staff %}
+                        <div class="post-menu">
+                            <button class="action-btn post-menu-btn" data-checkin-id="{{ check_in.id }}">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                            <div class="post-menu-dropdown" id="menu-{{ check_in.id }}">
+                                <button class="edit-checkin-btn" data-checkin-id="{{ check_in.id }}" data-challenge-id="{{ challenge.id }}" data-content="{{ check_in.progress_note|default:''|escapejs }}">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="delete-checkin-btn delete-btn" data-checkin-id="{{ check_in.id }}" data-challenge-id="{{ challenge.id }}">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
 
                     <!-- Post Content -->
@@ -783,10 +921,40 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Check-in Modal -->
+<div class="edit-modal" id="editCheckinModal">
+    <div class="edit-modal-content">
+        <div class="edit-modal-header">
+            <h5>Edit Check-in</h5>
+            <button class="edit-modal-close" onclick="closeEditModal()">&times;</button>
+        </div>
+        <div class="edit-modal-body">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Progress Note</label>
+            <textarea id="editCheckinContent" placeholder="Share your progress..."></textarea>
+        </div>
+        <div class="edit-modal-footer">
+            <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+            <button class="btn btn-primary" id="saveCheckinEdit">Save Changes</button>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+    // Global variables for edit functionality
+    let currentEditCheckinId = null;
+    let currentEditChallengeId = null;
+
+    // Close edit modal function (global)
+    function closeEditModal() {
+        document.getElementById('editCheckinModal').style.display = 'none';
+        document.getElementById('editCheckinContent').value = '';
+        currentEditCheckinId = null;
+        currentEditChallengeId = null;
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         // Helper function to get CSRF token
         function getCookie(name) {
@@ -803,6 +971,119 @@
             }
             return cookieValue;
         }
+
+        // Post menu toggle
+        document.querySelectorAll('.post-menu-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const checkinId = this.dataset.checkinId;
+                const menu = document.getElementById(`menu-${checkinId}`);
+
+                // Close all other menus
+                document.querySelectorAll('.post-menu-dropdown').forEach(m => {
+                    if (m !== menu) m.classList.remove('show');
+                });
+
+                menu.classList.toggle('show');
+            });
+        });
+
+        // Close menus when clicking outside
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.post-menu-dropdown').forEach(m => {
+                m.classList.remove('show');
+            });
+        });
+
+        // Edit check-in button
+        document.querySelectorAll('.edit-checkin-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                currentEditCheckinId = this.dataset.checkinId;
+                currentEditChallengeId = this.dataset.challengeId;
+                const content = this.dataset.content || '';
+
+                document.getElementById('editCheckinContent').value = content;
+                document.getElementById('editCheckinModal').style.display = 'flex';
+
+                // Close the dropdown
+                document.querySelectorAll('.post-menu-dropdown').forEach(m => {
+                    m.classList.remove('show');
+                });
+            });
+        });
+
+        // Save edit button
+        document.getElementById('saveCheckinEdit').addEventListener('click', async function() {
+            if (!currentEditCheckinId || !currentEditChallengeId) return;
+
+            const content = document.getElementById('editCheckinContent').value.trim();
+
+            try {
+                const response = await fetch(`/accounts/challenges/${currentEditChallengeId}/checkin/${currentEditCheckinId}/edit/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: `progress_note=${encodeURIComponent(content)}`
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    closeEditModal();
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Failed to update check-in');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to update check-in');
+            }
+        });
+
+        // Delete check-in button
+        document.querySelectorAll('.delete-checkin-btn').forEach(btn => {
+            btn.addEventListener('click', async function(e) {
+                e.stopPropagation();
+
+                if (!confirm('Are you sure you want to delete this check-in? This cannot be undone.')) {
+                    return;
+                }
+
+                const checkinId = this.dataset.checkinId;
+                const challengeId = this.dataset.challengeId;
+                const postCard = this.closest('.post-card');
+
+                try {
+                    const response = await fetch(`/accounts/challenges/${challengeId}/checkin/${checkinId}/delete/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken')
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        postCard.remove();
+                    } else {
+                        alert(data.error || 'Failed to delete check-in');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to delete check-in');
+                }
+            });
+        });
+
+        // Close modal when clicking overlay
+        document.getElementById('editCheckinModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
 
         // Handle encouragement buttons
         document.querySelectorAll('.encourage-btn').forEach(button => {

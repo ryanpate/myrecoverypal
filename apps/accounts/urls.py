@@ -66,6 +66,7 @@ urlpatterns = [
     path('social-feed/post/<int:post_id>/like/', views.like_social_post, name='like_social_post'),
     path('social-feed/post/<int:post_id>/comment/', views.comment_social_post, name='comment_social_post'),
     path('social-feed/post/<int:post_id>/delete/', views.delete_social_post, name='delete_social_post'),
+    path('social-feed/post/<int:post_id>/edit/', views.edit_social_post, name='edit_social_post'),
     path('social-feed/comment/<int:comment_id>/like/', views.like_comment, name='like_comment'),
     path('social-feed/comment/<int:comment_id>/reply/', views.reply_to_comment, name='reply_to_comment'),
 
@@ -98,6 +99,8 @@ urlpatterns = [
     path('groups/<int:group_id>/post/<int:post_id>/comment/', views.comment_group_post, name='comment_group_post'),
     path('groups/<int:group_id>/post/<int:post_id>/like/', views.like_group_post, name='like_group_post'),
     path('groups/<int:group_id>/post/<int:post_id>/pin/', views.pin_group_post, name='pin_group_post'),
+    path('groups/<int:group_id>/post/<int:post_id>/delete/', views.delete_group_post, name='delete_group_post'),
+    path('groups/<int:group_id>/post/<int:post_id>/edit/', views.edit_group_post, name='edit_group_post'),
     path('groups/<int:group_id>/transfer/', views.transfer_group_ownership, name='transfer_group_ownership'),
     path('groups/<int:group_id>/members-for-transfer/', views.get_group_members_for_transfer, name='get_group_members_for_transfer'),
     path('groups/<int:group_id>/archive/', views.archive_group, name='archive_group'),
@@ -128,6 +131,10 @@ urlpatterns = [
          views.add_challenge_comment, name='add_challenge_comment'),
     path('ajax/encourage/<int:check_in_id>/',
          views.give_encouragement, name='give_encouragement'),
+    path('challenges/<int:challenge_id>/checkin/<int:checkin_id>/delete/',
+         views.delete_challenge_checkin, name='delete_challenge_checkin'),
+    path('challenges/<int:challenge_id>/checkin/<int:checkin_id>/edit/',
+         views.edit_challenge_checkin, name='edit_challenge_checkin'),
 
     # Add these notification URLs
     path('notifications/', views.notifications_page, name='notifications'),
