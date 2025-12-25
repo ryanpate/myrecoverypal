@@ -168,50 +168,187 @@
     }
 
     .activity-feed {
+        max-height: none;
+        overflow-y: visible;
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    /* Post card styling (matching social feed) */
+    .post-card {
         background: white;
         border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        max-height: 600px;
-        overflow-y: auto;
-    }
-
-    .check-in-item {
-        border: 1px solid #e9ecef;
-        border-radius: 8px;
-        padding: 1rem;
         margin-bottom: 1rem;
-        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
     }
 
-    .check-in-item:hover {
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .check-in-header {
+    .social-post-header {
         display: flex;
         align-items: center;
-        margin-bottom: 0.75rem;
+        padding: 1rem 1rem 0.75rem 1rem;
+        gap: 0.75rem;
     }
 
-    .check-in-avatar {
-        width: 40px;
-        height: 40px;
+    .avatar-medium {
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
-        background: #e9ecef;
+        object-fit: cover;
+    }
+
+    .post-author-info {
+        flex: 1;
+    }
+
+    .post-author-name {
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.2rem;
+        font-size: 1rem;
+    }
+
+    .post-meta {
+        font-size: 0.85rem;
+        color: #666;
+        margin: 0;
+    }
+
+    .post-content {
+        padding: 0 1rem 1rem 1rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: var(--text-dark);
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    .post-engagement {
+        padding: 0.5rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: #666;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .post-actions-bar {
+        padding: 0.75rem 1rem;
+        display: flex;
+        gap: 1rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .action-btn {
+        background: none;
+        border: none;
+        color: #666;
+        font-size: 0.95rem;
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s;
         display: flex;
         align-items: center;
-        justify-content: center;
-        margin-right: 0.75rem;
+        gap: 0.5rem;
+    }
+
+    .action-btn:hover {
+        background: #f5f5f5;
+    }
+
+    .action-btn.encouraged {
+        color: #ffc107;
+    }
+
+    .action-btn i {
         font-size: 1.2rem;
     }
 
-    .mood-indicator {
-        padding: 0.25rem 0.5rem;
+    /* Comments section */
+    .comments-section {
+        padding: 0 1rem 1rem 1rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .comment {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+    }
+
+    .comment-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .comment-content {
+        flex: 1;
+        background: #f5f5f5;
+        padding: 0.5rem 0.75rem;
+        border-radius: 12px;
+    }
+
+    .comment-author {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .comment-text {
+        font-size: 0.9rem;
+        color: var(--text-dark);
+    }
+
+    .comment-time {
+        font-size: 0.75rem;
+        color: #999;
+        margin-top: 0.25rem;
+    }
+
+    .comment-form {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+    }
+
+    .comment-input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        outline: none;
+    }
+
+    .comment-input:focus {
+        border-color: var(--primary-light);
+    }
+
+    .comment-submit {
+        background: var(--primary-light);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Mood badge styling */
+    .mood-badge {
+        padding: 0.25rem 0.75rem;
         border-radius: 15px;
         font-size: 0.8rem;
         font-weight: 600;
-        margin-left: auto;
     }
 
     .mood-great {
@@ -239,29 +376,26 @@
         color: #721c24;
     }
 
-    .encouragement-section {
-        display: flex;
+    /* Goal completion badge */
+    .goal-badge {
+        display: inline-flex;
         align-items: center;
-        gap: 1rem;
-        margin-top: 0.75rem;
-        padding-top: 0.75rem;
-        border-top: 1px solid #f8f9fa;
-    }
-
-    .encourage-btn {
-        background: none;
-        border: 1px solid #ffc107;
-        color: #ffc107;
+        gap: 0.25rem;
         padding: 0.25rem 0.75rem;
-        border-radius: 20px;
+        border-radius: 15px;
         font-size: 0.8rem;
-        transition: all 0.3s ease;
+        font-weight: 600;
+        margin-right: 0.5rem;
     }
 
-    .encourage-btn:hover,
-    .encourage-btn.encouraged {
-        background: #ffc107;
-        color: #000;
+    .goal-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .goal-partial {
+        background: #fff3cd;
+        color: #856404;
     }
 
     .user-participation-card {
@@ -443,69 +577,103 @@
                 </div>
 
                 {% for check_in in recent_check_ins %}
-                <div class="check-in-item">
-                    <div class="check-in-header">
-                        <div class="check-in-avatar">
-                            {% if check_in.participant.user.avatar %}
-                            <img src="{{ check_in.participant.user.avatar.url }}"
-                                alt="{{ check_in.participant.user.username }}"
-                                style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                <div class="post-card" data-check-in-id="{{ check_in.id }}">
+                    <!-- Post Header -->
+                    <div class="social-post-header">
+                        {% if check_in.participant.user.avatar %}
+                            <img src="{{ check_in.participant.user.avatar.url }}" alt="{{ check_in.participant.user.username }}" class="avatar-medium">
+                        {% else %}
+                            <img src="{% static 'images/default-avatar.png' %}" alt="{{ check_in.participant.user.username }}" class="avatar-medium">
+                        {% endif %}
+                        <div class="post-author-info">
+                            <div class="post-author-name">
+                                <a href="{% url 'accounts:profile' check_in.participant.user.username %}" class="text-decoration-none" style="color: inherit;">
+                                    {{ check_in.participant.user.get_full_name|default:check_in.participant.user.username }}
+                                </a>
+                            </div>
+                            <div class="post-meta">{{ check_in.created_at|timesince }} ago</div>
+                        </div>
+                        <span class="mood-badge mood-{{ check_in.mood }}">{{ check_in.get_mood_display }}</span>
+                    </div>
+
+                    <!-- Post Content -->
+                    <div class="post-content">
+                        <div style="margin-bottom: 0.5rem;">
+                            {% if check_in.completed_daily_goal %}
+                            <span class="goal-badge goal-completed"><i class="fas fa-check-circle"></i> Completed daily goal</span>
                             {% else %}
-                            <i class="fas fa-user"></i>
+                            <span class="goal-badge goal-partial"><i class="fas fa-clock"></i> Partial completion</span>
                             {% endif %}
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0">
-                                <a href="{% url 'accounts:profile' check_in.participant.user.username %}"
-                                    class="text-decoration-none">
-                                    {{
-                                    check_in.participant.user.get_full_name|default:check_in.participant.user.username
-                                    }}
-                                </a>
-                            </h6>
-                            <small class="text-muted">{{ check_in.created_at|timesince }} ago</small>
+                        {% if check_in.progress_note %}
+                        {{ check_in.progress_note }}
+                        {% endif %}
+                        {% if check_in.custom_metric_1 or check_in.custom_metric_2 %}
+                        <div style="margin-top: 0.5rem; color: #666; font-size: 0.9rem;">
+                            {% if check_in.custom_metric_1 %}
+                            <span class="me-3"><i class="fas fa-chart-bar"></i> {{ check_in.custom_metric_1 }}</span>
+                            {% endif %}
+                            {% if check_in.custom_metric_2 %}
+                            <span><i class="fas fa-chart-bar"></i> {{ check_in.custom_metric_2 }}</span>
+                            {% endif %}
                         </div>
-                        <div class="mood-indicator mood-{{ check_in.mood }}">
-                            {{ check_in.get_mood_display }}
-                        </div>
-                    </div>
-
-                    <div class="check-in-status mb-2">
-                        {% if check_in.completed_daily_goal %}
-                        <span class="badge bg-success"><i class="fas fa-check-circle"></i> Completed daily goal</span>
-                        {% else %}
-                        <span class="badge bg-warning"><i class="fas fa-pause"></i> Partial completion</span>
                         {% endif %}
                     </div>
 
-                    {% if check_in.progress_note %}
-                    <p class="mb-2">{{ check_in.progress_note }}</p>
-                    {% endif %}
-
-                    {% if check_in.custom_metric_1 or check_in.custom_metric_2 %}
-                    <div class="metrics mb-2">
-                        {% if check_in.custom_metric_1 %}
-                        <small class="text-muted me-3"><i class="fas fa-chart-bar"></i> {{ check_in.custom_metric_1
-                            }}</small>
-                        {% endif %}
-                        {% if check_in.custom_metric_2 %}
-                        <small class="text-muted"><i class="fas fa-chart-bar"></i> {{ check_in.custom_metric_2
-                            }}</small>
-                        {% endif %}
+                    <!-- Engagement Stats -->
+                    <div class="post-engagement">
+                        <span class="encouragement-count">{{ check_in.encouragement_count }} encouragement{{ check_in.encouragement_count|pluralize }}</span>
+                        <span class="comments-count">{{ check_in.comments.count }} comment{{ check_in.comments.count|pluralize }}</span>
                     </div>
-                    {% endif %}
 
-                    <div class="encouragement-section">
-                        <button class="encourage-btn" data-check-in-id="{{ check_in.id }}">
-                            <i class="fas fa-thumbs-up"></i> Encourage ({{ check_in.encouragement_count }})
+                    <!-- Action Buttons -->
+                    <div class="post-actions-bar">
+                        <button class="action-btn encourage-btn" data-check-in-id="{{ check_in.id }}">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>Encourage</span>
                         </button>
-                        <small class="text-muted"><i class="fas fa-comments"></i> {{ check_in.comments.count }}
-                            comments</small>
+                        <button class="action-btn comment-toggle-btn" data-check-in-id="{{ check_in.id }}">
+                            <i class="far fa-comment"></i>
+                            <span>Comment</span>
+                        </button>
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="comments-section" id="comments-{{ check_in.id }}" style="display: none;">
+                        <div class="comments-list">
+                            {% for comment in check_in.comments.all %}
+                            <div class="comment">
+                                {% if comment.user.avatar %}
+                                    <img src="{{ comment.user.avatar.url }}" alt="{{ comment.user.username }}" class="comment-avatar">
+                                {% else %}
+                                    <img src="{% static 'images/default-avatar.png' %}" alt="{{ comment.user.username }}" class="comment-avatar">
+                                {% endif %}
+                                <div class="comment-content">
+                                    <div class="comment-author">{{ comment.user.get_full_name|default:comment.user.username }}</div>
+                                    <div class="comment-text">{{ comment.content }}</div>
+                                    <div class="comment-time">{{ comment.created_at|timesince }} ago</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Comment Form -->
+                        <form class="comment-form" data-check-in-id="{{ check_in.id }}">
+                            {% csrf_token %}
+                            <input type="text" class="comment-input" placeholder="Write a comment..." name="content" required>
+                            <button type="submit" class="comment-submit">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
                 {% empty %}
-                <div class="text-center py-4">
-                    <p class="text-muted">No shared check-ins yet. Be the first to share your progress!</p>
+                <div class="post-card">
+                    <div style="text-align: center; padding: 3rem 1rem; color: #666;">
+                        <i class="fas fa-comments" style="font-size: 3rem; color: #ddd; margin-bottom: 1rem; display: block;"></i>
+                        <h5>No shared check-ins yet</h5>
+                        <p>Be the first to share your progress!</p>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -620,32 +788,100 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Helper function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
         // Handle encouragement buttons
         document.querySelectorAll('.encourage-btn').forEach(button => {
             button.addEventListener('click', function () {
                 const checkInId = this.dataset.checkInId;
+                const postCard = this.closest('.post-card');
 
                 fetch(`/accounts/ajax/encourage/${checkInId}/`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        'X-CSRFToken': getCookie('csrftoken'),
                         'Content-Type': 'application/json',
                     },
                 })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            this.innerHTML = `<i class="fas fa-thumbs-up"></i> Encourage (${data.total_encouragements})`;
+                            const icon = this.querySelector('i');
                             if (data.encouraged) {
                                 this.classList.add('encouraged');
+                                icon.classList.remove('far');
+                                icon.classList.add('fas');
                             } else {
                                 this.classList.remove('encouraged');
+                                icon.classList.remove('fas');
+                                icon.classList.add('far');
                             }
+
+                            // Update encouragement count
+                            const countEl = postCard.querySelector('.encouragement-count');
+                            const count = data.total_encouragements;
+                            countEl.textContent = `${count} encouragement${count !== 1 ? 's' : ''}`;
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
                     });
+            });
+        });
+
+        // Comment toggle
+        document.querySelectorAll('.comment-toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const checkInId = this.dataset.checkInId;
+                const commentsSection = document.getElementById(`comments-${checkInId}`);
+                commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+            });
+        });
+
+        // Comment form submission
+        document.querySelectorAll('.comment-form').forEach(form => {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const checkInId = this.dataset.checkInId;
+                const formData = new FormData(this);
+                const input = this.querySelector('.comment-input');
+
+                try {
+                    const response = await fetch(`/accounts/challenges/check-in/${checkInId}/comment/`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken')
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Reload to show new comment
+                        window.location.reload();
+                    } else {
+                        alert(data.error || 'Failed to post comment');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to post comment');
+                }
             });
         });
     });
