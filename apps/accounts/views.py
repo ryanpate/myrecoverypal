@@ -1019,14 +1019,77 @@ class RecoveryGroupDetailView(LoginRequiredMixin, DetailView):
     template_name = 'accounts/groups/group_detail.html'
     context_object_name = 'group'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        group = self.get_object()
+
+        # Get user's membership status
+        membership = None
+        is_member = False
+        is_admin = False
+        is_moderator = False
+        if self.request.user.is_authenticated:
+            membership = GroupMembership.objects.filter(
+                user=self.request.user,
+                group=group,
+                status__in=['active', 'moderator', 'admin', 'pending']
+            ).first()
+            is_member = membership and membership.status in ['active', 'moderator', 'admin']
+            is_admin = membership and membership.status == 'admin'
+            is_moderator = membership and membership.status in ['admin', 'moderator']
+
+        context['membership'] = membership
+        context['is_member'] = is_member
+        context['is_admin'] = is_admin
+        context['is_moderator'] = is_moderator
+
+        # Get group members (limit to 12 for display)
+        context['members'] = User.objects.filter(
+            group_memberships__group=group,
+            group_memberships__status__in=['active', 'moderator', 'admin']
+        ).distinct()[:12]
+
+        # Get pending members for admins/moderators
+        if is_moderator:
+            context['pending_members'] = GroupMembership.objects.filter(
+                group=group,
+                status='pending'
+            ).select_related('user').order_by('-created_at')
+        else:
+            context['pending_members'] = []
+
+        # Get recent posts if user is a member (with comments)
+        if is_member:
+            context['recent_posts'] = group.posts.select_related('author').prefetch_related(
+                'comments__author'
+            ).order_by('-is_pinned', '-created_at')[:10]
+        else:
+            context['recent_posts'] = []
+
+        # Get all members for transfer ownership (admin only)
+        if is_admin:
+            context['transferable_members'] = GroupMembership.objects.filter(
+                group=group,
+                status__in=['active', 'moderator']
+            ).select_related('user')
+        else:
+            context['transferable_members'] = []
+
+        return context
+
 
 @login_required
 def create_group(request):
     """Create a new recovery group"""
     if request.method == 'POST':
-        name = request.POST.get('name', '')
-        description = request.POST.get('description', '')
+        name = request.POST.get('name', '').strip()
+        description = request.POST.get('description', '').strip()
+        group_type = request.POST.get('group_type', '')
         privacy_level = request.POST.get('privacy_level', 'public')
+        location = request.POST.get('location', '').strip()
+        meeting_schedule = request.POST.get('meeting_schedule', '').strip()
+        max_members = request.POST.get('max_members', '')
+        group_color = request.POST.get('group_color', '#52b788')
 
         # Check if user is trying to create a private/secret group
         if privacy_level in ['private', 'secret']:
@@ -1037,24 +1100,50 @@ def create_group(request):
                 )
                 return redirect('accounts:pricing')
 
-        if name and description:
+        if name and description and group_type:
             group = RecoveryGroup.objects.create(
                 name=name,
                 description=description,
+                group_type=group_type,
                 privacy_level=privacy_level,
+                location=location,
+                meeting_schedule=meeting_schedule,
+                max_members=int(max_members) if max_members else None,
+                group_color=group_color,
                 creator=request.user
             )
-            messages.success(request, f'Group "{name}" created successfully!')
-            return redirect('accounts:groups_list')
 
-    return render(request, 'accounts/groups/create_group.html')
+            # Auto-add creator as admin member
+            GroupMembership.objects.create(
+                user=request.user,
+                group=group,
+                status='admin',
+                joined_date=timezone.now().date()
+            )
+
+            messages.success(request, f'Group "{name}" created successfully!')
+            return redirect('accounts:group_detail', pk=group.id)
+        else:
+            messages.error(request, 'Please fill in all required fields (name, description, and group type).')
+
+    context = {
+        'group_types': RecoveryGroup.GROUP_TYPES,
+    }
+    return render(request, 'accounts/groups/create_group.html', context)
 
 
 @login_required
 def my_groups(request):
     """User's joined groups"""
-    groups = request.user.get_joined_groups()
-    return render(request, 'accounts/groups/my_groups.html', {'groups': groups})
+    from .models import GroupMembership
+
+    # Get memberships (not groups) - template expects membership objects with .group attribute
+    memberships = GroupMembership.objects.filter(
+        user=request.user,
+        status__in=['active', 'moderator', 'admin']
+    ).select_related('group', 'group__creator').order_by('-last_active', '-joined_date')
+
+    return render(request, 'accounts/groups/my_groups.html', {'memberships': memberships})
 
 
 @login_required
@@ -1110,10 +1199,43 @@ def join_group(request, group_id):
             joined_date=timezone.now().date() if status == 'active' else None
         )
 
+        # Send notifications
+        from .models import Notification
+        joiner_name = request.user.get_full_name() or request.user.username
+
         if status == 'active':
             message = f'You have successfully joined {group.name}!'
+            # Notify group admins/moderators about new member
+            admin_members = GroupMembership.objects.filter(
+                group=group,
+                status__in=['admin', 'moderator']
+            ).select_related('user')
+            for admin in admin_members:
+                if admin.user != request.user:
+                    Notification.objects.create(
+                        recipient=admin.user,
+                        sender=request.user,
+                        notification_type='group_join',
+                        title=f'New member in {group.name}',
+                        message=f'{joiner_name} has joined {group.name}',
+                        link=f'/accounts/groups/{group.id}/'
+                    )
         else:
             message = f'Your request to join {group.name} is pending approval.'
+            # Notify admins about pending request
+            admin_members = GroupMembership.objects.filter(
+                group=group,
+                status__in=['admin', 'moderator']
+            ).select_related('user')
+            for admin in admin_members:
+                Notification.objects.create(
+                    recipient=admin.user,
+                    sender=request.user,
+                    notification_type='group_invite',
+                    title=f'Membership request for {group.name}',
+                    message=f'{joiner_name} has requested to join {group.name}',
+                    link=f'/accounts/groups/{group.id}/'
+                )
 
         return JsonResponse({
             'success': True,
@@ -1126,6 +1248,653 @@ def join_group(request, group_id):
             'success': False,
             'message': f'An error occurred: {str(e)}'
         }, status=400)
+
+
+@login_required
+@require_POST
+def create_group_post(request, group_id):
+    """Create a post within a recovery group"""
+    from .models import RecoveryGroup, GroupMembership, GroupPost
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if user is a member
+    membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['active', 'moderator', 'admin']
+    ).first()
+
+    if not membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'You must be a member of this group to post.'
+        }, status=403)
+
+    post_type = request.POST.get('post_type', 'discussion')
+    title = request.POST.get('title', '').strip()
+    content = request.POST.get('content', '').strip()
+    is_anonymous = request.POST.get('is_anonymous') == 'on'
+
+    if not title or not content:
+        return JsonResponse({
+            'success': False,
+            'message': 'Title and content are required.'
+        }, status=400)
+
+    post = GroupPost.objects.create(
+        author=request.user,
+        group=group,
+        post_type=post_type,
+        title=title,
+        content=content,
+        is_anonymous=is_anonymous
+    )
+
+    # Update membership last_active
+    membership.last_active = timezone.now()
+    membership.save(update_fields=['last_active'])
+
+    # Notify group members about new post
+    poster_name = 'Someone' if is_anonymous else (request.user.get_full_name() or request.user.username)
+    notify_group_members(
+        group=group,
+        sender=None if is_anonymous else request.user,
+        notification_type='group_post',
+        title=f'New post in {group.name}',
+        message=f'{poster_name} posted "{title}" in {group.name}',
+        link=f'/accounts/groups/{group.id}/',
+        exclude_user=request.user
+    )
+
+    return JsonResponse({
+        'success': True,
+        'message': 'Post created successfully!',
+        'post_id': post.id
+    })
+
+
+@login_required
+@require_POST
+def leave_group(request, group_id):
+    """Leave a recovery group"""
+    from .models import RecoveryGroup, GroupMembership
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['active', 'moderator']
+    ).first()
+
+    if not membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'You are not a member of this group.'
+        }, status=400)
+
+    # Prevent admin from leaving (they must transfer ownership first)
+    if membership.status == 'admin':
+        return JsonResponse({
+            'success': False,
+            'message': 'As the group administrator, you cannot leave. Transfer ownership first.'
+        }, status=400)
+
+    membership.status = 'left'
+    membership.left_date = timezone.now().date()
+    membership.save()
+
+    return JsonResponse({
+        'success': True,
+        'message': f'You have left {group.name}.'
+    })
+
+
+@login_required
+@require_POST
+def approve_member(request, group_id, user_id):
+    """Approve a pending member request"""
+    from .models import RecoveryGroup, GroupMembership
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if current user is admin or moderator
+    admin_membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['admin', 'moderator']
+    ).first()
+
+    if not admin_membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'You do not have permission to approve members.'
+        }, status=403)
+
+    # Get the pending membership
+    pending_membership = GroupMembership.objects.filter(
+        user_id=user_id,
+        group=group,
+        status='pending'
+    ).first()
+
+    if not pending_membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'No pending request found for this user.'
+        }, status=404)
+
+    # Approve the membership
+    pending_membership.status = 'active'
+    pending_membership.joined_date = timezone.now().date()
+    pending_membership.save()
+
+    return JsonResponse({
+        'success': True,
+        'message': f'{pending_membership.user.username} has been approved to join the group.'
+    })
+
+
+@login_required
+@require_POST
+def reject_member(request, group_id, user_id):
+    """Reject a pending member request"""
+    from .models import RecoveryGroup, GroupMembership
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if current user is admin or moderator
+    admin_membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['admin', 'moderator']
+    ).first()
+
+    if not admin_membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'You do not have permission to reject members.'
+        }, status=403)
+
+    # Get the pending membership
+    pending_membership = GroupMembership.objects.filter(
+        user_id=user_id,
+        group=group,
+        status='pending'
+    ).first()
+
+    if not pending_membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'No pending request found for this user.'
+        }, status=404)
+
+    # Delete the membership request
+    username = pending_membership.user.username
+    pending_membership.delete()
+
+    return JsonResponse({
+        'success': True,
+        'message': f'{username}\'s request has been rejected.'
+    })
+
+
+@login_required
+def edit_group(request, group_id):
+    """Edit group settings - only for group admin"""
+    from .models import RecoveryGroup, GroupMembership
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if current user is admin
+    admin_membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status='admin'
+    ).first()
+
+    if not admin_membership:
+        messages.error(request, 'You do not have permission to edit this group.')
+        return redirect('accounts:group_detail', pk=group_id)
+
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        description = request.POST.get('description', '').strip()
+        group_type = request.POST.get('group_type', '')
+        privacy_level = request.POST.get('privacy_level', 'public')
+        location = request.POST.get('location', '').strip()
+        meeting_schedule = request.POST.get('meeting_schedule', '').strip()
+        max_members = request.POST.get('max_members', '')
+        group_color = request.POST.get('group_color', '#52b788')
+
+        # Check premium for private/secret groups
+        if privacy_level in ['private', 'secret'] and group.privacy_level == 'public':
+            if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
+                messages.warning(request, 'Private groups require a Premium subscription.')
+                return redirect('accounts:edit_group', group_id=group_id)
+
+        if name and description and group_type:
+            group.name = name
+            group.description = description
+            group.group_type = group_type
+            group.privacy_level = privacy_level
+            group.location = location
+            group.meeting_schedule = meeting_schedule
+            group.max_members = int(max_members) if max_members else None
+            group.group_color = group_color
+            group.save()
+
+            messages.success(request, 'Group settings updated successfully!')
+            return redirect('accounts:group_detail', pk=group_id)
+        else:
+            messages.error(request, 'Please fill in all required fields.')
+
+    context = {
+        'group': group,
+        'group_types': RecoveryGroup.GROUP_TYPES,
+    }
+    return render(request, 'accounts/groups/edit_group.html', context)
+
+
+def notify_group_members(group, sender, notification_type, title, message, link, exclude_user=None):
+    """Helper function to notify all active group members"""
+    from .models import GroupMembership, Notification
+
+    members = GroupMembership.objects.filter(
+        group=group,
+        status__in=['active', 'moderator', 'admin']
+    ).select_related('user')
+
+    notifications = []
+    for membership in members:
+        if membership.user != exclude_user and membership.user != sender:
+            notifications.append(Notification(
+                recipient=membership.user,
+                sender=sender,
+                notification_type=notification_type,
+                title=title,
+                message=message,
+                link=link
+            ))
+
+    if notifications:
+        Notification.objects.bulk_create(notifications)
+
+
+@login_required
+@require_POST
+def comment_group_post(request, group_id, post_id):
+    """Add a comment to a group post"""
+    from .models import RecoveryGroup, GroupMembership, GroupPost, GroupPostComment, Notification
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+    post = get_object_or_404(GroupPost, id=post_id, group=group)
+
+    # Check if user is a member
+    membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['active', 'moderator', 'admin']
+    ).first()
+
+    if not membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'You must be a member of this group to comment.'
+        }, status=403)
+
+    content = request.POST.get('content', '').strip()
+    is_anonymous = request.POST.get('is_anonymous') == 'on'
+
+    if not content:
+        return JsonResponse({
+            'success': False,
+            'message': 'Comment cannot be empty.'
+        }, status=400)
+
+    comment = GroupPostComment.objects.create(
+        post=post,
+        author=request.user,
+        content=content,
+        is_anonymous=is_anonymous
+    )
+
+    # Notify the post author (if not commenting on own post)
+    if post.author != request.user:
+        commenter_name = 'Someone' if is_anonymous else request.user.get_full_name() or request.user.username
+        Notification.objects.create(
+            recipient=post.author,
+            sender=None if is_anonymous else request.user,
+            notification_type='group_comment',
+            title='New comment on your post',
+            message=f'{commenter_name} commented on your post "{post.title}" in {group.name}',
+            link=f'/accounts/groups/{group.id}/'
+        )
+
+    # Update membership last_active
+    membership.last_active = timezone.now()
+    membership.save(update_fields=['last_active'])
+
+    return JsonResponse({
+        'success': True,
+        'message': 'Comment added successfully!',
+        'comment_id': comment.id,
+        'author': 'Anonymous' if is_anonymous else (request.user.get_full_name() or request.user.username),
+        'content': content,
+        'created_at': comment.created_at.strftime('%b %d, %Y at %I:%M %p')
+    })
+
+
+@login_required
+@require_POST
+def transfer_group_ownership(request, group_id):
+    """Transfer group ownership to another member"""
+    from .models import RecoveryGroup, GroupMembership
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if current user is admin
+    admin_membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status='admin'
+    ).first()
+
+    if not admin_membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'Only the group admin can transfer ownership.'
+        }, status=403)
+
+    new_owner_id = request.POST.get('new_owner_id')
+    if not new_owner_id:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please select a new owner.'
+        }, status=400)
+
+    # Get the new owner's membership
+    new_owner_membership = GroupMembership.objects.filter(
+        user_id=new_owner_id,
+        group=group,
+        status__in=['active', 'moderator']
+    ).first()
+
+    if not new_owner_membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'Selected user is not an active member of this group.'
+        }, status=400)
+
+    # Transfer ownership
+    new_owner_membership.status = 'admin'
+    new_owner_membership.save()
+
+    admin_membership.status = 'active'
+    admin_membership.save()
+
+    # Update the group creator
+    group.creator = new_owner_membership.user
+    group.save()
+
+    # Notify the new owner
+    from .models import Notification
+    Notification.objects.create(
+        recipient=new_owner_membership.user,
+        sender=request.user,
+        notification_type='group_invite',
+        title='You are now the group admin',
+        message=f'{request.user.get_full_name() or request.user.username} has transferred ownership of "{group.name}" to you.',
+        link=f'/accounts/groups/{group.id}/'
+    )
+
+    return JsonResponse({
+        'success': True,
+        'message': f'Ownership transferred to {new_owner_membership.user.username} successfully!'
+    })
+
+
+@login_required
+def get_group_members_for_transfer(request, group_id):
+    """Get list of members eligible to receive ownership"""
+    from .models import RecoveryGroup, GroupMembership
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if current user is admin
+    admin_membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status='admin'
+    ).first()
+
+    if not admin_membership:
+        return JsonResponse({'success': False, 'message': 'Not authorized'}, status=403)
+
+    members = GroupMembership.objects.filter(
+        group=group,
+        status__in=['active', 'moderator']
+    ).select_related('user')
+
+    member_list = [{
+        'id': m.user.id,
+        'username': m.user.username,
+        'name': m.user.get_full_name() or m.user.username,
+        'status': m.status
+    } for m in members]
+
+    return JsonResponse({'success': True, 'members': member_list})
+
+
+@login_required
+@require_POST
+def archive_group(request, group_id):
+    """Archive a group (soft delete) - only for group admin"""
+    from .models import RecoveryGroup, GroupMembership
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if current user is admin
+    admin_membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status='admin'
+    ).first()
+
+    if not admin_membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'Only the group admin can archive this group.'
+        }, status=403)
+
+    # Archive the group (set is_active to False)
+    group.is_active = False
+    group.save()
+
+    # Notify all members that the group has been archived
+    notify_group_members(
+        group=group,
+        sender=request.user,
+        notification_type='group_invite',
+        title=f'{group.name} has been archived',
+        message=f'The group "{group.name}" has been archived by its administrator.',
+        link='/accounts/groups/',
+        exclude_user=request.user
+    )
+
+    return JsonResponse({
+        'success': True,
+        'message': f'Group "{group.name}" has been archived successfully.'
+    })
+
+
+@login_required
+@require_POST
+def like_group_post(request, group_id, post_id):
+    """Like or unlike a group post"""
+    from .models import RecoveryGroup, GroupMembership, GroupPost
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+    post = get_object_or_404(GroupPost, id=post_id, group=group)
+
+    # Check if user is a member
+    membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['active', 'moderator', 'admin']
+    ).first()
+
+    if not membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'You must be a member of this group to like posts.'
+        }, status=403)
+
+    # Toggle like
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+        liked = False
+        message = 'Post unliked'
+    else:
+        post.likes.add(request.user)
+        liked = True
+        message = 'Post liked'
+
+        # Notify post author (if not liking own post and not anonymous)
+        if post.author != request.user and not post.is_anonymous:
+            from .models import Notification
+            Notification.objects.create(
+                recipient=post.author,
+                sender=request.user,
+                notification_type='like',
+                title='Someone liked your post',
+                message=f'{request.user.get_full_name() or request.user.username} liked your post "{post.title}" in {group.name}',
+                link=f'/accounts/groups/{group.id}/'
+            )
+
+    return JsonResponse({
+        'success': True,
+        'message': message,
+        'liked': liked,
+        'likes_count': post.likes.count()
+    })
+
+
+@login_required
+@require_POST
+def pin_group_post(request, group_id, post_id):
+    """Pin or unpin a group post - admin/moderator only"""
+    from .models import RecoveryGroup, GroupMembership, GroupPost
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+    post = get_object_or_404(GroupPost, id=post_id, group=group)
+
+    # Check if user is admin or moderator
+    membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['admin', 'moderator']
+    ).first()
+
+    if not membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'Only admins and moderators can pin posts.'
+        }, status=403)
+
+    # Toggle pin
+    post.is_pinned = not post.is_pinned
+    post.save()
+
+    return JsonResponse({
+        'success': True,
+        'message': f'Post {"pinned" if post.is_pinned else "unpinned"} successfully.',
+        'is_pinned': post.is_pinned
+    })
+
+
+@login_required
+def generate_group_invite(request, group_id):
+    """Generate or get invite link for a group"""
+    from .models import RecoveryGroup, GroupMembership
+    import hashlib
+    import time
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Check if user is admin or moderator
+    membership = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['admin', 'moderator']
+    ).first()
+
+    if not membership:
+        return JsonResponse({
+            'success': False,
+            'message': 'Only admins and moderators can generate invite links.'
+        }, status=403)
+
+    # Generate a simple invite code based on group id and a secret
+    # In production, you'd want to store these in a model with expiry
+    invite_code = hashlib.md5(f"{group.id}-{group.created_at}".encode()).hexdigest()[:12]
+
+    # Build the invite URL
+    invite_url = request.build_absolute_uri(f'/accounts/groups/{group.id}/join-invite/{invite_code}/')
+
+    return JsonResponse({
+        'success': True,
+        'invite_url': invite_url,
+        'invite_code': invite_code,
+        'group_name': group.name
+    })
+
+
+@login_required
+def join_group_via_invite(request, group_id, invite_code):
+    """Join a group via invite link"""
+    from .models import RecoveryGroup, GroupMembership
+    import hashlib
+
+    group = get_object_or_404(RecoveryGroup, id=group_id)
+
+    # Verify invite code
+    expected_code = hashlib.md5(f"{group.id}-{group.created_at}".encode()).hexdigest()[:12]
+
+    if invite_code != expected_code:
+        messages.error(request, 'Invalid or expired invite link.')
+        return redirect('accounts:groups_list')
+
+    # Check if already a member
+    existing = GroupMembership.objects.filter(
+        user=request.user,
+        group=group,
+        status__in=['active', 'moderator', 'admin', 'pending']
+    ).first()
+
+    if existing:
+        if existing.status == 'pending':
+            messages.info(request, 'Your membership is pending approval.')
+        else:
+            messages.info(request, 'You are already a member of this group.')
+        return redirect('accounts:group_detail', pk=group.id)
+
+    # Check group capacity
+    if group.is_full:
+        messages.error(request, 'This group has reached its maximum capacity.')
+        return redirect('accounts:groups_list')
+
+    # Create membership (bypasses private group approval for invite links)
+    GroupMembership.objects.create(
+        user=request.user,
+        group=group,
+        status='active',
+        joined_date=timezone.now().date()
+    )
+
+    messages.success(request, f'Welcome to {group.name}!')
+    return redirect('accounts:group_detail', pk=group.id)
 
 
 class ProfileView(DetailView):

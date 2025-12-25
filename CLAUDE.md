@@ -342,7 +342,89 @@ static/                   # CSS, JS, images
 
 ---
 
+## Recovery Groups System
+
+### Fixed Issues (2025-12-24)
+The groups system had several critical bugs that have been fixed:
+
+1. **my_groups() view** - Was passing `groups` instead of `memberships`, causing template to display incorrectly
+2. **RecoveryGroupDetailView** - Was missing `get_context_data()`, so templates didn't receive `membership`, `is_member`, `members`, or `recent_posts`
+3. **create_group()** - Was not extracting `group_type` from POST data (required field)
+4. **No group posting** - Added `create_group_post()` view and URL
+5. **No leave group** - Added `leave_group()` view and URL
+6. **Approve pending members** - Added approve/reject views with UI for admins/moderators
+7. **Edit group settings** - Added edit_group view and template for group admins
+8. **Age display bug** - Fixed "21" showing without context, now shows "Dec 2024" format
+
+### Group URLs
+```
+/accounts/groups/                           # List all groups
+/accounts/groups/create/                    # Create new group
+/accounts/groups/<id>/                      # Group detail
+/accounts/groups/my-groups/                 # User's joined groups
+/accounts/groups/<id>/join/                 # Join group (AJAX)
+/accounts/groups/<id>/leave/                # Leave group (AJAX)
+/accounts/groups/<id>/post/                 # Create post in group (AJAX)
+/accounts/groups/<id>/edit/                 # Edit group settings (admin only)
+/accounts/groups/<id>/approve/<user_id>/    # Approve pending member (AJAX)
+/accounts/groups/<id>/reject/<user_id>/     # Reject pending member (AJAX)
+/accounts/groups/<id>/post/<post_id>/comment/  # Add comment to post (AJAX)
+/accounts/groups/<id>/post/<post_id>/like/     # Like/unlike post (AJAX)
+/accounts/groups/<id>/post/<post_id>/pin/      # Pin/unpin post (AJAX, mod/admin)
+/accounts/groups/<id>/transfer/                # Transfer ownership (AJAX)
+/accounts/groups/<id>/members-for-transfer/    # Get members for transfer (AJAX)
+/accounts/groups/<id>/archive/                 # Archive group (AJAX, admin only)
+/accounts/groups/<id>/invite/                  # Generate invite link (AJAX)
+/accounts/groups/<id>/join-invite/<code>/      # Join via invite link
+```
+
+### Group Features Complete
+
+All group features have been implemented:
+- Create, edit, and archive groups
+- Join (public), request to join (private), invite links (secret/private)
+- Post discussions with 6 types
+- Like/unlike posts with notifications
+- Pin/unpin posts (moderator/admin)
+- Comment on posts with anonymous option
+- Approve/reject pending members
+- Transfer ownership
+- Group notifications for joins, posts, comments
+
+### Group Models Reference
+```python
+RecoveryGroup:
+    - group_type: 8 types (addiction_type, location, recovery_stage, interest, age_group, gender, family, professional)
+    - privacy_level: public, private, secret
+    - creator, moderators, max_members
+    - group_image, group_color
+
+GroupMembership:
+    - status: pending, active, moderator, admin, banned, left
+    - joined_date, left_date, last_active
+
+GroupPost:
+    - post_type: discussion, milestone, resource, question, support, event
+    - is_anonymous, is_pinned, likes
+
+GroupPostComment:
+    - post, author, content, is_anonymous
+    - created_at, updated_at
+
+Notification (group types):
+    - group_invite: Group invitation
+    - group_post: New post in group
+    - group_comment: Comment on post
+    - group_join: New member joined
+```
+
+---
+
 ## Changelog
 
+- **2025-12-24:** Completed all group features: archive groups, like/unlike posts, pin posts, invite links
+- **2025-12-24:** Added group notifications, comments on posts, transfer ownership feature
+- **2025-12-24:** Added approve/reject pending members, edit group settings, fixed age display bug
+- **2025-12-24:** Fixed groups system bugs (my_groups context, group detail context, create_group missing group_type), added group posting and leave functionality
 - **2025-12-11:** Streamlined for social-first focus, added beta growth priorities
 - **2025-11-20:** Initial comprehensive documentation
