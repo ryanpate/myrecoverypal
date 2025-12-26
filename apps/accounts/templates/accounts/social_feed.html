@@ -553,12 +553,7 @@
     <!-- Create Post Box (Only for authenticated users) -->
     <div class="create-post-box">
         <div class="create-post-header">
-            <div class="avatar-wrapper" style="position: relative; width: 40px; height: 40px; flex-shrink: 0;">
-                <div class="avatar-initials avatar-small" style="background: hsl({{ user.username|length|add:user.id }}0, 45%, 50%); border-radius: 50%; position: absolute; top: 0; left: 0;">{{ user.first_name|default:user.username|slice:":1" }}{{ user.last_name|default:""|slice:":1" }}{% if not user.last_name %}{{ user.username|slice:"1:2" }}{% endif %}</div>
-                {% if user.avatar %}
-                <img src="{{ user.avatar.url }}" alt="" class="avatar-small" style="position: absolute; top: 0; left: 0;" onerror="this.style.display='none'">
-                {% endif %}
-            </div>
+            <div class="avatar-initials avatar-small" style="background: hsl({{ user.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ user.username|slice:":1"|upper }}</div>
             <span style="font-weight: 500;">What's on your mind, {{ user.get_full_name|default:user.username }}?</span>
         </div>
         <form id="create-post-form" enctype="multipart/form-data">
@@ -613,12 +608,7 @@
             <div class="post-card" data-post-id="{{ post.id }}">
                 <!-- Post Header -->
                 <div class="social-post-header">
-                    <div class="avatar-wrapper" style="position: relative; width: 44px; height: 44px; flex-shrink: 0;">
-                        <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.username|length|add:post.author.id }}0, 45%, 50%); border-radius: 50%; position: absolute; top: 0; left: 0;">{{ post.author.first_name|default:post.author.username|slice:":1" }}{{ post.author.last_name|default:""|slice:":1" }}{% if not post.author.last_name %}{{ post.author.username|slice:"1:2" }}{% endif %}</div>
-                        {% if post.author.avatar %}
-                        <img src="{{ post.author.avatar.url }}" alt="" class="avatar-medium" style="position: absolute; top: 0; left: 0;" onerror="this.style.display='none'">
-                        {% endif %}
-                    </div>
+                    <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
                     <div class="post-author-info">
                         <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
                         <div class="post-meta">@{{ post.author.username }} · {{ post.created_at|timesince }} ago</div>
@@ -671,12 +661,7 @@
                     <div class="comments-list">
                         {% for comment in post.comments.all %}
                         <div class="comment">
-                            <div class="avatar-wrapper" style="position: relative; width: 32px; height: 32px; flex-shrink: 0;">
-                                <div class="avatar-initials comment-avatar" style="background: hsl({{ comment.author.username|length|add:comment.author.id }}0, 45%, 50%); border-radius: 50%; position: absolute; top: 0; left: 0;">{{ comment.author.first_name|default:comment.author.username|slice:":1" }}{{ comment.author.last_name|default:""|slice:":1" }}{% if not comment.author.last_name %}{{ comment.author.username|slice:"1:2" }}{% endif %}</div>
-                                {% if comment.author.avatar %}
-                                <img src="{{ comment.author.avatar.url }}" alt="" class="comment-avatar" style="position: absolute; top: 0; left: 0;" onerror="this.style.display='none'">
-                                {% endif %}
-                            </div>
+                            <div class="avatar-initials comment-avatar" style="background: hsl({{ comment.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ comment.author.username|slice:":1"|upper }}</div>
                             <div class="comment-content">
                                 <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</div>
                                 <div class="comment-text">{{ comment.content }}</div>
