@@ -527,7 +527,6 @@
                 name="content"
                 id="post-content"
                 placeholder="Share your journey, wins, or words of encouragement..."
-                maxlength="1000"
             ></textarea>
 
             <!-- Image Preview -->
@@ -551,7 +550,6 @@
                         <option value="friends">👥 Friends</option>
                         <option value="private">🔒 Only Me</option>
                     </select>
-                    <span class="char-counter" id="char-counter">0/1000</span>
                 </div>
                 <button type="submit" class="post-btn" id="post-submit-btn" disabled>Post</button>
             </div>
@@ -710,7 +708,7 @@
 <div class="edit-modal-overlay" id="editPostModal">
     <div class="edit-modal">
         <h3><i class="fas fa-edit"></i> Edit Post</h3>
-        <textarea id="editPostContent" maxlength="1000" placeholder="What's on your mind?"></textarea>
+        <textarea id="editPostContent" placeholder="What's on your mind?"></textarea>
         <div class="edit-modal-actions">
             <button class="edit-modal-cancel" onclick="closeEditModal()">Cancel</button>
             <button class="edit-modal-save" id="saveEditBtn">Save Changes</button>
@@ -722,21 +720,12 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Character counter
+    // Post content handling
     const textarea = document.getElementById('post-content');
-    const charCounter = document.getElementById('char-counter');
     const submitBtn = document.getElementById('post-submit-btn');
 
     textarea.addEventListener('input', function() {
         const length = this.value.length;
-        charCounter.textContent = `${length}/1000`;
-
-        if (length > 900) {
-            charCounter.classList.add('warning');
-        } else {
-            charCounter.classList.remove('warning');
-        }
-
         // Enable submit button if there's content or an image
         const hasImage = document.getElementById('post-image-input').files.length > 0;
         submitBtn.disabled = length === 0 && !hasImage;
@@ -820,7 +809,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 imageInput.value = '';
                 imagePreviewContainer.style.display = 'none';
                 imagePreview.src = '';
-                charCounter.textContent = '0/1000';
                 submitBtn.disabled = true;
 
                 // Reload page to show new post

@@ -966,7 +966,6 @@
                         name="content"
                         id="post-content"
                         placeholder="What's on your mind? Share a win, ask for support, or encourage others..."
-                        maxlength="1000"
                     ></textarea>
 
                     <!-- Image Preview -->
@@ -990,7 +989,6 @@
                                 <option value="friends">👥 Friends</option>
                                 <option value="private">🔒 Only Me</option>
                             </select>
-                            <span class="char-counter" id="char-counter">0/1000</span>
                         </div>
                         <button type="submit" class="post-btn" id="post-submit-btn" disabled>Post</button>
                     </div>
@@ -1223,21 +1221,12 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Character counter
+    // Post content handling
     const textarea = document.getElementById('post-content');
-    const charCounter = document.getElementById('char-counter');
     const submitBtn = document.getElementById('post-submit-btn');
 
     textarea.addEventListener('input', function() {
         const length = this.value.length;
-        charCounter.textContent = `${length}/1000`;
-
-        if (length > 900) {
-            charCounter.classList.add('warning');
-        } else {
-            charCounter.classList.remove('warning');
-        }
-
         const hasImage = document.getElementById('post-image-input').files.length > 0;
         submitBtn.disabled = length === 0 && !hasImage;
     });
@@ -1313,7 +1302,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 imageInput.value = '';
                 imagePreviewContainer.style.display = 'none';
                 imagePreview.src = '';
-                charCounter.textContent = '0/1000';
                 submitBtn.disabled = true;
                 window.location.reload();
             } else {

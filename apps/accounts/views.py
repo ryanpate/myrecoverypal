@@ -3174,9 +3174,6 @@ def create_social_post(request):
     if not content and not image:
         return JsonResponse({'error': 'Post must have either text or an image'}, status=400)
 
-    if content and len(content) > 1000:
-        return JsonResponse({'error': 'Post is too long (max 1000 characters)'}, status=400)
-
     try:
         # Create the post
         post = SocialPost.objects.create(
@@ -3419,9 +3416,6 @@ def edit_social_post(request, post_id):
         content = request.POST.get('content', '').strip()
         if not content:
             return JsonResponse({'error': 'Content is required'}, status=400)
-
-        if len(content) > 1000:
-            return JsonResponse({'error': 'Content is too long (max 1000 characters)'}, status=400)
 
         post.content = content
         post.save()

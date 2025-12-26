@@ -1367,7 +1367,7 @@ class SocialPost(models.Model):
     ]
 
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='social_posts')
-    content = models.TextField(max_length=1000, help_text="Share your thoughts, wins, or encouragement")
+    content = models.TextField(blank=True, help_text="Share your thoughts, wins, or encouragement")
     image = models.ImageField(upload_to='social_posts/', blank=True, null=True)
     visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='public')
 
