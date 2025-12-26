@@ -991,7 +991,12 @@
             <!-- Create Post Box -->
             <div class="create-post-box">
                 <div class="create-post-header">
-                    <div class="avatar-initials avatar-small" style="background: hsl({{ user.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ user.username|slice:":1"|upper }}</div>
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="" class="avatar-small" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="avatar-initials avatar-small" style="background: hsl({{ user.id|add:100 }}, 45%, 50%); border-radius: 50%; display: none;">{{ user.username|slice:":1"|upper }}</div>
+                    {% else %}
+                        <div class="avatar-initials avatar-small" style="background: hsl({{ user.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ user.username|slice:":1"|upper }}</div>
+                    {% endif %}
                     <span style="font-weight: 500; color: #666;">Share your journey...</span>
                 </div>
                 <form id="create-post-form" enctype="multipart/form-data">
@@ -1055,7 +1060,12 @@
                     <div class="post-card" data-post-id="{{ post.id }}">
                         <!-- Post Header -->
                         <div class="social-post-header">
-                            <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
+                            {% if post.author.avatar %}
+                                <img src="{{ post.author.avatar.url }}" alt="" class="avatar-medium" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%; display: none;">{{ post.author.username|slice:":1"|upper }}</div>
+                            {% else %}
+                                <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
+                            {% endif %}
                             <div class="post-author-info">
                                 <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
                                 <div class="post-meta">@{{ post.author.username }} · {{ post.created_at|timesince }} ago</div>
@@ -1101,7 +1111,12 @@
                                 {% for comment in post.comments.all %}
                                 {% if not comment.parent %}
                                 <div class="comment" data-comment-id="{{ comment.id }}">
-                                    <div class="avatar-initials comment-avatar" style="background: hsl({{ comment.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ comment.author.username|slice:":1"|upper }}</div>
+                                    {% if comment.author.avatar %}
+                                        <img src="{{ comment.author.avatar.url }}" alt="" class="comment-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div class="avatar-initials comment-avatar" style="background: hsl({{ comment.author.id|add:100 }}, 45%, 50%); border-radius: 50%; display: none;">{{ comment.author.username|slice:":1"|upper }}</div>
+                                    {% else %}
+                                        <div class="avatar-initials comment-avatar" style="background: hsl({{ comment.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ comment.author.username|slice:":1"|upper }}</div>
+                                    {% endif %}
                                     <div class="comment-content-wrapper">
                                         <div class="comment-content">
                                             <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</div>
@@ -1137,7 +1152,12 @@
                                         <div class="replies-container">
                                             {% for reply in comment.replies.all %}
                                             <div class="comment reply" data-comment-id="{{ reply.id }}">
-                                                <div class="avatar-initials comment-avatar" style="background: hsl({{ reply.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ reply.author.username|slice:":1"|upper }}</div>
+                                                {% if reply.author.avatar %}
+                                                    <img src="{{ reply.author.avatar.url }}" alt="" class="comment-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="avatar-initials comment-avatar" style="background: hsl({{ reply.author.id|add:100 }}, 45%, 50%); border-radius: 50%; display: none;">{{ reply.author.username|slice:":1"|upper }}</div>
+                                                {% else %}
+                                                    <div class="avatar-initials comment-avatar" style="background: hsl({{ reply.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ reply.author.username|slice:":1"|upper }}</div>
+                                                {% endif %}
                                                 <div class="comment-content-wrapper">
                                                     <div class="comment-content">
                                                         <div class="comment-author">{{ reply.author.get_full_name|default:reply.author.username }}</div>
