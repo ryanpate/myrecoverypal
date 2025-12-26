@@ -1,6 +1,6 @@
 
 // service-worker.js
-const CACHE_NAME = 'myrecoverypal-v1';
+const CACHE_NAME = 'myrecoverypal-v2';
 const urlsToCache = [
   '/',
   '/static/css/main.css',
