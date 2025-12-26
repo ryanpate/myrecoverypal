@@ -2951,9 +2951,14 @@
                 return;
             }
 
-            listElement.innerHTML = notifications.map(notification => `
-                <a href="${notification.link || '#'}" class="notification-item ${notification.is_read ? '' : 'unread'}" 
-                   onclick="handleNotificationClick(event, ${notification.id}, '${notification.link || ''}')">
+            listElement.innerHTML = notifications.map(notification => {
+                const link = notification.link || '';
+                const escapedLink = link.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                return `
+                <div class="notification-item ${notification.is_read ? '' : 'unread'}"
+                     data-id="${notification.id}"
+                     data-link="${escapedLink}"
+                     onclick="handleNotificationClick(event, this)">
                     <div class="notification-avatar">
                         ${notification.sender_avatar ?
                     `<img src="${notification.sender_avatar}" alt="${notification.sender_name}">` :
@@ -2965,21 +2970,32 @@
                         <div class="notification-message">${notification.message}</div>
                         <div class="notification-time">${notification.time_ago}</div>
                     </div>
-                </a>
-            `).join('');
+                </div>
+            `;}).join('');
         }
 
-        async function handleNotificationClick(event, notificationId, link) {
-            // If notification has no link, prevent default
-            if (!link || link === '#') {
-                event.preventDefault();
+        function handleNotificationClick(event, element) {
+            // Always prevent default to control navigation
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Get data from the element
+            const notificationId = element.dataset.id;
+            const link = element.dataset.link;
+
+            // Close the notification dropdown
+            const dropdown = document.getElementById('notificationDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('active');
             }
 
-            // Mark as read
-            await markNotificationAsRead(notificationId);
+            // Mark as read (fire and forget - don't block navigation)
+            if (notificationId) {
+                markNotificationAsRead(notificationId);
+            }
 
-            // If there's a link and we prevented default, navigate manually
-            if (link && link !== '#' && event.defaultPrevented) {
+            // Navigate to the link if it exists and is valid
+            if (link && link !== '#' && link !== '') {
                 window.location.href = link;
             }
         }
