@@ -330,6 +330,35 @@
         object-fit: cover;
     }
 
+    /* Initials avatar */
+    .avatar-initials {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: white;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+
+    .avatar-initials.avatar-small {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .avatar-initials.avatar-medium {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+    }
+
+    .avatar-initials.comment-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 0.85rem;
+    }
+
     .post-author-info {
         flex: 1;
         min-width: 0;
@@ -962,11 +991,7 @@
             <!-- Create Post Box -->
             <div class="create-post-box">
                 <div class="create-post-header">
-                    {% if user.avatar %}
-                        <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="avatar-small">
-                    {% else %}
-                        <img src="{% static 'images/default-avatar.png' %}" alt="{{ user.username }}" class="avatar-small">
-                    {% endif %}
+                    <div class="avatar-initials avatar-small" style="background: hsl({{ user.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ user.username|slice:":1"|upper }}</div>
                     <span style="font-weight: 500; color: #666;">Share your journey...</span>
                 </div>
                 <form id="create-post-form" enctype="multipart/form-data">
@@ -1030,11 +1055,7 @@
                     <div class="post-card" data-post-id="{{ post.id }}">
                         <!-- Post Header -->
                         <div class="social-post-header">
-                            {% if post.author.avatar %}
-                                <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username }}" class="avatar-medium">
-                            {% else %}
-                                <img src="{% static 'images/default-avatar.png' %}" alt="{{ post.author.username }}" class="avatar-medium">
-                            {% endif %}
+                            <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
                             <div class="post-author-info">
                                 <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
                                 <div class="post-meta">@{{ post.author.username }} · {{ post.created_at|timesince }} ago</div>
@@ -1080,11 +1101,7 @@
                                 {% for comment in post.comments.all %}
                                 {% if not comment.parent %}
                                 <div class="comment" data-comment-id="{{ comment.id }}">
-                                    {% if comment.author.avatar %}
-                                        <img src="{{ comment.author.avatar.url }}" alt="{{ comment.author.username }}" class="comment-avatar">
-                                    {% else %}
-                                        <img src="{% static 'images/default-avatar.png' %}" alt="{{ comment.author.username }}" class="comment-avatar">
-                                    {% endif %}
+                                    <div class="avatar-initials comment-avatar" style="background: hsl({{ comment.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ comment.author.username|slice:":1"|upper }}</div>
                                     <div class="comment-content-wrapper">
                                         <div class="comment-content">
                                             <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</div>
@@ -1120,11 +1137,7 @@
                                         <div class="replies-container">
                                             {% for reply in comment.replies.all %}
                                             <div class="comment reply" data-comment-id="{{ reply.id }}">
-                                                {% if reply.author.avatar %}
-                                                    <img src="{{ reply.author.avatar.url }}" alt="{{ reply.author.username }}" class="comment-avatar">
-                                                {% else %}
-                                                    <img src="{% static 'images/default-avatar.png' %}" alt="{{ reply.author.username }}" class="comment-avatar">
-                                                {% endif %}
+                                                <div class="avatar-initials comment-avatar" style="background: hsl({{ reply.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ reply.author.username|slice:":1"|upper }}</div>
                                                 <div class="comment-content-wrapper">
                                                     <div class="comment-content">
                                                         <div class="comment-author">{{ reply.author.get_full_name|default:reply.author.username }}</div>
