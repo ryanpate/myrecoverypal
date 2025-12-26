@@ -118,22 +118,28 @@
     .post-author-info {
         flex: 1;
         min-width: 0;
+        display: flex;
+        flex-direction: column;
     }
 
     .post-author-name {
         font-weight: 600;
         color: var(--text-dark);
-        margin-bottom: 0.2rem;
+        margin-bottom: 0.1rem;
         font-size: 1rem;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        display: block;
+        line-height: 1.3;
     }
 
     .post-meta {
         font-size: 0.85rem;
         color: #666;
         margin: 0;
+        display: block;
+        line-height: 1.3;
     }
 
     .post-content {
@@ -505,7 +511,7 @@
                     {% endif %}
                     <div class="post-author-info">
                         <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
-                        <div class="post-meta">{{ post.created_at|timesince }} ago</div>
+                        <div class="post-meta">@{{ post.author.username }} · {{ post.created_at|timesince }} ago</div>
                     </div>
                     {% if post.author == user %}
                     <button class="action-btn delete-post-btn" data-post-id="{{ post.id }}">
