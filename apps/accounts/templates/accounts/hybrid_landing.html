@@ -332,12 +332,16 @@
 
     .post-author-info {
         flex: 1;
+        min-width: 0;
     }
 
     .post-author-name {
         font-weight: 600;
         color: #333;
         margin-bottom: 0.2rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .post-meta {
