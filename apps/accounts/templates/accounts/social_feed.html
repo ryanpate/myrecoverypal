@@ -115,6 +115,35 @@
         object-fit: cover;
     }
 
+    /* Initials avatar fallback */
+    .avatar-initials {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: white;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+
+    .avatar-initials.avatar-small {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+
+    .avatar-initials.avatar-medium {
+        width: 44px;
+        height: 44px;
+        font-size: 1rem;
+    }
+
+    .avatar-initials.comment-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 0.75rem;
+    }
+
     .post-author-info {
         flex: 1;
         min-width: 0;
@@ -525,9 +554,9 @@
     <div class="create-post-box">
         <div class="create-post-header">
             {% if user.avatar %}
-                <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="avatar-small">
+                <img src="{{ user.avatar.url }}" alt="" class="avatar-small">
             {% else %}
-                <img src="{% static 'images/default-avatar.png' %}" alt="{{ user.username }}" class="avatar-small">
+                <div class="avatar-initials avatar-small" style="background: hsl({{ user.username|length|add:user.id }}0, 45%, 50%); border-radius: 50%;">{{ user.first_name|default:user.username|slice:":1" }}{{ user.last_name|default:""|slice:":1" }}{% if not user.last_name %}{{ user.username|slice:"1:2" }}{% endif %}</div>
             {% endif %}
             <span style="font-weight: 500;">What's on your mind, {{ user.get_full_name|default:user.username }}?</span>
         </div>
@@ -584,9 +613,9 @@
                 <!-- Post Header -->
                 <div class="social-post-header">
                     {% if post.author.avatar %}
-                        <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username }}" class="avatar-medium">
+                        <img src="{{ post.author.avatar.url }}" alt="" class="avatar-medium">
                     {% else %}
-                        <img src="{% static 'images/default-avatar.png' %}" alt="{{ post.author.username }}" class="avatar-medium">
+                        <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.username|length|add:post.author.id }}0, 45%, 50%); border-radius: 50%;">{{ post.author.first_name|default:post.author.username|slice:":1" }}{{ post.author.last_name|default:""|slice:":1" }}{% if not post.author.last_name %}{{ post.author.username|slice:"1:2" }}{% endif %}</div>
                     {% endif %}
                     <div class="post-author-info">
                         <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
@@ -641,9 +670,9 @@
                         {% for comment in post.comments.all %}
                         <div class="comment">
                             {% if comment.author.avatar %}
-                                <img src="{{ comment.author.avatar.url }}" alt="{{ comment.author.username }}" class="comment-avatar">
+                                <img src="{{ comment.author.avatar.url }}" alt="" class="comment-avatar">
                             {% else %}
-                                <img src="{% static 'images/default-avatar.png' %}" alt="{{ comment.author.username }}" class="comment-avatar">
+                                <div class="avatar-initials comment-avatar" style="background: hsl({{ comment.author.username|length|add:comment.author.id }}0, 45%, 50%); border-radius: 50%;">{{ comment.author.first_name|default:comment.author.username|slice:":1" }}{{ comment.author.last_name|default:""|slice:":1" }}{% if not comment.author.last_name %}{{ comment.author.username|slice:"1:2" }}{% endif %}</div>
                             {% endif %}
                             <div class="comment-content">
                                 <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</div>
