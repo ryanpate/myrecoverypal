@@ -2974,7 +2974,7 @@
             `;}).join('');
         }
 
-        function handleNotificationClick(event, element) {
+        async function handleNotificationClick(event, element) {
             // Always prevent default to control navigation
             event.preventDefault();
             event.stopPropagation();
@@ -2989,9 +2989,9 @@
                 dropdown.classList.remove('active');
             }
 
-            // Mark as read (fire and forget - don't block navigation)
+            // Mark as read and wait for completion before navigating
             if (notificationId) {
-                markNotificationAsRead(notificationId);
+                await markNotificationAsRead(notificationId);
             }
 
             // Navigate to the link if it exists and is valid
