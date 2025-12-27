@@ -495,3 +495,73 @@ class InvoiceAdmin(admin.ModelAdmin):
 
 # Register the custom user admin
 admin.site.register(User, CustomUserAdmin)
+
+
+# ===========================================
+# A/B Testing Admin
+# ===========================================
+from .ab_testing import ABTest, ABTestVariant, ABTestAssignment, ABTestConversion
+
+
+@admin.register(ABTest)
+class ABTestAdmin(admin.ModelAdmin):
+    list_display = ['name', 'is_active', 'start_date', 'end_date', 'traffic_percentage', 'get_variant_count']
+    list_filter = ['is_active']
+    search_fields = ['name', 'description']
+    readonly_fields = ['created_at', 'updated_at']
+
+    fieldsets = (
+        ('Test Information', {
+            'fields': ('name', 'description', 'is_active')
+        }),
+        ('Configuration', {
+            'fields': ('traffic_percentage', 'start_date', 'end_date')
+        }),
+        ('Metadata', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    def get_variant_count(self, obj):
+        return obj.variants.count()
+    get_variant_count.short_description = 'Variants'
+
+
+@admin.register(ABTestVariant)
+class ABTestVariantAdmin(admin.ModelAdmin):
+    list_display = ['test', 'name', 'weight', 'get_assignment_count']
+    list_filter = ['test']
+    search_fields = ['name', 'description']
+
+    def get_assignment_count(self, obj):
+        return obj.assignments.count()
+    get_assignment_count.short_description = 'Users Assigned'
+
+
+@admin.register(ABTestAssignment)
+class ABTestAssignmentAdmin(admin.ModelAdmin):
+    list_display = ['user', 'test', 'variant', 'assigned_at']
+    list_filter = ['test', 'variant', 'assigned_at']
+    search_fields = ['user__username', 'user__email']
+    readonly_fields = ['assigned_at']
+
+
+@admin.register(ABTestConversion)
+class ABTestConversionAdmin(admin.ModelAdmin):
+    list_display = ['get_user', 'get_test', 'get_variant', 'conversion_type', 'converted_at']
+    list_filter = ['conversion_type', 'assignment__test', 'assignment__variant', 'converted_at']
+    search_fields = ['assignment__user__username', 'assignment__user__email']
+    readonly_fields = ['converted_at']
+
+    def get_user(self, obj):
+        return obj.assignment.user.username
+    get_user.short_description = 'User'
+
+    def get_test(self, obj):
+        return obj.assignment.test.name
+    get_test.short_description = 'Test'
+
+    def get_variant(self, obj):
+        return obj.assignment.variant.name
+    get_variant.short_description = 'Variant'

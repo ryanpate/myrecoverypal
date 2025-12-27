@@ -8,6 +8,7 @@ from datetime import timedelta
 # At the top of apps/accounts/models.py, add:
 from .invite_models import WaitlistRequest, InviteCode, SystemSettings
 from .payment_models import Subscription, Transaction, PaymentMethod, Invoice, SubscriptionPlan
+from .ab_testing import ABTest, ABTestVariant, ABTestAssignment, ABTestConversion
 
 # Recovery stage choices for onboarding and matching
 RECOVERY_STAGE_CHOICES = [

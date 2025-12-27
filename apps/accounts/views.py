@@ -36,6 +36,7 @@ from .forms import (
     ChallengeCommentForm, PalRequestForm, ChallengeFilterForm
 )
 from .payment_models import Subscription
+from .ab_testing import ABTestingService
 
 def register_view(request):
     """
@@ -166,6 +167,13 @@ def onboarding_view(request):
     if user.has_completed_onboarding:
         return redirect('accounts:social_feed')
 
+    # A/B Testing: Get user's variant and track onboarding start
+    ab_variant = ABTestingService.get_variant(user, 'onboarding_flow')
+    ab_config = ABTestingService.get_variant_config(user, 'onboarding_flow')
+
+    # Track that user started onboarding (only tracked once per user)
+    ABTestingService.track_conversion(user, 'onboarding_flow', 'started_onboarding')
+
     # Get current step from query param (default to 1)
     step = int(request.GET.get('step', 1))
 
@@ -189,6 +197,7 @@ def onboarding_view(request):
                     pass
 
             user.save()
+            ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_step_1')
             return redirect(reverse('accounts:onboarding') + '?step=2')
 
         elif step == 2:
@@ -196,6 +205,7 @@ def onboarding_view(request):
             interests = request.POST.getlist('interests')
             user.interests = interests
             user.save()
+            ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_step_2')
             return redirect(reverse('accounts:onboarding') + '?step=3')
 
         elif step == 3:
@@ -223,6 +233,7 @@ def onboarding_view(request):
                     messages.warning(request, 'Could not upload photo. You can add it later.')
 
             user.save()
+            ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_step_3')
             return redirect(reverse('accounts:onboarding') + '?step=4')
 
         elif step == 4:
@@ -230,19 +241,27 @@ def onboarding_view(request):
             is_profile_public = request.POST.get('is_profile_public') == 'on'
             user.is_profile_public = is_profile_public
             user.save()
+            ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_step_4')
             return redirect(reverse('accounts:onboarding') + '?step=5')
 
         elif step == 5:
             # Step 5: Follow suggested users
             users_to_follow = request.POST.getlist('follow_users')
+            followed_count = 0
 
             for user_id in users_to_follow:
                 try:
                     user_to_follow = User.objects.get(id=user_id)
                     if user_to_follow != user:
                         user.follow_user(user_to_follow)
+                        followed_count += 1
                 except User.DoesNotExist:
                     pass
+
+            ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_step_5')
+            if followed_count > 0:
+                ABTestingService.track_conversion(user, 'onboarding_flow', 'followed_user',
+                                                  {'count': followed_count})
 
             # Redirect to completion screen
             return redirect(reverse('accounts:onboarding') + '?step=6')
@@ -251,6 +270,7 @@ def onboarding_view(request):
             # Step 6: Completion - mark onboarding done
             user.has_completed_onboarding = True
             user.save()
+            ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding')
             messages.success(request, "Welcome to MyRecoveryPal!")
             return redirect('accounts:social_feed')
 
@@ -259,6 +279,10 @@ def onboarding_view(request):
         'step': step,
         'total_steps': 5,  # Don't count completion as a step
         'progress_percent': int((min(step, 5) / 5) * 100),
+        # A/B Testing context
+        'ab_variant': ab_variant,
+        'ab_config': ab_config,
+        'skip_allowed': ab_config.get('skip_allowed', False),
     }
 
     if step == 1:

@@ -7,9 +7,12 @@ from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from apps.core.views import robots_txt_view
 from recovery_hub.sitemaps import sitemaps
+from apps.accounts.admin_dashboard import engagement_dashboard, ab_test_results
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('admin/dashboard/', engagement_dashboard, name='admin_engagement_dashboard'),
+    path('admin/dashboard/ab-tests/', ab_test_results, name='admin_ab_test_results'),
     path('', include('apps.core.urls', namespace='core')),
     path('accounts/', include('apps.accounts.urls', namespace='accounts')),
     path('blog/', include('apps.blog.urls', namespace='blog')),

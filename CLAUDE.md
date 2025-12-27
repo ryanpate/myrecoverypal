@@ -92,12 +92,71 @@ Users land on the **Social Feed**, not a dashboard or resource page.
 3. Implement `send_fcm_notification` and `send_apns_notification` in push_notifications.py
 4. See `PUSH_NOTIFICATIONS_SETUP.md` for full guide
 
+### Admin Analytics Dashboard
+
+**Access:** `/admin/dashboard/` (staff only)
+
+Key metrics displayed:
+- User Growth: Total users, new signups (7d/30d), onboarding rate
+- Engagement: Check-ins, posts, mood distribution
+- Retention: DAU/MAU ratio, active users, streak counts
+- Social: Connections, groups, members per group
+- Email: Welcome email delivery tracking
+
+**A/B Testing:** `/admin/dashboard/ab-tests/`
+
+### A/B Testing System
+
+**Service:** `apps/accounts/ab_testing.py`
+
+Tracks onboarding flow experiments with these variants:
+- `control` - Current 5-step onboarding
+- `simplified` - 3-step flow (skip recovery stage/interests)
+- `progressive` - 5-step with skip option
+
+**Initialize test:** `python manage.py init_ab_tests`
+
+**Key conversions tracked:**
+- started_onboarding, completed_step_1-5, completed_onboarding
+- followed_user, first_post, first_checkin
+- day_1_return, day_7_return
+
+**Usage in views:**
+```python
+from apps.accounts.ab_testing import ABTestingService
+
+# Get user's variant
+variant = ABTestingService.get_variant(user, 'onboarding_flow')
+
+# Track conversion
+ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding')
+```
+
 ### Remaining Tasks
 
-#### Analytics (Priority: MEDIUM)
-1. ~~**Google Analytics**~~ - COMPLETE (G-81SZGNRESW, Property 517028653)
-2. **Admin engagement dashboard** - User activity metrics in Django admin
-3. **A/B testing** - Onboarding variations
+#### Retention (Priority: HIGH)
+1. Daily gratitude prompt in check-in
+2. Prominent sobriety counter widget on profile
+3. Meeting reminders (push before saved meetings)
+4. Progress visualizations (mood/craving trends)
+5. Accountability nudges for Recovery Pals
+
+#### Polish (Priority: MEDIUM)
+1. Dark mode
+2. Skeleton loaders for content
+3. Optimistic UI for likes/comments
+4. Infinite scroll on feeds
+5. Image compression for uploads
+
+#### Technical Debt (Priority: LOW)
+1. Service worker caching review
+2. Mobile gesture support
+3. Improved offline support
+4. Performance audit (N+1 queries)
+
+#### Infrastructure
+1. Enable mobile push (FCM/APNs)
+2. Set up Celery Beat worker on Railway
 
 ---
 
