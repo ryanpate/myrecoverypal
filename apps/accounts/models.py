@@ -531,21 +531,26 @@ class UserConnection(models.Model):
         if self.follower == self.following:
             raise ValueError("Users cannot follow themselves")
 
-        super().save(*args, **kwargs)
-
-        # Check if connection is now mutual
-        if self.connection_type == 'follow':
-            mutual_connection = UserConnection.objects.filter(
+        # Check if connection is mutual BEFORE saving
+        if self.connection_type == 'follow' and not kwargs.get('update_fields'):
+            mutual_exists = UserConnection.objects.filter(
                 follower=self.following,
                 following=self.follower,
                 connection_type='follow'
-            ).first()
+            ).exists()
 
-            if mutual_connection:
+            if mutual_exists:
                 self.is_mutual = True
-                mutual_connection.is_mutual = True
-                self.save(update_fields=['is_mutual'])
-                mutual_connection.save(update_fields=['is_mutual'])
+
+        super().save(*args, **kwargs)
+
+        # Update the other side to be mutual (use .update() to avoid recursion)
+        if self.connection_type == 'follow' and self.is_mutual:
+            UserConnection.objects.filter(
+                follower=self.following,
+                following=self.follower,
+                connection_type='follow'
+            ).update(is_mutual=True)
 
 
 class SponsorRelationship(models.Model):
