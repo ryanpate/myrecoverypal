@@ -10,9 +10,10 @@ from recovery_hub.sitemaps import sitemaps
 from apps.accounts.admin_dashboard import engagement_dashboard, ab_test_results
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('admin/dashboard/', engagement_dashboard, name='admin_engagement_dashboard'),
+    # Custom admin dashboards (must be before admin.site.urls)
     path('admin/dashboard/ab-tests/', ab_test_results, name='admin_ab_test_results'),
+    path('admin/dashboard/', engagement_dashboard, name='admin_engagement_dashboard'),
+    path('admin/', admin.site.urls),
     path('', include('apps.core.urls', namespace='core')),
     path('accounts/', include('apps.accounts.urls', namespace='accounts')),
     path('blog/', include('apps.blog.urls', namespace='blog')),
