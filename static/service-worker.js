@@ -1,7 +1,7 @@
 // MyRecoveryPal Service Worker
 // Version 2.2 - Fix notification mark-as-read race condition
 
-const CACHE_VERSION = 'myrecoverypal-v18';
+const CACHE_VERSION = 'myrecoverypal-v19';
 const CACHE_NAMES = {
   static: `${CACHE_VERSION}-static`,
   dynamic: `${CACHE_VERSION}-dynamic`,

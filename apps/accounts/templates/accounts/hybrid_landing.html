@@ -437,6 +437,71 @@
         opacity: 0.95;
     }
 
+    /* Celebration Share Buttons */
+    .celebration-share {
+        margin: 1.25rem 0;
+    }
+
+    .celebration-share-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-bottom: 0.75rem;
+    }
+
+    .celebration-share-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .celebration-share-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        text-decoration: none;
+        color: white;
+        font-size: 1.1rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .celebration-share-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        color: white;
+    }
+
+    .celebration-share-btn.native {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .celebration-share-btn.twitter {
+        background: #1da1f2;
+    }
+
+    .celebration-share-btn.facebook {
+        background: #1877f2;
+    }
+
+    .celebration-share-btn.whatsapp {
+        background: #25d366;
+    }
+
+    .celebration-share-btn.shared {
+        background: #333;
+    }
+
+    /* Hide native share on desktop */
+    @media (min-width: 769px) {
+        .celebration-share-btn.native {
+            display: none;
+        }
+    }
+
     .celebration-close {
         background: white;
         color: #667eea;
@@ -1273,6 +1338,29 @@
         <div class="celebration-title">Congratulations!</div>
         <div class="celebration-days">{{ milestone_to_celebrate.days }} Days</div>
         <div class="celebration-message">{{ milestone_to_celebrate.message }}</div>
+
+        <!-- Share Your Achievement -->
+        <div class="celebration-share">
+            <div class="celebration-share-label">Share your achievement:</div>
+            <div class="celebration-share-buttons">
+                <button class="celebration-share-btn native" onclick="shareMilestone({{ milestone_to_celebrate.days }}, this)" title="Share">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <a href="https://twitter.com/intent/tweet?text=🎉%20{{ milestone_to_celebrate.days }}%20days%20sober!%20%23Recovery%20%23MyRecoveryPal%20%23SobrietyMilestone"
+                   target="_blank" rel="noopener" class="celebration-share-btn twitter" title="Share on Twitter/X">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?quote=🎉%20{{ milestone_to_celebrate.days }}%20days%20sober!%20%23Recovery%20%23MyRecoveryPal"
+                   target="_blank" rel="noopener" class="celebration-share-btn facebook" title="Share on Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://wa.me/?text=🎉%20{{ milestone_to_celebrate.days }}%20days%20sober!%20%23Recovery%20%23MyRecoveryPal"
+                   target="_blank" rel="noopener" class="celebration-share-btn whatsapp" title="Share on WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+
         <button class="celebration-close" onclick="closeCelebration()">
             <i class="fas fa-heart"></i> Keep Going!
         </button>
@@ -2356,6 +2444,40 @@ function closeCelebration() {
         setTimeout(() => {
             modal.remove();
         }, 300);
+    }
+}
+
+// Share milestone via native Web Share API
+async function shareMilestone(days, button) {
+    const shareData = {
+        title: 'My Recovery Milestone',
+        text: `🎉 ${days} days sober! #Recovery #MyRecoveryPal #SobrietyMilestone`,
+        url: window.location.origin
+    };
+
+    if (navigator.share) {
+        try {
+            await navigator.share(shareData);
+            button.classList.add('shared');
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                button.classList.remove('shared');
+                button.innerHTML = '<i class="fas fa-share-alt"></i>';
+            }, 2000);
+        } catch (err) {
+            console.log('Share cancelled or failed:', err);
+        }
+    } else {
+        // Fallback: copy to clipboard
+        const shareText = `🎉 ${days} days sober! #Recovery #MyRecoveryPal #SobrietyMilestone\n\nJoin the supportive community at ${window.location.origin}`;
+        navigator.clipboard.writeText(shareText).then(() => {
+            button.classList.add('shared');
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                button.classList.remove('shared');
+                button.innerHTML = '<i class="fas fa-share-alt"></i>';
+            }, 2000);
+        });
     }
 }
 

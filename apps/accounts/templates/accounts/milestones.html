@@ -180,14 +180,28 @@
     .share-btn.facebook { background: #1877f2; }
     .share-btn.twitter { background: #1da1f2; }
     .share-btn.linkedin { background: #0077b5; }
+    .share-btn.whatsapp { background: #25d366; }
+    .share-btn.native {
+        background: linear-gradient(135deg, #4db8e8, #52b788);
+        cursor: pointer;
+        border: none;
+    }
     .share-btn.copy {
-        background: #52b788;
+        background: #666;
         cursor: pointer;
         border: none;
     }
 
-    .share-btn.copy.copied {
+    .share-btn.copy.copied,
+    .share-btn.native.shared {
         background: #333;
+    }
+
+    /* Hide native share on desktop */
+    @media (min-width: 769px) {
+        .share-btn.native {
+            display: none;
+        }
     }
 
     @media (max-width: 768px) {
@@ -261,7 +275,10 @@
             <!-- Share buttons -->
             <div class="milestone-actions">
                 <span class="share-label">Share:</span>
-                {% with share_text="I just achieved a milestone in my recovery journey: "|add:milestone.title|add:" on MyRecoveryPal!" %}
+                {% with share_text="🎉 I just achieved a milestone in my recovery journey: "|add:milestone.title|add:" #Recovery #MyRecoveryPal" %}
+                <button class="share-btn native" onclick="nativeShare('{{ milestone.title|escapejs }}', this)" title="Share">
+                    <i class="fas fa-share-alt"></i>
+                </button>
                 <a href="https://www.facebook.com/sharer/sharer.php?quote={{ share_text|urlencode }}"
                    target="_blank" rel="noopener"
                    class="share-btn facebook" title="Share on Facebook">
@@ -269,13 +286,13 @@
                 </a>
                 <a href="https://twitter.com/intent/tweet?text={{ share_text|urlencode }}"
                    target="_blank" rel="noopener"
-                   class="share-btn twitter" title="Share on Twitter">
+                   class="share-btn twitter" title="Share on Twitter/X">
                     <i class="fab fa-twitter"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}"
+                <a href="https://wa.me/?text={{ share_text|urlencode }}%20{{ request.build_absolute_uri|urlencode }}"
                    target="_blank" rel="noopener"
-                   class="share-btn linkedin" title="Share on LinkedIn">
-                    <i class="fab fa-linkedin-in"></i>
+                   class="share-btn whatsapp" title="Share on WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
                 </a>
                 <button class="share-btn copy" onclick="copyMilestoneText('{{ milestone.title|escapejs }}', this)" title="Copy to clipboard">
                     <i class="fas fa-link"></i>
@@ -302,8 +319,36 @@
 
 {% block extra_js %}
 <script>
+// Native Web Share API (mobile)
+async function nativeShare(milestoneTitle, button) {
+    const shareData = {
+        title: 'My Recovery Milestone',
+        text: `🎉 I just achieved a milestone in my recovery journey: ${milestoneTitle} #Recovery #MyRecoveryPal`,
+        url: window.location.origin
+    };
+
+    if (navigator.share) {
+        try {
+            await navigator.share(shareData);
+            button.classList.add('shared');
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                button.classList.remove('shared');
+                button.innerHTML = '<i class="fas fa-share-alt"></i>';
+            }, 2000);
+        } catch (err) {
+            // User cancelled or error - do nothing
+            console.log('Share cancelled or failed:', err);
+        }
+    } else {
+        // Fallback to copy
+        copyMilestoneText(milestoneTitle, button);
+    }
+}
+
+// Copy to clipboard
 function copyMilestoneText(milestoneTitle, button) {
-    const shareText = `I just achieved a milestone in my recovery journey: ${milestoneTitle} on MyRecoveryPal! Join the supportive community at ${window.location.origin}`;
+    const shareText = `🎉 I just achieved a milestone in my recovery journey: ${milestoneTitle} #Recovery #MyRecoveryPal\n\nJoin the supportive community at ${window.location.origin}`;
 
     navigator.clipboard.writeText(shareText).then(() => {
         // Show success state

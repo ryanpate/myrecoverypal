@@ -271,12 +271,45 @@
         text-align: center;
         border: 2px solid transparent;
         transition: all 0.3s ease;
+        position: relative;
     }
 
     .milestone-card:hover {
         border-color: #52b788;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(82, 183, 136, 0.2);
+    }
+
+    .milestone-share-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #52b788;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .milestone-card:hover .milestone-share-btn {
+        opacity: 1;
+    }
+
+    .milestone-share-btn:hover {
+        transform: scale(1.1);
+        background: #45a078;
+    }
+
+    .milestone-share-btn.shared {
+        background: #333;
     }
 
     .milestone-icon {
@@ -525,6 +558,9 @@
             <div class="milestone-grid">
                 {% for milestone in milestones %}
                 <div class="milestone-card">
+                    <button class="milestone-share-btn" onclick="shareMilestoneFromProfile('{{ milestone.title|escapejs }}', this)" title="Share milestone">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
                     <div class="milestone-icon"><i class="fas fa-award"></i></div>
                     <div class="milestone-title">{{ milestone.title }}</div>
                     <div class="milestone-date">{{ milestone.date_achieved|date:"M d, Y" }}</div>
@@ -573,4 +609,41 @@
     </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Share milestone from profile page
+async function shareMilestoneFromProfile(milestoneTitle, button) {
+    const shareData = {
+        title: 'My Recovery Milestone',
+        text: `🎉 I achieved a milestone: ${milestoneTitle} #Recovery #MyRecoveryPal`,
+        url: window.location.origin
+    };
+
+    if (navigator.share) {
+        try {
+            await navigator.share(shareData);
+            showShareSuccess(button);
+        } catch (err) {
+            console.log('Share cancelled or failed:', err);
+        }
+    } else {
+        // Fallback: copy to clipboard
+        const shareText = `🎉 I achieved a milestone: ${milestoneTitle} #Recovery #MyRecoveryPal\n\nJoin the supportive community at ${window.location.origin}`;
+        navigator.clipboard.writeText(shareText).then(() => {
+            showShareSuccess(button);
+        });
+    }
+}
+
+function showShareSuccess(button) {
+    button.classList.add('shared');
+    button.innerHTML = '<i class="fas fa-check"></i>';
+    setTimeout(() => {
+        button.classList.remove('shared');
+        button.innerHTML = '<i class="fas fa-share-alt"></i>';
+    }, 2000);
+}
+</script>
 {% endblock %}
