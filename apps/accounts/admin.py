@@ -8,9 +8,10 @@ from .payment_models import Subscription, SubscriptionPlan, Transaction, Payment
 
 class CustomUserAdmin(UserAdmin):
     list_display = ['username', 'email', 'first_name', 'last_name', 'is_active',
-                    'sobriety_date', 'get_days_sober', 'is_sponsor']
-    list_filter = ['is_active', 'is_staff',
+                    'is_staff', 'sobriety_date', 'get_days_sober', 'is_sponsor']
+    list_filter = ['is_active', 'is_staff', 'is_superuser',
                    'is_sponsor', 'newsletter_subscriber']
+    list_editable = ['is_staff']  # Allow quick editing from list view
 
     fieldsets = UserAdmin.fieldsets + (
         ('Recovery Information', {

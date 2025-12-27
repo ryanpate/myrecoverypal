@@ -173,7 +173,7 @@ def engagement_dashboard(request):
     # Most followed users
     top_followed = list(
         User.objects.annotate(
-            follower_count=Count('followers', filter=Q(followers__status='active'))
+            follower_count=Count('follower_connections', filter=Q(follower_connections__connection_type='follow'))
         ).order_by('-follower_count')[:10]
     )
 
