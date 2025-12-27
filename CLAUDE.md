@@ -58,7 +58,7 @@ Users land on the **Social Feed**, not a dashboard or resource page.
 | Check-in reminders | COMPLETE | Daily at 5 PM via Celery |
 | Weekly digest | COMPLETE | Sundays at 10:30 AM |
 | Push triggers | COMPLETE | Integrated with notifications (logging mode) |
-| Analytics | PENDING | Google Analytics / Mixpanel needed |
+| Analytics | COMPLETE | Google Analytics G-81SZGNRESW (Property 517028653) |
 
 ### Retention Email System
 
@@ -95,8 +95,8 @@ Users land on the **Social Feed**, not a dashboard or resource page.
 ### Remaining Tasks
 
 #### Analytics (Priority: MEDIUM)
-1. **Google Analytics / Mixpanel** - Basic funnel tracking
-2. **Admin engagement dashboard** - User activity metrics
+1. ~~**Google Analytics**~~ - COMPLETE (G-81SZGNRESW, Property 517028653)
+2. **Admin engagement dashboard** - User activity metrics in Django admin
 3. **A/B testing** - Onboarding variations
 
 ---
@@ -294,9 +294,9 @@ celery -A recovery_hub worker -l info
 - [x] **Daily check-in reminder** - Sent at 5 PM to users with prior check-ins
 - [x] **Weekly digest** - Sent Sundays at 10:30 AM with activity summary
 
-### MEDIUM - Analytics (PENDING)
-- [ ] **Basic funnel tracking** - Registration → Activation → Retention
-- [ ] **Admin dashboard** - User engagement metrics
+### MEDIUM - Analytics (PARTIAL)
+- [x] **Basic funnel tracking** - Google Analytics G-81SZGNRESW already integrated
+- [ ] **Admin dashboard** - User engagement metrics in Django admin
 - [ ] **A/B testing** - Onboarding variations
 
 ---
