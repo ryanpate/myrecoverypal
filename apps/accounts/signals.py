@@ -38,6 +38,15 @@ def create_user_subscription(sender, instance, created, **kwargs):
         )
 
 
+@receiver(post_save, sender=User)
+def send_welcome_email_on_registration(sender, instance, created, **kwargs):
+    """Send welcome email when user registers"""
+    if created:
+        from .tasks import send_welcome_email_day_1
+        # Delay slightly to ensure user data is fully saved
+        send_welcome_email_day_1.apply_async(args=[instance.id], countdown=30)
+
+
 @receiver(post_save, sender=Milestone)
 def create_milestone_activity(sender, instance, created, **kwargs):
     """Create activity when milestone is created"""

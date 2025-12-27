@@ -680,6 +680,25 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.newsletter.tasks.send_scheduled_newsletters',
         'schedule': crontab(minute='*/15'),  # Check every 15 minutes
     },
+    # Welcome email sequence - Day 3 and Day 7 (Day 1 is triggered on registration)
+    'send-welcome-emails-day-3': {
+        'task': 'apps.accounts.tasks.send_welcome_emails_day_3',
+        'schedule': crontab(hour=10, minute=0),  # Daily at 10 AM
+    },
+    'send-welcome-emails-day-7': {
+        'task': 'apps.accounts.tasks.send_welcome_emails_day_7',
+        'schedule': crontab(hour=10, minute=15),  # Daily at 10:15 AM
+    },
+    # Daily check-in reminders - afternoon to catch evening check-ins
+    'send-checkin-reminders': {
+        'task': 'apps.accounts.tasks.send_checkin_reminders',
+        'schedule': crontab(hour=17, minute=0),  # Daily at 5 PM
+    },
+    # Weekly digest - Sundays at 10 AM
+    'send-weekly-digests': {
+        'task': 'apps.accounts.tasks.send_weekly_digests',
+        'schedule': crontab(hour=10, minute=30, day_of_week=0),  # Sunday 10:30 AM
+    },
 }
 
 # ========================================

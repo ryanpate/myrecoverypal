@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Weekly Recovery Recap</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .digest-header {
+            background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 25px 0;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .section-title {
+            color: #1e4d8b;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .follower-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .follower-item:last-child {
+            border-bottom: none;
+        }
+        .follower-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4db8e8, #52b788);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        .post-item {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 3px solid #52b788;
+        }
+        .notification-badge {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #52b788;
+            color: white !important;
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            margin: 10px;
+        }
+        .cta-button.secondary {
+            background: #1e4d8b;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">MyRecoveryPal</div>
+            <h1 style="color: #1e4d8b; margin: 0;">Your Weekly Recap</h1>
+            <p style="color: #666; font-size: 16px;">Here's what you might have missed</p>
+        </div>
+
+        <div class="digest-header">
+            <div style="font-size: 32px; margin-bottom: 10px;">&#128172;</div>
+            <h2 style="margin: 0;">Hi {{ user.first_name|default:user.username }}!</h2>
+            {% if days_sober > 0 %}
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">{{ days_sober }} days sober and counting!</p>
+            {% endif %}
+        </div>
+
+        {% if unread_notifications > 0 %}
+        <div style="text-align: center; margin: 25px 0;">
+            <span class="notification-badge">{{ unread_notifications }} unread notification{{ unread_notifications|pluralize }}</span>
+            <p style="color: #666; margin: 10px 0 0 0;">People are waiting to connect with you!</p>
+        </div>
+        {% endif %}
+
+        {% if new_followers %}
+        <div class="section">
+            <h3 class="section-title">
+                <span style="font-size: 24px;">&#128075;</span> New Followers
+            </h3>
+            {% for connection in new_followers %}
+            <div class="follower-item">
+                <div class="follower-avatar">{{ connection.user.first_name|default:connection.user.username|slice:":1"|upper }}</div>
+                <div>
+                    <strong>{{ connection.user.first_name|default:connection.user.username }}</strong>
+                    {% if connection.user.bio %}
+                    <br><span style="color: #666; font-size: 13px;">{{ connection.user.bio|truncatewords:10 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            {% if new_follower_count > 5 %}
+            <p style="text-align: center; color: #666; margin: 15px 0 0 0;">
+                + {{ new_follower_count|add:"-5" }} more new followers
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if popular_posts %}
+        <div class="section">
+            <h3 class="section-title">
+                <span style="font-size: 24px;">&#128293;</span> Popular Posts This Week
+            </h3>
+            {% for post in popular_posts %}
+            <div class="post-item">
+                <div style="font-weight: 600; margin-bottom: 5px;">{{ post.user.first_name|default:post.user.username }}</div>
+                <div style="color: #666;">{{ post.content|truncatewords:20 }}</div>
+                <div style="color: #999; font-size: 12px; margin-top: 8px;">
+                    &#10084; {{ post.like_count }} likes
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ site_url }}/accounts/social-feed/" class="cta-button">
+                See Your Feed
+            </a>
+            <a href="{{ site_url }}/accounts/check-in/" class="cta-button secondary">
+                Check In
+            </a>
+        </div>
+
+        <div style="background: #f0f9f4; padding: 20px; border-radius: 10px; margin: 25px 0; text-align: center;">
+            <p style="margin: 0; color: #52b788; font-weight: 600;">Keep showing up for yourself.</p>
+            <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">Every step forward is progress.</p>
+        </div>
+
+        <div class="footer">
+            <p style="margin: 10px 0;">
+                <a href="{{ site_url }}/accounts/settings/" style="color: #4db8e8; text-decoration: none;">Email Settings</a> |
+                <a href="{{ site_url }}" style="color: #4db8e8; text-decoration: none;">Visit MyRecoveryPal</a>
+            </p>
+            <p style="margin: 20px 0 10px 0; font-size: 12px; color: #999;">
+                You're receiving this weekly digest because you're a member of MyRecoveryPal.
+            </p>
+            <p style="margin: 10px 0; color: #666;">
+                {{ current_year }} MyRecoveryPal. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

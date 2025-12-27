@@ -3135,7 +3135,7 @@ def notifications_page(request):
 
 
 def create_notification(recipient, sender, notification_type, title, message, link='', content_object=None):
-    """Helper function to create notifications"""
+    """Helper function to create notifications and trigger push notifications"""
     if recipient == sender:  # Don't notify yourself
         return None
 
@@ -3148,6 +3148,21 @@ def create_notification(recipient, sender, notification_type, title, message, li
         link=link,
         content_object=content_object
     )
+
+    # Trigger push notification (logs for now, sends when FCM/APNs configured)
+    try:
+        from .push_notifications import PushNotificationService
+        PushNotificationService._send_push(
+            recipient=recipient,
+            notification_type=notification_type,
+            sender=sender,
+            data={'notification_id': str(notification.id), 'link': link, 'type': notification_type}
+        )
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Failed to send push notification: {e}")
+
     return notification
 
 

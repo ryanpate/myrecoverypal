@@ -46,41 +46,55 @@ Users land on the **Social Feed**, not a dashboard or resource page.
 
 **Critical Problem:** Small user base limits testing and revenue potential.
 
-### Identified Gaps
+### Beta Feature Status
 
-| Gap | Status | Priority |
-|-----|--------|----------|
-| No onboarding flow | New users land on empty feed | CRITICAL |
-| No referral system | Invite codes exist but aren't surfaced | CRITICAL |
-| No share buttons | Milestones can't be shared externally | HIGH |
-| No suggested users | Empty feed for new users | HIGH |
-| No email engagement | Single welcome email only | HIGH |
-| No push triggers | Firebase configured, not implemented | MEDIUM |
-| No analytics | Can't measure engagement | MEDIUM |
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Onboarding wizard | COMPLETE | 5-step flow with interests, recovery stage |
+| Invite system | COMPLETE | Invite link in nav, profile, sidebar |
+| Share buttons | COMPLETE | Twitter, Facebook, WhatsApp, native share |
+| Suggested users | COMPLETE | Recovery stage + interests matching |
+| Email engagement | COMPLETE | Day 1, 3, 7 welcome sequence |
+| Check-in reminders | COMPLETE | Daily at 5 PM via Celery |
+| Weekly digest | COMPLETE | Sundays at 10:30 AM |
+| Push triggers | COMPLETE | Integrated with notifications (logging mode) |
+| Analytics | PENDING | Google Analytics / Mixpanel needed |
 
-### Recommended Implementation Order
+### Retention Email System
 
-#### Phase 1: First-Time User Experience (Week 1-2)
-1. **Onboarding wizard** after registration
-   - Step 1: Profile photo + bio
-   - Step 2: Select interests (recovery stage, group types)
-   - Step 3: Follow suggested users (5-10 active members)
-2. **Seed content** - Ensure feed has posts even for new users
-3. **Empty state CTAs** - "Your feed is empty - follow some people!"
+**Celery Beat Schedule:**
+- `send_welcome_emails_day_3`: Daily at 10:00 AM
+- `send_welcome_emails_day_7`: Daily at 10:15 AM
+- `send_checkin_reminders`: Daily at 5:00 PM
+- `send_weekly_digests`: Sundays at 10:30 AM
 
-#### Phase 2: Viral Growth (Week 2-3)
-1. **Referral link in profile settings** - Surface existing InviteCode system
-2. **"Invite Friends" button** - Generate shareable invite links
-3. **Share milestone cards** - Social media sharing for achievements
-4. **Achievement badges** - Shareable graphics for milestones
+**Email Templates:** `apps/accounts/templates/emails/`
+- `welcome_day_1.html` - Welcome + getting started
+- `welcome_day_3.html` - Check-in + feature discovery
+- `welcome_day_7.html` - First week celebration + stats
+- `checkin_reminder.html` - Streak motivation
+- `weekly_digest.html` - Activity summary
 
-#### Phase 3: Retention (Week 3-4)
-1. **Email drip campaign** - Day 1, 3, 7, 14 engagement emails
-2. **Push notifications** - New follower, comment, group invite
-3. **Daily check-in reminders** - If user hasn't checked in
-4. **Weekly digest** - "Here's what you missed"
+**User Fields for Tracking:**
+- `welcome_email_1_sent`, `welcome_email_2_sent`, `welcome_email_3_sent`
+- `last_checkin_reminder_sent`, `last_weekly_digest_sent`
 
-#### Phase 4: Analytics (Week 4+)
+### Push Notification System
+
+**Service:** `apps/accounts/push_notifications.py`
+- Currently logs notifications (can enable FCM/APNs when ready)
+- Integrated with `create_notification()` helper
+- Supports: follow, like, comment, message, pal_request, sponsor_request, group events
+
+**To enable mobile push:**
+1. Set up Firebase project and add `google-services.json`
+2. Configure APNs certificates in Apple Developer Portal
+3. Implement `send_fcm_notification` and `send_apns_notification` in push_notifications.py
+4. See `PUSH_NOTIFICATIONS_SETUP.md` for full guide
+
+### Remaining Tasks
+
+#### Analytics (Priority: MEDIUM)
 1. **Google Analytics / Mixpanel** - Basic funnel tracking
 2. **Admin engagement dashboard** - User activity metrics
 3. **A/B testing** - Onboarding variations
@@ -464,9 +478,15 @@ Notification (group types):
 
 ## Changelog
 
+- **2025-12-27:** Added push notification triggers - integrated with create_notification() helper, logs for now (enable FCM/APNs when ready).
+- **2025-12-27:** Added weekly digest email - sent Sundays at 10:30 AM with new followers, popular posts, unread notifications.
+- **2025-12-27:** Added daily check-in reminder email - sent at 5 PM to users who haven't checked in, shows streak status.
+- **2025-12-27:** Added welcome email sequence - Day 1 (immediate), Day 3, Day 7 with personalized stats and CTAs.
+- **2025-12-27:** Added Celery Beat schedule for retention emails - scheduled tasks for engagement campaigns.
+- **2025-12-27:** Added engagement email tracking fields - welcome_email_1_sent, welcome_email_2_sent, welcome_email_3_sent, last_checkin_reminder_sent, last_weekly_digest_sent.
 - **2025-12-27:** Added milestone share buttons - milestones page (WhatsApp, native share), celebration modal, profile cards with hover-reveal share.
 - **2025-12-27:** Surfaced invite codes - added "Invite Friends" link to quick actions sidebar, edit profile page, and mobile menu.
-- **2025-12-27:** Added quick reactions with emoji picker (❤️🙏💪🎉) - tap React button to show picker, reactions display as emoji summary.
+- **2025-12-27:** Added quick reactions with emoji picker - tap React button to show picker, reactions display as emoji summary.
 - **2025-12-27:** Added pull-to-refresh gesture for mobile feed - pull down from top to reload content.
 - **2025-12-27:** Added PostReaction model for emoji-based reactions on social posts.
 - **2025-12-27:** Added milestone celebrations with confetti animation when users hit sobriety milestones (1, 7, 14, 30, 60, 90, 180, 365+ days).

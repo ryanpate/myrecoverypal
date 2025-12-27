@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Don't Break Your Streak!</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .streak-box {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa502 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 25px 0;
+        }
+        .streak-number {
+            font-size: 64px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #52b788;
+            color: white !important;
+            padding: 18px 50px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">MyRecoveryPal</div>
+            <h1 style="color: #1e4d8b; margin: 0;">Don't Break Your Streak!</h1>
+        </div>
+
+        {% if streak > 0 %}
+        <div class="streak-box">
+            <div style="font-size: 40px; margin-bottom: 5px;">&#128293;</div>
+            <div class="streak-number">{{ streak }}</div>
+            <div style="text-transform: uppercase; font-size: 14px; letter-spacing: 2px; margin-top: 5px;">Day Streak</div>
+        </div>
+        {% else %}
+        <div class="streak-box" style="background: linear-gradient(135deg, #4db8e8 0%, #52b788 100%);">
+            <div style="font-size: 40px; margin-bottom: 10px;">&#128170;</div>
+            <div style="font-size: 20px; font-weight: 600;">Start a New Streak Today!</div>
+            <div style="opacity: 0.9; margin-top: 10px;">Every check-in counts</div>
+        </div>
+        {% endif %}
+
+        <div style="margin: 30px 0; text-align: center;">
+            <p>Hi {{ user.first_name|default:user.username }},</p>
+            <p>We noticed you haven't checked in today. Just a quick reminder that tracking your progress helps you stay accountable and see how far you've come.</p>
+            {% if last_checkin_date %}
+            <p style="color: #666;">Your last check-in was on {{ last_checkin_date|date:"F d" }}.</p>
+            {% endif %}
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{{ site_url }}/accounts/check-in/" class="cta-button">
+                &#10004; Check In Now
+            </a>
+        </div>
+
+        {% if days_sober > 0 %}
+        <div style="background: #f0f9f4; padding: 20px; border-radius: 10px; margin: 25px 0; text-align: center;">
+            <p style="margin: 0; color: #52b788; font-weight: 600; font-size: 18px;">{{ days_sober }} days sober</p>
+            <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">Keep going - you're doing great!</p>
+        </div>
+        {% endif %}
+
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 25px 0;">
+            <p style="margin: 0; color: #666; text-align: center; font-style: italic;">"Small daily improvements are the key to staggering long-term results."</p>
+        </div>
+
+        <div class="footer">
+            <p style="margin: 10px 0;">
+                <a href="{{ site_url }}/accounts/settings/" style="color: #4db8e8; text-decoration: none;">Manage Reminders</a> |
+                <a href="{{ site_url }}" style="color: #4db8e8; text-decoration: none;">Visit MyRecoveryPal</a>
+            </p>
+            <p style="margin: 20px 0 10px 0; font-size: 12px; color: #999;">
+                You're receiving this because you enabled check-in reminders.
+            </p>
+            <p style="margin: 10px 0; color: #666;">
+                {{ current_year }} MyRecoveryPal. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -82,6 +82,18 @@ class User(AbstractUser):
     email_notifications = models.BooleanField(default=True)
     newsletter_subscriber = models.BooleanField(default=True)
 
+    # Engagement email tracking
+    welcome_email_1_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Welcome email Day 1 sent timestamp")
+    welcome_email_2_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Welcome email Day 3 sent timestamp")
+    welcome_email_3_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Welcome email Day 7 sent timestamp")
+    last_checkin_reminder_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Last check-in reminder sent")
+    last_weekly_digest_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Last weekly digest sent")
+
     # Timestamps
     last_seen = models.DateTimeField(null=True, blank=True)
 

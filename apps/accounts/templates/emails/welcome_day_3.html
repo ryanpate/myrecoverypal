@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How's Your Journey Going?</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #4db8e8 0%, #52b788 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 25px 0;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #52b788;
+            color: white !important;
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            margin: 15px 10px;
+        }
+        .cta-button.secondary {
+            background: #1e4d8b;
+        }
+        .feature-grid {
+            display: table;
+            width: 100%;
+            margin: 25px 0;
+        }
+        .feature-item {
+            display: table-cell;
+            width: 33%;
+            text-align: center;
+            padding: 15px;
+            vertical-align: top;
+        }
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">MyRecoveryPal</div>
+            <h1 style="color: #1e4d8b; margin: 0;">Day 3 Check-In</h1>
+            <p style="color: #666; font-size: 16px;">How's your recovery journey going?</p>
+        </div>
+
+        <div style="margin: 30px 0;">
+            <p>Hi {{ user.first_name|default:user.username }},</p>
+            <p>It's been a few days since you joined MyRecoveryPal. We wanted to check in and see how things are going.</p>
+            {% if days_sober > 0 %}
+            <p><strong>{{ days_sober }} days strong!</strong> Every day matters, and we're proud of you.</p>
+            {% endif %}
+        </div>
+
+        {% if not has_completed_onboarding %}
+        <div class="highlight-box">
+            <h3 style="margin: 0 0 10px 0;">Complete Your Profile</h3>
+            <p style="margin: 0; opacity: 0.9;">Finish setting up your profile to connect with the right people and get personalized support.</p>
+        </div>
+        {% endif %}
+
+        <div style="margin: 30px 0;">
+            <h3 style="color: #1e4d8b;">Have you tried these yet?</h3>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="feature-icon">&#128221;</div>
+                <strong>Daily Check-In</strong><br>
+                <span style="color: #666; font-size: 14px;">Track your mood daily</span>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">&#128101;</div>
+                <strong>Join a Group</strong><br>
+                <span style="color: #666; font-size: 14px;">Find your community</span>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">&#127942;</div>
+                <strong>Add a Milestone</strong><br>
+                <span style="color: #666; font-size: 14px;">Celebrate wins</span>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ site_url }}/accounts/check-in/" class="cta-button">
+                Do a Check-In
+            </a>
+            <a href="{{ site_url }}/accounts/groups/" class="cta-button secondary">
+                Browse Groups
+            </a>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 25px 0;">
+            <p style="margin: 0; font-weight: 600; color: #1e4d8b;">Remember:</p>
+            <p style="margin: 10px 0 0 0; color: #666; font-style: italic;">"Recovery is not a race. You don't have to feel guilty if it takes you longer than you thought it would."</p>
+        </div>
+
+        <div class="footer">
+            <p style="margin: 10px 0;">
+                <a href="{{ site_url }}/accounts/settings/" style="color: #4db8e8; text-decoration: none;">Email Settings</a> |
+                <a href="{{ site_url }}" style="color: #4db8e8; text-decoration: none;">Visit MyRecoveryPal</a>
+            </p>
+            <p style="margin: 20px 0 10px 0; font-size: 12px; color: #999;">
+                You're receiving this because you signed up for MyRecoveryPal.
+            </p>
+            <p style="margin: 10px 0; color: #666;">
+                {{ current_year }} MyRecoveryPal. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
