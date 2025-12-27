@@ -1566,6 +1566,49 @@ class SocialPost(models.Model):
             ).exists()
         return False
 
+    def get_reaction_counts(self):
+        """Get count of each reaction type"""
+        from django.db.models import Count
+        reactions = self.reactions.values('reaction_type').annotate(count=Count('id'))
+        return {r['reaction_type']: r['count'] for r in reactions}
+
+    def get_user_reaction(self, user):
+        """Get the reaction type for a specific user, if any"""
+        if not user.is_authenticated:
+            return None
+        reaction = self.reactions.filter(user=user).first()
+        return reaction.reaction_type if reaction else None
+
+
+class PostReaction(models.Model):
+    """Emoji reactions on social posts (beyond simple likes)"""
+    REACTION_CHOICES = [
+        ('like', '❤️'),
+        ('support', '🙏'),
+        ('strong', '💪'),
+        ('celebrate', '🎉'),
+    ]
+
+    post = models.ForeignKey(SocialPost, on_delete=models.CASCADE, related_name='reactions')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_reactions')
+    reaction_type = models.CharField(max_length=10, choices=REACTION_CHOICES, default='like')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('post', 'user')  # One reaction per user per post
+        indexes = [
+            models.Index(fields=['post', 'reaction_type']),
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} reacted {self.get_reaction_type_display()} to post {self.post.id}"
+
+    @classmethod
+    def get_emoji(cls, reaction_type):
+        """Get emoji for a reaction type"""
+        emoji_map = dict(cls.REACTION_CHOICES)
+        return emoji_map.get(reaction_type, '❤️')
+
 
 class SocialPostComment(models.Model):
     """Comments on social posts"""

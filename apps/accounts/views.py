@@ -14,7 +14,7 @@ from django.db.models import Q, Count, Prefetch, Avg
 from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
-from .models import GroupPost, User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, ActivityComment, UserConnection, SponsorRelationship, RecoveryPal, RecoveryGroup, GroupMembership, SocialPost, SocialPostComment
+from .models import GroupPost, User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, ActivityComment, UserConnection, SponsorRelationship, RecoveryPal, RecoveryGroup, GroupMembership, SocialPost, SocialPostComment, PostReaction
 from .forms import CustomUserCreationForm, UserProfileForm, MilestoneForm, SupportMessageForm, SponsorRequestForm, RecoveryPalForm, RecoveryGroupForm, GroupPostForm, GroupMembershipForm
 from .signals import create_profile_update_activity
 from django.core.paginator import Paginator
@@ -3376,7 +3376,15 @@ def create_social_post(request):
 @login_required
 @require_POST
 def like_social_post(request, post_id):
-    """Toggle like on a social post"""
+    """Toggle like on a social post (legacy, now redirects to react)"""
+    # Default to 'like' reaction for backward compatibility
+    return react_to_post(request, post_id, 'like')
+
+
+@login_required
+@require_POST
+def react_to_post(request, post_id, reaction_type=None):
+    """Add or toggle a reaction on a social post"""
     try:
         post = get_object_or_404(SocialPost, id=post_id)
 
@@ -3384,30 +3392,77 @@ def like_social_post(request, post_id):
         if not post.is_visible_to(request.user):
             return JsonResponse({'error': 'Post not found'}, status=404)
 
-        if request.user in post.likes.all():
-            post.likes.remove(request.user)
-            liked = False
+        # Get reaction type from URL or POST data
+        if reaction_type is None:
+            reaction_type = request.POST.get('reaction_type', 'like')
+
+        # Validate reaction type
+        valid_reactions = ['like', 'support', 'strong', 'celebrate']
+        if reaction_type not in valid_reactions:
+            return JsonResponse({'error': 'Invalid reaction type'}, status=400)
+
+        # Check for existing reaction
+        existing_reaction = PostReaction.objects.filter(
+            post=post,
+            user=request.user
+        ).first()
+
+        reaction_emojis = {
+            'like': '❤️',
+            'support': '🙏',
+            'strong': '💪',
+            'celebrate': '🎉'
+        }
+
+        if existing_reaction:
+            if existing_reaction.reaction_type == reaction_type:
+                # Same reaction - remove it (toggle off)
+                existing_reaction.delete()
+                reacted = False
+                user_reaction = None
+            else:
+                # Different reaction - update it
+                existing_reaction.reaction_type = reaction_type
+                existing_reaction.save()
+                reacted = True
+                user_reaction = reaction_type
         else:
-            post.likes.add(request.user)
-            liked = True
+            # No existing reaction - create new one
+            PostReaction.objects.create(
+                post=post,
+                user=request.user,
+                reaction_type=reaction_type
+            )
+            reacted = True
+            user_reaction = reaction_type
 
             # Create notification for post author
             if post.author != request.user:
+                emoji = reaction_emojis.get(reaction_type, '❤️')
                 create_notification(
                     recipient=post.author,
                     sender=request.user,
                     notification_type='like',
-                    title='New Like',
-                    message=f'{request.user.get_full_name() or request.user.username} liked your post',
+                    title='New Reaction',
+                    message=f'{request.user.get_full_name() or request.user.username} reacted {emoji} to your post',
                     link=f'/accounts/social-feed/'
                 )
 
+        # Get updated reaction counts
+        reaction_counts = post.get_reaction_counts()
+        total_reactions = sum(reaction_counts.values())
+
         return JsonResponse({
             'success': True,
-            'liked': liked,
-            'likes_count': post.likes.count()
+            'reacted': reacted,
+            'user_reaction': user_reaction,
+            'reaction_counts': reaction_counts,
+            'total_reactions': total_reactions,
+            # Legacy compatibility
+            'liked': reacted and user_reaction == 'like',
+            'likes_count': total_reactions
         })
-    except Exception:
+    except Exception as e:
         return JsonResponse({'error': 'Social feed is being set up. Please try again later.'}, status=503)
 
 

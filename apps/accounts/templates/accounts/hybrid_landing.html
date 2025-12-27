@@ -731,6 +731,84 @@
         font-size: 1.2rem;
     }
 
+    /* Reaction Picker */
+    .reaction-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .reaction-picker {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        border-radius: 30px;
+        padding: 0.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        display: none;
+        gap: 0.25rem;
+        z-index: 100;
+        white-space: nowrap;
+        margin-bottom: 8px;
+    }
+
+    .reaction-picker.show {
+        display: flex;
+        animation: reactionPop 0.2s ease-out;
+    }
+
+    @keyframes reactionPop {
+        0% { transform: translateX(-50%) scale(0.8); opacity: 0; }
+        100% { transform: translateX(-50%) scale(1); opacity: 1; }
+    }
+
+    .reaction-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        padding: 0.4rem;
+        cursor: pointer;
+        transition: transform 0.15s ease;
+        border-radius: 50%;
+        line-height: 1;
+    }
+
+    .reaction-btn:hover {
+        transform: scale(1.3);
+        background: #f5f5f5;
+    }
+
+    .reaction-btn.selected {
+        background: #e8f5e9;
+    }
+
+    /* Reaction display in engagement stats */
+    .reaction-summary {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .reaction-emoji {
+        font-size: 0.9rem;
+        margin-right: -2px;
+    }
+
+    .reaction-count {
+        margin-left: 0.25rem;
+    }
+
+    /* User's current reaction indicator */
+    .post-action-btn.reacted {
+        color: #52b788;
+    }
+
+    .post-action-btn .user-reaction {
+        font-size: 1rem;
+        margin-right: 0.25rem;
+    }
+
     .comments-section {
         padding: 0 1rem 1rem 1rem;
         border-top: 1px solid #f0f0f0;
@@ -1127,10 +1205,65 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
+
+    /* Pull-to-Refresh */
+    .pull-to-refresh {
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        display: none;
+        padding: 1rem;
+        pointer-events: none;
+    }
+
+    .pull-to-refresh.visible {
+        display: block;
+    }
+
+    .pull-indicator {
+        background: white;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        transition: transform 0.2s ease;
+    }
+
+    .pull-indicator i {
+        color: #52b788;
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .pull-indicator.pulling i {
+        transform: rotate(180deg);
+    }
+
+    .pull-indicator.refreshing i {
+        animation: spin 1s linear infinite;
+    }
+
+    @media (min-width: 769px) {
+        .pull-to-refresh {
+            display: none !important;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- Pull-to-Refresh Indicator (Mobile Only) -->
+<div class="pull-to-refresh" id="pull-to-refresh">
+    <div class="pull-indicator" id="pull-indicator">
+        <i class="fas fa-arrow-down"></i>
+    </div>
+</div>
+
 <!-- Milestone Celebration Modal -->
 {% if milestone_to_celebrate %}
 <div class="celebration-overlay" id="celebration-modal">
@@ -1468,10 +1601,18 @@
                         {% if user.is_authenticated %}
                         <!-- Action Buttons (Authenticated Users Only) -->
                         <div class="post-actions-bar">
-                            <button class="post-action-btn like-btn {% if user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
-                                <i class="{% if user in post.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
-                                <span>Like</span>
-                            </button>
+                            <div class="reaction-container">
+                                <div class="reaction-picker" id="reaction-picker-{{ post.id }}">
+                                    <button class="reaction-btn" data-reaction="like" title="Love">❤️</button>
+                                    <button class="reaction-btn" data-reaction="support" title="Support">🙏</button>
+                                    <button class="reaction-btn" data-reaction="strong" title="Strength">💪</button>
+                                    <button class="reaction-btn" data-reaction="celebrate" title="Celebrate">🎉</button>
+                                </div>
+                                <button class="post-action-btn react-btn {% if user in post.likes.all %}reacted{% endif %}" data-post-id="{{ post.id }}">
+                                    <span class="user-reaction">{% if user in post.likes.all %}❤️{% else %}<i class="far fa-heart"></i>{% endif %}</span>
+                                    <span>React</span>
+                                </button>
+                            </div>
                             <button class="post-action-btn comment-toggle-btn" data-post-id="{{ post.id }}">
                                 <i class="far fa-comment"></i>
                                 <span>Comment</span>
@@ -1734,40 +1875,93 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Like button handlers
-    document.querySelectorAll('.like-btn').forEach(btn => {
-        btn.addEventListener('click', async function() {
+    // Reaction picker handlers
+    const reactionEmojis = {
+        'like': '❤️',
+        'support': '🙏',
+        'strong': '💪',
+        'celebrate': '🎉'
+    };
+
+    // Toggle reaction picker on button click
+    document.querySelectorAll('.react-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
             const postId = this.dataset.postId;
-            const postCard = this.closest('.post-card');
+            const picker = document.getElementById(`reaction-picker-${postId}`);
+
+            // Close all other pickers
+            document.querySelectorAll('.reaction-picker.show').forEach(p => {
+                if (p !== picker) p.classList.remove('show');
+            });
+
+            picker.classList.toggle('show');
+        });
+    });
+
+    // Handle reaction selection
+    document.querySelectorAll('.reaction-picker .reaction-btn').forEach(btn => {
+        btn.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            const picker = this.closest('.reaction-picker');
+            const postId = picker.id.replace('reaction-picker-', '');
+            const reactionType = this.dataset.reaction;
+            const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
+            const reactBtn = postCard.querySelector('.react-btn');
+
+            picker.classList.remove('show');
 
             try {
-                const response = await fetch(`/accounts/social-feed/post/${postId}/like/`, {
+                const response = await fetch(`/accounts/social-feed/post/${postId}/react/`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRFToken': getCookie('csrftoken')
-                    }
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `reaction_type=${reactionType}`
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
-                    const icon = this.querySelector('i');
-                    if (data.liked) {
-                        this.classList.add('liked');
-                        icon.classList.remove('far');
-                        icon.classList.add('fas');
+                    const userReactionSpan = reactBtn.querySelector('.user-reaction');
+
+                    if (data.user_reaction) {
+                        reactBtn.classList.add('reacted');
+                        userReactionSpan.innerHTML = reactionEmojis[data.user_reaction];
                     } else {
-                        this.classList.remove('liked');
-                        icon.classList.remove('fas');
-                        icon.classList.add('far');
+                        reactBtn.classList.remove('reacted');
+                        userReactionSpan.innerHTML = '<i class="far fa-heart"></i>';
                     }
 
+                    // Update likes count display
                     const likesCount = postCard.querySelector('.likes-count');
-                    likesCount.textContent = `${data.likes_count} like${data.likes_count !== 1 ? 's' : ''}`;
+                    const totalReactions = data.total_reactions || 0;
+
+                    // Build reaction summary
+                    if (totalReactions > 0 && data.reaction_counts) {
+                        let summaryHtml = '<span class="reaction-summary">';
+                        for (const [type, count] of Object.entries(data.reaction_counts)) {
+                            if (count > 0) {
+                                summaryHtml += `<span class="reaction-emoji">${reactionEmojis[type]}</span>`;
+                            }
+                        }
+                        summaryHtml += `<span class="reaction-count">${totalReactions}</span></span>`;
+                        likesCount.innerHTML = summaryHtml;
+                    } else {
+                        likesCount.textContent = '0 likes';
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
             }
+        });
+    });
+
+    // Close picker when clicking outside
+    document.addEventListener('click', function() {
+        document.querySelectorAll('.reaction-picker.show').forEach(picker => {
+            picker.classList.remove('show');
         });
     });
 
@@ -2171,5 +2365,80 @@ styleSheet.textContent = `
     }
 `;
 document.head.appendChild(styleSheet);
+
+// Pull-to-Refresh (Mobile Only)
+(function() {
+    // Only enable on mobile
+    if (window.innerWidth > 768) return;
+
+    const pullToRefresh = document.getElementById('pull-to-refresh');
+    const pullIndicator = document.getElementById('pull-indicator');
+    if (!pullToRefresh || !pullIndicator) return;
+
+    let startY = 0;
+    let currentY = 0;
+    let isPulling = false;
+    let isRefreshing = false;
+    const threshold = 80; // Distance needed to trigger refresh
+
+    document.addEventListener('touchstart', function(e) {
+        // Only start if we're at the top of the page
+        if (window.scrollY === 0 && !isRefreshing) {
+            startY = e.touches[0].pageY;
+            isPulling = true;
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchmove', function(e) {
+        if (!isPulling || isRefreshing) return;
+
+        currentY = e.touches[0].pageY;
+        const pullDistance = currentY - startY;
+
+        if (pullDistance > 0 && window.scrollY === 0) {
+            // Show the indicator
+            pullToRefresh.classList.add('visible');
+
+            // Calculate pull progress (max 100%)
+            const progress = Math.min(pullDistance / threshold, 1);
+            pullIndicator.style.transform = `scale(${0.5 + (progress * 0.5)})`;
+
+            // Rotate arrow when threshold is reached
+            if (pullDistance >= threshold) {
+                pullIndicator.classList.add('pulling');
+            } else {
+                pullIndicator.classList.remove('pulling');
+            }
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchend', function(e) {
+        if (!isPulling || isRefreshing) return;
+
+        const pullDistance = currentY - startY;
+
+        if (pullDistance >= threshold && window.scrollY === 0) {
+            // Trigger refresh
+            isRefreshing = true;
+            pullIndicator.classList.remove('pulling');
+            pullIndicator.classList.add('refreshing');
+            pullIndicator.querySelector('i').className = 'fas fa-sync-alt';
+
+            // Reload the page
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        } else {
+            // Reset
+            pullToRefresh.classList.remove('visible');
+            pullIndicator.classList.remove('pulling');
+            pullIndicator.style.transform = '';
+        }
+
+        isPulling = false;
+        startY = 0;
+        currentY = 0;
+    }, { passive: true });
+})();
 </script>
 {% endblock %}
