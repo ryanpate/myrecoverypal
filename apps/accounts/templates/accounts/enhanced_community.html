@@ -180,6 +180,14 @@
         object-fit: cover;
     }
 
+    .avatar-initial {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+
     /* Online status indicators - More visible implementation */
     .online-status {
         display: inline-flex;
@@ -547,11 +555,12 @@
 
         {% for suggested_user in suggested_users %}
         <div class="suggested-user">
-            <div class="suggested-avatar" style="{% if not suggested_user.avatar %}background: hsl({{ suggested_user.id|add:100 }}, 45%, 50%);{% endif %}">
+            <div class="suggested-avatar" style="background: hsl({{ suggested_user.id|add:100 }}, 45%, 50%);">
                 {% if suggested_user.avatar %}
-                <img src="{{ suggested_user.avatar.url }}" alt="{{ suggested_user.username }}">
+                <img src="{{ suggested_user.avatar.url }}" alt="{{ suggested_user.username }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span class="avatar-initial" style="display:none;">{{ suggested_user.first_name|default:suggested_user.username|slice:":1"|upper }}</span>
                 {% else %}
-                {{ suggested_user.first_name|default:suggested_user.username|slice:":1"|upper }}
+                <span class="avatar-initial">{{ suggested_user.first_name|default:suggested_user.username|slice:":1"|upper }}</span>
                 {% endif %}
             </div>
             <div class="flex-grow-1">
@@ -634,11 +643,12 @@
             {% endwith %}
             {% endif %}
 
-            <div class="member-avatar" style="{% if not member.avatar %}background: hsl({{ member.id|add:100 }}, 45%, 50%);{% endif %}">
+            <div class="member-avatar" style="background: hsl({{ member.id|add:100 }}, 45%, 50%);">
                 {% if member.avatar %}
-                <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
+                <img src="{{ member.avatar.url }}" alt="{{ member.username }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span class="avatar-initial" style="display:none;">{{ member.first_name|default:member.username|slice:":1"|upper }}</span>
                 {% else %}
-                {{ member.first_name|default:member.username|slice:":1"|upper }}
+                <span class="avatar-initial">{{ member.first_name|default:member.username|slice:":1"|upper }}</span>
                 {% endif %}
             </div>
 

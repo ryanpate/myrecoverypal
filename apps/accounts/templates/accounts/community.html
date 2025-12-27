@@ -110,6 +110,18 @@
         object-fit: cover;
     }
 
+    .avatar-initial {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        font-size: 2rem;
+        font-weight: 600;
+        color: white;
+        text-transform: uppercase;
+    }
+
     .member-info {
         text-align: center;
     }
@@ -375,11 +387,12 @@
     <div class="members-grid">
         {% for member in members %}
         <div class="member-card">
-            <div class="member-avatar" style="{% if not member.avatar %}background: hsl({{ member.id|add:100 }}, 45%, 50%);{% endif %}">
+            <div class="member-avatar" style="background: hsl({{ member.id|add:100 }}, 45%, 50%);">
                 {% if member.avatar %}
-                <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
+                <img src="{{ member.avatar.url }}" alt="{{ member.username }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span class="avatar-initial" style="display:none;">{{ member.first_name|default:member.username|slice:":1"|upper }}</span>
                 {% else %}
-                {{ member.first_name|default:member.username|slice:":1"|upper }}
+                <span class="avatar-initial">{{ member.first_name|default:member.username|slice:":1"|upper }}</span>
                 {% endif %}
             </div>
 
