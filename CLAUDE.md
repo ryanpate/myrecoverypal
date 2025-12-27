@@ -288,15 +288,16 @@ celery -A recovery_hub worker -l info
 - [x] **Surface invite codes** - Added "Invite Friends" to quick actions, edit profile, and mobile menu
 - [x] **Share buttons** - Milestone sharing on milestones page, celebration modal, and profile cards
 
-### HIGH - Retention
-- [ ] **Welcome email sequence** - Day 1, 3, 7 engagement emails
-- [ ] **Push notification triggers** - New follower, comment, like
-- [ ] **Daily check-in reminder** - Email/push if inactive
-- [ ] **Weekly digest** - Summary of missed activity
+### HIGH - Retention (ALL COMPLETE)
+- [x] **Welcome email sequence** - Day 1, 3, 7 engagement emails via Celery Beat
+- [x] **Push notification triggers** - Integrated with all notification types (logging mode, enable FCM/APNs when ready)
+- [x] **Daily check-in reminder** - Sent at 5 PM to users with prior check-ins
+- [x] **Weekly digest** - Sent Sundays at 10:30 AM with activity summary
 
-### MEDIUM - Analytics
+### MEDIUM - Analytics (PENDING)
 - [ ] **Basic funnel tracking** - Registration → Activation → Retention
 - [ ] **Admin dashboard** - User engagement metrics
+- [ ] **A/B testing** - Onboarding variations
 
 ---
 
