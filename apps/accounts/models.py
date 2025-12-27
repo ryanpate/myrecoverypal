@@ -9,6 +9,52 @@ from datetime import timedelta
 from .invite_models import WaitlistRequest, InviteCode, SystemSettings
 from .payment_models import Subscription, Transaction, PaymentMethod, Invoice, SubscriptionPlan
 
+# Recovery stage choices for onboarding and matching
+RECOVERY_STAGE_CHOICES = [
+    ('starting', 'Just Starting (0-30 days)'),
+    ('building', 'Building Foundation (1-6 months)'),
+    ('growing', 'Growing Stronger (6-12 months)'),
+    ('thriving', 'Thriving (1+ years)'),
+    ('supporting', 'Supporting Others'),
+]
+
+# Predefined interest categories for onboarding
+INTEREST_CATEGORIES = {
+    'recovery_focus': [
+        ('alcohol', 'Alcohol'),
+        ('drugs', 'Drugs'),
+        ('prescription', 'Prescription'),
+        ('gambling', 'Gambling'),
+        ('other', 'Other'),
+    ],
+    'activities': [
+        ('exercise', 'Exercise'),
+        ('meditation', 'Meditation'),
+        ('art', 'Art & Creative'),
+        ('music', 'Music'),
+        ('reading', 'Reading'),
+        ('outdoors', 'Outdoors'),
+        ('cooking', 'Cooking'),
+        ('sports', 'Sports'),
+    ],
+    'support_type': [
+        ('peer_support', 'Peer Support'),
+        ('professional', 'Professional Help'),
+        ('faith_based', 'Faith-Based'),
+        ('family', 'Family Support'),
+        ('online', 'Online Community'),
+    ],
+    'goals': [
+        ('career', 'Career'),
+        ('relationships', 'Relationships'),
+        ('health', 'Physical Health'),
+        ('mental_health', 'Mental Health'),
+        ('education', 'Education'),
+        ('hobbies', 'New Hobbies'),
+    ],
+}
+
+
 class User(AbstractUser):
     # Additional fields for recovery
     email = models.EmailField(unique=True)
@@ -42,6 +88,22 @@ class User(AbstractUser):
     # Onboarding tracking
     has_completed_onboarding = models.BooleanField(
         default=False, help_text="Has the user completed the onboarding wizard?")
+
+    # Recovery stage for matching (NEW)
+    recovery_stage = models.CharField(
+        max_length=20,
+        choices=RECOVERY_STAGE_CHOICES,
+        blank=True,
+        null=True,
+        help_text="Where user is in their recovery journey"
+    )
+
+    # Interests for matching (NEW - stored as JSON array)
+    interests = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="User's selected interests for matching"
+    )
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']

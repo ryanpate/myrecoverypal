@@ -150,11 +150,16 @@ def register_view(request):
 @login_required
 def onboarding_view(request):
     """
-    Multi-step onboarding wizard for new users.
-    Step 1: Profile photo + bio
-    Step 2: Recovery info (goals, sobriety date)
-    Step 3: Follow suggested users
+    Multi-step onboarding wizard for new users (5 steps + completion).
+    Step 1: Recovery Stage - Where are you in your journey?
+    Step 2: Interests - What matters most to you?
+    Step 3: Profile - Let people recognize you
+    Step 4: Privacy - You're in control
+    Step 5: Connect - People on a similar path
+    Step 6: Complete - You're all set!
     """
+    from .models import RECOVERY_STAGE_CHOICES, INTEREST_CATEGORIES
+
     user = request.user
 
     # If already completed onboarding, redirect to social feed
@@ -164,42 +169,17 @@ def onboarding_view(request):
     # Get current step from query param (default to 1)
     step = int(request.GET.get('step', 1))
 
+    # Clamp step to valid range
+    step = max(1, min(step, 6))
+
     if request.method == 'POST':
         if step == 1:
-            # Handle profile photo and bio
-            bio = request.POST.get('bio', '').strip()
-            location = request.POST.get('location', '').strip()
-
-            user.bio = bio[:500]  # Max 500 chars
-            user.location = location[:100]
-
-            # Handle avatar upload
-            if 'avatar' in request.FILES:
-                try:
-                    avatar_file = request.FILES['avatar']
-                    # Upload to Cloudinary
-                    result = cloudinary.uploader.upload(
-                        avatar_file,
-                        folder='avatars/',
-                        transformation=[
-                            {'width': 300, 'height': 300, 'crop': 'fill', 'gravity': 'face'}
-                        ]
-                    )
-                    user.avatar = result['secure_url']
-                except Exception as e:
-                    messages.warning(request, 'Could not upload photo. You can add it later in settings.')
-
-            user.save()
-            return redirect(reverse('accounts:onboarding') + '?step=2')
-
-        elif step == 2:
-            # Handle recovery info
-            recovery_goals = request.POST.get('recovery_goals', '').strip()
+            # Step 1: Recovery Stage
+            recovery_stage = request.POST.get('recovery_stage', '').strip()
             sobriety_date = request.POST.get('sobriety_date', '').strip()
-            is_profile_public = request.POST.get('is_profile_public') == 'on'
 
-            user.recovery_goals = recovery_goals
-            user.is_profile_public = is_profile_public
+            if recovery_stage:
+                user.recovery_stage = recovery_stage
 
             if sobriety_date:
                 try:
@@ -209,10 +189,51 @@ def onboarding_view(request):
                     pass
 
             user.save()
+            return redirect(reverse('accounts:onboarding') + '?step=2')
+
+        elif step == 2:
+            # Step 2: Interests (multi-select)
+            interests = request.POST.getlist('interests')
+            user.interests = interests
+            user.save()
             return redirect(reverse('accounts:onboarding') + '?step=3')
 
         elif step == 3:
-            # Handle following users
+            # Step 3: Profile (avatar, name, bio)
+            first_name = request.POST.get('first_name', '').strip()
+            bio = request.POST.get('bio', '').strip()
+
+            if first_name:
+                user.first_name = first_name[:30]
+            user.bio = bio[:500]
+
+            # Handle avatar upload
+            if 'avatar' in request.FILES:
+                try:
+                    avatar_file = request.FILES['avatar']
+                    result = cloudinary.uploader.upload(
+                        avatar_file,
+                        folder='avatars/',
+                        transformation=[
+                            {'width': 300, 'height': 300, 'crop': 'fill', 'gravity': 'face'}
+                        ]
+                    )
+                    user.avatar = result['secure_url']
+                except Exception as e:
+                    messages.warning(request, 'Could not upload photo. You can add it later.')
+
+            user.save()
+            return redirect(reverse('accounts:onboarding') + '?step=4')
+
+        elif step == 4:
+            # Step 4: Privacy
+            is_profile_public = request.POST.get('is_profile_public') == 'on'
+            user.is_profile_public = is_profile_public
+            user.save()
+            return redirect(reverse('accounts:onboarding') + '?step=5')
+
+        elif step == 5:
+            # Step 5: Follow suggested users
             users_to_follow = request.POST.getlist('follow_users')
 
             for user_id in users_to_follow:
@@ -223,48 +244,87 @@ def onboarding_view(request):
                 except User.DoesNotExist:
                     pass
 
-            # Mark onboarding as complete
+            # Redirect to completion screen
+            return redirect(reverse('accounts:onboarding') + '?step=6')
+
+        elif step == 6:
+            # Step 6: Completion - mark onboarding done
             user.has_completed_onboarding = True
             user.save()
-
-            messages.success(request, "Welcome to MyRecoveryPal! Your profile is all set up.")
+            messages.success(request, "Welcome to MyRecoveryPal!")
             return redirect('accounts:social_feed')
 
-    # GET request - show appropriate step
+    # GET request - build context for current step
     context = {
         'step': step,
-        'total_steps': 3,
-        'progress_percent': int((step / 3) * 100),
+        'total_steps': 5,  # Don't count completion as a step
+        'progress_percent': int((min(step, 5) / 5) * 100),
     }
 
-    if step == 3:
-        # Get suggested users for step 3
+    if step == 1:
+        # Recovery stage choices
+        context['recovery_stages'] = RECOVERY_STAGE_CHOICES
+        context['current_stage'] = user.recovery_stage
+
+    elif step == 2:
+        # Interest categories
+        context['interest_categories'] = INTEREST_CATEGORIES
+        context['selected_interests'] = user.interests or []
+
+    elif step == 5:
+        # Get suggested users matched by recovery stage and interests
         excluded_ids = list(user.get_following().values_list('id', flat=True))
         excluded_ids.append(user.id)
 
-        # Get active users with profiles
-        suggested = User.objects.filter(
-            is_active=True,
-            is_profile_public=True,
-        ).exclude(
-            id__in=excluded_ids
-        ).exclude(
-            bio=''
-        ).order_by('-date_joined')[:10]
+        # Start with users at the same recovery stage
+        suggested = []
 
-        # If not enough users with bios, get any active public users
-        if suggested.count() < 5:
+        if user.recovery_stage:
+            stage_matches = User.objects.filter(
+                is_active=True,
+                is_profile_public=True,
+                recovery_stage=user.recovery_stage,
+            ).exclude(
+                id__in=excluded_ids
+            ).exclude(
+                avatar=''
+            ).order_by('-last_seen', '-date_joined')[:4]
+            suggested.extend(list(stage_matches))
+
+        # Add users with similar interests
+        if user.interests:
+            already_ids = [u.id for u in suggested]
+            for interest in user.interests[:3]:  # Check top 3 interests
+                interest_matches = User.objects.filter(
+                    is_active=True,
+                    is_profile_public=True,
+                    interests__contains=interest,
+                ).exclude(
+                    id__in=excluded_ids + already_ids
+                ).order_by('-last_seen')[:2]
+                for u in interest_matches:
+                    if u.id not in already_ids and len(suggested) < 8:
+                        suggested.append(u)
+                        already_ids.append(u.id)
+
+        # Fill remaining slots with active users
+        if len(suggested) < 6:
+            already_ids = [u.id for u in suggested]
             more_users = User.objects.filter(
                 is_active=True,
                 is_profile_public=True,
             ).exclude(
-                id__in=excluded_ids
+                id__in=excluded_ids + already_ids
             ).exclude(
-                id__in=suggested.values_list('id', flat=True)
-            ).order_by('-last_seen', '-date_joined')[:10 - suggested.count()]
-            suggested = list(suggested) + list(more_users)
+                bio=''
+            ).order_by('-last_seen', '-date_joined')[:8 - len(suggested)]
+            suggested.extend(list(more_users))
 
-        context['suggested_users'] = suggested
+        context['suggested_users'] = suggested[:8]
+
+    elif step == 6:
+        # Completion screen - show summary
+        context['days_sober'] = user.get_days_sober() if user.sobriety_date else None
 
     return render(request, 'accounts/onboarding.html', context)
 

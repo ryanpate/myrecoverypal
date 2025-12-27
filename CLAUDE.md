@@ -1,6 +1,6 @@
 # CLAUDE.md - MyRecoveryPal Development Guide
 
-**Last Updated:** 2025-12-11
+**Last Updated:** 2025-12-27
 **Project:** MyRecoveryPal - Social Recovery Platform
 **Tech Stack:** Django 5.0.10, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
@@ -268,8 +268,8 @@ celery -A recovery_hub worker -l info
 ## Immediate TODOs for Beta Success
 
 ### CRITICAL - User Acquisition
-- [ ] **Onboarding wizard** - 3-step profile setup after registration
-- [ ] **Suggested users** - Show active users to follow on empty feed
+- [x] **Onboarding wizard** - 5-step wizard with recovery stage, interests, profile, privacy, and smart user matching
+- [x] **Suggested users** - Matching algorithm uses recovery_stage and interests for better connections
 - [ ] **Surface invite codes** - Add "Invite Friends" to profile/settings
 - [ ] **Share buttons** - External sharing for milestones
 
@@ -420,8 +420,51 @@ Notification (group types):
 
 ---
 
+## Recommended Features for Better UX
+
+### HIGH PRIORITY - Quick Wins
+
+| Feature | Impact | Effort | Why |
+|---------|--------|--------|-----|
+| **One-tap check-in widget** | High | Low | Let users check in from feed without navigation. Increases daily engagement. |
+| **Milestone celebrations** | High | Low | Animated confetti/celebration when users hit 30/60/90/365 days. Shareable moment. |
+| **Streak indicator** | High | Low | Show consecutive check-in days prominently. Gamifies daily engagement. |
+| **Quick reactions** | Medium | Low | Emoji reactions beyond likes (🙏 ❤️ 💪 🎉). More expressive support. |
+| **Pull-to-refresh** | Medium | Low | Mobile-friendly gesture to refresh feed. Expected UX pattern. |
+
+### MEDIUM PRIORITY - Retention Boosters
+
+| Feature | Impact | Effort | Why |
+|---------|--------|--------|-----|
+| **Daily gratitude prompt** | High | Medium | "Today I'm grateful for..." prompt increases positive engagement. |
+| **Sobriety counter widget** | High | Medium | Prominent, beautiful display of days/months/years sober on profile. |
+| **Meeting reminders** | High | Medium | Push notification before saved meetings. Integrates support_services. |
+| **Progress visualizations** | Medium | Medium | Charts showing mood trends, craving patterns over time. |
+| **Accountability nudges** | Medium | Medium | Prompt Recovery Pals to check in on each other if inactive. |
+
+### LOWER PRIORITY - Polish
+
+| Feature | Impact | Effort | Why |
+|---------|--------|--------|-----|
+| **Dark mode** | Medium | Medium | Essential for nighttime use, reduces eye strain. |
+| **Skeleton loaders** | Low | Low | Replace spinners with content placeholders. Feels faster. |
+| **Optimistic UI** | Medium | Medium | Likes/comments appear instantly. Feels more responsive. |
+| **Infinite scroll** | Low | Medium | Replace pagination on feeds. Modern UX expectation. |
+| **Image compression** | Low | Low | Auto-compress uploads for faster loading. |
+
+### Technical Debt to Address
+
+- [ ] **Service worker caching strategy** - Review what's cached, ensure updates propagate
+- [ ] **Mobile gesture support** - Swipe actions for common tasks
+- [ ] **Offline support** - Allow viewing cached content when offline
+- [ ] **Performance audit** - Check for N+1 queries, slow page loads
+
+---
+
 ## Changelog
 
+- **2025-12-27:** Redesigned onboarding wizard with 5 steps: recovery stage, interests, profile, privacy, connect. Added recovery_stage and interests fields to User model for smarter user matching.
+- **2025-12-27:** Fixed notification click not marking as read (race condition in JS handler)
 - **2025-12-24:** Completed all group features: archive groups, like/unlike posts, pin posts, invite links
 - **2025-12-24:** Added group notifications, comments on posts, transfer ownership feature
 - **2025-12-24:** Added approve/reject pending members, edit group settings, fixed age display bug
