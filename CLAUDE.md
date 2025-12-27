@@ -268,11 +268,11 @@ celery -A recovery_hub worker -l info
 
 ## Immediate TODOs for Beta Success
 
-### CRITICAL - User Acquisition
+### CRITICAL - User Acquisition (ALL COMPLETE)
 - [x] **Onboarding wizard** - 5-step wizard with recovery stage, interests, profile, privacy, and smart user matching
 - [x] **Suggested users** - Matching algorithm uses recovery_stage and interests for better connections
 - [x] **Surface invite codes** - Added "Invite Friends" to quick actions, edit profile, and mobile menu
-- [ ] **Share buttons** - External sharing for milestones
+- [x] **Share buttons** - Milestone sharing on milestones page, celebration modal, and profile cards
 
 ### HIGH - Retention
 - [ ] **Welcome email sequence** - Day 1, 3, 7 engagement emails
@@ -464,6 +464,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2025-12-27:** Added milestone share buttons - milestones page (WhatsApp, native share), celebration modal, profile cards with hover-reveal share.
 - **2025-12-27:** Surfaced invite codes - added "Invite Friends" link to quick actions sidebar, edit profile page, and mobile menu.
 - **2025-12-27:** Added quick reactions with emoji picker (❤️🙏💪🎉) - tap React button to show picker, reactions display as emoji summary.
 - **2025-12-27:** Added pull-to-refresh gesture for mobile feed - pull down from top to reload content.
