@@ -166,7 +166,9 @@
         align-items: center;
         justify-content: center;
         font-size: 2rem;
-        color: #666;
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
         overflow: hidden;
         border: 3px solid #f0f0f0;
         position: relative;
@@ -399,8 +401,10 @@
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        color: #999;
-        font-size: 1.5rem;
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 600;
+        text-transform: uppercase;
     }
 
     .suggested-avatar img {
@@ -543,11 +547,11 @@
 
         {% for suggested_user in suggested_users %}
         <div class="suggested-user">
-            <div class="suggested-avatar">
+            <div class="suggested-avatar" style="{% if not suggested_user.avatar %}background: hsl({{ suggested_user.id|add:100 }}, 45%, 50%);{% endif %}">
                 {% if suggested_user.avatar %}
                 <img src="{{ suggested_user.avatar.url }}" alt="{{ suggested_user.username }}">
                 {% else %}
-                <i class="fas fa-user"></i>
+                {{ suggested_user.first_name|default:suggested_user.username|slice:":1"|upper }}
                 {% endif %}
             </div>
             <div class="flex-grow-1">
@@ -630,11 +634,11 @@
             {% endwith %}
             {% endif %}
 
-            <div class="member-avatar">
+            <div class="member-avatar" style="{% if not member.avatar %}background: hsl({{ member.id|add:100 }}, 45%, 50%);{% endif %}">
                 {% if member.avatar %}
                 <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
                 {% else %}
-                <i class="fas fa-user"></i>
+                {{ member.first_name|default:member.username|slice:":1"|upper }}
                 {% endif %}
             </div>
 
