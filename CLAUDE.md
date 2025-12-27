@@ -271,7 +271,7 @@ celery -A recovery_hub worker -l info
 ### CRITICAL - User Acquisition
 - [x] **Onboarding wizard** - 5-step wizard with recovery stage, interests, profile, privacy, and smart user matching
 - [x] **Suggested users** - Matching algorithm uses recovery_stage and interests for better connections
-- [ ] **Surface invite codes** - Add "Invite Friends" to profile/settings
+- [x] **Surface invite codes** - Added "Invite Friends" to quick actions, edit profile, and mobile menu
 - [ ] **Share buttons** - External sharing for milestones
 
 ### HIGH - Retention
@@ -464,6 +464,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2025-12-27:** Surfaced invite codes - added "Invite Friends" link to quick actions sidebar, edit profile page, and mobile menu.
 - **2025-12-27:** Added quick reactions with emoji picker (❤️🙏💪🎉) - tap React button to show picker, reactions display as emoji summary.
 - **2025-12-27:** Added pull-to-refresh gesture for mobile feed - pull down from top to reload content.
 - **2025-12-27:** Added PostReaction model for emoji-based reactions on social posts.
