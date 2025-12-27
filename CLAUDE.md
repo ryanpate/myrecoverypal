@@ -424,13 +424,13 @@ Notification (group types):
 
 ### HIGH PRIORITY - Quick Wins
 
-| Feature | Impact | Effort | Why |
-|---------|--------|--------|-----|
-| **One-tap check-in widget** | High | Low | Let users check in from feed without navigation. Increases daily engagement. |
-| **Milestone celebrations** | High | Low | Animated confetti/celebration when users hit 30/60/90/365 days. Shareable moment. |
-| **Streak indicator** | High | Low | Show consecutive check-in days prominently. Gamifies daily engagement. |
-| **Quick reactions** | Medium | Low | Emoji reactions beyond likes (🙏 ❤️ 💪 🎉). More expressive support. |
-| **Pull-to-refresh** | Medium | Low | Mobile-friendly gesture to refresh feed. Expected UX pattern. |
+| Feature | Impact | Effort | Status |
+|---------|--------|--------|--------|
+| ~~One-tap check-in widget~~ | High | Low | ✅ Done |
+| **Milestone celebrations** | High | Low | Pending |
+| **Streak indicator** | High | Low | Pending |
+| **Quick reactions** | Medium | Low | Pending |
+| **Pull-to-refresh** | Medium | Low | Pending |
 
 ### MEDIUM PRIORITY - Retention Boosters
 
@@ -463,6 +463,9 @@ Notification (group types):
 
 ## Changelog
 
+- **2025-12-27:** Added one-tap check-in widget to social feed sidebar. Users can now check in their mood with a single click without navigating away.
+- **2025-12-27:** Fixed infinite recursion bug in UserConnection.save() that caused errors when following certain users.
+- **2025-12-27:** Fixed avatar fallback for users with broken/missing avatar images on community pages.
 - **2025-12-27:** Redesigned onboarding wizard with 5 steps: recovery stage, interests, profile, privacy, connect. Added recovery_stage and interests fields to User model for smarter user matching.
 - **2025-12-27:** Fixed notification click not marking as read (race condition in JS handler)
 - **2025-12-24:** Completed all group features: archive groups, like/unlike posts, pin posts, invite links
