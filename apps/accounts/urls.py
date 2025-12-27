@@ -57,6 +57,8 @@ urlpatterns = [
     
     # Activity Feed URLs
     path('daily-checkin/', views.daily_checkin_view, name='daily_checkin'),
+    path('quick-checkin/', views.quick_checkin, name='quick_checkin'),
+    path('checkin-status/', views.get_checkin_status, name='checkin_status'),
     path('like-activity/<int:activity_id>/', views.like_activity, name='like_activity'),
     path('comment-on-activity/<int:activity_id>/', views.comment_on_activity, name='comment_on_activity'),
 

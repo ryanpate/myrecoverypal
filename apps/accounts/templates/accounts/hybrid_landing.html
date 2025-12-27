@@ -187,6 +187,128 @@
         text-align: center;
     }
 
+    /* Quick Check-in Widget */
+    .checkin-widget {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        padding: 1.25rem;
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .checkin-widget h3 {
+        color: white;
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .checkin-widget h3 i {
+        color: white;
+    }
+
+    .checkin-prompt {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-bottom: 1rem;
+    }
+
+    .mood-buttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.25rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .mood-btn {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid transparent;
+        border-radius: 10px;
+        padding: 0.6rem 0.25rem;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .mood-btn:hover {
+        background: rgba(255, 255, 255, 0.35);
+        transform: scale(1.08);
+    }
+
+    .mood-btn.selected {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: white;
+        transform: scale(1.08);
+    }
+
+    .mood-btn .mood-label {
+        font-size: 0.6rem;
+        color: rgba(255, 255, 255, 0.85);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .mood-btn.selected .mood-label {
+        color: #667eea;
+    }
+
+    .checkin-submit {
+        width: 100%;
+        background: white;
+        color: #667eea;
+        border: none;
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.95rem;
+    }
+
+    .checkin-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .checkin-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .checkin-done {
+        text-align: center;
+        padding: 0.5rem 0;
+    }
+
+    .checkin-done-emoji {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .checkin-done-text {
+        font-size: 0.95rem;
+        opacity: 0.95;
+    }
+
+    .checkin-done-link {
+        display: inline-block;
+        margin-top: 0.75rem;
+        color: white;
+        opacity: 0.85;
+        font-size: 0.85rem;
+        text-decoration: underline;
+    }
+
+    .checkin-done-link:hover {
+        opacity: 1;
+        color: white;
+    }
+
     /* Right Column - Social Feed */
     .feed-column {
         width: 100%;
@@ -864,6 +986,52 @@
                     <div class="stat-box">
                         <div class="stat-number">{{ user.get_joined_groups.count }}</div>
                         <div class="stat-label">Groups</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Check-in Widget -->
+            <div class="checkin-widget" id="checkin-widget">
+                <h3><i class="fas fa-smile"></i> Daily Check-in</h3>
+                <div id="checkin-form">
+                    <div class="checkin-prompt">How are you feeling today?</div>
+                    <div class="mood-buttons">
+                        <button type="button" class="mood-btn" data-mood="1" title="Struggling">
+                            <span>😰</span>
+                            <span class="mood-label">Tough</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="2" title="Down">
+                            <span>😔</span>
+                            <span class="mood-label">Down</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="3" title="Okay">
+                            <span>😐</span>
+                            <span class="mood-label">Okay</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="4" title="Good">
+                            <span>😊</span>
+                            <span class="mood-label">Good</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="5" title="Great">
+                            <span>😄</span>
+                            <span class="mood-label">Great</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="6" title="Amazing">
+                            <span>🌟</span>
+                            <span class="mood-label">Amazing</span>
+                        </button>
+                    </div>
+                    <button type="button" class="checkin-submit" id="checkin-submit-btn" disabled>
+                        <i class="fas fa-check"></i> Check In
+                    </button>
+                </div>
+                <div id="checkin-done" style="display: none;">
+                    <div class="checkin-done">
+                        <div class="checkin-done-emoji" id="checkin-mood-emoji"></div>
+                        <div class="checkin-done-text">You've checked in today!</div>
+                        <a href="{% url 'accounts:daily_checkin' %}" class="checkin-done-link">
+                            Add more details →
+                        </a>
                     </div>
                 </div>
             </div>
@@ -1643,5 +1811,114 @@ function followUserFromFeed(username, button) {
         alert('Could not follow user. Please try again.');
     });
 }
+
+// Quick Check-in Widget
+(function() {
+    const checkinWidget = document.getElementById('checkin-widget');
+    if (!checkinWidget) return;
+
+    const checkinForm = document.getElementById('checkin-form');
+    const checkinDone = document.getElementById('checkin-done');
+    const moodButtons = document.querySelectorAll('.mood-btn');
+    const submitBtn = document.getElementById('checkin-submit-btn');
+    const moodEmojiDisplay = document.getElementById('checkin-mood-emoji');
+
+    let selectedMood = null;
+    const moodEmojis = {
+        1: '😰',
+        2: '😔',
+        3: '😐',
+        4: '😊',
+        5: '😄',
+        6: '🌟'
+    };
+
+    // Check if already checked in today
+    fetch('/accounts/checkin-status/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.checked_in) {
+                showCheckedInState(data.mood);
+            }
+        })
+        .catch(error => console.error('Error checking status:', error));
+
+    // Mood button selection
+    moodButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            moodButtons.forEach(b => b.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedMood = parseInt(this.dataset.mood);
+            submitBtn.disabled = false;
+        });
+    });
+
+    // Submit check-in
+    submitBtn.addEventListener('click', async function() {
+        if (!selectedMood) return;
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking in...';
+
+        try {
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+                getCookie('csrftoken');
+
+            const formData = new FormData();
+            formData.append('mood', selectedMood);
+
+            const response = await fetch('/accounts/quick-checkin/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showCheckedInState(selectedMood);
+                // Show a brief success animation
+                checkinWidget.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    checkinWidget.style.transform = 'scale(1)';
+                }, 200);
+            } else if (data.already_checked_in) {
+                showCheckedInState(data.mood);
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Check In';
+                alert(data.error || 'Could not complete check-in');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> Check In';
+            alert('Could not complete check-in. Please try again.');
+        }
+    });
+
+    function showCheckedInState(mood) {
+        checkinForm.style.display = 'none';
+        checkinDone.style.display = 'block';
+        moodEmojiDisplay.textContent = moodEmojis[mood] || '✨';
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+})();
 </script>
 {% endblock %}

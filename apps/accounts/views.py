@@ -677,6 +677,94 @@ def daily_checkin_view(request):
     }
     return render(request, 'accounts/daily_checkin.html', context)
 
+
+@login_required
+@require_POST
+def quick_checkin(request):
+    """AJAX endpoint for one-tap check-in from the feed"""
+    today = timezone.now().date()
+
+    # Check if already checked in today
+    existing_checkin = DailyCheckIn.objects.filter(
+        user=request.user,
+        date=today
+    ).first()
+
+    if existing_checkin:
+        return JsonResponse({
+            'success': False,
+            'already_checked_in': True,
+            'mood': existing_checkin.mood,
+            'mood_display': existing_checkin.get_mood_display(),
+            'message': 'You already checked in today!'
+        })
+
+    # Get mood from request
+    mood = request.POST.get('mood')
+    if not mood:
+        return JsonResponse({
+            'success': False,
+            'error': 'Please select a mood'
+        })
+
+    try:
+        mood = int(mood)
+        if mood < 1 or mood > 6:
+            raise ValueError("Invalid mood value")
+    except (ValueError, TypeError):
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid mood value'
+        })
+
+    # Create the check-in with defaults
+    checkin = DailyCheckIn.objects.create(
+        user=request.user,
+        date=today,
+        mood=mood,
+        craving_level=0,
+        energy_level=3,
+        is_shared=True  # Default to shared for community engagement
+    )
+
+    # Create activity for the feed
+    ActivityFeed.objects.create(
+        user=request.user,
+        activity_type='check_in_posted',
+        title=f"Daily Check-in: {checkin.get_mood_display()}",
+        description=f"Checked in feeling {checkin.get_mood_display().lower()}",
+        content_object=checkin
+    )
+
+    return JsonResponse({
+        'success': True,
+        'mood': mood,
+        'mood_display': checkin.get_mood_display(),
+        'message': 'Check-in complete! 🌟'
+    })
+
+
+@login_required
+def get_checkin_status(request):
+    """AJAX endpoint to get today's check-in status"""
+    today = timezone.now().date()
+    checkin = DailyCheckIn.objects.filter(
+        user=request.user,
+        date=today
+    ).first()
+
+    if checkin:
+        return JsonResponse({
+            'checked_in': True,
+            'mood': checkin.mood,
+            'mood_display': checkin.get_mood_display(),
+        })
+    else:
+        return JsonResponse({
+            'checked_in': False
+        })
+
+
 @login_required
 @require_POST
 def like_activity(request, activity_id):
