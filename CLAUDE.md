@@ -115,8 +115,9 @@ Users land on the **Social Feed**, not a dashboard or resource page.
 All social features live here:
 
 **Social Models:**
-- `SocialPost` - Posts with likes, comments, visibility controls
-- `SocialPostComment` - Threaded comments
+- `SocialPost` - Posts with reactions, comments, visibility controls
+- `SocialPostComment` - Threaded comments with likes
+- `PostReaction` - Emoji reactions on posts (❤️🙏💪🎉)
 - `UserConnection` - Follow/block with mutual tracking
 - `RecoveryGroup` - 8 types, 3 privacy levels, group posts
 - `GroupChallenge` - 10 types, badges, streaks, leaderboards
@@ -422,15 +423,15 @@ Notification (group types):
 
 ## Recommended Features for Better UX
 
-### HIGH PRIORITY - Quick Wins
+### HIGH PRIORITY - Quick Wins (ALL COMPLETE)
 
 | Feature | Impact | Effort | Status |
 |---------|--------|--------|--------|
 | ~~One-tap check-in widget~~ | High | Low | ✅ Done |
 | ~~Milestone celebrations~~ | High | Low | ✅ Done |
 | ~~Streak indicator~~ | High | Low | ✅ Done |
-| **Quick reactions** | Medium | Low | Pending |
-| **Pull-to-refresh** | Medium | Low | Pending |
+| ~~Quick reactions (❤️🙏💪🎉)~~ | Medium | Low | ✅ Done |
+| ~~Pull-to-refresh~~ | Medium | Low | ✅ Done |
 
 ### MEDIUM PRIORITY - Retention Boosters
 
@@ -463,6 +464,9 @@ Notification (group types):
 
 ## Changelog
 
+- **2025-12-27:** Added quick reactions with emoji picker (❤️🙏💪🎉) - tap React button to show picker, reactions display as emoji summary.
+- **2025-12-27:** Added pull-to-refresh gesture for mobile feed - pull down from top to reload content.
+- **2025-12-27:** Added PostReaction model for emoji-based reactions on social posts.
 - **2025-12-27:** Added milestone celebrations with confetti animation when users hit sobriety milestones (1, 7, 14, 30, 60, 90, 180, 365+ days).
 - **2025-12-27:** Added streak indicator showing consecutive check-in days with fire emoji in the check-in widget.
 - **2025-12-27:** Added progress bar showing days until next sobriety milestone.
