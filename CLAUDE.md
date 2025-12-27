@@ -427,8 +427,8 @@ Notification (group types):
 | Feature | Impact | Effort | Status |
 |---------|--------|--------|--------|
 | ~~One-tap check-in widget~~ | High | Low | ✅ Done |
-| **Milestone celebrations** | High | Low | Pending |
-| **Streak indicator** | High | Low | Pending |
+| ~~Milestone celebrations~~ | High | Low | ✅ Done |
+| ~~Streak indicator~~ | High | Low | ✅ Done |
 | **Quick reactions** | Medium | Low | Pending |
 | **Pull-to-refresh** | Medium | Low | Pending |
 
@@ -463,6 +463,9 @@ Notification (group types):
 
 ## Changelog
 
+- **2025-12-27:** Added milestone celebrations with confetti animation when users hit sobriety milestones (1, 7, 14, 30, 60, 90, 180, 365+ days).
+- **2025-12-27:** Added streak indicator showing consecutive check-in days with fire emoji in the check-in widget.
+- **2025-12-27:** Added progress bar showing days until next sobriety milestone.
 - **2025-12-27:** Added one-tap check-in widget to social feed sidebar. Users can now check in their mood with a single click without navigating away.
 - **2025-12-27:** Fixed infinite recursion bug in UserConnection.save() that caused errors when following certain users.
 - **2025-12-27:** Fixed avatar fallback for users with broken/missing avatar images on community pages.
