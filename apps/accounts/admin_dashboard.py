@@ -122,10 +122,10 @@ def engagement_dashboard(request):
     # SOCIAL METRICS
     # ===========================================
 
-    # Connections
-    total_connections = UserConnection.objects.filter(status='active').count()
+    # Connections (follow type, not blocks)
+    total_connections = UserConnection.objects.filter(connection_type='follow').count()
     new_connections_7d = UserConnection.objects.filter(
-        created_at__gte=last_7_days, status='active'
+        created_at__gte=last_7_days, connection_type='follow'
     ).count()
 
     # Groups
