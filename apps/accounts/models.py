@@ -132,6 +132,90 @@ class User(AbstractUser):
         else:
             return f"{days} day{'s' if days != 1 else ''}"
 
+    def get_checkin_streak(self):
+        """Calculate consecutive days of check-ins ending today or yesterday"""
+        from datetime import timedelta
+        today = timezone.now().date()
+
+        # Get all check-in dates for this user, ordered by date descending
+        checkin_dates = set(
+            self.daily_checkins.values_list('date', flat=True)
+        )
+
+        if not checkin_dates:
+            return 0
+
+        # Start counting from today or yesterday
+        streak = 0
+        current_date = today
+
+        # Check if they checked in today
+        if today in checkin_dates:
+            streak = 1
+            current_date = today - timedelta(days=1)
+        elif (today - timedelta(days=1)) in checkin_dates:
+            # Started yesterday, still counts as active streak
+            streak = 1
+            current_date = today - timedelta(days=2)
+        else:
+            return 0
+
+        # Count consecutive days backwards
+        while current_date in checkin_dates:
+            streak += 1
+            current_date -= timedelta(days=1)
+
+        return streak
+
+    def get_milestone_to_celebrate(self):
+        """Check if user just hit a sobriety milestone today"""
+        days = self.get_days_sober()
+
+        # Define milestone days
+        milestones = {
+            1: ("1 Day", "Your journey begins! 🌱"),
+            7: ("1 Week", "One week strong! 💪"),
+            14: ("2 Weeks", "Two weeks of progress! 🌟"),
+            30: ("1 Month", "A whole month! Amazing! 🎉"),
+            60: ("2 Months", "60 days of strength! 🔥"),
+            90: ("3 Months", "90 days - a huge milestone! 🏆"),
+            180: ("6 Months", "Half a year of recovery! 🌈"),
+            365: ("1 Year", "ONE YEAR! Incredible! 🎊"),
+            730: ("2 Years", "Two years of freedom! ⭐"),
+            1095: ("3 Years", "Three years strong! 🏅"),
+            1825: ("5 Years", "FIVE YEARS! You're an inspiration! 💎"),
+        }
+
+        if days in milestones:
+            title, message = milestones[days]
+            return {
+                'days': days,
+                'title': title,
+                'message': message,
+                'is_milestone': True
+            }
+        return None
+
+    def get_next_milestone(self):
+        """Get the next upcoming sobriety milestone"""
+        days = self.get_days_sober()
+        milestones = [1, 7, 14, 30, 60, 90, 180, 365, 730, 1095, 1825]
+
+        for milestone in milestones:
+            if days < milestone:
+                return {
+                    'days': milestone,
+                    'days_until': milestone - days
+                }
+
+        # Beyond 5 years, next milestone is next year anniversary
+        years = (days // 365) + 1
+        next_milestone = years * 365
+        return {
+            'days': next_milestone,
+            'days_until': next_milestone - days
+        }
+
     def get_absolute_url(self):
         return reverse('accounts:profile', kwargs={'username': self.username})
 

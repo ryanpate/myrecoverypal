@@ -309,6 +309,175 @@
         color: white;
     }
 
+    /* Streak Indicator */
+    .streak-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+    }
+
+    .streak-fire {
+        font-size: 1.2rem;
+    }
+
+    .streak-count {
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .streak-label {
+        font-size: 0.8rem;
+        opacity: 0.9;
+    }
+
+    /* Milestone Celebration Modal */
+    .celebration-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .celebration-modal {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        border-radius: 24px;
+        padding: 2.5rem;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        color: white;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: celebrationPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+
+    @keyframes celebrationPop {
+        0% { transform: scale(0.5); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .celebration-confetti {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    .confetti-piece {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        animation: confettiFall 3s ease-out forwards;
+    }
+
+    @keyframes confettiFall {
+        0% {
+            transform: translateY(-100%) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(500px) rotate(720deg);
+            opacity: 0;
+        }
+    }
+
+    .celebration-emoji {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        animation: bounce 0.6s ease infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .celebration-title {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .celebration-days {
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin: 0.5rem 0;
+        background: linear-gradient(45deg, #fff, #ffd700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+    }
+
+    .celebration-message {
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.95;
+    }
+
+    .celebration-close {
+        background: white;
+        color: #667eea;
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .celebration-close:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Next Milestone Progress */
+    .next-milestone {
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 0.8rem;
+        opacity: 0.85;
+    }
+
+    .milestone-progress-bar {
+        height: 6px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+        margin-top: 0.5rem;
+        overflow: hidden;
+    }
+
+    .milestone-progress-fill {
+        height: 100%;
+        background: white;
+        border-radius: 3px;
+        transition: width 0.5s ease;
+    }
+
     /* Right Column - Social Feed */
     .feed-column {
         width: 100%;
@@ -962,6 +1131,22 @@
 {% endblock %}
 
 {% block content %}
+<!-- Milestone Celebration Modal -->
+{% if milestone_to_celebrate %}
+<div class="celebration-overlay" id="celebration-modal">
+    <div class="celebration-modal">
+        <div class="celebration-confetti" id="confetti-container"></div>
+        <div class="celebration-emoji">🎉</div>
+        <div class="celebration-title">Congratulations!</div>
+        <div class="celebration-days">{{ milestone_to_celebrate.days }} Days</div>
+        <div class="celebration-message">{{ milestone_to_celebrate.message }}</div>
+        <button class="celebration-close" onclick="closeCelebration()">
+            <i class="fas fa-heart"></i> Keep Going!
+        </button>
+    </div>
+</div>
+{% endif %}
+
 <div class="hybrid-container">
     <div class="hybrid-grid">
         <!-- Left Sidebar - User Stats (Authenticated Users Only) -->
@@ -1034,6 +1219,27 @@
                         </a>
                     </div>
                 </div>
+
+                <!-- Streak Indicator -->
+                {% if checkin_streak and checkin_streak > 0 %}
+                <div class="streak-indicator">
+                    <span class="streak-fire">🔥</span>
+                    <span class="streak-count">{{ checkin_streak }}</span>
+                    <span class="streak-label">day streak!</span>
+                </div>
+                {% endif %}
+
+                <!-- Next Milestone Progress -->
+                {% if next_milestone %}
+                <div class="next-milestone">
+                    <span>{{ next_milestone.days_until }} days until {{ next_milestone.days }}-day milestone</span>
+                    {% with progress=user.get_days_sober|divisibleby:1 %}
+                    <div class="milestone-progress-bar">
+                        <div class="milestone-progress-fill" style="width: {% widthratio user.get_days_sober next_milestone.days 100 %}%;"></div>
+                    </div>
+                    {% endwith %}
+                </div>
+                {% endif %}
             </div>
 
             <!-- Recovery Network -->
@@ -1920,5 +2126,50 @@ function followUserFromFeed(username, button) {
         return cookieValue;
     }
 })();
+
+// Milestone Celebration Modal
+(function() {
+    const celebrationModal = document.getElementById('celebration-modal');
+    if (!celebrationModal) return;
+
+    // Create confetti
+    const confettiContainer = document.getElementById('confetti-container');
+    const colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff6fb5', '#c56cf0'];
+
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti-piece';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 2 + 's';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        confettiContainer.appendChild(confetti);
+    }
+
+    // Auto-close after 10 seconds
+    setTimeout(() => {
+        closeCelebration();
+    }, 10000);
+})();
+
+function closeCelebration() {
+    const modal = document.getElementById('celebration-modal');
+    if (modal) {
+        modal.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
+    }
+}
+
+// Add fadeOut animation dynamically
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+`;
+document.head.appendChild(styleSheet);
 </script>
 {% endblock %}

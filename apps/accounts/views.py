@@ -3243,6 +3243,21 @@ def hybrid_landing_view(request):
                 if post.is_visible_to(user):
                     visible_posts.append(post)
 
+            # Check-in streak
+            checkin_streak = user.get_checkin_streak()
+
+            # Milestone celebration check
+            milestone_to_celebrate = user.get_milestone_to_celebrate()
+            next_milestone = user.get_next_milestone()
+
+            # Check if we've already shown this milestone celebration today
+            show_celebration = False
+            if milestone_to_celebrate:
+                celebration_key = f"celebrated_milestone_{milestone_to_celebrate['days']}"
+                if not request.session.get(celebration_key):
+                    show_celebration = True
+                    request.session[celebration_key] = True
+
             context.update({
                 # User basics
                 'user': user,
@@ -3263,6 +3278,11 @@ def hybrid_landing_view(request):
 
                 # Groups
                 'user_groups': user_groups,
+
+                # Streak and milestone celebration
+                'checkin_streak': checkin_streak,
+                'milestone_to_celebrate': milestone_to_celebrate if show_celebration else None,
+                'next_milestone': next_milestone,
             })
         else:
             # For unauthenticated users, only show public posts
