@@ -219,6 +219,8 @@ if DATABASE_URL:
     DATABASES['default']['OPTIONS'] = db_options
     # Enable atomic requests for better transaction handling
     DATABASES['default']['ATOMIC_REQUESTS'] = True
+    # Verify connection is alive before use (Django 4.1+) - prevents "connection already closed" errors
+    DATABASES['default']['CONN_HEALTH_CHECKS'] = True
 else:
     # Use SQLite as fallback (for build phase and local dev)
     DATABASES = {
