@@ -40,6 +40,7 @@ urlpatterns = [
     path('profile/<str:username>/', views.ProfileView.as_view(), name='profile'),
     path('edit-profile/', views.edit_profile_view, name='edit_profile'),
     path('invite-friends/', views.invite_friends_view, name='invite_friends'),
+    path('invite-friends/send-email/', views.send_invite_email_view, name='send_invite_email'),
 
     # Milestones
     path('milestones/', views.MilestoneListView.as_view(), name='milestones'),

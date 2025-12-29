@@ -431,6 +431,120 @@ def invite_friends_view(request):
     return render(request, 'accounts/invite_friends.html', context)
 
 
+@login_required
+@require_POST
+def send_invite_email_view(request):
+    """
+    Send an invite email directly through Resend API.
+    Allows users to invite friends via email without opening their email client.
+    """
+    import re
+    import os
+    import requests
+    import logging
+    from django.template.loader import render_to_string
+    from django.utils.html import strip_tags
+
+    logger = logging.getLogger('apps.accounts')
+
+    user = request.user
+    recipient_email = request.POST.get('email', '').strip()
+    personal_message = request.POST.get('message', '').strip()
+
+    # Validate email
+    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not recipient_email or not re.match(email_regex, recipient_email):
+        return JsonResponse({
+            'success': False,
+            'error': 'Please enter a valid email address.'
+        }, status=400)
+
+    # Check if user has an active invite code
+    invite_code = InviteCode.objects.filter(
+        created_by=user,
+        status='active',
+        uses_remaining__gt=0
+    ).first()
+
+    if not invite_code:
+        return JsonResponse({
+            'success': False,
+            'error': 'You need to generate an invite code first.'
+        }, status=400)
+
+    # Build invite URL
+    site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
+    invite_url = f"{site_url}/accounts/register/?invite={invite_code.code}"
+
+    # Render email template
+    context = {
+        'inviter': user,
+        'recipient_email': recipient_email,
+        'personal_message': personal_message if personal_message else None,
+        'invite_url': invite_url,
+        'invite_code': invite_code.code,
+        'site_url': site_url,
+        'current_year': timezone.now().year,
+    }
+
+    html_message = render_to_string('accounts/emails/friend_invite.html', context)
+    plain_message = strip_tags(html_message)
+    subject = f"{user.first_name or user.username} invited you to join MyRecoveryPal"
+
+    # Send via Resend API
+    try:
+        resend_api_key = os.environ.get('RESEND_API_KEY', getattr(settings, 'EMAIL_HOST_PASSWORD', ''))
+
+        if not resend_api_key:
+            logger.error("RESEND_API_KEY not configured")
+            return JsonResponse({
+                'success': False,
+                'error': 'Email service not configured. Please try sharing via link instead.'
+            }, status=500)
+
+        response = requests.post(
+            'https://api.resend.com/emails',
+            headers={
+                'Authorization': f'Bearer {resend_api_key}',
+                'Content-Type': 'application/json'
+            },
+            json={
+                'from': getattr(settings, 'DEFAULT_FROM_EMAIL', 'MyRecoveryPal <noreply@myrecoverypal.com>'),
+                'to': [recipient_email],
+                'subject': subject,
+                'html': html_message,
+                'text': plain_message
+            },
+            timeout=10
+        )
+
+        if response.status_code in [200, 201]:
+            logger.info(f"Invite email sent from {user.username} to {recipient_email}")
+            return JsonResponse({
+                'success': True,
+                'message': f'Invitation sent to {recipient_email}!'
+            })
+        else:
+            logger.error(f"Resend API error: {response.status_code} - {response.text}")
+            return JsonResponse({
+                'success': False,
+                'error': 'Failed to send email. Please try again or share via link.'
+            }, status=500)
+
+    except requests.exceptions.Timeout:
+        logger.error("Resend API timeout")
+        return JsonResponse({
+            'success': False,
+            'error': 'Email service timed out. Please try again.'
+        }, status=500)
+    except Exception as e:
+        logger.error(f"Error sending invite email: {e}")
+        return JsonResponse({
+            'success': False,
+            'error': 'An error occurred. Please try sharing via link instead.'
+        }, status=500)
+
+
 @require_http_methods(["GET", "POST"])
 def request_access_view(request):
     """

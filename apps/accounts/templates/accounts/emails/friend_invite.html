@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You're Invited to MyRecoveryPal</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .invite-box {
+            background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        .from-user {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border-left: 4px solid #4db8e8;
+        }
+        .from-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4db8e8, #52b788);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #52b788;
+            color: white !important;
+            padding: 18px 50px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        .feature-grid {
+            display: table;
+            width: 100%;
+            margin: 25px 0;
+        }
+        .feature-row {
+            display: table-row;
+        }
+        .feature-item {
+            display: table-cell;
+            padding: 15px;
+            text-align: center;
+            width: 33.33%;
+        }
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .feature-text {
+            font-size: 13px;
+            color: #666;
+        }
+        .personal-message {
+            background: #fff8e6;
+            border: 1px solid #ffeaa7;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-style: italic;
+            color: #856404;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">MyRecoveryPal</div>
+            <h1 style="color: #1e4d8b; margin: 0;">You're Invited!</h1>
+        </div>
+
+        <div class="from-user">
+            <div style="text-align: center;">
+                <div class="from-avatar">{{ inviter.first_name|default:inviter.username|slice:":1"|upper }}</div>
+                <div style="font-weight: 600; font-size: 18px;">{{ inviter.first_name|default:inviter.username }}</div>
+                <div style="color: #666;">wants you to join MyRecoveryPal</div>
+            </div>
+        </div>
+
+        {% if personal_message %}
+        <div class="personal-message">
+            "{{ personal_message }}"
+        </div>
+        {% endif %}
+
+        <div class="invite-box">
+            <h2 style="margin: 0 0 10px 0; font-size: 22px;">Join Our Supportive Community</h2>
+            <p style="margin: 0; opacity: 0.9;">Connect with others who understand your journey</p>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{{ invite_url }}" class="cta-button">
+                Join MyRecoveryPal
+            </a>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-row">
+                <div class="feature-item">
+                    <div class="feature-icon">&#128172;</div>
+                    <div class="feature-text"><strong>Community</strong><br>Connect with others</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">&#128293;</div>
+                    <div class="feature-text"><strong>Daily Check-ins</strong><br>Track your progress</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">&#127942;</div>
+                    <div class="feature-text"><strong>Milestones</strong><br>Celebrate wins</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="background: #f0f9f4; padding: 20px; border-radius: 10px; margin: 25px 0; text-align: center;">
+            <p style="margin: 0; color: #52b788; font-weight: 600;">Recovery is possible.</p>
+            <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">You don't have to do it alone.</p>
+        </div>
+
+        <div class="footer">
+            <p style="margin: 10px 0;">
+                <a href="{{ site_url }}" style="color: #4db8e8; text-decoration: none;">Learn More About MyRecoveryPal</a>
+            </p>
+            <p style="margin: 20px 0 10px 0; font-size: 12px; color: #999;">
+                You received this email because {{ inviter.first_name|default:inviter.username }} thought you might benefit from our community.<br>
+                If you're not interested, you can simply ignore this email.
+            </p>
+            <p style="margin: 10px 0; color: #666;">
+                {{ current_year }} MyRecoveryPal. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

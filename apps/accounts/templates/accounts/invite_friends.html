@@ -336,6 +336,9 @@
 {% endblock %}
 
 {% block content %}
+<!-- Hidden CSRF token for AJAX requests -->
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
 <div class="invite-container">
     <a href="{% url 'accounts:edit_profile' %}" class="back-link">
         <i class="fas fa-arrow-left"></i> Back to Settings
@@ -386,9 +389,37 @@
                 <a href="sms:?body=Join%20me%20on%20MyRecoveryPal%20-%20a%20supportive%20community%20for%20recovery!%20{{ invite_url }}" class="share-btn sms">
                     <i class="fas fa-sms"></i> Text
                 </a>
-                <a href="mailto:?subject=Join%20MyRecoveryPal&body=I%20wanted%20to%20invite%20you%20to%20join%20MyRecoveryPal%2C%20a%20supportive%20community%20for%20recovery.%0A%0AUse%20this%20link%20to%20sign%20up%3A%20{{ invite_url|urlencode }}" class="share-btn email">
+                <button type="button" class="share-btn email" onclick="toggleEmailForm()">
                     <i class="fas fa-envelope"></i> Email
-                </a>
+                </button>
+            </div>
+
+            <!-- Email Invite Form -->
+            <div id="email-invite-form" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: white; border-radius: 12px; border: 2px solid #e0e8d8;">
+                <h4 style="margin: 0 0 1rem 0; color: #333; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-paper-plane" style="color: #52b788;"></i> Send Invite via Email
+                </h4>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #555;">Friend's Email</label>
+                    <input type="email" id="invite-email" placeholder="friend@example.com"
+                           style="width: 100%; padding: 0.875rem 1rem; border: 2px solid #d0e8d8; border-radius: 10px; font-size: 0.95rem; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #555;">Personal Message (optional)</label>
+                    <textarea id="invite-message" placeholder="Add a personal note to your invitation..." rows="3"
+                              style="width: 100%; padding: 0.875rem 1rem; border: 2px solid #d0e8d8; border-radius: 10px; font-size: 0.95rem; resize: vertical; box-sizing: border-box;"></textarea>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button type="button" onclick="sendInviteEmail()" id="send-email-btn"
+                            style="flex: 1; padding: 0.875rem 1.5rem; background: #52b788; color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <i class="fas fa-paper-plane"></i> Send Invitation
+                    </button>
+                    <button type="button" onclick="toggleEmailForm()"
+                            style="padding: 0.875rem 1.5rem; background: #f0f0f0; color: #666; border: none; border-radius: 10px; font-weight: 500; cursor: pointer;">
+                        Cancel
+                    </button>
+                </div>
+                <div id="email-result" style="margin-top: 1rem; display: none;"></div>
             </div>
         </div>
 
@@ -464,6 +495,93 @@ function copyInviteLink() {
             btn.innerHTML = '<i class="fas fa-copy"></i> <span>Copy</span>';
         }, 2000);
     });
+}
+
+function toggleEmailForm() {
+    const form = document.getElementById('email-invite-form');
+    const resultDiv = document.getElementById('email-result');
+
+    if (form.style.display === 'none') {
+        form.style.display = 'block';
+        document.getElementById('invite-email').focus();
+    } else {
+        form.style.display = 'none';
+        // Reset form
+        document.getElementById('invite-email').value = '';
+        document.getElementById('invite-message').value = '';
+        resultDiv.style.display = 'none';
+    }
+}
+
+function sendInviteEmail() {
+    const email = document.getElementById('invite-email').value.trim();
+    const message = document.getElementById('invite-message').value.trim();
+    const btn = document.getElementById('send-email-btn');
+    const resultDiv = document.getElementById('email-result');
+
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+        showResult('Please enter a valid email address.', 'error');
+        return;
+    }
+
+    // Disable button and show loading
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+    // Get CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    // Send request
+    fetch('{% url "accounts:send_invite_email" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken
+        },
+        body: `email=${encodeURIComponent(email)}&message=${encodeURIComponent(message)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showResult(data.message, 'success');
+            // Clear form
+            document.getElementById('invite-email').value = '';
+            document.getElementById('invite-message').value = '';
+        } else {
+            showResult(data.error || 'Failed to send invitation.', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showResult('An error occurred. Please try again.', 'error');
+    })
+    .finally(() => {
+        // Re-enable button
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Invitation';
+    });
+}
+
+function showResult(message, type) {
+    const resultDiv = document.getElementById('email-result');
+    resultDiv.style.display = 'block';
+    resultDiv.style.padding = '1rem';
+    resultDiv.style.borderRadius = '8px';
+    resultDiv.style.fontWeight = '500';
+
+    if (type === 'success') {
+        resultDiv.style.background = '#d4edda';
+        resultDiv.style.color = '#155724';
+        resultDiv.style.border = '1px solid #c3e6cb';
+        resultDiv.innerHTML = '<i class="fas fa-check-circle"></i> ' + message;
+    } else {
+        resultDiv.style.background = '#f8d7da';
+        resultDiv.style.color = '#721c24';
+        resultDiv.style.border = '1px solid #f5c6cb';
+        resultDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + message;
+    }
 }
 </script>
 {% endblock %}
