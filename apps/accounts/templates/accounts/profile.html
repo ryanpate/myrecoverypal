@@ -489,11 +489,22 @@
             <i class="fas fa-tachometer-alt"></i> Dashboard
         </a>
     </div>
-    {% elif request.user.is_authenticated and profile_user.allow_messages %}
+    {% elif request.user.is_authenticated %}
     <div class="profile-actions">
+        {% if profile_user.allow_messages %}
         <a href="{% url 'accounts:send_message' profile_user.username %}" class="message-btn">
             <i class="fas fa-envelope"></i> Send Message
         </a>
+        {% endif %}
+        {% if not request.user.get_recovery_pal and profile_user != request.user %}
+        <a href="{% url 'accounts:request_pal' profile_user.username %}" class="btn" style="background: linear-gradient(135deg, #52b788 0%, #40916c 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 50px; text-decoration: none; display: inline-block; transition: all 0.3s ease; font-weight: 600; margin-left: 0.5rem;">
+            <i class="fas fa-handshake-angle"></i> Request as Pal
+        </a>
+        {% elif request.user.get_recovery_pal == profile_user %}
+        <span class="btn" style="background: #e8f7f0; color: #2d6a4f; padding: 0.75rem 1.5rem; border-radius: 50px; display: inline-block; font-weight: 600; margin-left: 0.5rem; cursor: default;">
+            <i class="fas fa-check-circle"></i> Your Recovery Pal
+        </span>
+        {% endif %}
     </div>
     {% endif %}
 

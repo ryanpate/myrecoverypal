@@ -1568,6 +1568,35 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Find a Recovery Pal Card (show if user doesn't have one) -->
+            {% if not user.get_recovery_pal %}
+            <div class="stats-card" style="background: linear-gradient(135deg, #e8f7f0 0%, #d4f1e9 100%); border: 2px solid #52b788;">
+                <h3 style="color: #2d6a4f;"><i class="fas fa-handshake-angle" style="color: #52b788;"></i> Find a Recovery Pal</h3>
+                <p style="color: #40916c; font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.5;">
+                    A Recovery Pal is someone on a similar journey who can offer mutual support and accountability.
+                </p>
+                <div style="background: white; border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #333; font-size: 0.85rem;">
+                            <i class="fas fa-check-circle" style="color: #52b788;"></i>
+                            <span>Daily check-ins together</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #333; font-size: 0.85rem;">
+                            <i class="fas fa-check-circle" style="color: #52b788;"></i>
+                            <span>Share goals & celebrate wins</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #333; font-size: 0.85rem;">
+                            <i class="fas fa-check-circle" style="color: #52b788;"></i>
+                            <span>Support during tough times</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'accounts:pal_dashboard' %}" style="display: block; text-align: center; background: #52b788; color: white; padding: 0.75rem 1rem; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="fas fa-search"></i> Find Your Pal
+                </a>
+            </div>
+            {% endif %}
         </div>
         {% endif %}
 

@@ -216,6 +216,57 @@
 </div>
 
 <div class="container">
+    <!-- Educational Banner for users without a pal -->
+    {% if not current_pal %}
+    <div class="dashboard-card" style="background: linear-gradient(135deg, #e8f7f0 0%, #d4f1e9 100%); border: 2px solid #52b788; margin-bottom: 2rem;">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h3 style="color: #2d6a4f; margin-bottom: 1rem;"><i class="fas fa-handshake-angle" style="color: #52b788;"></i> What is a Recovery Pal?</h3>
+                <p style="color: #40916c; font-size: 1.1rem; line-height: 1.6; margin-bottom: 1rem;">
+                    A Recovery Pal is your <strong>accountability partner</strong> on the recovery journey. Unlike a sponsor who mentors you, a pal is a <strong>peer walking a similar path</strong> - someone who understands your daily struggles and can celebrate your wins with you.
+                </p>
+                <div class="row" style="margin-top: 1.5rem;">
+                    <div class="col-6 col-md-3 text-center mb-3">
+                        <div style="font-size: 2rem; color: #52b788;">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #333; margin-top: 0.5rem;">Daily Check-ins</div>
+                    </div>
+                    <div class="col-6 col-md-3 text-center mb-3">
+                        <div style="font-size: 2rem; color: #52b788;">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #333; margin-top: 0.5rem;">Shared Goals</div>
+                    </div>
+                    <div class="col-6 col-md-3 text-center mb-3">
+                        <div style="font-size: 2rem; color: #52b788;">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #333; margin-top: 0.5rem;">Accountability</div>
+                    </div>
+                    <div class="col-6 col-md-3 text-center mb-3">
+                        <div style="font-size: 2rem; color: #52b788;">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #333; margin-top: 0.5rem;">Mutual Support</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div style="background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(82, 183, 136, 0.2);">
+                    <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">
+                        <i class="fas fa-user-friends" style="color: #52b788;"></i>
+                    </div>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 1rem;">Research shows that having an accountability partner can increase your chances of reaching a goal by up to <strong>95%</strong></p>
+                    <a href="{% url 'accounts:community' %}" class="btn" style="background: #52b788; color: white; padding: 0.75rem 2rem; border-radius: 50px; font-weight: 600; display: inline-block; text-decoration: none; transition: all 0.3s;">
+                        <i class="fas fa-search"></i> Find Your Pal
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="row">
         <!-- Current Pal -->
         <div class="col-md-8">

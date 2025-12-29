@@ -2266,6 +2266,9 @@
                                 <span class="message-count-badge">{{ user_active_challenges_count }}</span>
                                 {% endif %}
                             </a>
+                            <a href="{% url 'accounts:pal_dashboard' %}" style="color: #52b788;">
+                                <i class="fas fa-handshake-angle"></i> My Recovery Pal
+                            </a>
                             {% if user_pending_check_ins > 0 %}
                             <a href="{% url 'accounts:my_challenges' %}" style="background: #fff3cd; color: #856404;">
                                 <i class="fas fa-check-circle"></i> {{ user_pending_check_ins }} Check-in{{
@@ -2433,6 +2436,11 @@
                 <a href="{% url 'accounts:groups_list' %}"
                     class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">
                     Groups
+                </a>
+                <a href="{% url 'accounts:pal_dashboard' %}"
+                    class="{% if request.resolver_match.url_name == 'pal_dashboard' %}active{% endif %}"
+                    style="color: #52b788;">
+                    <i class="fas fa-handshake-angle"></i> My Recovery Pal
                 </a>
                 <a href="{% url 'accounts:messages' %}"
                     class="{% if request.resolver_match.url_name == 'messages' %}active{% endif %}">
