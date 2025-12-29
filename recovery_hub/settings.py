@@ -522,21 +522,20 @@ MOBILE_APP_APPLE_MOBILE_WEB_APP_TITLE = 'RecoveryPal'
 # MOBILE_APP_ANDROID_APP_NAME = 'MyRecoveryPal'
 
 # ========================================
-# Email Configuration - Flexible for Any Provider
+# Email Configuration - Using Resend
 # ========================================
 
 EMAIL_BACKEND = os.environ.get(
     'EMAIL_BACKEND',
     'django.core.mail.backends.smtp.EmailBackend'
 )
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.sendgrid.net')  # ✅ From env
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))  # ✅ From env
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'  # ✅ From env
-EMAIL_USE_SSL = os.environ.get(
-    'EMAIL_USE_SSL', 'False') == 'True'  # ✅ From env
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'apikey')  # ✅ From env
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.resend.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '465'))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'False') == 'True'
+EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'True') == 'True'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'resend')
 EMAIL_HOST_PASSWORD = os.environ.get(
-    'EMAIL_HOST_PASSWORD', '')  # ✅ Correct var name
+    'RESEND_API_KEY', os.environ.get('EMAIL_HOST_PASSWORD', ''))
 DEFAULT_FROM_EMAIL = os.environ.get(
     'DEFAULT_FROM_EMAIL',
     'MyRecoveryPal <noreply@myrecoverypal.com>'

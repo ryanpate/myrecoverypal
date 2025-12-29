@@ -172,7 +172,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 ### Integrations
 - **Stripe** - Subscriptions (14-day premium trial on signup)
 - **Cloudinary** - Media storage
-- **SendGrid** - Email
+- **Resend** - Email
 - **Sentry** - Error monitoring
 - **Firebase** - Push notifications (configured, needs implementation)
 
@@ -316,7 +316,7 @@ CLOUDINARY_API_KEY=...
 CLOUDINARY_API_SECRET=...
 STRIPE_SECRET_KEY=...
 STRIPE_PUBLISHABLE_KEY=...
-EMAIL_HOST_PASSWORD=<sendgrid-key>
+RESEND_API_KEY=<resend-api-key>
 SENTRY_DSN=...
 ```
 

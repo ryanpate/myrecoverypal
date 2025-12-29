@@ -91,25 +91,25 @@ class Command(BaseCommand):
             
             if 'authentication failed' in error_str or '535' in error_str:
                 self.stdout.write(self.style.WARNING('🔐 Authentication Issue:'))
-                self.stdout.write('   - Check your EMAIL_PASSWORD is correct')
-                self.stdout.write('   - Verify ryan@myrecoverypal.com password in Microsoft 365')
-                self.stdout.write('   - Ensure SMTP authentication is enabled for this account')
-                
+                self.stdout.write('   - Check your RESEND_API_KEY is correct')
+                self.stdout.write('   - Verify the API key starts with "re_"')
+                self.stdout.write('   - Ensure your domain is verified in Resend')
+
             elif 'connection refused' in error_str or 'timed out' in error_str:
                 self.stdout.write(self.style.WARNING('🌐 Connection Issue:'))
-                self.stdout.write('   - Check if smtp.office365.com is accessible')
-                self.stdout.write('   - Verify port 587 is not blocked')
+                self.stdout.write('   - Check if smtp.resend.com is accessible')
+                self.stdout.write('   - Verify port 465 is not blocked')
                 self.stdout.write('   - Check Railway network settings')
-                
+
             elif 'recipient' in error_str or 'address' in error_str:
                 self.stdout.write(self.style.WARNING('📧 Recipient Issue:'))
                 self.stdout.write(f'   - Check if {recipient} is a valid email address')
-                
+
             else:
                 self.stdout.write(self.style.WARNING('📋 General troubleshooting:'))
-                self.stdout.write('   1. Verify EMAIL_PASSWORD is set in Railway')
-                self.stdout.write('   2. Check Microsoft 365 admin center')
-                self.stdout.write('   3. Ensure account has SMTP enabled')
+                self.stdout.write('   1. Verify RESEND_API_KEY is set in Railway')
+                self.stdout.write('   2. Check Resend dashboard for API key status')
+                self.stdout.write('   3. Ensure domain myrecoverypal.com is verified')
                 self.stdout.write('   4. Try with a different recipient email')
             
             import traceback

@@ -221,7 +221,7 @@ class InviteCode(models.Model):
     
 
     def send_invite_email(self):
-        """Send invite email using SendGrid API (with SMTP fallback)"""
+        """Send invite email using Resend API (with SMTP fallback)"""
         if not self.email:
             return False
 
@@ -246,45 +246,42 @@ class InviteCode(models.Model):
         plain_message = strip_tags(html_message)
         subject = '🌟 Welcome to MyRecoveryPal - Your Invite Code'
 
-        # Try SendGrid HTTP API first (more reliable on Railway)
+        # Try Resend HTTP API first (more reliable on Railway)
         try:
             import requests
+            import os
 
-            sendgrid_api_key = settings.EMAIL_HOST_PASSWORD
+            resend_api_key = os.environ.get('RESEND_API_KEY', settings.EMAIL_HOST_PASSWORD)
 
             response = requests.post(
-                'https://api.sendgrid.com/v3/mail/send',
+                'https://api.resend.com/emails',
                 headers={
-                    'Authorization': f'Bearer {sendgrid_api_key}',
+                    'Authorization': f'Bearer {resend_api_key}',
                     'Content-Type': 'application/json'
                 },
                 json={
-                    'personalizations': [{
-                        'to': [{'email': self.email}],
-                        'subject': subject
-                    }],
-                    'from': {'email': settings.DEFAULT_FROM_EMAIL},
-                    'content': [
-                        {'type': 'text/plain', 'value': plain_message},
-                        {'type': 'text/html', 'value': html_message}
-                    ]
+                    'from': settings.DEFAULT_FROM_EMAIL,
+                    'to': [self.email],
+                    'subject': subject,
+                    'html': html_message,
+                    'text': plain_message
                 },
                 timeout=10
             )
 
-            if response.status_code in [200, 202]:
-                logger.info(f"✅ SendGrid API: Email sent to {self.email}")
+            if response.status_code in [200, 201]:
+                logger.info(f"✅ Resend API: Email sent to {self.email}")
                 return True
             else:
                 logger.error(
-                    f"❌ SendGrid API failed: {response.status_code} - {response.text}")
-                raise Exception(f"SendGrid API error: {response.status_code}")
+                    f"❌ Resend API failed: {response.status_code} - {response.text}")
+                raise Exception(f"Resend API error: {response.status_code}")
 
         except Exception as api_error:
             logger.warning(
-                f"⚠️ SendGrid API failed: {api_error}, trying SMTP fallback...")
+                f"⚠️ Resend API failed: {api_error}, trying SMTP fallback...")
 
-            # Fallback to SMTP (less reliable on Railway)
+            # Fallback to SMTP
             try:
                 from django.core.mail import EmailMultiAlternatives
 
@@ -302,7 +299,7 @@ class InviteCode(models.Model):
 
             except Exception as smtp_error:
                 logger.error(
-                    f"❌ Both SendGrid API and SMTP failed for {self.email}: {smtp_error}")
+                    f"❌ Both Resend API and SMTP failed for {self.email}: {smtp_error}")
                 return False
 
 class SystemSettings(models.Model):
