@@ -476,9 +476,21 @@ def send_invite_email_view(request):
     site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
     invite_url = f"{site_url}/accounts/register/?invite={invite_code.code}"
 
+    # Get inviter's avatar URL if they have one
+    inviter_avatar_url = None
+    if user.avatar:
+        try:
+            inviter_avatar_url = user.avatar.url
+            # Ensure it's an absolute URL for email
+            if inviter_avatar_url and not inviter_avatar_url.startswith('http'):
+                inviter_avatar_url = f"{site_url}{inviter_avatar_url}"
+        except Exception:
+            inviter_avatar_url = None
+
     # Render email template
     context = {
         'inviter': user,
+        'inviter_avatar_url': inviter_avatar_url,
         'recipient_email': recipient_email,
         'personal_message': personal_message if personal_message else None,
         'invite_url': invite_url,

@@ -122,7 +122,12 @@
 
         <div class="from-user">
             <div style="text-align: center;">
+                {% if inviter_avatar_url %}
+                <img src="{{ inviter_avatar_url }}" alt="{{ inviter.first_name|default:inviter.username }}"
+                     style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #52b788; margin-bottom: 10px;">
+                {% else %}
                 <div class="from-avatar">{{ inviter.first_name|default:inviter.username|slice:":1"|upper }}</div>
+                {% endif %}
                 <div style="font-weight: 600; font-size: 18px;">{{ inviter.first_name|default:inviter.username }}</div>
                 <div style="color: #666;">wants you to join MyRecoveryPal</div>
             </div>
