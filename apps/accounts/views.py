@@ -2692,19 +2692,62 @@ def update_last_seen(request):
 class MessageListView(LoginRequiredMixin, ListView):
     model = SupportMessage
     template_name = 'accounts/messages.html'
-    context_object_name = 'messages'
+    context_object_name = 'user_messages'  # Changed from 'messages' to avoid conflict with Django's messages framework
     paginate_by = 20
-    
+
     def get_queryset(self):
-        # Mark messages as read when viewing
-        SupportMessage.objects.filter(
-            recipient=self.request.user,
-            is_read=False
-        ).update(is_read=True)
-        
-        return SupportMessage.objects.filter(
-            Q(sender=self.request.user) | Q(recipient=self.request.user)
-        ).order_by('-created_at')
+        user = self.request.user
+        filter_type = self.request.GET.get('filter', 'all')
+
+        # Base queryset based on filter
+        if filter_type == 'sent':
+            queryset = SupportMessage.objects.filter(sender=user)
+        elif filter_type == 'unread':
+            queryset = SupportMessage.objects.filter(recipient=user, is_read=False)
+        else:
+            queryset = SupportMessage.objects.filter(
+                Q(sender=user) | Q(recipient=user)
+            )
+
+        return queryset.order_by('-created_at')
+
+    def get(self, request, *args, **kwargs):
+        # Mark messages as read when viewing inbox (not when viewing sent)
+        if request.GET.get('filter') != 'sent':
+            SupportMessage.objects.filter(
+                recipient=request.user,
+                is_read=False
+            ).update(is_read=True)
+        return super().get(request, *args, **kwargs)
+
+
+@login_required
+@require_POST
+def delete_message_view(request, message_id):
+    """Delete a message (only if user is sender or recipient)"""
+    try:
+        message = SupportMessage.objects.get(id=message_id)
+
+        # Only allow deletion if user is sender or recipient
+        if message.sender != request.user and message.recipient != request.user:
+            return JsonResponse({
+                'success': False,
+                'error': 'You do not have permission to delete this message.'
+            }, status=403)
+
+        message.delete()
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Message deleted successfully.'
+        })
+
+    except SupportMessage.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Message not found.'
+        }, status=404)
+
 
 @login_required
 def challenges_home(request):

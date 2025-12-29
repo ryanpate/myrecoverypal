@@ -54,6 +54,7 @@ urlpatterns = [
 
     # Messages
     path('messages/', views.MessageListView.as_view(), name='messages'),
+    path('messages/<int:message_id>/delete/', views.delete_message_view, name='delete_message'),
     path('send-message/<str:username>/', views.send_message_view, name='send_message'),
     
     # Activity Feed URLs

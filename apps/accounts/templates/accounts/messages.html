@@ -457,10 +457,12 @@
                 </div>
 
                 <div class="message-actions">
-                    <button class="action-btn" title="Reply">
+                    {% if message.sender != request.user %}
+                    <a href="{% url 'accounts:send_message' message.sender.username %}" class="action-btn" title="Reply">
                         <i class="fas fa-reply"></i>
-                    </button>
-                    <button class="action-btn" title="Delete">
+                    </a>
+                    {% endif %}
+                    <button class="action-btn delete-message-btn" title="Delete" data-message-id="{{ message.id }}">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -520,6 +522,52 @@
             } else {
                 message.style.display = 'none';
             }
+        });
+    });
+
+    // Delete message functionality
+    document.querySelectorAll('.delete-message-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent triggering the message item click
+
+            if (!confirm('Are you sure you want to delete this message?')) {
+                return;
+            }
+
+            const messageId = this.dataset.messageId;
+            const messageItem = this.closest('.message-item');
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+                              document.querySelector('meta[name=csrf-token]')?.content;
+
+            fetch(`/accounts/messages/${messageId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Animate removal
+                    messageItem.style.transition = 'opacity 0.3s, transform 0.3s';
+                    messageItem.style.opacity = '0';
+                    messageItem.style.transform = 'translateX(20px)';
+                    setTimeout(() => {
+                        messageItem.remove();
+                        // Check if no messages left
+                        if (document.querySelectorAll('.message-item').length === 0) {
+                            location.reload();
+                        }
+                    }, 300);
+                } else {
+                    alert(data.error || 'Failed to delete message');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
         });
     });
 </script>
