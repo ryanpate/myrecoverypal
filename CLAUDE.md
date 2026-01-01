@@ -409,12 +409,12 @@ Create keyword-targeted landing pages:
 |------|-----------------|--------|
 | `/alcohol-recovery-app/` | alcohol recovery app, sobriety app | ✅ Done |
 | `/sober-grid-alternative/` | sober grid alternative | ✅ Done |
-| `/drug-addiction-recovery-app/` | drug addiction app, NA app | ⬜ TODO |
-| `/sobriety-counter-app/` | sobriety counter, sober day tracker | ⬜ TODO |
-| `/free-aa-app/` | AA app, 12 step app, free AA meeting finder | ⬜ TODO |
-| `/opioid-recovery-app/` | opioid recovery, fentanyl recovery app | ⬜ TODO |
-| `/gambling-addiction-app/` | gambling addiction help, gambling recovery | ⬜ TODO |
-| `/mental-health-recovery-app/` | mental health support app, anxiety recovery | ⬜ TODO |
+| `/drug-addiction-recovery-app/` | drug addiction app, NA app | ✅ Done |
+| `/sobriety-counter-app/` | sobriety counter, sober day tracker | ✅ Done |
+| `/free-aa-app/` | AA app, 12 step app, free AA meeting finder | ✅ Done |
+| `/opioid-recovery-app/` | opioid recovery, fentanyl recovery app | ✅ Done |
+| `/gambling-addiction-app/` | gambling addiction help, gambling recovery | ✅ Done |
+| `/mental-health-recovery-app/` | mental health support app, anxiety recovery | ✅ Done |
 
 ### HIGH - Blog Content Optimization
 Transform existing blog posts for search intent:
