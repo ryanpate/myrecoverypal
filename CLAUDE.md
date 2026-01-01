@@ -1,9 +1,10 @@
 # CLAUDE.md - MyRecoveryPal Development Guide
 
-**Last Updated:** 2025-12-27
+**Last Updated:** 2026-01-01
 **Project:** MyRecoveryPal - Social Recovery Platform
 **Tech Stack:** Django 5.0.10, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
+**Current Users:** 18 registered, ~58 monthly active visitors
 
 ---
 
@@ -45,6 +46,39 @@ Users land on the **Social Feed**, not a dashboard or resource page.
 ## Beta Priority: User Growth
 
 **Critical Problem:** Small user base limits testing and revenue potential.
+
+### Current Analytics (Jan 2026)
+
+**Google Analytics (Dec 4-31, 2025):**
+| Metric | Value | Assessment |
+|--------|-------|------------|
+| Total Active Users | 58 | Very low |
+| New Users | 59 | Minimal growth |
+| Sessions | 171 | Low |
+| Avg Engagement | 89-296 sec | Good when engaged |
+| Revenue | $0 | No monetization |
+| Week 1 Retention | 6% | Needs improvement |
+
+**Traffic Sources:**
+- Direct: 46% (likely team/testing)
+- Organic Social: 44% (TikTok/IG working)
+- Referral: 7%
+- **Organic Search: 0%** ⚠️ Critical gap
+
+**Google Search Console:**
+| Metric | Value | Problem |
+|--------|-------|---------|
+| Total Clicks | 7 | Almost invisible |
+| Impressions | 37 | Not being shown |
+| Indexed Queries | 1 | Catastrophic |
+| Avg Position | 5.59 | Decent when shown |
+
+**Key Insight:** Only 2 pages appear in `site:myrecoverypal.com` search. 54+ blog posts aren't indexed.
+
+**Competitors for reference:**
+- I Am Sober: 200K+ app reviews, 127M+ pledges
+- Sober Grid: NSF/NIH funded, GPS-based community
+- Nomo: Free with unlimited clocks
 
 ### Beta Feature Status
 
@@ -360,6 +394,132 @@ celery -A recovery_hub worker -l info
 
 ---
 
+## SEO & Traffic Growth Strategy
+
+### Current SEO Assets
+- **Landing Pages:** `/alcohol-recovery-app/`, `/sober-grid-alternative/`
+- **Blog:** 54+ posts (not keyword-optimized)
+- **Schema:** Organization, WebSite, FAQPage, SoftwareApplication
+- **Sitemap:** `/sitemap.xml` with 17 URLs
+
+### CRITICAL - SEO Landing Pages (Priority: URGENT)
+Create keyword-targeted landing pages:
+
+| Page | Target Keywords | Status |
+|------|-----------------|--------|
+| `/alcohol-recovery-app/` | alcohol recovery app, sobriety app | ✅ Done |
+| `/sober-grid-alternative/` | sober grid alternative | ✅ Done |
+| `/drug-addiction-recovery-app/` | drug addiction app, NA app | ⬜ TODO |
+| `/sobriety-counter-app/` | sobriety counter, sober day tracker | ⬜ TODO |
+| `/free-aa-app/` | AA app, 12 step app, free AA meeting finder | ⬜ TODO |
+| `/opioid-recovery-app/` | opioid recovery, fentanyl recovery app | ⬜ TODO |
+| `/gambling-addiction-app/` | gambling addiction help, gambling recovery | ⬜ TODO |
+| `/mental-health-recovery-app/` | mental health support app, anxiety recovery | ⬜ TODO |
+
+### HIGH - Blog Content Optimization
+Transform existing blog posts for search intent:
+
+| Current Title | SEO-Optimized Title | Target Keyword |
+|--------------|---------------------|----------------|
+| "Meditation in Recovery" | "Meditation for Addiction Recovery: Complete Guide" | meditation addiction recovery |
+| "Family Matters: Addiction" | "How Addiction Affects Families: Healing Together" | addiction effects on family |
+
+**New blog posts to create (high search volume):**
+- [ ] "How Long Does Alcohol Withdrawal Last?" (22K/mo)
+- [ ] "Signs of Alcoholism: Self-Assessment Guide" (18K/mo)
+- [ ] "How to Stop Drinking: Step-by-Step Guide" (14K/mo)
+- [ ] "What is Sober Curious? Complete Guide" (12K/mo)
+- [ ] "High Functioning Alcoholic: Signs & Getting Help" (9K/mo)
+- [ ] "Dopamine Detox for Addiction Recovery" (8K/mo)
+
+### MEDIUM - Backlink Building
+- [ ] Sign up for Connectively (formerly HARO) - get quoted in articles
+- [ ] Guest post outreach to: The Fix, Recovery.org, Sober Nation
+- [ ] Submit to recovery app directories
+- [ ] Local PR outreach (founder story)
+
+### MEDIUM - Social & Community Marketing
+- [ ] Reddit engagement: r/stopdrinking (900K+), r/addiction, r/REDDITORSINRECOVERY
+- [ ] Pinterest: Recovery quotes, infographics, milestone images
+- [ ] TikTok content: "Day 1 vs Day 365", body changes after quitting
+- [ ] Instagram Reels: Behind-the-scenes, user stories
+
+### HIGH - App Store Presence
+**Critical for discovery - competitors get most users from app stores**
+- [ ] Publish to Apple App Store (Capacitor already configured)
+- [ ] Publish to Google Play Store
+- [ ] App Store Optimization (ASO): keywords, screenshots, description
+- [ ] Request reviews from existing users
+
+---
+
+## Revenue Strategy
+
+### Current State
+- **Revenue:** $0
+- **Stripe:** Configured but no active subscriptions
+- **Store:** Coming soon page exists
+
+### IMMEDIATE - No Development Required
+
+#### 1. Donation System
+- [ ] Add Ko-fi or Buy Me a Coffee integration
+- [ ] "Support Our Mission" button in footer/sidebar
+- [ ] One-time and monthly donation options
+
+#### 2. Affiliate Marketing
+| Partner | Commission | Integration |
+|---------|------------|-------------|
+| Amazon (recovery books) | 4-10% | Link in resources |
+| BetterHelp | $100-200/referral | Blog posts, resources |
+| Treatment center directories | $50-500/lead | Meeting finder page |
+
+- [ ] Create affiliate resources page
+- [ ] Add affiliate disclosures to relevant pages
+
+#### 3. Sponsored Content
+Once traffic increases:
+- Sponsored blog posts: $200-500 each
+- Partners: Treatment centers, sober lifestyle brands
+
+### SHORT-TERM - Development Required
+
+#### 4. Premium Tier ("MyRecoveryPal Pro")
+| Free | Premium ($4.99/mo or $29.99/yr) |
+|------|--------------------------------|
+| Social feed | Advanced analytics & charts |
+| Basic groups | Unlimited private groups |
+| Daily check-in | Guided meditations library |
+| 30-day journal | Unlimited journal + export |
+| 1 accountability pal | Unlimited pals |
+| Community challenges | Create custom challenges |
+
+- [ ] Create pricing page
+- [ ] Implement Stripe subscription tiers
+- [ ] Build premium feature gates
+
+#### 5. Recovery Merchandise Store
+- [ ] Milestone tokens/coins (physical)
+- [ ] Recovery affirmation cards
+- [ ] Journals with prompts
+- [ ] Apparel (hoodies, t-shirts)
+
+### MEDIUM-TERM - Business Development
+
+#### 6. B2B Licensing
+| Customer | Use Case | Pricing |
+|----------|----------|---------|
+| Treatment centers | White-label platform | $500-2,000/mo |
+| EAP providers | Employee recovery support | $1,000-5,000/mo |
+| Sober living facilities | Resident community | $200-500/mo |
+
+#### 7. Recovery Coach Marketplace
+- Connect users with certified recovery coaches
+- 15-20% platform fee
+- Video/chat sessions through platform
+
+---
+
 ## Privacy & Safety
 
 ### Non-Negotiable
@@ -538,6 +698,12 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-01:** Added comprehensive SEO & Traffic Growth Strategy section with landing page roadmap, blog optimization plan, backlink strategy, and social marketing tactics.
+- **2026-01-01:** Added Revenue Strategy section with donation, affiliate, premium tier, merchandise, B2B licensing, and coach marketplace plans.
+- **2026-01-01:** Added current analytics status from Google Analytics and Search Console data.
+- **2026-01-01:** Created `/alcohol-recovery-app/` SEO landing page with schema markup.
+- **2026-01-01:** Added SEO landing pages to sitemap.xml.
+- **2026-01-01:** Completed SEO quick wins: alt text optimization, internal linking, FAQ schema, Core Web Vitals preconnect hints.
 - **2025-12-27:** Added push notification triggers - integrated with create_notification() helper, logs for now (enable FCM/APNs when ready).
 - **2025-12-27:** Added weekly digest email - sent Sundays at 10:30 AM with new followers, popular posts, unread notifications.
 - **2025-12-27:** Added daily check-in reminder email - sent at 5 PM to users who haven't checked in, shows streak status.
