@@ -3451,6 +3451,24 @@ def hybrid_landing_view(request):
                 if post.is_visible_to(user):
                     visible_posts.append(post)
 
+            # Add shared check-ins to the feed
+            # Get check-ins from users we follow + our own shared check-ins
+            following_ids = list(user.following.filter(status='active').values_list('target_id', flat=True))
+            following_ids.append(user.id)  # Include user's own check-ins
+
+            shared_checkins = DailyCheckIn.objects.filter(
+                is_shared=True,
+                user_id__in=following_ids
+            ).select_related('user').order_by('-created_at')[:50]
+
+            # Convert check-ins to a format compatible with the feed
+            for checkin in shared_checkins:
+                checkin.is_checkin = True  # Flag to identify in template
+                visible_posts.append(checkin)
+
+            # Sort combined feed by created_at (newest first)
+            visible_posts.sort(key=lambda x: x.created_at, reverse=True)
+
             # Check-in streak
             checkin_streak = user.get_checkin_streak()
 
@@ -3564,14 +3582,16 @@ def hybrid_landing_view(request):
                 context['days_since_joined'] = days_since_joined
 
         return render(request, 'accounts/hybrid_landing.html', context)
-    except Exception:
-        # Fallback behavior
+    except Exception as e:
+        # Log the error for debugging but don't show confusing messages to users
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error in hybrid_landing_view: {e}")
+
+        # Fallback behavior - redirect silently without messages
         if user.is_authenticated:
-            from django.contrib import messages
-            messages.warning(request, 'Loading your personalized dashboard...')
             return redirect('accounts:dashboard')
         else:
-            # For unauthenticated users, redirect to main landing page
             return redirect('core:index')
 
 
