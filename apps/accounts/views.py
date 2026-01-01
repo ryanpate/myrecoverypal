@@ -3510,59 +3510,6 @@ def hybrid_landing_view(request):
             'posts': page_obj,
         })
 
-        # Detect "new user" state for better onboarding experience
-        if user.is_authenticated:
-            following_count = user.following.filter(status='active').count()
-            days_since_joined = (timezone.now() - user.date_joined).days
-            has_posted = user.social_posts.exists()
-            has_checked_in_today = user.daily_checkins.filter(
-                date=timezone.now().date()
-            ).exists()
-            total_checkins = user.daily_checkins.count()
-
-            # Determine if user is "new" (joined < 7 days ago and following < 5 people)
-            is_new_user = days_since_joined <= 7 and following_count < 5
-
-            # Show welcome card and suggestions if:
-            # 1. Feed is empty OR
-            # 2. User is new with few followers
-            show_welcome_experience = len(visible_posts) == 0 or is_new_user
-
-            if show_welcome_experience:
-                excluded_ids = list(user.get_following().values_list('id', flat=True))
-                excluded_ids.append(user.id)
-
-                # Get suggested users with smart matching
-                from django.db.models import Q, Count
-
-                suggested_for_empty_feed = User.objects.filter(
-                    is_active=True,
-                    is_profile_public=True,
-                ).exclude(
-                    id__in=excluded_ids
-                ).annotate(
-                    follower_count=Count('followers')
-                ).order_by('-follower_count', '-last_seen')[:8]
-
-                # Build getting started checklist
-                getting_started = {
-                    'profile_complete': bool(user.bio and user.avatar),
-                    'first_post': has_posted,
-                    'first_checkin': total_checkins > 0,
-                    'following_someone': following_count > 0,
-                    'joined_group': user.group_memberships.filter(status__in=['active', 'moderator', 'admin']).exists(),
-                }
-                getting_started['completed_count'] = sum(getting_started.values())
-                getting_started['total_count'] = len(getting_started) - 1  # Exclude completed_count
-
-                context['suggested_users_for_feed'] = suggested_for_empty_feed
-                context['feed_is_empty'] = len(visible_posts) == 0
-                context['is_new_user'] = is_new_user
-                context['show_welcome_experience'] = True
-                context['getting_started'] = getting_started
-                context['has_checked_in_today'] = has_checked_in_today
-                context['days_since_joined'] = days_since_joined
-
         return render(request, 'accounts/hybrid_landing.html', context)
     except Exception as e:
         # Log the error for debugging but don't show confusing messages to users
