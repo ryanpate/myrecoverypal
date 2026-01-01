@@ -112,6 +112,49 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- SEO Blog Posts - High Volume Keywords -->
+  <url>
+    <loc>https://www.myrecoverypal.com/blog/how-long-does-alcohol-withdrawal-last/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.myrecoverypal.com/blog/signs-of-alcoholism-self-assessment/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.myrecoverypal.com/blog/how-to-stop-drinking-alcohol-guide/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.myrecoverypal.com/blog/what-is-sober-curious-guide/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.myrecoverypal.com/blog/high-functioning-alcoholic-signs-help/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.myrecoverypal.com/blog/dopamine-detox-addiction-recovery/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Community Guidelines -->
   <url>
     <loc>https://www.myrecoverypal.com/guidelines/</loc>
