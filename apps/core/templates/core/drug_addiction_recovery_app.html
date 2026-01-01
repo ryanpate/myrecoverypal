@@ -1,0 +1,313 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Free Drug Addiction Recovery App 2025 - NA Support & Sobriety Tracker | MyRecoveryPal{% endblock %}
+{% block meta_description %}Looking for a drug addiction recovery app? MyRecoveryPal is the free NA-friendly sobriety tracker and support community. Track clean days, connect with others in recovery, and find hope. Join free today.{% endblock %}
+{% block meta_keywords %}drug addiction recovery app, NA app, narcotics anonymous app, drug recovery app, addiction recovery app, sobriety tracker, clean time counter, drug free tracker, substance abuse app, recovery community app{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/drug-addiction-recovery-app/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Free Drug Addiction Recovery App 2025 - MyRecoveryPal",
+  "description": "MyRecoveryPal is the free drug addiction recovery app with clean time tracking, NA-friendly community, and peer support features.",
+  "url": "https://www.myrecoverypal.com/drug-addiction-recovery-app/",
+  "mainEntity": {
+    "@type": "SoftwareApplication",
+    "name": "MyRecoveryPal",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "Web Browser, iOS, Android",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "150"
+    }
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.myrecoverypal.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Drug Addiction Recovery App",
+        "item": "https://www.myrecoverypal.com/drug-addiction-recovery-app/"
+      }
+    ]
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the best free drug addiction recovery app?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MyRecoveryPal is a top-rated free drug addiction recovery app that combines clean time tracking with a supportive NA-friendly community. It offers peer support, recovery groups, challenges, and milestone celebrations—all 100% free."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there an app for Narcotics Anonymous?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "While not officially affiliated with NA, MyRecoveryPal is designed to complement your NA program. Track your clean time, connect with others in recovery from drug addiction, and find daily support between meetings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do drug recovery apps help with staying clean?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Drug recovery apps help by tracking your clean time, providing daily check-ins, connecting you with others who understand addiction, offering accountability through challenges, and celebrating milestones. The social support is crucial for long-term recovery."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is MyRecoveryPal free for drug addiction recovery?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, MyRecoveryPal is 100% free forever. All features including clean time tracking, recovery groups, challenges, messaging, and community support are available at no cost."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ar-hero {
+        background: linear-gradient(135deg, #6b2d5c 0%, #9b4dca 60%, #52b788 100%);
+        padding: 5rem 2rem;
+        text-align: center;
+        color: white;
+    }
+    .ar-hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.2; }
+    .ar-hero p { font-size: 1.3rem; max-width: 700px; margin: 0 auto 2rem; opacity: 0.95; }
+    .ar-hero .cta-button {
+        display: inline-block; padding: 1rem 2.5rem; background: #52b788; color: white;
+        text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.2rem;
+        transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(82, 183, 136, 0.3);
+    }
+    .ar-hero .cta-button:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(82, 183, 136, 0.4); background: #45a675; }
+    .stats-bar { background: white; padding: 2rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .stat-item { text-align: center; }
+    .stat-number { font-size: 2.5rem; font-weight: 800; color: #6b2d5c; }
+    .stat-label { color: #666; font-size: 0.95rem; }
+    .features-section { padding: 4rem 2rem; background: #f8f9fa; }
+    .features-section h2 { text-align: center; color: #6b2d5c; font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .features-section .subtitle { text-align: center; color: #666; font-size: 1.1rem; margin-bottom: 3rem; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+    .feature-card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s ease; }
+    .feature-card:hover { transform: translateY(-5px); }
+    .feature-card .icon { font-size: 2.5rem; margin-bottom: 1rem; color: #52b788; }
+    .feature-card h3 { color: #6b2d5c; margin-bottom: 0.75rem; }
+    .feature-card p { color: #666; line-height: 1.6; }
+    .content-section { padding: 4rem 2rem; background: white; }
+    .content-section .container { max-width: 800px; margin: 0 auto; }
+    .content-section h2 { color: #6b2d5c; font-size: 2rem; margin-bottom: 1.5rem; }
+    .content-section h3 { color: #6b2d5c; font-size: 1.4rem; margin: 2rem 0 1rem; }
+    .content-section p { color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
+    .content-section ul { margin: 1.5rem 0; padding-left: 1.5rem; }
+    .content-section ul li { color: #555; line-height: 1.8; margin-bottom: 0.75rem; }
+    .testimonial-section { padding: 4rem 2rem; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); }
+    .testimonial-section h2 { text-align: center; color: #6b2d5c; font-size: 2rem; margin-bottom: 2rem; }
+    .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto; }
+    .testimonial-card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
+    .testimonial-card p { color: #555; line-height: 1.7; font-style: italic; margin-bottom: 1rem; }
+    .testimonial-author { color: #6b2d5c; font-weight: 600; }
+    .testimonial-days { color: #52b788; font-size: 0.9rem; }
+    .faq-section { padding: 4rem 2rem; background: white; }
+    .faq-section h2 { text-align: center; color: #6b2d5c; font-size: 2.2rem; margin-bottom: 2rem; }
+    .faq-container { max-width: 800px; margin: 0 auto; }
+    .faq-item { background: #f8f9fa; border-radius: 10px; margin-bottom: 1rem; padding: 1.5rem; }
+    .faq-item h3 { color: #6b2d5c; margin-bottom: 0.75rem; font-size: 1.2rem; }
+    .faq-item p { color: #666; line-height: 1.7; margin: 0; }
+    .cta-section { padding: 5rem 2rem; background: linear-gradient(135deg, #6b2d5c 0%, #9b4dca 100%); text-align: center; color: white; }
+    .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+    .cta-section p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.95; }
+    .cta-section .cta-button { display: inline-block; padding: 1rem 3rem; background: #52b788; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.3rem; transition: all 0.3s ease; }
+    .cta-section .cta-button:hover { transform: translateY(-3px); background: #45a675; }
+    .cta-section .subtext { margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; }
+    .related-links { padding: 3rem 2rem; background: #f8f9fa; }
+    .related-links h3 { text-align: center; color: #6b2d5c; margin-bottom: 1.5rem; }
+    .related-grid { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto; }
+    .related-grid a { background: white; padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: #6b2d5c; font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
+    .related-grid a:hover { transform: translateY(-3px); }
+    @media (max-width: 768px) { .ar-hero h1 { font-size: 2rem; } .stats-bar { gap: 1.5rem; } .stat-number { font-size: 2rem; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="ar-hero">
+    <h1>Free Drug Addiction Recovery App for Your Journey to Clean Living</h1>
+    <p>Track your clean time, connect with others who understand, and build a life free from drugs. MyRecoveryPal is the free recovery community that supports you 24/7.</p>
+    <a href="{% url 'accounts:register' %}" class="cta-button">Start Your Recovery Free</a>
+</section>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-number">1,000+</div>
+        <div class="stat-label">Members in Recovery</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Free Forever</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Peer Support</div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="features-section">
+    <h2>Built for Drug Addiction Recovery</h2>
+    <p class="subtitle">Whether you're in NA, working a program, or finding your own path—we're here for you</p>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-calendar-check"></i></div>
+            <h3>Clean Time Tracker</h3>
+            <p>Track your drug-free days with milestone celebrations. Every clean day matters—and the community celebrates with you.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <h3>NA-Friendly Community</h3>
+            <p>Connect with others in recovery from all substances. Share your story, find sponsors, and build a sober support network.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-clipboard-check"></i></div>
+            <h3>Daily Check-ins</h3>
+            <p>Track your mood, cravings, and triggers each day. Identify patterns and see your progress over time.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-trophy"></i></div>
+            <h3>Recovery Challenges</h3>
+            <p>Join 30, 60, or 90-day challenges with daily accountability. Structure your early recovery with community support.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-user-friends"></i></div>
+            <h3>Recovery Pal Matching</h3>
+            <p>Get matched with an accountability partner who understands drug addiction. Someone to call when urges hit.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-book"></i></div>
+            <h3>Private Recovery Journal</h3>
+            <p>Process your recovery journey in a completely private space. Work through emotions without judgment.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Content Section -->
+<section class="content-section">
+    <div class="container">
+        <h2>Why MyRecoveryPal Works for Drug Addiction Recovery</h2>
+        <p>Recovery from drug addiction is one of the hardest things you'll ever do. Whether you're struggling with opioids, cocaine, meth, prescription drugs, or any other substance—the journey to clean living requires support.</p>
+
+        <h3>Complement Your Recovery Program</h3>
+        <p>MyRecoveryPal isn't meant to replace NA, treatment, or professional help. It's designed to fill the gaps between meetings, therapy sessions, and support group gatherings. When cravings hit at 2 AM or you need encouragement between meetings, the community is here.</p>
+
+        <h3>Features Built for Drug Addiction Recovery</h3>
+        <ul>
+            <li><strong>Clean Time Tracking:</strong> Track your drug-free days with milestones at 1 day, 1 week, 30 days, 90 days, 1 year, and beyond.</li>
+            <li><strong>Recovery Groups:</strong> Join groups for specific substances, recovery stages, or shared interests.</li>
+            <li><strong>Daily Check-ins:</strong> Monitor your mood, cravings, and triggers to identify patterns.</li>
+            <li><strong>Peer Support:</strong> Connect with others who truly understand drug addiction—not just friends or family who mean well but don't get it.</li>
+            <li><strong>Accountability Partners:</strong> Get matched with a Recovery Pal for one-on-one support.</li>
+            <li><strong>Crisis Resources:</strong> Quick access to hotlines and professional help when needed.</li>
+        </ul>
+
+        <h3>All Types of Drug Addiction Welcome</h3>
+        <p>Our community includes people recovering from opioids (heroin, fentanyl, prescription painkillers), stimulants (cocaine, meth, adderall), benzodiazepines, marijuana, and more. Whatever substance brought you here, you'll find others who understand.</p>
+    </div>
+</section>
+
+<!-- Testimonial Section -->
+<section class="testimonial-section">
+    <h2>Stories from Our Community</h2>
+    <div class="testimonial-grid">
+        <div class="testimonial-card">
+            <p>"After 15 years of using, I never thought I'd make it this far. Having people to reach out to at any hour has saved me more than once."</p>
+            <div class="testimonial-author">Anonymous Member</div>
+            <div class="testimonial-days">6 months clean</div>
+        </div>
+        <div class="testimonial-card">
+            <p>"The clean time tracker with milestone celebrations gives me something to work toward. I've never made it past 30 days before—now I'm at 90."</p>
+            <div class="testimonial-author">Anonymous Member</div>
+            <div class="testimonial-days">92 days clean</div>
+        </div>
+        <div class="testimonial-card">
+            <p>"Between NA meetings, this app keeps me connected to recovery. My Recovery Pal checks on me daily. It matters more than I can say."</p>
+            <div class="testimonial-author">Anonymous Member</div>
+            <div class="testimonial-days">1 year clean</div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-container">
+        <div class="faq-item">
+            <h3>What is the best free drug addiction recovery app?</h3>
+            <p>MyRecoveryPal is a highly-rated free drug addiction recovery app combining clean time tracking with peer support. It offers groups, challenges, messaging, and milestone celebrations—all free, with no premium tier or hidden fees.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Is there an app for Narcotics Anonymous (NA)?</h3>
+            <p>While not officially affiliated with NA, MyRecoveryPal complements your NA program. Track clean time, connect with others in recovery, find accountability partners, and get support between meetings.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Is MyRecoveryPal free?</h3>
+            <p>Yes, 100% free forever. No subscriptions, no premium features, no credit card required. Every feature is available to everyone—because recovery support should never depend on money.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Can I stay anonymous?</h3>
+            <p>Absolutely. Post anonymously in groups, control your profile privacy, and share only what you're comfortable with. Anonymity is core to recovery, and we respect that.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Does the app work for all drug addictions?</h3>
+            <p>Yes. Our community includes people recovering from opioids, stimulants, benzodiazepines, marijuana, and more. You'll find groups and individuals who understand your specific struggle.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Related Links Section -->
+<section class="related-links">
+    <h3>Explore More Recovery Resources</h3>
+    <div class="related-grid">
+        <a href="{% url 'accounts:community' %}"><i class="fas fa-users"></i> Recovery Community</a>
+        <a href="{% url 'accounts:groups_list' %}"><i class="fas fa-user-friends"></i> Support Groups</a>
+        <a href="{% url 'accounts:challenges_home' %}"><i class="fas fa-trophy"></i> Recovery Challenges</a>
+        <a href="{% url 'blog:post_list' %}"><i class="fas fa-book-open"></i> Recovery Stories</a>
+        <a href="{% url 'core:alcohol_recovery_app' %}"><i class="fas fa-wine-bottle"></i> Alcohol Recovery</a>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <h2>Ready to Start Your Recovery Journey?</h2>
+    <p>Join thousands of people who've found support, accountability, and hope on MyRecoveryPal.</p>
+    <a href="{% url 'accounts:register' %}" class="cta-button">Join Free Today</a>
+    <p class="subtext">No credit card required. Takes 30 seconds to sign up.</p>
+</section>
+{% endblock %}

@@ -22,4 +22,10 @@ urlpatterns = [
     path('get-app/', views.GetAppView.as_view(), name='get_app'),
     path('sober-grid-alternative/', views.SoberGridAlternativeView.as_view(), name='sober_grid_alternative'),
     path('alcohol-recovery-app/', views.AlcoholRecoveryAppView.as_view(), name='alcohol_recovery_app'),
+    path('drug-addiction-recovery-app/', views.DrugAddictionRecoveryAppView.as_view(), name='drug_addiction_recovery_app'),
+    path('sobriety-counter-app/', views.SobrietyCounterAppView.as_view(), name='sobriety_counter_app'),
+    path('free-aa-app/', views.FreeAAAppView.as_view(), name='free_aa_app'),
+    path('opioid-recovery-app/', views.OpioidRecoveryAppView.as_view(), name='opioid_recovery_app'),
+    path('gambling-addiction-app/', views.GamblingAddictionAppView.as_view(), name='gambling_addiction_app'),
+    path('mental-health-recovery-app/', views.MentalHealthRecoveryAppView.as_view(), name='mental_health_recovery_app'),
 ]

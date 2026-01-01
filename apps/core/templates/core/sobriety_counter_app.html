@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Free Sobriety Counter App 2025 - Sober Day Tracker & Calculator | MyRecoveryPal{% endblock %}
+{% block meta_description %}Track your sober days with MyRecoveryPal's free sobriety counter. Calculate clean time, celebrate milestones, and connect with a supportive recovery community. Start tracking free today.{% endblock %}
+{% block meta_keywords %}sobriety counter app, sober day tracker, sobriety calculator, clean time counter, days sober app, sobriety tracker free, sober streak counter, alcohol free days tracker, sobriety milestone tracker{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/sobriety-counter-app/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Free Sobriety Counter App 2025 - MyRecoveryPal",
+  "description": "Track your sober days with MyRecoveryPal's free sobriety counter app with milestone celebrations and community support.",
+  "url": "https://www.myrecoverypal.com/sobriety-counter-app/",
+  "mainEntity": {
+    "@type": "SoftwareApplication",
+    "name": "MyRecoveryPal",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "Web Browser, iOS, Android",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "ratingCount": "150" }
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a sobriety counter app?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A sobriety counter app tracks the number of days, weeks, months, or years you've been sober. It calculates your clean time automatically and often includes milestone celebrations, daily check-ins, and community support features."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the best free sobriety counter app?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MyRecoveryPal is a top-rated free sobriety counter that goes beyond simple day counting. It includes milestone celebrations, daily check-ins, peer support community, recovery challenges, and accountability partners—all 100% free."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I calculate my sobriety date?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Enter your sobriety date (the last day you used) into MyRecoveryPal, and the app automatically calculates your days, weeks, months, and years sober. You'll receive milestone celebrations as you reach key milestones like 30 days, 90 days, 1 year, and more."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ar-hero { background: linear-gradient(135deg, #2d6a4f 0%, #40916c 60%, #74c69d 100%); padding: 5rem 2rem; text-align: center; color: white; }
+    .ar-hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.2; }
+    .ar-hero p { font-size: 1.3rem; max-width: 700px; margin: 0 auto 2rem; opacity: 0.95; }
+    .ar-hero .cta-button { display: inline-block; padding: 1rem 2.5rem; background: #1b4332; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.2rem; transition: all 0.3s ease; }
+    .ar-hero .cta-button:hover { transform: translateY(-3px); background: #143d2b; }
+    .stats-bar { background: white; padding: 2rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .stat-item { text-align: center; }
+    .stat-number { font-size: 2.5rem; font-weight: 800; color: #2d6a4f; }
+    .stat-label { color: #666; font-size: 0.95rem; }
+    .features-section { padding: 4rem 2rem; background: #f8f9fa; }
+    .features-section h2 { text-align: center; color: #2d6a4f; font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .features-section .subtitle { text-align: center; color: #666; font-size: 1.1rem; margin-bottom: 3rem; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+    .feature-card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s ease; }
+    .feature-card:hover { transform: translateY(-5px); }
+    .feature-card .icon { font-size: 2.5rem; margin-bottom: 1rem; color: #40916c; }
+    .feature-card h3 { color: #2d6a4f; margin-bottom: 0.75rem; }
+    .feature-card p { color: #666; line-height: 1.6; }
+    .counter-demo { padding: 4rem 2rem; background: linear-gradient(135deg, #d8f3dc 0%, #b7e4c7 100%); text-align: center; }
+    .counter-demo h2 { color: #2d6a4f; font-size: 2rem; margin-bottom: 1rem; }
+    .counter-display { background: white; max-width: 400px; margin: 0 auto; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+    .counter-display .days { font-size: 5rem; font-weight: 800; color: #2d6a4f; line-height: 1; }
+    .counter-display .label { font-size: 1.5rem; color: #40916c; margin-bottom: 1rem; }
+    .counter-display .breakdown { display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e9ecef; }
+    .counter-display .breakdown div { text-align: center; }
+    .counter-display .breakdown .num { font-size: 1.5rem; font-weight: 700; color: #2d6a4f; }
+    .counter-display .breakdown .lbl { font-size: 0.85rem; color: #666; }
+    .content-section { padding: 4rem 2rem; background: white; }
+    .content-section .container { max-width: 800px; margin: 0 auto; }
+    .content-section h2 { color: #2d6a4f; font-size: 2rem; margin-bottom: 1.5rem; }
+    .content-section h3 { color: #2d6a4f; font-size: 1.4rem; margin: 2rem 0 1rem; }
+    .content-section p { color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
+    .content-section ul { margin: 1.5rem 0; padding-left: 1.5rem; }
+    .content-section ul li { color: #555; line-height: 1.8; margin-bottom: 0.75rem; }
+    .milestones-section { padding: 4rem 2rem; background: #f8f9fa; }
+    .milestones-section h2 { text-align: center; color: #2d6a4f; font-size: 2rem; margin-bottom: 2rem; }
+    .milestones-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; max-width: 800px; margin: 0 auto; }
+    .milestone-card { background: white; padding: 1.5rem; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+    .milestone-card .days { font-size: 2rem; font-weight: 800; color: #40916c; }
+    .milestone-card .name { color: #2d6a4f; font-weight: 600; margin-top: 0.5rem; }
+    .faq-section { padding: 4rem 2rem; background: white; }
+    .faq-section h2 { text-align: center; color: #2d6a4f; font-size: 2.2rem; margin-bottom: 2rem; }
+    .faq-container { max-width: 800px; margin: 0 auto; }
+    .faq-item { background: #f8f9fa; border-radius: 10px; margin-bottom: 1rem; padding: 1.5rem; }
+    .faq-item h3 { color: #2d6a4f; margin-bottom: 0.75rem; font-size: 1.2rem; }
+    .faq-item p { color: #666; line-height: 1.7; margin: 0; }
+    .cta-section { padding: 5rem 2rem; background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%); text-align: center; color: white; }
+    .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+    .cta-section p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.95; }
+    .cta-section .cta-button { display: inline-block; padding: 1rem 3rem; background: white; color: #2d6a4f; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.3rem; transition: all 0.3s ease; }
+    .cta-section .cta-button:hover { transform: translateY(-3px); }
+    .cta-section .subtext { margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; }
+    .related-links { padding: 3rem 2rem; background: #f8f9fa; }
+    .related-links h3 { text-align: center; color: #2d6a4f; margin-bottom: 1.5rem; }
+    .related-grid { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto; }
+    .related-grid a { background: white; padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: #2d6a4f; font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
+    .related-grid a:hover { transform: translateY(-3px); }
+    @media (max-width: 768px) { .ar-hero h1 { font-size: 2rem; } .counter-display .days { font-size: 3.5rem; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="ar-hero">
+    <h1>Free Sobriety Counter App That Celebrates Every Day</h1>
+    <p>More than a day counter. Track your clean time, celebrate milestones with the community, and stay motivated on your recovery journey.</p>
+    <a href="{% url 'accounts:register' %}" class="cta-button">Start Counting Free</a>
+</section>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-number">1,000+</div>
+        <div class="stat-label">Members Tracking</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Free Forever</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">10+</div>
+        <div class="stat-label">Milestone Badges</div>
+    </div>
+</div>
+
+<!-- Counter Demo Section -->
+<section class="counter-demo">
+    <h2>Your Sobriety Counter</h2>
+    <div class="counter-display">
+        <div class="days">365</div>
+        <div class="label">Days Sober</div>
+        <div class="breakdown">
+            <div><div class="num">1</div><div class="lbl">Year</div></div>
+            <div><div class="num">12</div><div class="lbl">Months</div></div>
+            <div><div class="num">52</div><div class="lbl">Weeks</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <h2>More Than Just Counting Days</h2>
+    <p class="subtitle">A complete sobriety tracking system with community support</p>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-stopwatch"></i></div>
+            <h3>Automatic Calculation</h3>
+            <p>Enter your sobriety date once. We calculate days, weeks, months, and years automatically—updated in real-time.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-medal"></i></div>
+            <h3>Milestone Celebrations</h3>
+            <p>Earn badges at 1 day, 1 week, 1 month, 90 days, 1 year, and beyond. The community celebrates with you!</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-chart-line"></i></div>
+            <h3>Progress Tracking</h3>
+            <p>See your journey visualized. Track mood, cravings, and growth alongside your sober days.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <h3>Community Support</h3>
+            <p>Share milestones with others in recovery. Get encouragement when you need it most.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-bell"></i></div>
+            <h3>Daily Reminders</h3>
+            <p>Optional daily check-in reminders keep you connected to your recovery and community.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-share-alt"></i></div>
+            <h3>Share Your Progress</h3>
+            <p>Celebrate milestones by sharing to social media or with your support network.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Milestones Section -->
+<section class="milestones-section">
+    <h2>Milestones We Celebrate</h2>
+    <div class="milestones-grid">
+        <div class="milestone-card"><div class="days">1</div><div class="name">Day One</div></div>
+        <div class="milestone-card"><div class="days">7</div><div class="name">One Week</div></div>
+        <div class="milestone-card"><div class="days">14</div><div class="name">Two Weeks</div></div>
+        <div class="milestone-card"><div class="days">30</div><div class="name">One Month</div></div>
+        <div class="milestone-card"><div class="days">60</div><div class="name">Two Months</div></div>
+        <div class="milestone-card"><div class="days">90</div><div class="name">90 Days</div></div>
+        <div class="milestone-card"><div class="days">180</div><div class="name">Six Months</div></div>
+        <div class="milestone-card"><div class="days">365</div><div class="name">One Year</div></div>
+    </div>
+</section>
+
+<!-- Content Section -->
+<section class="content-section">
+    <div class="container">
+        <h2>Why Use a Sobriety Counter App?</h2>
+        <p>Tracking your sober days isn't just about numbers—it's about building momentum, celebrating progress, and staying accountable to your recovery goals.</p>
+
+        <h3>The Psychology of Counting Sober Days</h3>
+        <p>Research shows that tracking progress increases motivation and success rates. Each day you add to your counter reinforces your commitment. Each milestone you reach builds confidence that you can keep going.</p>
+
+        <h3>MyRecoveryPal Goes Beyond Simple Counting</h3>
+        <ul>
+            <li><strong>Automatic Calculation:</strong> Enter your sobriety date and we handle the math—days, weeks, months, years.</li>
+            <li><strong>Milestone Celebrations:</strong> Confetti animations and community recognition when you hit key milestones.</li>
+            <li><strong>Daily Check-ins:</strong> Track mood and cravings alongside your sober days for deeper insights.</li>
+            <li><strong>Community Sharing:</strong> Share milestones and get encouragement from people who understand.</li>
+            <li><strong>Recovery Challenges:</strong> Join structured 30/60/90 day challenges for extra accountability.</li>
+            <li><strong>Private Journal:</strong> Reflect on your journey in a completely private space.</li>
+        </ul>
+
+        <h3>Free Forever</h3>
+        <p>Unlike other apps with premium tiers, every MyRecoveryPal feature is 100% free. No subscriptions, no locked features, no credit card required.</p>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-container">
+        <div class="faq-item">
+            <h3>What is a sobriety counter app?</h3>
+            <p>A sobriety counter app tracks the number of days you've been sober since your quit date. MyRecoveryPal calculates days, weeks, months, and years automatically and celebrates milestones with you.</p>
+        </div>
+        <div class="faq-item">
+            <h3>What is the best free sobriety counter app?</h3>
+            <p>MyRecoveryPal is a top-rated free sobriety counter that includes milestone celebrations, community support, daily check-ins, and recovery challenges—all completely free.</p>
+        </div>
+        <div class="faq-item">
+            <h3>How do I calculate my sobriety date?</h3>
+            <p>Simply enter the last day you used drugs or alcohol. MyRecoveryPal automatically calculates your total clean time and tracks your progress from there.</p>
+        </div>
+        <div class="faq-item">
+            <h3>What if I relapse?</h3>
+            <p>Relapse is part of many recovery journeys. You can reset your counter and the community will support you without judgment. What matters is that you keep trying.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Related Links Section -->
+<section class="related-links">
+    <h3>Explore More Recovery Features</h3>
+    <div class="related-grid">
+        <a href="{% url 'accounts:community' %}"><i class="fas fa-users"></i> Recovery Community</a>
+        <a href="{% url 'accounts:challenges_home' %}"><i class="fas fa-trophy"></i> Recovery Challenges</a>
+        <a href="{% url 'core:alcohol_recovery_app' %}"><i class="fas fa-wine-bottle"></i> Alcohol Recovery</a>
+        <a href="{% url 'core:drug_addiction_recovery_app' %}"><i class="fas fa-pills"></i> Drug Recovery</a>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <h2>Start Counting Your Sober Days Today</h2>
+    <p>Every day matters. Every milestone is worth celebrating. Start your free sobriety counter now.</p>
+    <a href="{% url 'accounts:register' %}" class="cta-button">Join Free Today</a>
+    <p class="subtext">No credit card required. Takes 30 seconds to sign up.</p>
+</section>
+{% endblock %}

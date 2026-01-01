@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Free AA App 2025 - 12 Step Recovery App & Meeting Finder | MyRecoveryPal{% endblock %}
+{% block meta_description %}Looking for a free AA app? MyRecoveryPal complements your 12 step program with sobriety tracking, meeting support, and a recovery community. Track progress between AA meetings. Join free.{% endblock %}
+{% block meta_keywords %}AA app, alcoholics anonymous app, 12 step app, free AA app, AA meeting app, recovery app, sobriety app, AA tracker, 12 step recovery app, AA support app, big book app{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/free-aa-app/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Free AA App 2025 - 12 Step Recovery Support | MyRecoveryPal",
+  "description": "MyRecoveryPal is the free AA-friendly app for tracking sobriety, connecting with others in 12 step recovery, and staying supported between meetings.",
+  "url": "https://www.myrecoverypal.com/free-aa-app/",
+  "mainEntity": {
+    "@type": "SoftwareApplication",
+    "name": "MyRecoveryPal",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "Web Browser, iOS, Android",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is there an official AA app?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "While AA doesn't have an official app, MyRecoveryPal is designed to complement your AA program. Track your sobriety, connect with others in 12 step recovery, and get support between meetings—all for free."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the best free app for AA recovery?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MyRecoveryPal is a top-rated free app for people in AA. It offers sobriety tracking, peer support, recovery groups, challenges, and community—all designed to support your 12 step journey."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How can an app help with AA recovery?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Apps like MyRecoveryPal provide support between AA meetings through daily check-ins, accountability partners, and a community of people in recovery. They help track progress and celebrate milestones in your sobriety journey."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ar-hero { background: linear-gradient(135deg, #1e3a5f 0%, #3d5a80 60%, #98c1d9 100%); padding: 5rem 2rem; text-align: center; color: white; }
+    .ar-hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.2; }
+    .ar-hero p { font-size: 1.3rem; max-width: 700px; margin: 0 auto 2rem; opacity: 0.95; }
+    .ar-hero .cta-button { display: inline-block; padding: 1rem 2.5rem; background: #ee6c4d; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.2rem; transition: all 0.3s ease; }
+    .ar-hero .cta-button:hover { transform: translateY(-3px); background: #e85a38; }
+    .stats-bar { background: white; padding: 2rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .stat-item { text-align: center; }
+    .stat-number { font-size: 2.5rem; font-weight: 800; color: #1e3a5f; }
+    .stat-label { color: #666; font-size: 0.95rem; }
+    .steps-section { padding: 4rem 2rem; background: #f8f9fa; }
+    .steps-section h2 { text-align: center; color: #1e3a5f; font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .steps-section .subtitle { text-align: center; color: #666; font-size: 1.1rem; margin-bottom: 3rem; }
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+    .step-card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s ease; }
+    .step-card:hover { transform: translateY(-5px); }
+    .step-card .icon { font-size: 2.5rem; margin-bottom: 1rem; color: #3d5a80; }
+    .step-card h3 { color: #1e3a5f; margin-bottom: 0.75rem; }
+    .step-card p { color: #666; line-height: 1.6; }
+    .content-section { padding: 4rem 2rem; background: white; }
+    .content-section .container { max-width: 800px; margin: 0 auto; }
+    .content-section h2 { color: #1e3a5f; font-size: 2rem; margin-bottom: 1.5rem; }
+    .content-section h3 { color: #1e3a5f; font-size: 1.4rem; margin: 2rem 0 1rem; }
+    .content-section p { color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
+    .content-section ul { margin: 1.5rem 0; padding-left: 1.5rem; }
+    .content-section ul li { color: #555; line-height: 1.8; margin-bottom: 0.75rem; }
+    .principles-section { padding: 4rem 2rem; background: linear-gradient(135deg, #e0e8f0 0%, #f8f9fa 100%); }
+    .principles-section h2 { text-align: center; color: #1e3a5f; font-size: 2rem; margin-bottom: 2rem; }
+    .principles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; max-width: 900px; margin: 0 auto; }
+    .principle-card { background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 3px 15px rgba(0,0,0,0.08); }
+    .principle-card .number { font-size: 1.5rem; font-weight: 800; color: #ee6c4d; }
+    .principle-card .text { color: #1e3a5f; font-weight: 500; margin-top: 0.5rem; font-size: 0.95rem; }
+    .faq-section { padding: 4rem 2rem; background: white; }
+    .faq-section h2 { text-align: center; color: #1e3a5f; font-size: 2.2rem; margin-bottom: 2rem; }
+    .faq-container { max-width: 800px; margin: 0 auto; }
+    .faq-item { background: #f8f9fa; border-radius: 10px; margin-bottom: 1rem; padding: 1.5rem; }
+    .faq-item h3 { color: #1e3a5f; margin-bottom: 0.75rem; font-size: 1.2rem; }
+    .faq-item p { color: #666; line-height: 1.7; margin: 0; }
+    .cta-section { padding: 5rem 2rem; background: linear-gradient(135deg, #1e3a5f 0%, #3d5a80 100%); text-align: center; color: white; }
+    .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+    .cta-section p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.95; }
+    .cta-section .cta-button { display: inline-block; padding: 1rem 3rem; background: #ee6c4d; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.3rem; transition: all 0.3s ease; }
+    .cta-section .cta-button:hover { transform: translateY(-3px); background: #e85a38; }
+    .cta-section .subtext { margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; }
+    .related-links { padding: 3rem 2rem; background: #f8f9fa; }
+    .related-links h3 { text-align: center; color: #1e3a5f; margin-bottom: 1.5rem; }
+    .related-grid { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto; }
+    .related-grid a { background: white; padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: #1e3a5f; font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
+    .related-grid a:hover { transform: translateY(-3px); }
+    @media (max-width: 768px) { .ar-hero h1 { font-size: 2rem; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="ar-hero">
+    <h1>Free AA App for Your 12 Step Recovery Journey</h1>
+    <p>Support between meetings. Track your sobriety, connect with others in AA, and strengthen your recovery—all in one free app.</p>
+    <a href="{% url 'accounts:register' %}" class="cta-button">Join Free Today</a>
+</section>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-number">1,000+</div>
+        <div class="stat-label">Members in Recovery</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Free Forever</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Community Support</div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="steps-section">
+    <h2>Designed to Support Your AA Program</h2>
+    <p class="subtitle">Between meetings, between calls with your sponsor—we're here</p>
+    <div class="steps-grid">
+        <div class="step-card">
+            <div class="icon"><i class="fas fa-calendar-check"></i></div>
+            <h3>Sobriety Counter</h3>
+            <p>Track your sober days with milestone celebrations at 30, 60, 90 days, 1 year, and beyond.</p>
+        </div>
+        <div class="step-card">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <h3>Recovery Community</h3>
+            <p>Connect with others working the 12 steps. Share experience, strength, and hope.</p>
+        </div>
+        <div class="step-card">
+            <div class="icon"><i class="fas fa-clipboard-check"></i></div>
+            <h3>Daily Check-ins</h3>
+            <p>Track your mood and gratitude daily. Spot patterns and celebrate your growth.</p>
+        </div>
+        <div class="step-card">
+            <div class="icon"><i class="fas fa-user-friends"></i></div>
+            <h3>Accountability Partners</h3>
+            <p>Get matched with a Recovery Pal who understands the program and can support you.</p>
+        </div>
+        <div class="step-card">
+            <div class="icon"><i class="fas fa-trophy"></i></div>
+            <h3>30/60/90 Challenges</h3>
+            <p>Join structured challenges with daily accountability—just like working the steps.</p>
+        </div>
+        <div class="step-card">
+            <div class="icon"><i class="fas fa-book"></i></div>
+            <h3>Private Journal</h3>
+            <p>Write about your recovery journey. Process Step 4 work or daily reflections privately.</p>
+        </div>
+    </div>
+</section>
+
+<!-- 12 Principles Section -->
+<section class="principles-section">
+    <h2>Supporting Your 12 Step Journey</h2>
+    <div class="principles-grid">
+        <div class="principle-card"><div class="number">1</div><div class="text">Honesty</div></div>
+        <div class="principle-card"><div class="number">2</div><div class="text">Hope</div></div>
+        <div class="principle-card"><div class="number">3</div><div class="text">Faith</div></div>
+        <div class="principle-card"><div class="number">4</div><div class="text">Courage</div></div>
+        <div class="principle-card"><div class="number">5</div><div class="text">Integrity</div></div>
+        <div class="principle-card"><div class="number">6</div><div class="text">Willingness</div></div>
+        <div class="principle-card"><div class="number">7</div><div class="text">Humility</div></div>
+        <div class="principle-card"><div class="number">8</div><div class="text">Love</div></div>
+        <div class="principle-card"><div class="number">9</div><div class="text">Discipline</div></div>
+        <div class="principle-card"><div class="number">10</div><div class="text">Perseverance</div></div>
+        <div class="principle-card"><div class="number">11</div><div class="text">Awareness</div></div>
+        <div class="principle-card"><div class="number">12</div><div class="text">Service</div></div>
+    </div>
+</section>
+
+<!-- Content Section -->
+<section class="content-section">
+    <div class="container">
+        <h2>How MyRecoveryPal Supports Your AA Program</h2>
+        <p>MyRecoveryPal isn't meant to replace AA meetings, sponsors, or the fellowship. It's designed to complement your program by providing support between meetings and helping you stay connected to recovery 24/7.</p>
+
+        <h3>Filling the Gaps Between Meetings</h3>
+        <p>AA meetings are powerful—but they typically happen a few times per week. What about the other times when cravings hit, when you're feeling low, or when you just need to connect with someone who understands? That's where MyRecoveryPal comes in.</p>
+
+        <h3>Features That Complement AA</h3>
+        <ul>
+            <li><strong>Sobriety Tracking:</strong> Track your clean time with milestone celebrations that mirror AA chips (24 hours, 30 days, 90 days, 1 year, etc.).</li>
+            <li><strong>Daily Check-ins:</strong> Practice Step 10 with daily self-reflection on mood, cravings, and gratitude.</li>
+            <li><strong>Recovery Community:</strong> Connect with others working the steps. Share experience, strength, and hope—just like in meetings.</li>
+            <li><strong>Private Journal:</strong> Work through Step 4 writing, daily inventory, or personal reflections in a private space.</li>
+            <li><strong>Accountability Partners:</strong> Connect with a Recovery Pal for additional support between sponsor calls.</li>
+            <li><strong>Recovery Groups:</strong> Join groups focused on specific steps, recovery stages, or shared interests.</li>
+        </ul>
+
+        <h3>Not Officially Affiliated with AA</h3>
+        <p>MyRecoveryPal is an independent platform designed to support people in 12 step programs. We're not officially affiliated with Alcoholics Anonymous, but many of our members are active in AA and find the app helpful alongside their program.</p>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-container">
+        <div class="faq-item">
+            <h3>Is there an official AA app?</h3>
+            <p>AA doesn't have an official app, but MyRecoveryPal is designed to complement your AA program. Track sobriety, connect with others in recovery, and get support between meetings—all for free.</p>
+        </div>
+        <div class="faq-item">
+            <h3>What is the best free app for AA recovery?</h3>
+            <p>MyRecoveryPal is a top-rated free app for people in AA. It offers sobriety tracking, peer support, recovery groups, challenges, and community features—all designed to support your 12 step journey.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Is MyRecoveryPal free?</h3>
+            <p>Yes, 100% free forever. No subscriptions, no premium tiers, no credit card required. We believe recovery support should be accessible to everyone.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Can I stay anonymous like in AA?</h3>
+            <p>Absolutely. Post anonymously, control your profile privacy, and share only what you're comfortable with. Anonymity is core to recovery, and we respect that tradition.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Related Links Section -->
+<section class="related-links">
+    <h3>Explore More Recovery Resources</h3>
+    <div class="related-grid">
+        <a href="{% url 'accounts:community' %}"><i class="fas fa-users"></i> Recovery Community</a>
+        <a href="{% url 'accounts:groups_list' %}"><i class="fas fa-user-friends"></i> Support Groups</a>
+        <a href="{% url 'core:alcohol_recovery_app' %}"><i class="fas fa-wine-bottle"></i> Alcohol Recovery</a>
+        <a href="{% url 'core:sobriety_counter_app' %}"><i class="fas fa-stopwatch"></i> Sobriety Counter</a>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <h2>Support Your AA Journey Today</h2>
+    <p>Between meetings, between sponsor calls—we're here for you 24/7.</p>
+    <a href="{% url 'accounts:register' %}" class="cta-button">Join Free Today</a>
+    <p class="subtext">No credit card required. Takes 30 seconds to sign up.</p>
+</section>
+{% endblock %}

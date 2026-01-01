@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Free Mental Health Recovery App 2025 - Anxiety & Depression Support | MyRecoveryPal{% endblock %}
+{% block meta_description %}Struggling with anxiety, depression, or mental health challenges? MyRecoveryPal is the free peer support community for mental health recovery. Track your journey, connect with others. Join free.{% endblock %}
+{% block meta_keywords %}mental health app, anxiety recovery app, depression support app, mental health recovery, peer support app, mental wellness app, anxiety support community, depression recovery app, mental health tracker{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/mental-health-recovery-app/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Free Mental Health Recovery App 2025 - MyRecoveryPal",
+  "description": "MyRecoveryPal is the free mental health recovery app with mood tracking, peer support, and community features for anxiety, depression, and mental wellness.",
+  "url": "https://www.myrecoverypal.com/mental-health-recovery-app/",
+  "mainEntity": {
+    "@type": "SoftwareApplication",
+    "name": "MyRecoveryPal",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "Web Browser, iOS, Android",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is there a free app for mental health support?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, MyRecoveryPal is a free mental health support app with mood tracking, peer community, daily check-ins, and recovery groups. It connects you with others who understand anxiety, depression, and mental health challenges."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the best app for anxiety and depression?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MyRecoveryPal is a highly-rated free app for anxiety and depression support. It offers mood tracking, peer support community, private journaling, and connection with others on similar mental health journeys."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can peer support help with mental health recovery?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Research shows peer support is highly effective for mental health recovery. Connecting with others who share similar experiences reduces isolation, provides hope, and offers practical coping strategies."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ar-hero { background: linear-gradient(135deg, #5c4d7d 0%, #8b7fad 60%, #b8d4e3 100%); padding: 5rem 2rem; text-align: center; color: white; }
+    .ar-hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.2; }
+    .ar-hero p { font-size: 1.3rem; max-width: 700px; margin: 0 auto 2rem; opacity: 0.95; }
+    .ar-hero .cta-button { display: inline-block; padding: 1rem 2.5rem; background: #52b788; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.2rem; transition: all 0.3s ease; }
+    .ar-hero .cta-button:hover { transform: translateY(-3px); background: #45a675; }
+    .crisis-bar { background: #e3f2fd; padding: 1rem 2rem; text-align: center; }
+    .crisis-bar p { margin: 0; color: #1565c0; font-weight: 500; }
+    .crisis-bar a { color: #0d47a1; font-weight: 700; }
+    .stats-bar { background: white; padding: 2rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .stat-item { text-align: center; }
+    .stat-number { font-size: 2.5rem; font-weight: 800; color: #5c4d7d; }
+    .stat-label { color: #666; font-size: 0.95rem; }
+    .features-section { padding: 4rem 2rem; background: #f8f9fa; }
+    .features-section h2 { text-align: center; color: #5c4d7d; font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .features-section .subtitle { text-align: center; color: #666; font-size: 1.1rem; margin-bottom: 3rem; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+    .feature-card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s ease; }
+    .feature-card:hover { transform: translateY(-5px); }
+    .feature-card .icon { font-size: 2.5rem; margin-bottom: 1rem; color: #8b7fad; }
+    .feature-card h3 { color: #5c4d7d; margin-bottom: 0.75rem; }
+    .feature-card p { color: #666; line-height: 1.6; }
+    .mood-section { padding: 4rem 2rem; background: linear-gradient(135deg, #ede7f6 0%, #e8eaf6 100%); text-align: center; }
+    .mood-section h2 { color: #5c4d7d; font-size: 2rem; margin-bottom: 2rem; }
+    .mood-grid { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; max-width: 600px; margin: 0 auto; }
+    .mood-item { background: white; padding: 1.5rem 2rem; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.08); min-width: 100px; }
+    .mood-item .emoji { font-size: 2.5rem; }
+    .mood-item .label { color: #5c4d7d; font-weight: 500; margin-top: 0.5rem; font-size: 0.9rem; }
+    .content-section { padding: 4rem 2rem; background: white; }
+    .content-section .container { max-width: 800px; margin: 0 auto; }
+    .content-section h2 { color: #5c4d7d; font-size: 2rem; margin-bottom: 1.5rem; }
+    .content-section h3 { color: #5c4d7d; font-size: 1.4rem; margin: 2rem 0 1rem; }
+    .content-section p { color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
+    .content-section ul { margin: 1.5rem 0; padding-left: 1.5rem; }
+    .content-section ul li { color: #555; line-height: 1.8; margin-bottom: 0.75rem; }
+    .faq-section { padding: 4rem 2rem; background: #f8f9fa; }
+    .faq-section h2 { text-align: center; color: #5c4d7d; font-size: 2.2rem; margin-bottom: 2rem; }
+    .faq-container { max-width: 800px; margin: 0 auto; }
+    .faq-item { background: white; border-radius: 10px; margin-bottom: 1rem; padding: 1.5rem; }
+    .faq-item h3 { color: #5c4d7d; margin-bottom: 0.75rem; font-size: 1.2rem; }
+    .faq-item p { color: #666; line-height: 1.7; margin: 0; }
+    .cta-section { padding: 5rem 2rem; background: linear-gradient(135deg, #5c4d7d 0%, #8b7fad 100%); text-align: center; color: white; }
+    .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+    .cta-section p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.95; }
+    .cta-section .cta-button { display: inline-block; padding: 1rem 3rem; background: #52b788; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.3rem; transition: all 0.3s ease; }
+    .cta-section .cta-button:hover { transform: translateY(-3px); background: #45a675; }
+    .cta-section .subtext { margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; }
+    .related-links { padding: 3rem 2rem; background: #f8f9fa; }
+    .related-links h3 { text-align: center; color: #5c4d7d; margin-bottom: 1.5rem; }
+    .related-grid { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto; }
+    .related-grid a { background: white; padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: #5c4d7d; font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
+    .related-grid a:hover { transform: translateY(-3px); }
+    @media (max-width: 768px) { .ar-hero h1 { font-size: 2rem; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="ar-hero">
+    <h1>Free Mental Health Support in a Caring Community</h1>
+    <p>Track your mental health journey, connect with others who understand, and find hope in peer support. You're not alone in this.</p>
+    <a href="{% url 'accounts:register' %}" class="cta-button">Join Our Community Free</a>
+</section>
+
+<!-- Crisis Bar -->
+<div class="crisis-bar">
+    <p><i class="fas fa-heart"></i> Need immediate support? <a href="{% url 'core:crisis' %}">Access crisis resources</a> or text HOME to 741741</p>
+</div>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-number">1,000+</div>
+        <div class="stat-label">Supportive Members</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Free Forever</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Peer Support</div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="features-section">
+    <h2>Support for Your Mental Health Journey</h2>
+    <p class="subtitle">Whether you're dealing with anxiety, depression, or other challenges—we're here</p>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-chart-line"></i></div>
+            <h3>Mood Tracking</h3>
+            <p>Track your mood daily. See patterns over time and celebrate progress in your mental health journey.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <h3>Peer Support Community</h3>
+            <p>Connect with others who understand anxiety, depression, and mental health struggles firsthand.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-clipboard-check"></i></div>
+            <h3>Daily Check-ins</h3>
+            <p>Simple daily check-ins to monitor your mood, energy, and gratitude. Small steps, big impact.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-user-friends"></i></div>
+            <h3>Support Partners</h3>
+            <p>Get matched with a peer who understands your journey. Someone to check in with regularly.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-book"></i></div>
+            <h3>Private Journal</h3>
+            <p>Process your thoughts and feelings in a completely private space. Write freely without judgment.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-trophy"></i></div>
+            <h3>Wellness Challenges</h3>
+            <p>Join self-care challenges with daily activities. Build healthy habits with community support.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Mood Section -->
+<section class="mood-section">
+    <h2>Track How You're Feeling</h2>
+    <div class="mood-grid">
+        <div class="mood-item"><div class="emoji">😊</div><div class="label">Great</div></div>
+        <div class="mood-item"><div class="emoji">🙂</div><div class="label">Good</div></div>
+        <div class="mood-item"><div class="emoji">😐</div><div class="label">Okay</div></div>
+        <div class="mood-item"><div class="emoji">😔</div><div class="label">Low</div></div>
+        <div class="mood-item"><div class="emoji">😢</div><div class="label">Struggling</div></div>
+    </div>
+</section>
+
+<!-- Content Section -->
+<section class="content-section">
+    <div class="container">
+        <h2>Why Peer Support Works for Mental Health</h2>
+        <p>Research consistently shows that peer support is highly effective for mental health recovery. Connecting with others who truly understand—not just empathize—provides a unique kind of support that even well-meaning friends and family can't offer.</p>
+
+        <h3>You're Not Alone</h3>
+        <p>Millions of people struggle with anxiety, depression, and mental health challenges. Yet it often feels isolating. MyRecoveryPal connects you with a community of people on similar journeys—reducing isolation and providing hope.</p>
+
+        <h3>Features for Mental Health Support</h3>
+        <ul>
+            <li><strong>Mood Tracking:</strong> Simple daily mood logs help you see patterns and progress over time.</li>
+            <li><strong>Daily Check-ins:</strong> Track mood, energy, sleep quality, and gratitude each day.</li>
+            <li><strong>Peer Support:</strong> Connect with others who truly understand anxiety, depression, and mental health struggles.</li>
+            <li><strong>Support Groups:</strong> Join groups for specific challenges like anxiety, depression, PTSD, or general mental wellness.</li>
+            <li><strong>Private Journal:</strong> Process your thoughts and feelings in a completely private space.</li>
+            <li><strong>Wellness Challenges:</strong> Join self-care challenges with daily activities to build healthy habits.</li>
+        </ul>
+
+        <h3>Complements Professional Help</h3>
+        <p>MyRecoveryPal is not a replacement for therapy, medication, or professional mental health treatment. It's designed to provide additional peer support between appointments—a community that's there for you 24/7.</p>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-container">
+        <div class="faq-item">
+            <h3>Is there a free app for mental health support?</h3>
+            <p>Yes, MyRecoveryPal is a free mental health support app with mood tracking, peer community, daily check-ins, and recovery groups—all 100% free.</p>
+        </div>
+        <div class="faq-item">
+            <h3>What is the best app for anxiety and depression?</h3>
+            <p>MyRecoveryPal is highly rated for anxiety and depression support. It offers mood tracking, peer support from people who understand, private journaling, and community connection.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Can peer support really help with mental health?</h3>
+            <p>Research shows peer support is highly effective. Connecting with others who share similar experiences reduces isolation, provides hope, and offers practical coping strategies.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Is my information private?</h3>
+            <p>Yes. Your journal is completely private. You control what you share publicly. We never sell your data, and you can post anonymously in groups.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Related Links Section -->
+<section class="related-links">
+    <h3>Explore More Support Resources</h3>
+    <div class="related-grid">
+        <a href="{% url 'core:crisis' %}"><i class="fas fa-phone-alt"></i> Crisis Resources</a>
+        <a href="{% url 'accounts:community' %}"><i class="fas fa-users"></i> Community</a>
+        <a href="{% url 'accounts:groups_list' %}"><i class="fas fa-user-friends"></i> Support Groups</a>
+        <a href="{% url 'blog:post_list' %}"><i class="fas fa-book-open"></i> Recovery Stories</a>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <h2>Start Your Mental Health Journey Today</h2>
+    <p>Connect with a caring community that understands. You don't have to do this alone.</p>
+    <a href="{% url 'accounts:register' %}" class="cta-button">Join Free Today</a>
+    <p class="subtext">No credit card required. Takes 30 seconds to sign up.</p>
+</section>
+{% endblock %}

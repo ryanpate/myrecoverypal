@@ -67,6 +67,30 @@ class AlcoholRecoveryAppView(TemplateView):
     template_name = 'core/alcohol_recovery_app.html'
 
 
+class DrugAddictionRecoveryAppView(TemplateView):
+    template_name = 'core/drug_addiction_recovery_app.html'
+
+
+class SobrietyCounterAppView(TemplateView):
+    template_name = 'core/sobriety_counter_app.html'
+
+
+class FreeAAAppView(TemplateView):
+    template_name = 'core/free_aa_app.html'
+
+
+class OpioidRecoveryAppView(TemplateView):
+    template_name = 'core/opioid_recovery_app.html'
+
+
+class GamblingAddictionAppView(TemplateView):
+    template_name = 'core/gambling_addiction_app.html'
+
+
+class MentalHealthRecoveryAppView(TemplateView):
+    template_name = 'core/mental_health_recovery_app.html'
+
+
 # Sitemap View - serves static sitemap.xml
 def sitemap_view(request):
     """
