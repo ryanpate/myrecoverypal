@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}MyRecoveryPal - Free Recovery Support Community & Sobriety Tracker{% endblock %}
-{% block meta_description %}Join MyRecoveryPal's free social community for addiction recovery, sobriety support, and mental health. Connect with others in recovery, track milestones, share your journey, and find hope. 100% free forever.{% endblock %}
+{% block meta_description %}The free recovery social network. Connect with 1,000+ people in sobriety, share your journey, and celebrate milestones together. No ads, no data selling, 100% free. Join now—it takes 30 seconds.{% endblock %}
 {% block meta_keywords %}addiction recovery community, sobriety support group, recovery social network, alcohol recovery app, drug addiction help, mental health support, sober living community, recovery tracker, addiction support forum, peer support recovery, free sobriety app, 12 step alternative, recovery journey, substance abuse support{% endblock %}
 
 {% block structured_data %}
@@ -490,8 +490,15 @@
         <!-- Add Logo Image -->
         <img src="{% static 'images/logo-white.svg' %}" alt="MyRecoveryPal" class="hero-logo floating">
 
-        <h1>Heal Together, Grow Together</h1>
-        <p>A social community where people in recovery, active addiction, and their loved ones come together to support, share, and heal as one.</p>
+        <h1>The Free Recovery Social Network</h1>
+        <p>Connect with 1,000+ people in sobriety. Share your journey, celebrate milestones, and find your tribe—all 100% free.</p>
+
+        <!-- Trust Signals -->
+        <div class="trust-signals" style="display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <span style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.9); font-size: 0.95rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> 100% Free Forever</span>
+            <span style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.9); font-size: 0.95rem;"><i class="fas fa-shield-alt" style="color: #52b788;"></i> Private & Secure</span>
+            <span style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.9); font-size: 0.95rem;"><i class="fas fa-users" style="color: #52b788;"></i> Anonymous Option</span>
+        </div>
         {% if user.is_authenticated %}
         <a href="{% url 'accounts:dashboard' %}" class="cta-button">Go to Dashboard</a>
         {% else %}

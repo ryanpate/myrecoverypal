@@ -612,7 +612,7 @@ journey.{% endblock %}
                 <div class="post-card">
                     <div class="post-image">
                         {% if post.featured_image %}
-                        <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                        <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" loading="lazy">
                         {% else %}
                         <i class="fas fa-book-open"></i>
                         {% endif %}

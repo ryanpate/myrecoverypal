@@ -25,6 +25,7 @@ class StaticViewSitemap(Sitemap):
             ('core:demo', 0.8),  # Demo/tour page - important for discovery
             ('core:about', 0.8),  # About page
             ('core:crisis', 0.8),  # Crisis resources - important
+            ('core:sober_grid_alternative', 0.9),  # Sober Grid alternative - SEO landing page
             ('core:contact', 0.7),  # Contact page
             ('core:success_stories', 0.7),  # Success stories
             ('core:team', 0.6),  # Team page

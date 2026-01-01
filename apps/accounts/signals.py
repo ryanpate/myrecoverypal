@@ -40,11 +40,14 @@ def create_user_subscription(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def send_welcome_email_on_registration(sender, instance, created, **kwargs):
-    """Send welcome email when user registers"""
-    if created:
+    """Send welcome email after user completes onboarding, not immediately after registration.
+    This gives users time to complete onboarding before receiving email prompts."""
+    if not created and instance.has_completed_onboarding:
         from .tasks import send_welcome_email_day_1
-        # Delay slightly to ensure user data is fully saved
-        send_welcome_email_day_1.apply_async(args=[instance.id], countdown=30)
+        # Only send if they just completed onboarding and email hasn't been sent yet
+        if not instance.welcome_email_1_sent:
+            # Delay 5 minutes to let them explore first
+            send_welcome_email_day_1.apply_async(args=[instance.id], countdown=300)
 
 
 @receiver(post_save, sender=Milestone)

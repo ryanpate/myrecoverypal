@@ -59,6 +59,10 @@ class DemoView(TemplateView):
     template_name = 'core/demo.html'
 
 
+class SoberGridAlternativeView(TemplateView):
+    template_name = 'core/sober_grid_alternative.html'
+
+
 # Sitemap View - serves static sitemap.xml
 def sitemap_view(request):
     """

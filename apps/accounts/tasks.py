@@ -71,20 +71,23 @@ def send_welcome_email_day_1(self, user_id):
 def send_welcome_emails_day_3():
     """
     Scheduled task to send Day 3 welcome emails.
-    Sent to users who joined 3 days ago and haven't completed onboarding.
+    Sent to users who joined 3+ days ago and haven't received this email yet.
+    Uses date (not datetime) to avoid missing users if Celery runs inconsistently.
     """
     from .models import User
 
-    three_days_ago = timezone.now() - timedelta(days=3)
-    two_days_ago = timezone.now() - timedelta(days=2)
+    # Target users who joined 3+ days ago (using date to be more reliable)
+    three_days_ago = (timezone.now() - timedelta(days=3)).date()
 
-    # Users who joined around 3 days ago
+    # Users who joined 3+ days ago but haven't received Day 3 email
     users = User.objects.filter(
-        date_joined__gte=three_days_ago,
-        date_joined__lt=two_days_ago,
+        date_joined__date__lte=three_days_ago,
         email_notifications=True,
         welcome_email_2_sent__isnull=True,
         welcome_email_1_sent__isnull=False,  # Must have received Day 1
+    ).exclude(
+        # Don't send to users who joined more than 10 days ago (too late)
+        date_joined__date__lt=(timezone.now() - timedelta(days=10)).date()
     )
 
     sent_count = 0
@@ -126,18 +129,21 @@ def send_welcome_emails_day_7():
     """
     Scheduled task to send Day 7 welcome emails.
     Celebrates their first week and encourages engagement.
+    Uses date (not datetime) to avoid missing users if Celery runs inconsistently.
     """
     from .models import User
 
-    seven_days_ago = timezone.now() - timedelta(days=7)
-    six_days_ago = timezone.now() - timedelta(days=6)
+    # Target users who joined 7+ days ago (using date to be more reliable)
+    seven_days_ago = (timezone.now() - timedelta(days=7)).date()
 
     users = User.objects.filter(
-        date_joined__gte=seven_days_ago,
-        date_joined__lt=six_days_ago,
+        date_joined__date__lte=seven_days_ago,
         email_notifications=True,
         welcome_email_3_sent__isnull=True,
         welcome_email_2_sent__isnull=False,  # Must have received Day 3
+    ).exclude(
+        # Don't send to users who joined more than 21 days ago (too late)
+        date_joined__date__lt=(timezone.now() - timedelta(days=21)).date()
     )
 
     sent_count = 0
