@@ -55,6 +55,21 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- SEO Landing Pages -->
+  <url>
+    <loc>https://www.myrecoverypal.com/alcohol-recovery-app/</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.myrecoverypal.com/sober-grid-alternative/</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Community Guidelines -->
   <url>
     <loc>https://www.myrecoverypal.com/guidelines/</loc>
