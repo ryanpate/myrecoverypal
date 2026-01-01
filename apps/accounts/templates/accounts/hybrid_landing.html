@@ -1068,6 +1068,153 @@
         margin-bottom: 1rem;
     }
 
+    /* Welcome Card for New Users */
+    .welcome-card {
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        color: white;
+        text-align: center;
+    }
+
+    .welcome-card h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .welcome-card p {
+        opacity: 0.95;
+        margin-bottom: 1.5rem;
+    }
+
+    .checkin-prompt {
+        background: rgba(255,255,255,0.2);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .checkin-prompt h4 {
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .checkin-btn {
+        display: inline-block;
+        background: #52b788;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 0.75rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .checkin-btn:hover {
+        background: #45a374;
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    /* Getting Started Checklist */
+    .getting-started {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .getting-started h3 {
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .getting-started h3 i {
+        color: #52b788;
+    }
+
+    .progress-bar-container {
+        background: #e9ecef;
+        border-radius: 10px;
+        height: 8px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+
+    .progress-bar-fill {
+        background: linear-gradient(90deg, #52b788, #4db8e8);
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.5s ease;
+    }
+
+    .checklist {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .checklist li {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .checklist li:last-child {
+        border-bottom: none;
+    }
+
+    .checklist li.completed {
+        color: #999;
+    }
+
+    .checklist li.completed .check-icon {
+        background: #52b788;
+        color: white;
+    }
+
+    .check-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        background: #e9ecef;
+        color: #999;
+        flex-shrink: 0;
+    }
+
+    .checklist-action {
+        margin-left: auto;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.85rem;
+        background: #f8f9fa;
+        color: #1e4d8b;
+        border-radius: 15px;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .checklist-action:hover {
+        background: #1e4d8b;
+        color: white;
+    }
+
     /* Suggested Users on Empty Feed */
     .suggested-users-section {
         background: white;
@@ -1845,11 +1992,84 @@
                     </div>
                     {% endif %}
                 {% else %}
+                    <!-- New User Welcome Experience -->
+                    {% if show_welcome_experience and user.is_authenticated %}
+                    <div class="welcome-card">
+                        <h2><i class="fas fa-heart"></i> Welcome to MyRecoveryCircle!</h2>
+                        <p>You're now part of a supportive community. Here's how to get started:</p>
+
+                        {% if not has_checked_in_today %}
+                        <div class="checkin-prompt">
+                            <h4><i class="fas fa-smile"></i> How are you feeling today?</h4>
+                            <p style="font-size: 0.95rem; opacity: 0.9;">Your first check-in takes just 10 seconds</p>
+                            <a href="{% url 'accounts:checkin' %}" class="checkin-btn">
+                                <i class="fas fa-check-circle"></i> Do Your First Check-in
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="checkin-prompt">
+                            <h4><i class="fas fa-check-circle"></i> Great job on today's check-in!</h4>
+                            <p style="font-size: 0.95rem; opacity: 0.9;">Keep the momentum going by connecting with others</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if getting_started %}
+                    <div class="getting-started">
+                        <h3><i class="fas fa-rocket"></i> Getting Started</h3>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width: {{ getting_started.completed_count|default:0 }}0%;"></div>
+                        </div>
+                        <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">{{ getting_started.completed_count }}/{{ getting_started.total_count }} completed</p>
+
+                        <ul class="checklist">
+                            <li class="{% if getting_started.profile_complete %}completed{% endif %}">
+                                <span class="check-icon">{% if getting_started.profile_complete %}<i class="fas fa-check"></i>{% else %}1{% endif %}</span>
+                                <span>Complete your profile</span>
+                                {% if not getting_started.profile_complete %}
+                                <a href="{% url 'accounts:edit_profile' %}" class="checklist-action">Add bio</a>
+                                {% endif %}
+                            </li>
+                            <li class="{% if getting_started.first_checkin %}completed{% endif %}">
+                                <span class="check-icon">{% if getting_started.first_checkin %}<i class="fas fa-check"></i>{% else %}2{% endif %}</span>
+                                <span>Do your first check-in</span>
+                                {% if not getting_started.first_checkin %}
+                                <a href="{% url 'accounts:checkin' %}" class="checklist-action">Check in</a>
+                                {% endif %}
+                            </li>
+                            <li class="{% if getting_started.following_someone %}completed{% endif %}">
+                                <span class="check-icon">{% if getting_started.following_someone %}<i class="fas fa-check"></i>{% else %}3{% endif %}</span>
+                                <span>Follow someone</span>
+                                {% if not getting_started.following_someone %}
+                                <a href="{% url 'accounts:community' %}" class="checklist-action">Browse</a>
+                                {% endif %}
+                            </li>
+                            <li class="{% if getting_started.first_post %}completed{% endif %}">
+                                <span class="check-icon">{% if getting_started.first_post %}<i class="fas fa-check"></i>{% else %}4{% endif %}</span>
+                                <span>Share your first post</span>
+                                {% if not getting_started.first_post %}
+                                <span class="checklist-action" style="cursor: pointer;" onclick="document.getElementById('post-content').focus()">Write</span>
+                                {% endif %}
+                            </li>
+                            <li class="{% if getting_started.joined_group %}completed{% endif %}">
+                                <span class="check-icon">{% if getting_started.joined_group %}<i class="fas fa-check"></i>{% else %}5{% endif %}</span>
+                                <span>Join a group</span>
+                                {% if not getting_started.joined_group %}
+                                <a href="{% url 'accounts:group_list' %}" class="checklist-action">Explore</a>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+
+                    {% if feed_is_empty %}
                     <div class="empty-state">
                         <i class="fas fa-comments"></i>
-                        <h3>Welcome to MyRecoveryCircle!</h3>
-                        <p>Your feed is empty. Follow some community members to see their posts here!</p>
+                        <h3>Your feed is waiting for content!</h3>
+                        <p>Follow some community members below to see their posts here.</p>
                     </div>
+                    {% endif %}
 
                     {% if suggested_users_for_feed %}
                     <div class="suggested-users-section">
@@ -1861,7 +2081,7 @@
                             <div class="suggested-user-card" id="suggested-user-{{ member.username }}">
                                 <a href="{% url 'accounts:profile' member.username %}" class="suggested-user-avatar">
                                     {% if member.avatar %}
-                                        <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
+                                        <img src="{{ member.avatar.url }}" alt="{{ member.username }}" loading="lazy">
                                     {% else %}
                                         <i class="fas fa-user"></i>
                                     {% endif %}
