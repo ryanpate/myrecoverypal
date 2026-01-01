@@ -2406,6 +2406,11 @@
             {% if user.is_authenticated %}
             <div class="mobile-menu-section">
                 <div class="mobile-menu-label">Recovery Tools</div>
+                <a href="{% url 'accounts:dashboard' %}"
+                    class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                    style="background: linear-gradient(135deg, #1e4d8b, #4db8e8); color: white;">
+                    <i class="fas fa-tachometer-alt" style="margin-right: 0.5rem;"></i> My Dashboard
+                </a>
                 <a href="{% url 'journal:entry_list' %}"
                     class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
                     Journal
