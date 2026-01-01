@@ -21,4 +21,5 @@ urlpatterns = [
     path('install/', views.InstallGuideView.as_view(), name='install_guide'),
     path('get-app/', views.GetAppView.as_view(), name='get_app'),
     path('sober-grid-alternative/', views.SoberGridAlternativeView.as_view(), name='sober_grid_alternative'),
+    path('alcohol-recovery-app/', views.AlcoholRecoveryAppView.as_view(), name='alcohol_recovery_app'),
 ]

@@ -892,7 +892,7 @@
                 <div class="connection-item">
                     <div class="connection-avatar">
                         {% if user.get_active_sponsor.avatar %}
-                        <img src="{{ user.get_active_sponsor.avatar.url }}" alt="Sponsor">
+                        <img src="{{ user.get_active_sponsor.avatar.url }}" alt="{{ user.get_active_sponsor.username }} - Your Recovery Sponsor">
                         {% else %}
                         <i class="fas fa-star"></i>
                         {% endif %}
@@ -909,7 +909,7 @@
                 <div class="connection-item">
                     <div class="connection-avatar">
                         {% if user.get_recovery_pal.avatar %}
-                        <img src="{{ user.get_recovery_pal.avatar.url }}" alt="Pal">
+                        <img src="{{ user.get_recovery_pal.avatar.url }}" alt="{{ user.get_recovery_pal.username }} - Your Recovery Pal">
                         {% else %}
                         <i class="fas fa-handshake"></i>
                         {% endif %}
@@ -928,7 +928,7 @@
                 <div class="connection-item">
                     <div class="connection-avatar">
                         {% if sponsorship.sponsee.avatar %}
-                        <img src="{{ sponsorship.sponsee.avatar.url }}" alt="Sponsee">
+                        <img src="{{ sponsorship.sponsee.avatar.url }}" alt="{{ sponsorship.sponsee.username }} - Your Sponsee">
                         {% else %}
                         <i class="fas fa-user"></i>
                         {% endif %}
@@ -1139,7 +1139,7 @@
                         </div>
                         <div class="mobile-post-content">{{ post.content }}</div>
                         {% if post.image %}
-                        <img src="{{ post.image.url }}" alt="Post image" class="mobile-post-image">
+                        <img src="{{ post.image.url }}" alt="Image shared by {{ post.author.username }} in recovery community" class="mobile-post-image">
                         {% endif %}
                         <div class="mobile-post-engagement">
                             <button class="mobile-action-btn mobile-like-btn {% if user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">

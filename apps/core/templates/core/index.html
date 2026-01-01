@@ -67,6 +67,54 @@
   }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is MyRecoveryPal free to use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, MyRecoveryPal is 100% free forever. There are no subscriptions, hidden fees, or paywalls. We believe recovery support should be accessible to everyone."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Who is MyRecoveryPal for?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MyRecoveryPal serves people in recovery from alcohol, drugs, or behavioral addictions, individuals in active addiction seeking support, family members and friends supporting loved ones, and anyone seeking mental health support and peer connection."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is my information private and secure?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, privacy and security are our top priorities. Your journal entries are always private, and you have full control over what information you share. We offer anonymous posting options and never sell your data."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What features does MyRecoveryPal offer?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MyRecoveryPal offers sobriety tracking with milestone celebrations, a social community for sharing your story, private journaling and daily check-ins, recovery challenges and support groups, connections with sponsors and recovery pals, and mobile-friendly access anywhere."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is MyRecoveryPal a replacement for professional treatment?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, MyRecoveryPal is a peer support community and is not a replacement for professional medical treatment or therapy. We encourage members to work with healthcare professionals and use our platform as an additional support tool."
+      }
+    }
+  ]
+}
+</script>
 {% endblock %}
 
 {% block extra_css %}
@@ -488,7 +536,7 @@
 <section class="hero" id="home">
     <div class="hero-content">
         <!-- Add Logo Image -->
-        <img src="{% static 'images/logo-white.svg' %}" alt="MyRecoveryPal" class="hero-logo floating">
+        <img src="{% static 'images/logo-white.svg' %}" alt="MyRecoveryPal - Free Recovery Social Network for Sobriety Support" class="hero-logo floating">
 
         <h1>The Free Recovery Social Network</h1>
         <p>Connect with 1,000+ people in sobriety. Share your journey, celebrate milestones, and find your tribe—all 100% free.</p>
@@ -615,6 +663,58 @@
             Go to MyRecoveryCircle
         </a>
         {% endif %}
+    </div>
+</section>
+
+<!-- Internal Links Section for SEO -->
+<section style="padding: 4rem 2rem; background: #f8f9fa;">
+    <div class="container" style="max-width: 1000px; margin: 0 auto;">
+        <h2 style="text-align: center; color: #1e4d8b; margin-bottom: 1rem; font-size: 2rem;">Explore Recovery Resources</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 2.5rem;">Discover all the ways MyRecoveryPal can support your recovery journey</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+            <a href="{% url 'accounts:community' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s;">
+                <i class="fas fa-users" style="font-size: 2rem; color: #52b788; margin-bottom: 0.75rem; display: block;"></i>
+                <h3 style="color: #1e4d8b; font-size: 1.1rem; margin-bottom: 0.5rem;">Recovery Community</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0;">Connect with others in recovery</p>
+            </a>
+
+            <a href="{% url 'accounts:groups_list' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s;">
+                <i class="fas fa-user-friends" style="font-size: 2rem; color: #4db8e8; margin-bottom: 0.75rem; display: block;"></i>
+                <h3 style="color: #1e4d8b; font-size: 1.1rem; margin-bottom: 0.5rem;">Support Groups</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0;">Join groups for your recovery type</p>
+            </a>
+
+            <a href="{% url 'accounts:challenges_home' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s;">
+                <i class="fas fa-trophy" style="font-size: 2rem; color: #f39c12; margin-bottom: 0.75rem; display: block;"></i>
+                <h3 style="color: #1e4d8b; font-size: 1.1rem; margin-bottom: 0.5rem;">Recovery Challenges</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0;">Stay motivated with community challenges</p>
+            </a>
+
+            <a href="{% url 'blog:post_list' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s;">
+                <i class="fas fa-book-open" style="font-size: 2rem; color: #e74c3c; margin-bottom: 0.75rem; display: block;"></i>
+                <h3 style="color: #1e4d8b; font-size: 1.1rem; margin-bottom: 0.5rem;">Recovery Stories</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0;">Read inspiring recovery journeys</p>
+            </a>
+
+            <a href="{% url 'resources:list' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s;">
+                <i class="fas fa-bookmark" style="font-size: 2rem; color: #9b59b6; margin-bottom: 0.75rem; display: block;"></i>
+                <h3 style="color: #1e4d8b; font-size: 1.1rem; margin-bottom: 0.5rem;">Recovery Resources</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0;">Educational content and guides</p>
+            </a>
+
+            <a href="{% url 'core:sober_grid_alternative' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s;">
+                <i class="fas fa-exchange-alt" style="font-size: 2rem; color: #1e4d8b; margin-bottom: 0.75rem; display: block;"></i>
+                <h3 style="color: #1e4d8b; font-size: 1.1rem; margin-bottom: 0.5rem;">Sober Grid Alternative</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0;">Compare recovery app features</p>
+            </a>
+
+            <a href="{% url 'core:alcohol_recovery_app' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s;">
+                <i class="fas fa-wine-glass-alt" style="font-size: 2rem; color: #e74c3c; margin-bottom: 0.75rem; display: block;"></i>
+                <h3 style="color: #1e4d8b; font-size: 1.1rem; margin-bottom: 0.5rem;">Alcohol Recovery App</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0;">Sobriety tracking & support</p>
+            </a>
+        </div>
     </div>
 </section>
 

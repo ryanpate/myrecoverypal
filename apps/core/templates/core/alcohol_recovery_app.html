@@ -1,0 +1,585 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Free Alcohol Recovery App 2025 - Sobriety Tracker & Support Community | MyRecoveryPal{% endblock %}
+{% block meta_description %}Looking for an alcohol recovery app? MyRecoveryPal is the free sobriety tracker and support community helping 1,000+ people stay sober. Track days clean, connect with others, and celebrate milestones. Join free today.{% endblock %}
+{% block meta_keywords %}alcohol recovery app, sobriety tracker app, stop drinking app, alcohol addiction app, sober app, quit drinking app, alcohol free tracker, sobriety counter app, alcohol recovery community, sober living app, free sobriety app{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/alcohol-recovery-app/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Free Alcohol Recovery App 2025 - MyRecoveryPal",
+  "description": "MyRecoveryPal is the free alcohol recovery app with sobriety tracking, peer support, and community features to help you stay sober.",
+  "url": "https://www.myrecoverypal.com/alcohol-recovery-app/",
+  "mainEntity": {
+    "@type": "SoftwareApplication",
+    "name": "MyRecoveryPal",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "Web Browser, iOS, Android",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "150"
+    }
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.myrecoverypal.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Alcohol Recovery App",
+        "item": "https://www.myrecoverypal.com/alcohol-recovery-app/"
+      }
+    ]
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the best free alcohol recovery app?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MyRecoveryPal is a top-rated free alcohol recovery app that combines sobriety tracking with a supportive community. Unlike simple day counters, it offers peer support, recovery groups, challenges, and milestone celebrations—all 100% free."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do alcohol recovery apps help with sobriety?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Alcohol recovery apps help by tracking your sober days, providing daily check-ins, connecting you with others in recovery, offering accountability through challenges, and celebrating your milestones. The social support component is particularly effective for long-term sobriety."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is MyRecoveryPal free to use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, MyRecoveryPal is 100% free forever. There are no subscriptions, premium tiers, or hidden fees. We believe recovery support should be accessible to everyone regardless of financial situation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I stay anonymous on MyRecoveryPal?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely. MyRecoveryPal offers anonymous posting in groups, privacy controls for your profile, and you choose what to share. Your recovery journey is private unless you decide to share it."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ar-hero {
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        padding: 5rem 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .ar-hero h1 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+    }
+
+    .ar-hero p {
+        font-size: 1.3rem;
+        max-width: 700px;
+        margin: 0 auto 2rem;
+        opacity: 0.95;
+    }
+
+    .ar-hero .cta-button {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        background: #52b788;
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(82, 183, 136, 0.3);
+    }
+
+    .ar-hero .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(82, 183, 136, 0.4);
+        background: #45a675;
+    }
+
+    .stats-bar {
+        background: white;
+        padding: 2rem;
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        flex-wrap: wrap;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1e4d8b;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    .features-section {
+        padding: 4rem 2rem;
+        background: #f8f9fa;
+    }
+
+    .features-section h2 {
+        text-align: center;
+        color: #1e4d8b;
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .features-section .subtitle {
+        text-align: center;
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 3rem;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-card .icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #52b788;
+    }
+
+    .feature-card h3 {
+        color: #1e4d8b;
+        margin-bottom: 0.75rem;
+    }
+
+    .feature-card p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .content-section {
+        padding: 4rem 2rem;
+        background: white;
+    }
+
+    .content-section .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .content-section h2 {
+        color: #1e4d8b;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .content-section h3 {
+        color: #1e4d8b;
+        font-size: 1.4rem;
+        margin: 2rem 0 1rem;
+    }
+
+    .content-section p {
+        color: #555;
+        line-height: 1.8;
+        font-size: 1.05rem;
+        margin-bottom: 1rem;
+    }
+
+    .content-section ul {
+        margin: 1.5rem 0;
+        padding-left: 1.5rem;
+    }
+
+    .content-section ul li {
+        color: #555;
+        line-height: 1.8;
+        margin-bottom: 0.75rem;
+    }
+
+    .testimonial-section {
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .testimonial-section h2 {
+        text-align: center;
+        color: #1e4d8b;
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .testimonial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .testimonial-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .testimonial-card p {
+        color: #555;
+        line-height: 1.7;
+        font-style: italic;
+        margin-bottom: 1rem;
+    }
+
+    .testimonial-author {
+        color: #1e4d8b;
+        font-weight: 600;
+    }
+
+    .testimonial-days {
+        color: #52b788;
+        font-size: 0.9rem;
+    }
+
+    .faq-section {
+        padding: 4rem 2rem;
+        background: white;
+    }
+
+    .faq-section h2 {
+        text-align: center;
+        color: #1e4d8b;
+        font-size: 2.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .faq-item {
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        padding: 1.5rem;
+    }
+
+    .faq-item h3 {
+        color: #1e4d8b;
+        margin-bottom: 0.75rem;
+        font-size: 1.2rem;
+    }
+
+    .faq-item p {
+        color: #666;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .cta-section {
+        padding: 5rem 2rem;
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
+        text-align: center;
+        color: white;
+    }
+
+    .cta-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+    }
+
+    .cta-section .cta-button {
+        display: inline-block;
+        padding: 1rem 3rem;
+        background: #52b788;
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.3rem;
+        transition: all 0.3s ease;
+    }
+
+    .cta-section .cta-button:hover {
+        transform: translateY(-3px);
+        background: #45a675;
+    }
+
+    .cta-section .subtext {
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        opacity: 0.85;
+    }
+
+    .related-links {
+        padding: 3rem 2rem;
+        background: #f8f9fa;
+    }
+
+    .related-links h3 {
+        text-align: center;
+        color: #1e4d8b;
+        margin-bottom: 1.5rem;
+    }
+
+    .related-grid {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .related-grid a {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #1e4d8b;
+        font-weight: 500;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        transition: transform 0.3s;
+    }
+
+    .related-grid a:hover {
+        transform: translateY(-3px);
+    }
+
+    @media (max-width: 768px) {
+        .ar-hero h1 {
+            font-size: 2rem;
+        }
+
+        .stats-bar {
+            gap: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="ar-hero">
+    <h1>The Free Alcohol Recovery App That Actually Works</h1>
+    <p>More than a sobriety counter. MyRecoveryPal is a supportive community of 1,000+ people helping each other stay sober—one day at a time.</p>
+    <a href="{% url 'accounts:register' %}" class="cta-button">Start Your Sober Journey Free</a>
+</section>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-number">1,000+</div>
+        <div class="stat-label">Members in Recovery</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Free Forever</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Community Support</div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="features-section">
+    <h2>Everything You Need to Stay Sober</h2>
+    <p class="subtitle">Built by people in recovery, for people in recovery</p>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-calendar-check"></i></div>
+            <h3>Sobriety Day Counter</h3>
+            <p>Track your alcohol-free days with automatic milestone celebrations. Every day matters—and the community celebrates with you.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <h3>Peer Support Community</h3>
+            <p>Connect with others who understand the struggle. Share your story, follow inspiring members, and build real friendships.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-clipboard-check"></i></div>
+            <h3>Daily Check-ins</h3>
+            <p>Track your mood, cravings, and gratitude each day. Identify patterns and celebrate your progress over time.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-trophy"></i></div>
+            <h3>30/60/90 Day Challenges</h3>
+            <p>Join structured challenges to stay accountable. Daily check-ins and community support keep you motivated.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-user-friends"></i></div>
+            <h3>Recovery Pal Matching</h3>
+            <p>Get matched with an accountability partner. Someone who checks on you during tough moments.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-book"></i></div>
+            <h3>Private Recovery Journal</h3>
+            <p>Write about your journey in a completely private space. Process your thoughts without judgment.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Content Section -->
+<section class="content-section">
+    <div class="container">
+        <h2>Why MyRecoveryPal Works for Alcohol Recovery</h2>
+        <p>Quitting drinking is hard. Really hard. And doing it alone makes it even harder. That's why MyRecoveryPal was built—to ensure nobody has to face alcohol recovery alone.</p>
+
+        <h3>More Than a Simple Sobriety Counter</h3>
+        <p>While counting sober days is important, research shows that social connection is one of the strongest predictors of long-term sobriety. MyRecoveryPal combines day tracking with a full social network designed specifically for the recovery community.</p>
+
+        <h3>Features That Support Lasting Sobriety</h3>
+        <ul>
+            <li><strong>Sobriety Tracking:</strong> Track your alcohol-free days with automatic milestone celebrations at 1 day, 1 week, 1 month, 90 days, 1 year, and beyond.</li>
+            <li><strong>Daily Check-ins:</strong> Log your mood, cravings, and gratitude each day. Spot patterns and celebrate your growth.</li>
+            <li><strong>Peer Support:</strong> Connect with others who truly understand. Share your struggles, celebrate your wins, and never feel alone.</li>
+            <li><strong>Recovery Groups:</strong> Join groups focused on alcohol recovery, or groups based on your interests, location, or recovery stage.</li>
+            <li><strong>Accountability Challenges:</strong> Join 30, 60, or 90-day challenges with daily check-ins to stay on track.</li>
+            <li><strong>Recovery Pals:</strong> Get matched with an accountability partner for those tough moments.</li>
+            <li><strong>Private Journal:</strong> Process your thoughts and feelings in a completely private space.</li>
+        </ul>
+
+        <h3>Free for Everyone, Forever</h3>
+        <p>We believe that financial situation should never be a barrier to recovery support. MyRecoveryPal is 100% free—no premium tiers, no hidden fees, no credit card required. Every feature is available to every user.</p>
+    </div>
+</section>
+
+<!-- Testimonial Section -->
+<section class="testimonial-section">
+    <h2>What Our Members Say</h2>
+    <div class="testimonial-grid">
+        <div class="testimonial-card">
+            <p>"After trying 3 different apps, this is the one that stuck. It's not just about counting days—it's about having people who actually get it."</p>
+            <div class="testimonial-author">Anonymous Member</div>
+            <div class="testimonial-days">127 days sober</div>
+        </div>
+        <div class="testimonial-card">
+            <p>"The daily check-ins and recovery pal feature kept me accountable during my first 90 days. I don't think I could have done it alone."</p>
+            <div class="testimonial-author">Anonymous Member</div>
+            <div class="testimonial-days">243 days sober</div>
+        </div>
+        <div class="testimonial-card">
+            <p>"Finally, an app that treats recovery as a community journey, not just a numbers game. The milestone celebrations are surprisingly motivating."</p>
+            <div class="testimonial-author">Anonymous Member</div>
+            <div class="testimonial-days">365+ days sober</div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-container">
+        <div class="faq-item">
+            <h3>What is the best free alcohol recovery app?</h3>
+            <p>MyRecoveryPal is a top-rated free alcohol recovery app that combines sobriety tracking with peer support. Unlike simple day counters, it offers a full social network with groups, challenges, messaging, and milestone celebrations—all 100% free.</p>
+        </div>
+        <div class="faq-item">
+            <h3>How do alcohol recovery apps help with sobriety?</h3>
+            <p>Recovery apps help by tracking your progress, providing daily accountability, connecting you with others in recovery, and celebrating your milestones. Research shows social support is crucial for long-term sobriety—and that's what MyRecoveryPal focuses on.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Is MyRecoveryPal free to use?</h3>
+            <p>Yes, MyRecoveryPal is 100% free forever. No subscriptions, no premium tiers, no hidden fees, no credit card required. We believe recovery support should be accessible to everyone.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Can I stay anonymous on MyRecoveryPal?</h3>
+            <p>Absolutely. You can post anonymously in groups, control your profile privacy, and choose exactly what to share. Your recovery journey is yours to share on your own terms.</p>
+        </div>
+        <div class="faq-item">
+            <h3>How is MyRecoveryPal different from I Am Sober or similar apps?</h3>
+            <p>While tracking apps focus mainly on counting sober days, MyRecoveryPal is a complete social network for recovery. You can follow people, join groups, participate in challenges, send messages, and build real relationships—not just track numbers.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Related Links Section -->
+<section class="related-links">
+    <h3>Explore More Recovery Resources</h3>
+    <div class="related-grid">
+        <a href="{% url 'accounts:community' %}"><i class="fas fa-users"></i> Recovery Community</a>
+        <a href="{% url 'accounts:groups_list' %}"><i class="fas fa-user-friends"></i> Support Groups</a>
+        <a href="{% url 'accounts:challenges_home' %}"><i class="fas fa-trophy"></i> Recovery Challenges</a>
+        <a href="{% url 'blog:post_list' %}"><i class="fas fa-book-open"></i> Recovery Stories</a>
+        <a href="{% url 'core:sober_grid' %}"><i class="fas fa-exchange-alt"></i> Sober Grid Alternative</a>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <h2>Ready to Start Your Alcohol-Free Journey?</h2>
+    <p>Join thousands of people who've found support, accountability, and hope on MyRecoveryPal.</p>
+    <a href="{% url 'accounts:register' %}" class="cta-button">Join Free Today</a>
+    <p class="subtext">No credit card required. Takes 30 seconds to sign up.</p>
+</section>
+{% endblock %}

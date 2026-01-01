@@ -738,6 +738,33 @@ journey.{% endblock %}
                 </ul>
             </div>
 
+            <!-- Related Links for SEO -->
+            <div class="sidebar-section">
+                <h5>Explore More</h5>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0;">
+                        <a href="{% url 'accounts:community' %}" style="color: #666; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-users" style="color: #52b788;"></i> Recovery Community
+                        </a>
+                    </li>
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0;">
+                        <a href="{% url 'accounts:groups_list' %}" style="color: #666; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-user-friends" style="color: #4db8e8;"></i> Support Groups
+                        </a>
+                    </li>
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0;">
+                        <a href="{% url 'resources:list' %}" style="color: #666; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-bookmark" style="color: #9b59b6;"></i> Recovery Resources
+                        </a>
+                    </li>
+                    <li style="padding: 0.5rem 0;">
+                        <a href="{% url 'accounts:challenges_home' %}" style="color: #666; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-trophy" style="color: #f39c12;"></i> Recovery Challenges
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
             <!-- Popular Tags -->
             <div class="sidebar-section">
                 <h5>Popular Tags</h5>

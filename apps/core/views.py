@@ -63,6 +63,10 @@ class SoberGridAlternativeView(TemplateView):
     template_name = 'core/sober_grid_alternative.html'
 
 
+class AlcoholRecoveryAppView(TemplateView):
+    template_name = 'core/alcohol_recovery_app.html'
+
+
 # Sitemap View - serves static sitemap.xml
 def sitemap_view(request):
     """
