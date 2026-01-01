@@ -672,69 +672,6 @@
         overflow: hidden;
     }
 
-    /* Check-in Cards in Feed */
-    .checkin-card {
-        border-left: 4px solid #52b788;
-    }
-
-    .checkin-badge {
-        background: linear-gradient(135deg, #52b788, #4db8e8);
-        color: white;
-        padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        margin-left: auto;
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
-    }
-
-    .checkin-content {
-        padding: 0 1rem 1rem;
-    }
-
-    .checkin-mood {
-        font-size: 1.25rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .mood-emoji {
-        display: inline-block;
-    }
-
-    .checkin-gratitude {
-        background: #f0fdf4;
-        padding: 0.75rem;
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-        color: #333;
-    }
-
-    .checkin-notes {
-        color: #555;
-        font-size: 0.95rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .checkin-stats {
-        display: flex;
-        gap: 1rem;
-        font-size: 0.8rem;
-        color: #666;
-    }
-
-    .checkin-stats .stat {
-        display: flex;
-        align-items: center;
-        gap: 0.3rem;
-    }
-
-    .checkin-stats .stat i {
-        color: #52b788;
-    }
-
     .social-post-header {
         display: flex;
         align-items: center;
@@ -1894,44 +1831,6 @@
             <div id="posts-container">
                 {% if posts %}
                     {% for post in posts %}
-                    {% if post.is_checkin %}
-                    <!-- Check-in Card -->
-                    <div class="post-card checkin-card" data-checkin-id="{{ post.id }}">
-                        <div class="social-post-header">
-                            {% if post.user.avatar %}
-                                <img src="{{ post.user.avatar.url }}" alt="" class="avatar-medium" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                <div class="avatar-initials avatar-medium" style="background: hsl({{ post.user.id|add:100 }}, 45%, 50%); border-radius: 50%; display: none;">{{ post.user.username|slice:":1"|upper }}</div>
-                            {% else %}
-                                <div class="avatar-initials avatar-medium" style="background: hsl({{ post.user.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.user.username|slice:":1"|upper }}</div>
-                            {% endif %}
-                            <div class="post-author-info">
-                                <div class="post-author-name">{{ post.user.get_full_name|default:post.user.username }}</div>
-                                <div class="post-meta">@{{ post.user.username }} · {{ post.created_at|timesince }} ago</div>
-                            </div>
-                            <span class="checkin-badge"><i class="fas fa-check-circle"></i> Check-in</span>
-                        </div>
-                        <div class="checkin-content">
-                            <div class="checkin-mood">
-                                <span class="mood-emoji">{{ post.get_mood_display }}</span>
-                            </div>
-                            {% if post.gratitude %}
-                            <div class="checkin-gratitude">
-                                <strong>Grateful for:</strong> {{ post.gratitude }}
-                            </div>
-                            {% endif %}
-                            {% if post.notes %}
-                            <div class="checkin-notes">{{ post.notes }}</div>
-                            {% endif %}
-                            <div class="checkin-stats">
-                                {% if post.craving_level > 0 %}
-                                <span class="stat"><i class="fas fa-fire"></i> Craving: {{ post.get_craving_level_display }}</span>
-                                {% endif %}
-                                <span class="stat"><i class="fas fa-bolt"></i> Energy: {{ post.energy_level }}/5</span>
-                            </div>
-                        </div>
-                    </div>
-                    {% else %}
-                    <!-- Regular Post Card -->
                     <div class="post-card" data-post-id="{{ post.id }}">
                         <!-- Post Header -->
                         <div class="social-post-header">
@@ -2078,7 +1977,6 @@
                             {% endif %}
                         </div>
                     </div>
-                    {% endif %}
                     {% endfor %}
 
                     <!-- Pagination -->

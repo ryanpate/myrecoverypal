@@ -1,0 +1,319 @@
+# ----------------------------------------
+# Reports snapshot
+# Account: ryanpate
+# Property: MyRecoveryPal
+# ----------------------------------------
+#  
+# Start date: 20251204
+# End date: 20251231
+Nth day,Active users
+0000,0
+0001,0
+0002,0
+0003,0
+0004,0
+0005,0
+0006,0
+0007,0
+0008,0
+0009,0
+0010,0
+0011,0
+0012,0
+0013,0
+0014,0
+0015,0
+0016,33
+0017,3
+0018,4
+0019,5
+0020,3
+0021,3
+0022,5
+0023,15
+0024,5
+0025,4
+0026,4
+0027,3
+
+# Start date: 20251204
+# End date: 20251231
+Nth day,New users
+0000,0
+0001,0
+0002,0
+0003,0
+0004,0
+0005,0
+0006,0
+0007,0
+0008,0
+0009,0
+0010,0
+0011,0
+0012,0
+0013,0
+0014,0
+0015,0
+0016,33
+0017,2
+0018,2
+0019,2
+0020,1
+0021,0
+0022,2
+0023,12
+0024,3
+0025,1
+0026,1
+0027,0
+
+# Start date: 20251204
+# End date: 20251231
+Nth day,Average engagement time per active user
+0000,0
+0001,0
+0002,0
+0003,0
+0004,0
+0005,0
+0006,0
+0007,0
+0008,0
+0009,0
+0010,0
+0011,0
+0012,0
+0013,0
+0014,0
+0015,0
+0016,3.878787878787879
+0017,193
+0018,234
+0019,236
+0020,114.33333333333333
+0021,296
+0022,156.4
+0023,89.73333333333333
+0024,158.6
+0025,85.5
+0026,13.25
+0027,18.666666666666668
+
+# Start date: 20251204
+# End date: 20251231
+Nth day,Total revenue
+0000,0
+0001,0
+0002,0
+0003,0
+0004,0
+0005,0
+0006,0
+0007,0
+0008,0
+0009,0
+0010,0
+0011,0
+0012,0
+0013,0
+0014,0
+0015,0
+0016,0
+0017,0
+0018,0
+0019,0
+0020,0
+0021,0
+0022,0
+0023,0
+0024,0
+0025,0
+0026,0
+0027,0
+
+# Where do your new users come from?
+# Start date: 20251204
+# End date: 20251231
+First user primary channel group (Default Channel Group),New users
+Direct,27
+Organic Social,26
+Referral,4
+Unassigned,2
+
+#  
+# Start date: 20251204
+# End date: 20251231
+Session primary channel group (Default Channel Group),Sessions
+Direct,87
+Referral,52
+Organic Social,26
+Unassigned,6
+
+#  
+# Start date: 20251204
+# End date: 20251231
+Country ID,Active users
+AU,1
+DE,19
+IE,3
+MW,1
+SE,1
+US,29
+ZA,1
+
+# Start date: 20251204
+# End date: 20251231
+Country,Active users
+US,29
+DE,19
+IE,3
+AU,1
+MW,1
+SE,1
+ZA,1
+
+# How are active users trending?
+# Start date: 20251204
+# End date: 20251231
+Nth day,30 days,7 days,1 day
+0000,0,0,0
+0001,0,0,0
+0002,0,0,0
+0003,0,0,0
+0004,0,0,0
+0005,0,0,0
+0006,0,0,0
+0007,0,0,0
+0008,0,0,0
+0009,0,0,0
+0010,0,0,0
+0011,0,0,0
+0012,0,0,0
+0013,0,0,0
+0014,0,0,0
+0015,0,0,0
+0016,33,33,33
+0017,35,35,3
+0018,37,37,4
+0019,39,39,5
+0020,40,40,3
+0021,40,40,3
+0022,42,42,5
+0023,54,23,15
+0024,56,23,5
+0025,57,23,4
+0026,58,22,4
+0027,58,21,3
+
+# How well do you retain your users?
+# Start date: 20251116
+# End date: 20251227
+Date,Week 0,Week 1,Week 2,Week 3,Week 4,Week 5
+Nov 16 - Nov 22,0,0,0,0,0,0
+Nov 23 - Nov 29,0,0,0,0,0,-1
+Nov 30 - Dec 6,0,0,0,0,-1,-1
+Dec 7 - Dec 13,0,0,0,-1,-1,-1
+Dec 14 - Dec 20,33,2,-1,-1,-1,-1
+Dec 21 - Dec 27,21,-1,-1,-1,-1,-1
+
+#  
+# Start date: 20251204
+# End date: 20251231
+Page title and screen class,Views
+MyRecoveryCircle - Social Community for Recovery,213
+Recovery Community - MyRecoveryPal,62
+Recovery Groups - MyRecoveryPal,47
+MyRecoveryPal - Free Recovery Support Community & Sobriety Tracker,46
+The Starting Line - MyRecoveryPal,19
+Messages - MyRecoveryPal,17
+Recovery Challenges - MyRecoveryPal,13
+Register - MyRecoveryPal,13
+Dashboard - MyRecoveryPal,11
+Recovery Pal Dashboard - MyRecoveryPal,11
+Invite Friends - MyRecoveryPal,8
+Recovery Blog - Journey to Recovery,8
+sera - Profile,8
+Edit Profile - MyRecoveryPal,7
+Login - Journey to Recovery,6
+Store Coming Soon - MyRecoveryPal,6
+..might have relapsed </3 | MyRecoveryPal Recovery Stories,5
+My Groups - MyRecoveryPal,5
+Welcome to MyRecoveryPal - Step 1 of 3,5
+Welcome to MyRecoveryPal - Step 2 of 3,4
+Welcome to MyRecoveryPal - Step 3 of 3,4
+rowan - Profile,4
+Contact Us - MyRecoveryPal,3
+Install MyRecoveryPal - Get the App,3
+Recovery Resources - MyRecoveryPal,3
+Suggested Users - MyRecoveryPal,3
+Community Guidelines - MyRecoveryPal,2
+Create Recovery Group - MyRecoveryPal,2
+Emily Pate - Profile,2
+How I Found My Way Back: The Power of Quiet Time and Meditation in Recovery | MyRecoveryPal Recovery Stories,2
+My Challenges - MyRecoveryPal,2
+My Journal Entries - Journey to Recovery,2
+My Posts - MyRecoveryPal,2
+Our Team - MyRecoveryPal,2
+Privacy Policy - MyRecoveryPal,2
+Ryan Pate - Profile,2
+Success Stories - MyRecoveryPal,2
+sixfreakingseven - Profile,2
+slligoos3 - Profile,2
+About - MyRecoveryPal,1
+Add Milestone - MyRecoveryPal,1
+Cookie Policy - MyRecoveryPal,1
+Family & Relationships - Journey to Recovery,1
+Family Matters: How Addiction Impacts Loved Ones — And How We Begin to Heal | MyRecoveryPal Recovery Stories,1
+Haley Pate - Profile,1
+Letting Go of Life’s Tides: How Sobriety — and Serenity — Must Stand Alone | MyRecoveryPal Recovery Stories,1
+Manage Subscription - MyRecoveryPal,1
+Mental Health & Wellness - Journey to Recovery,1
+My Bookmarked Resources,1
+My Journal - Journey to Recovery,1
+My Milestones - MyRecoveryPal,1
+MyRecoveryPal - Your Recovery Support Community,1
+MyRecoveryPal Tour - See Our Recovery Support Community in Action,1
+Page Not Found - MyRecoveryPal,1
+Pricing - MyRecoveryPal,1
+Request Recovery Pal - kylieC0001 - MyRecoveryPal,1
+Send Message - MyRecoveryPal,1
+Sponsor Dashboard - MyRecoveryPal,1
+Terms of Service - MyRecoveryPal,1
+kylieC0001 - Profile,1
+
+#  
+# Start date: 20251204
+# End date: 20251231
+Event name,Event count
+page_view,581
+user_engagement,503
+scroll,182
+session_start,168
+form_start,65
+first_visit,59
+form_submit,46
+view_search_results,6
+
+# What are your top performing key events?
+# Start date: 20251204
+# End date: 20251231
+Event name,Key events
+
+
+# Where does your average 120d value come from?
+# Start date: 20251204
+# End date: 20251231
+First user primary channel group (Default Channel Group),Average 120d value
+
+
+#  
+# Start date: 20251204
+# End date: 20251231
+Item name,Items purchased
+
+
+# How does activity on your platforms compare?
+# Start date: 20251204
+# End date: 20251231
+Platform,Key events

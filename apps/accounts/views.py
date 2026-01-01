@@ -3443,31 +3443,13 @@ def hybrid_landing_view(request):
             posts = SocialPost.objects.select_related('author').prefetch_related(
                 'likes',
                 'comments__author'
-            ).all()
+            ).order_by('-created_at')
 
             # Filter posts based on visibility for authenticated users
             visible_posts = []
             for post in posts:
                 if post.is_visible_to(user):
                     visible_posts.append(post)
-
-            # Add shared check-ins to the feed
-            # Get check-ins from users we follow + our own shared check-ins
-            following_ids = list(user.following.filter(status='active').values_list('target_id', flat=True))
-            following_ids.append(user.id)  # Include user's own check-ins
-
-            shared_checkins = DailyCheckIn.objects.filter(
-                is_shared=True,
-                user_id__in=following_ids
-            ).select_related('user').order_by('-created_at')[:50]
-
-            # Convert check-ins to a format compatible with the feed
-            for checkin in shared_checkins:
-                checkin.is_checkin = True  # Flag to identify in template
-                visible_posts.append(checkin)
-
-            # Sort combined feed by created_at (newest first)
-            visible_posts.sort(key=lambda x: x.created_at, reverse=True)
 
             # Check-in streak
             checkin_streak = user.get_checkin_streak()
