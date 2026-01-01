@@ -3,6 +3,9 @@ from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
 from .models import User, Milestone, ActivityFeed, DailyCheckIn
 from .payment_models import Subscription
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender=User)
@@ -43,11 +46,15 @@ def send_welcome_email_on_registration(sender, instance, created, **kwargs):
     """Send welcome email after user completes onboarding, not immediately after registration.
     This gives users time to complete onboarding before receiving email prompts."""
     if not created and instance.has_completed_onboarding:
-        from .tasks import send_welcome_email_day_1
         # Only send if they just completed onboarding and email hasn't been sent yet
         if not instance.welcome_email_1_sent:
-            # Delay 5 minutes to let them explore first
-            send_welcome_email_day_1.apply_async(args=[instance.id], countdown=300)
+            try:
+                from .tasks import send_welcome_email_day_1
+                # Delay 5 minutes to let them explore first
+                send_welcome_email_day_1.apply_async(args=[instance.id], countdown=300)
+            except Exception as e:
+                # Don't crash the request if Celery broker is unavailable
+                logger.warning(f"Could not queue welcome email for user {instance.id}: {e}")
 
 
 @receiver(post_save, sender=Milestone)
