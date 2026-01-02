@@ -397,13 +397,15 @@ celery -A recovery_hub worker -l info
 ## SEO & Traffic Growth Strategy
 
 ### Current SEO Assets
-- **Landing Pages:** `/alcohol-recovery-app/`, `/sober-grid-alternative/`
-- **Blog:** 54+ posts (not keyword-optimized)
+- **Landing Pages:** 8 SEO-optimized pages targeting high-volume keywords
+- **Blog:** 58+ posts including 6 SEO-optimized articles (83K monthly search volume)
 - **Schema:** Organization, WebSite, FAQPage, SoftwareApplication
-- **Sitemap:** `/sitemap.xml` with 17 URLs
+- **Sitemap:** `/sitemap.xml` with 25+ URLs
+- **Ads.txt:** Google AdSense verification configured
+- **Robots.txt:** Properly configured for crawling
 
-### CRITICAL - SEO Landing Pages (Priority: URGENT)
-Create keyword-targeted landing pages:
+### SEO Landing Pages - ✅ ALL COMPLETE
+Keyword-targeted landing pages:
 
 | Page | Target Keywords | Status |
 |------|-----------------|--------|
@@ -416,21 +418,25 @@ Create keyword-targeted landing pages:
 | `/gambling-addiction-app/` | gambling addiction help, gambling recovery | ✅ Done |
 | `/mental-health-recovery-app/` | mental health support app, anxiety recovery | ✅ Done |
 
-### HIGH - Blog Content Optimization
-Transform existing blog posts for search intent:
+### SEO Blog Posts - ✅ ALL COMPLETE
+High-volume keyword blog posts (83K combined monthly searches):
 
-| Current Title | SEO-Optimized Title | Target Keyword |
-|--------------|---------------------|----------------|
-| "Meditation in Recovery" | "Meditation for Addiction Recovery: Complete Guide" | meditation addiction recovery |
-| "Family Matters: Addiction" | "How Addiction Affects Families: Healing Together" | addiction effects on family |
+| Blog Post | Target Keyword | Monthly Searches | Status |
+|-----------|----------------|------------------|--------|
+| How Long Does Alcohol Withdrawal Last? | alcohol withdrawal timeline | 22K/mo | ✅ Done |
+| Signs of Alcoholism: Self-Assessment Guide | signs of alcoholism | 18K/mo | ✅ Done |
+| How to Stop Drinking: Step-by-Step Guide | how to stop drinking | 14K/mo | ✅ Done |
+| What is Sober Curious? Complete Guide | sober curious | 12K/mo | ✅ Done |
+| High-Functioning Alcoholic: Signs & Help | high functioning alcoholic | 9K/mo | ✅ Done |
+| Dopamine Detox for Addiction Recovery | dopamine detox addiction | 8K/mo | ✅ Done |
 
-**New blog posts to create (high search volume):**
-- [x] "How Long Does Alcohol Withdrawal Last?" (22K/mo) ✅ Done
-- [x] "Signs of Alcoholism: Self-Assessment Guide" (18K/mo) ✅ Done
-- [x] "How to Stop Drinking: Step-by-Step Guide" (14K/mo) ✅ Done
-- [x] "What is Sober Curious? Complete Guide" (12K/mo) ✅ Done
-- [x] "High Functioning Alcoholic: Signs & Getting Help" (9K/mo) ✅ Done
-- [x] "Dopamine Detox for Addiction Recovery" (8K/mo) ✅ Done
+**Blog post URLs:**
+- `/blog/how-long-does-alcohol-withdrawal-last/`
+- `/blog/signs-of-alcoholism-self-assessment/`
+- `/blog/how-to-stop-drinking-alcohol-guide/`
+- `/blog/what-is-sober-curious-guide/`
+- `/blog/high-functioning-alcoholic-signs-help/`
+- `/blog/dopamine-detox-addiction-recovery/`
 
 ### MEDIUM - Backlink Building
 - [ ] Sign up for Connectively (formerly HARO) - get quoted in articles
@@ -457,6 +463,7 @@ Transform existing blog posts for search intent:
 
 ### Current State
 - **Revenue:** $0
+- **Google AdSense:** Applied (pending approval), ads.txt configured
 - **Stripe:** Configured but no active subscriptions
 - **Store:** Coming soon page exists
 
@@ -698,6 +705,9 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-02:** Added ads.txt route for Google AdSense verification at `/ads.txt`.
+- **2026-01-02:** Created admin endpoint `/blog/admin/create-seo-posts/` to run blog post creation on production.
+- **2026-01-02:** Published 6 SEO blog posts to production database.
 - **2026-01-01:** Created 6 SEO-optimized blog posts targeting high-volume keywords (83K combined monthly searches): alcohol withdrawal, signs of alcoholism, how to stop drinking, sober curious, high-functioning alcoholic, dopamine detox.
 - **2026-01-01:** Added comprehensive SEO & Traffic Growth Strategy section with landing page roadmap, blog optimization plan, backlink strategy, and social marketing tactics.
 - **2026-01-01:** Added Revenue Strategy section with donation, affiliate, premium tier, merchandise, B2B licensing, and coach marketplace plans.
