@@ -5,7 +5,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
-from apps.core.views import robots_txt_view
+from apps.core.views import robots_txt_view, ads_txt_view
 from recovery_hub.sitemaps import sitemaps
 from apps.accounts.admin_dashboard import engagement_dashboard, ab_test_results
 
@@ -26,6 +26,7 @@ urlpatterns = [
     # SEO files
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', robots_txt_view, name='robots'),
+    path('ads.txt', ads_txt_view, name='ads'),
     # Add allauth URLs if using django-allauth
     path('accounts/', include('allauth.urls')),
 ]
