@@ -17,4 +17,6 @@ urlpatterns = [
     path('post/<slug:slug>/delete/',
          views.PostDeleteView.as_view(), name='post_delete'),
     path('post/<slug:slug>/comment/', views.add_comment, name='add_comment'),
+    # Admin-only: Create SEO blog posts
+    path('admin/create-seo-posts/', views.create_seo_posts, name='create_seo_posts'),
 ]

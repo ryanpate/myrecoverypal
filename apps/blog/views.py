@@ -1,12 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.db.models import Q, F
 from django.urls import reverse_lazy
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
+from django.core.management import call_command
+from io import StringIO
 from .models import Post, Category, Tag, Comment
 from .forms import CommentForm, PostForm
 
@@ -266,3 +269,33 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         messages.success(
             request, f'Post "{post.title}" has been deleted successfully!')
         return super().delete(request, *args, **kwargs)
+
+
+@staff_member_required
+def create_seo_posts(request):
+    """
+    Admin-only view to create SEO blog posts.
+    Access at: /blog/admin/create-seo-posts/
+    """
+    if not request.user.is_superuser:
+        return HttpResponse("Superuser access required", status=403)
+
+    # Capture command output
+    out = StringIO()
+    try:
+        call_command('create_seo_blog_posts', stdout=out)
+        output = out.getvalue()
+        return HttpResponse(
+            f"<html><head><title>SEO Posts Created</title></head>"
+            f"<body><h1>SEO Blog Posts Creation</h1>"
+            f"<pre>{output}</pre>"
+            f"<p><a href='/blog/'>View Blog</a></p></body></html>",
+            content_type="text/html"
+        )
+    except Exception as e:
+        return HttpResponse(
+            f"<html><head><title>Error</title></head>"
+            f"<body><h1>Error</h1><pre>{str(e)}</pre></body></html>",
+            content_type="text/html",
+            status=500
+        )
