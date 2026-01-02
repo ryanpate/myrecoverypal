@@ -187,7 +187,7 @@ class Command(BaseCommand):
             {
                 'title': 'Signs of Alcoholism: Self-Assessment Guide to Know If You Have a Problem',
                 'slug': 'signs-of-alcoholism-self-assessment',
-                'meta_description': 'Wondering if your drinking is a problem? Use our alcoholism self-assessment guide to recognize the warning signs. Honest questions to evaluate your relationship with alcohol.',
+                'meta_description': 'Is your drinking a problem? Use our alcoholism self-assessment guide to recognize warning signs and evaluate your relationship with alcohol.',
                 'excerpt': 'Not sure if your drinking has become a problem? This honest self-assessment guide helps you recognize the warning signs of alcoholism and understand when to seek help.',
                 'category': categories['Recovery Fundamentals'],
                 'tags': ['alcoholism', 'self-assessment', 'alcohol', 'recovery'],
@@ -321,7 +321,7 @@ class Command(BaseCommand):
             {
                 'title': 'How to Stop Drinking Alcohol: A Step-by-Step Guide for 2025',
                 'slug': 'how-to-stop-drinking-alcohol-guide',
-                'meta_description': 'Ready to quit drinking? This step-by-step guide shows you how to stop drinking alcohol safely and successfully. Practical strategies, timeline, and support resources.',
+                'meta_description': 'Ready to quit drinking? This step-by-step guide shows you how to stop drinking alcohol safely. Practical strategies and support resources.',
                 'excerpt': 'A comprehensive guide to quitting alcohol, from making the decision to building a sober life. Includes practical strategies, safety considerations, and ongoing support tips.',
                 'category': categories['Coping Strategies'],
                 'tags': ['quitting-drinking', 'sobriety', 'alcohol', 'guide', 'recovery'],
@@ -512,7 +512,7 @@ class Command(BaseCommand):
             {
                 'title': 'What is Sober Curious? The Complete Guide to Exploring Sobriety',
                 'slug': 'what-is-sober-curious-guide',
-                'meta_description': 'What does sober curious mean? Discover the growing movement of people questioning their relationship with alcohol. Learn how to explore sobriety without labels.',
+                'meta_description': 'What does sober curious mean? Discover the growing movement of people questioning their drinking. Learn how to explore sobriety without labels.',
                 'excerpt': 'The sober curious movement is growing. Learn what it means to question your drinking, how to explore sobriety, and whether alcohol-free living might be right for you.',
                 'category': categories['Recovery Fundamentals'],
                 'tags': ['sober-curious', 'sobriety', 'alcohol', 'wellness', 'guide'],
@@ -898,7 +898,7 @@ class Command(BaseCommand):
             {
                 'title': 'Dopamine Detox for Addiction Recovery: How to Reset Your Brain\'s Reward System',
                 'slug': 'dopamine-detox-addiction-recovery',
-                'meta_description': 'Learn how dopamine detox helps addiction recovery by resetting your brain\'s reward system. Science-backed strategies to restore natural pleasure and motivation.',
+                'meta_description': 'Learn how dopamine detox helps addiction recovery by resetting your brain\'s reward system. Restore natural pleasure and motivation.',
                 'excerpt': 'Addiction hijacks your brain\'s reward system. Learn how a dopamine detox can help reset your pleasure pathways, reduce cravings, and support lasting recovery.',
                 'category': categories['Mental Health & Wellness'],
                 'tags': ['dopamine', 'addiction', 'recovery', 'mental-health', 'wellness'],
