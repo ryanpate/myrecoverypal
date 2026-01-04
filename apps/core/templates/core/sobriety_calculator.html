@@ -1,0 +1,998 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Free Sobriety Calculator - How Long Have I Been Sober? | MyRecoveryPal{% endblock %}
+{% block meta_description %}Calculate your sobriety time instantly. Free sobriety calculator shows days, weeks, months sober plus milestones, money saved, and health benefits. No signup required.{% endblock %}
+{% block meta_keywords %}sobriety calculator, how long have i been sober, sober calculator, clean time calculator, sobriety date calculator, days sober calculator, sobriety clock, sober time calculator{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/sobriety-calculator/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Free Sobriety Calculator",
+  "description": "Calculate how long you've been sober with our free sobriety calculator. Shows days, weeks, months, years plus milestones reached and health benefits.",
+  "url": "https://www.myrecoverypal.com/sobriety-calculator/",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Calculate days sober",
+    "Track weeks and months",
+    "Milestone celebrations",
+    "Money saved calculator",
+    "Health benefits timeline"
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I calculate my sobriety date?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Enter the last day you drank alcohol or used drugs into the calculator above. The tool automatically calculates your total sober time in days, weeks, months, and years. Your sobriety date is day one of your recovery journey."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What counts as a sobriety date?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Your sobriety date is typically the day after your last drink or drug use. For example, if you had your last drink on January 1st, your sobriety date would be January 2nd. Some people count from the moment they decided to quit."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much money can I save by not drinking?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The average person who drinks regularly spends $50-150 per week on alcohol. Over a year, that's $2,600-$7,800 saved. Our calculator lets you enter your personal spending to see exactly how much you've saved since getting sober."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What health benefits happen when you stop drinking?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Within 24 hours, blood sugar normalizes. After 1 week, sleep improves. At 1 month, liver fat reduces by 15%. After 3 months, blood pressure may decrease. At 1 year, liver function significantly improves and heart disease risk drops."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if I relapse - do I reset my sobriety calculator?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Many people choose to reset their sobriety date after a relapse to maintain honesty in their recovery. However, some track both their original quit date and their current streak. What matters most is that you keep trying - relapse is often part of recovery."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Calculate Your Sobriety Time",
+  "description": "Use this free sobriety calculator to find out how long you've been sober",
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Enter Your Sobriety Date",
+      "text": "Click on the date field and select the day you started your sobriety journey (your last day using)."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "View Your Results",
+      "text": "Instantly see your total sober time broken down into days, weeks, months, and years."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Check Milestones",
+      "text": "See which sobriety milestones you've reached and which ones are coming up next."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Calculate Money Saved (Optional)",
+      "text": "Enter how much you used to spend daily on alcohol or drugs to see your total savings."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Save Your Progress",
+      "text": "Create a free account to save your sobriety date and get milestone reminders."
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .calc-hero {
+        background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #40916c 100%);
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+    }
+    .calc-hero h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+    .calc-hero p {
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+        opacity: 0.95;
+    }
+
+    /* Calculator Section */
+    .calculator-section {
+        padding: 3rem 2rem;
+        background: linear-gradient(180deg, #d8f3dc 0%, #f8f9fa 100%);
+    }
+    .calculator-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .calculator-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        overflow: hidden;
+    }
+    .calc-input-section {
+        padding: 2.5rem;
+        background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+        color: white;
+        text-align: center;
+    }
+    .calc-input-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+    }
+    .date-input-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .date-input-wrapper label {
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+    #sobriety-date {
+        padding: 1rem 1.5rem;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 12px;
+        background: white;
+        color: #1b4332;
+        font-weight: 600;
+        cursor: pointer;
+        min-width: 200px;
+    }
+    #sobriety-date:focus {
+        outline: 3px solid #74c69d;
+    }
+
+    /* Results Display */
+    .calc-results {
+        padding: 3rem 2.5rem;
+    }
+    .main-counter {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+    .days-display {
+        font-size: 6rem;
+        font-weight: 800;
+        color: #2d6a4f;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+    .days-label {
+        font-size: 1.8rem;
+        color: #40916c;
+        font-weight: 600;
+    }
+    .time-breakdown {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+    }
+    .time-unit {
+        background: #f8f9fa;
+        padding: 1.5rem 1rem;
+        border-radius: 16px;
+        text-align: center;
+    }
+    .time-unit .value {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #2d6a4f;
+        line-height: 1.2;
+    }
+    .time-unit .label {
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 0.25rem;
+    }
+
+    /* Milestones */
+    .milestones-container {
+        margin-bottom: 2.5rem;
+    }
+    .milestones-container h3 {
+        font-size: 1.3rem;
+        color: #2d6a4f;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .milestone-track {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    .milestone-badge {
+        padding: 0.75rem 1.25rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .milestone-badge.achieved {
+        background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+        color: white;
+    }
+    .milestone-badge.next {
+        background: #fff3cd;
+        color: #856404;
+        border: 2px dashed #ffc107;
+    }
+    .milestone-badge.future {
+        background: #f8f9fa;
+        color: #999;
+    }
+
+    /* Money Saved Calculator */
+    .money-calculator {
+        background: #f0fdf4;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2.5rem;
+    }
+    .money-calculator h3 {
+        font-size: 1.3rem;
+        color: #2d6a4f;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .money-input-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+    .money-input-row label {
+        color: #555;
+        font-weight: 500;
+    }
+    .money-input-row input {
+        padding: 0.75rem 1rem;
+        border: 2px solid #b7e4c7;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        width: 120px;
+        font-weight: 600;
+    }
+    .money-input-row input:focus {
+        outline: none;
+        border-color: #2d6a4f;
+    }
+    .money-saved-display {
+        text-align: center;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+    }
+    .money-saved-display .amount {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #2d6a4f;
+    }
+    .money-saved-display .label {
+        color: #666;
+        font-size: 1rem;
+    }
+
+    /* Health Benefits Timeline */
+    .health-benefits {
+        margin-bottom: 2.5rem;
+    }
+    .health-benefits h3 {
+        font-size: 1.3rem;
+        color: #2d6a4f;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .benefits-timeline {
+        display: grid;
+        gap: 1rem;
+    }
+    .benefit-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    .benefit-item.unlocked {
+        background: #d1fae5;
+    }
+    .benefit-item.locked {
+        background: #f8f9fa;
+        opacity: 0.7;
+    }
+    .benefit-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.2rem;
+    }
+    .benefit-item.unlocked .benefit-icon {
+        background: #2d6a4f;
+        color: white;
+    }
+    .benefit-item.locked .benefit-icon {
+        background: #dee2e6;
+        color: #999;
+    }
+    .benefit-content {
+        flex: 1;
+    }
+    .benefit-content .time {
+        font-weight: 700;
+        color: #2d6a4f;
+        font-size: 0.95rem;
+    }
+    .benefit-item.locked .benefit-content .time {
+        color: #999;
+    }
+    .benefit-content .description {
+        color: #555;
+        font-size: 0.95rem;
+        margin-top: 0.25rem;
+    }
+
+    /* CTA Section */
+    .calc-cta {
+        background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+        padding: 2.5rem;
+        text-align: center;
+        color: white;
+    }
+    .calc-cta h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+    .calc-cta p {
+        opacity: 0.9;
+        margin-bottom: 1.5rem;
+    }
+    .calc-cta .cta-button {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        background: white;
+        color: #2d6a4f;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+    .calc-cta .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .calc-cta .benefits-list {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    .calc-cta .benefits-list span {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Placeholder state */
+    .placeholder-state {
+        text-align: center;
+        padding: 3rem;
+        color: #999;
+    }
+    .placeholder-state .icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+    .placeholder-state p {
+        font-size: 1.1rem;
+    }
+
+    /* Content Sections */
+    .content-section {
+        padding: 4rem 2rem;
+        background: white;
+    }
+    .content-section .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .content-section h2 {
+        color: #2d6a4f;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+    .content-section h3 {
+        color: #2d6a4f;
+        font-size: 1.4rem;
+        margin: 2rem 0 1rem;
+    }
+    .content-section p {
+        color: #555;
+        line-height: 1.8;
+        font-size: 1.05rem;
+        margin-bottom: 1rem;
+    }
+    .content-section ul {
+        margin: 1.5rem 0;
+        padding-left: 1.5rem;
+    }
+    .content-section ul li {
+        color: #555;
+        line-height: 1.8;
+        margin-bottom: 0.75rem;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+        padding: 4rem 2rem;
+        background: #f8f9fa;
+    }
+    .faq-section h2 {
+        text-align: center;
+        color: #2d6a4f;
+        font-size: 2.2rem;
+        margin-bottom: 2rem;
+    }
+    .faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .faq-item {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .faq-item h3 {
+        color: #2d6a4f;
+        margin-bottom: 0.75rem;
+        font-size: 1.15rem;
+    }
+    .faq-item p {
+        color: #666;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    /* Related Links */
+    .related-section {
+        padding: 3rem 2rem;
+        background: white;
+    }
+    .related-section h3 {
+        text-align: center;
+        color: #2d6a4f;
+        margin-bottom: 1.5rem;
+    }
+    .related-grid {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .related-grid a {
+        background: #f8f9fa;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #2d6a4f;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .related-grid a:hover {
+        background: #2d6a4f;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Final CTA */
+    .final-cta {
+        padding: 5rem 2rem;
+        background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+        text-align: center;
+        color: white;
+    }
+    .final-cta h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    .final-cta p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+    }
+    .final-cta .cta-button {
+        display: inline-block;
+        padding: 1.25rem 3rem;
+        background: white;
+        color: #2d6a4f;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.3rem;
+        transition: all 0.3s ease;
+    }
+    .final-cta .cta-button:hover {
+        transform: translateY(-3px);
+    }
+    .final-cta .subtext {
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        opacity: 0.85;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .calc-hero h1 { font-size: 1.8rem; }
+        .days-display { font-size: 4rem; }
+        .days-label { font-size: 1.3rem; }
+        .time-breakdown { grid-template-columns: repeat(2, 1fr); }
+        .time-unit .value { font-size: 1.8rem; }
+        .money-saved-display .amount { font-size: 2.2rem; }
+        .calc-cta .benefits-list { flex-direction: column; gap: 0.75rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="calc-hero">
+    <h1>Free Sobriety Calculator</h1>
+    <p>Calculate how long you've been sober instantly. See your milestones, money saved, and health benefits - no signup required.</p>
+</section>
+
+<!-- Calculator Section -->
+<section class="calculator-section">
+    <div class="calculator-container">
+        <div class="calculator-card">
+            <!-- Input Section -->
+            <div class="calc-input-section">
+                <h2>Enter Your Sobriety Date</h2>
+                <div class="date-input-wrapper">
+                    <label for="sobriety-date">I quit on:</label>
+                    <input type="date" id="sobriety-date" max="" />
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="calc-results">
+                <!-- Placeholder State -->
+                <div id="placeholder-state" class="placeholder-state">
+                    <div class="icon"><i class="fas fa-calendar-alt"></i></div>
+                    <p>Select your sobriety date above to see your progress</p>
+                </div>
+
+                <!-- Results (hidden by default) -->
+                <div id="results-display" style="display: none;">
+                    <!-- Main Counter -->
+                    <div class="main-counter">
+                        <div class="days-display" id="total-days">0</div>
+                        <div class="days-label">Days Sober</div>
+                    </div>
+
+                    <!-- Time Breakdown -->
+                    <div class="time-breakdown">
+                        <div class="time-unit">
+                            <div class="value" id="years">0</div>
+                            <div class="label">Years</div>
+                        </div>
+                        <div class="time-unit">
+                            <div class="value" id="months">0</div>
+                            <div class="label">Months</div>
+                        </div>
+                        <div class="time-unit">
+                            <div class="value" id="weeks">0</div>
+                            <div class="label">Weeks</div>
+                        </div>
+                        <div class="time-unit">
+                            <div class="value" id="hours">0</div>
+                            <div class="label">Hours</div>
+                        </div>
+                    </div>
+
+                    <!-- Milestones -->
+                    <div class="milestones-container">
+                        <h3><i class="fas fa-medal"></i> Milestones</h3>
+                        <div class="milestone-track" id="milestones-track">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Money Saved Calculator -->
+                    <div class="money-calculator">
+                        <h3><i class="fas fa-piggy-bank"></i> Money Saved</h3>
+                        <div class="money-input-row">
+                            <label for="daily-spend">I used to spend about $</label>
+                            <input type="number" id="daily-spend" value="15" min="0" step="1" />
+                            <label>per day</label>
+                        </div>
+                        <div class="money-saved-display">
+                            <div class="amount" id="money-saved">$0</div>
+                            <div class="label">Total Saved Since Quitting</div>
+                        </div>
+                    </div>
+
+                    <!-- Health Benefits -->
+                    <div class="health-benefits">
+                        <h3><i class="fas fa-heart"></i> Health Benefits Unlocked</h3>
+                        <div class="benefits-timeline" id="benefits-timeline">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="calc-cta">
+                <h3>Save Your Progress Forever</h3>
+                <p>Create a free account to track milestones, get reminders, and connect with others in recovery.</p>
+                <a href="{% url 'accounts:register' %}" class="cta-button">Save My Sobriety Date</a>
+                <div class="benefits-list">
+                    <span><i class="fas fa-check"></i> 100% Free</span>
+                    <span><i class="fas fa-check"></i> Milestone Alerts</span>
+                    <span><i class="fas fa-check"></i> Community Support</span>
+                    <span><i class="fas fa-check"></i> Daily Check-ins</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Content Section -->
+<section class="content-section">
+    <div class="container">
+        <h2>How to Use This Sobriety Calculator</h2>
+        <p>Our free sobriety calculator helps you track exactly how long you've been sober. Simply enter the date you stopped drinking or using drugs, and the calculator instantly shows your clean time broken down into days, weeks, months, and years.</p>
+
+        <h3>What Is a Sobriety Date?</h3>
+        <p>Your sobriety date (also called a "clean date" or "sober date") is the day you stopped using alcohol or drugs. For most people, this is the day after their last drink or use. For example, if you had your last drink on December 31st, your sobriety date would be January 1st.</p>
+
+        <h3>Why Tracking Sobriety Time Matters</h3>
+        <p>Research consistently shows that tracking progress increases motivation and success rates in recovery. Here's why counting your sober days matters:</p>
+        <ul>
+            <li><strong>Builds momentum:</strong> Each day adds to your streak, making you less likely to break it</li>
+            <li><strong>Celebrates progress:</strong> Milestones give you concrete achievements to celebrate</li>
+            <li><strong>Provides perspective:</strong> On tough days, seeing how far you've come helps you push through</li>
+            <li><strong>Creates accountability:</strong> Having a number to protect motivates you to stay sober</li>
+            <li><strong>Shows tangible benefits:</strong> Calculating money saved and health gains makes progress real</li>
+        </ul>
+
+        <h3>Sobriety Milestones Worth Celebrating</h3>
+        <p>Recovery is full of meaningful milestones. Here are the most commonly celebrated ones:</p>
+        <ul>
+            <li><strong>24 Hours:</strong> The first day is often the hardest. You did it!</li>
+            <li><strong>1 Week (7 days):</strong> Physical withdrawal symptoms often peak and start to subside</li>
+            <li><strong>2 Weeks (14 days):</strong> Sleep patterns begin to normalize</li>
+            <li><strong>1 Month (30 days):</strong> A major milestone in any recovery program</li>
+            <li><strong>90 Days:</strong> The traditional AA "chip" milestone, indicating stable early recovery</li>
+            <li><strong>6 Months (180 days):</strong> Half a year sober - a huge achievement</li>
+            <li><strong>1 Year (365 days):</strong> Your "soberversary" - a life-changing accomplishment</li>
+        </ul>
+
+        <h3>What Happens to Your Body When You Quit Drinking?</h3>
+        <p>The health benefits of sobriety begin almost immediately:</p>
+        <ul>
+            <li><strong>After 1 hour:</strong> Liver begins processing alcohol out of your system</li>
+            <li><strong>After 24 hours:</strong> Blood sugar levels start to normalize</li>
+            <li><strong>After 3 days:</strong> Alcohol is completely out of your bloodstream</li>
+            <li><strong>After 1 week:</strong> Sleep quality improves, hydration increases</li>
+            <li><strong>After 2 weeks:</strong> Stomach lining starts to heal, digestion improves</li>
+            <li><strong>After 1 month:</strong> Liver fat can reduce by up to 15%, blood pressure may drop</li>
+            <li><strong>After 3 months:</strong> Skin appearance improves, mental clarity increases</li>
+            <li><strong>After 1 year:</strong> Risk of heart disease, stroke, and liver disease significantly reduced</li>
+        </ul>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-container">
+        <div class="faq-item">
+            <h3>How do I calculate my sobriety date?</h3>
+            <p>Enter the last day you drank alcohol or used drugs into the calculator above. The tool automatically calculates your total sober time in days, weeks, months, and years. Your sobriety date is day one of your recovery journey.</p>
+        </div>
+        <div class="faq-item">
+            <h3>What counts as a sobriety date?</h3>
+            <p>Your sobriety date is typically the day after your last drink or drug use. For example, if you had your last drink on January 1st, your sobriety date would be January 2nd. Some people count from the moment they decided to quit.</p>
+        </div>
+        <div class="faq-item">
+            <h3>How much money can I save by not drinking?</h3>
+            <p>The average person who drinks regularly spends $50-150 per week on alcohol. Over a year, that's $2,600-$7,800 saved. Our calculator lets you enter your personal spending to see exactly how much you've saved since getting sober.</p>
+        </div>
+        <div class="faq-item">
+            <h3>What health benefits happen when you stop drinking?</h3>
+            <p>Within 24 hours, blood sugar normalizes. After 1 week, sleep improves. At 1 month, liver fat reduces by 15%. After 3 months, blood pressure may decrease. At 1 year, liver function significantly improves and heart disease risk drops.</p>
+        </div>
+        <div class="faq-item">
+            <h3>What if I relapse - do I reset my sobriety calculator?</h3>
+            <p>Many people choose to reset their sobriety date after a relapse to maintain honesty in their recovery. However, some track both their original quit date and their current streak. What matters most is that you keep trying - relapse is often part of recovery.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Is this sobriety calculator free?</h3>
+            <p>Yes, this sobriety calculator is 100% free to use with no signup required. If you want to save your progress, get milestone reminders, and connect with a supportive community, you can create a free MyRecoveryPal account.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Related Links -->
+<section class="related-section">
+    <h3>More Recovery Tools</h3>
+    <div class="related-grid">
+        <a href="{% url 'core:sobriety_counter_app' %}"><i class="fas fa-stopwatch"></i> Sobriety Counter App</a>
+        <a href="{% url 'core:alcohol_recovery_app' %}"><i class="fas fa-wine-bottle"></i> Alcohol Recovery</a>
+        <a href="{% url 'accounts:community' %}"><i class="fas fa-users"></i> Recovery Community</a>
+        <a href="{% url 'accounts:challenges_home' %}"><i class="fas fa-trophy"></i> Recovery Challenges</a>
+    </div>
+</section>
+
+<!-- Final CTA -->
+<section class="final-cta">
+    <h2>Every Day Sober Matters</h2>
+    <p>Join thousands of people tracking their recovery journey with MyRecoveryPal</p>
+    <a href="{% url 'accounts:register' %}" class="cta-button">Start Your Journey Free</a>
+    <p class="subtext">No credit card required. Takes 30 seconds.</p>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.getElementById('sobriety-date');
+    const placeholderState = document.getElementById('placeholder-state');
+    const resultsDisplay = document.getElementById('results-display');
+    const dailySpendInput = document.getElementById('daily-spend');
+
+    // Set max date to today
+    const today = new Date();
+    dateInput.max = today.toISOString().split('T')[0];
+
+    // Milestones in days
+    const milestones = [
+        { days: 1, label: '1 Day' },
+        { days: 7, label: '1 Week' },
+        { days: 14, label: '2 Weeks' },
+        { days: 30, label: '1 Month' },
+        { days: 60, label: '2 Months' },
+        { days: 90, label: '90 Days' },
+        { days: 180, label: '6 Months' },
+        { days: 365, label: '1 Year' },
+        { days: 730, label: '2 Years' },
+        { days: 1825, label: '5 Years' },
+        { days: 3650, label: '10 Years' }
+    ];
+
+    // Health benefits timeline
+    const healthBenefits = [
+        { days: 1, icon: 'fa-tint', benefit: '24 Hours', description: 'Blood sugar levels begin to normalize' },
+        { days: 3, icon: 'fa-blood-drop', benefit: '3 Days', description: 'Alcohol completely leaves your bloodstream' },
+        { days: 7, icon: 'fa-bed', benefit: '1 Week', description: 'Sleep quality improves, better hydration' },
+        { days: 14, icon: 'fa-stomach', benefit: '2 Weeks', description: 'Stomach lining heals, digestion improves' },
+        { days: 30, icon: 'fa-liver', benefit: '1 Month', description: 'Liver fat reduces up to 15%, blood pressure drops' },
+        { days: 90, icon: 'fa-brain', benefit: '3 Months', description: 'Mental clarity improves, skin looks healthier' },
+        { days: 180, icon: 'fa-heartbeat', benefit: '6 Months', description: 'Cardiovascular health significantly improves' },
+        { days: 365, icon: 'fa-shield-heart', benefit: '1 Year', description: 'Risk of heart disease and stroke reduced by 50%' }
+    ];
+
+    function calculateSobriety(sobrietyDate) {
+        const now = new Date();
+        const start = new Date(sobrietyDate);
+
+        // Total days
+        const diffTime = now - start;
+        const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const totalHours = Math.floor(diffTime / (1000 * 60 * 60));
+
+        // Years, months, weeks breakdown
+        const years = Math.floor(totalDays / 365);
+        const months = Math.floor(totalDays / 30);
+        const weeks = Math.floor(totalDays / 7);
+
+        return {
+            totalDays,
+            totalHours,
+            years,
+            months,
+            weeks
+        };
+    }
+
+    function updateDisplay(sobrietyDate) {
+        const stats = calculateSobriety(sobrietyDate);
+
+        // Show results, hide placeholder
+        placeholderState.style.display = 'none';
+        resultsDisplay.style.display = 'block';
+
+        // Update main counter with animation
+        animateNumber('total-days', stats.totalDays);
+
+        // Update breakdown
+        document.getElementById('years').textContent = stats.years;
+        document.getElementById('months').textContent = stats.months;
+        document.getElementById('weeks').textContent = stats.weeks;
+        document.getElementById('hours').textContent = stats.totalHours.toLocaleString();
+
+        // Update milestones
+        updateMilestones(stats.totalDays);
+
+        // Update money saved
+        updateMoneySaved(stats.totalDays);
+
+        // Update health benefits
+        updateHealthBenefits(stats.totalDays);
+    }
+
+    function animateNumber(elementId, target) {
+        const element = document.getElementById(elementId);
+        const duration = 1000;
+        const start = 0;
+        const startTime = performance.now();
+
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            const current = Math.floor(start + (target - start) * easeOut);
+            element.textContent = current.toLocaleString();
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+        requestAnimationFrame(update);
+    }
+
+    function updateMilestones(totalDays) {
+        const track = document.getElementById('milestones-track');
+        track.innerHTML = '';
+
+        let nextFound = false;
+        milestones.forEach(milestone => {
+            const badge = document.createElement('div');
+            badge.className = 'milestone-badge';
+
+            if (totalDays >= milestone.days) {
+                badge.classList.add('achieved');
+                badge.innerHTML = `<i class="fas fa-check-circle"></i> ${milestone.label}`;
+            } else if (!nextFound) {
+                badge.classList.add('next');
+                const daysUntil = milestone.days - totalDays;
+                badge.innerHTML = `<i class="fas fa-hourglass-half"></i> ${milestone.label} (${daysUntil} days)`;
+                nextFound = true;
+            } else {
+                badge.classList.add('future');
+                badge.innerHTML = `<i class="far fa-circle"></i> ${milestone.label}`;
+            }
+
+            track.appendChild(badge);
+        });
+    }
+
+    function updateMoneySaved(totalDays) {
+        const dailySpend = parseFloat(dailySpendInput.value) || 0;
+        const totalSaved = totalDays * dailySpend;
+        document.getElementById('money-saved').textContent = '$' + totalSaved.toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+    }
+
+    function updateHealthBenefits(totalDays) {
+        const timeline = document.getElementById('benefits-timeline');
+        timeline.innerHTML = '';
+
+        healthBenefits.forEach(benefit => {
+            const item = document.createElement('div');
+            item.className = 'benefit-item ' + (totalDays >= benefit.days ? 'unlocked' : 'locked');
+
+            item.innerHTML = `
+                <div class="benefit-icon">
+                    <i class="fas ${totalDays >= benefit.days ? 'fa-check' : benefit.icon}"></i>
+                </div>
+                <div class="benefit-content">
+                    <div class="time">${benefit.benefit}</div>
+                    <div class="description">${benefit.description}</div>
+                </div>
+            `;
+
+            timeline.appendChild(item);
+        });
+    }
+
+    // Event listeners
+    dateInput.addEventListener('change', function() {
+        if (this.value) {
+            updateDisplay(this.value);
+        }
+    });
+
+    dailySpendInput.addEventListener('input', function() {
+        if (dateInput.value) {
+            const stats = calculateSobriety(dateInput.value);
+            updateMoneySaved(stats.totalDays);
+        }
+    });
+
+    // Check for date in URL params (for sharing)
+    const urlParams = new URLSearchParams(window.location.search);
+    const dateParam = urlParams.get('date');
+    if (dateParam) {
+        dateInput.value = dateParam;
+        updateDisplay(dateParam);
+    }
+});
+</script>
+{% endblock %}

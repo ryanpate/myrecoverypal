@@ -112,6 +112,13 @@
     <priority>0.8</priority>
   </url>
 
+  <url>
+    <loc>https://www.myrecoverypal.com/sobriety-calculator/</loc>
+    <lastmod>2026-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
   <!-- SEO Blog Posts - High Volume Keywords -->
   <url>
     <loc>https://www.myrecoverypal.com/blog/how-long-does-alcohol-withdrawal-last/</loc>

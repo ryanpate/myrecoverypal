@@ -1,6 +1,6 @@
 # CLAUDE.md - MyRecoveryPal Development Guide
 
-**Last Updated:** 2026-01-01
+**Last Updated:** 2026-01-04
 **Project:** MyRecoveryPal - Social Recovery Platform
 **Tech Stack:** Django 5.0.10, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
@@ -413,6 +413,7 @@ Keyword-targeted landing pages:
 | `/sober-grid-alternative/` | sober grid alternative | ✅ Done |
 | `/drug-addiction-recovery-app/` | drug addiction app, NA app | ✅ Done |
 | `/sobriety-counter-app/` | sobriety counter, sober day tracker | ✅ Done |
+| `/sobriety-calculator/` | sobriety calculator, how long sober, clean time calculator | ✅ Done |
 | `/free-aa-app/` | AA app, 12 step app, free AA meeting finder | ✅ Done |
 | `/opioid-recovery-app/` | opioid recovery, fentanyl recovery app | ✅ Done |
 | `/gambling-addiction-app/` | gambling addiction help, gambling recovery | ✅ Done |
@@ -705,6 +706,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-04:** Created `/sobriety-calculator/` interactive tool page with no-signup-required calculator, money saved estimator, health benefits timeline, and milestone tracker. Targets "sobriety calculator", "how long have I been sober", and "clean time calculator" keywords.
 - **2026-01-02:** Added ads.txt route for Google AdSense verification at `/ads.txt`.
 - **2026-01-02:** Created admin endpoint `/blog/admin/create-seo-posts/` to run blog post creation on production.
 - **2026-01-02:** Published 6 SEO blog posts to production database.

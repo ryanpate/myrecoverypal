@@ -91,6 +91,10 @@ class MentalHealthRecoveryAppView(TemplateView):
     template_name = 'core/mental_health_recovery_app.html'
 
 
+class SobrietyCalculatorView(TemplateView):
+    template_name = 'core/sobriety_calculator.html'
+
+
 # Sitemap View - serves static sitemap.xml
 def sitemap_view(request):
     """

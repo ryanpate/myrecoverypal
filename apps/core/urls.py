@@ -28,4 +28,5 @@ urlpatterns = [
     path('opioid-recovery-app/', views.OpioidRecoveryAppView.as_view(), name='opioid_recovery_app'),
     path('gambling-addiction-app/', views.GamblingAddictionAppView.as_view(), name='gambling_addiction_app'),
     path('mental-health-recovery-app/', views.MentalHealthRecoveryAppView.as_view(), name='mental_health_recovery_app'),
+    path('sobriety-calculator/', views.SobrietyCalculatorView.as_view(), name='sobriety_calculator'),
 ]
