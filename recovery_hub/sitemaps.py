@@ -20,21 +20,44 @@ class StaticViewSitemap(Sitemap):
     def items(self):
         # List all your public static pages with priorities
         return [
-            ('core:index', 1.0),  # Home page - highest priority
-            ('blog:post_list', 0.9),  # Blog listing
-            ('core:demo', 0.8),  # Demo/tour page - important for discovery
+            # Home page - highest priority
+            ('core:index', 1.0),
+
+            # Blog listing
+            ('blog:post_list', 0.9),
+
+            # HIGH PRIORITY: SEO Landing Pages (high-value keywords)
+            ('core:sobriety_calculator', 0.95),  # Interactive tool - highest engagement
+            ('core:sobriety_counter_app', 0.9),  # "sobriety counter app" keyword
+            ('core:sober_grid_alternative', 0.9),  # "sober grid alternative" keyword
+            ('core:alcohol_recovery_app', 0.85),  # "alcohol recovery app" keyword
+            ('core:drug_addiction_recovery_app', 0.85),  # "drug addiction app" keyword
+            ('core:free_aa_app', 0.85),  # "free AA app" keyword
+            ('core:opioid_recovery_app', 0.85),  # "opioid recovery app" keyword
+            ('core:gambling_addiction_app', 0.85),  # "gambling addiction app" keyword
+            ('core:mental_health_recovery_app', 0.85),  # "mental health recovery app" keyword
+
+            # Core pages
+            ('core:demo', 0.8),  # Demo/tour page
             ('core:about', 0.8),  # About page
-            ('core:crisis', 0.8),  # Crisis resources - important
-            ('core:sober_grid_alternative', 0.9),  # Sober Grid alternative - SEO landing page
+            ('core:crisis', 0.8),  # Crisis resources
+
+            # Community pages
             ('core:contact', 0.7),  # Contact page
             ('core:success_stories', 0.7),  # Success stories
             ('core:team', 0.6),  # Team page
             ('core:guidelines', 0.6),  # Community guidelines
+
+            # Account pages
             ('accounts:login', 0.5),  # Login
-            ('accounts:register', 0.6),  # Signup - use register instead of signup
+            ('accounts:register', 0.6),  # Signup
+
+            # Legal pages
             ('core:privacy', 0.5),  # Privacy policy
             ('core:terms', 0.5),  # Terms of service
             ('core:cookies', 0.4),  # Cookie policy
+
+            # Store
             ('store:product_list', 0.5),  # Store
         ]
 
