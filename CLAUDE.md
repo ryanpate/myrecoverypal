@@ -439,6 +439,36 @@ High-volume keyword blog posts (83K combined monthly searches):
 - `/blog/high-functioning-alcoholic-signs-help/`
 - `/blog/dopamine-detox-addiction-recovery/`
 
+### URGENT - Google Search Console Manual Indexing
+**Submit these URLs in priority order** (index quota reached - submit manually via URL Inspection tool):
+
+**Priority 1 - Highest SEO Value (submit first):**
+- [ ] `https://www.myrecoverypal.com/sobriety-calculator/` - NEW interactive tool, targets calculator keywords
+- [ ] `https://www.myrecoverypal.com/sobriety-counter-app/` - Already getting 29 impressions, needs indexing boost
+- [ ] `https://www.myrecoverypal.com/sober-grid-alternative/` - Position 4.89, close to page 1
+
+**Priority 2 - High-Volume Blog Posts (83K monthly searches combined):**
+- [ ] `https://www.myrecoverypal.com/blog/how-long-does-alcohol-withdrawal-last/` - 22K/mo searches
+- [ ] `https://www.myrecoverypal.com/blog/signs-of-alcoholism-self-assessment/` - 18K/mo searches
+- [ ] `https://www.myrecoverypal.com/blog/how-to-stop-drinking-alcohol-guide/` - 14K/mo searches
+- [ ] `https://www.myrecoverypal.com/blog/what-is-sober-curious-guide/` - 12K/mo searches
+- [ ] `https://www.myrecoverypal.com/blog/high-functioning-alcoholic-signs-help/` - 9K/mo searches
+- [ ] `https://www.myrecoverypal.com/blog/dopamine-detox-addiction-recovery/` - 8K/mo searches
+
+**Priority 3 - Other SEO Landing Pages:**
+- [ ] `https://www.myrecoverypal.com/alcohol-recovery-app/`
+- [ ] `https://www.myrecoverypal.com/drug-addiction-recovery-app/`
+- [ ] `https://www.myrecoverypal.com/free-aa-app/`
+- [ ] `https://www.myrecoverypal.com/opioid-recovery-app/`
+- [ ] `https://www.myrecoverypal.com/gambling-addiction-app/`
+- [ ] `https://www.myrecoverypal.com/mental-health-recovery-app/`
+
+**Priority 4 - Core Pages:**
+- [ ] `https://www.myrecoverypal.com/`
+- [ ] `https://www.myrecoverypal.com/blog/`
+- [ ] `https://www.myrecoverypal.com/about/`
+- [ ] `https://www.myrecoverypal.com/crisis/`
+
 ### MEDIUM - Backlink Building
 - [ ] Sign up for Connectively (formerly HARO) - get quoted in articles
 - [ ] Guest post outreach to: The Fix, Recovery.org, Sober Nation
