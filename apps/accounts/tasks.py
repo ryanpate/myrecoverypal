@@ -37,7 +37,7 @@ def send_welcome_email_day_1(self, user_id):
 
         site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
 
-        html_message = render_to_string('accounts/emails/welcome_day_1.html', {
+        html_message = render_to_string('emails/welcome_day_1.html', {
             'user': user,
             'site_url': site_url,
             'current_year': timezone.now().year,
@@ -95,7 +95,7 @@ def send_welcome_emails_day_3():
 
     for user in users:
         try:
-            html_message = render_to_string('accounts/emails/welcome_day_3.html', {
+            html_message = render_to_string('emails/welcome_day_3.html', {
                 'user': user,
                 'site_url': site_url,
                 'has_completed_onboarding': user.has_completed_onboarding,
@@ -157,7 +157,7 @@ def send_welcome_emails_day_7():
             following_count = user.following.filter(status='active').count()
             checkin_count = user.daily_checkins.count()
 
-            html_message = render_to_string('accounts/emails/welcome_day_7.html', {
+            html_message = render_to_string('emails/welcome_day_7.html', {
                 'user': user,
                 'site_url': site_url,
                 'post_count': post_count,
@@ -228,7 +228,7 @@ def send_checkin_reminders():
             streak = user.get_checkin_streak()
             last_checkin = user.daily_checkins.order_by('-date').first()
 
-            html_message = render_to_string('accounts/emails/checkin_reminder.html', {
+            html_message = render_to_string('emails/checkin_reminder.html', {
                 'user': user,
                 'site_url': site_url,
                 'streak': streak,
@@ -315,7 +315,7 @@ def send_weekly_digests():
             if not new_followers.exists() and unread_notifications == 0 and not popular_posts.exists():
                 continue
 
-            html_message = render_to_string('accounts/emails/weekly_digest.html', {
+            html_message = render_to_string('emails/weekly_digest.html', {
                 'user': user,
                 'site_url': site_url,
                 'new_followers': new_followers,
