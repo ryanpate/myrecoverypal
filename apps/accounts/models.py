@@ -229,6 +229,82 @@ class User(AbstractUser):
             'days_until': next_milestone - days
         }
 
+    def get_profile_completion(self):
+        """
+        Calculate profile completion percentage for progressive onboarding.
+        Returns dict with percentage and list of incomplete items.
+        """
+        completed = 0
+        total = 6
+        incomplete_items = []
+
+        # Check each profile component
+        if self.recovery_stage:
+            completed += 1
+        else:
+            incomplete_items.append({
+                'field': 'recovery_stage',
+                'label': 'Recovery stage',
+                'step': 1
+            })
+
+        if self.interests and len(self.interests) > 0:
+            completed += 1
+        else:
+            incomplete_items.append({
+                'field': 'interests',
+                'label': 'Interests',
+                'step': 2
+            })
+
+        if self.first_name:
+            completed += 1
+        else:
+            incomplete_items.append({
+                'field': 'first_name',
+                'label': 'Display name',
+                'step': 3
+            })
+
+        if self.bio:
+            completed += 1
+        else:
+            incomplete_items.append({
+                'field': 'bio',
+                'label': 'Bio',
+                'step': 3
+            })
+
+        if self.avatar:
+            completed += 1
+        else:
+            incomplete_items.append({
+                'field': 'avatar',
+                'label': 'Profile photo',
+                'step': 3
+            })
+
+        # Check if user has followed anyone
+        if self.following_count > 0:
+            completed += 1
+        else:
+            incomplete_items.append({
+                'field': 'following',
+                'label': 'Follow someone',
+                'step': 5
+            })
+
+        percentage = int((completed / total) * 100)
+
+        return {
+            'percentage': percentage,
+            'completed': completed,
+            'total': total,
+            'incomplete_items': incomplete_items,
+            'is_complete': completed == total,
+            'next_step': incomplete_items[0]['step'] if incomplete_items else None
+        }
+
     def get_absolute_url(self):
         return reverse('accounts:profile', kwargs={'username': self.username})
 

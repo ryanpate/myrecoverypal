@@ -89,8 +89,8 @@ def register_view(request):
                         days_sober=0
                     )
 
-                # Redirect to onboarding for new users
-                return redirect('accounts:onboarding')
+                # Redirect to social feed - onboarding is now progressive
+                return redirect('accounts:social_feed')
         else:
             form = CustomUserCreationForm()
 
@@ -133,8 +133,8 @@ def register_view(request):
                     days_sober=0
                 )
 
-            # Redirect to onboarding for new users
-            return redirect('accounts:onboarding')
+            # Redirect to social feed - onboarding is now progressive
+            return redirect('accounts:social_feed')
     else:
         # Pre-fill invite code if provided in URL
         initial = {'invite_code': invite_code} if invite_code else {}
@@ -3405,6 +3405,13 @@ def social_feed_view(request):
             'is_gated': is_gated,
             'total_posts_count': total_posts_count,
         }
+
+        # Add profile completion for progressive onboarding banner
+        if request.user.is_authenticated:
+            profile_completion = request.user.get_profile_completion()
+            context['profile_completion'] = profile_completion
+            context['show_profile_banner'] = not profile_completion['is_complete'] and not request.user.has_completed_onboarding
+
         return render(request, 'accounts/social_feed.html', context)
     except Exception:
         # Migration not run yet, show empty feed
@@ -3421,9 +3428,8 @@ def hybrid_landing_view(request):
     """
     user = request.user
 
-    # Redirect to onboarding if not completed (for authenticated users)
-    if user.is_authenticated and hasattr(user, 'has_completed_onboarding') and not user.has_completed_onboarding:
-        return redirect('accounts:onboarding')
+    # Progressive onboarding: Don't redirect, show profile completion banner instead
+    # Users can now use the app immediately and complete profile later
 
     try:
         # Initialize context
@@ -3474,6 +3480,9 @@ def hybrid_landing_view(request):
                     show_celebration = True
                     request.session[celebration_key] = True
 
+            # Profile completion for progressive onboarding banner
+            profile_completion = user.get_profile_completion()
+
             context.update({
                 # User basics
                 'user': user,
@@ -3499,6 +3508,10 @@ def hybrid_landing_view(request):
                 'checkin_streak': checkin_streak,
                 'milestone_to_celebrate': milestone_to_celebrate if show_celebration else None,
                 'next_milestone': next_milestone,
+
+                # Progressive onboarding
+                'profile_completion': profile_completion,
+                'show_profile_banner': not profile_completion['is_complete'] and not user.has_completed_onboarding,
             })
         else:
             # For unauthenticated users, only show public posts

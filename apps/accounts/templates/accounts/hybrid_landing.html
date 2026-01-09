@@ -1185,6 +1185,145 @@
             display: none !important;
         }
     }
+
+    /* Profile Completion Banner */
+    .profile-completion-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 12px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .banner-content {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        flex-wrap: wrap;
+    }
+
+    .banner-progress {
+        flex-shrink: 0;
+    }
+
+    .progress-circle {
+        width: 60px;
+        height: 60px;
+        position: relative;
+    }
+
+    .progress-circle svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+    }
+
+    .circle-bg {
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.2);
+        stroke-width: 3;
+    }
+
+    .circle-progress {
+        fill: none;
+        stroke: white;
+        stroke-width: 3;
+        stroke-linecap: round;
+        transition: stroke-dasharray 0.5s ease;
+    }
+
+    .progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+    .banner-text {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .banner-text h4 {
+        margin: 0 0 0.25rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .banner-text p {
+        margin: 0;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .banner-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-shrink: 0;
+    }
+
+    .btn-complete {
+        background: white;
+        color: #667eea;
+        padding: 0.6rem 1.25rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
+    }
+
+    .btn-complete:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        color: #667eea;
+        text-decoration: none;
+    }
+
+    .btn-dismiss {
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .btn-dismiss:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+    @media (max-width: 600px) {
+        .banner-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .banner-actions {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-complete {
+            flex: 1;
+            justify-content: center;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -1231,6 +1370,39 @@
         <button class="celebration-close" onclick="closeCelebration()">
             <i class="fas fa-heart"></i> Keep Going!
         </button>
+    </div>
+</div>
+{% endif %}
+
+<!-- Profile Completion Banner (Progressive Onboarding) -->
+{% if show_profile_banner %}
+<div class="profile-completion-banner" id="profile-banner">
+    <div class="banner-content">
+        <div class="banner-progress">
+            <div class="progress-circle" data-percentage="{{ profile_completion.percentage }}">
+                <svg viewBox="0 0 36 36">
+                    <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                    <path class="circle-progress" stroke-dasharray="{{ profile_completion.percentage }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                </svg>
+                <span class="progress-text">{{ profile_completion.percentage }}%</span>
+            </div>
+        </div>
+        <div class="banner-text">
+            <h4>Complete your profile to connect better</h4>
+            <p>
+                {% if profile_completion.incomplete_items %}
+                Next: Add your {{ profile_completion.incomplete_items.0.label|lower }}
+                {% endif %}
+            </p>
+        </div>
+        <div class="banner-actions">
+            <a href="{% url 'accounts:onboarding' %}?step={{ profile_completion.next_step|default:1 }}" class="btn-complete">
+                <i class="fas fa-user-edit"></i> Complete Profile
+            </a>
+            <button class="btn-dismiss" onclick="dismissProfileBanner()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
     </div>
 </div>
 {% endif %}
@@ -2425,5 +2597,26 @@ document.head.appendChild(styleSheet);
         currentY = 0;
     }, { passive: true });
 })();
+
+// Profile Banner Dismiss
+function dismissProfileBanner() {
+    const banner = document.getElementById('profile-banner');
+    if (banner) {
+        banner.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => {
+            banner.remove();
+        }, 300);
+        // Store dismissal in session so it doesn't reappear on this session
+        sessionStorage.setItem('profile_banner_dismissed', 'true');
+    }
+}
+
+// Check if banner was dismissed in this session
+document.addEventListener('DOMContentLoaded', function() {
+    if (sessionStorage.getItem('profile_banner_dismissed') === 'true') {
+        const banner = document.getElementById('profile-banner');
+        if (banner) banner.remove();
+    }
+});
 </script>
 {% endblock %}
