@@ -140,27 +140,211 @@
         color: white;
     }
 
-    /* Sobriety Counter */
-    .sobriety-counter {
-        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
-        color: white;
+    /* Enhanced Sobriety Counter Widget */
+    .sobriety-widget {
+        background: linear-gradient(135deg, #1e4d8b 0%, #2d5a9e 50%, #52b788 100%);
+        border-radius: 20px;
         padding: 2rem;
-        border-radius: 10px;
-        text-align: center;
         margin-bottom: 2rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 40px rgba(30, 77, 139, 0.3);
+        position: relative;
+        overflow: hidden;
     }
 
-    .sobriety-days {
-        font-size: 3rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    .sobriety-widget::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        pointer-events: none;
     }
 
-    .sobriety-label {
-        font-size: 1.2rem;
+    .sobriety-widget-inner {
+        position: relative;
+        z-index: 1;
+    }
+
+    .sobriety-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .sobriety-title {
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
         opacity: 0.95;
+    }
+
+    .sobriety-share-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .sobriety-share-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+    }
+
+    .sobriety-main {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .sobriety-days-big {
+        font-size: 5rem;
+        font-weight: 800;
+        color: white;
+        line-height: 1;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        margin-bottom: 0.25rem;
+    }
+
+    .sobriety-days-label {
+        font-size: 1.5rem;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .sobriety-breakdown {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+        flex-wrap: wrap;
+    }
+
+    .sobriety-unit {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        min-width: 80px;
+    }
+
+    .sobriety-unit-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: white;
+        display: block;
+    }
+
+    .sobriety-unit-label {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .sobriety-start-date {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .sobriety-start-date i {
+        margin-right: 0.4rem;
+    }
+
+    /* Next Milestone Progress */
+    .sobriety-milestone {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+    }
+
+    .milestone-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+
+    .milestone-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .milestone-target {
+        color: #ffd700;
+        font-weight: 700;
+        font-size: 0.95rem;
+    }
+
+    .milestone-progress-bar {
+        height: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+
+    .milestone-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #ffd700, #ffeb3b);
+        border-radius: 4px;
+        transition: width 0.5s ease;
+    }
+
+    .milestone-days-left {
+        text-align: right;
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 0.8rem;
+    }
+
+    /* Motivational Message */
+    .sobriety-motivation {
+        text-align: center;
+        margin-top: 1.25rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .sobriety-motivation p {
+        color: rgba(255, 255, 255, 0.9);
+        font-style: italic;
+        font-size: 0.95rem;
+        margin: 0;
+    }
+
+    @media (max-width: 480px) {
+        .sobriety-days-big {
+            font-size: 3.5rem;
+        }
+
+        .sobriety-breakdown {
+            gap: 0.75rem;
+        }
+
+        .sobriety-unit {
+            min-width: 70px;
+            padding: 0.75rem 1rem;
+        }
+
+        .sobriety-unit-value {
+            font-size: 1.5rem;
+        }
     }
 
     /* Bio Section */
@@ -509,15 +693,75 @@
     {% endif %}
 
     {% if show_full_profile %}
-    <!-- Sobriety Counter -->
+    <!-- Enhanced Sobriety Counter Widget -->
     {% if profile_user.show_sobriety_date and profile_user.sobriety_date %}
-    <div class="sobriety-counter">
-        <div class="sobriety-days">{{ profile_user.get_days_sober }}</div>
-        <div class="sobriety-label">Days of Sobriety</div>
-        <p style="margin-top: 1rem; opacity: 0.95;">
-            <i class="fas fa-calendar-check"></i> Clean since {{ profile_user.sobriety_date|date:"F d, Y" }}
-        </p>
+    {% with days_sober=profile_user.get_days_sober %}
+    <div class="sobriety-widget">
+        <div class="sobriety-widget-inner">
+            <div class="sobriety-header">
+                <div class="sobriety-title">
+                    <i class="fas fa-medal"></i> Sobriety Journey
+                </div>
+                <button class="sobriety-share-btn" onclick="shareSobriety({{ days_sober }})">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
+            </div>
+
+            <div class="sobriety-main">
+                <div class="sobriety-days-big">{{ days_sober }}</div>
+                <div class="sobriety-days-label">Days Sober</div>
+            </div>
+
+            <div class="sobriety-breakdown">
+                <div class="sobriety-unit">
+                    <span class="sobriety-unit-value">{% widthratio days_sober 365 1 %}</span>
+                    <span class="sobriety-unit-label">Years</span>
+                </div>
+                <div class="sobriety-unit">
+                    <span class="sobriety-unit-value">{% widthratio days_sober 30 1 %}</span>
+                    <span class="sobriety-unit-label">Months</span>
+                </div>
+                <div class="sobriety-unit">
+                    <span class="sobriety-unit-value">{% widthratio days_sober 7 1 %}</span>
+                    <span class="sobriety-unit-label">Weeks</span>
+                </div>
+            </div>
+
+            <div class="sobriety-start-date">
+                <i class="fas fa-calendar-check"></i> Clean since {{ profile_user.sobriety_date|date:"F j, Y" }}
+            </div>
+
+            <!-- Next Milestone Progress -->
+            {% if next_sobriety_milestone %}
+            <div class="sobriety-milestone">
+                <div class="milestone-header">
+                    <span class="milestone-label"><i class="fas fa-flag-checkered"></i> Next Milestone</span>
+                    <span class="milestone-target">{{ next_sobriety_milestone.days }} Days</span>
+                </div>
+                <div class="milestone-progress-bar">
+                    <div class="milestone-progress-fill" style="width: {{ next_sobriety_milestone.progress }}%;"></div>
+                </div>
+                <div class="milestone-days-left">{{ next_sobriety_milestone.days_until }} days to go</div>
+            </div>
+            {% endif %}
+
+            <!-- Motivational Message -->
+            <div class="sobriety-motivation">
+                {% if days_sober < 7 %}
+                <p>"The first week is the hardest. You're doing amazing!"</p>
+                {% elif days_sober < 30 %}
+                <p>"Every day you're getting stronger. Keep going!"</p>
+                {% elif days_sober < 90 %}
+                <p>"You've built real momentum. Your commitment is inspiring!"</p>
+                {% elif days_sober < 365 %}
+                <p>"You're transforming your life one day at a time."</p>
+                {% else %}
+                <p>"A true warrior in recovery. Your journey inspires others!"</p>
+                {% endif %}
+            </div>
+        </div>
     </div>
+    {% endwith %}
     {% endif %}
 
     <!-- Bio Section -->
@@ -655,6 +899,36 @@ function showShareSuccess(button) {
         button.classList.remove('shared');
         button.innerHTML = '<i class="fas fa-share-alt"></i>';
     }, 2000);
+}
+
+// Share sobriety counter
+async function shareSobriety(days) {
+    const message = days === 1
+        ? `I'm celebrating 1 day sober!`
+        : `I'm celebrating ${days} days sober!`;
+
+    const shareData = {
+        title: 'My Sobriety Journey',
+        text: `${message} Every day is a victory. #Recovery #SobrietyJourney #MyRecoveryPal`,
+        url: window.location.origin
+    };
+
+    if (navigator.share) {
+        try {
+            await navigator.share(shareData);
+        } catch (err) {
+            console.log('Share cancelled or failed:', err);
+        }
+    } else {
+        // Fallback: copy to clipboard
+        const shareText = `${message} Every day is a victory. #Recovery #SobrietyJourney #MyRecoveryPal\n\nJoin our supportive community at ${window.location.origin}`;
+        try {
+            await navigator.clipboard.writeText(shareText);
+            alert('Copied to clipboard! Share your progress on social media.');
+        } catch (err) {
+            console.error('Could not copy text:', err);
+        }
+    }
 }
 </script>
 {% endblock %}

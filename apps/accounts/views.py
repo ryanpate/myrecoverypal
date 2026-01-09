@@ -2217,7 +2217,7 @@ class ProfileView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile_user = self.get_object()
-        
+
         # Only show certain information if profile is public or it's the user's own profile
         if profile_user == self.request.user or profile_user.is_profile_public:
             context['show_full_profile'] = True
@@ -2225,15 +2225,46 @@ class ProfileView(DetailView):
             context['recent_posts'] = profile_user.blog_posts.filter(
                 status='published'
             )[:5] if hasattr(profile_user, 'blog_posts') else []
-            
+
             # Add recent activities for this user
             context['user_activities'] = ActivityFeed.objects.filter(
                 user=profile_user,
                 is_public=True
             )[:10]
+
+            # Calculate next sobriety milestone for the widget
+            if profile_user.sobriety_date and profile_user.show_sobriety_date:
+                days_sober = profile_user.get_days_sober()
+                # Define milestone thresholds
+                milestones = [1, 7, 14, 30, 60, 90, 100, 180, 270, 365, 500, 730, 1000, 1095, 1460, 1825, 2555, 3650]
+
+                next_milestone = None
+                for m in milestones:
+                    if days_sober < m:
+                        next_milestone = m
+                        break
+
+                if next_milestone:
+                    # Find previous milestone for progress calculation
+                    prev_milestone = 0
+                    for m in milestones:
+                        if m < next_milestone and days_sober >= m:
+                            prev_milestone = m
+                        elif m >= next_milestone:
+                            break
+
+                    days_in_range = next_milestone - prev_milestone
+                    days_completed = days_sober - prev_milestone
+                    progress = int((days_completed / days_in_range) * 100) if days_in_range > 0 else 0
+
+                    context['next_sobriety_milestone'] = {
+                        'days': next_milestone,
+                        'progress': min(progress, 100),
+                        'days_until': next_milestone - days_sober
+                    }
         else:
             context['show_full_profile'] = False
-        
+
         return context
 
 @login_required
