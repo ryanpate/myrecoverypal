@@ -3372,27 +3372,39 @@ def create_notification(recipient, sender, notification_type, title, message, li
 def social_feed_view(request):
     """Display the social media feed"""
     try:
+        user = request.user
+
         # Get posts visible to the current user
         posts = SocialPost.objects.select_related('author').prefetch_related(
             'likes',
             'comments__author'
-        ).all()
+        ).order_by('-created_at')
 
         # Filter posts based on visibility
         visible_posts = []
+        following_posts = []  # Posts from users they follow
+
+        if user.is_authenticated:
+            following_ids = set(user.get_following().values_list('id', flat=True))
+        else:
+            following_ids = set()
+
         for post in posts:
-            if post.is_visible_to(request.user):
+            if post.is_visible_to(user if user.is_authenticated else None):
                 visible_posts.append(post)
+                # Track posts from followed users
+                if user.is_authenticated and post.author_id in following_ids:
+                    following_posts.append(post)
 
         # For anonymous users, limit to 3 posts to encourage signup
         is_gated = False
         total_posts_count = len(visible_posts)
-        if not request.user.is_authenticated and len(visible_posts) > 3:
+        if not user.is_authenticated and len(visible_posts) > 3:
             visible_posts = visible_posts[:3]
             is_gated = True
 
         # Pagination (only for authenticated users)
-        if request.user.is_authenticated:
+        if user.is_authenticated:
             paginator = Paginator(visible_posts, 20)
             page_number = request.GET.get('page')
             page_obj = paginator.get_page(page_number)
@@ -3401,16 +3413,47 @@ def social_feed_view(request):
 
         context = {
             'page_obj': page_obj,
-            'posts': visible_posts if not request.user.is_authenticated else page_obj,
+            'posts': visible_posts if not user.is_authenticated else page_obj,
             'is_gated': is_gated,
             'total_posts_count': total_posts_count,
         }
 
-        # Add profile completion for progressive onboarding banner
-        if request.user.is_authenticated:
-            profile_completion = request.user.get_profile_completion()
+        # For authenticated users, check if feed is empty/sparse and add suggestions
+        if user.is_authenticated:
+            profile_completion = user.get_profile_completion()
             context['profile_completion'] = profile_completion
-            context['show_profile_banner'] = not profile_completion['is_complete'] and not request.user.has_completed_onboarding
+            context['show_profile_banner'] = not profile_completion['is_complete'] and not user.has_completed_onboarding
+
+            # Check if user has a sparse feed (following few people or few posts from followed users)
+            is_new_user = len(following_ids) < 3
+            has_sparse_feed = len(following_posts) < 5
+
+            if is_new_user or has_sparse_feed:
+                # Get suggested users to follow
+                from django.db.models import Count, Q
+
+                suggested_users = User.objects.filter(
+                    is_active=True,
+                    is_profile_public=True
+                ).exclude(
+                    id=user.id
+                ).exclude(
+                    id__in=following_ids
+                ).annotate(
+                    followers_count=Count('followers', filter=Q(followers__connection_type='follow')),
+                    posts_count=Count('social_posts')
+                ).filter(
+                    posts_count__gt=0  # Only suggest users who have posted
+                ).order_by('-followers_count', '-posts_count')[:6]
+
+                context['suggested_users'] = suggested_users
+                context['show_suggestions'] = True
+                context['is_new_user'] = is_new_user
+                context['following_count'] = len(following_ids)
+
+                # Get discover posts (recent public posts from users they don't follow)
+                discover_posts = [p for p in visible_posts if p.author_id not in following_ids and p.author_id != user.id][:5]
+                context['discover_posts'] = discover_posts
 
         return render(request, 'accounts/social_feed.html', context)
     except Exception:
