@@ -2645,6 +2645,12 @@ class EnhancedCommunityView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # Calculate total members count (all active users, not just paginated)
+        total_members = User.objects.filter(
+            is_active=True
+        ).exclude(id=self.request.user.id if self.request.user.is_authenticated else None).count()
+        context['total_members'] = total_members
+
         # Calculate online count
         five_minutes_ago = timezone.now() - timedelta(minutes=5)
         online_count = User.objects.filter(
