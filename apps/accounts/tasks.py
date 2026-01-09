@@ -1,13 +1,44 @@
 from celery import shared_task
-from django.core.mail import send_mail
+from django.core.mail import send_mail, get_connection, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.utils import timezone
 from django.conf import settings
 from datetime import timedelta
 import logging
+import time
 
 logger = logging.getLogger(__name__)
+
+
+def send_email_with_retry(subject, plain_message, html_message, recipient_email, max_retries=3):
+    """
+    Send an email with retry logic for transient SMTP errors.
+    Returns True if successful, False otherwise.
+    """
+    for attempt in range(max_retries):
+        try:
+            send_mail(
+                subject=subject,
+                message=plain_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[recipient_email],
+                html_message=html_message,
+                fail_silently=False,
+            )
+            return True
+        except Exception as e:
+            error_msg = str(e).lower()
+            # Retry on transient connection errors
+            if any(x in error_msg for x in ['connection', 'timeout', 'closed', 'reset', 'refused']):
+                if attempt < max_retries - 1:
+                    wait_time = (attempt + 1) * 2  # Exponential backoff: 2s, 4s, 6s
+                    logger.warning(f"Email send attempt {attempt + 1} failed for {recipient_email}: {e}. Retrying in {wait_time}s...")
+                    time.sleep(wait_time)
+                    continue
+            # Non-transient error or max retries reached
+            raise
+    return False
 
 
 # ========================================
@@ -67,8 +98,8 @@ def send_welcome_email_day_1(self, user_id):
         raise self.retry(exc=e, countdown=60)
 
 
-@shared_task
-def send_welcome_emails_day_3():
+@shared_task(bind=True, max_retries=3)
+def send_welcome_emails_day_3(self):
     """
     Scheduled task to send Day 3 welcome emails.
     Sent to users who joined 3+ days ago and haven't received this email yet.
@@ -91,6 +122,7 @@ def send_welcome_emails_day_3():
     )
 
     sent_count = 0
+    failed_count = 0
     site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
 
     for user in users:
@@ -104,28 +136,31 @@ def send_welcome_emails_day_3():
             })
             plain_message = strip_tags(html_message)
 
-            send_mail(
+            # Use retry helper for transient SMTP errors
+            send_email_with_retry(
                 subject="How's your recovery journey going? 💪",
-                message=plain_message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
+                plain_message=plain_message,
                 html_message=html_message,
-                fail_silently=False,
+                recipient_email=user.email,
             )
 
             user.welcome_email_2_sent = timezone.now()
             user.save(update_fields=['welcome_email_2_sent'])
             sent_count += 1
 
+            # Small delay between emails to avoid rate limiting
+            time.sleep(0.5)
+
         except Exception as e:
+            failed_count += 1
             logger.error(f"Error sending Day 3 email to {user.email}: {e}")
 
-    logger.info(f"Welcome email Day 3 sent to {sent_count} users")
+    logger.info(f"Welcome email Day 3 sent to {sent_count} users, {failed_count} failed")
     return sent_count
 
 
-@shared_task
-def send_welcome_emails_day_7():
+@shared_task(bind=True, max_retries=3)
+def send_welcome_emails_day_7(self):
     """
     Scheduled task to send Day 7 welcome emails.
     Celebrates their first week and encourages engagement.
@@ -147,6 +182,7 @@ def send_welcome_emails_day_7():
     )
 
     sent_count = 0
+    failed_count = 0
     site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
 
     for user in users:
@@ -169,23 +205,26 @@ def send_welcome_emails_day_7():
             })
             plain_message = strip_tags(html_message)
 
-            send_mail(
+            # Use retry helper for transient SMTP errors
+            send_email_with_retry(
                 subject="🎉 One week with MyRecoveryPal!",
-                message=plain_message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
+                plain_message=plain_message,
                 html_message=html_message,
-                fail_silently=False,
+                recipient_email=user.email,
             )
 
             user.welcome_email_3_sent = timezone.now()
             user.save(update_fields=['welcome_email_3_sent'])
             sent_count += 1
 
+            # Small delay between emails to avoid rate limiting
+            time.sleep(0.5)
+
         except Exception as e:
+            failed_count += 1
             logger.error(f"Error sending Day 7 email to {user.email}: {e}")
 
-    logger.info(f"Welcome email Day 7 sent to {sent_count} users")
+    logger.info(f"Welcome email Day 7 sent to {sent_count} users, {failed_count} failed")
     return sent_count
 
 
@@ -193,8 +232,8 @@ def send_welcome_emails_day_7():
 # Daily Check-in Reminder
 # ========================================
 
-@shared_task
-def send_checkin_reminders():
+@shared_task(bind=True, max_retries=3)
+def send_checkin_reminders(self):
     """
     Send check-in reminders to users who haven't checked in today.
     Only sends to users who have checked in before (engaged users).
@@ -220,6 +259,7 @@ def send_checkin_reminders():
     ).distinct()
 
     sent_count = 0
+    failed_count = 0
     site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
 
     for user in users_with_prior_checkins:
@@ -238,23 +278,26 @@ def send_checkin_reminders():
             })
             plain_message = strip_tags(html_message)
 
-            send_mail(
+            # Use retry helper for transient SMTP errors
+            send_email_with_retry(
                 subject="Don't break your streak! Check in today 🔥",
-                message=plain_message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
+                plain_message=plain_message,
                 html_message=html_message,
-                fail_silently=False,
+                recipient_email=user.email,
             )
 
             user.last_checkin_reminder_sent = timezone.now()
             user.save(update_fields=['last_checkin_reminder_sent'])
             sent_count += 1
 
+            # Small delay between emails to avoid rate limiting
+            time.sleep(0.5)
+
         except Exception as e:
+            failed_count += 1
             logger.error(f"Error sending check-in reminder to {user.email}: {e}")
 
-    logger.info(f"Check-in reminders sent to {sent_count} users")
+    logger.info(f"Check-in reminders sent to {sent_count} users, {failed_count} failed")
     return sent_count
 
 
@@ -262,8 +305,8 @@ def send_checkin_reminders():
 # Weekly Digest Email
 # ========================================
 
-@shared_task
-def send_weekly_digests():
+@shared_task(bind=True, max_retries=3)
+def send_weekly_digests(self):
     """
     Send weekly digest emails summarizing activity.
     Includes: new followers, missed posts, community highlights.
@@ -283,6 +326,8 @@ def send_weekly_digests():
     )
 
     sent_count = 0
+    failed_count = 0
+    skipped_count = 0
     site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
 
     for user in users:
@@ -313,6 +358,7 @@ def send_weekly_digests():
 
             # If no activity, skip sending
             if not new_followers.exists() and unread_notifications == 0 and not popular_posts.exists():
+                skipped_count += 1
                 continue
 
             html_message = render_to_string('emails/weekly_digest.html', {
@@ -327,23 +373,26 @@ def send_weekly_digests():
             })
             plain_message = strip_tags(html_message)
 
-            send_mail(
+            # Use retry helper for transient SMTP errors
+            send_email_with_retry(
                 subject="Your weekly recovery recap 📬",
-                message=plain_message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
+                plain_message=plain_message,
                 html_message=html_message,
-                fail_silently=False,
+                recipient_email=user.email,
             )
 
             user.last_weekly_digest_sent = timezone.now()
             user.save(update_fields=['last_weekly_digest_sent'])
             sent_count += 1
 
+            # Small delay between emails to avoid rate limiting
+            time.sleep(0.5)
+
         except Exception as e:
+            failed_count += 1
             logger.error(f"Error sending weekly digest to {user.email}: {e}")
 
-    logger.info(f"Weekly digests sent to {sent_count} users")
+    logger.info(f"Weekly digests sent to {sent_count} users, {failed_count} failed, {skipped_count} skipped (no activity)")
     return sent_count
 
 
