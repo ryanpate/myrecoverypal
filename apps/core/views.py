@@ -158,32 +158,13 @@ def ads_txt_view(request):
     """
     Serve the ads.txt file for Google AdSense verification.
     """
-    import os
-    from django.conf import settings
     from django.http import HttpResponse
 
-    # Try to find ads.txt in multiple locations
-    ads_paths = [
-        os.path.join(settings.BASE_DIR, 'root_files', 'ads.txt'),
-        os.path.join(settings.BASE_DIR, 'ads.txt'),
-        os.path.join(settings.STATIC_ROOT, 'ads.txt') if hasattr(settings, 'STATIC_ROOT') and settings.STATIC_ROOT else None,
-    ]
+    # Hardcoded ads.txt content for reliability
+    # This ensures Google AdSense can always verify the file
+    ads_content = "google.com, pub-5523870768931777, DIRECT, f08c47fec0942fa0"
 
-    ads_content = None
-    for path in ads_paths:
-        if path and os.path.exists(path):
-            try:
-                with open(path, 'r', encoding='utf-8') as f:
-                    ads_content = f.read()
-                break
-            except Exception:
-                continue
-
-    if ads_content:
-        return HttpResponse(ads_content, content_type='text/plain')
-
-    # If no file found, return empty response
-    return HttpResponse('', content_type='text/plain', status=404)
+    return HttpResponse(ads_content, content_type='text/plain')
 
 
 # Robots.txt View - serves static robots.txt
