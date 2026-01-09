@@ -395,7 +395,7 @@
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="stat-card">
-                    <div class="stat-number">{{ badges|length|default:0 }}</div>
+                    <div class="stat-number">{{ stats.badges_earned|default:0 }}</div>
                     <div class="stat-label">Badges Earned</div>
                 </div>
             </div>
@@ -479,18 +479,18 @@
 
     <div class="row mt-4">
         <!-- Badges Earned -->
-        {% if badges %}
+        {% if user_badges %}
         <div class="col-lg-6">
             <div class="badges-earned">
                 <h4 class="mb-3"><i class="fas fa-medal"></i> Recent Badges</h4>
-                {% for badge in badges|slice:":5" %}
-                <div class="badge-item rarity-{{ badge.rarity|default:1 }}">
+                {% for user_badge in user_badges|slice:":5" %}
+                <div class="badge-item rarity-{{ user_badge.badge.rarity_level|default:1 }}">
                     <div class="badge-icon">
                         <i class="fas fa-trophy"></i>
                     </div>
                     <div class="badge-info">
-                        <div class="badge-name">{{ badge.name }}</div>
-                        <div class="badge-date">Earned {{ badge.earned_date|date:"M d, Y" }}</div>
+                        <div class="badge-name">{{ user_badge.badge.name }}</div>
+                        <div class="badge-date">Earned {{ user_badge.earned_date|date:"M d, Y" }}</div>
                     </div>
                 </div>
                 {% endfor %}

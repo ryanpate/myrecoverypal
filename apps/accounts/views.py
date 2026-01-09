@@ -1361,8 +1361,10 @@ class RecoveryGroupDetailView(LoginRequiredMixin, DetailView):
             context['recent_posts'] = group.posts.select_related('author').prefetch_related(
                 'comments__author'
             ).order_by('-is_pinned', '-created_at')[:10]
+            context['posts_count'] = group.posts.count()
         else:
             context['recent_posts'] = []
+            context['posts_count'] = 0
 
         # Get all members for transfer ownership (admin only)
         if is_admin:
