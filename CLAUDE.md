@@ -1,6 +1,6 @@
 # CLAUDE.md - MyRecoveryPal Development Guide
 
-**Last Updated:** 2026-01-04
+**Last Updated:** 2026-01-09
 **Project:** MyRecoveryPal - Social Recovery Platform
 **Tech Stack:** Django 5.0.10, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
@@ -169,8 +169,8 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 ### Remaining Tasks
 
 #### Retention (Priority: HIGH)
-1. Daily gratitude prompt in check-in
-2. Prominent sobriety counter widget on profile
+1. ~~Daily gratitude prompt in check-in~~ ✅ COMPLETE
+2. ~~Prominent sobriety counter widget on profile~~ ✅ COMPLETE
 3. Meeting reminders (push before saved meetings)
 4. Progress visualizations (mood/craving trends)
 5. Accountability nudges for Recovery Pals
@@ -190,7 +190,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 
 #### Infrastructure
 1. Enable mobile push (FCM/APNs)
-2. Set up Celery Beat worker on Railway
+2. ~~Set up Celery Beat worker on Railway~~ ✅ COMPLETE
 
 ---
 
@@ -206,7 +206,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 ### Integrations
 - **Stripe** - Subscriptions (14-day premium trial on signup)
 - **Cloudinary** - Media storage
-- **Resend** - Email
+- **SendGrid** - Email (production), Resend API key also configured
 - **Sentry** - Error monitoring
 - **Firebase** - Push notifications (configured, needs implementation)
 
@@ -360,15 +360,32 @@ SENTRY_DSN=...
 
 **Platform:** Railway (auto-deploy from `main`)
 
+### Railway Services (Project: responsible-education)
+
+| Service | Purpose | Start Command |
+|---------|---------|---------------|
+| **web** | Django app | `gunicorn recovery_hub.wsgi:application` (via start.sh) |
+| **celery-worker** | Background tasks + Beat scheduler | `celery -A recovery_hub worker -l info -B` |
+| **Postgres** | Database | Managed by Railway |
+| **Redis** | Cache + Celery broker | Managed by Railway |
+
+### Environment Variables (Required for both web and celery-worker)
 ```bash
-# Build
-./build.sh
+SECRET_KEY, DATABASE_URL, REDIS_URL, DJANGO_SETTINGS_MODULE
+EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
+DEFAULT_FROM_EMAIL, SITE_URL, SENTRY_DSN
+```
 
-# Web
-gunicorn recovery_hub.wsgi:application
+**Note:** `REDIS_URL` must include authentication credentials:
+```
+redis://default:<password>@redis.railway.internal:6379
+```
 
-# Worker (separate service)
-celery -A recovery_hub worker -l info
+```bash
+# Local Development
+./build.sh                                    # Build
+python manage.py runserver                    # Web server
+celery -A recovery_hub worker -l info -B     # Worker + Beat
 ```
 
 ---
@@ -439,23 +456,23 @@ High-volume keyword blog posts (83K combined monthly searches):
 - `/blog/high-functioning-alcoholic-signs-help/`
 - `/blog/dopamine-detox-addiction-recovery/`
 
-### URGENT - Google Search Console Manual Indexing
-**Submit these URLs in priority order** (index quota reached - submit manually via URL Inspection tool):
+### Google Search Console Indexing Status
+**Submit remaining URLs via URL Inspection tool:**
 
-**Priority 1 - Highest SEO Value (submit first):**
-- [ ] `https://www.myrecoverypal.com/sobriety-calculator/` - NEW interactive tool, targets calculator keywords
-- [ ] `https://www.myrecoverypal.com/sobriety-counter-app/` - Already getting 29 impressions, needs indexing boost
-- [ ] `https://www.myrecoverypal.com/sober-grid-alternative/` - Position 4.89, close to page 1
+**✅ INDEXED (Jan 5, 2026):**
+- [x] `https://www.myrecoverypal.com/sobriety-calculator/`
+- [x] `https://www.myrecoverypal.com/sobriety-counter-app/`
+- [x] `https://www.myrecoverypal.com/sober-grid-alternative/`
+- [x] `https://www.myrecoverypal.com/blog/how-long-does-alcohol-withdrawal-last/`
+- [x] `https://www.myrecoverypal.com/blog/signs-of-alcoholism-self-assessment/`
+- [x] `https://www.myrecoverypal.com/blog/how-to-stop-drinking-alcohol-guide/`
 
-**Priority 2 - High-Volume Blog Posts (83K monthly searches combined):**
-- [ ] `https://www.myrecoverypal.com/blog/how-long-does-alcohol-withdrawal-last/` - 22K/mo searches
-- [ ] `https://www.myrecoverypal.com/blog/signs-of-alcoholism-self-assessment/` - 18K/mo searches
-- [ ] `https://www.myrecoverypal.com/blog/how-to-stop-drinking-alcohol-guide/` - 14K/mo searches
+**Priority 1 - Remaining Blog Posts (29K monthly searches combined):**
 - [ ] `https://www.myrecoverypal.com/blog/what-is-sober-curious-guide/` - 12K/mo searches
 - [ ] `https://www.myrecoverypal.com/blog/high-functioning-alcoholic-signs-help/` - 9K/mo searches
 - [ ] `https://www.myrecoverypal.com/blog/dopamine-detox-addiction-recovery/` - 8K/mo searches
 
-**Priority 3 - Other SEO Landing Pages:**
+**Priority 2 - SEO Landing Pages:**
 - [ ] `https://www.myrecoverypal.com/alcohol-recovery-app/`
 - [ ] `https://www.myrecoverypal.com/drug-addiction-recovery-app/`
 - [ ] `https://www.myrecoverypal.com/free-aa-app/`
@@ -463,7 +480,7 @@ High-volume keyword blog posts (83K combined monthly searches):
 - [ ] `https://www.myrecoverypal.com/gambling-addiction-app/`
 - [ ] `https://www.myrecoverypal.com/mental-health-recovery-app/`
 
-**Priority 4 - Core Pages:**
+**Priority 3 - Core Pages:**
 - [ ] `https://www.myrecoverypal.com/`
 - [ ] `https://www.myrecoverypal.com/blog/`
 - [ ] `https://www.myrecoverypal.com/about/`
@@ -707,10 +724,10 @@ Notification (group types):
 
 ### MEDIUM PRIORITY - Retention Boosters
 
-| Feature | Impact | Effort | Why |
-|---------|--------|--------|-----|
-| **Daily gratitude prompt** | High | Medium | "Today I'm grateful for..." prompt increases positive engagement. |
-| **Sobriety counter widget** | High | Medium | Prominent, beautiful display of days/months/years sober on profile. |
+| Feature | Impact | Effort | Status |
+|---------|--------|--------|--------|
+| ~~Daily gratitude prompt~~ | High | Medium | ✅ Done |
+| ~~Sobriety counter widget~~ | High | Medium | ✅ Done |
 | **Meeting reminders** | High | Medium | Push notification before saved meetings. Integrates support_services. |
 | **Progress visualizations** | Medium | Medium | Charts showing mood trends, craving patterns over time. |
 | **Accountability nudges** | Medium | Medium | Prompt Recovery Pals to check in on each other if inactive. |
@@ -736,6 +753,16 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-09:** Fixed ads.txt to use hardcoded content for reliability - file-based approach was failing on production.
+- **2026-01-09:** Added prominent sobriety counter widget to profile page with gradient design, years/months/weeks breakdown, milestone progress bar, motivational messages, and share button.
+- **2026-01-09:** Added daily gratitude prompt to check-in feature with quick-fill tags and featured gratitude section.
+- **2026-01-09:** Fixed z-index issue where pagination was blocking top navigation menu.
+- **2026-01-09:** Fixed empty feed problem for new users - added suggested users section with follow buttons when feed is sparse.
+- **2026-01-09:** Implemented onboarding overhaul - users now land on social feed first with progressive profile completion banner.
+- **2026-01-09:** Fixed pagination display bugs on community page (Total Members), my_challenges (badges count), and group_detail (posts count).
+- **2026-01-07:** Fixed welcome emails not sending - REDIS_URL on web service was missing authentication credentials. Updated to use internal Redis URL with auth.
+- **2026-01-07:** Created dedicated `celery-worker` service on Railway running `celery -A recovery_hub worker -l info -B` with Beat scheduler embedded. All scheduled tasks (welcome emails, check-in reminders, weekly digests) now execute properly.
+- **2026-01-05:** Submitted 6 priority URLs to Google Search Console for indexing: sobriety-calculator, sobriety-counter-app, sober-grid-alternative, and 3 high-volume blog posts (alcohol withdrawal, signs of alcoholism, how to stop drinking).
 - **2026-01-04:** Created `/sobriety-calculator/` interactive tool page with no-signup-required calculator, money saved estimator, health benefits timeline, and milestone tracker. Targets "sobriety calculator", "how long have I been sober", and "clean time calculator" keywords.
 - **2026-01-02:** Added ads.txt route for Google AdSense verification at `/ads.txt`.
 - **2026-01-02:** Created admin endpoint `/blog/admin/create-seo-posts/` to run blog post creation on production.
