@@ -824,6 +824,7 @@ def daily_checkin_view(request):
 
     context = {
         'existing_checkin': existing_checkin,
+        'today': today,
     }
     return render(request, 'accounts/daily_checkin.html', context)
 
@@ -867,6 +868,9 @@ def quick_checkin(request):
             'error': 'Invalid mood value'
         })
 
+    # Get optional gratitude
+    gratitude = request.POST.get('gratitude', '').strip()[:280]  # Limit to 280 chars
+
     # Create the check-in with defaults
     checkin = DailyCheckIn.objects.create(
         user=request.user,
@@ -874,15 +878,21 @@ def quick_checkin(request):
         mood=mood,
         craving_level=0,
         energy_level=3,
+        gratitude=gratitude,
         is_shared=True  # Default to shared for community engagement
     )
+
+    # Build activity description
+    description = f"Checked in feeling {checkin.get_mood_display().lower()}"
+    if gratitude:
+        description += f" — Grateful for: {gratitude[:100]}{'...' if len(gratitude) > 100 else ''}"
 
     # Create activity for the feed
     ActivityFeed.objects.create(
         user=request.user,
         activity_type='check_in_posted',
         title=f"Daily Check-in: {checkin.get_mood_display()}",
-        description=f"Checked in feeling {checkin.get_mood_display().lower()}",
+        description=description,
         content_object=checkin
     )
 

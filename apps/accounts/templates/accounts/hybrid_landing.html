@@ -309,6 +309,65 @@
         color: white;
     }
 
+    /* Gratitude Section */
+    .gratitude-section {
+        margin: 1rem 0;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .gratitude-label {
+        display: block;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.95;
+    }
+
+    .gratitude-label i {
+        color: #ff6b6b;
+        margin-right: 0.25rem;
+    }
+
+    .gratitude-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        font-size: 0.9rem;
+        resize: none;
+        font-family: inherit;
+        transition: all 0.2s;
+    }
+
+    .gratitude-input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .gratitude-input:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .gratitude-hint {
+        font-size: 0.75rem;
+        opacity: 0.7;
+        margin-top: 0.35rem;
+        text-align: right;
+    }
+
     /* Streak Indicator */
     .streak-indicator {
         display: flex;
@@ -1466,6 +1525,24 @@
                             <span class="mood-label">Amazing</span>
                         </button>
                     </div>
+
+                    <!-- Gratitude Prompt (appears after mood selection) -->
+                    <div id="gratitude-section" class="gratitude-section" style="display: none;">
+                        <label class="gratitude-label">
+                            <i class="fas fa-heart"></i> What are you grateful for today?
+                        </label>
+                        <textarea
+                            id="gratitude-input"
+                            class="gratitude-input"
+                            placeholder="e.g., My family, another day sober, a good night's sleep..."
+                            maxlength="280"
+                            rows="2"
+                        ></textarea>
+                        <div class="gratitude-hint">
+                            <span id="gratitude-char-count">0</span>/280 · Practicing gratitude boosts recovery
+                        </div>
+                    </div>
+
                     <button type="button" class="checkin-submit" id="checkin-submit-btn" disabled>
                         <i class="fas fa-check"></i> Check In
                     </button>
@@ -2345,6 +2422,9 @@ function followUserFromFeed(username, button) {
     const moodButtons = document.querySelectorAll('.mood-btn');
     const submitBtn = document.getElementById('checkin-submit-btn');
     const moodEmojiDisplay = document.getElementById('checkin-mood-emoji');
+    const gratitudeSection = document.getElementById('gratitude-section');
+    const gratitudeInput = document.getElementById('gratitude-input');
+    const gratitudeCharCount = document.getElementById('gratitude-char-count');
 
     let selectedMood = null;
     const moodEmojis = {
@@ -2373,8 +2453,21 @@ function followUserFromFeed(username, button) {
             this.classList.add('selected');
             selectedMood = parseInt(this.dataset.mood);
             submitBtn.disabled = false;
+
+            // Show gratitude section with animation
+            if (gratitudeSection) {
+                gratitudeSection.style.display = 'block';
+                gratitudeInput.focus();
+            }
         });
     });
+
+    // Character count for gratitude
+    if (gratitudeInput) {
+        gratitudeInput.addEventListener('input', function() {
+            gratitudeCharCount.textContent = this.value.length;
+        });
+    }
 
     // Submit check-in
     submitBtn.addEventListener('click', async function() {
@@ -2389,6 +2482,11 @@ function followUserFromFeed(username, button) {
 
             const formData = new FormData();
             formData.append('mood', selectedMood);
+
+            // Include gratitude if provided
+            if (gratitudeInput && gratitudeInput.value.trim()) {
+                formData.append('gratitude', gratitudeInput.value.trim());
+            }
 
             const response = await fetch('/accounts/quick-checkin/', {
                 method: 'POST',
