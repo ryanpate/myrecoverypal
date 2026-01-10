@@ -1473,6 +1473,8 @@ class RecoveryGroupDetailView(LoginRequiredMixin, DetailView):
 @login_required
 def create_group(request):
     """Create a new recovery group"""
+    from .image_utils import validate_image, compress_image, is_cloudinary_enabled
+
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
         description = request.POST.get('description', '').strip()
@@ -1482,6 +1484,19 @@ def create_group(request):
         meeting_schedule = request.POST.get('meeting_schedule', '').strip()
         max_members = request.POST.get('max_members', '')
         group_color = request.POST.get('group_color', '#52b788')
+        group_image = request.FILES.get('group_image')
+
+        # Validate and compress group image if provided
+        if group_image:
+            is_valid, error = validate_image(group_image)
+            if not is_valid:
+                messages.error(request, error)
+                return render(request, 'accounts/groups/create_group.html', {
+                    'group_types': RecoveryGroup.GROUP_TYPES,
+                })
+            # Compress for local storage (Cloudinary handles optimization automatically)
+            if not is_cloudinary_enabled():
+                group_image = compress_image(group_image, max_dimension=1200)
 
         # Check if user is trying to create a private/secret group
         if privacy_level in ['private', 'secret']:
@@ -1502,6 +1517,7 @@ def create_group(request):
                 meeting_schedule=meeting_schedule,
                 max_members=int(max_members) if max_members else None,
                 group_color=group_color,
+                group_image=group_image,
                 creator=request.user
             )
 
@@ -1836,6 +1852,7 @@ def reject_member(request, group_id, user_id):
 def edit_group(request, group_id):
     """Edit group settings - only for group admin"""
     from .models import RecoveryGroup, GroupMembership
+    from .image_utils import validate_image, compress_image, is_cloudinary_enabled
 
     group = get_object_or_404(RecoveryGroup, id=group_id)
 
@@ -1859,6 +1876,20 @@ def edit_group(request, group_id):
         meeting_schedule = request.POST.get('meeting_schedule', '').strip()
         max_members = request.POST.get('max_members', '')
         group_color = request.POST.get('group_color', '#52b788')
+        group_image = request.FILES.get('group_image')
+
+        # Validate and compress group image if provided
+        if group_image:
+            is_valid, error = validate_image(group_image)
+            if not is_valid:
+                messages.error(request, error)
+                return render(request, 'accounts/groups/edit_group.html', {
+                    'group': group,
+                    'group_types': RecoveryGroup.GROUP_TYPES,
+                })
+            # Compress for local storage (Cloudinary handles optimization automatically)
+            if not is_cloudinary_enabled():
+                group_image = compress_image(group_image, max_dimension=1200)
 
         # Check premium for private/secret groups
         if privacy_level in ['private', 'secret'] and group.privacy_level == 'public':
@@ -1875,6 +1906,8 @@ def edit_group(request, group_id):
             group.meeting_schedule = meeting_schedule
             group.max_members = int(max_members) if max_members else None
             group.group_color = group_color
+            if group_image:
+                group.group_image = group_image
             group.save()
 
             messages.success(request, 'Group settings updated successfully!')
@@ -3815,6 +3848,8 @@ def social_feed_posts_api(request):
 @require_POST
 def create_social_post(request):
     """Create a new social post via AJAX"""
+    from .image_utils import validate_image, compress_image, is_cloudinary_enabled
+
     content = request.POST.get('content', '').strip()
     visibility = request.POST.get('visibility', 'public')
     image = request.FILES.get('image')
@@ -3822,6 +3857,16 @@ def create_social_post(request):
     # Require either content or image
     if not content and not image:
         return JsonResponse({'error': 'Post must have either text or an image'}, status=400)
+
+    # Process image if provided
+    if image:
+        is_valid, error = validate_image(image)
+        if not is_valid:
+            return JsonResponse({'error': error}, status=400)
+
+        # Compress for local storage (Cloudinary handles optimization automatically)
+        if not is_cloudinary_enabled():
+            image = compress_image(image, max_dimension=1920)
 
     try:
         # Create the post
