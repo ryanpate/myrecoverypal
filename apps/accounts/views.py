@@ -936,7 +936,8 @@ def progress_view(request):
     except (ValueError, TypeError):
         days = 30
 
-    start_date = timezone.now().date() - timedelta(days=days)
+    today = timezone.now().date()
+    start_date = today - timedelta(days=days)
 
     # Get check-ins for the period
     checkins = DailyCheckIn.objects.filter(
@@ -987,6 +988,74 @@ def progress_view(request):
     mood_emojis = {1: '😰', 2: '😔', 3: '😐', 4: '😊', 5: '😄', 6: '🌟'}
     avg_mood_emoji = mood_emojis.get(round(avg_mood), '😐') if avg_mood else ''
 
+    # Weekly comparison: this week vs last week
+    this_week_start = today - timedelta(days=today.weekday())
+    last_week_start = this_week_start - timedelta(days=7)
+    last_week_end = this_week_start - timedelta(days=1)
+
+    this_week_checkins = DailyCheckIn.objects.filter(
+        user=request.user,
+        date__gte=this_week_start,
+        date__lte=today
+    )
+    last_week_checkins = DailyCheckIn.objects.filter(
+        user=request.user,
+        date__gte=last_week_start,
+        date__lte=last_week_end
+    )
+
+    weekly_comparison = {
+        'this_week': {
+            'count': this_week_checkins.count(),
+            'avg_mood': round(sum(c.mood for c in this_week_checkins) / this_week_checkins.count(), 1) if this_week_checkins.count() > 0 else 0,
+            'avg_craving': round(sum(c.craving_level for c in this_week_checkins) / this_week_checkins.count(), 1) if this_week_checkins.count() > 0 else 0,
+        },
+        'last_week': {
+            'count': last_week_checkins.count(),
+            'avg_mood': round(sum(c.mood for c in last_week_checkins) / last_week_checkins.count(), 1) if last_week_checkins.count() > 0 else 0,
+            'avg_craving': round(sum(c.craving_level for c in last_week_checkins) / last_week_checkins.count(), 1) if last_week_checkins.count() > 0 else 0,
+        },
+    }
+
+    # Calculate mood change percentage
+    if weekly_comparison['last_week']['avg_mood'] > 0:
+        mood_change = round(((weekly_comparison['this_week']['avg_mood'] - weekly_comparison['last_week']['avg_mood']) / weekly_comparison['last_week']['avg_mood']) * 100)
+    else:
+        mood_change = 0
+
+    weekly_comparison['mood_change'] = mood_change
+    weekly_comparison['mood_improved'] = mood_change > 0
+
+    # Calendar heatmap data (last 90 days)
+    heatmap_start = today - timedelta(days=90)
+    heatmap_checkins = DailyCheckIn.objects.filter(
+        user=request.user,
+        date__gte=heatmap_start
+    ).values('date', 'mood')
+
+    # Create heatmap data: date -> mood level
+    heatmap_data = {c['date'].isoformat(): c['mood'] for c in heatmap_checkins}
+
+    # Milestone progress
+    days_sober = request.user.get_days_sober() or 0
+    milestones = [1, 7, 14, 30, 60, 90, 180, 365, 730, 1095]
+    current_milestone = 0
+    next_milestone = milestones[0]
+    for m in milestones:
+        if days_sober >= m:
+            current_milestone = m
+        else:
+            next_milestone = m
+            break
+    else:
+        next_milestone = days_sober + 365  # Next yearly milestone
+
+    if next_milestone > current_milestone:
+        milestone_progress = round(((days_sober - current_milestone) / (next_milestone - current_milestone)) * 100)
+    else:
+        milestone_progress = 100
+    days_to_milestone = next_milestone - days_sober
+
     context = {
         'days': days,
         'chart_data': json.dumps(chart_data),
@@ -1001,7 +1070,13 @@ def progress_view(request):
         'worst_mood_checkin': worst_mood_checkin,
         'zero_craving_days': zero_craving_days,
         'mood_distribution': json.dumps(mood_distribution),
-        'days_sober': request.user.get_days_sober(),
+        'days_sober': days_sober,
+        'weekly_comparison': weekly_comparison,
+        'heatmap_data': json.dumps(heatmap_data),
+        'milestone_progress': milestone_progress,
+        'next_milestone': next_milestone,
+        'days_to_milestone': days_to_milestone,
+        'current_milestone': current_milestone,
     }
 
     return render(request, 'accounts/progress.html', context)

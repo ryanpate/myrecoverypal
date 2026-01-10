@@ -751,6 +751,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-10:** Enhanced progress visualizations page: added mood distribution pie chart, weekly comparison (this week vs last week with percentage change), 90-day check-in calendar heatmap (GitHub-style), milestone progress bar with days until next milestone, and dark mode support for all charts.
 - **2026-01-10:** Improved service worker caching strategy: removed duplicate sw.js, created standalone offline.html (doesn't require Django templates), added main.js to static cache, excluded API endpoints from caching (/api/, notifications, social feed posts), switched HTML pages to network-first strategy (shows fresh content, caches as fallback). Cache version bumped to v21.
 - **2026-01-10:** Implemented mobile push notifications infrastructure. New `DeviceToken` model stores FCM/APNs tokens. API endpoints `/accounts/api/device-token/register/` and `/unregister/` for mobile apps. `push_notifications.py` updated with `send_fcm_notification()` and `send_apns_notification()` functions. Requires Firebase credentials JSON and APNs .p8 key file to enable. See `PUSH_NOTIFICATIONS_SETUP.md` for configuration guide.
 - **2026-01-10:** Added image compression for uploads. New `image_utils.py` module provides validation (5MB limit, MIME type check), compression (max 1920px for posts, 1200px for groups, JPEG quality 85), and Cloudinary integration. Social post images and group images now auto-compressed before storage.
