@@ -3711,6 +3711,106 @@ def hybrid_landing_view(request):
             return redirect('core:index')
 
 
+def social_feed_posts_api(request):
+    """
+    API endpoint for infinite scroll - returns paginated posts as JSON.
+    Works for both authenticated and unauthenticated users.
+    """
+    from django.utils.timesince import timesince
+
+    user = request.user
+    page_number = request.GET.get('page', 1)
+
+    try:
+        page_number = int(page_number)
+    except (ValueError, TypeError):
+        page_number = 1
+
+    try:
+        if user.is_authenticated:
+            # Get all posts with related data
+            posts = SocialPost.objects.select_related('author').prefetch_related(
+                'likes',
+                'comments__author'
+            ).order_by('-created_at')
+
+            # Filter posts based on visibility
+            visible_posts = [post for post in posts if post.is_visible_to(user)]
+        else:
+            # For unauthenticated users, only show public posts
+            visible_posts = list(SocialPost.objects.select_related('author').prefetch_related(
+                'likes',
+                'comments__author'
+            ).filter(visibility='public').order_by('-created_at'))
+
+        # Paginate
+        paginator = Paginator(visible_posts, 15)
+        page_obj = paginator.get_page(page_number)
+
+        # Serialize posts
+        posts_data = []
+        for post in page_obj:
+            # Get comments for this post
+            comments_data = []
+            for comment in post.comments.all()[:5]:  # Limit to 5 comments initially
+                comments_data.append({
+                    'id': comment.id,
+                    'author': {
+                        'id': comment.author.id,
+                        'username': comment.author.username,
+                        'full_name': comment.author.get_full_name() or comment.author.username,
+                        'avatar_initial': comment.author.username[0].upper() if comment.author.username else 'U',
+                        'avatar_color': f"hsl({comment.author.id + 100}, 45%, 50%)"
+                    },
+                    'content': comment.content,
+                    'created_at': timesince(comment.created_at) + ' ago',
+                })
+
+            # Check if current user liked this post
+            user_liked = user.is_authenticated and post.likes.filter(id=user.id).exists()
+
+            # Check if post belongs to current user
+            is_own_post = user.is_authenticated and post.author.id == user.id
+
+            posts_data.append({
+                'id': post.id,
+                'author': {
+                    'id': post.author.id,
+                    'username': post.author.username,
+                    'full_name': post.author.get_full_name() or post.author.username,
+                    'avatar_initial': post.author.username[0].upper() if post.author.username else 'U',
+                    'avatar_color': f"hsl({post.author.id + 100}, 45%, 50%)",
+                    'has_avatar': bool(post.author.avatar) if hasattr(post.author, 'avatar') else False,
+                    'avatar_url': post.author.avatar.url if hasattr(post.author, 'avatar') and post.author.avatar else None,
+                },
+                'content': post.content,
+                'image_url': post.image.url if post.image else None,
+                'visibility': post.visibility,
+                'created_at': timesince(post.created_at) + ' ago',
+                'likes_count': post.likes.count(),
+                'comments_count': post.comments.count(),
+                'user_liked': user_liked,
+                'is_own_post': is_own_post,
+                'comments': comments_data,
+            })
+
+        return JsonResponse({
+            'success': True,
+            'posts': posts_data,
+            'has_next': page_obj.has_next(),
+            'has_previous': page_obj.has_previous(),
+            'current_page': page_obj.number,
+            'total_pages': paginator.num_pages,
+            'total_posts': len(visible_posts),
+        })
+
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error in social_feed_posts_api: {e}")
+        return JsonResponse({'success': False, 'error': 'Failed to load posts'}, status=500)
+
+
 @login_required
 @require_POST
 def create_social_post(request):

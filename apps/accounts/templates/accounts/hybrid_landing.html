@@ -1951,9 +1951,9 @@
                     </div>
                     {% endfor %}
 
-                    <!-- Pagination -->
-                    {% if page_obj.has_other_pages %}
-                    <div style="text-align: center; margin: 2rem 0;">
+                    <!-- Pagination (hidden when infinite scroll active) -->
+                    <div id="pagination-controls" style="text-align: center; margin: 2rem 0;">
+                        {% if page_obj.has_other_pages %}
                         {% if page_obj.has_previous %}
                         <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary">Previous</a>
                         {% endif %}
@@ -1961,8 +1961,23 @@
                         {% if page_obj.has_next %}
                         <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-primary">Next</a>
                         {% endif %}
+                        {% endif %}
                     </div>
-                    {% endif %}
+
+                    <!-- Infinite Scroll Loading Indicator -->
+                    <div id="infinite-scroll-loader" class="infinite-scroll-loader" style="display: none;">
+                        <div class="spinner"></div>
+                        <span>Loading more posts...</span>
+                    </div>
+
+                    <!-- End of Feed Message -->
+                    <div id="end-of-feed" class="end-of-feed" style="display: none;">
+                        <i class="fas fa-check-circle"></i>
+                        <span>You've reached the end of the feed</span>
+                    </div>
+
+                    <!-- Scroll Sentinel (invisible trigger for infinite scroll) -->
+                    <div id="scroll-sentinel"></div>
                 {% else %}
                     <div class="empty-state">
                         <i class="fas fa-comments"></i>
@@ -1978,6 +1993,186 @@
 
 {% block extra_js %}
 <script>
+// =============================================
+// Current User Data & Infinite Scroll Config
+// =============================================
+{% if user.is_authenticated %}
+const currentUser = {
+    id: {{ user.id }},
+    username: "{{ user.username|escapejs }}",
+    fullName: "{{ user.get_full_name|default:user.username|escapejs }}",
+    avatarInitial: "{{ user.username|slice:':1'|upper|escapejs }}",
+    avatarColor: "hsl({{ user.id|add:100 }}, 45%, 50%)"
+};
+{% else %}
+const currentUser = null;
+{% endif %}
+
+// Infinite scroll state
+const infiniteScroll = {
+    currentPage: {{ page_obj.number|default:1 }},
+    totalPages: {{ page_obj.paginator.num_pages|default:1 }},
+    isLoading: false,
+    hasMorePosts: {{ page_obj.has_next|yesno:"true,false" }},
+    postsContainer: null,
+    loader: null,
+    endOfFeed: null,
+    sentinel: null,
+    observer: null
+};
+
+// Reaction emojis mapping
+const reactionEmojis = {
+    'like': '❤️',
+    'support': '🙏',
+    'strong': '💪',
+    'celebrate': '🎉'
+};
+
+// =============================================
+// Post Template Function
+// =============================================
+function createPostElement(post) {
+    const div = document.createElement('div');
+    div.className = 'post-card new-post';
+    div.dataset.postId = post.id;
+
+    // Build avatar HTML
+    let avatarHtml;
+    if (post.author.has_avatar && post.author.avatar_url) {
+        avatarHtml = `
+            <img src="${post.author.avatar_url}" alt="${post.author.username}'s profile photo" class="avatar-medium" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="avatar-initials avatar-medium" style="background: ${post.author.avatar_color}; border-radius: 50%; display: none;">${post.author.avatar_initial}</div>
+        `;
+    } else {
+        avatarHtml = `<div class="avatar-initials avatar-medium" style="background: ${post.author.avatar_color}; border-radius: 50%;">${post.author.avatar_initial}</div>`;
+    }
+
+    // Build image HTML if exists
+    const imageHtml = post.image_url ? `
+        <div class="post-image-container">
+            <img src="${post.image_url}" alt="Post image" class="post-image" loading="lazy">
+        </div>
+    ` : '';
+
+    // Build comments HTML
+    let commentsHtml = '';
+    if (post.comments && post.comments.length > 0) {
+        commentsHtml = post.comments.map(comment => `
+            <div class="comment" data-comment-id="${comment.id}">
+                <div class="avatar-initials comment-avatar" style="background: ${comment.author.avatar_color}; border-radius: 50%;">${comment.author.avatar_initial}</div>
+                <div class="comment-content-wrapper">
+                    <div class="comment-content">
+                        <div class="comment-author">${comment.author.full_name}</div>
+                        <div class="comment-text">${escapeHtml(comment.content)}</div>
+                    </div>
+                    <div class="comment-actions">
+                        <span class="comment-time">${comment.created_at}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Build the full post HTML
+    div.innerHTML = `
+        <!-- Post Header -->
+        <div class="social-post-header">
+            ${avatarHtml}
+            <div class="post-author-info">
+                <div class="post-author-name">${post.author.full_name}</div>
+                <div class="post-meta">@${post.author.username} · ${post.created_at}</div>
+            </div>
+            ${post.is_own_post && currentUser ? `
+            <div class="post-menu">
+                <button class="post-menu-btn" data-post-id="${post.id}">
+                    <i class="fas fa-ellipsis-h"></i>
+                </button>
+                <div class="post-menu-dropdown" id="menu-${post.id}" style="display: none;">
+                    <button class="delete-post-btn" data-post-id="${post.id}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+            ` : ''}
+        </div>
+
+        <!-- Post Content -->
+        <div class="post-content">${escapeHtml(post.content).replace(/\\n/g, '<br>')}</div>
+
+        ${imageHtml}
+
+        <!-- Engagement Stats -->
+        <div class="post-engagement">
+            <span class="likes-count">${post.likes_count > 0 ? `<span class="reaction-summary"><span class="reaction-emoji">❤️</span><span class="reaction-count">${post.likes_count}</span></span>` : '0 likes'}</span>
+            <span class="comments-count comment-toggle-link" data-post-id="${post.id}">${post.comments_count} comment${post.comments_count !== 1 ? 's' : ''}</span>
+        </div>
+
+        <!-- Action Buttons -->
+        ${currentUser ? `
+        <div class="post-actions-bar">
+            <div class="reaction-container">
+                <button class="post-action-btn react-btn ${post.user_liked ? 'reacted' : ''}" data-post-id="${post.id}">
+                    <span class="user-reaction">${post.user_liked ? '❤️' : '<i class="far fa-heart"></i>'}</span>
+                    <span>React</span>
+                </button>
+                <div class="reaction-picker" id="reaction-picker-${post.id}">
+                    <button type="button" class="reaction-btn" data-reaction="like" title="Love">❤️</button>
+                    <button type="button" class="reaction-btn" data-reaction="support" title="Support">🙏</button>
+                    <button type="button" class="reaction-btn" data-reaction="strong" title="Strong">💪</button>
+                    <button type="button" class="reaction-btn" data-reaction="celebrate" title="Celebrate">🎉</button>
+                </div>
+            </div>
+            <button class="post-action-btn comment-toggle-btn" data-post-id="${post.id}">
+                <i class="far fa-comment"></i>
+                <span>Comment</span>
+            </button>
+        </div>
+        ` : ''}
+
+        <!-- Comments Section -->
+        <div class="comments-section" id="comments-${post.id}" style="display: none;">
+            <div class="comments-list">
+                ${commentsHtml}
+            </div>
+            ${currentUser ? `
+            <form class="comment-form" data-post-id="${post.id}">
+                <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                <input type="text" class="comment-input" placeholder="Write a comment..." name="content" required>
+                <button type="submit" class="comment-submit">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+            ` : ''}
+        </div>
+    `;
+
+    return div;
+}
+
+// Helper to escape HTML
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Post content handling
     const textarea = document.getElementById('post-content');
@@ -2075,13 +2270,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Reaction picker handlers
-    const reactionEmojis = {
-        'like': '❤️',
-        'support': '🙏',
-        'strong': '💪',
-        'celebrate': '🎉'
-    };
+    // Reaction picker handlers (reactionEmojis defined at top of script)
 
     // Toggle reaction picker on button click
     document.querySelectorAll('.react-btn').forEach(btn => {
@@ -2336,21 +2525,416 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Helper function to get CSRF token
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+    // =============================================
+    // Infinite Scroll Initialization
+    // =============================================
+    (function initInfiniteScroll() {
+        infiniteScroll.postsContainer = document.getElementById('posts-container');
+        infiniteScroll.loader = document.getElementById('infinite-scroll-loader');
+        infiniteScroll.endOfFeed = document.getElementById('end-of-feed');
+        infiniteScroll.sentinel = document.getElementById('scroll-sentinel');
+        const paginationControls = document.getElementById('pagination-controls');
+
+        // Only initialize if we have the required elements
+        if (!infiniteScroll.postsContainer || !infiniteScroll.sentinel) return;
+
+        // Hide pagination controls when infinite scroll is active
+        if (paginationControls) {
+            paginationControls.style.display = 'none';
+        }
+
+        // Create IntersectionObserver to detect when sentinel is visible
+        infiniteScroll.observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !infiniteScroll.isLoading && infiniteScroll.hasMorePosts) {
+                    loadMorePosts();
+                }
+            });
+        }, {
+            rootMargin: '200px' // Load when within 200px of bottom
+        });
+
+        // Start observing the sentinel
+        infiniteScroll.observer.observe(infiniteScroll.sentinel);
+
+        async function loadMorePosts() {
+            infiniteScroll.isLoading = true;
+
+            // Show loading indicator
+            if (infiniteScroll.loader) {
+                infiniteScroll.loader.style.display = 'flex';
+            }
+
+            try {
+                const nextPage = infiniteScroll.currentPage + 1;
+                const response = await fetch(`/accounts/social-feed/posts/?page=${nextPage}`);
+                const data = await response.json();
+
+                if (data.success && data.posts.length > 0) {
+                    // Append new posts
+                    data.posts.forEach(post => {
+                        const postEl = createPostElement(post);
+                        infiniteScroll.postsContainer.appendChild(postEl);
+                    });
+
+                    infiniteScroll.currentPage = data.current_page;
+                    infiniteScroll.hasMorePosts = data.has_next;
+
+                    // Remove animation class after animation completes
+                    setTimeout(() => {
+                        document.querySelectorAll('.post-card.new-post').forEach(el => {
+                            el.classList.remove('new-post');
+                        });
+                    }, 500);
+                }
+
+                // Check if we've reached the end
+                if (!data.has_next) {
+                    infiniteScroll.hasMorePosts = false;
+                    if (infiniteScroll.endOfFeed) {
+                        infiniteScroll.endOfFeed.style.display = 'block';
+                    }
+                    // Stop observing
+                    infiniteScroll.observer.unobserve(infiniteScroll.sentinel);
+                }
+            } catch (error) {
+                console.error('Error loading more posts:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Failed to load more posts', 'error');
+                }
+            } finally {
+                infiniteScroll.isLoading = false;
+                if (infiniteScroll.loader) {
+                    infiniteScroll.loader.style.display = 'none';
                 }
             }
         }
-        return cookieValue;
+    })();
+
+    // =============================================
+    // Event Delegation for Dynamic Posts
+    // =============================================
+    // Use event delegation so handlers work on dynamically loaded posts
+    const feedColumn = document.querySelector('.feed-column');
+    if (feedColumn) {
+        feedColumn.addEventListener('click', function(e) {
+            // React button (show picker)
+            const reactBtn = e.target.closest('.react-btn');
+            if (reactBtn && !e.target.closest('.reaction-picker')) {
+                e.stopPropagation();
+                const postId = reactBtn.dataset.postId;
+                const picker = document.getElementById(`reaction-picker-${postId}`);
+                if (picker) {
+                    // Close all other pickers
+                    document.querySelectorAll('.reaction-picker.show').forEach(p => {
+                        if (p !== picker) p.classList.remove('show');
+                    });
+                    picker.classList.toggle('show');
+                }
+                return;
+            }
+
+            // Reaction picker button
+            const reactionBtn = e.target.closest('.reaction-picker .reaction-btn');
+            if (reactionBtn) {
+                e.stopPropagation();
+                handleReaction(reactionBtn);
+                return;
+            }
+
+            // Comment toggle button
+            const commentToggle = e.target.closest('.comment-toggle-btn, .comment-toggle-link');
+            if (commentToggle) {
+                const postId = commentToggle.dataset.postId;
+                const commentsSection = document.getElementById(`comments-${postId}`);
+                if (commentsSection) {
+                    commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+                }
+                return;
+            }
+
+            // Post menu button
+            const menuBtn = e.target.closest('.post-menu-btn');
+            if (menuBtn) {
+                e.stopPropagation();
+                const postId = menuBtn.dataset.postId;
+                const menu = document.getElementById(`menu-${postId}`);
+                document.querySelectorAll('.post-menu-dropdown').forEach(m => {
+                    if (m !== menu) m.style.display = 'none';
+                });
+                if (menu) {
+                    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+                }
+                return;
+            }
+
+            // Delete post button
+            const deleteBtn = e.target.closest('.delete-post-btn');
+            if (deleteBtn) {
+                handleDeletePost(deleteBtn);
+                return;
+            }
+
+            // Like comment button
+            const likeCommentBtn = e.target.closest('.like-comment-btn');
+            if (likeCommentBtn) {
+                handleLikeComment(likeCommentBtn);
+                return;
+            }
+
+            // Reply comment button
+            const replyBtn = e.target.closest('.reply-comment-btn');
+            if (replyBtn) {
+                const commentId = replyBtn.dataset.commentId;
+                const comment = replyBtn.closest('.comment');
+                const replyForm = comment?.querySelector('.reply-form');
+                if (replyForm) {
+                    replyForm.style.display = replyForm.style.display === 'none' ? 'flex' : 'none';
+                    if (replyForm.style.display === 'flex') {
+                        replyForm.querySelector('.reply-input')?.focus();
+                    }
+                }
+                return;
+            }
+
+            // Reply cancel button
+            const cancelBtn = e.target.closest('.reply-cancel');
+            if (cancelBtn) {
+                const replyForm = cancelBtn.closest('.reply-form');
+                if (replyForm) {
+                    replyForm.style.display = 'none';
+                    const input = replyForm.querySelector('.reply-input');
+                    if (input) input.value = '';
+                }
+                return;
+            }
+        });
+
+        // Form submissions via delegation
+        feedColumn.addEventListener('submit', function(e) {
+            // Comment form
+            const commentForm = e.target.closest('.comment-form');
+            if (commentForm) {
+                e.preventDefault();
+                handleCommentSubmit(commentForm);
+                return;
+            }
+
+            // Reply form
+            const replyForm = e.target.closest('.reply-form');
+            if (replyForm) {
+                e.preventDefault();
+                handleReplySubmit(replyForm);
+                return;
+            }
+        });
     }
+
+    // Handler functions for delegated events
+    async function handleReaction(btn) {
+        const picker = btn.closest('.reaction-picker');
+        const postId = picker.id.replace('reaction-picker-', '');
+        const reactionType = btn.dataset.reaction;
+        const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
+        const reactBtn = postCard?.querySelector('.react-btn');
+
+        picker.classList.remove('show');
+
+        try {
+            const response = await fetch(`/accounts/social-feed/post/${postId}/react/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `reaction_type=${reactionType}`
+            });
+
+            const data = await response.json();
+
+            if (data.success && reactBtn) {
+                const userReactionSpan = reactBtn.querySelector('.user-reaction');
+                if (data.user_reaction) {
+                    reactBtn.classList.add('reacted');
+                    userReactionSpan.innerHTML = reactionEmojis[data.user_reaction];
+                } else {
+                    reactBtn.classList.remove('reacted');
+                    userReactionSpan.innerHTML = '<i class="far fa-heart"></i>';
+                }
+
+                const likesCount = postCard.querySelector('.likes-count');
+                const totalReactions = data.total_reactions || 0;
+                if (totalReactions > 0 && data.reaction_counts) {
+                    let summaryHtml = '<span class="reaction-summary">';
+                    for (const [type, count] of Object.entries(data.reaction_counts)) {
+                        if (count > 0) {
+                            summaryHtml += `<span class="reaction-emoji">${reactionEmojis[type]}</span>`;
+                        }
+                    }
+                    summaryHtml += `<span class="reaction-count">${totalReactions}</span></span>`;
+                    likesCount.innerHTML = summaryHtml;
+                } else {
+                    likesCount.textContent = '0 likes';
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    async function handleDeletePost(btn) {
+        if (!confirm('Are you sure you want to delete this post?')) return;
+
+        const postId = btn.dataset.postId;
+        const postCard = btn.closest('.post-card');
+
+        try {
+            const response = await fetch(`/accounts/social-feed/post/${postId}/delete/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            });
+            const data = await response.json();
+            if (data.success && postCard) {
+                postCard.remove();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to delete post');
+        }
+    }
+
+    async function handleLikeComment(btn) {
+        const commentId = btn.dataset.commentId;
+        const icon = btn.querySelector('i');
+        const likesCount = btn.querySelector('.comment-likes-count');
+
+        try {
+            const response = await fetch(`/accounts/social-feed/comment/${commentId}/like/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            });
+            const data = await response.json();
+            if (data.success) {
+                if (data.liked) {
+                    btn.classList.add('liked');
+                    icon?.classList.remove('far');
+                    icon?.classList.add('fas');
+                } else {
+                    btn.classList.remove('liked');
+                    icon?.classList.remove('fas');
+                    icon?.classList.add('far');
+                }
+                if (likesCount) {
+                    likesCount.textContent = data.likes_count > 0 ? data.likes_count : '';
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    async function handleCommentSubmit(form) {
+        const postId = form.dataset.postId;
+        const input = form.querySelector('.comment-input');
+        const content = input?.value.trim();
+        if (!content) return;
+
+        const commentsList = document.querySelector(`#comments-${postId} .comments-list`);
+
+        // Optimistic UI - create temp comment
+        const tempId = 'temp-' + Date.now();
+        const tempComment = document.createElement('div');
+        tempComment.className = 'comment optimistic';
+        tempComment.id = tempId;
+        tempComment.innerHTML = `
+            <div class="avatar-initials comment-avatar" style="background: ${currentUser?.avatarColor || '#ccc'}; border-radius: 50%;">${currentUser?.avatarInitial || 'U'}</div>
+            <div class="comment-content-wrapper">
+                <div class="comment-content">
+                    <div class="comment-author">${currentUser?.fullName || 'You'}</div>
+                    <div class="comment-text">${escapeHtml(content)}</div>
+                </div>
+                <div class="comment-actions">
+                    <span class="comment-time"><i class="fas fa-spinner fa-spin"></i> Sending...</span>
+                </div>
+            </div>
+        `;
+
+        commentsList?.appendChild(tempComment);
+        input.value = '';
+
+        // Ensure comments section is visible
+        const commentsSection = document.getElementById(`comments-${postId}`);
+        if (commentsSection?.style.display === 'none') {
+            commentsSection.style.display = 'block';
+        }
+
+        try {
+            const formData = new FormData(form);
+            formData.set('content', content);
+
+            const response = await fetch(`/accounts/social-feed/post/${postId}/comment/`, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                const comment = document.getElementById(tempId);
+                if (comment) {
+                    comment.classList.remove('optimistic');
+                    comment.id = `comment-${data.comment.id}`;
+                    const timeEl = comment.querySelector('.comment-time');
+                    if (timeEl) timeEl.innerHTML = 'Just now';
+                }
+                // Update comment count
+                const countEl = document.querySelector(`[data-post-id="${postId}"].comment-toggle-link, .post-card[data-post-id="${postId}"] .comments-count`);
+                if (countEl) {
+                    const match = countEl.textContent.match(/\\d+/);
+                    const count = match ? parseInt(match[0]) + 1 : 1;
+                    countEl.textContent = `${count} comment${count !== 1 ? 's' : ''}`;
+                }
+            } else {
+                throw new Error(data.error || 'Failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById(tempId)?.remove();
+            input.value = content;
+            if (typeof showToast === 'function') {
+                showToast('Failed to post comment. Please try again.', 'error');
+            } else {
+                alert('Failed to post comment');
+            }
+        }
+    }
+
+    async function handleReplySubmit(form) {
+        const commentId = form.dataset.commentId;
+        const input = form.querySelector('.reply-input');
+        const content = input?.value.trim();
+        if (!content) return;
+
+        try {
+            const formData = new FormData(form);
+            const response = await fetch(`/accounts/social-feed/comment/${commentId}/reply/`, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            });
+            const data = await response.json();
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.error || 'Failed to post reply');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to post reply');
+        }
+    }
+
+    // getCookie is defined at top of script
 });
 
 // Follow user from empty feed suggestions

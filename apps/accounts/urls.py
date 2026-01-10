@@ -70,6 +70,7 @@ urlpatterns = [
 
     # Social Feed URLs (MyRecoveryCircle)
     path('social-feed/', views.hybrid_landing_view, name='social_feed'),
+    path('social-feed/posts/', views.social_feed_posts_api, name='social_feed_posts_api'),
     path('social-feed/create/', views.create_social_post, name='create_social_post'),
     path('social-feed/post/<int:post_id>/like/', views.like_social_post, name='like_social_post'),
     path('social-feed/post/<int:post_id>/react/', views.react_to_post, name='react_to_post'),

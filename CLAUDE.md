@@ -179,7 +179,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 1. ~~Dark mode~~ ✅ COMPLETE
 2. ~~Skeleton loaders for content~~ ✅ COMPLETE
 3. ~~Optimistic UI for likes/comments~~ ✅ COMPLETE
-4. Infinite scroll on feeds
+4. ~~Infinite scroll on feeds~~ ✅ COMPLETE
 5. Image compression for uploads
 
 #### Technical Debt (Priority: LOW)
@@ -739,7 +739,7 @@ Notification (group types):
 | ~~Dark mode~~ | Medium | Medium | ✅ Done |
 | ~~Skeleton loaders~~ | Low | Low | ✅ Done |
 | ~~Optimistic UI~~ | Medium | Medium | ✅ Done |
-| **Infinite scroll** | Low | Medium | Replace pagination on feeds. Modern UX expectation. |
+| ~~Infinite scroll~~ | Low | Medium | ✅ Done |
 | **Image compression** | Low | Low | Auto-compress uploads for faster loading. |
 
 ### Technical Debt to Address
@@ -753,6 +753,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-10:** Implemented infinite scroll on social feed. New API endpoint `/accounts/social-feed/posts/` returns paginated JSON. IntersectionObserver detects scroll position and loads more posts automatically. Event handlers refactored to delegation pattern for dynamically loaded posts. Fallback to pagination for non-JS browsers.
 - **2026-01-10:** Implemented optimistic UI for likes and comments on social feed. Like button toggles immediately before server response with rollback on error. Comments appear instantly with "Sending..." state, removed on failure. Toast notification system added for error feedback.
 - **2026-01-10:** Added skeleton loaders to social feed for improved perceived loading performance. Shimmer animation placeholders for post cards replace spinners during page load. Reusable skeleton partials and JavaScript utilities for future expansion.
 - **2026-01-10:** Added dark mode support with system preference detection and manual toggle. Theme toggle button in navigation bar (desktop and mobile). Preferences persist via localStorage. Includes comprehensive CSS overrides for all components.

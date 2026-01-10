@@ -725,6 +725,76 @@
     }
 }
 
+/* =============================================
+   Infinite Scroll
+   ============================================= */
+
+/* Loading indicator at bottom of feed */
+.infinite-scroll-loader {
+    text-align: center;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    color: var(--text-muted);
+}
+
+.infinite-scroll-loader .spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--bg-gray);
+    border-top-color: var(--primary-light);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* End of feed message */
+.end-of-feed {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.end-of-feed i {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.5;
+}
+
+/* Scroll sentinel (invisible trigger element) */
+#scroll-sentinel {
+    height: 1px;
+    width: 100%;
+}
+
+/* Post appear animation for dynamically loaded posts */
+.post-card.new-post {
+    animation: post-appear 0.3s ease;
+}
+
+@keyframes post-appear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hide traditional pagination when infinite scroll is active */
+.pagination.hidden-by-infinite-scroll {
+    display: none;
+}
+
 /* Typography */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
