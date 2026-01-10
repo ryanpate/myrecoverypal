@@ -178,7 +178,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 #### Polish (Priority: MEDIUM)
 1. ~~Dark mode~~ ✅ COMPLETE
 2. ~~Skeleton loaders for content~~ ✅ COMPLETE
-3. Optimistic UI for likes/comments
+3. ~~Optimistic UI for likes/comments~~ ✅ COMPLETE
 4. Infinite scroll on feeds
 5. Image compression for uploads
 
@@ -738,7 +738,7 @@ Notification (group types):
 |---------|--------|--------|--------|
 | ~~Dark mode~~ | Medium | Medium | ✅ Done |
 | ~~Skeleton loaders~~ | Low | Low | ✅ Done |
-| **Optimistic UI** | Medium | Medium | Likes/comments appear instantly. Feels more responsive. |
+| ~~Optimistic UI~~ | Medium | Medium | ✅ Done |
 | **Infinite scroll** | Low | Medium | Replace pagination on feeds. Modern UX expectation. |
 | **Image compression** | Low | Low | Auto-compress uploads for faster loading. |
 
@@ -753,6 +753,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-10:** Implemented optimistic UI for likes and comments on social feed. Like button toggles immediately before server response with rollback on error. Comments appear instantly with "Sending..." state, removed on failure. Toast notification system added for error feedback.
 - **2026-01-10:** Added skeleton loaders to social feed for improved perceived loading performance. Shimmer animation placeholders for post cards replace spinners during page load. Reusable skeleton partials and JavaScript utilities for future expansion.
 - **2026-01-10:** Added dark mode support with system preference detection and manual toggle. Theme toggle button in navigation bar (desktop and mobile). Preferences persist via localStorage. Includes comprehensive CSS overrides for all components.
 - **2026-01-10:** Added accountability nudges for Recovery Pals - sends notifications and emails when a pal hasn't checked in for 3+ days. Both inactive user and their active pal receive prompts. Celery Beat task runs daily at 2 PM UTC with 3-day cooldown.

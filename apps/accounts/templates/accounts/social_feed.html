@@ -993,6 +993,19 @@
 
 {% block extra_js %}
 <script>
+// Current user data for optimistic UI
+{% if user.is_authenticated %}
+const currentUser = {
+    id: {{ user.id }},
+    username: "{{ user.username|escapejs }}",
+    fullName: "{{ user.get_full_name|default:user.username|escapejs }}",
+    avatarInitial: "{{ user.username|slice:':1'|upper|escapejs }}",
+    avatarColor: "hsl({{ user.id|add:100 }}, 45%, 50%)"
+};
+{% else %}
+const currentUser = null;
+{% endif %}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Post content handling
     const textarea = document.getElementById('post-content');
@@ -1135,12 +1148,35 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Like button handlers
+    // Like button handlers - OPTIMISTIC UI
     document.querySelectorAll('.like-btn').forEach(btn => {
         btn.addEventListener('click', async function() {
             const postId = this.dataset.postId;
             const postCard = this.closest('.post-card');
+            const icon = this.querySelector('i');
+            const likesCount = postCard.querySelector('.likes-count');
 
+            // 1. Save current state for potential rollback
+            const wasLiked = this.classList.contains('liked');
+            const currentCountText = likesCount.textContent;
+            const currentCount = parseInt(currentCountText) || 0;
+
+            // 2. OPTIMISTIC UPDATE - Update UI immediately
+            if (wasLiked) {
+                this.classList.remove('liked');
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                const newCount = Math.max(0, currentCount - 1);
+                likesCount.textContent = `${newCount} like${newCount !== 1 ? 's' : ''}`;
+            } else {
+                this.classList.add('liked');
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                const newCount = currentCount + 1;
+                likesCount.textContent = `${newCount} like${newCount !== 1 ? 's' : ''}`;
+            }
+
+            // 3. Send request in background
             try {
                 const response = await fetch(`/accounts/social-feed/post/${postId}/like/`, {
                     method: 'POST',
@@ -1152,23 +1188,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
 
                 if (data.success) {
-                    const icon = this.querySelector('i');
-                    if (data.liked) {
-                        this.classList.add('liked');
-                        icon.classList.remove('far');
-                        icon.classList.add('fas');
-                    } else {
-                        this.classList.remove('liked');
-                        icon.classList.remove('fas');
-                        icon.classList.add('far');
-                    }
-
-                    // Update likes count
-                    const likesCount = postCard.querySelector('.likes-count');
+                    // Update with server's authoritative count (handles race conditions)
                     likesCount.textContent = `${data.likes_count} like${data.likes_count !== 1 ? 's' : ''}`;
+                } else {
+                    throw new Error(data.error || 'Failed to update like');
                 }
             } catch (error) {
-                console.error('Error:', error);
+                // 4. ROLLBACK on error - Revert to previous state
+                console.error('Like error:', error);
+                if (wasLiked) {
+                    this.classList.add('liked');
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                } else {
+                    this.classList.remove('liked');
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+                likesCount.textContent = currentCountText;
+                showToast('Failed to update like. Please try again.', 'error');
             }
         });
     });
@@ -1182,7 +1220,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Comment form submission
+    // Comment form submission - OPTIMISTIC UI
     document.querySelectorAll('.comment-form').forEach(form => {
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -1190,7 +1228,43 @@ document.addEventListener('DOMContentLoaded', function() {
             const postId = this.dataset.postId;
             const formData = new FormData(this);
             const input = this.querySelector('.comment-input');
+            const content = input.value.trim();
+            const commentsList = document.querySelector(`#comments-${postId} .comments-list`);
 
+            if (!content || !currentUser) return;
+
+            // 1. Create optimistic comment element
+            const tempId = 'temp-' + Date.now();
+            const optimisticComment = document.createElement('div');
+            optimisticComment.className = 'comment optimistic';
+            optimisticComment.id = tempId;
+            optimisticComment.innerHTML = `
+                <div class="avatar-initials comment-avatar" style="background: ${currentUser.avatarColor}; border-radius: 50%;">${currentUser.avatarInitial}</div>
+                <div class="comment-content">
+                    <div class="comment-author">${currentUser.fullName}</div>
+                    <div class="comment-text">${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                    <div class="comment-time"><i class="fas fa-spinner fa-spin"></i> Sending...</div>
+                </div>
+            `;
+
+            // 2. Insert at end of comments list and clear input
+            commentsList.appendChild(optimisticComment);
+            input.value = '';
+
+            // Make sure comments section is visible
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            if (commentsSection.style.display === 'none') {
+                commentsSection.style.display = 'block';
+            }
+
+            // Update comment count optimistically
+            const commentCountEl = document.querySelector(`[data-post-id="${postId}"].comment-toggle-btn span`);
+            if (commentCountEl) {
+                const currentCount = parseInt(commentCountEl.textContent) || 0;
+                commentCountEl.textContent = `${currentCount + 1} comments`;
+            }
+
+            // 3. Send request in background
             try {
                 const response = await fetch(`/accounts/social-feed/post/${postId}/comment/`, {
                     method: 'POST',
@@ -1203,14 +1277,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
 
                 if (data.success) {
-                    // Reload to show new comment
-                    window.location.reload();
+                    // 4. Update comment with server data
+                    const comment = document.getElementById(tempId);
+                    if (comment) {
+                        comment.classList.remove('optimistic');
+                        comment.id = `comment-${data.comment.id}`;
+                        const timeEl = comment.querySelector('.comment-time');
+                        if (timeEl) {
+                            timeEl.innerHTML = 'Just now';
+                        }
+                    }
                 } else {
-                    alert(data.error || 'Failed to post comment');
+                    throw new Error(data.error || 'Failed to post comment');
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to post comment');
+                // 5. Remove optimistic comment and restore input on error
+                console.error('Comment error:', error);
+                const failedComment = document.getElementById(tempId);
+                if (failedComment) {
+                    failedComment.remove();
+                }
+                input.value = content; // Restore the text
+
+                // Revert comment count
+                if (commentCountEl) {
+                    const currentCount = parseInt(commentCountEl.textContent) || 0;
+                    commentCountEl.textContent = `${Math.max(0, currentCount - 1)} comments`;
+                }
+
+                showToast('Failed to post comment. Please try again.', 'error');
             }
         });
     });

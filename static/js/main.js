@@ -186,6 +186,83 @@ document.addEventListener('DOMContentLoaded', function() {
 // End Skeleton Loader Management
 // =============================================
 
+// =============================================
+// Toast Notification System
+// =============================================
+
+/**
+ * Initialize toast container (creates it if doesn't exist)
+ */
+function initToastContainer() {
+    if (!document.getElementById('toastContainer')) {
+        const container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+    return document.getElementById('toastContainer');
+}
+
+/**
+ * Show a toast notification
+ * @param {string} message - The message to display
+ * @param {string} type - 'error', 'success', or 'info' (default: 'info')
+ * @param {number} duration - Duration in ms before auto-dismiss (default: 3000)
+ */
+function showToast(message, type = 'info', duration = 3000) {
+    const container = initToastContainer();
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+
+    const icons = {
+        error: 'fas fa-exclamation-circle',
+        success: 'fas fa-check-circle',
+        info: 'fas fa-info-circle'
+    };
+
+    toast.innerHTML = `
+        <i class="toast-icon ${icons[type] || icons.info}"></i>
+        <span class="toast-message">${message}</span>
+        <button class="toast-close" aria-label="Close">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    // Close button handler
+    toast.querySelector('.toast-close').addEventListener('click', () => {
+        dismissToast(toast);
+    });
+
+    container.appendChild(toast);
+
+    // Auto-dismiss after duration
+    if (duration > 0) {
+        setTimeout(() => {
+            dismissToast(toast);
+        }, duration);
+    }
+
+    return toast;
+}
+
+/**
+ * Dismiss a toast notification
+ * @param {HTMLElement} toast - The toast element to dismiss
+ */
+function dismissToast(toast) {
+    if (!toast || toast.classList.contains('toast-hiding')) return;
+
+    toast.classList.add('toast-hiding');
+    setTimeout(() => {
+        toast.remove();
+    }, 300); // Match CSS animation duration
+}
+
+// =============================================
+// End Toast Notification System
+// =============================================
+
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {

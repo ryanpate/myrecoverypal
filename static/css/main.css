@@ -550,6 +550,181 @@
 
 /* Dark mode - skeleton already uses CSS variables so it works automatically */
 
+/* =============================================
+   Toast Notifications
+   ============================================= */
+
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    background: var(--card-bg);
+    color: var(--text-dark);
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 280px;
+    max-width: 400px;
+    pointer-events: auto;
+    animation: toast-slide-in 0.3s ease;
+    border-left: 4px solid var(--primary-light);
+}
+
+.toast.toast-error {
+    border-left-color: #ef4444;
+}
+
+.toast.toast-success {
+    border-left-color: var(--accent-green);
+}
+
+.toast.toast-hiding {
+    animation: toast-slide-out 0.3s ease forwards;
+}
+
+.toast-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.toast-error .toast-icon {
+    color: #ef4444;
+}
+
+.toast-success .toast-icon {
+    color: var(--accent-green);
+}
+
+.toast-message {
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    font-size: 1rem;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.toast-close:hover {
+    opacity: 1;
+}
+
+@keyframes toast-slide-in {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toast-slide-out {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
+
+/* Mobile toast positioning */
+@media (max-width: 480px) {
+    .toast-container {
+        left: 10px;
+        right: 10px;
+        transform: none;
+        bottom: 80px; /* Above mobile nav */
+    }
+
+    .toast {
+        min-width: auto;
+        max-width: none;
+    }
+}
+
+/* =============================================
+   Optimistic UI States
+   ============================================= */
+
+/* Like button optimistic animation */
+.like-btn {
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.like-btn:active {
+    transform: scale(0.9);
+}
+
+.like-btn.liked i {
+    animation: like-pop 0.3s ease;
+}
+
+@keyframes like-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* Optimistic comment state */
+.comment.optimistic {
+    opacity: 0.7;
+    position: relative;
+}
+
+.comment.optimistic::after {
+    content: 'Sending...';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.comment.optimistic.error {
+    opacity: 0.5;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Comment appear animation */
+.comment.new-comment {
+    animation: comment-appear 0.3s ease;
+}
+
+@keyframes comment-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Typography */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
