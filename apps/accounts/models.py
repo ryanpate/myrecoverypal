@@ -94,6 +94,8 @@ class User(AbstractUser):
         help_text="Last check-in reminder sent")
     last_weekly_digest_sent = models.DateTimeField(null=True, blank=True,
         help_text="Last weekly digest sent")
+    last_pal_nudge_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Last accountability nudge sent for Recovery Pal")
 
     # Timestamps
     last_seen = models.DateTimeField(null=True, blank=True)
@@ -1537,6 +1539,7 @@ class Notification(models.Model):
         ('comment', 'New Comment'),
         ('like', 'New Like'),
         ('meeting_reminder', 'Meeting Reminder'),
+        ('pal_nudge', 'Recovery Pal Nudge'),
     )
 
     recipient = models.ForeignKey(

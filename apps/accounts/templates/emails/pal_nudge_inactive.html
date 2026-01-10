@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Recovery Pal is Thinking of You</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .pal-box {
+            background: linear-gradient(135deg, #4db8e8 0%, #52b788 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 25px 0;
+        }
+        .pal-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.5);
+            margin-bottom: 15px;
+        }
+        .pal-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #52b788;
+            color: white !important;
+            padding: 18px 50px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">MyRecoveryPal</div>
+            <h1 style="color: #1e4d8b; margin: 0;">Your Recovery Pal Misses You</h1>
+        </div>
+
+        <div class="pal-box">
+            <div style="font-size: 50px; margin-bottom: 10px;">&#128591;</div>
+            <div class="pal-name">{{ pal_name }}</div>
+            <div style="opacity: 0.9;">is thinking of you</div>
+        </div>
+
+        <div style="margin: 30px 0; text-align: center;">
+            <p>Hi {{ user.first_name|default:user.username }},</p>
+            <p>We noticed it's been <strong>{{ days_inactive }} days</strong> since your last check-in. Your Recovery Pal {{ pal_name }} is here to support you.</p>
+            <p style="color: #666;">Taking a moment to check in can help you stay connected to your recovery journey - even on tough days.</p>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{{ site_url }}/accounts/daily-checkin/" class="cta-button">
+                &#10004; Do Your Check-in
+            </a>
+        </div>
+
+        {% if shared_goals %}
+        <div style="background: #f0f9f4; padding: 20px; border-radius: 10px; margin: 25px 0;">
+            <p style="margin: 0 0 10px 0; color: #52b788; font-weight: 600;">Your Shared Goals</p>
+            <p style="margin: 0; color: #666; font-style: italic;">{{ shared_goals }}</p>
+        </div>
+        {% endif %}
+
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 25px 0; text-align: center;">
+            <p style="margin: 0; font-size: 14px; color: #666;">
+                <strong>Remember:</strong> Recovery isn't about being perfect. It's about showing up, one day at a time.
+            </p>
+        </div>
+
+        <div style="background: #e8f4f8; padding: 20px; border-radius: 10px; margin: 25px 0; text-align: center;">
+            <p style="margin: 0 0 10px 0; color: #1e4d8b; font-weight: 600;">Want to reach out to {{ pal_name }}?</p>
+            <a href="{{ site_url }}/accounts/send-message/{{ pal.username }}/" style="color: #4db8e8; text-decoration: none;">Send a Message</a>
+        </div>
+
+        <div class="footer">
+            <p style="margin: 10px 0;">
+                <a href="{{ site_url }}/accounts/pals/" style="color: #4db8e8; text-decoration: none;">Recovery Pals</a> |
+                <a href="{{ site_url }}" style="color: #4db8e8; text-decoration: none;">Visit MyRecoveryPal</a>
+            </p>
+            <p style="margin: 20px 0 10px 0; font-size: 12px; color: #999;">
+                You're receiving this because you have an active Recovery Pal connection.
+            </p>
+            <p style="margin: 10px 0; color: #666;">
+                {{ current_year }} MyRecoveryPal. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

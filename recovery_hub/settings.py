@@ -705,6 +705,11 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_meeting_reminders',
         'schedule': crontab(minute='*/15'),  # Every 15 minutes
     },
+    # Recovery Pal accountability nudges - daily at 2 PM UTC
+    'send-pal-accountability-nudges': {
+        'task': 'apps.accounts.tasks.send_pal_accountability_nudges',
+        'schedule': crontab(hour=14, minute=0),  # Daily at 2 PM UTC
+    },
 }
 
 # ========================================

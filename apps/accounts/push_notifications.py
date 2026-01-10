@@ -102,6 +102,16 @@ class PushNotificationService:
             'body': '{meeting_name} starts in 30 minutes',
             'icon': '/static/images/favicon_192.png',
         },
+        'pal_nudge': {
+            'title': 'Check on Your Recovery Pal',
+            'body': '{pal_name} could use your support',
+            'icon': '/static/images/favicon_192.png',
+        },
+        'pal_nudge_inactive': {
+            'title': 'Your Recovery Pal Misses You',
+            'body': '{pal_name} is thinking of you - time for a check-in?',
+            'icon': '/static/images/favicon_192.png',
+        },
     }
 
     @classmethod
@@ -431,6 +441,66 @@ class PushNotificationService:
             body = f"{meeting_name} starts in 30 minutes"
 
             logger.info(f"[PUSH] To: {user.email} | Type: meeting_reminder | "
+                       f"Title: {title} | Body: {body}")
+
+        return notification
+
+    @classmethod
+    def notify_pal_nudge_inactive(cls, inactive_user, active_pal, days_inactive):
+        """
+        Notify an inactive user that their Recovery Pal is thinking of them.
+        Sent when user hasn't checked in for 3+ days.
+        """
+        from .models import Notification
+
+        pal_name = cls._get_sender_name(active_pal)
+
+        notification = Notification.objects.create(
+            recipient=inactive_user,
+            sender=active_pal,
+            notification_type='pal_nudge',
+            title='Your Recovery Pal Misses You',
+            message=f"{pal_name} is thinking of you. It's been {days_inactive} days since your last check-in.",
+            link='/accounts/daily-checkin/'
+        )
+
+        # Send push notification
+        if cls._should_send_push(inactive_user):
+            template = cls.NOTIFICATION_TEMPLATES.get('pal_nudge_inactive', {})
+            title = template.get('title', 'Your Recovery Pal Misses You')
+            body = f"{pal_name} is thinking of you - time for a check-in?"
+
+            logger.info(f"[PUSH] To: {inactive_user.email} | Type: pal_nudge_inactive | "
+                       f"Title: {title} | Body: {body}")
+
+        return notification
+
+    @classmethod
+    def notify_pal_nudge_active(cls, active_pal, inactive_user, days_inactive):
+        """
+        Notify an active pal to reach out to their inactive Recovery Pal.
+        Sent when their pal hasn't checked in for 3+ days.
+        """
+        from .models import Notification
+
+        pal_name = cls._get_sender_name(inactive_user)
+
+        notification = Notification.objects.create(
+            recipient=active_pal,
+            sender=inactive_user,
+            notification_type='pal_nudge',
+            title='Check on Your Recovery Pal',
+            message=f"{pal_name} hasn't checked in for {days_inactive} days. Send them some support!",
+            link=f'/accounts/send-message/{inactive_user.username}/'
+        )
+
+        # Send push notification
+        if cls._should_send_push(active_pal):
+            template = cls.NOTIFICATION_TEMPLATES.get('pal_nudge', {})
+            title = template.get('title', 'Check on Your Recovery Pal')
+            body = f"{pal_name} could use your support"
+
+            logger.info(f"[PUSH] To: {active_pal.email} | Type: pal_nudge | "
                        f"Title: {title} | Body: {body}")
 
         return notification

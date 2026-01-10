@@ -173,7 +173,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 2. ~~Prominent sobriety counter widget on profile~~ ✅ COMPLETE
 3. ~~Meeting reminders (push before saved meetings)~~ ✅ COMPLETE
 4. ~~Progress visualizations (mood/craving trends)~~ ✅ COMPLETE
-5. Accountability nudges for Recovery Pals
+5. ~~Accountability nudges for Recovery Pals~~ ✅ COMPLETE
 
 #### Polish (Priority: MEDIUM)
 1. Dark mode
@@ -730,7 +730,7 @@ Notification (group types):
 | ~~Sobriety counter widget~~ | High | Medium | ✅ Done |
 | ~~Meeting reminders~~ | High | Medium | ✅ Done |
 | ~~Progress visualizations~~ | Medium | Medium | ✅ Done |
-| **Accountability nudges** | Medium | Medium | Prompt Recovery Pals to check in on each other if inactive. |
+| ~~Accountability nudges~~ | Medium | Medium | ✅ Done |
 
 ### LOWER PRIORITY - Polish
 
@@ -753,6 +753,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-10:** Added accountability nudges for Recovery Pals - sends notifications and emails when a pal hasn't checked in for 3+ days. Both inactive user and their active pal receive prompts. Celery Beat task runs daily at 2 PM UTC with 3-day cooldown.
 - **2026-01-10:** Added progress visualizations page at `/accounts/progress/` with Chart.js charts showing mood, craving, and energy trends over 7/30/90 days. Includes stats grid, insights section, and navigation links.
 - **2026-01-10:** Added meeting reminders feature - sends push notifications and emails 30 minutes before bookmarked meetings. Includes Celery Beat task running every 15 minutes with timezone-aware scheduling.
 - **2026-01-09:** Fixed ads.txt to use hardcoded content for reliability - file-based approach was failing on production.

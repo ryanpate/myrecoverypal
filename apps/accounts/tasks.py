@@ -505,6 +505,150 @@ def send_meeting_reminders(self):
 
 
 # ========================================
+# Recovery Pal Accountability Nudges
+# ========================================
+
+@shared_task(bind=True, max_retries=3)
+def send_pal_accountability_nudges(self):
+    """
+    Send accountability nudges for Recovery Pals when one hasn't checked in for 3+ days.
+
+    Both users receive notifications:
+    - Inactive user: Reminder to check in (their pal is thinking of them)
+    - Active pal: Prompt to reach out and support
+
+    Runs daily at 2 PM UTC. Max one nudge per relationship every 3 days.
+    """
+    from .models import User, RecoveryPal, DailyCheckIn
+    from .push_notifications import PushNotificationService
+
+    now = timezone.now()
+    three_days_ago = now - timedelta(days=3)
+    nudge_cooldown = now - timedelta(days=3)  # Don't re-nudge within 3 days
+
+    sent_count = 0
+    failed_count = 0
+    skipped_count = 0
+    site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
+
+    # Get all active pal relationships
+    active_pals = RecoveryPal.objects.filter(status='active').select_related('user1', 'user2')
+
+    for pal_rel in active_pals:
+        try:
+            user1, user2 = pal_rel.user1, pal_rel.user2
+
+            # Get last check-in for each user
+            user1_last_checkin = DailyCheckIn.objects.filter(user=user1).order_by('-date').first()
+            user2_last_checkin = DailyCheckIn.objects.filter(user=user2).order_by('-date').first()
+
+            # Determine who is inactive (no check-in in 3+ days)
+            user1_inactive = not user1_last_checkin or user1_last_checkin.date < three_days_ago.date()
+            user2_inactive = not user2_last_checkin or user2_last_checkin.date < three_days_ago.date()
+
+            # Skip if both active or both inactive (no clear active/inactive pair)
+            if user1_inactive == user2_inactive:
+                skipped_count += 1
+                continue
+
+            # Identify inactive and active users
+            inactive_user = user1 if user1_inactive else user2
+            active_user = user2 if user1_inactive else user1
+            inactive_last_checkin = user1_last_checkin if user1_inactive else user2_last_checkin
+
+            # Calculate days since last check-in
+            if inactive_last_checkin:
+                days_inactive = (now.date() - inactive_last_checkin.date).days
+            else:
+                days_inactive = 7  # Default if never checked in
+
+            # Check throttling (once per 3 days per inactive user)
+            if inactive_user.last_pal_nudge_sent and inactive_user.last_pal_nudge_sent > nudge_cooldown:
+                skipped_count += 1
+                continue
+
+            # Skip users with notifications disabled
+            if not inactive_user.email_notifications or not active_user.email_notifications:
+                skipped_count += 1
+                continue
+
+            # Send nudge to inactive user
+            active_pal_name = active_user.first_name or active_user.username
+
+            # Send in-app notification to inactive user
+            PushNotificationService.notify_pal_nudge_inactive(
+                inactive_user=inactive_user,
+                active_pal=active_user,
+                days_inactive=days_inactive
+            )
+
+            # Send email to inactive user
+            html_message = render_to_string('emails/pal_nudge_inactive.html', {
+                'user': inactive_user,
+                'pal': active_user,
+                'pal_name': active_pal_name,
+                'days_inactive': days_inactive,
+                'shared_goals': pal_rel.shared_goals,
+                'site_url': site_url,
+                'current_year': now.year,
+            })
+            plain_message = strip_tags(html_message)
+
+            send_email_with_retry(
+                subject=f"{active_pal_name} is thinking of you",
+                plain_message=plain_message,
+                html_message=html_message,
+                recipient_email=inactive_user.email,
+            )
+
+            # Send nudge to active pal
+            inactive_pal_name = inactive_user.first_name or inactive_user.username
+
+            # Send in-app notification to active pal
+            PushNotificationService.notify_pal_nudge_active(
+                active_pal=active_user,
+                inactive_user=inactive_user,
+                days_inactive=days_inactive
+            )
+
+            # Send email to active pal
+            html_message = render_to_string('emails/pal_nudge_active.html', {
+                'user': active_user,
+                'pal': inactive_user,
+                'pal_name': inactive_pal_name,
+                'days_inactive': days_inactive,
+                'shared_goals': pal_rel.shared_goals,
+                'site_url': site_url,
+                'current_year': now.year,
+            })
+            plain_message = strip_tags(html_message)
+
+            send_email_with_retry(
+                subject=f"{inactive_pal_name} could use your support",
+                plain_message=plain_message,
+                html_message=html_message,
+                recipient_email=active_user.email,
+            )
+
+            # Update tracking on inactive user
+            inactive_user.last_pal_nudge_sent = now
+            inactive_user.save(update_fields=['last_pal_nudge_sent'])
+            sent_count += 1
+
+            logger.info(f"Pal accountability nudge sent: {inactive_user.email} (inactive) <-> {active_user.email} (active)")
+
+            # Small delay between emails to avoid rate limiting
+            time.sleep(0.5)
+
+        except Exception as e:
+            failed_count += 1
+            logger.error(f"Error sending pal nudge for relationship {pal_rel.id}: {e}")
+
+    logger.info(f"Pal accountability nudges: {sent_count} sent, {failed_count} failed, {skipped_count} skipped")
+    return sent_count
+
+
+# ========================================
 # Invite Email (existing)
 # ========================================
 
