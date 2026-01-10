@@ -171,7 +171,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 #### Retention (Priority: HIGH)
 1. ~~Daily gratitude prompt in check-in~~ ✅ COMPLETE
 2. ~~Prominent sobriety counter widget on profile~~ ✅ COMPLETE
-3. Meeting reminders (push before saved meetings)
+3. ~~Meeting reminders (push before saved meetings)~~ ✅ COMPLETE
 4. Progress visualizations (mood/craving trends)
 5. Accountability nudges for Recovery Pals
 
@@ -728,7 +728,7 @@ Notification (group types):
 |---------|--------|--------|--------|
 | ~~Daily gratitude prompt~~ | High | Medium | ✅ Done |
 | ~~Sobriety counter widget~~ | High | Medium | ✅ Done |
-| **Meeting reminders** | High | Medium | Push notification before saved meetings. Integrates support_services. |
+| ~~Meeting reminders~~ | High | Medium | ✅ Done |
 | **Progress visualizations** | Medium | Medium | Charts showing mood trends, craving patterns over time. |
 | **Accountability nudges** | Medium | Medium | Prompt Recovery Pals to check in on each other if inactive. |
 
@@ -753,6 +753,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-10:** Added meeting reminders feature - sends push notifications and emails 30 minutes before bookmarked meetings. Includes Celery Beat task running every 15 minutes with timezone-aware scheduling.
 - **2026-01-09:** Fixed ads.txt to use hardcoded content for reliability - file-based approach was failing on production.
 - **2026-01-09:** Added prominent sobriety counter widget to profile page with gradient design, years/months/weeks breakdown, milestone progress bar, motivational messages, and share button.
 - **2026-01-09:** Added daily gratitude prompt to check-in feature with quick-fill tags and featured gratitude section.

@@ -397,6 +397,114 @@ def send_weekly_digests(self):
 
 
 # ========================================
+# Meeting Reminders
+# ========================================
+
+@shared_task(bind=True, max_retries=3)
+def send_meeting_reminders(self):
+    """
+    Send reminders for bookmarked meetings starting in ~30 minutes.
+    Runs every 15 minutes to catch meetings in the 20-40 minute window.
+    """
+    from apps.support_services.models import UserBookmark
+    from .push_notifications import PushNotificationService
+    import pytz
+
+    now = timezone.now()
+    sent_count = 0
+    failed_count = 0
+    site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
+
+    # Get all meeting bookmarks where:
+    # - User has reminder enabled
+    # - Meeting exists (is bookmarked)
+    # - Hasn't been reminded in the last 20 hours
+    last_reminder_cutoff = now - timedelta(hours=20)
+
+    bookmarks = UserBookmark.objects.filter(
+        meeting__isnull=False,
+        reminder_enabled=True,
+        user__email_notifications=True,
+    ).exclude(
+        last_reminder_sent__gte=last_reminder_cutoff
+    ).select_related('user', 'meeting')
+
+    for bookmark in bookmarks:
+        try:
+            meeting = bookmark.meeting
+            user = bookmark.user
+
+            # Skip if meeting has no time set
+            if not meeting.time:
+                continue
+
+            # Get the meeting timezone
+            try:
+                meeting_tz = pytz.timezone(meeting.timezone or 'America/Chicago')
+            except pytz.exceptions.UnknownTimeZoneError:
+                meeting_tz = pytz.timezone('America/Chicago')
+
+            # Get current time in meeting's timezone
+            now_in_meeting_tz = now.astimezone(meeting_tz)
+            today_weekday = (now_in_meeting_tz.weekday() + 1) % 7  # Convert to Sunday=0
+
+            # Check if meeting is today
+            if meeting.day != today_weekday:
+                continue
+
+            # Create datetime for today's meeting
+            from datetime import datetime
+            meeting_datetime = meeting_tz.localize(
+                datetime.combine(now_in_meeting_tz.date(), meeting.time)
+            )
+
+            # Calculate minutes until meeting
+            time_until_meeting = meeting_datetime - now_in_meeting_tz
+            minutes_until = time_until_meeting.total_seconds() / 60
+
+            # Send reminder if meeting is 20-40 minutes away
+            if 20 <= minutes_until <= 40:
+                # Send push notification
+                PushNotificationService.notify_meeting_reminder(user, meeting)
+
+                # Send email reminder
+                meeting_name = meeting.name or meeting.group or 'Your meeting'
+                html_message = render_to_string('emails/meeting_reminder.html', {
+                    'user': user,
+                    'meeting': meeting,
+                    'meeting_name': meeting_name,
+                    'meeting_time': meeting.time.strftime('%I:%M %p'),
+                    'site_url': site_url,
+                    'current_year': now.year,
+                })
+                plain_message = strip_tags(html_message)
+
+                send_email_with_retry(
+                    subject=f"Meeting Reminder: {meeting_name} starts soon!",
+                    plain_message=plain_message,
+                    html_message=html_message,
+                    recipient_email=user.email,
+                )
+
+                # Update last reminder sent
+                bookmark.last_reminder_sent = now
+                bookmark.save(update_fields=['last_reminder_sent'])
+                sent_count += 1
+
+                logger.info(f"Meeting reminder sent to {user.email} for {meeting_name}")
+
+                # Small delay between emails
+                time.sleep(0.5)
+
+        except Exception as e:
+            failed_count += 1
+            logger.error(f"Error sending meeting reminder for bookmark {bookmark.id}: {e}")
+
+    logger.info(f"Meeting reminders sent: {sent_count}, failed: {failed_count}")
+    return sent_count
+
+
+# ========================================
 # Invite Email (existing)
 # ========================================
 

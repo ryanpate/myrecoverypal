@@ -1536,6 +1536,7 @@ class Notification(models.Model):
         ('group_join', 'New Group Member'),
         ('comment', 'New Comment'),
         ('like', 'New Like'),
+        ('meeting_reminder', 'Meeting Reminder'),
     )
 
     recipient = models.ForeignKey(

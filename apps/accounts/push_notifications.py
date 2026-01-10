@@ -97,6 +97,11 @@ class PushNotificationService:
             'body': "You've been invited to a challenge",
             'icon': '/static/images/favicon_192.png',
         },
+        'meeting_reminder': {
+            'title': 'Meeting Reminder',
+            'body': '{meeting_name} starts in 30 minutes',
+            'icon': '/static/images/favicon_192.png',
+        },
     }
 
     @classmethod
@@ -403,3 +408,29 @@ class PushNotificationService:
             )
 
         return notifications
+
+    @classmethod
+    def notify_meeting_reminder(cls, user, meeting):
+        """Notify user about an upcoming meeting they've bookmarked"""
+        from .models import Notification
+
+        meeting_name = meeting.name or meeting.group or 'Your meeting'
+
+        notification = Notification.objects.create(
+            recipient=user,
+            sender=None,
+            notification_type='meeting_reminder',
+            message=f"{meeting_name} starts in 30 minutes",
+            url=f"/support/meetings/{meeting.slug}/"
+        )
+
+        # Send push with custom template
+        if cls._should_send_push(user):
+            template = cls.NOTIFICATION_TEMPLATES.get('meeting_reminder', {})
+            title = template.get('title', 'Meeting Reminder')
+            body = f"{meeting_name} starts in 30 minutes"
+
+            logger.info(f"[PUSH] To: {user.email} | Type: meeting_reminder | "
+                       f"Title: {title} | Body: {body}")
+
+        return notification

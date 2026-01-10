@@ -436,6 +436,10 @@ class UserBookmark(models.Model):
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # Meeting reminder settings
+    reminder_enabled = models.BooleanField(default=True)
+    last_reminder_sent = models.DateTimeField(null=True, blank=True)
+
     class Meta:
         ordering = ['-created_at']
         unique_together = [

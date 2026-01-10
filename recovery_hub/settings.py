@@ -700,6 +700,11 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_weekly_digests',
         'schedule': crontab(hour=10, minute=30, day_of_week=0),  # Sunday 10:30 AM
     },
+    # Meeting reminders - every 15 minutes for 30-min advance notice
+    'send-meeting-reminders': {
+        'task': 'apps.accounts.tasks.send_meeting_reminders',
+        'schedule': crontab(minute='*/15'),  # Every 15 minutes
+    },
 }
 
 # ========================================
