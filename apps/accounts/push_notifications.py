@@ -113,9 +113,50 @@ def send_fcm_notification(token, title, body, data=None):
         return False
 
 
+def _get_apns_auth_token():
+    """
+    Generate JWT auth token for APNs.
+    Tokens are valid for 1 hour, so we cache them.
+    """
+    import time
+    import jwt
+
+    apns_key_path = getattr(settings, 'APNS_KEY_PATH', None)
+    apns_key_id = getattr(settings, 'APNS_KEY_ID', None)
+    apns_team_id = getattr(settings, 'APNS_TEAM_ID', None)
+
+    if not all([apns_key_path, apns_key_id, apns_team_id]):
+        return None
+
+    if not os.path.exists(apns_key_path):
+        return None
+
+    try:
+        with open(apns_key_path, 'r') as f:
+            auth_key = f.read()
+
+        token = jwt.encode(
+            {
+                'iss': apns_team_id,
+                'iat': int(time.time()),
+            },
+            auth_key,
+            algorithm='ES256',
+            headers={
+                'alg': 'ES256',
+                'kid': apns_key_id,
+            }
+        )
+        return token
+    except Exception as e:
+        logger.error(f"Failed to generate APNs auth token: {e}")
+        return None
+
+
 def send_apns_notification(token, title, body, data=None):
     """
     Send push notification via Apple Push Notification service (iOS).
+    Uses HTTP/2 with JWT authentication.
 
     Args:
         token: Device APNs token
@@ -126,6 +167,8 @@ def send_apns_notification(token, title, body, data=None):
     Returns:
         bool: True if sent successfully, False otherwise
     """
+    import json
+
     # Check if APNs is configured
     apns_key_path = getattr(settings, 'APNS_KEY_PATH', None)
     apns_key_id = getattr(settings, 'APNS_KEY_ID', None)
@@ -140,54 +183,67 @@ def send_apns_notification(token, title, body, data=None):
         logger.warning(f"APNs key file not found: {apns_key_path}")
         return False
 
+    # Get auth token
+    auth_token = _get_apns_auth_token()
+    if not auth_token:
+        logger.error("Failed to get APNs auth token")
+        return False
+
     try:
-        from apns2.client import APNsClient
-        from apns2.payload import Payload
-        from apns2.credentials import TokenCredentials
+        import httpx
 
-        # Create credentials
-        token_credentials = TokenCredentials(
-            auth_key_path=apns_key_path,
-            auth_key_id=apns_key_id,
-            team_id=apns_team_id,
-        )
-
-        # Determine if we're in sandbox mode
+        # Determine environment
         use_sandbox = getattr(settings, 'APNS_USE_SANDBOX', settings.DEBUG)
+        if use_sandbox:
+            apns_host = "https://api.sandbox.push.apple.com"
+        else:
+            apns_host = "https://api.push.apple.com"
 
-        # Create client
-        client = APNsClient(
-            credentials=token_credentials,
-            use_sandbox=use_sandbox,
-        )
+        # Build payload
+        payload = {
+            "aps": {
+                "alert": {
+                    "title": title,
+                    "body": body,
+                },
+                "badge": 1,
+                "sound": "default",
+            }
+        }
+        # Add custom data
+        if data:
+            payload.update(data)
 
-        # Create payload
-        payload = Payload(
-            alert={
-                'title': title,
-                'body': body,
-            },
-            badge=1,
-            sound='default',
-            custom=data or {},
-        )
+        # Send request via HTTP/2
+        url = f"{apns_host}/3/device/{token}"
+        headers = {
+            "authorization": f"bearer {auth_token}",
+            "apns-topic": apns_topic,
+            "apns-push-type": "alert",
+            "apns-priority": "10",
+        }
 
-        # Send notification
-        client.send_notification(
-            token_hex=token,
-            notification=payload,
-            topic=apns_topic,
-        )
+        with httpx.Client(http2=True, timeout=30.0) as client:
+            response = client.post(
+                url,
+                headers=headers,
+                content=json.dumps(payload),
+            )
 
-        logger.info(f"APNs notification sent successfully to {token[:20]}...")
-        return True
+        if response.status_code == 200:
+            logger.info(f"APNs notification sent successfully to {token[:20]}...")
+            return True
+        else:
+            error_body = response.text
+            logger.warning(f"APNs error {response.status_code}: {error_body}")
+
+            # Check for invalid token errors
+            if response.status_code in (400, 410):
+                if 'BadDeviceToken' in error_body or 'Unregistered' in error_body:
+                    logger.warning(f"APNs token invalid: {token[:20]}...")
+            return False
 
     except Exception as e:
-        error_str = str(e)
-        # Check for invalid token errors
-        if 'BadDeviceToken' in error_str or 'Unregistered' in error_str:
-            logger.warning(f"APNs token invalid: {token[:20]}...")
-            return False
         logger.error(f"APNs send error: {e}")
         return False
 
