@@ -176,7 +176,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 5. ~~Accountability nudges for Recovery Pals~~ ✅ COMPLETE
 
 #### Polish (Priority: MEDIUM)
-1. Dark mode
+1. ~~Dark mode~~ ✅ COMPLETE
 2. Skeleton loaders for content
 3. Optimistic UI for likes/comments
 4. Infinite scroll on feeds
@@ -734,9 +734,9 @@ Notification (group types):
 
 ### LOWER PRIORITY - Polish
 
-| Feature | Impact | Effort | Why |
-|---------|--------|--------|-----|
-| **Dark mode** | Medium | Medium | Essential for nighttime use, reduces eye strain. |
+| Feature | Impact | Effort | Status |
+|---------|--------|--------|--------|
+| ~~Dark mode~~ | Medium | Medium | ✅ Done |
 | **Skeleton loaders** | Low | Low | Replace spinners with content placeholders. Feels faster. |
 | **Optimistic UI** | Medium | Medium | Likes/comments appear instantly. Feels more responsive. |
 | **Infinite scroll** | Low | Medium | Replace pagination on feeds. Modern UX expectation. |
@@ -753,6 +753,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-10:** Added dark mode support with system preference detection and manual toggle. Theme toggle button in navigation bar (desktop and mobile). Preferences persist via localStorage. Includes comprehensive CSS overrides for all components.
 - **2026-01-10:** Added accountability nudges for Recovery Pals - sends notifications and emails when a pal hasn't checked in for 3+ days. Both inactive user and their active pal receive prompts. Celery Beat task runs daily at 2 PM UTC with 3-day cooldown.
 - **2026-01-10:** Added progress visualizations page at `/accounts/progress/` with Chart.js charts showing mood, craving, and energy trends over 7/30/90 days. Includes stats grid, insights section, and navigation links.
 - **2026-01-10:** Added meeting reminders feature - sends push notifications and emails 30 minutes before bookmarked meetings. Includes Celery Beat task running every 15 minutes with timezone-aware scheduling.
