@@ -157,6 +157,12 @@ urlpatterns = [
          views.mark_all_notifications_read, name='mark_all_notifications_read'),
     path('api/update-last-seen/', views.update_last_seen, name='update_last_seen'),
 
+    # Push notification device token endpoints
+    path('api/device-token/register/',
+         views.register_device_token, name='register_device_token'),
+    path('api/device-token/unregister/',
+         views.unregister_device_token, name='unregister_device_token'),
+
     path('request-access/', views.request_access_view, name='request_access'),
     path('admin/approve-waitlist/<int:request_id>/',
          views.admin_approve_waitlist, name='admin_approve_waitlist'),

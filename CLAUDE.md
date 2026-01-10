@@ -188,8 +188,8 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 3. Improved offline support
 4. Performance audit (N+1 queries)
 
-#### Infrastructure
-1. Enable mobile push (FCM/APNs)
+#### Infrastructure - ALL COMPLETE ✅
+1. ~~Enable mobile push (FCM/APNs)~~ ✅ COMPLETE
 2. ~~Set up Celery Beat worker on Railway~~ ✅ COMPLETE
 
 ---
@@ -753,6 +753,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-10:** Implemented mobile push notifications infrastructure. New `DeviceToken` model stores FCM/APNs tokens. API endpoints `/accounts/api/device-token/register/` and `/unregister/` for mobile apps. `push_notifications.py` updated with `send_fcm_notification()` and `send_apns_notification()` functions. Requires Firebase credentials JSON and APNs .p8 key file to enable. See `PUSH_NOTIFICATIONS_SETUP.md` for configuration guide.
 - **2026-01-10:** Added image compression for uploads. New `image_utils.py` module provides validation (5MB limit, MIME type check), compression (max 1920px for posts, 1200px for groups, JPEG quality 85), and Cloudinary integration. Social post images and group images now auto-compressed before storage.
 - **2026-01-10:** Fixed dark mode toggle not working - main.js was not included in base.html.
 - **2026-01-10:** Implemented infinite scroll on social feed. New API endpoint `/accounts/social-feed/posts/` returns paginated JSON. IntersectionObserver detects scroll position and loads more posts automatically. Event handlers refactored to delegation pattern for dynamically loaded posts. Fallback to pagination for non-JS browsers.

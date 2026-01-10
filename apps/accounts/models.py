@@ -1602,6 +1602,48 @@ class Notification(models.Model):
         return icons.get(self.notification_type, 'fa-bell')
 
 
+class DeviceToken(models.Model):
+    """
+    Stores device tokens for push notifications (FCM for Android, APNs for iOS)
+    """
+    PLATFORM_CHOICES = [
+        ('ios', 'iOS'),
+        ('android', 'Android'),
+        ('web', 'Web'),
+    ]
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='device_tokens'
+    )
+    token = models.CharField(max_length=255, unique=True)
+    platform = models.CharField(max_length=10, choices=PLATFORM_CHOICES)
+    device_name = models.CharField(max_length=100, blank=True)
+    active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    last_used_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ['user', 'token']
+        indexes = [
+            models.Index(fields=['user', 'active']),
+            models.Index(fields=['platform', 'active']),
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.platform} ({self.token[:20]}...)"
+
+    def mark_used(self):
+        """Update last_used_at timestamp"""
+        self.last_used_at = timezone.now()
+        self.save(update_fields=['last_used_at'])
+
+    def deactivate(self):
+        """Mark token as inactive (e.g., when push fails)"""
+        self.active = False
+        self.save(update_fields=['active', 'updated_at'])
+
+
 class SocialPost(models.Model):
     """User-generated social media posts for the community feed"""
     VISIBILITY_CHOICES = [

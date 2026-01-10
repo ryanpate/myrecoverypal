@@ -2,8 +2,8 @@
 Push Notification Service for MyRecoveryPal
 
 This module provides push notification triggers for key user events.
-Currently logs notifications and creates in-app Notification records.
-Can be extended with Firebase FCM / Apple APNs when mobile infrastructure is ready.
+Sends push notifications via Firebase Cloud Messaging (Android) and
+Apple Push Notification service (iOS).
 
 Usage:
     from apps.accounts.push_notifications import PushNotificationService
@@ -14,9 +14,228 @@ Usage:
 """
 
 import logging
+import os
 from django.utils import timezone
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
+
+# Firebase Admin SDK initialization (lazy loading)
+_firebase_app = None
+
+
+def _get_firebase_app():
+    """
+    Lazily initialize Firebase Admin SDK.
+    Returns None if not configured.
+    """
+    global _firebase_app
+
+    if _firebase_app is not None:
+        return _firebase_app
+
+    firebase_creds_path = getattr(settings, 'FIREBASE_CREDENTIALS_PATH', None)
+    if not firebase_creds_path or not os.path.exists(firebase_creds_path):
+        logger.debug("Firebase credentials not configured - push notifications disabled")
+        return None
+
+    try:
+        import firebase_admin
+        from firebase_admin import credentials
+
+        if not firebase_admin._apps:
+            cred = credentials.Certificate(firebase_creds_path)
+            _firebase_app = firebase_admin.initialize_app(cred)
+            logger.info("Firebase Admin SDK initialized successfully")
+        else:
+            _firebase_app = firebase_admin.get_app()
+
+        return _firebase_app
+    except Exception as e:
+        logger.error(f"Failed to initialize Firebase Admin: {e}")
+        return None
+
+
+def send_fcm_notification(token, title, body, data=None):
+    """
+    Send push notification via Firebase Cloud Messaging (Android/Web).
+
+    Args:
+        token: Device FCM token
+        title: Notification title
+        body: Notification body message
+        data: Optional dict of additional data
+
+    Returns:
+        bool: True if sent successfully, False otherwise
+    """
+    app = _get_firebase_app()
+    if not app:
+        logger.debug(f"FCM not configured - would send: {title}")
+        return False
+
+    try:
+        from firebase_admin import messaging
+
+        message = messaging.Message(
+            notification=messaging.Notification(
+                title=title,
+                body=body,
+            ),
+            data={k: str(v) for k, v in (data or {}).items()},  # FCM requires string values
+            token=token,
+            android=messaging.AndroidConfig(
+                priority='high',
+                notification=messaging.AndroidNotification(
+                    icon='ic_notification',
+                    color='#52b788',
+                    sound='default',
+                ),
+            ),
+            webpush=messaging.WebpushConfig(
+                notification=messaging.WebpushNotification(
+                    icon='/static/images/favicon_192.png',
+                ),
+            ),
+        )
+
+        response = messaging.send(message)
+        logger.info(f"FCM notification sent successfully: {response}")
+        return True
+
+    except Exception as e:
+        error_str = str(e)
+        # Check for invalid/unregistered token errors
+        if 'UNREGISTERED' in error_str or 'INVALID' in error_str:
+            logger.warning(f"FCM token invalid/unregistered: {token[:20]}...")
+            return False
+        logger.error(f"FCM send error: {e}")
+        return False
+
+
+def send_apns_notification(token, title, body, data=None):
+    """
+    Send push notification via Apple Push Notification service (iOS).
+
+    Args:
+        token: Device APNs token
+        title: Notification title
+        body: Notification body message
+        data: Optional dict of additional data
+
+    Returns:
+        bool: True if sent successfully, False otherwise
+    """
+    # Check if APNs is configured
+    apns_key_path = getattr(settings, 'APNS_KEY_PATH', None)
+    apns_key_id = getattr(settings, 'APNS_KEY_ID', None)
+    apns_team_id = getattr(settings, 'APNS_TEAM_ID', None)
+    apns_topic = getattr(settings, 'APNS_TOPIC', 'com.myrecoverypal.app')
+
+    if not all([apns_key_path, apns_key_id, apns_team_id]):
+        logger.debug(f"APNs not configured - would send: {title}")
+        return False
+
+    if not os.path.exists(apns_key_path):
+        logger.warning(f"APNs key file not found: {apns_key_path}")
+        return False
+
+    try:
+        from apns2.client import APNsClient
+        from apns2.payload import Payload
+        from apns2.credentials import TokenCredentials
+
+        # Create credentials
+        token_credentials = TokenCredentials(
+            auth_key_path=apns_key_path,
+            auth_key_id=apns_key_id,
+            team_id=apns_team_id,
+        )
+
+        # Determine if we're in sandbox mode
+        use_sandbox = getattr(settings, 'APNS_USE_SANDBOX', settings.DEBUG)
+
+        # Create client
+        client = APNsClient(
+            credentials=token_credentials,
+            use_sandbox=use_sandbox,
+        )
+
+        # Create payload
+        payload = Payload(
+            alert={
+                'title': title,
+                'body': body,
+            },
+            badge=1,
+            sound='default',
+            custom=data or {},
+        )
+
+        # Send notification
+        client.send_notification(
+            token_hex=token,
+            notification=payload,
+            topic=apns_topic,
+        )
+
+        logger.info(f"APNs notification sent successfully to {token[:20]}...")
+        return True
+
+    except Exception as e:
+        error_str = str(e)
+        # Check for invalid token errors
+        if 'BadDeviceToken' in error_str or 'Unregistered' in error_str:
+            logger.warning(f"APNs token invalid: {token[:20]}...")
+            return False
+        logger.error(f"APNs send error: {e}")
+        return False
+
+
+def send_push_to_user(user, title, body, data=None):
+    """
+    Send push notification to all of a user's registered devices.
+
+    Args:
+        user: User model instance
+        title: Notification title
+        body: Notification body message
+        data: Optional dict of additional data
+
+    Returns:
+        dict: Results with success/failure counts per platform
+    """
+    from .models import DeviceToken
+
+    results = {
+        'android': {'sent': 0, 'failed': 0},
+        'ios': {'sent': 0, 'failed': 0},
+        'web': {'sent': 0, 'failed': 0},
+    }
+
+    device_tokens = DeviceToken.objects.filter(user=user, active=True)
+
+    for device in device_tokens:
+        success = False
+
+        if device.platform == 'android':
+            success = send_fcm_notification(device.token, title, body, data)
+        elif device.platform == 'ios':
+            success = send_apns_notification(device.token, title, body, data)
+        elif device.platform == 'web':
+            success = send_fcm_notification(device.token, title, body, data)
+
+        if success:
+            results[device.platform]['sent'] += 1
+            device.mark_used()
+        else:
+            results[device.platform]['failed'] += 1
+            # Deactivate invalid tokens
+            if not success:
+                device.deactivate()
+                logger.info(f"Deactivated invalid token for {user.username}")
+
+    return results
 
 
 class PushNotificationService:
@@ -146,8 +365,8 @@ class PushNotificationService:
     @classmethod
     def _send_push(cls, recipient, notification_type, sender=None, data=None):
         """
-        Send push notification to user.
-        Currently logs the notification. Extend with FCM/APNs integration.
+        Send push notification to user via FCM (Android/Web) and APNs (iOS).
+        Falls back to logging if push services are not configured.
         """
         if not cls._should_send_push(recipient):
             return False
@@ -158,18 +377,22 @@ class PushNotificationService:
         title = template.get('title', 'MyRecoveryPal')
         body = template.get('body', 'You have a new notification').format(sender=sender_name)
 
-        # Log the push notification (for debugging and when push isn't configured)
+        # Add notification type to data payload
+        push_data = data or {}
+        push_data['notification_type'] = notification_type
+
+        # Log the push notification (always, for debugging)
         logger.info(f"[PUSH] To: {recipient.email} | Type: {notification_type} | "
                    f"Title: {title} | Body: {body}")
 
-        # TODO: When Firebase/APNs is configured, add actual push here:
-        # from .services import send_fcm_notification, send_apns_notification
-        # device_tokens = DeviceToken.objects.filter(user=recipient, active=True)
-        # for token in device_tokens:
-        #     if token.platform == 'android':
-        #         send_fcm_notification(token.token, title, body, data)
-        #     elif token.platform == 'ios':
-        #         send_apns_notification(token.token, title, body, data)
+        # Send actual push notifications to all user's devices
+        results = send_push_to_user(recipient, title, body, push_data)
+
+        # Log results
+        total_sent = sum(r['sent'] for r in results.values())
+        total_failed = sum(r['failed'] for r in results.values())
+        if total_sent > 0 or total_failed > 0:
+            logger.info(f"[PUSH RESULT] {recipient.email}: sent={total_sent}, failed={total_failed}")
 
         return True
 

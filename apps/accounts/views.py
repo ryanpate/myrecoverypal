@@ -3466,6 +3466,86 @@ def mark_all_notifications_read(request):
 
 
 @login_required
+@require_POST
+def register_device_token(request):
+    """
+    Register a device token for push notifications.
+    POST /accounts/api/device-token/register/
+    Body: {"token": "...", "platform": "ios"|"android"|"web", "device_name": "..."}
+    """
+    import json
+    from .models import DeviceToken
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    token = data.get('token', '').strip()
+    platform = data.get('platform', '').lower()
+    device_name = data.get('device_name', '')
+
+    if not token:
+        return JsonResponse({'error': 'Token is required'}, status=400)
+
+    if platform not in ['ios', 'android', 'web']:
+        return JsonResponse({'error': 'Invalid platform. Must be ios, android, or web'}, status=400)
+
+    # Create or update device token
+    device_token, created = DeviceToken.objects.update_or_create(
+        token=token,
+        defaults={
+            'user': request.user,
+            'platform': platform,
+            'device_name': device_name,
+            'active': True,
+        }
+    )
+
+    # Mark as used
+    device_token.mark_used()
+
+    return JsonResponse({
+        'success': True,
+        'created': created,
+        'token_id': device_token.id,
+    })
+
+
+@login_required
+@require_POST
+def unregister_device_token(request):
+    """
+    Unregister a device token (e.g., on logout).
+    POST /accounts/api/device-token/unregister/
+    Body: {"token": "..."}
+    """
+    import json
+    from .models import DeviceToken
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    token = data.get('token', '').strip()
+
+    if not token:
+        return JsonResponse({'error': 'Token is required'}, status=400)
+
+    # Delete the token (only if it belongs to the current user)
+    deleted_count, _ = DeviceToken.objects.filter(
+        user=request.user,
+        token=token
+    ).delete()
+
+    return JsonResponse({
+        'success': True,
+        'deleted': deleted_count > 0,
+    })
+
+
+@login_required
 def notifications_page(request):
     """Full page view of all notifications"""
     notifications = request.user.notifications.all()

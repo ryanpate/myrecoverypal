@@ -720,9 +720,24 @@ CELERY_BEAT_SCHEDULE = {
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
 
-# Push Notification Services (optional)
-# FCM_SERVER_KEY = os.environ.get('FCM_SERVER_KEY', '')
-# APNS_CERTIFICATE = os.environ.get('APNS_CERTIFICATE', '')
+# Push Notification Services
+# Firebase Cloud Messaging (Android/Web)
+# Download service account JSON from Firebase Console → Project Settings → Service Accounts
+FIREBASE_CREDENTIALS_PATH = os.environ.get(
+    'FIREBASE_CREDENTIALS_PATH',
+    os.path.join(BASE_DIR, 'firebase-credentials.json')
+)
+
+# Apple Push Notification service (iOS)
+# Create key in Apple Developer Portal → Certificates, Identifiers & Profiles → Keys
+APNS_KEY_PATH = os.environ.get(
+    'APNS_KEY_PATH',
+    os.path.join(BASE_DIR, 'apns-auth-key.p8')
+)
+APNS_KEY_ID = os.environ.get('APNS_KEY_ID', '')
+APNS_TEAM_ID = os.environ.get('APNS_TEAM_ID', '')
+APNS_TOPIC = os.environ.get('APNS_TOPIC', 'com.myrecoverypal.app')
+APNS_USE_SANDBOX = os.environ.get('APNS_USE_SANDBOX', 'true').lower() == 'true' if DEBUG else False
 
 # ========================================
 # Django REST Framework Configuration
