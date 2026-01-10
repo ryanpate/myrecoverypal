@@ -175,7 +175,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 4. ~~Progress visualizations (mood/craving trends)~~ ✅ COMPLETE
 5. ~~Accountability nudges for Recovery Pals~~ ✅ COMPLETE
 
-#### Polish (Priority: MEDIUM)
+#### Polish (Priority: MEDIUM) - ALL COMPLETE ✅
 1. ~~Dark mode~~ ✅ COMPLETE
 2. ~~Skeleton loaders for content~~ ✅ COMPLETE
 3. ~~Optimistic UI for likes/comments~~ ✅ COMPLETE
@@ -732,7 +732,7 @@ Notification (group types):
 | ~~Progress visualizations~~ | Medium | Medium | ✅ Done |
 | ~~Accountability nudges~~ | Medium | Medium | ✅ Done |
 
-### LOWER PRIORITY - Polish
+### LOWER PRIORITY - Polish (ALL COMPLETE ✅)
 
 | Feature | Impact | Effort | Status |
 |---------|--------|--------|--------|
