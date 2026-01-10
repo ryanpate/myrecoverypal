@@ -1,0 +1,452 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Progress - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .progress-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .progress-header {
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 20px;
+        text-align: center;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-header h1 {
+        color: white;
+        margin: 0 0 0.5rem;
+        font-size: 1.75rem;
+    }
+
+    .progress-header p {
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    .time-selector {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .time-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        padding: 0.5rem 1.25rem;
+        border-radius: 20px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .time-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+    }
+
+    .time-btn.active {
+        background: white;
+        color: #1e4d8b;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e4d8b;
+    }
+
+    .stat-value.mood { color: #52b788; }
+    .stat-value.craving { color: #ff6b6b; }
+    .stat-value.energy { color: #4db8e8; }
+    .stat-value.streak { color: #ffa502; }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 0.5rem;
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .chart-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 250px;
+    }
+
+    .secondary-charts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: #999;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-checkin {
+        background: linear-gradient(135deg, #52b788 0%, #40916c 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-checkin:hover {
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(82, 183, 136, 0.3);
+    }
+
+    .insight-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .insight-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .insight-text {
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    @media (max-width: 576px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .chart-container {
+            height: 200px;
+        }
+
+        .secondary-charts {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="progress-container">
+    <!-- Header -->
+    <div class="progress-header">
+        <h1><i class="fas fa-chart-line"></i> My Progress</h1>
+        <p>Track your mood, cravings, and energy over time</p>
+
+        <div class="time-selector">
+            <a href="?days=7" class="time-btn {% if days == 7 %}active{% endif %}">7 Days</a>
+            <a href="?days=30" class="time-btn {% if days == 30 %}active{% endif %}">30 Days</a>
+            <a href="?days=90" class="time-btn {% if days == 90 %}active{% endif %}">90 Days</a>
+        </div>
+    </div>
+
+    {% if total_checkins > 0 %}
+    <!-- Statistics Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_checkins }}</div>
+            <div class="stat-label">Check-ins</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value mood">{{ avg_mood }} {{ avg_mood_emoji }}</div>
+            <div class="stat-label">Avg Mood</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value streak">{{ current_streak }}</div>
+            <div class="stat-label">Day Streak</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ checkin_rate }}%</div>
+            <div class="stat-label">Check-in Rate</div>
+        </div>
+    </div>
+
+    <!-- Insights -->
+    {% if best_mood_checkin %}
+    <div class="insight-card">
+        <div class="insight-title">Insights</div>
+        <div class="insight-text">
+            Your best day was <strong>{{ best_mood_checkin.date|date:"M d" }}</strong> when you felt {{ best_mood_checkin.get_mood_display }}.
+            {% if zero_craving_days > 0 %}
+            You had <strong>{{ zero_craving_days }} days</strong> with zero cravings!
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main Mood Chart -->
+    <div class="chart-card">
+        <div class="chart-title">
+            <i class="fas fa-smile" style="color: #52b788;"></i>
+            Mood Trend
+        </div>
+        <div class="chart-container">
+            <canvas id="moodChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Secondary Charts -->
+    <div class="secondary-charts">
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="fas fa-fire" style="color: #ff6b6b;"></i>
+                Craving Levels
+            </div>
+            <div class="chart-container">
+                <canvas id="cravingChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="fas fa-bolt" style="color: #4db8e8;"></i>
+                Energy Levels
+            </div>
+            <div class="chart-container">
+                <canvas id="energyChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    {% if days_sober %}
+    <div class="insight-card" style="text-align: center; background: linear-gradient(135deg, #52b788 0%, #40916c 100%); color: white;">
+        <div class="insight-title" style="color: white; font-size: 1.25rem;">{{ days_sober }} Days Sober</div>
+        <div class="insight-text" style="color: rgba(255,255,255,0.9);">Keep going - you're doing amazing!</div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+        <i class="fas fa-chart-bar"></i>
+        <h3>No check-ins yet</h3>
+        <p>Start tracking your mood, cravings, and energy to see your progress visualized here.</p>
+        <a href="{% url 'accounts:daily_checkin' %}" class="btn-checkin">
+            <i class="fas fa-plus"></i> Do Your First Check-in
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if total_checkins > 0 %}
+<script>
+    const chartData = {{ chart_data|safe }};
+
+    // Mood labels for Y-axis
+    const moodLabels = ['', 'Struggling', 'Down', 'Okay', 'Good', 'Great', 'Amazing'];
+    const cravingLabels = ['None', 'Mild', 'Moderate', 'Strong', 'Intense'];
+
+    // Common chart options
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        },
+        elements: {
+            point: {
+                radius: 4,
+                hoverRadius: 6
+            }
+        }
+    };
+
+    // Mood Chart
+    new Chart(document.getElementById('moodChart'), {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Mood',
+                data: chartData.mood,
+                borderColor: '#52b788',
+                backgroundColor: 'rgba(82, 183, 136, 0.1)',
+                tension: 0.3,
+                fill: true,
+                borderWidth: 3
+            }]
+        },
+        options: {
+            ...commonOptions,
+            scales: {
+                ...commonOptions.scales,
+                y: {
+                    min: 1,
+                    max: 6,
+                    ticks: {
+                        stepSize: 1,
+                        callback: function(value) {
+                            return moodLabels[value] || '';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                ...commonOptions.plugins,
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Mood: ' + moodLabels[context.raw];
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Craving Chart
+    new Chart(document.getElementById('cravingChart'), {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Craving Level',
+                data: chartData.craving,
+                borderColor: '#ff6b6b',
+                backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                tension: 0.3,
+                fill: true,
+                borderWidth: 3
+            }]
+        },
+        options: {
+            ...commonOptions,
+            scales: {
+                ...commonOptions.scales,
+                y: {
+                    min: 0,
+                    max: 4,
+                    ticks: {
+                        stepSize: 1,
+                        callback: function(value) {
+                            return cravingLabels[value] || '';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                ...commonOptions.plugins,
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Craving: ' + cravingLabels[context.raw];
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Energy Chart
+    new Chart(document.getElementById('energyChart'), {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Energy Level',
+                data: chartData.energy,
+                borderColor: '#4db8e8',
+                backgroundColor: 'rgba(77, 184, 232, 0.1)',
+                tension: 0.3,
+                fill: true,
+                borderWidth: 3
+            }]
+        },
+        options: {
+            ...commonOptions,
+            scales: {
+                ...commonOptions.scales,
+                y: {
+                    min: 1,
+                    max: 5,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}

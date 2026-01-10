@@ -926,6 +926,88 @@ def get_checkin_status(request):
 
 
 @login_required
+def progress_view(request):
+    """Display progress visualizations for mood, craving, and energy trends"""
+    # Get time range from query param (default 30 days)
+    try:
+        days = int(request.GET.get('days', 30))
+        if days not in [7, 30, 90]:
+            days = 30
+    except (ValueError, TypeError):
+        days = 30
+
+    start_date = timezone.now().date() - timedelta(days=days)
+
+    # Get check-ins for the period
+    checkins = DailyCheckIn.objects.filter(
+        user=request.user,
+        date__gte=start_date
+    ).order_by('date')
+
+    # Prepare chart data
+    chart_data = {
+        'labels': [c.date.strftime('%b %d') for c in checkins],
+        'mood': [c.mood for c in checkins],
+        'craving': [c.craving_level for c in checkins],
+        'energy': [c.energy_level for c in checkins],
+    }
+
+    # Calculate statistics
+    total_checkins = checkins.count()
+    checkin_rate = round((total_checkins / days) * 100) if days > 0 else 0
+
+    # Mood statistics
+    if total_checkins > 0:
+        avg_mood = round(sum(c.mood for c in checkins) / total_checkins, 1)
+        avg_craving = round(sum(c.craving_level for c in checkins) / total_checkins, 1)
+        avg_energy = round(sum(c.energy_level for c in checkins) / total_checkins, 1)
+
+        # Best and worst days
+        best_mood_checkin = max(checkins, key=lambda c: c.mood)
+        worst_mood_checkin = min(checkins, key=lambda c: c.mood)
+
+        # Days with zero cravings
+        zero_craving_days = sum(1 for c in checkins if c.craving_level == 0)
+
+        # Mood distribution for pie chart
+        mood_distribution = {}
+        for c in checkins:
+            mood_label = c.get_mood_display()
+            mood_distribution[mood_label] = mood_distribution.get(mood_label, 0) + 1
+    else:
+        avg_mood = 0
+        avg_craving = 0
+        avg_energy = 0
+        best_mood_checkin = None
+        worst_mood_checkin = None
+        zero_craving_days = 0
+        mood_distribution = {}
+
+    # Get emoji for average mood
+    mood_emojis = {1: '😰', 2: '😔', 3: '😐', 4: '😊', 5: '😄', 6: '🌟'}
+    avg_mood_emoji = mood_emojis.get(round(avg_mood), '😐') if avg_mood else ''
+
+    context = {
+        'days': days,
+        'chart_data': json.dumps(chart_data),
+        'total_checkins': total_checkins,
+        'checkin_rate': checkin_rate,
+        'avg_mood': avg_mood,
+        'avg_mood_emoji': avg_mood_emoji,
+        'avg_craving': avg_craving,
+        'avg_energy': avg_energy,
+        'current_streak': request.user.get_checkin_streak(),
+        'best_mood_checkin': best_mood_checkin,
+        'worst_mood_checkin': worst_mood_checkin,
+        'zero_craving_days': zero_craving_days,
+        'mood_distribution': json.dumps(mood_distribution),
+        'days_sober': request.user.get_days_sober(),
+    }
+
+    return render(request, 'accounts/progress.html', context)
+
+
+@login_required
 @require_POST
 def like_activity(request, activity_id):
     """AJAX endpoint to like/unlike an activity"""
