@@ -801,8 +801,15 @@
     </div>
     {% endif %}
 
+    <!-- Skeleton Loaders (shown while content loads) -->
+    <div id="skeletonContainer" class="skeleton-container">
+        {% include 'accounts/partials/skeleton_post.html' %}
+        {% include 'accounts/partials/skeleton_post.html' %}
+        {% include 'accounts/partials/skeleton_post.html' %}
+    </div>
+
     <!-- Feed Posts -->
-    <div id="posts-container">
+    <div id="postsContainer" class="content-container loading">
         {% if posts %}
             {% for post in posts %}
             <div class="post-card" data-post-id="{{ post.id }}">

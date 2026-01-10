@@ -92,6 +92,100 @@ document.addEventListener('DOMContentLoaded', function() {
 // End Dark Mode Theme System
 // =============================================
 
+// =============================================
+// Skeleton Loader Management
+// =============================================
+
+/**
+ * Show skeleton loaders in a container
+ * @param {string} containerId - ID of the skeleton container
+ */
+function showSkeletons(containerId) {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.classList.remove('hidden');
+        container.style.display = 'block';
+    }
+}
+
+/**
+ * Hide skeleton loaders
+ * @param {string} containerId - ID of the skeleton container
+ */
+function hideSkeletons(containerId) {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.classList.add('hidden');
+        setTimeout(() => {
+            container.style.display = 'none';
+        }, 300); // Match CSS transition duration
+    }
+}
+
+/**
+ * Show content container
+ * @param {string} containerId - ID of the content container
+ */
+function showContent(containerId) {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.classList.remove('loading');
+        container.style.display = 'block';
+    }
+}
+
+/**
+ * Generate skeleton comment HTML
+ * @param {number} count - Number of skeleton comments to generate
+ * @returns {string} HTML string of skeleton comments
+ */
+function generateSkeletonComments(count = 2) {
+    let html = '';
+    for (let i = 0; i < count; i++) {
+        html += `
+            <div class="skeleton-comment">
+                <div class="skeleton skeleton-avatar-sm"></div>
+                <div class="skeleton-comment-content">
+                    <div class="skeleton skeleton-text skeleton-text-short" style="height: 12px;"></div>
+                    <div class="skeleton skeleton-text" style="height: 12px;"></div>
+                </div>
+            </div>
+        `;
+    }
+    return html;
+}
+
+/**
+ * Initialize skeleton loading behavior on page load
+ * Automatically transitions from skeletons to content
+ */
+function initSkeletonLoaders() {
+    const skeletonContainer = document.getElementById('skeletonContainer');
+    const postsContainer = document.getElementById('postsContainer');
+
+    if (skeletonContainer && postsContainer) {
+        // Show skeletons initially
+        skeletonContainer.style.display = 'block';
+        postsContainer.classList.add('loading');
+
+        // Transition to actual content after brief delay
+        // This gives a consistent loading feel even on fast connections
+        setTimeout(() => {
+            hideSkeletons('skeletonContainer');
+            showContent('postsContainer');
+        }, 150);
+    }
+}
+
+// Initialize skeleton loaders on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+    initSkeletonLoaders();
+});
+
+// =============================================
+// End Skeleton Loader Management
+// =============================================
+
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
