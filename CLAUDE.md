@@ -184,9 +184,8 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 
 #### Technical Debt (Priority: LOW)
 1. ~~Service worker caching review~~ ✅ COMPLETE
-2. Mobile gesture support
-3. Improved offline support
-4. Performance audit (N+1 queries)
+2. Improved offline support
+3. Performance audit (N+1 queries)
 
 #### Infrastructure - ALL COMPLETE ✅
 1. ~~Enable mobile push (FCM/APNs)~~ ✅ COMPLETE
@@ -745,7 +744,6 @@ Notification (group types):
 ### Technical Debt to Address
 
 - [x] **Service worker caching strategy** - ✅ COMPLETE. Added API exclusions, network-first for HTML, standalone offline page
-- [ ] **Mobile gesture support** - Swipe actions for common tasks
 - [ ] **Offline support** - Allow viewing cached content when offline
 - [ ] **Performance audit** - Check for N+1 queries, slow page loads
 
