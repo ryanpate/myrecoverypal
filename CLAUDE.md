@@ -1,6 +1,6 @@
 # CLAUDE.md - MyRecoveryPal Development Guide
 
-**Last Updated:** 2026-01-09
+**Last Updated:** 2026-01-10
 **Project:** MyRecoveryPal - Social Recovery Platform
 **Tech Stack:** Django 5.0.10, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
@@ -183,7 +183,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 5. ~~Image compression for uploads~~ ✅ COMPLETE
 
 #### Technical Debt (Priority: LOW)
-1. Service worker caching review
+1. ~~Service worker caching review~~ ✅ COMPLETE
 2. Mobile gesture support
 3. Improved offline support
 4. Performance audit (N+1 queries)
@@ -744,7 +744,7 @@ Notification (group types):
 
 ### Technical Debt to Address
 
-- [ ] **Service worker caching strategy** - Review what's cached, ensure updates propagate
+- [x] **Service worker caching strategy** - ✅ COMPLETE. Added API exclusions, network-first for HTML, standalone offline page
 - [ ] **Mobile gesture support** - Swipe actions for common tasks
 - [ ] **Offline support** - Allow viewing cached content when offline
 - [ ] **Performance audit** - Check for N+1 queries, slow page loads
@@ -753,6 +753,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-10:** Improved service worker caching strategy: removed duplicate sw.js, created standalone offline.html (doesn't require Django templates), added main.js to static cache, excluded API endpoints from caching (/api/, notifications, social feed posts), switched HTML pages to network-first strategy (shows fresh content, caches as fallback). Cache version bumped to v21.
 - **2026-01-10:** Implemented mobile push notifications infrastructure. New `DeviceToken` model stores FCM/APNs tokens. API endpoints `/accounts/api/device-token/register/` and `/unregister/` for mobile apps. `push_notifications.py` updated with `send_fcm_notification()` and `send_apns_notification()` functions. Requires Firebase credentials JSON and APNs .p8 key file to enable. See `PUSH_NOTIFICATIONS_SETUP.md` for configuration guide.
 - **2026-01-10:** Added image compression for uploads. New `image_utils.py` module provides validation (5MB limit, MIME type check), compression (max 1920px for posts, 1200px for groups, JPEG quality 85), and Cloudinary integration. Social post images and group images now auto-compressed before storage.
 - **2026-01-10:** Fixed dark mode toggle not working - main.js was not included in base.html.

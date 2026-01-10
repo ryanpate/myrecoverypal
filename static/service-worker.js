@@ -1,7 +1,7 @@
 // MyRecoveryPal Service Worker
-// Version 2.2 - Fix notification mark-as-read race condition
+// Version 2.3 - Improved caching strategy and API exclusions
 
-const CACHE_VERSION = 'myrecoverypal-v20';
+const CACHE_VERSION = 'myrecoverypal-v21';
 const CACHE_NAMES = {
   static: `${CACHE_VERSION}-static`,
   dynamic: `${CACHE_VERSION}-dynamic`,
@@ -11,16 +11,34 @@ const CACHE_NAMES = {
 // Resources to cache immediately on install
 const STATIC_CACHE_URLS = [
   '/',
-  '/offline/',
+  '/static/offline.html',
   '/static/css/main.css',
+  '/static/js/main.js',
   '/static/images/logo.svg',
   '/static/images/favicon_192.png',
   '/static/images/favicon_512.png'
 ];
 
+// API paths that should never be cached (always need fresh data)
+const API_PATHS = [
+  '/api/',
+  '/accounts/api/',
+  '/social-feed/posts/',
+  '/accounts/social-feed/posts/',
+  '/notifications/',
+  '/accounts/notifications/',
+  '/checkin-status/',
+  '/accounts/checkin-status/'
+];
+
 // Maximum number of items in dynamic cache
 const DYNAMIC_CACHE_LIMIT = 50;
 const IMAGE_CACHE_LIMIT = 100;
+
+// Helper: Check if URL is an API endpoint
+function isApiRequest(url) {
+  return API_PATHS.some(path => url.pathname.includes(path));
+}
 
 // Install event - cache static resources
 self.addEventListener('install', event => {
@@ -57,7 +75,7 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch event - serve from cache with network fallback
+// Fetch event - network-first for pages, cache-first for assets
 self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
@@ -77,53 +95,65 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  event.respondWith(
-    caches.match(request)
-      .then(cachedResponse => {
-        // Return cached response if found
-        if (cachedResponse) {
-          // Update cache in background for HTML pages
-          if (request.destination === 'document') {
-            event.waitUntil(updateCache(request));
-          }
-          return cachedResponse;
-        }
+  // Skip API requests - always fetch fresh data
+  if (isApiRequest(url)) {
+    return;
+  }
 
-        // Not in cache, fetch from network
-        return fetch(request)
-          .then(response => {
-            // Don't cache if not a valid response
-            if (!response || response.status !== 200 || response.type === 'error') {
-              return response;
-            }
+  // Use network-first for HTML pages (shows fresh content)
+  if (request.destination === 'document') {
+    event.respondWith(networkFirstStrategy(request));
+    return;
+  }
 
-            // Clone the response
-            const responseToCache = response.clone();
-
-            // Cache based on content type
-            caches.open(getCacheName(request))
-              .then(cache => {
-                cache.put(request, responseToCache);
-                // Limit cache size
-                limitCacheSize(getCacheName(request), getCacheLimit(request));
-              });
-
-            return response;
-          })
-          .catch(error => {
-            console.log('[ServiceWorker] Fetch failed:', error);
-            // Return offline page for navigation requests
-            if (request.destination === 'document') {
-              return caches.match('/offline/');
-            }
-            // Return placeholder for images
-            if (request.destination === 'image') {
-              return caches.match('/static/images/favicon_192.png');
-            }
-          });
-      })
-  );
+  // Use cache-first for static assets (CSS, JS, images)
+  event.respondWith(cacheFirstStrategy(request));
 });
+
+// Network-first strategy for HTML pages
+async function networkFirstStrategy(request) {
+  try {
+    const response = await fetch(request);
+    if (response && response.status === 200) {
+      const cache = await caches.open(CACHE_NAMES.dynamic);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch (error) {
+    console.log('[ServiceWorker] Network failed, trying cache:', error);
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    // Return offline page as last resort
+    return caches.match('/static/offline.html');
+  }
+}
+
+// Cache-first strategy for static assets
+async function cacheFirstStrategy(request) {
+  const cachedResponse = await caches.match(request);
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+
+  try {
+    const response = await fetch(request);
+    if (response && response.status === 200 && response.type !== 'error') {
+      const cache = await caches.open(getCacheName(request));
+      cache.put(request, response.clone());
+      limitCacheSize(getCacheName(request), getCacheLimit(request));
+    }
+    return response;
+  } catch (error) {
+    console.log('[ServiceWorker] Fetch failed:', error);
+    // Return placeholder for images
+    if (request.destination === 'image') {
+      return caches.match('/static/images/favicon_192.png');
+    }
+    return new Response('Resource unavailable', { status: 503 });
+  }
+}
 
 // Helper: Update cache in background
 async function updateCache(request) {
