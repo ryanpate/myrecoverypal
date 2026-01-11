@@ -334,10 +334,10 @@ def send_weekly_digests(self):
         try:
             # Gather digest content
             new_followers = UserConnection.objects.filter(
-                target=user,
-                status='active',
+                following=user,
+                connection_type='follow',
                 created_at__gte=one_week_ago
-            ).select_related('user')[:5]
+            ).select_related('follower')[:5]
 
             # Unread notifications count
             unread_notifications = Notification.objects.filter(
@@ -347,7 +347,10 @@ def send_weekly_digests(self):
             ).count()
 
             # Popular posts from people they follow
-            following_ids = user.following.filter(status='active').values_list('target_id', flat=True)
+            following_ids = UserConnection.objects.filter(
+                follower=user,
+                connection_type='follow'
+            ).values_list('following_id', flat=True)
             popular_posts = SocialPost.objects.filter(
                 user_id__in=following_ids,
                 created_at__gte=one_week_ago,

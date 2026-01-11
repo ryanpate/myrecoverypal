@@ -146,11 +146,11 @@
             </h3>
             {% for connection in new_followers %}
             <div class="follower-item">
-                <div class="follower-avatar">{{ connection.user.first_name|default:connection.user.username|slice:":1"|upper }}</div>
+                <div class="follower-avatar">{{ connection.follower.first_name|default:connection.follower.username|slice:":1"|upper }}</div>
                 <div>
-                    <strong>{{ connection.user.first_name|default:connection.user.username }}</strong>
-                    {% if connection.user.bio %}
-                    <br><span style="color: #666; font-size: 13px;">{{ connection.user.bio|truncatewords:10 }}</span>
+                    <strong>{{ connection.follower.first_name|default:connection.follower.username }}</strong>
+                    {% if connection.follower.bio %}
+                    <br><span style="color: #666; font-size: 13px;">{{ connection.follower.bio|truncatewords:10 }}</span>
                     {% endif %}
                 </div>
             </div>
