@@ -189,8 +189,8 @@ def send_welcome_emails_day_7(self):
         try:
             # Get some engagement stats
             post_count = user.social_posts.count()
-            follower_count = user.followers.filter(status='active').count()
-            following_count = user.following.filter(status='active').count()
+            follower_count = user.follower_connections.filter(connection_type='follow').count()
+            following_count = user.following_connections.filter(connection_type='follow').count()
             checkin_count = user.daily_checkins.count()
 
             html_message = render_to_string('emails/welcome_day_7.html', {
