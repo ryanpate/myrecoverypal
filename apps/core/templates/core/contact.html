@@ -2,12 +2,410 @@
 {% load static %}
 
 {% block title %}Contact Us - MyRecoveryPal{% endblock %}
+{% block meta_description %}Get in touch with the MyRecoveryPal team. We're here to help with questions about the platform, technical support, partnerships, or feedback.{% endblock %}
 
 {% block content %}
-<div style="padding: 100px 20px 50px; max-width: 800px; margin: 0 auto;">
-    <h1 style="color: #1e4d8b;">Contact Us</h1>
-    <p>We'd love to hear from you!</p>
-    <p>Email: ryan@myrecoverypal.com</p>
-    <p>More contact options coming soon...</p>
+<div class="contact-page">
+    <!-- Page Header -->
+    <section class="contact-header">
+        <div class="container">
+            <h1>Contact Us</h1>
+            <p class="lead">We're here to help. Whether you have questions about MyRecoveryPal, need technical support, or want to share feedback, we'd love to hear from you.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="contact-content">
+        <div class="container">
+            <div class="contact-grid">
+                <!-- Contact Options -->
+                <div class="contact-options">
+                    <div class="contact-card">
+                        <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                        <h3>Email Us</h3>
+                        <p>For general inquiries, support, or feedback:</p>
+                        <a href="mailto:ryan@myrecoverypal.com" class="contact-link">ryan@myrecoverypal.com</a>
+                        <p class="response-time">We aim to respond within 24-48 hours.</p>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="contact-icon"><i class="fas fa-bug"></i></div>
+                        <h3>Report a Bug</h3>
+                        <p>Found something not working correctly? Let us know and we'll fix it.</p>
+                        <a href="mailto:ryan@myrecoverypal.com?subject=Bug Report" class="contact-link">Report an Issue</a>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="contact-icon"><i class="fas fa-handshake"></i></div>
+                        <h3>Partnerships</h3>
+                        <p>Interested in partnering with us? Treatment centers, recovery organizations, and mental health advocates welcome.</p>
+                        <a href="mailto:ryan@myrecoverypal.com?subject=Partnership Inquiry" class="contact-link">Discuss Partnership</a>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="contact-icon"><i class="fas fa-newspaper"></i></div>
+                        <h3>Press & Media</h3>
+                        <p>For press inquiries, interviews, or media requests:</p>
+                        <a href="mailto:ryan@myrecoverypal.com?subject=Press Inquiry" class="contact-link">Media Contact</a>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="contact-faq">
+                    <h2>Frequently Asked Questions</h2>
+
+                    <div class="faq-item">
+                        <h3>How do I reset my password?</h3>
+                        <p>Click "Forgot Password" on the login page and enter your email address. You'll receive a password reset link within minutes. Check your spam folder if you don't see it.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Is MyRecoveryPal free?</h3>
+                        <p>Yes, MyRecoveryPal is completely free. We believe financial circumstances should never be a barrier to recovery support. All features are available to all users at no cost.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>How do I delete my account?</h3>
+                        <p>You can delete your account from your Settings page. Go to Settings > Privacy > Delete Account. This action is permanent and cannot be undone.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Is my information private?</h3>
+                        <p>Your privacy is our top priority. Journal entries are always private. You control what information is visible on your profile. We never sell your data. Read our <a href="{% url 'core:privacy' %}">Privacy Policy</a> for full details.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Can I use MyRecoveryPal anonymously?</h3>
+                        <p>Yes. You can use a nickname, keep your profile private, and post anonymously in groups. Many users choose not to use their real names.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>How do I report inappropriate content?</h3>
+                        <p>Click the three-dot menu on any post and select "Report." Our moderation team reviews all reports within 24 hours. You can also email us directly for urgent concerns.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Crisis Note -->
+    <section class="crisis-note">
+        <div class="container">
+            <div class="crisis-box">
+                <h2><i class="fas fa-exclamation-triangle"></i> In Crisis?</h2>
+                <p>If you're experiencing a mental health or addiction crisis, please reach out for immediate help:</p>
+                <div class="crisis-contacts">
+                    <div class="crisis-contact">
+                        <strong>988 Suicide & Crisis Lifeline</strong>
+                        <span>Call or text 988</span>
+                    </div>
+                    <div class="crisis-contact">
+                        <strong>Crisis Text Line</strong>
+                        <span>Text HOME to 741741</span>
+                    </div>
+                    <div class="crisis-contact">
+                        <strong>Emergency</strong>
+                        <span>Call 911</span>
+                    </div>
+                </div>
+                <a href="{% url 'core:crisis' %}" class="crisis-link">View All Crisis Resources</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <h2>About MyRecoveryPal</h2>
+            <p>MyRecoveryPal is a social recovery platform built to help people in addiction and mental health recovery connect, support each other, and stay accountable. We're a small team passionate about making recovery support accessible to everyone.</p>
+            <p>Whether you're on day 1 or year 10, there's a place for you here. Join our community of people who understand the journey and are here to support each other.</p>
+            <div class="about-cta">
+                <a href="{% url 'core:about' %}" class="btn-secondary">Learn More About Us</a>
+                <a href="{% url 'accounts:register' %}" class="btn-primary">Join Free</a>
+            </div>
+        </div>
+    </section>
 </div>
+
+<style>
+.contact-page {
+    padding-top: 60px;
+}
+
+.contact-header {
+    background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
+    color: white;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.contact-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.contact-header .lead {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0.95;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.contact-content {
+    padding: 4rem 0;
+    background: #f8f9fa;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+}
+
+/* Contact Options */
+.contact-options {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.contact-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s;
+}
+
+.contact-card:hover {
+    transform: translateY(-3px);
+}
+
+.contact-icon {
+    font-size: 2rem;
+    color: #1e4d8b;
+    margin-bottom: 1rem;
+}
+
+.contact-card h3 {
+    color: #1e4d8b;
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.contact-card p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+}
+
+.contact-link {
+    display: inline-block;
+    color: #52b788;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.contact-link:hover {
+    color: #1e4d8b;
+}
+
+.response-time {
+    font-size: 0.85rem;
+    color: #999;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+}
+
+/* FAQ */
+.contact-faq {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+}
+
+.contact-faq h2 {
+    color: #1e4d8b;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.faq-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+}
+
+.faq-item h3 {
+    color: #1e4d8b;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.faq-item p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.faq-item a {
+    color: #52b788;
+}
+
+/* Crisis Note */
+.crisis-note {
+    padding: 3rem 0;
+    background: white;
+}
+
+.crisis-box {
+    background: #fff8f8;
+    border: 2px solid #ffcccc;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.crisis-box h2 {
+    color: #dc3545;
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.crisis-box h2 i {
+    margin-right: 0.5rem;
+}
+
+.crisis-box > p {
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+.crisis-contacts {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.crisis-contact {
+    text-align: center;
+}
+
+.crisis-contact strong {
+    display: block;
+    color: #1e4d8b;
+    font-size: 0.95rem;
+}
+
+.crisis-contact span {
+    color: #52b788;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.crisis-link {
+    display: inline-block;
+    color: #dc3545;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.crisis-link:hover {
+    text-decoration: underline;
+}
+
+/* About Section */
+.about-section {
+    padding: 4rem 0;
+    background: #f8f9fa;
+    text-align: center;
+}
+
+.about-section h2 {
+    color: #1e4d8b;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.about-section p {
+    color: #666;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    max-width: 700px;
+    margin: 0 auto 1rem;
+}
+
+.about-cta {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    display: inline-block;
+    padding: 0.875rem 2rem;
+    background: #52b788;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background: #45a675;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    display: inline-block;
+    padding: 0.875rem 2rem;
+    background: white;
+    color: #1e4d8b;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    border: 2px solid #1e4d8b;
+    transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+    background: #1e4d8b;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .contact-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .crisis-contacts {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+</style>
 {% endblock %}

@@ -72,23 +72,33 @@ class DrugAddictionRecoveryAppView(TemplateView):
 
 
 class SobrietyCounterAppView(TemplateView):
-    template_name = 'core/sobriety_counter_app.html'
+    """Redirects to sobriety calculator - consolidated for better SEO"""
+    def get(self, request, *args, **kwargs):
+        return redirect('core:sobriety_calculator', permanent=True)
 
 
 class FreeAAAppView(TemplateView):
-    template_name = 'core/free_aa_app.html'
+    """Redirects to alcohol recovery app - consolidated for better SEO"""
+    def get(self, request, *args, **kwargs):
+        return redirect('core:alcohol_recovery_app', permanent=True)
 
 
 class OpioidRecoveryAppView(TemplateView):
-    template_name = 'core/opioid_recovery_app.html'
+    """Redirects to drug addiction recovery app - consolidated for better SEO"""
+    def get(self, request, *args, **kwargs):
+        return redirect('core:drug_addiction_recovery_app', permanent=True)
 
 
 class GamblingAddictionAppView(TemplateView):
-    template_name = 'core/gambling_addiction_app.html'
+    """Redirects to main index - consolidated for better SEO (niche addiction type)"""
+    def get(self, request, *args, **kwargs):
+        return redirect('core:index', permanent=True)
 
 
 class MentalHealthRecoveryAppView(TemplateView):
-    template_name = 'core/mental_health_recovery_app.html'
+    """Redirects to main index - consolidated for better SEO"""
+    def get(self, request, *args, **kwargs):
+        return redirect('core:index', permanent=True)
 
 
 class SobrietyCalculatorView(TemplateView):

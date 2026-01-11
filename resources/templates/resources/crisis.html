@@ -1,16 +1,541 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Crisis Support - MyRecoveryPal{% endblock %}
+{% block title %}Crisis Support & Emergency Resources - MyRecoveryPal{% endblock %}
+{% block meta_description %}Immediate crisis support resources for addiction, mental health, and substance abuse. 24/7 hotlines, text lines, and emergency contacts. You are not alone - help is available.{% endblock %}
 
 {% block content %}
-<div style="padding: 100px 20px 50px; max-width: 800px; margin: 0 auto;">
-    <h1>Crisis Support</h1>
-    <p>If you're in crisis, please reach out for help:</p>
-    <ul>
-        <li>Call 988 - Suicide & Crisis Lifeline</li>
-        <li>Text "HELLO" to 741741 - Crisis Text Line</li>
-        <li>Call 911 for immediate emergency</li>
-    </ul>
+<div class="crisis-page">
+    <!-- Emergency Banner -->
+    <div class="emergency-banner">
+        <div class="container">
+            <p><strong>If you are in immediate danger, call 911.</strong></p>
+        </div>
+    </div>
+
+    <!-- Page Header -->
+    <section class="crisis-header">
+        <div class="container">
+            <h1>Crisis Support Resources</h1>
+            <p class="lead">You are not alone. If you're struggling right now, help is available 24 hours a day, 7 days a week. Reaching out for help is a sign of strength, not weakness.</p>
+        </div>
+    </section>
+
+    <!-- Primary Hotlines -->
+    <section class="hotlines-section">
+        <div class="container">
+            <h2>24/7 Crisis Hotlines</h2>
+            <p>These services are free, confidential, and available around the clock.</p>
+
+            <div class="hotline-grid">
+                <div class="hotline-card primary">
+                    <div class="hotline-icon"><i class="fas fa-phone-alt"></i></div>
+                    <h3>988 Suicide & Crisis Lifeline</h3>
+                    <div class="hotline-number">Call or Text: 988</div>
+                    <p>For anyone experiencing a mental health crisis, suicidal thoughts, or emotional distress. Available 24/7 with trained counselors.</p>
+                </div>
+
+                <div class="hotline-card">
+                    <div class="hotline-icon"><i class="fas fa-comments"></i></div>
+                    <h3>Crisis Text Line</h3>
+                    <div class="hotline-number">Text HOME to 741741</div>
+                    <p>Free, 24/7 text-based crisis support. Connect with a trained crisis counselor via text message.</p>
+                </div>
+
+                <div class="hotline-card">
+                    <div class="hotline-icon"><i class="fas fa-pills"></i></div>
+                    <h3>SAMHSA National Helpline</h3>
+                    <div class="hotline-number">1-800-662-4357</div>
+                    <p>Free, confidential, 24/7 treatment referral and information service for substance abuse and mental health disorders.</p>
+                </div>
+
+                <div class="hotline-card">
+                    <div class="hotline-icon"><i class="fas fa-wine-bottle"></i></div>
+                    <h3>Alcohol Helpline</h3>
+                    <div class="hotline-number">1-800-662-4357</div>
+                    <p>Immediate support for alcohol-related crises and treatment referrals. Available 24/7.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Warning Signs -->
+    <section class="warning-signs-section">
+        <div class="container">
+            <h2>Warning Signs of a Crisis</h2>
+            <p>Recognizing these signs in yourself or others can help you know when to seek immediate help.</p>
+
+            <div class="signs-grid">
+                <div class="sign-category">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Thoughts & Feelings</h3>
+                    <ul>
+                        <li>Feeling hopeless or like there's no way out</li>
+                        <li>Thinking about harming yourself</li>
+                        <li>Feeling like a burden to others</li>
+                        <li>Overwhelming anxiety or panic</li>
+                        <li>Extreme mood swings</li>
+                    </ul>
+                </div>
+
+                <div class="sign-category">
+                    <h3><i class="fas fa-user-alt"></i> Behaviors</h3>
+                    <ul>
+                        <li>Withdrawing from friends and family</li>
+                        <li>Giving away possessions</li>
+                        <li>Increased substance use</li>
+                        <li>Searching for means to harm yourself</li>
+                        <li>Saying goodbye to people</li>
+                    </ul>
+                </div>
+
+                <div class="sign-category">
+                    <h3><i class="fas fa-heart-broken"></i> Physical Signs</h3>
+                    <ul>
+                        <li>Changes in sleep patterns</li>
+                        <li>Severe withdrawal symptoms</li>
+                        <li>Not eating or overeating</li>
+                        <li>Physical agitation or restlessness</li>
+                        <li>Neglecting personal hygiene</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coping Strategies -->
+    <section class="coping-section">
+        <div class="container">
+            <h2>Immediate Coping Strategies</h2>
+            <p>While waiting for help or during a difficult moment, these techniques can help you stay safe.</p>
+
+            <div class="coping-grid">
+                <div class="coping-card">
+                    <h3>5-4-3-2-1 Grounding</h3>
+                    <p>Focus on 5 things you see, 4 you can touch, 3 you hear, 2 you smell, and 1 you taste. This brings you into the present moment.</p>
+                </div>
+
+                <div class="coping-card">
+                    <h3>Call Someone</h3>
+                    <p>Reach out to a trusted friend, family member, sponsor, or one of the hotlines above. You don't have to face this alone.</p>
+                </div>
+
+                <div class="coping-card">
+                    <h3>Change Your Environment</h3>
+                    <p>Move to a different room, go outside, or change your surroundings. Physical movement can shift your mental state.</p>
+                </div>
+
+                <div class="coping-card">
+                    <h3>Delay the Decision</h3>
+                    <p>Promise yourself to wait 15 minutes. Cravings and intense feelings often pass. Repeat if needed.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Additional Resources -->
+    <section class="resources-section">
+        <div class="container">
+            <h2>Additional Support Resources</h2>
+
+            <div class="resource-list">
+                <div class="resource-item">
+                    <h3>Alcoholics Anonymous (AA)</h3>
+                    <p>Find local and online AA meetings for peer support in alcohol recovery.</p>
+                    <a href="https://www.aa.org/find-aa" target="_blank" rel="noopener">Find a Meeting</a>
+                </div>
+
+                <div class="resource-item">
+                    <h3>Narcotics Anonymous (NA)</h3>
+                    <p>Connect with others recovering from drug addiction through NA meetings.</p>
+                    <a href="https://www.na.org/meetingsearch/" target="_blank" rel="noopener">Find a Meeting</a>
+                </div>
+
+                <div class="resource-item">
+                    <h3>SMART Recovery</h3>
+                    <p>Science-based mutual support groups for addiction recovery.</p>
+                    <a href="https://www.smartrecovery.org/meetings/" target="_blank" rel="noopener">Find a Meeting</a>
+                </div>
+
+                <div class="resource-item">
+                    <h3>National Alliance on Mental Illness (NAMI)</h3>
+                    <p>Mental health support, education, and advocacy.</p>
+                    <a href="https://www.nami.org/help" target="_blank" rel="noopener">Get Help</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Helping Others -->
+    <section class="helping-others-section">
+        <div class="container">
+            <h2>How to Help Someone in Crisis</h2>
+            <p>If someone you know is struggling, here's how you can support them.</p>
+
+            <div class="help-steps">
+                <div class="help-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Listen Without Judgment</h3>
+                        <p>Let them talk. Don't try to fix everything - sometimes people just need to be heard.</p>
+                    </div>
+                </div>
+
+                <div class="help-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Ask Directly</h3>
+                        <p>It's okay to ask "Are you thinking about hurting yourself?" Asking doesn't plant the idea.</p>
+                    </div>
+                </div>
+
+                <div class="help-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Remove Access to Means</h3>
+                        <p>Help secure medications, alcohol, or anything that could be used for self-harm.</p>
+                    </div>
+                </div>
+
+                <div class="help-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Stay With Them</h3>
+                        <p>Don't leave them alone. Your presence matters, even in silence.</p>
+                    </div>
+                </div>
+
+                <div class="help-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Get Professional Help</h3>
+                        <p>Call 988, take them to an emergency room, or call 911 if they're in immediate danger.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Encouragement Section -->
+    <section class="encouragement-section">
+        <div class="container">
+            <h2>You Matter</h2>
+            <p>Recovery is possible. Whatever you're going through right now, this moment will pass. People recover from addiction and mental health crises every day, and so can you.</p>
+            <p>If you're not ready to call a hotline, that's okay. You can:</p>
+            <ul>
+                <li>Text instead of calling (text HOME to 741741)</li>
+                <li>Chat online at <a href="https://suicidepreventionlifeline.org/chat/" target="_blank" rel="noopener">988 Lifeline Chat</a></li>
+                <li>Reach out to someone you trust</li>
+                <li>Come back to this page whenever you need it</li>
+            </ul>
+            <p><strong>You are stronger than you know, and you don't have to face this alone.</strong></p>
+        </div>
+    </section>
 </div>
+
+<style>
+.crisis-page {
+    padding-top: 60px;
+}
+
+.emergency-banner {
+    background: #dc3545;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    position: sticky;
+    top: 60px;
+    z-index: 100;
+}
+
+.emergency-banner p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.crisis-header {
+    background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
+    color: white;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.crisis-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.crisis-header .lead {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto;
+    opacity: 0.95;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+section {
+    padding: 3rem 0;
+}
+
+section h2 {
+    color: #1e4d8b;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+section > .container > p {
+    color: #555;
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+}
+
+/* Hotlines */
+.hotline-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.hotline-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.hotline-card:hover {
+    transform: translateY(-3px);
+}
+
+.hotline-card.primary {
+    border: 3px solid #52b788;
+}
+
+.hotline-icon {
+    font-size: 2.5rem;
+    color: #1e4d8b;
+    margin-bottom: 1rem;
+}
+
+.hotline-card h3 {
+    color: #1e4d8b;
+    margin-bottom: 0.75rem;
+}
+
+.hotline-number {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #52b788;
+    margin-bottom: 1rem;
+}
+
+.hotline-card p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Warning Signs */
+.warning-signs-section {
+    background: #fff8f8;
+}
+
+.signs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.sign-category h3 {
+    color: #1e4d8b;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.sign-category h3 i {
+    color: #e74c3c;
+    margin-right: 0.5rem;
+}
+
+.sign-category ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sign-category li {
+    padding: 0.5rem 0;
+    color: #555;
+    border-bottom: 1px solid #eee;
+}
+
+/* Coping */
+.coping-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+}
+
+.coping-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border-left: 4px solid #52b788;
+}
+
+.coping-card h3 {
+    color: #1e4d8b;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+}
+
+.coping-card p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Resources */
+.resources-section {
+    background: #f8f9fa;
+}
+
+.resource-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.resource-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.resource-item h3 {
+    color: #1e4d8b;
+    margin-bottom: 0.25rem;
+}
+
+.resource-item p {
+    color: #666;
+    margin: 0;
+    flex: 1;
+}
+
+.resource-item a {
+    background: #1e4d8b;
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.3s;
+}
+
+.resource-item a:hover {
+    background: #163a6b;
+}
+
+/* Help Steps */
+.help-steps {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.help-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    background: #1e4d8b;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.step-content h3 {
+    color: #1e4d8b;
+    margin-bottom: 0.5rem;
+}
+
+.step-content p {
+    color: #666;
+    margin: 0;
+}
+
+/* Encouragement */
+.encouragement-section {
+    background: linear-gradient(135deg, #52b788 0%, #1e4d8b 100%);
+    color: white;
+    text-align: center;
+}
+
+.encouragement-section h2 {
+    color: white;
+    font-size: 2rem;
+}
+
+.encouragement-section p {
+    color: white;
+    opacity: 0.95;
+    max-width: 700px;
+    margin: 0 auto 1rem;
+    font-size: 1.1rem;
+}
+
+.encouragement-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+}
+
+.encouragement-section li {
+    margin: 0.5rem 0;
+    font-size: 1.05rem;
+}
+
+.encouragement-section a {
+    color: #ffd700;
+}
+
+@media (max-width: 768px) {
+    .crisis-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .resource-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .resource-item a {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
 {% endblock %}
