@@ -5,6 +5,7 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import sys
+import os
 
 class Command(BaseCommand):
     help = 'Test email configuration with detailed output'
@@ -12,6 +13,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('recipient', type=str, help='Email address to send test email to')
         parser.add_argument('--invite-template', action='store_true', help='Test the invite email template')
+        parser.add_argument('--resend-api', action='store_true', help='Test using Resend HTTP API directly')
 
     def handle(self, *args, **options):
         recipient = options['recipient']
@@ -38,12 +40,44 @@ class Command(BaseCommand):
             return
         
         self.stdout.write(f'\n📨 Sending to: {recipient}\n')
-        
+
         try:
-            if options['invite_template']:
+            if options['resend_api']:
+                # Test using Resend HTTP API directly (recommended)
+                self.stdout.write('Testing email via Resend HTTP API (recommended)...\n')
+
+                from apps.accounts.email_service import send_email
+
+                success = send_email(
+                    subject='[TEST] MyRecoveryPal Email Test via Resend API',
+                    plain_message='This is a test email sent via Resend HTTP API. If you receive this, your email configuration is working!',
+                    html_message='''
+                    <html>
+                    <body style="font-family: Arial, sans-serif; padding: 20px;">
+                        <h2 style="color: #6366f1;">MyRecoveryPal Email Test</h2>
+                        <p>This is a test email sent via <strong>Resend HTTP API</strong>.</p>
+                        <p style="color: #22c55e;">If you receive this, your email configuration is working! ✅</p>
+                        <hr style="border: 1px solid #e5e7eb; margin: 20px 0;">
+                        <p style="color: #6b7280; font-size: 12px;">
+                            This test email was sent using the email_service module which uses the Resend HTTP API
+                            with SMTP fallback for reliability.
+                        </p>
+                    </body>
+                    </html>
+                    ''',
+                    recipient_email=recipient,
+                )
+
+                if success:
+                    self.stdout.write(self.style.SUCCESS('\n✅ SUCCESS! Test email sent via Resend API!'))
+                    self.stdout.write(self.style.SUCCESS(f'Check {recipient} for the email.\n'))
+                else:
+                    raise Exception('send_email returned False - check logs for details')
+
+            elif options['invite_template']:
                 # Test the actual invite template
                 self.stdout.write('Testing invite email template...\n')
-                
+
                 context = {
                     'email': recipient,
                     'invite_code': 'TEST-1234-5678',
@@ -52,10 +86,10 @@ class Command(BaseCommand):
                     'uses_remaining': 1,
                     'expires_at': None,
                 }
-                
+
                 html_message = render_to_string('emails/invite_code.html', context)
                 plain_message = strip_tags(html_message)
-                
+
                 email = EmailMultiAlternatives(
                     subject='🌟 [TEST] Welcome to MyRecoveryPal - Your Invite Code',
                     body=plain_message,
@@ -63,13 +97,14 @@ class Command(BaseCommand):
                     to=[recipient]
                 )
                 email.attach_alternative(html_message, "text/html")
-                
+
                 self.stdout.write('Connecting to SMTP server...')
                 email.send(fail_silently=False)
-                
+
             else:
-                # Simple test email
-                self.stdout.write('Sending simple test email...\n')
+                # Simple test email via SMTP
+                self.stdout.write('Sending simple test email via SMTP...\n')
+                self.stdout.write(self.style.WARNING('TIP: Use --resend-api flag for more reliable delivery\n'))
                 send_mail(
                     subject='Test Email from MyRecoveryPal',
                     message='This is a test email. If you receive this, your email configuration is working! ✅',

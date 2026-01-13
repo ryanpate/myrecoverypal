@@ -1,11 +1,12 @@
 from celery import shared_task
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.utils import timezone
 from django.conf import settings
 from .models import Newsletter, Subscriber, EmailLog
+from apps.accounts.email_service import send_email
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -49,17 +50,22 @@ def send_newsletter_task(newsletter_id):
                 })
                 
                 plain_message = strip_tags(html_message)
-                
-                # Send email
-                send_mail(
+
+                # Send email using Resend API
+                success = send_email(
                     subject=newsletter.subject,
-                    message=plain_message,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[subscriber.email],
+                    plain_message=plain_message,
                     html_message=html_message,
-                    fail_silently=False,
+                    recipient_email=subscriber.email,
                 )
-                
+
+                if not success:
+                    logger.warning(f"Failed to send newsletter to {subscriber.email}")
+                    continue
+
+                # Small delay between emails to avoid rate limiting
+                time.sleep(0.5)
+
                 # Update subscriber stats
                 subscriber.last_email_sent = timezone.now()
                 subscriber.emails_received += 1

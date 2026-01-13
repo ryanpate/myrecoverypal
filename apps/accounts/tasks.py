@@ -1,5 +1,4 @@
 from celery import shared_task
-from django.core.mail import send_mail, get_connection, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.utils import timezone
@@ -8,37 +7,9 @@ from datetime import timedelta
 import logging
 import time
 
+from .email_service import send_email
+
 logger = logging.getLogger(__name__)
-
-
-def send_email_with_retry(subject, plain_message, html_message, recipient_email, max_retries=3):
-    """
-    Send an email with retry logic for transient SMTP errors.
-    Returns True if successful, False otherwise.
-    """
-    for attempt in range(max_retries):
-        try:
-            send_mail(
-                subject=subject,
-                message=plain_message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[recipient_email],
-                html_message=html_message,
-                fail_silently=False,
-            )
-            return True
-        except Exception as e:
-            error_msg = str(e).lower()
-            # Retry on transient connection errors
-            if any(x in error_msg for x in ['connection', 'timeout', 'closed', 'reset', 'refused']):
-                if attempt < max_retries - 1:
-                    wait_time = (attempt + 1) * 2  # Exponential backoff: 2s, 4s, 6s
-                    logger.warning(f"Email send attempt {attempt + 1} failed for {recipient_email}: {e}. Retrying in {wait_time}s...")
-                    time.sleep(wait_time)
-                    continue
-            # Non-transient error or max retries reached
-            raise
-    return False
 
 
 # ========================================
@@ -75,14 +46,15 @@ def send_welcome_email_day_1(self, user_id):
         })
         plain_message = strip_tags(html_message)
 
-        send_mail(
+        success = send_email(
             subject="Welcome to MyRecoveryPal! 🌟",
-            message=plain_message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
+            plain_message=plain_message,
             html_message=html_message,
-            fail_silently=False,
+            recipient_email=user.email,
         )
+
+        if not success:
+            raise Exception(f"Failed to send welcome email to {user.email}")
 
         user.welcome_email_1_sent = timezone.now()
         user.save(update_fields=['welcome_email_1_sent'])
@@ -136,13 +108,15 @@ def send_welcome_emails_day_3(self):
             })
             plain_message = strip_tags(html_message)
 
-            # Use retry helper for transient SMTP errors
-            send_email_with_retry(
+            success = send_email(
                 subject="How's your recovery journey going? 💪",
                 plain_message=plain_message,
                 html_message=html_message,
                 recipient_email=user.email,
             )
+
+            if not success:
+                raise Exception(f"Failed to send Day 3 email to {user.email}")
 
             user.welcome_email_2_sent = timezone.now()
             user.save(update_fields=['welcome_email_2_sent'])
@@ -205,13 +179,15 @@ def send_welcome_emails_day_7(self):
             })
             plain_message = strip_tags(html_message)
 
-            # Use retry helper for transient SMTP errors
-            send_email_with_retry(
+            success = send_email(
                 subject="🎉 One week with MyRecoveryPal!",
                 plain_message=plain_message,
                 html_message=html_message,
                 recipient_email=user.email,
             )
+
+            if not success:
+                raise Exception(f"Failed to send Day 7 email to {user.email}")
 
             user.welcome_email_3_sent = timezone.now()
             user.save(update_fields=['welcome_email_3_sent'])
@@ -278,13 +254,15 @@ def send_checkin_reminders(self):
             })
             plain_message = strip_tags(html_message)
 
-            # Use retry helper for transient SMTP errors
-            send_email_with_retry(
+            success = send_email(
                 subject="Don't break your streak! Check in today 🔥",
                 plain_message=plain_message,
                 html_message=html_message,
                 recipient_email=user.email,
             )
+
+            if not success:
+                raise Exception(f"Failed to send check-in reminder to {user.email}")
 
             user.last_checkin_reminder_sent = timezone.now()
             user.save(update_fields=['last_checkin_reminder_sent'])
@@ -376,13 +354,15 @@ def send_weekly_digests(self):
             })
             plain_message = strip_tags(html_message)
 
-            # Use retry helper for transient SMTP errors
-            send_email_with_retry(
+            success = send_email(
                 subject="Your weekly recovery recap 📬",
                 plain_message=plain_message,
                 html_message=html_message,
                 recipient_email=user.email,
             )
+
+            if not success:
+                raise Exception(f"Failed to send weekly digest to {user.email}")
 
             user.last_weekly_digest_sent = timezone.now()
             user.save(update_fields=['last_weekly_digest_sent'])
@@ -482,12 +462,15 @@ def send_meeting_reminders(self):
                 })
                 plain_message = strip_tags(html_message)
 
-                send_email_with_retry(
+                success = send_email(
                     subject=f"Meeting Reminder: {meeting_name} starts soon!",
                     plain_message=plain_message,
                     html_message=html_message,
                     recipient_email=user.email,
                 )
+
+                if not success:
+                    logger.warning(f"Failed to send meeting reminder email to {user.email}")
 
                 # Update last reminder sent
                 bookmark.last_reminder_sent = now
@@ -597,12 +580,15 @@ def send_pal_accountability_nudges(self):
             })
             plain_message = strip_tags(html_message)
 
-            send_email_with_retry(
+            success = send_email(
                 subject=f"{active_pal_name} is thinking of you",
                 plain_message=plain_message,
                 html_message=html_message,
                 recipient_email=inactive_user.email,
             )
+
+            if not success:
+                logger.warning(f"Failed to send pal nudge email to inactive user {inactive_user.email}")
 
             # Send nudge to active pal
             inactive_pal_name = inactive_user.first_name or inactive_user.username
@@ -626,12 +612,15 @@ def send_pal_accountability_nudges(self):
             })
             plain_message = strip_tags(html_message)
 
-            send_email_with_retry(
+            success = send_email(
                 subject=f"{inactive_pal_name} could use your support",
                 plain_message=plain_message,
                 html_message=html_message,
                 recipient_email=active_user.email,
             )
+
+            if not success:
+                logger.warning(f"Failed to send pal nudge email to active user {active_user.email}")
 
             # Update tracking on inactive user
             inactive_user.last_pal_nudge_sent = now
