@@ -1,6 +1,6 @@
 # CLAUDE.md - MyRecoveryPal Development Guide
 
-**Last Updated:** 2026-01-11
+**Last Updated:** 2026-01-13
 **Project:** MyRecoveryPal - Social Recovery Platform
 **Tech Stack:** Django 5.0.10, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
@@ -95,6 +95,28 @@ Users land on the **Social Feed**, not a dashboard or resource page.
 | Analytics | COMPLETE | Google Analytics G-81SZGNRESW (Property 517028653) |
 
 ### Retention Email System
+
+**Email Service:** `apps/accounts/email_service.py`
+- Uses Resend HTTP API as primary method (more reliable on Railway)
+- Falls back to SMTP if API fails
+- Includes retry logic with exponential backoff
+- Handles rate limiting (429 responses)
+
+```python
+from apps.accounts.email_service import send_email
+
+send_email(
+    subject="Your subject",
+    plain_message="Plain text version",
+    html_message="<p>HTML version</p>",
+    recipient_email="user@example.com",
+)
+```
+
+**Testing emails:**
+```bash
+python manage.py test_email recipient@example.com --resend-api
+```
 
 **Celery Beat Schedule:**
 - `send_welcome_emails_day_3`: Daily at 10:00 AM
@@ -751,6 +773,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-13:** Fixed email system to use Resend HTTP API instead of unreliable SMTP. Created `apps/accounts/email_service.py` with `send_email()` function that uses Resend HTTP API as primary method with SMTP fallback. Updated all Celery tasks (welcome emails, check-in reminders, weekly digests, meeting reminders, pal nudges) and newsletter tasks to use new service. Includes retry logic with exponential backoff and rate limit handling. Added `--resend-api` flag to `test_email` management command. Root cause was SMTP connections failing on Railway with "Connection unexpectedly closed" errors.
 - **2026-01-11:** Added comprehensive Privacy Policy and Terms of Service pages. Privacy policy covers data collection, usage, third-party services, user rights, CCPA compliance, and data security. Terms of service includes health disclaimer with crisis resources, prohibited conduct specific to recovery platforms, user content policies, and subscription terms. Updated sitemap.xml with new lastmod dates.
 - **2026-01-10:** Enhanced progress visualizations page: added mood distribution pie chart, weekly comparison (this week vs last week with percentage change), 90-day check-in calendar heatmap (GitHub-style), milestone progress bar with days until next milestone, and dark mode support for all charts.
 - **2026-01-10:** Improved service worker caching strategy: removed duplicate sw.js, created standalone offline.html (doesn't require Django templates), added main.js to static cache, excluded API endpoints from caching (/api/, notifications, social feed posts), switched HTML pages to network-first strategy (shows fresh content, caches as fallback). Cache version bumped to v21.
