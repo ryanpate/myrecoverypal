@@ -100,10 +100,18 @@ def send_scheduled_newsletters():
         scheduled_for__lte=now,
         is_sent=False
     )
-    
+
     for newsletter in scheduled:
-        send_newsletter_task.delay(newsletter.id)
-        logger.info(f"Scheduled newsletter '{newsletter.title}' queued for sending")
+        try:
+            send_newsletter_task.delay(newsletter.id)
+            logger.info(f"Scheduled newsletter '{newsletter.title}' queued for sending")
+        except Exception as e:
+            # If we can't queue, send directly (we're already in a Celery task)
+            logger.warning(f"Could not queue newsletter '{newsletter.title}', sending directly: {e}")
+            try:
+                send_newsletter_task(newsletter.id)
+            except Exception as direct_error:
+                logger.error(f"Failed to send newsletter '{newsletter.title}': {direct_error}")
 
 @shared_task
 def update_subscriber_stats():

@@ -53,11 +53,19 @@ class NewsletterAdmin(admin.ModelAdmin):
     def send_newsletter(self, request, queryset):
         for newsletter in queryset:
             if newsletter.status == 'draft':
-                # Queue newsletter for sending
-                send_newsletter_task.delay(newsletter.id)
-                newsletter.status = 'sending'
-                newsletter.save()
-                messages.success(request, f'Newsletter "{newsletter.title}" queued for sending.')
+                try:
+                    # Queue newsletter for sending via Celery
+                    send_newsletter_task.delay(newsletter.id)
+                    newsletter.status = 'sending'
+                    newsletter.save()
+                    messages.success(request, f'Newsletter "{newsletter.title}" queued for sending.')
+                except Exception as e:
+                    # Celery broker unavailable - cannot queue newsletter
+                    messages.error(
+                        request,
+                        f'Could not queue "{newsletter.title}": Celery broker unavailable. '
+                        f'Please ensure the celery-worker service is running. Error: {str(e)}'
+                    )
             else:
                 messages.warning(request, f'Newsletter "{newsletter.title}" is not in draft status.')
     send_newsletter.short_description = "Send selected newsletters"
