@@ -52,9 +52,50 @@ def send_welcome_email_on_registration(sender, instance, created, **kwargs):
                 from .tasks import send_welcome_email_day_1
                 # Delay 5 minutes to let them explore first
                 send_welcome_email_day_1.apply_async(args=[instance.id], countdown=300)
+                logger.info(f"Queued welcome email for user {instance.id}")
             except Exception as e:
-                # Don't crash the request if Celery broker is unavailable
-                logger.warning(f"Could not queue welcome email for user {instance.id}: {e}")
+                # Celery broker unavailable - send email directly as fallback
+                logger.warning(f"Could not queue welcome email for user {instance.id}: {e}. Sending directly...")
+                try:
+                    _send_welcome_email_directly(instance)
+                except Exception as direct_error:
+                    logger.error(f"Failed to send welcome email directly for user {instance.id}: {direct_error}")
+
+
+def _send_welcome_email_directly(user):
+    """Fallback to send welcome email directly when Celery is unavailable."""
+    from django.template.loader import render_to_string
+    from django.utils.html import strip_tags
+    from django.utils import timezone
+    from django.conf import settings
+    from .email_service import send_email
+
+    if not user.email_notifications:
+        logger.info(f"Skipping welcome email for {user.email} - notifications disabled")
+        return
+
+    site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
+
+    html_message = render_to_string('emails/welcome_day_1.html', {
+        'user': user,
+        'site_url': site_url,
+        'current_year': timezone.now().year,
+    })
+    plain_message = strip_tags(html_message)
+
+    success = send_email(
+        subject="Welcome to MyRecoveryPal! 🌟",
+        plain_message=plain_message,
+        html_message=html_message,
+        recipient_email=user.email,
+    )
+
+    if success:
+        user.welcome_email_1_sent = timezone.now()
+        user.save(update_fields=['welcome_email_1_sent'])
+        logger.info(f"Welcome email sent directly to {user.email}")
+    else:
+        raise Exception(f"Email service failed for {user.email}")
 
 
 @receiver(post_save, sender=Milestone)
