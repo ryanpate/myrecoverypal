@@ -83,7 +83,7 @@ def _send_welcome_email_directly(user):
     })
     plain_message = strip_tags(html_message)
 
-    success = send_email(
+    success, error = send_email(
         subject="Welcome to MyRecoveryPal! 🌟",
         plain_message=plain_message,
         html_message=html_message,
@@ -95,7 +95,7 @@ def _send_welcome_email_directly(user):
         user.save(update_fields=['welcome_email_1_sent'])
         logger.info(f"Welcome email sent directly to {user.email}")
     else:
-        raise Exception(f"Email service failed for {user.email}")
+        raise Exception(f"Email service failed for {user.email}: {error}")
 
 
 @receiver(post_save, sender=Milestone)

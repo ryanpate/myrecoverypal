@@ -52,7 +52,7 @@ def send_newsletter_task(newsletter_id):
                 plain_message = strip_tags(html_message)
 
                 # Send email using Resend API
-                success = send_email(
+                success, error = send_email(
                     subject=newsletter.subject,
                     plain_message=plain_message,
                     html_message=html_message,
@@ -60,7 +60,7 @@ def send_newsletter_task(newsletter_id):
                 )
 
                 if not success:
-                    logger.warning(f"Failed to send newsletter to {subscriber.email}")
+                    logger.warning(f"Failed to send newsletter to {subscriber.email}: {error}")
                     continue
 
                 # Small delay between emails to avoid rate limiting

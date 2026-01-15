@@ -46,7 +46,7 @@ def send_welcome_email_day_1(self, user_id):
         })
         plain_message = strip_tags(html_message)
 
-        success = send_email(
+        success, error = send_email(
             subject="Welcome to MyRecoveryPal! 🌟",
             plain_message=plain_message,
             html_message=html_message,
@@ -54,7 +54,7 @@ def send_welcome_email_day_1(self, user_id):
         )
 
         if not success:
-            raise Exception(f"Failed to send welcome email to {user.email}")
+            raise Exception(f"Failed to send welcome email to {user.email}: {error}")
 
         user.welcome_email_1_sent = timezone.now()
         user.save(update_fields=['welcome_email_1_sent'])
@@ -108,7 +108,7 @@ def send_welcome_emails_day_3(self):
             })
             plain_message = strip_tags(html_message)
 
-            success = send_email(
+            success, error = send_email(
                 subject="How's your recovery journey going? 💪",
                 plain_message=plain_message,
                 html_message=html_message,
@@ -116,7 +116,7 @@ def send_welcome_emails_day_3(self):
             )
 
             if not success:
-                raise Exception(f"Failed to send Day 3 email to {user.email}")
+                raise Exception(f"Failed to send Day 3 email to {user.email}: {error}")
 
             user.welcome_email_2_sent = timezone.now()
             user.save(update_fields=['welcome_email_2_sent'])
@@ -179,7 +179,7 @@ def send_welcome_emails_day_7(self):
             })
             plain_message = strip_tags(html_message)
 
-            success = send_email(
+            success, error = send_email(
                 subject="🎉 One week with MyRecoveryPal!",
                 plain_message=plain_message,
                 html_message=html_message,
@@ -187,7 +187,7 @@ def send_welcome_emails_day_7(self):
             )
 
             if not success:
-                raise Exception(f"Failed to send Day 7 email to {user.email}")
+                raise Exception(f"Failed to send Day 7 email to {user.email}: {error}")
 
             user.welcome_email_3_sent = timezone.now()
             user.save(update_fields=['welcome_email_3_sent'])
@@ -254,7 +254,7 @@ def send_checkin_reminders(self):
             })
             plain_message = strip_tags(html_message)
 
-            success = send_email(
+            success, error = send_email(
                 subject="Don't break your streak! Check in today 🔥",
                 plain_message=plain_message,
                 html_message=html_message,
@@ -262,7 +262,7 @@ def send_checkin_reminders(self):
             )
 
             if not success:
-                raise Exception(f"Failed to send check-in reminder to {user.email}")
+                raise Exception(f"Failed to send check-in reminder to {user.email}: {error}")
 
             user.last_checkin_reminder_sent = timezone.now()
             user.save(update_fields=['last_checkin_reminder_sent'])
@@ -354,7 +354,7 @@ def send_weekly_digests(self):
             })
             plain_message = strip_tags(html_message)
 
-            success = send_email(
+            success, error = send_email(
                 subject="Your weekly recovery recap 📬",
                 plain_message=plain_message,
                 html_message=html_message,
@@ -362,7 +362,7 @@ def send_weekly_digests(self):
             )
 
             if not success:
-                raise Exception(f"Failed to send weekly digest to {user.email}")
+                raise Exception(f"Failed to send weekly digest to {user.email}: {error}")
 
             user.last_weekly_digest_sent = timezone.now()
             user.save(update_fields=['last_weekly_digest_sent'])
@@ -462,7 +462,7 @@ def send_meeting_reminders(self):
                 })
                 plain_message = strip_tags(html_message)
 
-                success = send_email(
+                success, error = send_email(
                     subject=f"Meeting Reminder: {meeting_name} starts soon!",
                     plain_message=plain_message,
                     html_message=html_message,
@@ -470,7 +470,7 @@ def send_meeting_reminders(self):
                 )
 
                 if not success:
-                    logger.warning(f"Failed to send meeting reminder email to {user.email}")
+                    logger.warning(f"Failed to send meeting reminder email to {user.email}: {error}")
 
                 # Update last reminder sent
                 bookmark.last_reminder_sent = now
@@ -580,7 +580,7 @@ def send_pal_accountability_nudges(self):
             })
             plain_message = strip_tags(html_message)
 
-            success = send_email(
+            success, error = send_email(
                 subject=f"{active_pal_name} is thinking of you",
                 plain_message=plain_message,
                 html_message=html_message,
@@ -588,7 +588,7 @@ def send_pal_accountability_nudges(self):
             )
 
             if not success:
-                logger.warning(f"Failed to send pal nudge email to inactive user {inactive_user.email}")
+                logger.warning(f"Failed to send pal nudge email to inactive user {inactive_user.email}: {error}")
 
             # Send nudge to active pal
             inactive_pal_name = inactive_user.first_name or inactive_user.username
@@ -612,7 +612,7 @@ def send_pal_accountability_nudges(self):
             })
             plain_message = strip_tags(html_message)
 
-            success = send_email(
+            success, error = send_email(
                 subject=f"{inactive_pal_name} could use your support",
                 plain_message=plain_message,
                 html_message=html_message,
@@ -620,7 +620,7 @@ def send_pal_accountability_nudges(self):
             )
 
             if not success:
-                logger.warning(f"Failed to send pal nudge email to active user {active_user.email}")
+                logger.warning(f"Failed to send pal nudge email to active user {active_user.email}: {error}")
 
             # Update tracking on inactive user
             inactive_user.last_pal_nudge_sent = now

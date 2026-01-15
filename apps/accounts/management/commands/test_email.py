@@ -48,7 +48,7 @@ class Command(BaseCommand):
 
                 from apps.accounts.email_service import send_email
 
-                success = send_email(
+                success, error = send_email(
                     subject='[TEST] MyRecoveryPal Email Test via Resend API',
                     plain_message='This is a test email sent via Resend HTTP API. If you receive this, your email configuration is working!',
                     html_message='''
@@ -72,7 +72,7 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.SUCCESS('\n✅ SUCCESS! Test email sent via Resend API!'))
                     self.stdout.write(self.style.SUCCESS(f'Check {recipient} for the email.\n'))
                 else:
-                    raise Exception('send_email returned False - check logs for details')
+                    raise Exception(f'Email send failed: {error}')
 
             elif options['invite_template']:
                 # Test the actual invite template
