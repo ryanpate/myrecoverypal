@@ -1,7 +1,7 @@
 # Railway Dockerfile for MyRecoveryPal Django Application
 # This Dockerfile is specifically for deploying the Django web app to Railway
 # The package.json and Capacitor files are for local mobile app development only
-# Build: 2026-01-17-v5 - Event delegation fix for comments
+# Build: 2026-01-17-v6 - Inline onclick handler for comments
 
 FROM python:3.11-slim
 

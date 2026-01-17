@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-<!-- Deploy timestamp: 2026-01-17-v5 -->
+<!-- Deploy timestamp: 2026-01-17-v6 -->
 
 {% block title %}MyRecoveryCircle - MyRecoveryPal{% endblock %}
 
@@ -858,7 +858,7 @@
                         <i class="{% if user in post.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
                         <span>Like</span>
                     </button>
-                    <button class="action-btn comment-toggle-btn" data-post-id="{{ post.id }}">
+                    <button class="action-btn comment-toggle-btn" data-post-id="{{ post.id }}" onclick="toggleComments('{{ post.id }}'); return false;">
                         <i class="far fa-comment"></i>
                         <span>Comment</span>
                     </button>
@@ -994,7 +994,7 @@
 
 {% block extra_js %}
 <script>
-// Test if this script block loads - BUILD 2026-01-17-v5
+// Test if this script block loads - BUILD 2026-01-17-v6
 console.log('=== SOCIAL FEED JS LOADED ===');
 window.onerror = function(msg, url, line) {
     console.error('JS Error:', msg, 'at line', line);
@@ -1013,6 +1013,20 @@ const currentUser = {
 {% else %}
 const currentUser = null;
 {% endif %}
+
+// Global function for comment toggle - called via onclick
+function toggleComments(postId) {
+    console.log('toggleComments called with postId:', postId);
+    const section = document.getElementById('comments-' + postId);
+    console.log('Found section:', section);
+    if (section) {
+        const isHidden = section.style.display === 'none' || section.style.display === '';
+        section.style.display = isHidden ? 'block' : 'none';
+        console.log('Set display to:', section.style.display);
+    } else {
+        console.error('Could not find comments section for post:', postId);
+    }
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOMContentLoaded fired - initializing social feed JS');
@@ -1238,27 +1252,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Comment toggle - using event delegation for robustness
-    console.log('Setting up comment toggle via event delegation');
-    document.addEventListener('click', function(e) {
-        // Check if clicked element or its parent is a comment toggle button
-        const btn = e.target.closest('.comment-toggle-btn');
-        if (btn) {
-            e.preventDefault();
-            e.stopPropagation();
-            const postId = btn.dataset.postId;
-            console.log('Comment toggle clicked for post:', postId);
-            const commentsSection = document.getElementById('comments-' + postId);
-            console.log('Comments section element:', commentsSection);
-            if (commentsSection) {
-                const isHidden = commentsSection.style.display === 'none' || commentsSection.style.display === '';
-                commentsSection.style.display = isHidden ? 'block' : 'none';
-                console.log('Toggled comments to:', commentsSection.style.display);
-            } else {
-                console.error('Comments section not found for post:', postId);
-            }
-        }
-    });
+    // Comment toggle is now handled via onclick attribute on the button
+    // See toggleComments() function defined above
 
     // Comment form submission - OPTIMISTIC UI
     const commentForms = document.querySelectorAll('.comment-form');
