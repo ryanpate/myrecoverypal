@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-<!-- Deploy timestamp: 2026-01-17-v2 -->
+<!-- Deploy timestamp: 2026-01-17-v5 -->
 
 {% block title %}MyRecoveryCircle - MyRecoveryPal{% endblock %}
 
@@ -994,7 +994,7 @@
 
 {% block extra_js %}
 <script>
-// Test if this script block loads - BUILD 2026-01-17-v4
+// Test if this script block loads - BUILD 2026-01-17-v5
 console.log('=== SOCIAL FEED JS LOADED ===');
 window.onerror = function(msg, url, line) {
     console.error('JS Error:', msg, 'at line', line);
@@ -1238,20 +1238,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Comment toggle
-    const commentToggleBtns = document.querySelectorAll('.comment-toggle-btn');
-    console.log('Found comment toggle buttons:', commentToggleBtns.length);
-    commentToggleBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const postId = this.dataset.postId;
+    // Comment toggle - using event delegation for robustness
+    console.log('Setting up comment toggle via event delegation');
+    document.addEventListener('click', function(e) {
+        // Check if clicked element or its parent is a comment toggle button
+        const btn = e.target.closest('.comment-toggle-btn');
+        if (btn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const postId = btn.dataset.postId;
             console.log('Comment toggle clicked for post:', postId);
-            const commentsSection = document.getElementById(`comments-${postId}`);
+            const commentsSection = document.getElementById('comments-' + postId);
+            console.log('Comments section element:', commentsSection);
             if (commentsSection) {
-                commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+                const isHidden = commentsSection.style.display === 'none' || commentsSection.style.display === '';
+                commentsSection.style.display = isHidden ? 'block' : 'none';
+                console.log('Toggled comments to:', commentsSection.style.display);
             } else {
                 console.error('Comments section not found for post:', postId);
             }
-        });
+        }
     });
 
     // Comment form submission - OPTIMISTIC UI
