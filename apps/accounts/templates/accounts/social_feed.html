@@ -1266,15 +1266,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // 3. Send request in background
             try {
+                const csrfToken = formData.get('csrfmiddlewaretoken');
+                console.log('Submitting comment for post:', postId, 'CSRF token present:', !!csrfToken);
+
                 const response = await fetch(`/accounts/social-feed/post/${postId}/comment/`, {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                        'X-CSRFToken': csrfToken
                     }
                 });
 
+                console.log('Comment response status:', response.status);
                 const data = await response.json();
+                console.log('Comment response data:', data);
 
                 if (data.success) {
                     // 4. Update comment with server data

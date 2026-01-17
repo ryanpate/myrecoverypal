@@ -1,7 +1,7 @@
 // MyRecoveryPal Service Worker
 // Version 2.3 - Improved caching strategy and API exclusions
 
-const CACHE_VERSION = 'myrecoverypal-v21';
+const CACHE_VERSION = 'myrecoverypal-v22';
 const CACHE_NAMES = {
   static: `${CACHE_VERSION}-static`,
   dynamic: `${CACHE_VERSION}-dynamic`,
@@ -25,6 +25,7 @@ const API_PATHS = [
   '/accounts/api/',
   '/social-feed/posts/',
   '/accounts/social-feed/posts/',
+  '/accounts/social-feed/post/',
   '/notifications/',
   '/accounts/notifications/',
   '/checkin-status/',
