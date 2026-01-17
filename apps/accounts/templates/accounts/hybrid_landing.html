@@ -1852,7 +1852,7 @@
                                     <span>React</span>
                                 </button>
                             </div>
-                            <button class="post-action-btn comment-toggle-btn" data-post-id="{{ post.id }}">
+                            <button class="post-action-btn comment-toggle-btn" data-post-id="{{ post.id }}" onclick="toggleComments('{{ post.id }}'); return false;">
                                 <i class="far fa-comment"></i>
                                 <span>Comment</span>
                             </button>
@@ -2008,6 +2008,20 @@ const currentUser = {
 const currentUser = null;
 {% endif %}
 
+// Global function for comment toggle - called via onclick
+function toggleComments(postId) {
+    console.log('toggleComments called with postId:', postId);
+    const section = document.getElementById('comments-' + postId);
+    console.log('Found section:', section);
+    if (section) {
+        const isHidden = section.style.display === 'none' || section.style.display === '';
+        section.style.display = isHidden ? 'block' : 'none';
+        console.log('Set display to:', section.style.display);
+    } else {
+        console.error('Could not find comments section for post:', postId);
+    }
+}
+
 // Infinite scroll state
 const infiniteScroll = {
     currentPage: {{ page_obj.number|default:1 }},
@@ -2123,7 +2137,7 @@ function createPostElement(post) {
                     <button type="button" class="reaction-btn" data-reaction="celebrate" title="Celebrate">🎉</button>
                 </div>
             </div>
-            <button class="post-action-btn comment-toggle-btn" data-post-id="${post.id}">
+            <button class="post-action-btn comment-toggle-btn" data-post-id="${post.id}" onclick="toggleComments('${post.id}'); return false;">
                 <i class="far fa-comment"></i>
                 <span>Comment</span>
             </button>
