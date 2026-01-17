@@ -1007,111 +1007,130 @@ const currentUser = null;
 {% endif %}
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOMContentLoaded fired - initializing social feed JS');
+
     // Post content handling
     const textarea = document.getElementById('post-content');
     const submitBtn = document.getElementById('post-submit-btn');
 
-    textarea.addEventListener('input', function() {
-        const length = this.value.length;
-        // Enable submit button if there's content or an image
-        const hasImage = document.getElementById('post-image-input').files.length > 0;
-        submitBtn.disabled = length === 0 && !hasImage;
-    });
+    if (textarea && submitBtn) {
+        textarea.addEventListener('input', function() {
+            const length = this.value.length;
+            // Enable submit button if there's content or an image
+            const hasImage = document.getElementById('post-image-input').files.length > 0;
+            submitBtn.disabled = length === 0 && !hasImage;
+        });
+    }
 
-    // Image upload handlers
+    // Image upload handlers (only if create post form exists)
     const addPhotoBtn = document.getElementById('add-photo-btn');
     const imageInput = document.getElementById('post-image-input');
     const imagePreviewContainer = document.getElementById('image-preview-container');
     const imagePreview = document.getElementById('image-preview');
     const removeImageBtn = document.getElementById('remove-image-btn');
+    const createPostForm = document.getElementById('create-post-form');
 
-    addPhotoBtn.addEventListener('click', function() {
-        imageInput.click();
-    });
+    if (addPhotoBtn && imageInput) {
+        addPhotoBtn.addEventListener('click', function() {
+            imageInput.click();
+        });
 
-    imageInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            // Validate file type
-            if (!file.type.startsWith('image/')) {
-                alert('Please select an image file');
-                this.value = '';
-                return;
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select an image file');
+                    this.value = '';
+                    return;
+                }
+
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Image size must be less than 5MB');
+                    this.value = '';
+                    return;
+                }
+
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (imagePreview && imagePreviewContainer) {
+                        imagePreview.src = e.target.result;
+                        imagePreviewContainer.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
+
+                // Enable submit button if image is selected
+                if (submitBtn) submitBtn.disabled = false;
             }
+        });
+    }
 
-            // Validate file size (max 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                alert('Image size must be less than 5MB');
-                this.value = '';
-                return;
+    if (removeImageBtn) {
+        removeImageBtn.addEventListener('click', function() {
+            if (imageInput) imageInput.value = '';
+            if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+            if (imagePreview) imagePreview.src = '';
+
+            // Disable submit button if no content
+            if (textarea && submitBtn) {
+                const hasContent = textarea.value.trim().length > 0;
+                submitBtn.disabled = !hasContent;
             }
-
-            // Show preview
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                imagePreview.src = e.target.result;
-                imagePreviewContainer.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-
-            // Enable submit button if image is selected
-            const hasContent = textarea.value.trim().length > 0;
-            submitBtn.disabled = false;
-        }
-    });
-
-    removeImageBtn.addEventListener('click', function() {
-        imageInput.value = '';
-        imagePreviewContainer.style.display = 'none';
-        imagePreview.src = '';
-
-        // Disable submit button if no content
-        const hasContent = textarea.value.trim().length > 0;
-        submitBtn.disabled = !hasContent;
-    });
+        });
+    }
 
     // Create post form submission
-    const createPostForm = document.getElementById('create-post-form');
-    createPostForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
+    if (createPostForm) {
+        createPostForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-        const formData = new FormData(this);
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<div class="spinner"></div>';
-
-        try {
-            const response = await fetch('{% url "accounts:create_social_post" %}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-                }
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                // Clear form
-                textarea.value = '';
-                imageInput.value = '';
-                imagePreviewContainer.style.display = 'none';
-                imagePreview.src = '';
+            const formData = new FormData(this);
+            if (submitBtn) {
                 submitBtn.disabled = true;
-
-                // Reload page to show new post
-                window.location.reload();
-            } else {
-                alert(data.error || 'Failed to create post');
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Post';
+                submitBtn.innerHTML = '<div class="spinner"></div>';
             }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to create post');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Post';
-        }
-    });
+
+            try {
+                const response = await fetch('{% url "accounts:create_social_post" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Clear form
+                    if (textarea) textarea.value = '';
+                    if (imageInput) imageInput.value = '';
+                    if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+                    if (imagePreview) imagePreview.src = '';
+                    if (submitBtn) submitBtn.disabled = true;
+
+                    // Reload page to show new post
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Failed to create post');
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Post';
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to create post');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Post';
+                }
+            }
+        });
+    }
 
     // Follow button handlers for suggested users
     document.querySelectorAll('.follow-suggested-btn').forEach(btn => {
@@ -1212,18 +1231,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Comment toggle
-    document.querySelectorAll('.comment-toggle-btn').forEach(btn => {
+    const commentToggleBtns = document.querySelectorAll('.comment-toggle-btn');
+    console.log('Found comment toggle buttons:', commentToggleBtns.length);
+    commentToggleBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             const postId = this.dataset.postId;
+            console.log('Comment toggle clicked for post:', postId);
             const commentsSection = document.getElementById(`comments-${postId}`);
-            commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+            if (commentsSection) {
+                commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+            } else {
+                console.error('Comments section not found for post:', postId);
+            }
         });
     });
 
     // Comment form submission - OPTIMISTIC UI
-    document.querySelectorAll('.comment-form').forEach(form => {
+    const commentForms = document.querySelectorAll('.comment-form');
+    console.log('Found comment forms:', commentForms.length);
+    commentForms.forEach(form => {
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
+            console.log('Comment form submitted');
 
             const postId = this.dataset.postId;
             const formData = new FormData(this);
@@ -1231,7 +1260,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const content = input.value.trim();
             const commentsList = document.querySelector(`#comments-${postId} .comments-list`);
 
-            if (!content || !currentUser) return;
+            console.log('Comment details - postId:', postId, 'content:', content, 'currentUser:', !!currentUser);
+
+            if (!content || !currentUser) {
+                console.log('Skipping comment - empty content or no user');
+                return;
+            }
 
             // 1. Create optimistic comment element
             const tempId = 'temp-' + Date.now();
