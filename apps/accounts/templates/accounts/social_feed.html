@@ -1270,7 +1270,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-CSRFToken': formData.get('csrftoken')
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
                     }
                 });
 
