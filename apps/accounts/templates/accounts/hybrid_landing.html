@@ -1834,7 +1834,7 @@
                         <!-- Engagement Stats -->
                         <div class="post-engagement">
                             <span class="likes-count">{{ post.likes.count }} like{{ post.likes.count|pluralize }}</span>
-                            <span class="comments-count {% if user.is_authenticated %}comment-toggle-link{% endif %}" data-post-id="{{ post.id }}" style="{% if user.is_authenticated %}cursor: pointer; user-select: none;{% endif %}">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
+                            <span class="comments-count {% if user.is_authenticated %}comment-toggle-link{% endif %}" data-post-id="{{ post.id }}" style="{% if user.is_authenticated %}cursor: pointer; user-select: none;{% endif %}" {% if user.is_authenticated %}onclick="toggleComments('{{ post.id }}'); return false;"{% endif %}>{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
                         </div>
 
                         {% if user.is_authenticated %}
@@ -2119,7 +2119,7 @@ function createPostElement(post) {
         <!-- Engagement Stats -->
         <div class="post-engagement">
             <span class="likes-count">${post.likes_count > 0 ? `<span class="reaction-summary"><span class="reaction-emoji">❤️</span><span class="reaction-count">${post.likes_count}</span></span>` : '0 likes'}</span>
-            <span class="comments-count comment-toggle-link" data-post-id="${post.id}">${post.comments_count} comment${post.comments_count !== 1 ? 's' : ''}</span>
+            <span class="comments-count comment-toggle-link" data-post-id="${post.id}" onclick="toggleComments('${post.id}'); return false;" style="cursor: pointer;">${post.comments_count} comment${post.comments_count !== 1 ? 's' : ''}</span>
         </div>
 
         <!-- Action Buttons -->
