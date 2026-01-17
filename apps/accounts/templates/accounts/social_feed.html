@@ -994,6 +994,13 @@
 
 {% block extra_js %}
 <script>
+// Test if this script block loads - BUILD 2026-01-17-v4
+console.log('=== SOCIAL FEED JS LOADED ===');
+window.onerror = function(msg, url, line) {
+    console.error('JS Error:', msg, 'at line', line);
+    return false;
+};
+
 // Current user data for optimistic UI
 {% if user.is_authenticated %}
 const currentUser = {
