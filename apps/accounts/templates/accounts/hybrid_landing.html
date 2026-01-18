@@ -2480,36 +2480,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Comment form submission
-    document.querySelectorAll('.comment-form').forEach(form => {
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const postId = this.dataset.postId;
-            const formData = new FormData(this);
-
-            try {
-                const response = await fetch(`/accounts/social-feed/post/${postId}/comment/`, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-                    }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert(data.error || 'Failed to post comment');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to post comment');
-            }
-        });
-    });
+    // Comment form submission - handled via event delegation in feedColumn.addEventListener('submit', ...)
+    // Removed duplicate handler that was causing double submissions
 
     // Delete post
     document.querySelectorAll('.delete-post-btn').forEach(btn => {
