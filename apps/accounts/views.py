@@ -1241,20 +1241,18 @@ def pal_dashboard(request):
     # Current pal
     current_pal = request.user.get_recovery_pal()
 
-    # Pending pal requests (sent and received)
+    # In RecoveryPal, user1 is always the sender, user2 is the recipient
+    # Sent requests: where I am user1 (I sent the request)
     sent_requests = RecoveryPal.objects.filter(
-        Q(user1=request.user) | Q(user2=request.user),
+        user1=request.user,
         status='pending'
-    ).exclude(
-        # Exclude requests I initiated
-        Q(user1=request.user, user2__lt=request.user) |
-        Q(user2=request.user, user1__lt=request.user)
-    )
+    ).select_related('user2')
 
+    # Received requests: where I am user2 (someone sent me a request)
     received_requests = RecoveryPal.objects.filter(
-        Q(user1=request.user) | Q(user2=request.user),
+        user2=request.user,
         status='pending'
-    ).exclude(id__in=sent_requests.values_list('id', flat=True))
+    ).select_related('user1')
 
     context = {
         'current_pal': current_pal,
@@ -1431,6 +1429,68 @@ def respond_sponsor_request(request, relationship_id):
         messages.info(request, 'Sponsor request declined.')
 
     return redirect('accounts:sponsor_dashboard')
+
+
+@login_required
+@require_POST
+def respond_pal_request(request, pal_id):
+    """Accept or decline a recovery pal request"""
+    from datetime import date
+
+    # Get the pal relationship where user is the recipient
+    pal_relationship = get_object_or_404(
+        RecoveryPal,
+        id=pal_id,
+        status='pending'
+    )
+
+    # Ensure the current user is part of this relationship
+    if request.user not in [pal_relationship.user1, pal_relationship.user2]:
+        messages.error(request, "You don't have permission to respond to this request.")
+        return redirect('accounts:pal_dashboard')
+
+    # Determine the other user
+    other_user = pal_relationship.user2 if pal_relationship.user1 == request.user else pal_relationship.user1
+
+    action = request.POST.get('action')
+
+    if action == 'accept':
+        pal_relationship.status = 'active'
+        pal_relationship.started_date = date.today()
+        pal_relationship.save()
+        messages.success(
+            request, f'You are now recovery pals with {other_user.get_full_name() or other_user.username}!')
+
+        # Create activity for both users
+        ActivityFeed.objects.create(
+            user=request.user,
+            activity_type='pal_started',
+            title=f"Became recovery pals with {other_user.get_full_name() or other_user.username}",
+            description="A new accountability partnership has begun!"
+        )
+        ActivityFeed.objects.create(
+            user=other_user,
+            activity_type='pal_started',
+            title=f"Became recovery pals with {request.user.get_full_name() or request.user.username}",
+            description="A new accountability partnership has begun!"
+        )
+
+        # Send notification to the requester
+        create_notification(
+            recipient=other_user,
+            sender=request.user,
+            notification_type='pal_request',
+            title='Pal Request Accepted!',
+            message=f"{request.user.get_full_name() or request.user.username} accepted your recovery pal request!",
+            link='/accounts/pals/',
+        )
+
+    elif action == 'decline':
+        pal_relationship.status = 'ended'
+        pal_relationship.save()
+        messages.info(request, 'Pal request declined.')
+
+    return redirect('accounts:pal_dashboard')
 
 
 # Group views

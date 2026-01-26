@@ -355,12 +355,9 @@
                 <h5><i class="fas fa-inbox"></i> Pal Requests</h5>
                 <p class="small text-muted">People who want to be your recovery pal</p>
 
-                {% for request in received_requests %}
-                {% with pal_user=request.user1 %}
-                {% if pal_user == user %}
-                {% with pal_user=request.user2 %}
-                {% endwith %}
-                {% endif %}
+                {% for pal_request in received_requests %}
+                {# For received requests, user1 is always the sender #}
+                {% with pal_user=pal_request.user1 %}
                 <div class="pal-card">
                     <div class="text-center">
                         <div class="pal-avatar mx-auto"
@@ -376,14 +373,16 @@
                         <span class="status-badge status-pending">Pending</span>
 
                         <div class="mt-3">
-                            <form method="post" style="display: inline;">
+                            <form method="post" action="{% url 'accounts:respond_pal_request' pal_request.id %}" style="display: inline;">
                                 {% csrf_token %}
+                                <input type="hidden" name="action" value="accept">
                                 <button type="submit" class="action-btn btn-accept btn-sm">
                                     <i class="fas fa-check"></i> Accept
                                 </button>
                             </form>
-                            <form method="post" style="display: inline;">
+                            <form method="post" action="{% url 'accounts:respond_pal_request' pal_request.id %}" style="display: inline;">
                                 {% csrf_token %}
+                                <input type="hidden" name="action" value="decline">
                                 <button type="submit" class="action-btn btn-decline btn-sm">
                                     <i class="fas fa-times"></i> Decline
                                 </button>
@@ -402,12 +401,9 @@
                 <h5><i class="fas fa-paper-plane"></i> Sent Requests</h5>
                 <p class="small text-muted">Pal requests you've sent</p>
 
-                {% for request in sent_requests %}
-                {% with pal_user=request.user2 %}
-                {% if pal_user == user %}
-                {% with pal_user=request.user1 %}
-                {% endwith %}
-                {% endif %}
+                {% for pal_request in sent_requests %}
+                {# For sent requests, user2 is always the recipient #}
+                {% with pal_user=pal_request.user2 %}
                 <div class="pal-card">
                     <div class="text-center">
                         <div class="pal-avatar mx-auto"

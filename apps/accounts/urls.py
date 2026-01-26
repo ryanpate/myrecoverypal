@@ -95,6 +95,9 @@ urlpatterns = [
     path('pals/', views.pal_dashboard, name='pal_dashboard'),
     path('pals/request/<str:username>/',
          views.request_pal, name='request_pal'),
+    path('pals/respond/<int:pal_id>/',
+         views.respond_pal_request, name='respond_pal_request'),
+
     # Recovery Groups
     path('groups/', views.RecoveryGroupListView.as_view(), name='groups_list'),
     path('groups/create/', views.create_group, name='create_group'),
