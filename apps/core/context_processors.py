@@ -17,7 +17,7 @@ def seo_defaults(request):
     
     # Default values
     default_title = "MyRecoveryPal - Your Recovery Support Community"
-    default_description = "Join MyRecoveryPal, a supportive community for individuals in recovery. Track milestones, connect with peers, journal your journey, and access recovery resources - all in one free platform."
+    default_description = "Free recovery community. Track milestones, connect with peers, journal your journey, access resources. Join MyRecoveryPal today."
     default_keywords = "recovery support, addiction recovery, sobriety tracker, recovery community, peer support, recovery journal, milestone tracking, sobriety app, recovery resources, mental health support"
     default_image = request.build_absolute_uri(settings.STATIC_URL + 'images/og-image.png')
     
