@@ -292,11 +292,26 @@ def create_seo_posts(request):
     if not is_authorized:
         return HttpResponse("Unauthorized. Superuser login or valid key required.", status=403)
 
+    # Force publish existing SEO posts that might be in draft
+    seo_slugs = [
+        'how-long-does-alcohol-withdrawal-last',
+        'signs-of-alcoholism-self-assessment',
+        'how-to-stop-drinking-alcohol-guide',
+        'what-is-sober-curious-guide',
+        'high-functioning-alcoholic-signs-help',
+        'dopamine-detox-addiction-recovery',
+    ]
+    updated_count = Post.objects.filter(slug__in=seo_slugs, status='draft').update(status='published')
+
     # Capture command output
     out = StringIO()
     try:
         call_command('create_seo_blog_posts', stdout=out)
         output = out.getvalue()
+
+        if updated_count > 0:
+            output = f"Force-published {updated_count} draft posts.\n\n" + output
+
         return HttpResponse(
             f"<html><head><title>SEO Posts Created</title></head>"
             f"<body><h1>SEO Blog Posts Creation</h1>"
