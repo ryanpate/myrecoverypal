@@ -271,14 +271,26 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-@staff_member_required
 def create_seo_posts(request):
     """
     Admin-only view to create SEO blog posts.
     Access at: /blog/admin/create-seo-posts/
+    Can be authenticated via:
+    1. Superuser login
+    2. Secret key query param matching ADMIN_SECRET_KEY env var
     """
-    if not request.user.is_superuser:
-        return HttpResponse("Superuser access required", status=403)
+    import os
+    secret_key = request.GET.get('key', '')
+    admin_secret = os.environ.get('ADMIN_SECRET_KEY', '')
+
+    # Allow access if superuser OR valid secret key
+    is_authorized = (
+        (request.user.is_authenticated and request.user.is_superuser) or
+        (admin_secret and secret_key == admin_secret)
+    )
+
+    if not is_authorized:
+        return HttpResponse("Unauthorized. Superuser login or valid key required.", status=403)
 
     # Capture command output
     out = StringIO()
