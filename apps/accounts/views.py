@@ -1137,32 +1137,87 @@ def suggested_users(request):
         request.user.get_following().values_list('id', flat=True))
     excluded_ids.append(request.user.id)
 
-    # Get users with mutual followers
-    mutual_suggestions = User.objects.filter(
-        follower_connections__follower__in=request.user.get_following(),
-        is_active=True
-    ).exclude(id__in=excluded_ids).annotate(
-        mutual_count=Count('follower_connections__follower')
-    ).order_by('-mutual_count')[:5]
+    # Collect all suggestions, avoiding duplicates
+    all_suggestions = []
+    seen_ids = set()
 
-    # Get users with similar recovery goals/interests
-    similar_users = User.objects.filter(
-        is_active=True,
-        recovery_goals__isnull=False
-    ).exclude(id__in=excluded_ids).exclude(
-        id__in=mutual_suggestions.values_list('id', flat=True)
-    )[:5]
+    # 1. Get users with mutual followers (people followed by people you follow)
+    following_users = request.user.get_following()
+    if following_users.exists():
+        mutual_suggestions = User.objects.filter(
+            follower_connections__follower__in=following_users,
+            is_active=True,
+            is_profile_public=True
+        ).exclude(id__in=excluded_ids).annotate(
+            mutual_count=Count('follower_connections__follower')
+        ).order_by('-mutual_count')[:5]
 
-    # Get new members
+        for user in mutual_suggestions:
+            if user.id not in seen_ids:
+                all_suggestions.append(user)
+                seen_ids.add(user.id)
+
+    # 2. Get users with similar recovery stage or interests
+    if hasattr(request.user, 'recovery_stage') and request.user.recovery_stage:
+        similar_stage = User.objects.filter(
+            is_active=True,
+            is_profile_public=True,
+            recovery_stage=request.user.recovery_stage
+        ).exclude(id__in=excluded_ids).exclude(id__in=seen_ids)[:5]
+
+        for user in similar_stage:
+            if user.id not in seen_ids:
+                all_suggestions.append(user)
+                seen_ids.add(user.id)
+
+    # 3. Get users with similar interests
+    if hasattr(request.user, 'interests') and request.user.interests:
+        user_interests = [i.strip().lower() for i in request.user.interests.split(',') if i.strip()]
+        if user_interests:
+            from django.db.models import Q
+            interest_q = Q()
+            for interest in user_interests[:3]:  # Limit to first 3 interests
+                interest_q |= Q(interests__icontains=interest)
+
+            similar_interests = User.objects.filter(
+                interest_q,
+                is_active=True,
+                is_profile_public=True
+            ).exclude(id__in=excluded_ids).exclude(id__in=seen_ids)[:5]
+
+            for user in similar_interests:
+                if user.id not in seen_ids:
+                    all_suggestions.append(user)
+                    seen_ids.add(user.id)
+
+    # 4. Get new members (joined in last 30 days)
     new_members = User.objects.filter(
         is_active=True,
+        is_profile_public=True,
         date_joined__gte=timezone.now() - timezone.timedelta(days=30)
-    ).exclude(id__in=excluded_ids).order_by('-date_joined')[:5]
+    ).exclude(id__in=excluded_ids).exclude(id__in=seen_ids).order_by('-date_joined')[:5]
+
+    for user in new_members:
+        if user.id not in seen_ids:
+            all_suggestions.append(user)
+            seen_ids.add(user.id)
+
+    # 5. Fallback: if still no suggestions, get any active public users
+    if len(all_suggestions) < 6:
+        fallback_users = User.objects.filter(
+            is_active=True,
+            is_profile_public=True
+        ).exclude(id__in=excluded_ids).exclude(id__in=seen_ids).order_by('-date_joined')[:10 - len(all_suggestions)]
+
+        for user in fallback_users:
+            if user.id not in seen_ids:
+                all_suggestions.append(user)
+                seen_ids.add(user.id)
 
     context = {
-        'mutual_suggestions': mutual_suggestions,
-        'similar_users': similar_users,
-        'new_members': new_members,
+        'suggested_users': all_suggestions[:12],  # Limit to 12 total
+        'mutual_suggestions': [u for u in all_suggestions if hasattr(u, 'mutual_count')][:5],
+        'new_members': new_members[:5],
     }
     return render(request, 'accounts/suggested_users.html', context)
 
@@ -3803,6 +3858,7 @@ def social_feed_view(request):
                 # Get suggested users to follow
                 from django.db.models import Count, Q
 
+                # First try users who have posted
                 suggested_users = User.objects.filter(
                     is_active=True,
                     is_profile_public=True
@@ -3816,6 +3872,17 @@ def social_feed_view(request):
                 ).filter(
                     posts_count__gt=0  # Only suggest users who have posted
                 ).order_by('-followers_count', '-posts_count')[:6]
+
+                # Fallback: if no users have posted, get any active users
+                if not suggested_users.exists():
+                    suggested_users = User.objects.filter(
+                        is_active=True,
+                        is_profile_public=True
+                    ).exclude(
+                        id=user.id
+                    ).exclude(
+                        id__in=following_ids
+                    ).order_by('-date_joined')[:6]
 
                 context['suggested_users'] = suggested_users
                 context['show_suggestions'] = True
