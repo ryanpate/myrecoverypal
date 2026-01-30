@@ -1,6 +1,6 @@
 # CLAUDE.md - MyRecoveryPal Development Guide
 
-**Last Updated:** 2026-01-13
+**Last Updated:** 2026-01-30
 **Project:** MyRecoveryPal - Social Recovery Platform
 **Tech Stack:** Django 5.0.10, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
@@ -773,6 +773,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-01-30:** Fixed suggested users not displaying on community, pal dashboard, and social feed pages. Root cause: `suggested_users` view was passing three separate context variables (`mutual_suggestions`, `similar_users`, `new_members`) but template expected unified `suggested_users` variable. Rewrote view to combine all suggestions with multi-level fallback logic: (1) mutual followers, (2) same recovery stage, (3) similar interests, (4) new members (last 30 days), (5) any active public users. Also fixed social feed suggestions which only showed users who had posted - added fallback for small user bases. Fixed duplicate URL name conflict between `/community/suggested/` and `/suggested-users/` routes.
 - **2026-01-26:** Website testing and SEO fixes. Fixed /terms/ page 500 error (changed `{% url 'privacy' %}` to `{% url 'core:privacy' %}`). Shortened meta descriptions to 120-160 characters on index.html, alcohol_recovery_app.html, sobriety_calculator.html, and context_processors.py for better SEO. Added ADMIN_SECRET_KEY authentication to `create_seo_posts` view for triggering blog post creation on production without login.
 - **2026-01-26:** Fixed Recovery Pal accept/decline functionality. Added `respond_pal_request` view and URL pattern `/pals/respond/<pal_id>/`. Fixed pal_dashboard view logic to properly identify sent requests (user1=current user) vs received requests (user2=current user). Updated template to use proper form actions with hidden action field for accept/decline.
 - **2026-01-13:** Fixed email system to use Resend HTTP API instead of unreliable SMTP. Created `apps/accounts/email_service.py` with `send_email()` function that uses Resend HTTP API as primary method with SMTP fallback. Updated all Celery tasks (welcome emails, check-in reminders, weekly digests, meeting reminders, pal nudges) and newsletter tasks to use new service. Includes retry logic with exponential backoff and rate limit handling. Added `--resend-api` flag to `test_email` management command. Root cause was SMTP connections failing on Railway with "Connection unexpectedly closed" errors.
