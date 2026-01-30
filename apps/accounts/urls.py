@@ -52,7 +52,7 @@ urlpatterns = [
     # Community
     #path('community/', views.CommunityView.as_view(), name='community'),
     path('community/', views.EnhancedCommunityView.as_view(), name='community'),
-    path('community/suggested/', views.suggested_users, name='suggested_users'),
+    path('community/suggested/', views.suggested_users, name='community_suggested'),
 
 
     # Messages
