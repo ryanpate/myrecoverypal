@@ -1770,3 +1770,37 @@ class SocialPostComment(models.Model):
     @property
     def replies_count(self):
         return self.replies.count()
+
+
+class RecoveryCoachSession(models.Model):
+    """A conversation session between a user and the AI recovery coach."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='coach_sessions')
+    title = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-updated_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.title or 'New Session'} ({self.created_at.strftime('%b %d')})"
+
+
+class CoachMessage(models.Model):
+    """A single message in a recovery coach conversation."""
+    ROLE_CHOICES = [
+        ('user', 'User'),
+        ('assistant', 'Assistant'),
+    ]
+    session = models.ForeignKey(RecoveryCoachSession, on_delete=models.CASCADE, related_name='messages')
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    tokens_used = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"{self.role}: {self.content[:50]}..."
