@@ -36,6 +36,7 @@ class StaticViewSitemap(Sitemap):
             ('core:opioid_recovery_app', 0.85),  # "opioid recovery app" keyword
             ('core:gambling_addiction_app', 0.85),  # "gambling addiction app" keyword
             ('core:mental_health_recovery_app', 0.85),  # "mental health recovery app" keyword
+            ('core:ai_recovery_coach', 0.9),  # "AI recovery coach" keyword
 
             # Core pages
             ('core:demo', 0.8),  # Demo/tour page

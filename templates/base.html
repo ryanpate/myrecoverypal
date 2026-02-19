@@ -2230,7 +2230,10 @@
                     </li>
                     {% endif %}
                     <li><a href="{% url 'accounts:recovery_coach' %}"
-                            class="{% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}">AI Coach</a></li>
+                            class="{% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}">
+                            <i class="fas fa-robot" style="margin-right: 3px;"></i>AI Coach
+                            <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 0.55rem; padding: 1px 5px; border-radius: 3px; margin-left: 4px; font-weight: 600; vertical-align: middle;">NEW</span>
+                        </a></li>
                     <li><a href="{% url 'accounts:social_feed' %}"
                             class="myrecoverycircle-btn {% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">MyRecoveryCircle</a>
                     </li>
@@ -2271,6 +2274,10 @@
                         <div class="user-dropdown" id="userDropdown">
                             <a href="{% url 'accounts:social_feed' %}">
                                 <i class="fas fa-circle-nodes"></i> MyRecoveryCircle
+                            </a>
+                            <a href="{% url 'accounts:recovery_coach' %}" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border-left: 3px solid #667eea;">
+                                <i class="fas fa-robot" style="color: #667eea;"></i> AI Recovery Coach
+                                <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 0.55rem; padding: 1px 5px; border-radius: 3px; margin-left: 4px; font-weight: 600;">NEW</span>
                             </a>
                             <a href="{% url 'accounts:dashboard' %}">
                                 Dashboard
@@ -2422,8 +2429,10 @@
                     Blog
                 </a>
                 <a href="{% url 'accounts:recovery_coach' %}"
-                    class="{% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}">
-                    AI Coach
+                    class="{% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}"
+                    style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15)); border-left: 3px solid #667eea;">
+                    <i class="fas fa-robot" style="margin-right: 0.5rem; color: #667eea;"></i> AI Recovery Coach
+                    <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 0.6rem; padding: 1px 5px; border-radius: 3px; margin-left: 4px; font-weight: 600;">NEW</span>
                 </a>
                 <a href="{% url 'accounts:social_feed' %}"
                     class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}"
@@ -2547,9 +2556,9 @@
         <a href="{% url 'accounts:social_feed' %}" class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">
             <span>Circle</span>
         </a>
-        <a href="{% url 'journal:entry_list' %}"
-            class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
-            <span>Journal</span>
+        <a href="{% url 'accounts:recovery_coach' %}"
+            class="{% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}">
+            <span>AI Coach</span>
         </a>
         <a href="{% url 'accounts:community' %}"
             class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
@@ -2568,9 +2577,9 @@
         <a href="{% url 'accounts:social_feed' %}" class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">
             <span>Circle</span>
         </a>
-        <a href="{% url 'blog:post_list' %}"
-            class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
-            <span>Blog</span>
+        <a href="{% url 'core:ai_recovery_coach' %}"
+            class="{% if request.resolver_match.url_name == 'ai_recovery_coach' %}active{% endif %}">
+            <span>AI Coach</span>
         </a>
         <a href="{% url 'accounts:login' %}">
             <span>Login</span>
@@ -2651,6 +2660,7 @@
                 <h3>Community</h3>
                 <ul>
                     <li><a href="{% url 'accounts:community' %}">Members</a></li>
+                    <li><a href="{% url 'core:ai_recovery_coach' %}">AI Recovery Coach</a></li>
                     <li><a href="{% url 'core:guidelines' %}">Guidelines</a></li>
                     <li><a href="{% url 'core:success_stories' %}">Success Stories</a></li>
                 </ul>
