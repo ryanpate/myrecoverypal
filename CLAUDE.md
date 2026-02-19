@@ -148,6 +148,41 @@ python manage.py test_email recipient@example.com --resend-api
 3. Implement `send_fcm_notification` and `send_apns_notification` in push_notifications.py
 4. See `PUSH_NOTIFICATIONS_SETUP.md` for full guide
 
+### AI Recovery Coach
+
+**Service:** `apps/accounts/coach_service.py`
+**Models:** `RecoveryCoachSession`, `CoachMessage` (in `apps/accounts/models.py`)
+**URL:** `/accounts/recovery-coach/`
+
+AI-powered conversational coach for recovery support, powered by Claude Haiku via the Anthropic API.
+
+**Rate Limits:**
+- Free users: 3 trial messages (lifetime)
+- Premium users: 20 messages per day
+
+**System Prompt Includes User Context:**
+- Sobriety date and days sober
+- Recent mood/craving check-ins
+- Recovery stage and interests
+- Active recovery goals
+
+**Safety Protocols:**
+- Crisis detection refers users to 988 Suicide & Crisis Lifeline
+- Never provides medical advice - directs to healthcare professionals
+- Cannot prescribe, diagnose, or replace professional treatment
+- All conversations stored for safety review
+
+**Cost:** ~$0.001 per message (Claude Haiku)
+
+**Usage:**
+```python
+from apps.accounts.coach_service import CoachService
+
+# Start or resume a session
+service = CoachService(user)
+response = service.send_message("I'm struggling with cravings today")
+```
+
 ### Admin Analytics Dashboard
 
 **Access:** `/admin/dashboard/` (staff only)
@@ -229,6 +264,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 - **Cloudinary** - Media storage
 - **SendGrid** - Email (production), Resend API key also configured
 - **Sentry** - Error monitoring
+- **Anthropic** - AI Recovery Coach (Claude Haiku)
 - **Firebase** - Push notifications (configured, needs implementation)
 
 ### Mobile
@@ -372,6 +408,7 @@ CLOUDINARY_API_SECRET=...
 STRIPE_SECRET_KEY=...
 STRIPE_PUBLISHABLE_KEY=...
 RESEND_API_KEY=<resend-api-key>
+ANTHROPIC_API_KEY=<anthropic-api-key>
 SENTRY_DSN=...
 ```
 
@@ -439,7 +476,6 @@ celery -A recovery_hub worker -l info -B     # Worker + Beat
 - **Blog:** 58+ posts including 6 SEO-optimized articles (83K monthly search volume)
 - **Schema:** Organization, WebSite, FAQPage, SoftwareApplication
 - **Sitemap:** `/sitemap.xml` with 25+ URLs
-- **Ads.txt:** Google AdSense verification configured
 - **Robots.txt:** Properly configured for crawling
 
 ### SEO Landing Pages - ✅ ALL COMPLETE
@@ -532,7 +568,7 @@ High-volume keyword blog posts (83K combined monthly searches):
 
 ### Current State
 - **Revenue:** $0
-- **Google AdSense:** Applied (pending approval), ads.txt configured
+- **AdSense:** Denied (recovery content policy). Using affiliate + subscription model instead.
 - **Stripe:** Configured but no active subscriptions
 - **Store:** Coming soon page exists
 
@@ -553,28 +589,23 @@ High-volume keyword blog posts (83K combined monthly searches):
 - [ ] Create affiliate resources page
 - [ ] Add affiliate disclosures to relevant pages
 
-#### 3. Sponsored Content
-Once traffic increases:
-- Sponsored blog posts: $200-500 each
-- Partners: Treatment centers, sober lifestyle brands
-
 ### SHORT-TERM - Development Required
 
-#### 4. Premium Tier ("MyRecoveryPal Pro")
+#### 3. Premium Tier ("MyRecoveryPal Premium")
 | Free | Premium ($4.99/mo or $29.99/yr) |
 |------|--------------------------------|
-| Social feed | Advanced analytics & charts |
-| Basic groups | Unlimited private groups |
-| Daily check-in | Guided meditations library |
-| 30-day journal | Unlimited journal + export |
-| 1 accountability pal | Unlimited pals |
-| Community challenges | Create custom challenges |
+| Unlimited social feed & messaging | All free features |
+| Join up to 5 groups | AI Recovery Coach (20 msgs/day) |
+| 30-day journal | Unlimited groups + private groups |
+| 3 AI Coach trial messages | Unlimited journal + export |
+| Daily check-in | 90-day analytics & charts |
+| Community challenges | Premium badge |
 
 - [ ] Create pricing page
 - [ ] Implement Stripe subscription tiers
 - [ ] Build premium feature gates
 
-#### 5. Recovery Merchandise Store
+#### 4. Recovery Merchandise Store
 - [ ] Milestone tokens/coins (physical)
 - [ ] Recovery affirmation cards
 - [ ] Journals with prompts
@@ -582,14 +613,14 @@ Once traffic increases:
 
 ### MEDIUM-TERM - Business Development
 
-#### 6. B2B Licensing
+#### 5. B2B Licensing
 | Customer | Use Case | Pricing |
 |----------|----------|---------|
 | Treatment centers | White-label platform | $500-2,000/mo |
 | EAP providers | Employee recovery support | $1,000-5,000/mo |
 | Sober living facilities | Resident community | $200-500/mo |
 
-#### 7. Recovery Coach Marketplace
+#### 6. Recovery Coach Marketplace
 - Connect users with certified recovery coaches
 - 15-20% platform fee
 - Video/chat sessions through platform
@@ -773,6 +804,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-02-19:** Implemented revenue strategy: AI Recovery Coach as premium subscription anchor ($4.99/mo), BetterHelp affiliate CTAs on blog posts, Ko-fi donation link in footer. Removed AdSense (denied for recovery content). Simplified pricing to Free + Premium tiers. Added coach_service.py with Claude Haiku integration, RecoveryCoachSession/CoachMessage models, chat UI at /accounts/recovery-coach/. Made messaging unlimited on free tier (was 10/month). Increased free group limit from 2 to 5.
 - **2026-02-19:** Fixed PostgreSQL OperationalError connection drops on Railway. Root cause: `conn_max_age=0` created a new DB connection per request, overwhelming Railway's proxy (`caboose.proxy.rlwy.net`) with connection churn. Changed `conn_max_age` from 0 to 600 (reuse connections for 10 minutes, validated by `CONN_HEALTH_CHECKS`). Increased `connect_timeout` from 10s to 30s. Rewrote `DatabaseConnectionMiddleware` to use Django's `close_old_connections()` and added `process_exception()` handler to close dead connections on mid-request failures.
 - **2026-02-08:** Updated iOS PWA install instructions on `/install/` page. Added missing step for tapping the "..." (More) button in Safari before the Share button. Added Safari-required info banner, in-app browser warning (for links opened from Facebook/Instagram/texts), toolbar visibility tips, and "Edit Actions" fallback for finding "Add to Home Screen". iOS instructions now 6 steps instead of 5.
 - **2026-01-30:** Fixed suggested users not displaying on community, pal dashboard, and social feed pages. Root cause: `suggested_users` view was passing three separate context variables (`mutual_suggestions`, `similar_users`, `new_members`) but template expected unified `suggested_users` variable. Rewrote view to combine all suggestions with multi-level fallback logic: (1) mutual followers, (2) same recovery stage, (3) similar interests, (4) new members (last 30 days), (5) any active public users. Also fixed social feed suggestions which only showed users who had posted - added fallback for small user bases. Fixed duplicate URL name conflict between `/community/suggested/` and `/suggested-users/` routes.
@@ -792,7 +824,6 @@ Notification (group types):
 - **2026-01-10:** Added accountability nudges for Recovery Pals - sends notifications and emails when a pal hasn't checked in for 3+ days. Both inactive user and their active pal receive prompts. Celery Beat task runs daily at 2 PM UTC with 3-day cooldown.
 - **2026-01-10:** Added progress visualizations page at `/accounts/progress/` with Chart.js charts showing mood, craving, and energy trends over 7/30/90 days. Includes stats grid, insights section, and navigation links.
 - **2026-01-10:** Added meeting reminders feature - sends push notifications and emails 30 minutes before bookmarked meetings. Includes Celery Beat task running every 15 minutes with timezone-aware scheduling.
-- **2026-01-09:** Fixed ads.txt to use hardcoded content for reliability - file-based approach was failing on production.
 - **2026-01-09:** Added prominent sobriety counter widget to profile page with gradient design, years/months/weeks breakdown, milestone progress bar, motivational messages, and share button.
 - **2026-01-09:** Added daily gratitude prompt to check-in feature with quick-fill tags and featured gratitude section.
 - **2026-01-09:** Fixed z-index issue where pagination was blocking top navigation menu.
@@ -803,7 +834,6 @@ Notification (group types):
 - **2026-01-07:** Created dedicated `celery-worker` service on Railway running `celery -A recovery_hub worker -l info -B` with Beat scheduler embedded. All scheduled tasks (welcome emails, check-in reminders, weekly digests) now execute properly.
 - **2026-01-05:** Submitted 6 priority URLs to Google Search Console for indexing: sobriety-calculator, sobriety-counter-app, sober-grid-alternative, and 3 high-volume blog posts (alcohol withdrawal, signs of alcoholism, how to stop drinking).
 - **2026-01-04:** Created `/sobriety-calculator/` interactive tool page with no-signup-required calculator, money saved estimator, health benefits timeline, and milestone tracker. Targets "sobriety calculator", "how long have I been sober", and "clean time calculator" keywords.
-- **2026-01-02:** Added ads.txt route for Google AdSense verification at `/ads.txt`.
 - **2026-01-02:** Created admin endpoint `/blog/admin/create-seo-posts/` to run blog post creation on production.
 - **2026-01-02:** Published 6 SEO blog posts to production database.
 - **2026-01-01:** Created 6 SEO-optimized blog posts targeting high-volume keywords (83K combined monthly searches): alcohol withdrawal, signs of alcoholism, how to stop drinking, sober curious, high-functioning alcoholic, dopamine detox.
