@@ -1,6 +1,6 @@
 # CLAUDE.md - MyRecoveryPal Development Guide
 
-**Last Updated:** 2026-01-30
+**Last Updated:** 2026-02-19
 **Project:** MyRecoveryPal - Social Recovery Platform
 **Tech Stack:** Django 5.0.10, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
@@ -773,6 +773,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-02-19:** Fixed PostgreSQL OperationalError connection drops on Railway. Root cause: `conn_max_age=0` created a new DB connection per request, overwhelming Railway's proxy (`caboose.proxy.rlwy.net`) with connection churn. Changed `conn_max_age` from 0 to 600 (reuse connections for 10 minutes, validated by `CONN_HEALTH_CHECKS`). Increased `connect_timeout` from 10s to 30s. Rewrote `DatabaseConnectionMiddleware` to use Django's `close_old_connections()` and added `process_exception()` handler to close dead connections on mid-request failures.
 - **2026-02-08:** Updated iOS PWA install instructions on `/install/` page. Added missing step for tapping the "..." (More) button in Safari before the Share button. Added Safari-required info banner, in-app browser warning (for links opened from Facebook/Instagram/texts), toolbar visibility tips, and "Edit Actions" fallback for finding "Add to Home Screen". iOS instructions now 6 steps instead of 5.
 - **2026-01-30:** Fixed suggested users not displaying on community, pal dashboard, and social feed pages. Root cause: `suggested_users` view was passing three separate context variables (`mutual_suggestions`, `similar_users`, `new_members`) but template expected unified `suggested_users` variable. Rewrote view to combine all suggestions with multi-level fallback logic: (1) mutual followers, (2) same recovery stage, (3) similar interests, (4) new members (last 30 days), (5) any active public users. Also fixed social feed suggestions which only showed users who had posted - added fallback for small user bases. Fixed duplicate URL name conflict between `/community/suggested/` and `/suggested-users/` routes.
 - **2026-01-26:** Website testing and SEO fixes. Fixed /terms/ page 500 error (changed `{% url 'privacy' %}` to `{% url 'core:privacy' %}`). Shortened meta descriptions to 120-160 characters on index.html, alcohol_recovery_app.html, sobriety_calculator.html, and context_processors.py for better SEO. Added ADMIN_SECRET_KEY authentication to `create_seo_posts` view for triggering blog post creation on production without login.
