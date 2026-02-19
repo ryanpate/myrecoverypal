@@ -54,3 +54,6 @@ whitenoise==6.6.0
 # Push notifications (FCM for Android, APNs for iOS)
 firebase-admin==6.5.0
 httpx[http2]==0.27.0  # HTTP/2 client for APNs
+
+# AI Recovery Coach
+anthropic>=0.42.0

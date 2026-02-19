@@ -720,6 +720,9 @@ CELERY_BEAT_SCHEDULE = {
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
 
+# AI Recovery Coach
+ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
+
 # Push Notification Services
 # Firebase Cloud Messaging (Android/Web)
 # Download service account JSON from Firebase Console → Project Settings → Service Accounts
