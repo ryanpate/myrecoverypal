@@ -1178,7 +1178,7 @@
         </div>
 
         <!-- Disclaimer (collapsible) -->
-        <div class="coach-disclaimer {% if not messages %}expanded{% endif %}" id="coachDisclaimer">
+        <div class="coach-disclaimer {% if not chat_messages %}expanded{% endif %}" id="coachDisclaimer">
             <div class="disclaimer-bar" onclick="document.getElementById('coachDisclaimer').classList.toggle('expanded')">
                 <div class="disclaimer-bar-left">
                     <i class="fas fa-triangle-exclamation"></i>
@@ -1200,8 +1200,8 @@
 
         <!-- Messages -->
         <div class="chat-messages" id="chatMessages">
-            {% if messages %}
-                {% for msg in messages %}
+            {% if chat_messages %}
+                {% for msg in chat_messages %}
                 <div class="msg-row {{ msg.role }}">
                     <div class="msg-avatar">
                         {% if msg.role == 'assistant' %}

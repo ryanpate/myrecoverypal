@@ -4598,7 +4598,7 @@ def recovery_coach(request):
 
     context = {
         'session': session,
-        'messages': messages_list,
+        'chat_messages': messages_list,
         'can_send': allowed,
         'limit_reason': reason,
         'is_premium': is_premium,
