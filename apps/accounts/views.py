@@ -4576,3 +4576,122 @@ def edit_challenge_checkin(request, challenge_id, checkin_id):
         })
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+# --- AI Recovery Coach Views ---
+
+@login_required
+def recovery_coach(request):
+    """Main recovery coach chat interface."""
+    from apps.accounts.models import RecoveryCoachSession, CoachMessage
+    from apps.accounts.coach_service import can_send_message, get_message_count_today, get_total_free_messages
+
+    is_premium = hasattr(request.user, 'subscription') and request.user.subscription.is_premium()
+
+    # Get or create active session
+    session = RecoveryCoachSession.objects.filter(user=request.user, is_active=True).first()
+    if not session:
+        session = RecoveryCoachSession.objects.create(user=request.user, title="New Conversation")
+
+    messages_list = session.messages.order_by('created_at')
+    allowed, reason = can_send_message(request.user)
+
+    context = {
+        'session': session,
+        'messages': messages_list,
+        'can_send': allowed,
+        'limit_reason': reason,
+        'is_premium': is_premium,
+        'messages_used': get_message_count_today(request.user) if is_premium else get_total_free_messages(request.user),
+        'message_limit': 20 if is_premium else 3,
+        'sessions': RecoveryCoachSession.objects.filter(user=request.user).order_by('-updated_at')[:10],
+    }
+    return render(request, 'accounts/recovery_coach.html', context)
+
+
+@login_required
+@require_POST
+def coach_send_message(request):
+    """AJAX endpoint: send a message to the coach and get a response."""
+    from apps.accounts.models import RecoveryCoachSession, CoachMessage
+    from apps.accounts.coach_service import can_send_message, send_coach_message, get_message_count_today, get_total_free_messages
+
+    user_message = request.POST.get('message', '').strip()
+    session_id = request.POST.get('session_id')
+
+    if not user_message:
+        return JsonResponse({'error': 'Message cannot be empty.'}, status=400)
+
+    if len(user_message) > 2000:
+        return JsonResponse({'error': 'Message is too long. Please keep it under 2000 characters.'}, status=400)
+
+    # Check rate limits
+    allowed, reason = can_send_message(request.user)
+    if not allowed:
+        return JsonResponse({'error': reason, 'upgrade_required': reason == 'upgrade_required'}, status=429)
+
+    # Get session
+    try:
+        session = RecoveryCoachSession.objects.get(id=session_id, user=request.user)
+    except RecoveryCoachSession.DoesNotExist:
+        return JsonResponse({'error': 'Session not found.'}, status=404)
+
+    # Save user message
+    CoachMessage.objects.create(session=session, role='user', content=user_message)
+
+    # Auto-title the session from first message
+    if not session.title or session.title == "New Conversation":
+        session.title = user_message[:100]
+        session.save(update_fields=['title', 'updated_at'])
+
+    # Get AI response
+    response_text, error = send_coach_message(request.user, session, user_message)
+
+    if error:
+        return JsonResponse({'error': error}, status=500)
+
+    # Save assistant message
+    CoachMessage.objects.create(session=session, role='assistant', content=response_text)
+    session.save(update_fields=['updated_at'])
+
+    is_premium = hasattr(request.user, 'subscription') and request.user.subscription.is_premium()
+
+    return JsonResponse({
+        'response': response_text,
+        'messages_used': get_message_count_today(request.user) if is_premium else get_total_free_messages(request.user),
+        'message_limit': 20 if is_premium else 3,
+    })
+
+
+@login_required
+@require_POST
+def coach_new_session(request):
+    """Start a new coach conversation session."""
+    from apps.accounts.models import RecoveryCoachSession
+
+    # Deactivate current active sessions
+    RecoveryCoachSession.objects.filter(user=request.user, is_active=True).update(is_active=False)
+
+    # Create new session
+    session = RecoveryCoachSession.objects.create(user=request.user, title="New Conversation")
+
+    return redirect('accounts:recovery_coach')
+
+
+@login_required
+def coach_load_session(request, session_id):
+    """Load a previous coach conversation session."""
+    from apps.accounts.models import RecoveryCoachSession
+
+    # Deactivate all sessions
+    RecoveryCoachSession.objects.filter(user=request.user, is_active=True).update(is_active=False)
+
+    # Activate selected session
+    try:
+        session = RecoveryCoachSession.objects.get(id=session_id, user=request.user)
+        session.is_active = True
+        session.save(update_fields=['is_active'])
+    except RecoveryCoachSession.DoesNotExist:
+        pass
+
+    return redirect('accounts:recovery_coach')

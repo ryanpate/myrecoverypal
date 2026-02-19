@@ -181,4 +181,10 @@ urlpatterns = [
     path('subscription/portal/', payment_views.create_customer_portal_session, name='customer_portal'),
     path('webhook/stripe/', payment_views.stripe_webhook, name='stripe_webhook'),
 
+    # AI Recovery Coach
+    path('recovery-coach/', views.recovery_coach, name='recovery_coach'),
+    path('recovery-coach/send/', views.coach_send_message, name='coach_send_message'),
+    path('recovery-coach/new/', views.coach_new_session, name='coach_new_session'),
+    path('recovery-coach/session/<int:session_id>/', views.coach_load_session, name='coach_load_session'),
+
 ]
