@@ -2229,8 +2229,8 @@
                             class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">Community</a>
                     </li>
                     {% endif %}
-                    <li><a href="{% url 'store:product_list' %}"
-                            class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">Store</a></li>
+                    <li><a href="{% url 'accounts:recovery_coach' %}"
+                            class="{% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}">AI Coach</a></li>
                     <li><a href="{% url 'accounts:social_feed' %}"
                             class="myrecoverycircle-btn {% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">MyRecoveryCircle</a>
                     </li>
@@ -2421,9 +2421,9 @@
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     Blog
                 </a>
-                <a href="{% url 'store:product_list' %}"
-                    class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
-                    Store
+                <a href="{% url 'accounts:recovery_coach' %}"
+                    class="{% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}">
+                    AI Coach
                 </a>
                 <a href="{% url 'accounts:social_feed' %}"
                     class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}"
@@ -2644,6 +2644,7 @@
                     <li><a href="{% url 'core:about' %}">Our Mission</a></li>
                     <li><a href="{% url 'core:team' %}">Team</a></li>
                     <li><a href="{% url 'core:contact' %}">Contact</a></li>
+                    <li><a href="https://ko-fi.com/myrecoverypal" target="_blank" rel="noopener">Support Our Mission</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -2664,7 +2665,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 MyRecoveryPal. All rights reserved. | Recovery is possible.</p>
+            <p>&copy; 2026 MyRecoveryPal. All rights reserved. | Recovery is possible.</p>
         </div>
     </footer>
 
