@@ -29,6 +29,7 @@
       "ratingCount": "150"
     },
     "featureList": [
+      "24/7 AI Recovery Coach for personalized support",
       "Sobriety tracking and milestone celebrations",
       "Social community for recovery support",
       "Private journaling and daily check-ins",
@@ -101,7 +102,15 @@
       "name": "What features does MyRecoveryPal offer?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "MyRecoveryPal offers sobriety tracking with milestone celebrations, a social community for sharing your story, private journaling and daily check-ins, recovery challenges and support groups, connections with sponsors and recovery pals, and mobile-friendly access anywhere."
+        "text": "MyRecoveryPal offers a 24/7 AI Recovery Coach for personalized support and coping strategies, sobriety tracking with milestone celebrations, a social community for sharing your story, private journaling and daily check-ins, recovery challenges and support groups, connections with sponsors and recovery pals, and mobile-friendly access anywhere."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the AI Recovery Coach?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The AI Recovery Coach (called Pal) is a 24/7 AI-powered companion that provides personalized recovery support, evidence-based coping strategies informed by CBT and mindfulness, and encouragement. Free users can try it with 3 messages, while Premium members get 20 messages per day. Pal is not a replacement for professional medical or mental health treatment."
       }
     },
     {
@@ -546,6 +555,7 @@
             <span style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.9); font-size: 0.95rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> 100% Free Forever</span>
             <span style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.9); font-size: 0.95rem;"><i class="fas fa-shield-alt" style="color: #52b788;"></i> Private & Secure</span>
             <span style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.9); font-size: 0.95rem;"><i class="fas fa-users" style="color: #52b788;"></i> Anonymous Option</span>
+            <span style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.9); font-size: 0.95rem;"><i class="fas fa-robot" style="color: #52b788;"></i> AI Recovery Coach</span>
         </div>
         {% if user.is_authenticated %}
         <a href="{% url 'accounts:dashboard' %}" class="cta-button">Go to Dashboard</a>
@@ -566,6 +576,13 @@
         <h2 class="section-title">Connect, Share, and Heal Together</h2>
         <p style="text-align: center; color: #666; font-size: 1.1rem; margin-bottom: 3rem;">A social platform built for connection, support, and collective healing</p>
         <div class="features-grid">
+            <div class="feature-card" style="border: 2px solid rgba(30, 77, 139, 0.2); background: linear-gradient(135deg, #ffffff, #f0f4ff);">
+                <div class="feature-icon"><i class="fas fa-robot"></i></div>
+                <span style="display: inline-block; background: linear-gradient(135deg, #1e4d8b, #4db8e8); color: white; padding: 0.2rem 0.7rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.75rem;">NEW</span>
+                <h3>24/7 AI Recovery Coach</h3>
+                <p>Get personalized support anytime with Pal, your AI recovery companion. Evidence-based coping strategies, guided reflection, and encouragement — available whenever you need it.</p>
+                <a href="/accounts/recovery-coach/" style="display: inline-block; margin-top: 0.75rem; padding: 0.5rem 1.25rem; background: linear-gradient(135deg, #1e4d8b, #4db8e8); color: white; border-radius: 25px; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: all 0.3s;">Try Free &rarr;</a>
+            </div>
             <div class="feature-card">
                 <div class="feature-icon"></div>
                 <h3>Share Your Story</h3>
@@ -629,6 +646,15 @@
                 <li style="margin-bottom: 0.5rem;"><strong>Anyone seeking mental health support</strong> and peer connection</li>
                 <li style="margin-bottom: 0.5rem;"><strong>Those looking for 12-step alternatives</strong> or complementary support</li>
             </ul>
+
+            <h3 style="color: #1e4d8b; margin: 2rem 0 1rem; font-size: 1.4rem;">AI-Powered Recovery Coaching</h3>
+            <p style="margin-bottom: 1.5rem;">
+                MyRecoveryPal features a built-in <strong>AI Recovery Coach</strong> called Pal — a 24/7 AI-powered companion that provides
+                personalized <strong>coping strategies</strong>, <strong>guided reflection</strong>, and evidence-based support informed by
+                CBT and mindfulness techniques. Whether you're dealing with cravings at 2 AM or want to celebrate a milestone, Pal is always available.
+                Free users get 3 trial messages to experience it, while Premium members enjoy 20 messages per day.
+                <em>Pal is an AI tool and not a replacement for professional medical or mental health treatment.</em>
+            </p>
 
             <h3 style="color: #1e4d8b; margin: 2rem 0 1rem; font-size: 1.4rem;">Recovery Support Features</h3>
             <p style="margin-bottom: 1.5rem;">
@@ -759,6 +785,12 @@
                 <i class="fas fa-exchange-alt" style="font-size: 2rem; color: #1e4d8b; margin-bottom: 0.75rem; display: block;"></i>
                 <h3 style="color: #1e4d8b; font-size: 1.1rem; margin-bottom: 0.5rem;">Sober Grid Alternative</h3>
                 <p style="color: #666; font-size: 0.9rem; margin: 0;">Compare recovery app features</p>
+            </a>
+
+            <a href="/accounts/recovery-coach/" style="background: linear-gradient(135deg, #f0f4ff, #e8f4f8); padding: 1.5rem; border-radius: 12px; text-decoration: none; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s; border: 1px solid rgba(30, 77, 139, 0.15);">
+                <i class="fas fa-robot" style="font-size: 2rem; color: #1e4d8b; margin-bottom: 0.75rem; display: block;"></i>
+                <h3 style="color: #1e4d8b; font-size: 1.1rem; margin-bottom: 0.5rem;">AI Recovery Coach</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0;">24/7 AI-powered support</p>
             </a>
 
             <a href="{% url 'core:alcohol_recovery_app' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s;">

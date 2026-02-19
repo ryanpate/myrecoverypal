@@ -1,0 +1,1046 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Recovery Coach - 24/7 Personalized Support | MyRecoveryPal{% endblock %}
+{% block meta_description %}AI Recovery Coach provides 24/7 personalized addiction recovery support. Evidence-based CBT and mindfulness techniques. Try free today.{% endblock %}
+{% block meta_keywords %}AI recovery coach, recovery coaching app, AI addiction coach, AI sobriety coach, 24/7 recovery support, AI therapy for addiction, addiction recovery chatbot, sobriety support AI{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/ai-recovery-coach/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "AI Recovery Coach - 24/7 Personalized Support | MyRecoveryPal",
+  "description": "AI Recovery Coach provides 24/7 personalized addiction and sobriety support using evidence-based CBT and mindfulness techniques.",
+  "url": "https://www.myrecoverypal.com/ai-recovery-coach/",
+  "mainEntity": {
+    "@type": "SoftwareApplication",
+    "name": "MyRecoveryPal AI Recovery Coach",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "Web Browser, iOS, Android",
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Free Trial",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "3 free trial messages to experience the AI Recovery Coach"
+      },
+      {
+        "@type": "Offer",
+        "name": "Premium",
+        "price": "4.99",
+        "priceCurrency": "USD",
+        "billingIncrement": "P1M",
+        "description": "20 messages per day with full AI Recovery Coach access"
+      }
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "150"
+    }
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.myrecoverypal.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "AI Recovery Coach",
+        "item": "https://www.myrecoverypal.com/ai-recovery-coach/"
+      }
+    ]
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the AI Recovery Coach?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The AI Recovery Coach is a 24/7 personalized support tool built into MyRecoveryPal. It uses evidence-based techniques like CBT and mindfulness to help you navigate cravings, manage stress, and stay on track in your recovery journey. It remembers your history and adapts its guidance to your unique situation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the AI Recovery Coach free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can try the AI Recovery Coach with 3 free messages. After that, full access is available with MyRecoveryPal Premium at $4.99 per month, which includes up to 20 messages per day plus all other premium features."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the AI Recovery Coach a replacement for therapy?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. The AI Recovery Coach is a supportive tool, not a licensed therapist or medical professional. It does not diagnose conditions, prescribe medication, or replace professional treatment. If you are in crisis, please call 988 (Suicide and Crisis Lifeline) or text HOME to 741741. Always consult with a qualified healthcare provider for medical or mental health concerns."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What kind of support does the AI Coach provide?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The AI Coach provides evidence-based support including cognitive behavioral therapy (CBT) techniques, mindfulness and grounding exercises, craving management strategies, relapse prevention planning, motivational support, and recovery milestone recognition. It is personalized to your recovery stage and goals."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is my conversation with the AI Coach private?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, absolutely. Your conversations with the AI Recovery Coach are completely private and encrypted. They are never shared with other users, posted publicly, or sold to third parties. Only you can see your conversation history."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many messages can I send?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Free users receive 3 trial messages to experience the AI Recovery Coach. Premium members ($4.99/month) can send up to 20 messages per day, which resets every 24 hours."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section */
+    .aic-hero {
+        background: var(--gradient-primary, linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%));
+        padding: 5rem 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .aic-hero h1 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+    }
+
+    .aic-hero p {
+        font-size: 1.3rem;
+        max-width: 720px;
+        margin: 0 auto 2rem;
+        opacity: 0.95;
+    }
+
+    .aic-hero-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .aic-hero .cta-button {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        background: var(--accent-green, #52b788);
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(82, 183, 136, 0.3);
+    }
+
+    .aic-hero .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(82, 183, 136, 0.4);
+        background: #45a675;
+    }
+
+    .aic-hero .cta-button-outline {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        background: transparent;
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+    }
+
+    .aic-hero .cta-button-outline:hover {
+        transform: translateY(-3px);
+        background: rgba(255, 255, 255, 0.15);
+        border-color: white;
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+        background: white;
+        padding: 2rem;
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        flex-wrap: wrap;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary-dark, #1e4d8b);
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    /* Features Section */
+    .features-section {
+        padding: 4rem 2rem;
+        background: var(--bg-light, #f8f9fa);
+    }
+
+    .features-section h2 {
+        text-align: center;
+        color: var(--primary-dark, #1e4d8b);
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .features-section .subtitle {
+        text-align: center;
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 3rem;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-card .icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--accent-green, #52b788);
+    }
+
+    .feature-card h3 {
+        color: var(--primary-dark, #1e4d8b);
+        margin-bottom: 0.75rem;
+    }
+
+    .feature-card p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    /* How It Works Section */
+    .how-it-works {
+        padding: 4rem 2rem;
+        background: white;
+    }
+
+    .how-it-works h2 {
+        text-align: center;
+        color: var(--primary-dark, #1e4d8b);
+        font-size: 2.2rem;
+        margin-bottom: 3rem;
+    }
+
+    .steps-container {
+        display: flex;
+        justify-content: center;
+        gap: 2.5rem;
+        flex-wrap: wrap;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .step-card {
+        text-align: center;
+        flex: 1;
+        min-width: 250px;
+        max-width: 300px;
+        position: relative;
+    }
+
+    .step-number {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: var(--gradient-primary, linear-gradient(135deg, #1e4d8b, #4db8e8));
+        color: white;
+        font-size: 1.8rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.25rem;
+    }
+
+    .step-card h3 {
+        color: var(--primary-dark, #1e4d8b);
+        margin-bottom: 0.75rem;
+        font-size: 1.25rem;
+    }
+
+    .step-card p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    /* Pricing Section */
+    .pricing-section {
+        padding: 4rem 2rem;
+        background: var(--bg-light, #f8f9fa);
+    }
+
+    .pricing-section h2 {
+        text-align: center;
+        color: var(--primary-dark, #1e4d8b);
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .pricing-section .subtitle {
+        text-align: center;
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 3rem;
+    }
+
+    .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .pricing-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        position: relative;
+        transition: transform 0.3s ease;
+    }
+
+    .pricing-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .pricing-card.featured {
+        border: 3px solid var(--accent-green, #52b788);
+    }
+
+    .pricing-card .badge {
+        position: absolute;
+        top: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--accent-green, #52b788);
+        color: white;
+        padding: 0.35rem 1.25rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .pricing-card h3 {
+        color: var(--primary-dark, #1e4d8b);
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .pricing-price {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: var(--primary-dark, #1e4d8b);
+        margin: 1rem 0 0.25rem;
+    }
+
+    .pricing-price span {
+        font-size: 1rem;
+        font-weight: 400;
+        color: #666;
+    }
+
+    .pricing-features {
+        list-style: none;
+        padding: 0;
+        margin: 1.5rem 0;
+        text-align: left;
+    }
+
+    .pricing-features li {
+        padding: 0.6rem 0;
+        color: #555;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .pricing-features li:last-child {
+        border-bottom: none;
+    }
+
+    .pricing-features li i {
+        color: var(--accent-green, #52b788);
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .pricing-features li.disabled {
+        color: #aaa;
+    }
+
+    .pricing-features li.disabled i {
+        color: #ccc;
+    }
+
+    .pricing-card .cta-button {
+        display: inline-block;
+        padding: 0.85rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        margin-top: 0.5rem;
+    }
+
+    .pricing-card .cta-button-primary {
+        background: var(--accent-green, #52b788);
+        color: white;
+        box-shadow: 0 4px 15px rgba(82, 183, 136, 0.3);
+    }
+
+    .pricing-card .cta-button-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(82, 183, 136, 0.4);
+        background: #45a675;
+    }
+
+    .pricing-card .cta-button-secondary {
+        background: var(--bg-light, #f0f0f0);
+        color: var(--primary-dark, #1e4d8b);
+    }
+
+    .pricing-card .cta-button-secondary:hover {
+        background: #e0e0e0;
+    }
+
+    /* Disclaimer Section */
+    .disclaimer-section {
+        padding: 3rem 2rem;
+        background: white;
+    }
+
+    .disclaimer-box {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: #fff8e1;
+        border-left: 4px solid #ffc107;
+        border-radius: 8px;
+    }
+
+    .disclaimer-box h3 {
+        color: #856404;
+        margin-bottom: 0.75rem;
+        font-size: 1.15rem;
+    }
+
+    .disclaimer-box p {
+        color: #665200;
+        line-height: 1.7;
+        margin-bottom: 0.75rem;
+    }
+
+    .disclaimer-box p:last-child {
+        margin-bottom: 0;
+    }
+
+    .disclaimer-box a {
+        color: #1e4d8b;
+        font-weight: 600;
+    }
+
+    .crisis-numbers {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .crisis-number {
+        background: white;
+        padding: 0.75rem 1.25rem;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #d32f2f;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .crisis-number i {
+        font-size: 1.1rem;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+        padding: 4rem 2rem;
+        background: var(--bg-light, #f8f9fa);
+    }
+
+    .faq-section h2 {
+        text-align: center;
+        color: var(--primary-dark, #1e4d8b);
+        font-size: 2.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .faq-item {
+        background: white;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        padding: 1.5rem;
+    }
+
+    .faq-item h3 {
+        color: var(--primary-dark, #1e4d8b);
+        margin-bottom: 0.75rem;
+        font-size: 1.2rem;
+    }
+
+    .faq-item p {
+        color: #666;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        padding: 5rem 2rem;
+        background: var(--gradient-primary, linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%));
+        text-align: center;
+        color: white;
+    }
+
+    .cta-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+    }
+
+    .cta-section .cta-button {
+        display: inline-block;
+        padding: 1rem 3rem;
+        background: var(--accent-green, #52b788);
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.3rem;
+        transition: all 0.3s ease;
+    }
+
+    .cta-section .cta-button:hover {
+        transform: translateY(-3px);
+        background: #45a675;
+    }
+
+    .cta-section .subtext {
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        opacity: 0.85;
+    }
+
+    /* Related Links Section */
+    .related-links {
+        padding: 3rem 2rem;
+        background: white;
+    }
+
+    .related-links h3 {
+        text-align: center;
+        color: var(--primary-dark, #1e4d8b);
+        margin-bottom: 1.5rem;
+    }
+
+    .related-grid {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .related-grid a {
+        background: var(--bg-light, #f8f9fa);
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        color: var(--primary-dark, #1e4d8b);
+        font-weight: 500;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s;
+    }
+
+    .related-grid a:hover {
+        transform: translateY(-3px);
+    }
+
+    /* Dark Mode */
+    [data-theme="dark"] .stats-bar {
+        background: #1e1e2e;
+    }
+
+    [data-theme="dark"] .stat-number {
+        color: #6db3f2;
+    }
+
+    [data-theme="dark"] .stat-label {
+        color: #aaa;
+    }
+
+    [data-theme="dark"] .features-section {
+        background: #16161e;
+    }
+
+    [data-theme="dark"] .feature-card {
+        background: #1e1e2e;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="dark"] .feature-card h3 {
+        color: #6db3f2;
+    }
+
+    [data-theme="dark"] .feature-card p {
+        color: #bbb;
+    }
+
+    [data-theme="dark"] .how-it-works {
+        background: #1a1a2e;
+    }
+
+    [data-theme="dark"] .how-it-works h2 {
+        color: #6db3f2;
+    }
+
+    [data-theme="dark"] .step-card h3 {
+        color: #6db3f2;
+    }
+
+    [data-theme="dark"] .step-card p {
+        color: #bbb;
+    }
+
+    [data-theme="dark"] .pricing-section {
+        background: #16161e;
+    }
+
+    [data-theme="dark"] .pricing-section h2 {
+        color: #6db3f2;
+    }
+
+    [data-theme="dark"] .pricing-section .subtitle {
+        color: #aaa;
+    }
+
+    [data-theme="dark"] .pricing-card {
+        background: #1e1e2e;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="dark"] .pricing-card h3 {
+        color: #6db3f2;
+    }
+
+    [data-theme="dark"] .pricing-price {
+        color: #6db3f2;
+    }
+
+    [data-theme="dark"] .pricing-price span {
+        color: #aaa;
+    }
+
+    [data-theme="dark"] .pricing-features li {
+        color: #ccc;
+        border-bottom-color: #2a2a3e;
+    }
+
+    [data-theme="dark"] .pricing-features li.disabled {
+        color: #666;
+    }
+
+    [data-theme="dark"] .pricing-card .cta-button-secondary {
+        background: #2a2a3e;
+        color: #6db3f2;
+    }
+
+    [data-theme="dark"] .disclaimer-section {
+        background: #1a1a2e;
+    }
+
+    [data-theme="dark"] .disclaimer-box {
+        background: #2a2520;
+        border-left-color: #ffc107;
+    }
+
+    [data-theme="dark"] .disclaimer-box h3 {
+        color: #ffd54f;
+    }
+
+    [data-theme="dark"] .disclaimer-box p {
+        color: #ddd;
+    }
+
+    [data-theme="dark"] .disclaimer-box a {
+        color: #6db3f2;
+    }
+
+    [data-theme="dark"] .crisis-number {
+        background: #1e1e2e;
+        color: #ef5350;
+    }
+
+    [data-theme="dark"] .faq-section {
+        background: #16161e;
+    }
+
+    [data-theme="dark"] .faq-section h2 {
+        color: #6db3f2;
+    }
+
+    [data-theme="dark"] .faq-item {
+        background: #1e1e2e;
+    }
+
+    [data-theme="dark"] .faq-item h3 {
+        color: #6db3f2;
+    }
+
+    [data-theme="dark"] .faq-item p {
+        color: #bbb;
+    }
+
+    [data-theme="dark"] .related-links {
+        background: #1a1a2e;
+    }
+
+    [data-theme="dark"] .related-links h3 {
+        color: #6db3f2;
+    }
+
+    [data-theme="dark"] .related-grid a {
+        background: #1e1e2e;
+        color: #6db3f2;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .aic-hero h1 {
+            font-size: 2rem;
+        }
+
+        .aic-hero p {
+            font-size: 1.1rem;
+        }
+
+        .stats-bar {
+            gap: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+
+        .features-section h2,
+        .how-it-works h2,
+        .pricing-section h2,
+        .faq-section h2 {
+            font-size: 1.8rem;
+        }
+
+        .cta-section h2 {
+            font-size: 2rem;
+        }
+
+        .steps-container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pricing-grid {
+            grid-template-columns: 1fr;
+            max-width: 400px;
+        }
+
+        .crisis-numbers {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="aic-hero page-header">
+    <h1>Your AI Recovery Coach, Available 24/7</h1>
+    <p>Personalized, evidence-based recovery support whenever you need it. Get guidance through cravings, stress, and difficult moments with an AI coach trained in addiction recovery techniques.</p>
+    <div class="aic-hero-buttons">
+        {% if user.is_authenticated %}
+        <a href="{% url 'accounts:recovery_coach' %}" class="cta-button">Try AI Coach</a>
+        {% else %}
+        <a href="{% url 'accounts:register' %}" class="cta-button">Try Free</a>
+        <a href="{% url 'accounts:login' %}" class="cta-button-outline">Sign In to Access</a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Always Available</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">CBT</div>
+        <div class="stat-label">Evidence-Based Techniques</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Private & Secure</div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="features-section">
+    <h2>What the AI Recovery Coach Can Do</h2>
+    <p class="subtitle">Intelligent support designed specifically for addiction and sobriety recovery</p>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <h3>24/7 Availability</h3>
+            <p>Cravings and tough moments do not follow a schedule. Your AI Recovery Coach is ready to help any time of day or night, whether it is 2 PM or 2 AM.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-brain"></i></div>
+            <h3>Evidence-Based Techniques</h3>
+            <p>Grounded in cognitive behavioral therapy (CBT) and mindfulness practices. Get real strategies used by addiction counselors to manage cravings, stress, and triggers.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-user-cog"></i></div>
+            <h3>Personalized to Your Journey</h3>
+            <p>The AI Coach learns about your recovery stage, goals, and challenges. Every conversation is tailored to where you are and what you need right now.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-phone-alt"></i></div>
+            <h3>Crisis Resource Integration</h3>
+            <p>When things get serious, the AI Coach immediately connects you to professional help. Integrated links to 988 Suicide & Crisis Lifeline and Crisis Text Line (text HOME to 741741).</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-lock"></i></div>
+            <h3>Private & Secure</h3>
+            <p>Your conversations are completely private. They are encrypted, never shared with other users, and never sold to third parties. Speak freely without judgment.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon"><i class="fas fa-history"></i></div>
+            <h3>Session History & Continuity</h3>
+            <p>The AI Coach remembers your previous conversations so you do not have to repeat yourself. It tracks your progress and adapts its guidance over time.</p>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps-container">
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <h3>Sign Up Free</h3>
+            <p>Create your MyRecoveryPal account in under 30 seconds. No credit card required. You get 3 free messages to try the AI Recovery Coach.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <h3>Start a Conversation</h3>
+            <p>Open the AI Coach from your dashboard and tell it what you are working through. Cravings, stress, a tough day, a question about recovery - anything.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <h3>Get Personalized Support</h3>
+            <p>Receive evidence-based guidance tailored to your unique recovery journey. The coach adapts to your needs and remembers your history.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="pricing-section">
+    <h2>Simple, Affordable Pricing</h2>
+    <p class="subtitle">Start free and upgrade when you are ready</p>
+    <div class="pricing-grid">
+        <div class="pricing-card">
+            <h3>Free</h3>
+            <div class="pricing-price">$0</div>
+            <ul class="pricing-features">
+                <li><i class="fas fa-check"></i> 3 trial messages with AI Coach</li>
+                <li><i class="fas fa-check"></i> Full social feed access</li>
+                <li><i class="fas fa-check"></i> Daily check-ins</li>
+                <li><i class="fas fa-check"></i> Recovery groups</li>
+                <li><i class="fas fa-check"></i> Sobriety tracking</li>
+                <li class="disabled"><i class="fas fa-times"></i> Unlimited AI Coach messages</li>
+            </ul>
+            <a href="{% url 'accounts:register' %}" class="cta-button cta-button-secondary">Get Started Free</a>
+        </div>
+        <div class="pricing-card featured">
+            <div class="badge">Most Popular</div>
+            <h3>Premium</h3>
+            <div class="pricing-price">$4.99<span>/month</span></div>
+            <ul class="pricing-features">
+                <li><i class="fas fa-check"></i> 20 AI Coach messages per day</li>
+                <li><i class="fas fa-check"></i> Everything in Free</li>
+                <li><i class="fas fa-check"></i> Session history & continuity</li>
+                <li><i class="fas fa-check"></i> Advanced recovery analytics</li>
+                <li><i class="fas fa-check"></i> Unlimited private groups</li>
+                <li><i class="fas fa-check"></i> Priority support</li>
+            </ul>
+            {% if user.is_authenticated %}
+            <a href="{% url 'accounts:recovery_coach' %}" class="cta-button cta-button-primary">Try AI Coach</a>
+            {% else %}
+            <a href="{% url 'accounts:register' %}" class="cta-button cta-button-primary">Start Free Trial</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Disclaimer Section -->
+<section class="disclaimer-section">
+    <div class="disclaimer-box">
+        <h3><i class="fas fa-exclamation-triangle"></i> Important Disclaimer</h3>
+        <p>The AI Recovery Coach is a <strong>supportive tool only</strong>. It is <strong>not</strong> a licensed therapist, medical professional, or mental health provider. It does not diagnose conditions, prescribe medication, or replace professional treatment.</p>
+        <p>If you are experiencing a medical emergency, call <strong>911</strong>. If you are in crisis or having thoughts of self-harm, please reach out to a professional immediately:</p>
+        <div class="crisis-numbers">
+            <div class="crisis-number">
+                <i class="fas fa-phone-alt"></i> 988 Suicide & Crisis Lifeline
+            </div>
+            <div class="crisis-number">
+                <i class="fas fa-comment-dots"></i> Text HOME to 741741
+            </div>
+        </div>
+        <p style="margin-top: 1rem;">Always consult with a qualified healthcare provider for medical or mental health concerns. The AI Coach is meant to complement, not replace, professional care. <a href="{% url 'core:crisis' %}">View all crisis resources</a>.</p>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-container">
+        <div class="faq-item">
+            <h3>What is the AI Recovery Coach?</h3>
+            <p>The AI Recovery Coach is a 24/7 personalized support tool built into MyRecoveryPal. It uses evidence-based techniques like CBT and mindfulness to help you navigate cravings, manage stress, and stay on track in your recovery journey. It remembers your history and adapts its guidance to your unique situation.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Is the AI Recovery Coach free?</h3>
+            <p>You can try the AI Recovery Coach with 3 free messages. After that, full access is available with MyRecoveryPal Premium at $4.99 per month, which includes up to 20 messages per day plus all other premium features.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Is the AI Recovery Coach a replacement for therapy?</h3>
+            <p>No. The AI Recovery Coach is a supportive tool, not a licensed therapist or medical professional. It does not diagnose conditions, prescribe medication, or replace professional treatment. If you are in crisis, please call 988 (Suicide and Crisis Lifeline) or text HOME to 741741. Always consult with a qualified healthcare provider for medical or mental health concerns.</p>
+        </div>
+        <div class="faq-item">
+            <h3>What kind of support does the AI Coach provide?</h3>
+            <p>The AI Coach provides evidence-based support including cognitive behavioral therapy (CBT) techniques, mindfulness and grounding exercises, craving management strategies, relapse prevention planning, motivational support, and recovery milestone recognition. It is personalized to your recovery stage and goals.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Is my conversation with the AI Coach private?</h3>
+            <p>Yes, absolutely. Your conversations with the AI Recovery Coach are completely private and encrypted. They are never shared with other users, posted publicly, or sold to third parties. Only you can see your conversation history.</p>
+        </div>
+        <div class="faq-item">
+            <h3>How many messages can I send?</h3>
+            <p>Free users receive 3 trial messages to experience the AI Recovery Coach. Premium members ($4.99/month) can send up to 20 messages per day, which resets every 24 hours.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Related Links Section -->
+<section class="related-links">
+    <h3>Explore More Recovery Resources</h3>
+    <div class="related-grid">
+        <a href="{% url 'core:sobriety_calculator' %}"><i class="fas fa-calculator"></i> Sobriety Calculator</a>
+        <a href="{% url 'core:alcohol_recovery_app' %}"><i class="fas fa-wine-bottle"></i> Alcohol Recovery App</a>
+        <a href="{% url 'accounts:community' %}"><i class="fas fa-users"></i> Recovery Community</a>
+        <a href="{% url 'accounts:groups_list' %}"><i class="fas fa-user-friends"></i> Support Groups</a>
+        <a href="{% url 'blog:post_list' %}"><i class="fas fa-book-open"></i> Recovery Blog</a>
+        <a href="{% url 'core:crisis' %}"><i class="fas fa-phone-alt"></i> Crisis Resources</a>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <h2>Ready to Talk to Your AI Recovery Coach?</h2>
+    <p>Get personalized, evidence-based recovery support any time you need it. Start with 3 free messages today.</p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'accounts:recovery_coach' %}" class="cta-button">Open AI Coach Now</a>
+    {% else %}
+    <a href="{% url 'accounts:register' %}" class="cta-button">Try Free Today</a>
+    {% endif %}
+    <p class="subtext">No credit card required. Sign up in 30 seconds.</p>
+</section>
+{% endblock %}

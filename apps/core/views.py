@@ -105,6 +105,10 @@ class SobrietyCalculatorView(TemplateView):
     template_name = 'core/sobriety_calculator.html'
 
 
+class AIRecoveryCoachView(TemplateView):
+    template_name = 'core/ai_recovery_coach.html'
+
+
 # Sitemap View - serves static sitemap.xml
 def sitemap_view(request):
     """
