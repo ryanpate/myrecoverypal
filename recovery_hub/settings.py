@@ -200,16 +200,16 @@ if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
-            # conn_max_age=0 disables persistent connections - each request gets fresh connection
-            # This prevents "connection already closed" errors from Railway terminating idle connections
-            # Slight performance overhead but much more reliable
-            conn_max_age=0,
+            # Reuse connections for 10 minutes to reduce connection churn on Railway's proxy.
+            # CONN_HEALTH_CHECKS (below) validates each reused connection before use,
+            # so stale connections are caught and replaced automatically.
+            conn_max_age=600,
         )
     }
     # Merge PostgreSQL options (don't overwrite existing options from dj-database-url)
     db_options = DATABASES['default'].get('OPTIONS', {})
     db_options.update({
-        'connect_timeout': 10,
+        'connect_timeout': 30,
         # TCP keepalive settings to detect dropped connections
         'keepalives': 1,
         'keepalives_idle': 30,

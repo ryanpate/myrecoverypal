@@ -1,7 +1,7 @@
 import logging
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-from django.db import connection, OperationalError, InterfaceError
+from django.db import close_old_connections, connection, connections, OperationalError, InterfaceError
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -9,36 +9,34 @@ logger = logging.getLogger(__name__)
 
 class DatabaseConnectionMiddleware:
     """
-    Middleware to ensure database connections are healthy before processing requests.
+    Middleware to handle Railway PostgreSQL proxy connection issues.
 
-    This fixes "connection already closed" errors that occur when Railway's PostgreSQL
-    proxy terminates idle connections, but Django still holds a reference to them.
+    Handles two failure modes:
+    1. Stale connections (pre-request): validated via health check before each request
+    2. Mid-request drops (during processing): caught via process_exception, connection
+       is closed so the next request gets a fresh one
     """
 
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        # Check if the connection is usable before processing the request
-        self._ensure_connection()
+        # Close stale connections before processing
+        close_old_connections()
 
         response = self.get_response(request)
         return response
 
-    def _ensure_connection(self):
+    def process_exception(self, request, exception):
         """
-        Verify the database connection is alive, close it if stale.
-        Django will automatically create a new connection when needed.
+        If a database connection dies mid-request, close all connections
+        so the next request starts fresh.
         """
-        try:
-            # Try a simple query to test the connection
-            connection.ensure_connection()
-            if connection.connection is not None:
-                connection.connection.cursor().execute('SELECT 1')
-        except (OperationalError, InterfaceError) as e:
-            # Connection is dead, close it so Django creates a fresh one
-            logger.warning(f"Stale database connection detected, closing: {e}")
-            connection.close()
+        if isinstance(exception, (OperationalError, InterfaceError)):
+            logger.warning(f"Database connection error during request: {exception}")
+            for conn in connections.all():
+                conn.close()
+        return None
 
 class UpdateLastActivityMiddleware:
     def __init__(self, get_response):
