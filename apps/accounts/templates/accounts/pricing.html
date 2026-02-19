@@ -3,6 +3,120 @@
 
 {% block title %}Pricing - MyRecoveryPal{% endblock %}
 
+{% block extra_css %}
+<style>
+    .pricing-ai-highlight {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 8px;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+    }
+    [data-theme="dark"] .pricing-ai-highlight {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+        border-color: rgba(102, 126, 234, 0.4);
+    }
+    .badge-new {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-size: 0.65rem;
+        padding: 2px 6px;
+        border-radius: 4px;
+        vertical-align: middle;
+        margin-left: 4px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    .ai-coach-desc {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-left: 24px;
+        margin-top: -4px;
+        margin-bottom: 8px;
+    }
+    [data-theme="dark"] .ai-coach-desc {
+        color: #adb5bd;
+    }
+    .try-coach-section {
+        background: linear-gradient(135deg, #f8f9ff, #f0f4ff);
+        border-radius: 16px;
+        padding: 40px;
+        text-align: center;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+    [data-theme="dark"] .try-coach-section {
+        background: linear-gradient(135deg, #1a1f3a, #1e2444);
+        border-color: rgba(102, 126, 234, 0.3);
+    }
+    .try-coach-section h3 {
+        color: #1e4d8b;
+        margin-bottom: 12px;
+    }
+    [data-theme="dark"] .try-coach-section h3 {
+        color: #8ab4f8;
+    }
+    .try-coach-section p {
+        color: #555;
+        max-width: 500px;
+        margin: 0 auto 20px;
+    }
+    [data-theme="dark"] .try-coach-section p {
+        color: #adb5bd;
+    }
+    .btn-coach-try {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 12px 32px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1.05rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-coach-try:hover {
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        text-decoration: none;
+    }
+    /* Dark mode card overrides */
+    [data-theme="dark"] .card.shadow-sm .card-header.bg-light,
+    [data-theme="dark"] .card.shadow-sm .card-footer.bg-light {
+        background-color: #2d2d2d !important;
+    }
+    [data-theme="dark"] .card .card-body.bg-white {
+        background-color: #1e1e1e !important;
+    }
+    [data-theme="dark"] .card .card-body.text-dark {
+        color: #e0e0e0 !important;
+    }
+    [data-theme="dark"] .card .card-header h3,
+    [data-theme="dark"] .card .card-header h2 {
+        color: inherit !important;
+    }
+    [data-theme="dark"] .card .card-header.bg-light h3,
+    [data-theme="dark"] .card .card-header.bg-light h2 {
+        color: #8ab4f8 !important;
+    }
+    [data-theme="dark"] .card .card-header.bg-light .text-muted {
+        color: #adb5bd !important;
+    }
+    [data-theme="dark"] .accordion .card {
+        background-color: #1e1e1e;
+        border-color: #333;
+    }
+    [data-theme="dark"] .accordion .card-header {
+        background-color: #2d2d2d;
+    }
+    [data-theme="dark"] .accordion .btn-link {
+        color: #8ab4f8;
+    }
+    [data-theme="dark"] .accordion .card-body {
+        color: #e0e0e0;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Pricing Page Header -->
 <div class="page-header">
@@ -33,7 +147,7 @@
 
     <div class="row justify-content-center">
         <!-- Free Tier -->
-        <div class="col-lg-4 col-md-6 mb-4">
+        <div class="col-lg-5 col-md-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <div class="card-header text-center bg-light" style="background-color: #f8f9fa !important;">
                     <h3 class="my-3" style="color: #1e4d8b !important;">Free</h3>
@@ -42,17 +156,23 @@
                 </div>
                 <div class="card-body text-dark bg-white">
                     <ul class="list-unstyled">
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Basic profile</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Join up to 2 groups</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> 10 messages/month</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Basic journaling</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Read blog posts</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Join challenges</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited social feed & posts</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited messaging</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Join up to 5 groups</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Daily check-in & streaks</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> 30-day journal</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Community challenges</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> 3 AI Coach trial messages</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Basic progress charts (7-day)</li>
                     </ul>
                 </div>
                 <div class="card-footer text-center bg-light">
                     {% if not user_subscription or user_subscription.tier == 'free' %}
-                        <button class="btn btn-outline-secondary btn-block" disabled>Current Plan</button>
+                        {% if user.is_authenticated %}
+                            <button class="btn btn-outline-secondary btn-block" disabled>Current Plan</button>
+                        {% else %}
+                            <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary btn-block">Get Started Free</a>
+                        {% endif %}
                     {% else %}
                         <a href="{% url 'accounts:subscription_management' %}" class="btn btn-outline-primary btn-block">Manage</a>
                     {% endif %}
@@ -63,7 +183,7 @@
         <!-- Premium Tier -->
         {% for plan in plans %}
             {% if plan.tier == 'premium' %}
-            <div class="col-lg-4 col-md-6 mb-4">
+            <div class="col-lg-5 col-md-6 mb-4">
                 <div class="card h-100 shadow-lg border-primary" style="transform: scale(1.05);">
                     <div class="card-header text-center bg-primary text-white" style="background-color: #1e4d8b !important;">
                         <span class="badge badge-warning mb-2">MOST POPULAR</span>
@@ -71,20 +191,29 @@
                         <h3 class="my-3" style="color: white !important;">Premium</h3>
                         <h2 class="display-4" style="color: white !important;">${{ plan.price|floatformat:2 }}</h2>
                         <p style="color: white !important;">per {{ plan.billing_period }}</p>
-                        {% if plan.billing_period == 'yearly' and plan.tier == 'premium' %}
+                        {% if plan.billing_period == 'yearly' %}
                             <small class="text-white-50" style="color: rgba(255,255,255,0.7) !important;">Save $22/year!</small>
-                        {% elif plan.billing_period == 'yearly' and plan.tier == 'pro' %}
-                            <small class="text-white-50" style="color: rgba(255,255,255,0.7) !important;">Save $42/year!</small>
                         {% endif %}
                     </div>
                     <div class="card-body text-dark bg-white">
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> <strong>All Free features</strong></li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited groups</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited messaging</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Create private groups</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Create up to 3 challenges</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Premium badge</li>
+                        <p class="mb-2" style="font-weight: 600; color: #1e4d8b;"><i class="fas fa-check-double text-success"></i> Everything in Free, plus:</p>
+
+                        <!-- AI Coach - Featured Premium Benefit -->
+                        <div class="pricing-ai-highlight">
+                            <li class="mb-1" style="list-style: none;">
+                                <i class="fas fa-star" style="color: #667eea;"></i>
+                                <strong>AI Recovery Coach</strong> (20 messages/day)
+                                <span class="badge-new">NEW</span>
+                            </li>
+                            <p class="ai-coach-desc mb-0">24/7 AI-powered recovery companion</p>
+                        </div>
+
+                        <ul class="list-unstyled mt-2">
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited groups + create private groups</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited journal + PDF export</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> 90-day progress analytics & charts</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Create custom challenges</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Premium profile badge</li>
                             <li class="mb-2"><i class="fas fa-check text-success"></i> Priority support</li>
                         </ul>
                     </div>
@@ -95,11 +224,7 @@
                             <button class="btn btn-light btn-block subscribe-btn"
                                     data-plan-id="{{ plan.id }}"
                                     data-plan-name="{{ plan.name }}">
-                                {% if user.is_authenticated %}
-                                    Upgrade Now
-                                {% else %}
-                                    Get Started
-                                {% endif %}
+                                Start 14-Day Free Trial
                             </button>
                         {% endif %}
                     </div>
@@ -107,46 +232,20 @@
             </div>
             {% endif %}
         {% endfor %}
+    </div>
 
-        <!-- Pro Tier -->
-        {% for plan in plans %}
-            {% if plan.tier == 'pro' %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-header text-center bg-dark text-white" style="background-color: #343a40 !important;">
-                        <h3 class="my-3" style="color: white !important;">Professional</h3>
-                        <h2 class="display-4" style="color: white !important;">${{ plan.price|floatformat:2 }}</h2>
-                        <p style="color: white !important;">per {{ plan.billing_period }}</p>
-                    </div>
-                    <div class="card-body text-dark bg-white">
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> <strong>All Premium features</strong></li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited challenge creation</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Professional badge</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Advanced analytics</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Custom profile features</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Early access to new features</li>
-                        </ul>
-                    </div>
-                    <div class="card-footer text-center bg-dark">
-                        {% if user_subscription.tier == 'pro' and user_subscription.is_active %}
-                            <button class="btn btn-light btn-block" disabled>Current Plan</button>
-                        {% else %}
-                            <button class="btn btn-light btn-block subscribe-btn"
-                                    data-plan-id="{{ plan.id }}"
-                                    data-plan-name="{{ plan.name }}">
-                                {% if user.is_authenticated %}
-                                    Upgrade to Pro
-                                {% else %}
-                                    Get Started
-                                {% endif %}
-                            </button>
-                        {% endif %}
-                    </div>
-                </div>
+    <!-- Try the AI Coach Section -->
+    <div class="row justify-content-center mt-4 mb-5">
+        <div class="col-lg-8">
+            <div class="try-coach-section">
+                <i class="fas fa-robot" style="font-size: 2.5rem; color: #667eea; margin-bottom: 16px;"></i>
+                <h3>Not sure? Try the AI Coach free</h3>
+                <p>Get 3 free messages to experience personalized recovery support -- no signup or credit card required.</p>
+                <a href="{% url 'accounts:recovery_coach' %}" class="btn btn-coach-try">
+                    <i class="fas fa-comment-dots mr-1"></i> Try AI Coach Free
+                </a>
             </div>
-            {% endif %}
-        {% endfor %}
+        </div>
     </div>
 
     <!-- FAQ Section -->
@@ -178,7 +277,7 @@
                     </div>
                     <div id="collapse2" class="collapse" data-parent="#faqAccordion">
                         <div class="card-body">
-                            The Free tier is available forever with no credit card required. Premium features are available immediately upon upgrading.
+                            Yes! Premium comes with a 14-day free trial so you can experience all features, including the AI Recovery Coach. The Free tier is available forever with no credit card required, and includes 3 AI Coach trial messages.
                         </div>
                     </div>
                 </div>
@@ -186,11 +285,25 @@
                     <div class="card-header" id="faq3">
                         <h5 class="mb-0">
                             <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse3">
-                                What payment methods do you accept?
+                                What is the AI Recovery Coach?
                             </button>
                         </h5>
                     </div>
                     <div id="collapse3" class="collapse" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            The AI Recovery Coach is a 24/7 AI-powered companion that provides personalized recovery support, coping strategies, and encouragement. Free users can try it with 3 messages, while Premium members get 20 messages per day. It is not a replacement for professional help but a supportive tool available whenever you need it.
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="faq4">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse4">
+                                What payment methods do you accept?
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse4" class="collapse" data-parent="#faqAccordion">
                         <div class="card-body">
                             We accept all major credit cards (Visa, Mastercard, American Express, Discover) through our secure payment processor, Stripe.
                         </div>
@@ -231,7 +344,7 @@
                 if (data.error) {
                     alert('Error: ' + data.error);
                     this.disabled = false;
-                    this.innerHTML = 'Upgrade Now';
+                    this.innerHTML = 'Start 14-Day Free Trial';
                     return;
                 }
 
@@ -242,7 +355,7 @@
                 console.error('Error:', error);
                 alert('An error occurred. Please try again.');
                 this.disabled = false;
-                this.innerHTML = 'Upgrade Now';
+                this.innerHTML = 'Start 14-Day Free Trial';
             }
         });
     });
