@@ -89,8 +89,7 @@ def check_feature_limit(feature_name, limit_attr):
 
             # Check limit for free users
             limits = {
-                'max_groups': 2,
-                'max_messages_per_month': 10,
+                'max_groups': 5,
                 'max_private_groups': 0,
             }
 
@@ -99,13 +98,6 @@ def check_feature_limit(feature_name, limit_attr):
             # Get current count based on feature
             if feature_name == 'groups':
                 count = request.user.get_joined_groups().count()
-            elif feature_name == 'messages':
-                from datetime import datetime
-                from django.db.models import Q
-                count = request.user.sent_messages.filter(
-                    sent_at__month=datetime.now().month,
-                    sent_at__year=datetime.now().year
-                ).count()
             else:
                 count = 0
 
