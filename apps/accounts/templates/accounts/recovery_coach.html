@@ -8,13 +8,16 @@
     /* ==============================
        RECOVERY COACH - LAYOUT
        ============================== */
+    /* Override body padding — coach page manages its own spacing */
+    body {
+        padding-top: 0 !important;
+    }
+
     .coach-page {
         display: flex;
-        position: fixed;
-        top: max(70px, calc(70px + env(safe-area-inset-top)));
-        bottom: 0;
-        left: 0;
-        right: 0;
+        height: calc(100vh - max(75px, 75px + env(safe-area-inset-top)));
+        margin-top: max(75px, calc(75px + env(safe-area-inset-top)));
+        max-width: 100%;
         overflow: hidden;
         background: var(--bg-light);
     }
