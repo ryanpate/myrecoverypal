@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MyRecoveryPal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e4d8b 0%, #2d6fc4 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .subtitle {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .status {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+        .offline-msg {
+            display: none;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+        .retry-btn {
+            display: inline-block;
+            margin-top: 0.75rem;
+            padding: 0.5rem 1.5rem;
+            background: white;
+            color: #1e4d8b;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">&#x1f91d;</div>
+        <h1>MyRecoveryPal</h1>
+        <p class="subtitle">Your Recovery Community</p>
+        <div id="loading">
+            <div class="spinner"></div>
+            <p class="status">Connecting...</p>
+        </div>
+        <div class="offline-msg" id="offlineMsg">
+            <p>Unable to connect. Please check your internet connection.</p>
+            <button class="retry-btn" onclick="loadApp()">Try Again</button>
+        </div>
+    </div>
+    <script>
+        function loadApp() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('offlineMsg').style.display = 'none';
+            window.location.href = 'https://www.myrecoverypal.com';
+        }
+
+        // Auto-redirect after brief splash
+        setTimeout(function() {
+            loadApp();
+        }, 500);
+
+        // Show offline message if redirect fails after timeout
+        setTimeout(function() {
+            if (document.visibilityState !== 'hidden') {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('offlineMsg').style.display = 'block';
+            }
+        }, 8000);
+    </script>
+</body>
+</html>
