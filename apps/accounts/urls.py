@@ -42,6 +42,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('profile/<str:username>/', views.ProfileView.as_view(), name='profile'),
     path('edit-profile/', views.edit_profile_view, name='edit_profile'),
+    path('delete-account/', views.delete_account, name='delete_account'),
     path('invite-friends/', views.invite_friends_view, name='invite_friends'),
     path('invite-friends/send-email/', views.send_invite_email_view, name='send_invite_email'),
 

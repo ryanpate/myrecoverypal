@@ -2815,8 +2815,8 @@
             closeBtn.addEventListener('click', closeInstallBanner);
         }
 
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
+        // Register Service Worker (skip in Capacitor native app to avoid stale content)
+        if ('serviceWorker' in navigator && !(window.Capacitor && window.Capacitor.isNativePlatform())) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('{% static "service-worker.js" %}')
                     .then(registration => console.log('ServiceWorker registered'))
@@ -3124,6 +3124,9 @@
             return cookieValue;
         }
     </script>
+
+    <!-- Capacitor Push Notifications (native app only) -->
+    <script src="{% static 'js/capacitor-push.js' %}"></script>
 
     <!-- Additional Scripts -->
     {% block extra_js %}{% endblock %}

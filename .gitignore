@@ -61,3 +61,11 @@ android/
 ios/
 www/
 .capacitor/
+
+# Signing keys (never commit these)
+*.keystore
+*.jks
+*.p8
+firebase-credentials.json
+google-services.json
+GoogleService-Info.plist

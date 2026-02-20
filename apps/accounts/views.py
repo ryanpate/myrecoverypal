@@ -4695,3 +4695,34 @@ def coach_load_session(request, session_id):
         pass
 
     return redirect('accounts:recovery_coach')
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def delete_account(request):
+    """
+    Account deletion view. Required by Apple App Store and Google Play Store.
+    Confirms with password, then deletes user and all associated data.
+    """
+    if request.method == 'POST':
+        password = request.POST.get('password', '')
+        confirm = request.POST.get('confirm', '')
+
+        if confirm != 'DELETE':
+            messages.error(request, 'Please type DELETE to confirm account deletion.')
+            return render(request, 'accounts/delete_account.html')
+
+        if not request.user.check_password(password):
+            messages.error(request, 'Incorrect password. Please try again.')
+            return render(request, 'accounts/delete_account.html')
+
+        # Log out and delete the user (CASCADE handles related objects)
+        user = request.user
+        from django.contrib.auth import logout
+        logout(request)
+        user.delete()
+
+        messages.success(request, 'Your account and all associated data have been permanently deleted.')
+        return redirect('core:index')
+
+    return render(request, 'accounts/delete_account.html')

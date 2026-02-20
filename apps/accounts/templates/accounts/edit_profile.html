@@ -267,6 +267,15 @@
             </a>
         </div>
     </form>
+
+    <!-- Account Deletion -->
+    <div class="form-section" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee;">
+        <h3 style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+        <p>Permanently delete your account and all associated data.</p>
+        <a href="{% url 'accounts:delete_account' %}" class="btn btn-outline-danger">
+            <i class="fas fa-trash-alt"></i> Delete Account
+        </a>
+    </div>
 </div>
 {% endblock %}
 

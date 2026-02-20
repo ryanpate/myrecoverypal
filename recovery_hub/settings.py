@@ -71,6 +71,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.up.railway.app',
     'https://myrecoverypal.com',
     'https://www.myrecoverypal.com',
+    'capacitor://localhost',
+    'ionic://localhost',
 ]
 
 # Add any additional hosts from environment
@@ -574,6 +576,8 @@ except ImportError:
 CORS_ALLOWED_ORIGINS = [
     'https://myrecoverypal.com',
     'https://www.myrecoverypal.com',
+    'capacitor://localhost',
+    'ionic://localhost',
 ]
 
 if DEBUG:
