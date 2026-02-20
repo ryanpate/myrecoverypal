@@ -20,7 +20,13 @@
     "name": "MyRecoveryPal",
     "applicationCategory": "HealthApplication",
     "operatingSystem": "Web Browser, iOS, Android",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    "offers": {
+      "@type": "AggregateOffer",
+      "lowPrice": "0",
+      "highPrice": "4.99",
+      "priceCurrency": "USD",
+      "offerCount": "2"
+    }
   }
 }
 </script>
@@ -34,7 +40,7 @@
       "name": "Is there an app to help stop gambling?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes, MyRecoveryPal helps people stop gambling by tracking bet-free days, connecting them with others in gambling recovery, and providing daily accountability. It's 100% free and includes peer support features."
+        "text": "Yes, MyRecoveryPal helps people stop gambling by tracking bet-free days, connecting them with others in gambling recovery, and providing daily accountability. It's free to join and includes peer support features."
       }
     },
     {
@@ -42,7 +48,7 @@
       "name": "What is the best free gambling addiction app?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "MyRecoveryPal is a top-rated free gambling addiction app that includes bet-free day tracking, peer support community, recovery challenges, and accountability partners—all designed to help you stop gambling."
+        "text": "MyRecoveryPal is a free-to-join gambling addiction app that includes bet-free day tracking, peer support community, recovery challenges, and accountability partners. Core features are free, with optional Premium at $4.99/month for advanced tools."
       }
     },
     {
@@ -116,19 +122,19 @@
 <!-- Hero Section -->
 <section class="ar-hero">
     <h1>Free Gambling Addiction App to Take Back Control</h1>
-    <p>Track your bet-free days, connect with others in gambling recovery, and break free from the cycle. MyRecoveryPal is 100% free.</p>
+    <p>Track your bet-free days, connect with others in gambling recovery, and break free from the cycle. MyRecoveryPal is free to join.</p>
     <a href="{% url 'accounts:register' %}" class="cta-button">Stop Gambling Today</a>
 </section>
 
 <!-- Stats Bar -->
 <div class="stats-bar">
     <div class="stat-item">
-        <div class="stat-number">1,000+</div>
-        <div class="stat-label">Members in Recovery</div>
+        <div class="stat-number">6+</div>
+        <div class="stat-label">Core Features</div>
     </div>
     <div class="stat-item">
-        <div class="stat-number">100%</div>
-        <div class="stat-label">Free Forever</div>
+        <div class="stat-number">Free</div>
+        <div class="stat-label">to Join</div>
     </div>
     <div class="stat-item">
         <div class="stat-number">24/7</div>
@@ -218,7 +224,7 @@
         </div>
         <div class="faq-item">
             <h3>What is the best free gambling addiction app?</h3>
-            <p>MyRecoveryPal is a top-rated free gambling addiction app with bet-free tracking, money saved calculator, peer support community, and recovery challenges—all 100% free.</p>
+            <p>MyRecoveryPal is a free-to-join gambling addiction app with bet-free tracking, money saved calculator, peer support community, and recovery challenges. Core features are free, with optional Premium for advanced tools.</p>
         </div>
         <div class="faq-item">
             <h3>Can apps really help with gambling addiction?</h3>
@@ -226,7 +232,7 @@
         </div>
         <div class="faq-item">
             <h3>Is MyRecoveryPal free?</h3>
-            <p>Yes, 100% free forever. No subscriptions, no premium features, no credit card required.</p>
+            <p>MyRecoveryPal is free to join. Core features including the social feed, groups, challenges, check-ins, and journaling are free. We also offer Premium ($4.99/month) with advanced features like the AI Recovery Coach, detailed analytics, and unlimited groups.</p>
         </div>
     </div>
 </section>

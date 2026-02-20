@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}MyRecoveryPal - Free Recovery Support Community & Sobriety Tracker{% endblock %}
-{% block meta_description %}Free recovery social network. Connect with 1,000+ sober people, share your journey, celebrate milestones together. No ads, 100% free.{% endblock %}
+{% block title %}MyRecoveryPal - Recovery Support Community & Sobriety Tracker{% endblock %}
+{% block meta_description %}Recovery social network with AI coaching. Share your journey, celebrate milestones, and build real connections with people who understand. Free to join.{% endblock %}
 {% block meta_keywords %}addiction recovery community, sobriety support group, recovery social network, alcohol recovery app, drug addiction help, mental health support, sober living community, recovery tracker, addiction support forum, peer support recovery, free sobriety app, 12 step alternative, recovery journey, substance abuse support{% endblock %}
 
 {% block structured_data %}
@@ -10,8 +10,8 @@
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "MyRecoveryPal - Free Recovery Support Community",
-  "description": "Join MyRecoveryPal's free social community for addiction recovery, sobriety support, and mental health. Connect with others in recovery, track milestones, and find hope.",
+  "name": "MyRecoveryPal - Recovery Support Community",
+  "description": "Join MyRecoveryPal's social community for addiction recovery, sobriety support, and mental health. Connect with others in recovery, track milestones, and find hope.",
   "url": "https://www.myrecoverypal.com",
   "mainEntity": {
     "@type": "SoftwareApplication",
@@ -19,14 +19,11 @@
     "applicationCategory": "HealthApplication",
     "operatingSystem": "Web Browser, iOS, Android",
     "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "ratingCount": "150"
+      "@type": "AggregateOffer",
+      "lowPrice": "0",
+      "highPrice": "4.99",
+      "priceCurrency": "USD",
+      "offerCount": "2"
     },
     "featureList": [
       "24/7 AI Recovery Coach for personalized support",
@@ -78,7 +75,7 @@
       "name": "Is MyRecoveryPal free to use?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes, MyRecoveryPal is 100% free forever. There are no subscriptions, hidden fees, or paywalls. We believe recovery support should be accessible to everyone."
+        "text": "MyRecoveryPal is free to join with core features like the social feed, groups, challenges, daily check-ins, and journaling. We also offer MyRecoveryPal Premium for $4.99/month with advanced features like the AI Recovery Coach, detailed analytics, and more. We believe recovery support should be accessible to everyone."
       }
     },
     {
@@ -545,14 +542,14 @@
 <section class="hero" id="home">
     <div class="hero-content">
         <!-- Add Logo Image -->
-        <img src="{% static 'images/logo-white.svg' %}" alt="MyRecoveryPal - Free Recovery Social Network for Sobriety Support" class="hero-logo floating">
+        <img src="{% static 'images/logo-white.svg' %}" alt="MyRecoveryPal - Recovery Social Network for Sobriety Support" class="hero-logo floating">
 
-        <h1>The Free Recovery Social Network</h1>
-        <p>Connect with 1,000+ people in sobriety. Share your journey, celebrate milestones, and find your tribe—all 100% free.</p>
+        <h1>A Recovery Community Built Together</h1>
+        <p>We're building something new — a social network made by and for people in recovery. Share your journey, celebrate milestones, and help shape a community that truly understands.</p>
 
         <!-- Trust Signals -->
         <div class="trust-signals" style="display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-            <span style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.9); font-size: 0.95rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> 100% Free Forever</span>
+            <span style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.9); font-size: 0.95rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> Free to Join</span>
             <span style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.9); font-size: 0.95rem;"><i class="fas fa-shield-alt" style="color: #52b788;"></i> Private & Secure</span>
             <span style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.9); font-size: 0.95rem;"><i class="fas fa-users" style="color: #52b788;"></i> Anonymous Option</span>
             <span style="display: flex; align-items: center; gap: 0.4rem; color: rgba(255,255,255,0.9); font-size: 0.95rem;"><i class="fas fa-robot" style="color: #52b788;"></i> AI Recovery Coach</span>
@@ -563,7 +560,7 @@
         <!-- CTA Container for proper alignment -->
         <div class="hero-cta-container">
             <a href="{% url 'accounts:register' %}" class="cta-button cta-button-pulse">Join Free Today</a>
-            <p class="cta-subtext">100% free - no credit card required</p>
+            <p class="cta-subtext">Free to join — no credit card required</p>
             <a href="{% url 'core:demo' %}" class="demo-link">See how it works &rarr;</a>
         </div>
         {% endif %}
@@ -620,11 +617,11 @@
 <!-- SEO Content Section -->
 <section style="padding: 4rem 2rem; background: white;">
     <div class="container" style="max-width: 900px; margin: 0 auto;">
-        <h2 style="text-align: center; color: #1e4d8b; margin-bottom: 2rem; font-size: 2rem;">A Free Online Recovery Community for Everyone</h2>
+        <h2 style="text-align: center; color: #1e4d8b; margin-bottom: 2rem; font-size: 2rem;">An Online Recovery Community for Everyone</h2>
 
         <div style="color: #666; line-height: 1.8; font-size: 1.05rem;">
             <p style="margin-bottom: 1.5rem;">
-                MyRecoveryPal is a <strong>free online community</strong> designed for individuals seeking <strong>addiction recovery support</strong>,
+                MyRecoveryPal is a <strong>growing online community</strong> designed for individuals seeking <strong>addiction recovery support</strong>,
                 <strong>sobriety help</strong>, and <strong>mental health resources</strong>. Whether you're in active recovery from alcohol or drugs,
                 supporting a loved one struggling with addiction, or looking for alternatives to traditional 12-step programs, you'll find a
                 welcoming space here.
@@ -635,7 +632,7 @@
                 Unlike other recovery apps or addiction forums, MyRecoveryPal combines the best features of <strong>social media</strong>
                 with <strong>recovery-focused tools</strong>. Our platform offers <strong>sobriety tracking</strong>,
                 <strong>milestone celebrations</strong>, private journaling, and real-time connection with others who understand your journey.
-                It's completely free—no subscriptions, no hidden fees, no paywalls.
+                Core features are free to use, with an optional Premium tier for advanced tools like the AI Recovery Coach.
             </p>
 
             <h3 style="color: #1e4d8b; margin: 2rem 0 1rem; font-size: 1.4rem;">Who MyRecoveryPal Serves</h3>
@@ -664,7 +661,7 @@
             </p>
 
             <p style="margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 600; text-align: center; color: #1e4d8b;">
-                Join thousands of people healing together. Your journey to recovery starts here.
+                Be part of a community that's growing every day. Your journey to recovery starts here.
             </p>
         </div>
     </div>
