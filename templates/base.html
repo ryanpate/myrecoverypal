@@ -1431,6 +1431,33 @@
             color: var(--accent-green);
         }
 
+        .footer-support-banner {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            margin: 0 -1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .footer-donate-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .footer-donate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            color: inherit;
+        }
+
         .footer-bottom {
             text-align: center;
             padding: 2rem 0 1rem;
@@ -2653,7 +2680,8 @@
                     <li><a href="{% url 'core:about' %}">Our Mission</a></li>
                     <li><a href="{% url 'core:team' %}">Team</a></li>
                     <li><a href="{% url 'core:contact' %}">Contact</a></li>
-                    <li><a href="https://ko-fi.com/myrecoverypal" target="_blank" rel="noopener">Support Our Mission</a></li>
+                    <li><a href="https://ko-fi.com/myrecoverypal" target="_blank" rel="noopener">Support Us (Ko-fi)</a></li>
+                    <li><a href="https://buymeacoffee.com/myrecoverypal" target="_blank" rel="noopener">Buy Me a Coffee</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -2672,6 +2700,18 @@
                     <li><a href="{% url 'core:terms' %}">Terms of Service</a></li>
                     <li><a href="{% url 'core:cookies' %}">Cookie Policy</a></li>
                 </ul>
+            </div>
+        </div>
+        <div class="footer-support-banner">
+            <p style="margin: 0 0 0.5rem 0; font-weight: 600; font-size: 1rem;">Support Our Mission</p>
+            <p style="margin: 0 0 0.75rem 0; opacity: 0.9; font-size: 0.85rem;">MyRecoveryPal is free to use. Help us keep it that way.</p>
+            <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+                <a href="https://ko-fi.com/myrecoverypal" target="_blank" rel="noopener" class="footer-donate-btn" style="background: #FF5E5B; color: white;">
+                    <i class="fas fa-heart"></i> Ko-fi
+                </a>
+                <a href="https://buymeacoffee.com/myrecoverypal" target="_blank" rel="noopener" class="footer-donate-btn" style="background: #FFDD00; color: #000;">
+                    <i class="fas fa-mug-hot"></i> Buy Me a Coffee
+                </a>
             </div>
         </div>
         <div class="footer-bottom">
