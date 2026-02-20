@@ -10,11 +10,13 @@
        ============================== */
     .coach-page {
         display: flex;
-        height: calc(100vh - max(80px, 80px + env(safe-area-inset-top)));
-        max-width: 100%;
+        position: fixed;
+        top: max(70px, calc(70px + env(safe-area-inset-top)));
+        bottom: 0;
+        left: 0;
+        right: 0;
         overflow: hidden;
         background: var(--bg-light);
-        margin-top: 10px;
     }
 
     /* ==============================
