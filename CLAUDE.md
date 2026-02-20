@@ -1,6 +1,6 @@
 # CLAUDE.md - MyRecoveryPal Development Guide
 
-**Last Updated:** 2026-02-19
+**Last Updated:** 2026-02-20
 **Project:** MyRecoveryPal - Social Recovery Platform
 **Tech Stack:** Django 5.0.10, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
@@ -18,9 +18,22 @@ python manage.py collectstatic --noinput     # Collect static files
 celery -A recovery_hub worker -l info        # Run Celery worker
 
 # Mobile
-npm run cap:sync                              # Sync to mobile platforms
-npm run cap:open:android                      # Open Android Studio
-npm run cap:open:ios                          # Open Xcode
+npx cap sync android                          # Sync web assets to Android
+npx cap sync ios                              # Sync web assets to iOS
+npx cap open android                          # Open Android Studio
+npx cap open ios                              # Open Xcode
+
+# Android Release Build (requires Java 17+)
+JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home" \
+  ANDROID_HOME=~/Library/Android/sdk \
+  ./android/gradlew -p android bundleRelease
+# Output: android/app/build/outputs/bundle/release/app-release.aab
+
+# iOS Release Build (unsigned verification)
+xcodebuild -workspace ios/App/App.xcworkspace -scheme App \
+  -configuration Release -destination 'generic/platform=iOS' \
+  CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO build
+# For App Store: open Xcode → Product → Archive → Distribute
 ```
 
 ---
@@ -268,8 +281,10 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 - **Firebase** - Push notifications (configured, needs implementation)
 
 ### Mobile
-- **Capacitor 7.4.4** - Native wrapper
-- **Firebase Cloud Messaging** - Push notifications
+- **Capacitor 7.4.4** - Native wrapper (iOS + Android projects tracked in git)
+- **Firebase Cloud Messaging** - Push notifications (Android configured, iOS pending Apple Developer enrollment)
+- **Android:** Release AAB built and ready for Google Play upload
+- **iOS:** Compiles clean, ready to archive once Apple Developer account is active
 
 ---
 
@@ -329,6 +344,7 @@ Email campaigns - underutilized for retention.
 /accounts/community/           → User discovery
 /accounts/groups/              → Groups
 /accounts/challenges/          → Challenges
+/accounts/delete-account/      → Account deletion (required by app stores)
 /blog/                         → Community blog
 /journal/                      → Private journal
 /resources/                    → Resource library
@@ -557,10 +573,46 @@ High-volume keyword blog posts (83K combined monthly searches):
 
 ### HIGH - App Store Presence
 **Critical for discovery - competitors get most users from app stores**
-- [ ] Publish to Apple App Store (Capacitor already configured)
-- [ ] Publish to Google Play Store
+
+#### Completed - Code & Build
+- [x] Account deletion feature (required by both stores) - `/accounts/delete-account/`
+- [x] Capacitor push notification client-side bridge (`static/js/capacitor-push.js`)
+- [x] Capacitor origins added to CSRF_TRUSTED_ORIGINS and CORS_ALLOWED_ORIGINS
+- [x] Service worker guarded in native context (prevents stale content)
+- [x] Signing keys added to `.gitignore`
+- [x] Native iOS/Android projects tracked in git (removed from `.gitignore`)
+- [x] Android: Release signing keystore generated and configured in `build.gradle`
+- [x] Android: Release AAB built (`android/app/build/outputs/bundle/release/app-release.aab`, 3.4 MB)
+- [x] iOS: Info.plist updated (background modes, camera/photo privacy descriptions)
+- [x] iOS: AppDelegate.swift updated with push notification token forwarding
+- [x] iOS: Xcode 26.2 compatibility fix (SUPPORTED_PLATFORMS in project.pbxproj)
+- [x] iOS: Release build verified (compiles clean)
+
+#### Remaining - Manual Steps
+- [ ] **Android: Upload AAB to Google Play Console** (account ready)
+- [ ] **Android: Complete store listing** (screenshots, description, data safety)
+- [ ] **Android: Submit for review** (expect 1-3 days)
+- [ ] **iOS: Enroll in Apple Developer Program** ($99/yr) - CRITICAL PATH BLOCKER
+- [ ] **iOS: Configure Xcode signing** (set team, add Push Notifications capability)
+- [ ] **iOS: Archive and submit** via App Store Connect
 - [ ] App Store Optimization (ASO): keywords, screenshots, description
 - [ ] Request reviews from existing users
+
+#### App Store Listing Details
+- **App name:** MyRecoveryPal
+- **Bundle ID:** `com.myrecoverypal.app`
+- **Category:** Health & Fitness
+- **Version:** 1.0.0
+- **Short description:** "Connect with others in recovery. Social feed, groups, AI coach & more."
+- **Privacy policy:** `https://www.myrecoverypal.com/privacy/`
+- **Target age:** 18+
+- **Apple review notes:** Include that app provides native push notifications, offline fallback, and native splash screen beyond web experience
+
+#### Keystore Info (SAVE SECURELY)
+- **File:** `android/app/myrecoverypal-release.keystore` (gitignored)
+- **Alias:** `myrecoverypal`
+- **Properties:** `android/keystore.properties` (gitignored)
+- **WARNING:** Lost keystore = cannot update the app. Back up immediately.
 
 ---
 
@@ -804,6 +856,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-02-20:** App Store Publishing - Phase 1-3 complete. Code changes: added account deletion feature at `/accounts/delete-account/` (required by both stores), created `capacitor-push.js` client-side bridge for native push notifications, added `capacitor://localhost` and `ionic://localhost` to CSRF/CORS settings, guarded service worker registration in Capacitor native context, added signing keys to `.gitignore`. Android: generated release keystore, configured signing in `build.gradle` via `keystore.properties`, built release AAB (3.4 MB) with `bundleRelease`. iOS: updated `Info.plist` with `UIBackgroundModes` (remote-notification) and camera/photo privacy descriptions, added push notification token forwarding in `AppDelegate.swift`, fixed Xcode 26.2 compatibility by adding `SUPPORTED_PLATFORMS` to `project.pbxproj`, set version to 1.0.0, verified clean release build. Tracked `android/` and `ios/` directories in git (removed from `.gitignore`, kept build artifacts and secrets excluded). Both platforms ready for store submission.
 - **2026-02-19:** Fixed AI Coach page content hidden behind top navigation. Reset body padding-top on coach page and used explicit margin-top (100px) on `.coach-page` container to ensure full clearance below the fixed nav bar, with matching height calc to fill the remaining viewport.
 - **2026-02-19:** Removed false claims and updated pricing messaging across homepage and all 10 SEO landing pages. Replaced "100% free forever" with "Free to Join" reflecting freemium model (free core + Premium $4.99/mo). Removed fake "1,000+ users" member counts and fabricated aggregateRating schemas (4.8 stars / 150 reviews). Removed "top-rated" / "highly-rated" claims. Updated FAQ answers across all pages to accurately describe free vs Premium tiers. Changed hero messaging to lean into being a new, growing community ("A Recovery Community Built Together") rather than inflating numbers. Pages updated: index.html, alcohol_recovery_app, drug_addiction_recovery_app, free_aa_app, gambling_addiction_app, mental_health_recovery_app, opioid_recovery_app, sober_grid_alternative, sobriety_counter_app, sobriety_calculator, demo.
 - **2026-02-19:** Fixed AI Coach previous conversation rendering over page header. Root cause: context variable `messages` in `recovery_coach` view collided with Django's built-in messages framework. `base.html` checks `{% if messages %}` to render alert divs and was picking up the CoachMessage queryset, rendering each chat message as an alert overlay at the top of the page. Renamed context variable to `chat_messages` in view and template. Also made disclaimer collapsible — shows compact one-line bar (warning + crisis numbers) by default when conversation exists, auto-expanded for new conversations.
