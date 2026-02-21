@@ -1,6 +1,6 @@
 # CLAUDE.md - MyRecoveryPal Development Guide
 
-**Last Updated:** 2026-02-20
+**Last Updated:** 2026-02-21
 **Project:** MyRecoveryPal - Social Recovery Platform
 **Tech Stack:** Django 5.0.10, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
@@ -478,10 +478,10 @@ celery -A recovery_hub worker -l info -B     # Worker + Beat
 - [x] **Daily check-in reminder** - Sent at 5 PM to users with prior check-ins
 - [x] **Weekly digest** - Sent Sundays at 10:30 AM with activity summary
 
-### MEDIUM - Analytics (PARTIAL)
+### MEDIUM - Analytics (ALL COMPLETE)
 - [x] **Basic funnel tracking** - Google Analytics G-81SZGNRESW already integrated
-- [ ] **Admin dashboard** - User engagement metrics in Django admin
-- [ ] **A/B testing** - Onboarding variations
+- [x] **Admin dashboard** - User engagement metrics at `/admin/dashboard/`
+- [x] **A/B testing** - Onboarding variations at `/admin/dashboard/ab-tests/`
 
 ---
 
@@ -620,30 +620,28 @@ High-volume keyword blog posts (83K combined monthly searches):
 
 ### Current State
 - **Revenue:** $0
-- **AdSense:** Denied (recovery content policy). Using affiliate + subscription model instead.
-- **Stripe:** Configured but no active subscriptions
-- **Store:** Coming soon page exists
+- **Monetization:** Freemium ($4.99/mo Premium) + BetterHelp affiliate + Ko-fi/BMAC donations
+- **Stripe:** Configured with Free + Premium tiers, 14-day trial on signup
+- **AI Coach:** "Anchor" - 3 free trial messages, 20/day for Premium
 
-### IMMEDIATE - No Development Required
+### IMMEDIATE - ✅ ALL COMPLETE
 
-#### 1. Donation System
-- [ ] Add Ko-fi or Buy Me a Coffee integration
-- [ ] "Support Our Mission" button in footer/sidebar
-- [ ] One-time and monthly donation options
+#### 1. Donation System - ✅ COMPLETE
+- [x] Ko-fi and Buy Me a Coffee integration added
+- [x] Donation links in footer
+- [x] One-time and monthly donation options
 
-#### 2. Affiliate Marketing
-| Partner | Commission | Integration |
-|---------|------------|-------------|
-| Amazon (recovery books) | 4-10% | Link in resources |
-| BetterHelp | $100-200/referral | Blog posts, resources |
-| Treatment center directories | $50-500/lead | Meeting finder page |
+#### 2. Affiliate Marketing - ✅ COMPLETE
+| Partner | Commission | Integration | Status |
+|---------|------------|-------------|--------|
+| BetterHelp | $100-200/referral | Blog post CTAs with UTM tracking | ✅ Done |
 
-- [ ] Create affiliate resources page
-- [ ] Add affiliate disclosures to relevant pages
+- [x] BetterHelp affiliate CTA on all blog posts (`_affiliate_cta.html`)
+- [x] Affiliate disclosures included in CTA
+- [ ] Amazon recovery books affiliate links (future)
+- [ ] Treatment center directory partnerships (future)
 
-### SHORT-TERM - Development Required
-
-#### 3. Premium Tier ("MyRecoveryPal Premium")
+#### 3. Premium Tier - ✅ COMPLETE
 | Free | Premium ($4.99/mo or $29.99/yr) |
 |------|--------------------------------|
 | Unlimited social feed & messaging | All free features |
@@ -653,9 +651,10 @@ High-volume keyword blog posts (83K combined monthly searches):
 | Daily check-in | 90-day analytics & charts |
 | Community challenges | Premium badge |
 
-- [ ] Create pricing page
-- [ ] Implement Stripe subscription tiers
-- [ ] Build premium feature gates
+- [x] Pricing page at `/accounts/pricing/` with therapy cost comparison
+- [x] Stripe subscription tiers configured
+- [x] Premium feature gates (AI Coach message limits, progressive upgrade hints)
+- [x] 14-day free trial on signup
 
 #### 4. Recovery Merchandise Store
 - [ ] Milestone tokens/coins (physical)
@@ -676,6 +675,54 @@ High-volume keyword blog posts (83K combined monthly searches):
 - Connect users with certified recovery coaches
 - 15-20% platform fee
 - Video/chat sessions through platform
+
+---
+
+## 30-Day Revenue & Marketing Plan (Started 2026-02-21)
+
+**Full plan:** `.claude/plans/mutable-munching-hummingbird.md`
+
+### Code Changes - ✅ ALL 15 ITEMS COMPLETE
+
+All conversion funnel fixes, email sequences, progressive upgrade hints, blog CTAs, pricing page updates, sitemap additions, and AI Coach landing page cost comparison have been implemented and deployed.
+
+### AI Coach Rename
+- Renamed from "Pal" to "Anchor" across all 9 files (25+ references)
+- System prompt, chat UI, emails, blog CTAs, homepage, social feed
+
+### Remaining Marketing Tasks (Manual - No Code)
+
+#### Google Search Console (Priority: HIGH)
+- [ ] Submit 8 remaining URLs via URL Inspection tool:
+  - `/ai-recovery-coach/`, `/accounts/pricing/`
+  - `/blog/what-is-sober-curious-guide/` (12K/mo searches)
+  - `/blog/high-functioning-alcoholic-signs-help/` (9K/mo searches)
+  - `/blog/dopamine-detox-addiction-recovery/` (8K/mo searches)
+  - `/alcohol-recovery-app/`, `/free-aa-app/`, `/sobriety-counter-app/`
+
+#### Reddit Marketing (Priority: HIGH)
+- [ ] Research r/stopdrinking (900K members) community rules and culture
+- [ ] Write Reddit Post 1: "I tracked my mood every day for 90 days in recovery" (r/stopdrinking)
+- [ ] Write Reddit Post 2: "The one thing that helped me most at 2 AM when cravings hit" (r/addiction)
+- [ ] Write Reddit Post 3: "Free sobriety calculator I built" with link to `/sobriety-calculator/` (r/sober)
+- [ ] Post content and monitor engagement (one ban = 900K users lost)
+- [ ] Write 2+ follow-up posts based on what performs best
+
+**Reddit rules:** Never be promotional. Provide genuine value. Only share link if asked in comments.
+
+#### TikTok Content (Priority: MEDIUM)
+- [ ] Record TikTok 1: "Things that happen to your body when you stop drinking" (timeline format)
+- [ ] Record TikTok 2: "I taught AI to be a recovery coach. Here's what happened." (demo Anchor)
+
+#### Pinterest (Priority: LOW)
+- [ ] Create 3-5 pins for highest-traffic blog posts (alcohol withdrawal timeline, signs of alcoholism, how to stop drinking)
+
+#### 30-Day Review
+- [ ] Check Google Analytics for traffic changes
+- [ ] Check Google Search Console for new indexing
+- [ ] Check Stripe dashboard for trial signups or payments
+- [ ] Check Ko-fi/Buy Me a Coffee for donations
+- [ ] Test full signup → AI Coach → upgrade flow manually
 
 ---
 
@@ -856,6 +903,8 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-02-21:** Implemented all 15 code changes from 30-Day Revenue & Marketing Plan. Conversion funnel fixes: updated sitemap.xml with 7 missing URLs, registration page now mentions AI Coach + 14-day trial, removed fabricated aggregateRating from AI Coach landing page, added AI Coach promo card to social feed sidebar, added therapy cost comparison to pricing page. Email sequences: welcome day 1/3/7 emails now promote Anchor (AI Coach), new day 5 premium trial nudge email with Celery task (`send_premium_trial_nudge`, runs daily at 11 AM). AI Coach UX: progressive upgrade hints (toast after message 1, persistent banner after message 2). Blog CTAs: rewrote AI Coach CTA with crisis-moment copy, optimized BetterHelp affiliate CTA with recovery-specific angle and UTM params. AI Coach landing page: added 3-column therapy cost comparison section. Added `premium_nudge_sent` field to User model (migration 0019).
+- **2026-02-21:** Renamed AI Coach from "Pal" to "Anchor" across entire codebase. Updated 25+ references in 9 files: coach_service.py system prompt, recovery_coach.html chat UI (header, disclaimer, welcome, typing indicator, upgrade text, placeholder, toast), social_feed.html promo card, welcome emails (day 1, 3), premium trial nudge email, blog AI Coach CTA, blog affiliate CTA, homepage (FAQ schema, feature card, SEO section). Preserved "Recovery Pal" (accountability partner feature) references untouched.
 - **2026-02-20:** App Store Publishing - Phase 1-3 complete. Code changes: added account deletion feature at `/accounts/delete-account/` (required by both stores), created `capacitor-push.js` client-side bridge for native push notifications, added `capacitor://localhost` and `ionic://localhost` to CSRF/CORS settings, guarded service worker registration in Capacitor native context, added signing keys to `.gitignore`. Android: generated release keystore, configured signing in `build.gradle` via `keystore.properties`, built release AAB (3.4 MB) with `bundleRelease`. iOS: updated `Info.plist` with `UIBackgroundModes` (remote-notification) and camera/photo privacy descriptions, added push notification token forwarding in `AppDelegate.swift`, fixed Xcode 26.2 compatibility by adding `SUPPORTED_PLATFORMS` to `project.pbxproj`, set version to 1.0.0, verified clean release build. Tracked `android/` and `ios/` directories in git (removed from `.gitignore`, kept build artifacts and secrets excluded). Both platforms ready for store submission.
 - **2026-02-19:** Fixed AI Coach page content hidden behind top navigation. Reset body padding-top on coach page and used explicit margin-top (100px) on `.coach-page` container to ensure full clearance below the fixed nav bar, with matching height calc to fill the remaining viewport.
 - **2026-02-19:** Removed false claims and updated pricing messaging across homepage and all 10 SEO landing pages. Replaced "100% free forever" with "Free to Join" reflecting freemium model (free core + Premium $4.99/mo). Removed fake "1,000+ users" member counts and fabricated aggregateRating schemas (4.8 stars / 150 reviews). Removed "top-rated" / "highly-rated" claims. Updated FAQ answers across all pages to accurately describe free vs Premium tiers. Changed hero messaging to lean into being a new, growing community ("A Recovery Community Built Together") rather than inflating numbers. Pages updated: index.html, alcohol_recovery_app, drug_addiction_recovery_app, free_aa_app, gambling_addiction_app, mental_health_recovery_app, opioid_recovery_app, sober_grid_alternative, sobriety_counter_app, sobriety_calculator, demo.
