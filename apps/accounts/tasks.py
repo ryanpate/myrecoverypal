@@ -668,3 +668,75 @@ def send_invite_email_task(self, invite_code_id):
         logger.error(f"Error sending invite email: {e}")
         # Retry after 60 seconds
         raise self.retry(exc=e, countdown=60)
+
+
+# ========================================
+# Premium Trial Nudge Email (Day 5)
+# ========================================
+
+@shared_task(bind=True, max_retries=3)
+def send_premium_trial_nudge(self):
+    """
+    Send premium trial nudge email to users who:
+    - Joined 5+ days ago
+    - Have NOT started a Premium trial
+    - Have NOT received this nudge yet
+    Runs daily at 11:00 AM.
+    """
+    from .models import User
+
+    five_days_ago = timezone.now() - timedelta(days=5)
+    site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
+
+    # Users who joined 5+ days ago, haven't been nudged, and aren't premium
+    users = User.objects.filter(
+        is_active=True,
+        email_notifications=True,
+        date_joined__lte=five_days_ago,
+        premium_nudge_sent__isnull=True,
+    )
+
+    sent_count = 0
+    failed_count = 0
+
+    for user in users:
+        # Skip users who already have an active premium subscription
+        try:
+            if hasattr(user, 'subscription') and user.subscription.is_premium():
+                continue
+        except Exception:
+            pass
+
+        try:
+            days_since_signup = (timezone.now() - user.date_joined).days
+
+            html_message = render_to_string('emails/premium_trial_nudge.html', {
+                'user': user,
+                'days_since_signup': days_since_signup,
+                'site_url': site_url,
+                'current_year': timezone.now().year,
+            })
+            plain_message = strip_tags(html_message)
+
+            success = send_email(
+                subject=f"Your AI Recovery Coach is waiting, {user.first_name or user.username}",
+                plain_message=plain_message,
+                html_message=html_message,
+                recipient_email=user.email,
+            )
+
+            if success:
+                user.premium_nudge_sent = timezone.now()
+                user.save(update_fields=['premium_nudge_sent'])
+                sent_count += 1
+                logger.info(f"Sent premium nudge to {user.email}")
+            else:
+                failed_count += 1
+                logger.warning(f"Failed to send premium nudge to {user.email}")
+
+        except Exception as e:
+            failed_count += 1
+            logger.error(f"Error sending premium nudge to {user.email}: {e}")
+
+    logger.info(f"Premium trial nudge: sent={sent_count}, failed={failed_count}")
+    return {'sent': sent_count, 'failed': failed_count}

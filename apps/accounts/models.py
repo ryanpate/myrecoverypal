@@ -96,6 +96,8 @@ class User(AbstractUser):
         help_text="Last weekly digest sent")
     last_pal_nudge_sent = models.DateTimeField(null=True, blank=True,
         help_text="Last accountability nudge sent for Recovery Pal")
+    premium_nudge_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Premium trial nudge email sent timestamp")
 
     # Timestamps
     last_seen = models.DateTimeField(null=True, blank=True)

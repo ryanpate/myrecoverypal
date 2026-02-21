@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your AI Recovery Coach is waiting</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .cta-button {
+            display: inline-block;
+            color: white !important;
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            margin: 15px 10px;
+        }
+        .cta-button.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        .cta-button.secondary {
+            background: #52b788;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">MyRecoveryPal</div>
+            <h1 style="color: #1e4d8b; margin: 0;">Your AI Recovery Coach is Waiting</h1>
+            <p style="color: #666; font-size: 16px;">Personalized support, whenever you need it</p>
+        </div>
+
+        <div style="margin: 30px 0;">
+            <p>Hi {{ user.first_name|default:user.username }},</p>
+            <p>You joined MyRecoveryPal {{ days_since_signup }} days ago. We hope the community has been helpful so far.</p>
+            <p>Did you know you have access to <strong>Anchor, your AI Recovery Coach</strong>? Anchor is available 24/7 for personalized support, coping strategies, and encouragement &mdash; no appointment needed.</p>
+        </div>
+
+        <!-- Cost Comparison -->
+        <div style="margin: 30px 0;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 15px; text-align: center; border: 1px solid #e0e0e0; border-radius: 8px 0 0 8px; width: 50%;">
+                        <div style="font-size: 24px; font-weight: 700; color: #dc3545;">$150-300</div>
+                        <div style="font-size: 13px; color: #666;">per therapy session</div>
+                    </td>
+                    <td style="padding: 15px; text-align: center; border: 1px solid #52b788; background: #f0fdf4; border-radius: 0 8px 8px 0; width: 50%;">
+                        <div style="font-size: 24px; font-weight: 700; color: #52b788;">$4.99/mo</div>
+                        <div style="font-size: 13px; color: #666;">20 AI messages/day</div>
+                    </td>
+                </tr>
+            </table>
+            <p style="text-align: center; color: #888; font-size: 13px; margin-top: 8px;">AI Coach complements professional treatment &mdash; does not replace therapy.</p>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ site_url }}/accounts/pricing/" class="cta-button primary">
+                Start Your Free Trial
+            </a>
+            <br>
+            <a href="{{ site_url }}/accounts/recovery-coach/" class="cta-button secondary">
+                Try AI Coach Free First
+            </a>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 25px 0; text-align: center;">
+            <p style="margin: 0; font-weight: 600; color: #1e4d8b;">What Anchor can help with:</p>
+            <p style="margin: 10px 0 0 0; color: #666;">Cravings &bull; Stress &bull; Sleep &bull; Motivation &bull; Relapse prevention &bull; Daily encouragement</p>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <p style="color: #888; font-size: 13px;">14-day free trial. Cancel anytime. No questions asked.</p>
+        </div>
+
+        <div class="footer">
+            <p style="margin: 10px 0;">
+                <a href="{{ site_url }}/accounts/settings/" style="color: #4db8e8; text-decoration: none;">Email Settings</a> |
+                <a href="{{ site_url }}" style="color: #4db8e8; text-decoration: none;">Visit MyRecoveryPal</a>
+            </p>
+            <p style="margin: 20px 0 10px 0; font-size: 12px; color: #999;">
+                You're receiving this because you signed up for MyRecoveryPal.
+            </p>
+            <p style="margin: 10px 0; color: #666;">
+                {{ current_year }} MyRecoveryPal. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

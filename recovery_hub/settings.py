@@ -714,6 +714,11 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_pal_accountability_nudges',
         'schedule': crontab(hour=14, minute=0),  # Daily at 2 PM UTC
     },
+    # Premium trial nudge - daily at 11 AM for users who joined 5+ days ago
+    'send-premium-trial-nudge': {
+        'task': 'apps.accounts.tasks.send_premium_trial_nudge',
+        'schedule': crontab(hour=11, minute=0),  # Daily at 11 AM
+    },
 }
 
 # ========================================

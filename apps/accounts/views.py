@@ -3846,6 +3846,7 @@ def social_feed_view(request):
 
         # For authenticated users, check if feed is empty/sparse and add suggestions
         if user.is_authenticated:
+            context['is_premium'] = hasattr(user, 'subscription') and user.subscription.is_premium()
             profile_completion = user.get_profile_completion()
             context['profile_completion'] = profile_completion
             context['show_profile_banner'] = not profile_completion['is_complete'] and not user.has_completed_onboarding
