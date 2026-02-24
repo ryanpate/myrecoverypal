@@ -148,6 +148,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'apps.accounts.middleware.DatabaseConnectionMiddleware',  # Fix stale DB connections
     'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static files
+    'django.middleware.gzip.GZipMiddleware',  # Compress HTML/JSON responses (reduces egress ~70%)
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -285,20 +286,25 @@ else:
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 
-# WhiteNoise for serving static files - Fixed to avoid DRF issues
-# Changed from CompressedManifestStaticFilesStorage
+# WhiteNoise for serving static files
+# Note: CompressedManifestStaticFilesStorage/CompressedStaticFilesStorage fail due to
+# DRF missing font references and WHITENOISE_ROOT conflicts with collectstatic.
+# Compression is handled by GZipMiddleware at request time instead.
 STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 
 # WhiteNoise settings
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = DEBUG
+# Long-lived cache for hashed files (1 year) - browsers won't re-request
+WHITENOISE_MAX_AGE = 31536000  # 1 year for hashed files
 
 # Only set WHITENOISE_ROOT if the directory exists
 if os.path.exists(BASE_DIR / 'root_files'):
     WHITENOISE_ROOT = BASE_DIR / 'root_files'
 
-# Disable these for now to avoid issues
+# Keep both hashed and unhashed files for compatibility
 WHITENOISE_KEEP_ONLY_HASHED_FILES = False
+# Skip compressing already-compressed binary formats
 WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp',
                                        'zip', 'gz', 'tgz', 'bz2', 'tbz', 'xz', 'br', 'swf', 'flv', 'woff', 'woff2']
 
@@ -675,6 +681,11 @@ CACHES['rate_limiting'] = {
     'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     'LOCATION': 'rate-limiting-cache',
 }
+
+# Use Redis for sessions to reduce DB traffic (Redis is already running for Celery)
+if REDIS_URL:
+    SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+    SESSION_CACHE_ALIAS = 'default'
 
 # ========================================
 # Celery Settings
