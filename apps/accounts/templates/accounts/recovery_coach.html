@@ -191,13 +191,14 @@
         width: 44px;
         height: 44px;
         border-radius: 50%;
-        background: var(--gradient-primary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.2rem;
+        overflow: hidden;
         flex-shrink: 0;
+    }
+
+    .coach-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .coach-info-name {
@@ -430,8 +431,16 @@
     }
 
     .msg-row.assistant .msg-avatar {
-        background: var(--gradient-primary);
-        color: white;
+        background: transparent;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .msg-row.assistant .msg-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
     }
 
     .msg-row.user .msg-avatar {
@@ -558,17 +567,18 @@
     }
 
     .welcome-icon-circle {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
-        background: var(--gradient-primary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 2.2rem;
+        overflow: hidden;
         margin-bottom: 1.25rem;
         box-shadow: 0 8px 25px rgba(30, 77, 139, 0.2);
+    }
+
+    .welcome-icon-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .welcome-heading {
@@ -1164,16 +1174,16 @@
         <div class="chat-top-bar">
             <div class="chat-top-bar-left">
                 <div class="coach-icon">
-                    <i class="fas fa-heart-pulse"></i>
+                    <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor AI Coach">
                 </div>
                 <div>
                     <div class="coach-info-name">
-                        Recovery Coach
+                        Anchor
                         {% if is_premium %}
                         <span class="premium-tag"><i class="fas fa-crown"></i> Pro</span>
                         {% endif %}
                     </div>
-                    <div class="coach-info-label">Anchor &mdash; Your AI Companion</div>
+                    <div class="coach-info-label">AI Recovery Coach &mdash; Stay Grounded</div>
                 </div>
             </div>
             <div class="msg-counter {% if messages_used >= message_limit %}counter-empty{% elif message_limit > 0 and messages_used >= message_limit|add:"-2" %}counter-low{% endif %}" id="messagesCounter">
@@ -1211,7 +1221,7 @@
                 <div class="msg-row {{ msg.role }}">
                     <div class="msg-avatar">
                         {% if msg.role == 'assistant' %}
-                        <i class="fas fa-heart-pulse"></i>
+                        <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor">
                         {% else %}
                         <i class="fas fa-user"></i>
                         {% endif %}
@@ -1226,7 +1236,7 @@
                 <!-- Welcome state -->
                 <div class="welcome-state" id="welcomeState">
                     <div class="welcome-icon-circle">
-                        <i class="fas fa-heart-pulse"></i>
+                        <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor AI Coach">
                     </div>
                     <div class="welcome-heading">Hi, I'm Anchor</div>
                     <div class="welcome-desc">
@@ -1252,8 +1262,8 @@
 
             <!-- Typing indicator -->
             <div class="typing-indicator" id="typingIndicator">
-                <div class="msg-avatar" style="background: var(--gradient-primary); color: white;">
-                    <i class="fas fa-heart-pulse"></i>
+                <div class="msg-avatar">
+                    <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor">
                 </div>
                 <div class="typing-bubble">
                     Anchor is thinking
@@ -1425,9 +1435,16 @@
 
         var avatar = document.createElement('div');
         avatar.className = 'msg-avatar';
-        var icon = document.createElement('i');
-        icon.className = role === 'assistant' ? 'fas fa-heart-pulse' : 'fas fa-user';
-        avatar.appendChild(icon);
+        if (role === 'assistant') {
+            var img = document.createElement('img');
+            img.src = "{% static 'images/anchor-ai-coach.png' %}";
+            img.alt = 'Anchor';
+            avatar.appendChild(img);
+        } else {
+            var icon = document.createElement('i');
+            icon.className = 'fas fa-user';
+            avatar.appendChild(icon);
+        }
 
         var bodyDiv = document.createElement('div');
 

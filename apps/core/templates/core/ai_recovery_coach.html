@@ -839,7 +839,8 @@
 {% block content %}
 <!-- Hero Section -->
 <section class="aic-hero page-header">
-    <h1>Your AI Recovery Coach, Available 24/7</h1>
+    <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor AI Recovery Coach" style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 1.5rem; box-shadow: 0 8px 30px rgba(0,0,0,0.25);">
+    <h1>Meet Anchor, Your AI Recovery Coach</h1>
     <p>Personalized, evidence-based recovery support whenever you need it. Get guidance through cravings, stress, and difficult moments with an AI coach trained in addiction recovery techniques.</p>
     <div class="aic-hero-buttons">
         {% if user.is_authenticated %}
