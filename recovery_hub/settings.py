@@ -732,6 +732,13 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+# Celery worker memory optimization (Railway cost reduction)
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 50  # Restart worker after 50 tasks to reclaim memory
+CELERY_WORKER_MAX_MEMORY_PER_CHILD = 200_000  # Kill child if it exceeds 200MB (kB)
+CELERY_WORKER_CONCURRENCY = 1  # Only 1 worker process needed for this workload
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1  # Don't prefetch extra tasks
+CELERY_TASK_RESULT_EXPIRES = 3600  # Expire results after 1 hour instead of default 24h
+
 # ========================================
 # API Keys and External Services
 # ========================================
