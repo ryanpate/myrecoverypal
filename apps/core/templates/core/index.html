@@ -482,12 +482,12 @@
         align-items: center;
     }
 
-    .showcase-inner.reverse {
-        direction: rtl;
+    .showcase-inner.reverse .showcase-image-wrap {
+        order: 2;
     }
 
-    .showcase-inner.reverse > * {
-        direction: ltr;
+    .showcase-inner.reverse .showcase-text {
+        order: 1;
     }
 
     .showcase-image-wrap {
@@ -978,10 +978,6 @@
             gap: 2rem;
         }
 
-        .showcase-inner.reverse {
-            direction: ltr;
-        }
-
         .features-grid {
             grid-template-columns: 1fr;
         }
@@ -1034,9 +1030,9 @@
         <p>Join a growing social community built by and for people in recovery. Share your journey, celebrate milestones, and get 24/7 AI-powered support — all in one place.</p>
 
         <div class="hero-trust-badges">
-            <span class="hero-trust-badge"><i class="fas fa-check-circle"></i> Free to Join</span>
-            <span class="hero-trust-badge"><i class="fas fa-lock"></i> Private &amp; Secure</span>
-            <span class="hero-trust-badge"><i class="fas fa-robot"></i> AI Coach Included</span>
+            <span class="hero-trust-badge"><i class="fas fa-check-circle" aria-hidden="true"></i> Free to Join</span>
+            <span class="hero-trust-badge"><i class="fas fa-lock" aria-hidden="true"></i> Private &amp; Secure</span>
+            <span class="hero-trust-badge"><i class="fas fa-robot" aria-hidden="true"></i> AI Coach Included</span>
         </div>
 
         {% if user.is_authenticated %}
@@ -1046,7 +1042,7 @@
         {% else %}
         <div class="hero-cta-group">
             <a href="{% url 'accounts:register' %}" class="cta-button cta-button-pulse">Join Free Today</a>
-            <a href="{% url 'core:demo' %}" class="hero-secondary-link">See how it works <i class="fas fa-arrow-right"></i></a>
+            <a href="{% url 'core:demo' %}" class="hero-secondary-link">See how it works <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
         </div>
         {% endif %}
     </div>
@@ -1055,7 +1051,7 @@
         <div class="hero-screenshot-wrap">
             <picture>
                 <source srcset="{% static 'images/demo/feed.webp' %}" type="image/webp">
-                <img src="{% static 'images/demo/feed.png' %}" alt="MyRecoveryCircle social feed screenshot" class="hero-screenshot">
+                <img src="{% static 'images/demo/feed.png' %}" alt="MyRecoveryCircle social feed screenshot" class="hero-screenshot" loading="eager" fetchpriority="high" width="600" height="450">
             </picture>
         </div>
     </div>
@@ -1067,15 +1063,15 @@
 <section class="trust-strip">
     <div class="trust-strip-inner">
         <div class="trust-strip-item">
-            <i class="fas fa-heart"></i>
+            <i class="fas fa-heart" aria-hidden="true"></i>
             Free to join — no credit card required
         </div>
         <div class="trust-strip-item">
-            <i class="fas fa-user-secret"></i>
+            <i class="fas fa-user-secret" aria-hidden="true"></i>
             Private &amp; anonymous posting available
         </div>
         <div class="trust-strip-item">
-            <i class="fas fa-robot"></i>
+            <i class="fas fa-robot" aria-hidden="true"></i>
             24/7 AI-powered recovery support
         </div>
     </div>
@@ -1119,7 +1115,7 @@
         <div class="showcase-image-wrap">
             <picture>
                 <source srcset="{% static 'images/demo/create-post.webp' %}" type="image/webp">
-                <img src="{% static 'images/demo/create-post.png' %}" alt="MyRecoveryCircle post composer screenshot">
+                <img src="{% static 'images/demo/create-post.png' %}" alt="MyRecoveryCircle post composer screenshot" loading="lazy" width="600" height="450">
             </picture>
         </div>
 
@@ -1129,11 +1125,11 @@
             <p>A supportive social feed designed specifically for people in recovery. Share what's on your mind with people who truly get it.</p>
 
             <ul class="showcase-checklist">
-                <li><i class="fas fa-check-circle"></i> Share your journey with posts, photos, and milestones</li>
-                <li><i class="fas fa-check-circle"></i> Celebrate sobriety milestones with your community</li>
-                <li><i class="fas fa-check-circle"></i> Log daily check-ins to track mood and cravings</li>
-                <li><i class="fas fa-check-circle"></i> Follow others and build real accountability connections</li>
-                <li><i class="fas fa-check-circle"></i> Join recovery groups that match your journey</li>
+                <li><i class="fas fa-check-circle" aria-hidden="true"></i> Share your journey with posts, photos, and milestones</li>
+                <li><i class="fas fa-check-circle" aria-hidden="true"></i> Celebrate sobriety milestones with your community</li>
+                <li><i class="fas fa-check-circle" aria-hidden="true"></i> Log daily check-ins to track mood and cravings</li>
+                <li><i class="fas fa-check-circle" aria-hidden="true"></i> Follow others and build real accountability connections</li>
+                <li><i class="fas fa-check-circle" aria-hidden="true"></i> Join recovery groups that match your journey</li>
             </ul>
 
             {% if user.is_authenticated %}
@@ -1156,18 +1152,18 @@
             <p>It's 2 AM and cravings are hitting hard. Anchor is always awake, always ready, and always in your corner with personalized, evidence-based support.</p>
 
             <ul class="showcase-checklist">
-                <li><i class="fas fa-check-circle"></i> Available 24/7 — day one or day one thousand</li>
-                <li><i class="fas fa-check-circle"></i> 3 free trial messages — no Premium required to start</li>
-                <li><i class="fas fa-check-circle"></i> CBT and mindfulness-informed coping strategies</li>
-                <li><i class="fas fa-check-circle"></i> Crisis resources always at hand (988 Lifeline &amp; more)</li>
+                <li><i class="fas fa-check-circle" aria-hidden="true"></i> Available 24/7 — day one or day one thousand</li>
+                <li><i class="fas fa-check-circle" aria-hidden="true"></i> 3 free trial messages — no Premium required to start</li>
+                <li><i class="fas fa-check-circle" aria-hidden="true"></i> CBT and mindfulness-informed coping strategies</li>
+                <li><i class="fas fa-check-circle" aria-hidden="true"></i> Crisis resources always at hand (988 Lifeline &amp; more)</li>
             </ul>
 
-            <a href="/accounts/recovery-coach/" class="cta-button-white">Try Anchor Free</a>
+            <a href="{% url 'accounts:recovery_coach' %}" class="cta-button-white">Try Anchor Free</a>
             <p class="showcase-disclaimer">Anchor is an AI tool and not a replacement for professional medical or mental health treatment. If you are in crisis, call 988.</p>
         </div>
 
         <div class="coach-logo-wrap">
-            <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor AI Recovery Coach logo" class="coach-logo">
+            <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor AI Recovery Coach logo" class="coach-logo" loading="lazy" width="280" height="280">
         </div>
     </div>
 </section>
@@ -1184,37 +1180,37 @@
 
         <div class="features-grid">
             <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-pen-to-square"></i></div>
+                <div class="feature-icon"><i class="fas fa-pen-to-square" aria-hidden="true"></i></div>
                 <h3>Share Your Story</h3>
                 <p>Post updates, photos, and thoughts to a feed of people who understand. Anonymous options available.</p>
             </div>
 
             <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-trophy"></i></div>
+                <div class="feature-icon"><i class="fas fa-trophy" aria-hidden="true"></i></div>
                 <h3>Celebrate Milestones</h3>
                 <p>Track your sobriety date and celebrate every milestone — 1 day, 30 days, 1 year — with your community.</p>
             </div>
 
             <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-users"></i></div>
+                <div class="feature-icon"><i class="fas fa-users" aria-hidden="true"></i></div>
                 <h3>Recovery Groups</h3>
                 <p>Join groups organized by addiction type, recovery stage, or shared interests. Up to 5 groups free.</p>
             </div>
 
             <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="feature-icon"><i class="fas fa-calendar-check" aria-hidden="true"></i></div>
                 <h3>Daily Check-ins</h3>
                 <p>Log your mood, cravings, and gratitude each day. Build a streak and watch your progress over time.</p>
             </div>
 
             <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-fire"></i></div>
+                <div class="feature-icon"><i class="fas fa-fire" aria-hidden="true"></i></div>
                 <h3>Recovery Challenges</h3>
                 <p>Join community challenges that keep you engaged, accountable, and motivated week after week.</p>
             </div>
 
             <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-book"></i></div>
+                <div class="feature-icon"><i class="fas fa-book" aria-hidden="true"></i></div>
                 <h3>Private Journal</h3>
                 <p>Write freely in your personal journal — entries are 100% private and never visible to anyone else.</p>
             </div>
@@ -1233,51 +1229,51 @@
 
         <div class="faq-list">
             <div class="faq-item">
-                <button class="faq-question" onclick="this.parentElement.classList.toggle('active')" aria-expanded="false">
+                <button class="faq-question" onclick="this.parentElement.classList.toggle('active'); this.setAttribute('aria-expanded', this.parentElement.classList.contains('active'))" aria-expanded="false" aria-controls="faq-answer-1">
                     <span>Is MyRecoveryPal free to use?</span>
-                    <i class="fas fa-chevron-down"></i>
+                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
                 </button>
-                <div class="faq-answer">
+                <div class="faq-answer" id="faq-answer-1">
                     <p>Yes — the core platform is free to join with no credit card required. Free members get full access to the social feed, groups (up to 5), challenges, daily check-ins, journaling, and 3 trial messages with the Anchor AI Coach. MyRecoveryPal Premium ($4.99/month) unlocks 20 AI Coach messages per day, unlimited groups, full journal history, and 90-day progress analytics. A 14-day Premium trial is included with every new account.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <button class="faq-question" onclick="this.parentElement.classList.toggle('active')" aria-expanded="false">
+                <button class="faq-question" onclick="this.parentElement.classList.toggle('active'); this.setAttribute('aria-expanded', this.parentElement.classList.contains('active'))" aria-expanded="false" aria-controls="faq-answer-2">
                     <span>Who is MyRecoveryPal for?</span>
-                    <i class="fas fa-chevron-down"></i>
+                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
                 </button>
-                <div class="faq-answer">
+                <div class="faq-answer" id="faq-answer-2">
                     <p>MyRecoveryPal is for anyone touched by addiction or mental health challenges — people in recovery from alcohol or drugs, individuals in active addiction who are looking for support, family members and friends of people with addiction, and anyone seeking peer connection and a judgment-free space to heal. All recovery paths are welcome here.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <button class="faq-question" onclick="this.parentElement.classList.toggle('active')" aria-expanded="false">
+                <button class="faq-question" onclick="this.parentElement.classList.toggle('active'); this.setAttribute('aria-expanded', this.parentElement.classList.contains('active'))" aria-expanded="false" aria-controls="faq-answer-3">
                     <span>Is my information private and secure?</span>
-                    <i class="fas fa-chevron-down"></i>
+                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
                 </button>
-                <div class="faq-answer">
+                <div class="faq-answer" id="faq-answer-3">
                     <p>Privacy is a top priority. Your journal entries are always 100% private — no one can ever see them. You control exactly what you share on your profile and in the social feed. Anonymous posting is available in groups so you can share openly without revealing your identity. We never sell your data to third parties.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <button class="faq-question" onclick="this.parentElement.classList.toggle('active')" aria-expanded="false">
+                <button class="faq-question" onclick="this.parentElement.classList.toggle('active'); this.setAttribute('aria-expanded', this.parentElement.classList.contains('active'))" aria-expanded="false" aria-controls="faq-answer-4">
                     <span>What is the Anchor AI Recovery Coach?</span>
-                    <i class="fas fa-chevron-down"></i>
+                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
                 </button>
-                <div class="faq-answer">
+                <div class="faq-answer" id="faq-answer-4">
                     <p>Anchor is a 24/7 AI-powered recovery companion built into MyRecoveryPal. It provides personalized support, evidence-based coping strategies informed by CBT and mindfulness, and a non-judgmental space to talk through what you're feeling. Free members get 3 trial messages to experience it; Premium members get 20 messages per day. Anchor is not a replacement for professional medical or mental health treatment — if you are in crisis, please call 988.</p>
                 </div>
             </div>
 
             <div class="faq-item">
-                <button class="faq-question" onclick="this.parentElement.classList.toggle('active')" aria-expanded="false">
+                <button class="faq-question" onclick="this.parentElement.classList.toggle('active'); this.setAttribute('aria-expanded', this.parentElement.classList.contains('active'))" aria-expanded="false" aria-controls="faq-answer-5">
                     <span>Is MyRecoveryPal a replacement for professional treatment?</span>
-                    <i class="fas fa-chevron-down"></i>
+                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
                 </button>
-                <div class="faq-answer">
+                <div class="faq-answer" id="faq-answer-5">
                     <p>No. MyRecoveryPal is a peer support community and personal recovery tool — it is not a substitute for professional medical care, therapy, or detox programs. We strongly encourage members to work with licensed healthcare professionals and use our platform as an additional layer of support alongside their treatment. If you are in immediate crisis, call or text 988 (Suicide &amp; Crisis Lifeline) or text HOME to 741741.</p>
                 </div>
             </div>
@@ -1332,7 +1328,7 @@
         </div>
 
         <div class="blog-cta-wrap">
-            <a href="{% url 'blog:post_list' %}" class="btn-outline">View All Articles <i class="fas fa-arrow-right"></i></a>
+            <a href="{% url 'blog:post_list' %}" class="btn-outline">View All Articles <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
         </div>
     </div>
 </section>
