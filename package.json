@@ -24,6 +24,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aparajita/capacitor-biometric-auth": "^9.1.2",
     "@capacitor/android": "^7.4.4",
     "@capacitor/app": "^7.1.2",
     "@capacitor/browser": "^7.0.4",

@@ -1,4 +1,6 @@
 PODS:
+  - AparajitaCapacitorBiometricAuth (9.1.2):
+    - Capacitor
   - Capacitor (7.4.4):
     - CapacitorCordova
   - CapacitorApp (7.1.2):
@@ -28,6 +30,7 @@ PODS:
     - PurchasesHybridCommon (= 17.25.0)
 
 DEPENDENCIES:
+  - "AparajitaCapacitorBiometricAuth (from `../../node_modules/@aparajita/capacitor-biometric-auth`)"
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
   - "CapacitorBrowser (from `../../node_modules/@capacitor/browser`)"
@@ -47,6 +50,8 @@ SPEC REPOS:
     - RevenueCat
 
 EXTERNAL SOURCES:
+  AparajitaCapacitorBiometricAuth:
+    :path: "../../node_modules/@aparajita/capacitor-biometric-auth"
   Capacitor:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorApp:
@@ -73,6 +78,7 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@revenuecat/purchases-capacitor"
 
 SPEC CHECKSUMS:
+  AparajitaCapacitorBiometricAuth: c7edb43d80486150b81224d3ff7e950b37a3c2f1
   Capacitor: 358dd1c3fdd71d969547b17e159fd8a7736cb45f
   CapacitorApp: f01a913211780e0718dae9750442c3e23f96e106
   CapacitorBrowser: affdd32ab6a1822942eb55095b3c5ecf3f656a9d
@@ -88,6 +94,6 @@ SPEC CHECKSUMS:
   RevenueCat: eab035bbab271faccfef5c36eaff2a1ffef14dc0
   RevenuecatPurchasesCapacitor: fa376932f9967c7ab4b5eac477e824d90393b91a
 
-PODFILE CHECKSUM: 18bbc2eb537d342daecd30a25814df3a510f5c21
+PODFILE CHECKSUM: c28e4eda38ba9a6541ee0e586c233849f1001409
 
 COCOAPODS: 1.16.2
