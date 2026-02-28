@@ -229,21 +229,10 @@
     color: #3a3a3c;
 }
 
+/* Hide close button on native — tap overlay to dismiss (iOS convention) */
 .ios-native-app .mobile-menu-close,
 .android-native-app .mobile-menu-close {
-    background: #e5e5ea;
-    width: 30px;
-    height: 30px;
-    top: calc(14px + env(safe-area-inset-top, 0px));
-    right: 16px;
-}
-
-.ios-native-app .mobile-menu-close svg,
-.android-native-app .mobile-menu-close svg {
-    stroke: #8e8e93;
-    width: 16px;
-    height: 16px;
-    stroke-width: 2.5;
+    display: none;
 }
 
 /* Native grouped-list sections */
@@ -430,19 +419,7 @@
     color: #fff;
 }
 
-[data-theme="dark"] .ios-native-app .mobile-menu-close,
-[data-theme="dark"] .android-native-app .mobile-menu-close,
-.ios-native-app[data-theme="dark"] .mobile-menu-close,
-.android-native-app[data-theme="dark"] .mobile-menu-close {
-    background: #3a3a3c;
-}
-
-[data-theme="dark"] .ios-native-app .mobile-menu-close svg,
-[data-theme="dark"] .android-native-app .mobile-menu-close svg,
-.ios-native-app[data-theme="dark"] .mobile-menu-close svg,
-.android-native-app[data-theme="dark"] .mobile-menu-close svg {
-    stroke: #fff;
-}
+/* close button hidden on native — no dark mode override needed */
 
 [data-theme="dark"] .ios-native-app .mobile-menu-label,
 [data-theme="dark"] .android-native-app .mobile-menu-label,
