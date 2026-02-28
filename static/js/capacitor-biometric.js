@@ -198,4 +198,146 @@
         });
     })();
 
+    // ========================================
+    // Biometric Settings Toggles (Edit Profile / Settings)
+    // ========================================
+    // Injects "Security" section with Face ID toggles on profile/settings pages
+    (function() {
+        var path = window.location.pathname;
+        if (path.indexOf('/accounts/edit-profile/') !== 0 &&
+            path.indexOf('/accounts/settings/') !== 0) {
+            return;
+        }
+
+        // Wait for availability check to complete before rendering
+        MRPBiometric.checkAvailability().then(function(result) {
+            if (!result.isAvailable) return;
+
+            // Determine the label based on biometry type
+            var bioLabel = 'Face ID';
+            if (MRPBiometric.biometryType === 'touchId') {
+                bioLabel = 'Touch ID';
+            } else if (MRPBiometric.biometryType === 'fingerprintAuthentication') {
+                bioLabel = 'Fingerprint';
+            }
+
+            // Build the settings section HTML
+            var section = document.createElement('div');
+            section.className = 'form-section biometric-settings-section';
+            section.innerHTML =
+                '<h3><i class="fas fa-fingerprint" aria-hidden="true"></i> Security</h3>' +
+                '<div class="biometric-setting-row" id="biometricAppLockRow">' +
+                    '<div class="biometric-setting-info">' +
+                        '<div class="biometric-setting-label">Lock App with ' + bioLabel + '</div>' +
+                        '<div class="biometric-setting-desc">Require biometric auth on app launch</div>' +
+                    '</div>' +
+                    '<label class="biometric-switch">' +
+                        '<input type="checkbox" id="biometricAppLockToggle">' +
+                        '<span class="biometric-slider"></span>' +
+                    '</label>' +
+                '</div>' +
+                '<div class="biometric-setting-row" id="biometricJournalLockRow">' +
+                    '<div class="biometric-setting-info">' +
+                        '<div class="biometric-setting-label">Require ' + bioLabel + ' for Journal</div>' +
+                        '<div class="biometric-setting-desc">Extra protection for private entries</div>' +
+                    '</div>' +
+                    '<label class="biometric-switch">' +
+                        '<input type="checkbox" id="biometricJournalLockToggle">' +
+                        '<span class="biometric-slider"></span>' +
+                    '</label>' +
+                '</div>';
+
+            // Find the insertion point -- before the Invite Friends or Danger Zone section
+            var container = document.querySelector('.edit-profile-container');
+            if (!container) return;
+
+            // Insert before the form's button group or the Danger Zone
+            var dangerZone = container.querySelector('.form-section:last-child');
+            var form = container.querySelector('form');
+            if (form) {
+                // Insert as the last form-section before the btn-group inside the form
+                var btnGroup = form.querySelector('.btn-group');
+                if (btnGroup) {
+                    form.insertBefore(section, btnGroup);
+                } else {
+                    form.appendChild(section);
+                }
+            } else if (dangerZone) {
+                dangerZone.parentNode.insertBefore(section, dangerZone);
+            } else {
+                container.appendChild(section);
+            }
+
+            var appLockToggle = document.getElementById('biometricAppLockToggle');
+            var journalLockToggle = document.getElementById('biometricJournalLockToggle');
+            var journalRow = document.getElementById('biometricJournalLockRow');
+
+            // Load current state
+            MRPBiometric.isAppLockEnabled().then(function(enabled) {
+                appLockToggle.checked = enabled;
+                updateJournalRowState(enabled);
+            });
+
+            MRPBiometric.isJournalLockEnabled().then(function(enabled) {
+                journalLockToggle.checked = enabled;
+            });
+
+            function updateJournalRowState(appLockEnabled) {
+                if (appLockEnabled) {
+                    journalRow.style.opacity = '1';
+                    journalLockToggle.disabled = false;
+                } else {
+                    journalRow.style.opacity = '0.4';
+                    journalLockToggle.disabled = true;
+                }
+            }
+
+            // Wire up change events
+            appLockToggle.addEventListener('change', function() {
+                var enabled = appLockToggle.checked;
+
+                if (enabled) {
+                    // Verify biometric auth before enabling
+                    MRPBiometric.authenticate('Enable ' + bioLabel + ' lock').then(function() {
+                        MRPBiometric.setAppLockEnabled(true);
+                        updateJournalRowState(true);
+                        // Auto-enable journal lock when app lock is turned on
+                        journalLockToggle.checked = true;
+                        MRPBiometric.setJournalLockEnabled(true);
+                        if (window.MRPNative && window.MRPNative.hapticSuccess) {
+                            window.MRPNative.hapticSuccess();
+                        }
+                    }).catch(function() {
+                        // Auth failed -- revert toggle
+                        appLockToggle.checked = false;
+                        if (window.MRPNative && window.MRPNative.hapticWarning) {
+                            window.MRPNative.hapticWarning();
+                        }
+                    });
+                } else {
+                    MRPBiometric.setAppLockEnabled(false);
+                    updateJournalRowState(false);
+                    // Disable journal lock when app lock is turned off
+                    journalLockToggle.checked = false;
+                    MRPBiometric.setJournalLockEnabled(false);
+                    if (window.MRPNative && window.MRPNative.hapticMedium) {
+                        window.MRPNative.hapticMedium();
+                    }
+                }
+            });
+
+            journalLockToggle.addEventListener('change', function() {
+                var enabled = journalLockToggle.checked;
+                MRPBiometric.setJournalLockEnabled(enabled);
+                if (window.MRPNative) {
+                    if (enabled && window.MRPNative.hapticSuccess) {
+                        window.MRPNative.hapticSuccess();
+                    } else if (!enabled && window.MRPNative.hapticMedium) {
+                        window.MRPNative.hapticMedium();
+                    }
+                }
+            });
+        });
+    })();
+
 })();

@@ -72,6 +72,107 @@
     background: rgba(255, 255, 255, 0.35);
 }
 
+/* Biometric Settings Toggles */
+.biometric-settings-section h3 {
+    color: var(--primary-color, #1e4d8b);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.biometric-setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid #eee;
+    transition: opacity 0.2s;
+}
+
+.biometric-setting-row:last-child {
+    border-bottom: none;
+}
+
+.biometric-setting-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.biometric-setting-label {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-dark, #333);
+}
+
+.biometric-setting-desc {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 0.15rem;
+}
+
+/* Biometric toggle switch (iOS-style) */
+.biometric-switch {
+    position: relative;
+    display: inline-block;
+    width: 51px;
+    height: 31px;
+    flex-shrink: 0;
+}
+
+.biometric-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.biometric-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #ccc;
+    border-radius: 31px;
+    transition: 0.3s;
+}
+
+.biometric-slider:before {
+    content: "";
+    position: absolute;
+    height: 27px;
+    width: 27px;
+    left: 2px;
+    bottom: 2px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.biometric-switch input:checked + .biometric-slider {
+    background: var(--accent-green, #52b788);
+}
+
+.biometric-switch input:checked + .biometric-slider:before {
+    transform: translateX(20px);
+}
+
+/* Dark mode support for biometric settings */
+[data-theme="dark"] .biometric-setting-label {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .biometric-setting-desc {
+    color: #999;
+}
+
+[data-theme="dark"] .biometric-setting-row {
+    border-bottom-color: #333;
+}
+
+[data-theme="dark"] .biometric-slider {
+    background: #555;
+}
+
 /* Note: All color variables are defined in static/css/main.css */
 
 * {
