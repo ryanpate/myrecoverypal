@@ -284,11 +284,12 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 
 ### Mobile
 - **Capacitor 7.4.4** - Native wrapper (iOS + Android projects tracked in git)
-- **10 Capacitor plugins:** push-notifications, status-bar, haptics, share, app, keyboard, browser, local-notifications, preferences, RevenueCat
+- **12 Capacitor plugins:** push-notifications, status-bar, haptics, share, app, keyboard, browser, local-notifications, preferences, RevenueCat, biometric-auth
+- **6 native JS modules:** capacitor-native.js, capacitor-push.js, capacitor-iap.js, capacitor-biometric.js, capacitor-transitions.js, capacitor-offline.js
 - **Firebase Cloud Messaging** - Push notifications (Android configured)
 - **APNs** - iOS push notifications (backend ready, needs key deployment to Railway)
 - **Android:** Release AAB built and ready for Google Play upload
-- **iOS:** Native features layer complete, IAP integrated, ready for Xcode Archive + App Store submission
+- **iOS:** Native features complete (Face ID, tab bar, transitions, offline mode), IAP integrated, ready for Xcode Archive + App Store submission
 
 ---
 
@@ -608,8 +609,12 @@ High-volume keyword blog posts (83K combined monthly searches):
 - [x] iOS: Stripe UI hidden / IAP shown inside native app via `.stripe-only` / `.iap-only` CSS classes
 - [x] iOS: Templates updated — pricing.html, recovery_coach.html, subscription_management.html
 - [x] iOS: APNs key extraction in `start.sh` from `APNS_KEY_CONTENT` env var
-- [x] iOS: Capacitor plugins installed (haptics, share, app, keyboard, browser, local-notifications, preferences, RevenueCat)
+- [x] iOS: Capacitor plugins installed (haptics, share, app, keyboard, browser, local-notifications, preferences, RevenueCat, biometric-auth)
 - [x] iOS: `capacitor.config.json` updated with Keyboard + LocalNotifications config
+- [x] iOS: Face ID / biometric lock (`static/js/capacitor-biometric.js`) — app lock (5-min timeout), journal lock, settings toggles on edit profile page
+- [x] iOS: Native tab bar navigation — 5 tabs (Feed, Groups, Coach, Journal, More) replacing web bottom nav, with "More" bottom-sheet menu
+- [x] iOS: Page transitions + swipe gestures (`static/js/capacitor-transitions.js`) — edge swipe back, 250ms slide transitions, View Transition API support (iOS 18+), pull-to-refresh
+- [x] iOS: Offline mode (`static/js/capacitor-offline.js`) — IndexedDB cache for posts/journal, write queue with auto-flush on reconnect, fetch interceptor for cache-first reads
 
 #### Remaining - Manual Steps
 - [ ] **Android: Upload AAB to Google Play Console** (account ready)
@@ -638,7 +643,7 @@ High-volume keyword blog posts (83K combined monthly searches):
 - **Privacy policy:** `https://www.myrecoverypal.com/privacy/`
 - **Target age:** 17+ (references alcohol/drug use in recovery context)
 - **Keywords:** sobriety, recovery, sober, addiction, AA, NA, support, community, coach, tracker, journal, mental health, 12 step
-- **Apple review notes:** Emphasize native features (haptics, share sheet, push, keyboard, camera), Capacitor as legitimate native framework, IAP sandbox testing instructions, health disclaimer, block/report moderation
+- **Apple review notes:** Emphasize native features (Face ID lock, iOS tab bar, haptics, share sheet, push, swipe gestures, page transitions, offline mode, keyboard), Capacitor as legitimate native framework, IAP sandbox testing instructions, health disclaimer, block/report moderation
 
 #### iOS Native Features (Guideline 4.2 Compliance)
 | Feature | Plugin | File |
@@ -651,6 +656,12 @@ High-volume keyword blog posts (83K combined monthly searches):
 | Local notification scheduling | `@capacitor/local-notifications` | `capacitor-native.js` |
 | In-app purchases (StoreKit 2) | `@revenuecat/purchases-capacitor` | `capacitor-iap.js` |
 | Push notifications | `@capacitor/push-notifications` | `capacitor-push.js` |
+| Face ID / Touch ID lock (app + journal) | `@aparajita/capacitor-biometric-auth` | `capacitor-biometric.js` |
+| iOS tab bar navigation (5 tabs + More menu) | Pure CSS/JS | `capacitor-native.js` + `base.html` |
+| Page transitions (250ms slide) | Pure CSS/JS + View Transition API | `capacitor-transitions.js` |
+| Edge swipe back gesture | Pure JS | `capacitor-transitions.js` |
+| Pull-to-refresh (enhanced) | Pure JS | `capacitor-transitions.js` |
+| Offline mode (IndexedDB + write queue) | Pure JS | `capacitor-offline.js` |
 
 #### iOS IAP Architecture
 ```
@@ -826,9 +837,12 @@ templates/                # Global templates
 static/
 ├── css/base-inline.css   # Main stylesheet (extracted from base.html)
 └── js/
-    ├── capacitor-native.js  # Native features (haptics, share, keyboard, app state)
-    ├── capacitor-push.js    # Push notification registration + deep linking
-    └── capacitor-iap.js     # iOS StoreKit 2 IAP via RevenueCat
+    ├── capacitor-native.js      # Native features (haptics, share, keyboard, app state, tab bar)
+    ├── capacitor-push.js        # Push notification registration + deep linking
+    ├── capacitor-iap.js         # iOS StoreKit 2 IAP via RevenueCat
+    ├── capacitor-biometric.js   # Face ID / Touch ID lock (app + journal + settings)
+    ├── capacitor-transitions.js # Page transitions, swipe gestures, pull-to-refresh
+    └── capacitor-offline.js     # IndexedDB cache, write queue, offline detection
 ios/                       # Capacitor iOS project (tracked in git)
 android/                   # Capacitor Android project (tracked in git)
 ```
@@ -973,6 +987,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-02-28:** iOS native features layer — Face ID, tab bar, transitions, offline mode. Installed `@aparajita/capacitor-biometric-auth` v9.1.2 (Capacitor 7 compatible). Created `static/js/capacitor-biometric.js` — two-layer biometric protection: app lock (auto-locks after 5+ min background, Face ID/Touch ID prompt with device passcode fallback) and journal lock (separate biometric gate on `/journal/` pages, redirects on denial). iOS-style toggle switches injected on edit-profile page via JS (adapts labels to detected biometry type — Face ID/Touch ID/Fingerprint). Created iOS-style 5-tab bottom navigation bar (Feed, Groups, Coach, Journal, More) replacing the web hamburger menu on native. "More" tab opens a bottom-sheet menu with 8 items (Profile, Milestones, Community, Challenges, Messages, Progress, Settings, Subscription) styled as iOS grouped-list with chevrons. Web bottom nav preserved unchanged via `.web-bottom-nav` class scoping. Hamburger hidden on native via JS. Created `static/js/capacitor-transitions.js` — edge swipe back gesture (30px edge zone, 80px threshold, visual chevron indicator), 250ms CSS page transitions matching iOS UIKit timing (slideInRight/slideOutLeft/slideOutRight), View Transition API support for iOS 18+ with CSS fallback, enhanced pull-to-refresh with rotation physics (120px threshold). Click delegation intercepts internal links for transitions but excludes tab bar and More menu. Created `static/js/capacitor-offline.js` — IndexedDB database (`mrp_offline`) with 5 object stores (posts, journal, checkins, write_queue, meta), social feed post caching (last 50), journal entry caching, write queue for offline mutations (auto-flushes on reconnect and app foreground), fetch interceptor (cache-first for GET `/social-feed/posts/`, queues non-GET when offline), amber offline banner. All features guard on `window.Capacitor.isNativePlatform()` — zero impact on web. All CSS scoped to `.ios-native-app` / `.android-native-app` body classes. Full dark mode support for tab bar, More menu, and biometric settings. Xcode build verified (BUILD SUCCEEDED). Total: 12 Capacitor plugins, 6 native JS modules.
 - **2026-02-28:** iOS App Store publication — native features, IAP, and APNs. Installed 8 new Capacitor plugins (`@capacitor/haptics`, `share`, `app`, `keyboard`, `browser`, `local-notifications`, `preferences`, `@revenuecat/purchases-capacitor`) bringing total to 10 iOS plugins. Created `static/js/capacitor-native.js` — native features bridge providing haptic feedback on like/check-in/share/follow actions, native share sheet override, keyboard height tracking (hides bottom nav via `.keyboard-open` CSS class), Android back button handler, app state change listener (refreshes notification count on foreground), platform detection (`ios-native-app` body class). Created `static/js/capacitor-iap.js` — RevenueCat/StoreKit 2 IAP bridge handling purchase flow with bottom sheet modal, restore purchases, entitlement checking, and server-side sync to Django. Added `ios_subscription_sync` POST endpoint at `/accounts/api/ios-subscription/sync/` that receives RevenueCat `customerInfo`, updates `Subscription` model with `subscription_source='apple'`, and does NOT overwrite active Stripe subscriptions. Added `subscription_source` field (stripe/apple/manual) to `Subscription` model (migration 0020). Added `.stripe-only` / `.iap-only` CSS toggle classes to `base-inline.css` — Stripe UI hidden and IAP UI shown when `body.ios-native-app` is present. Updated `pricing.html` (Stripe buttons wrapped with `.stripe-only`, IAP + Restore Purchases buttons added with `.iap-only`, Stripe checkout script wrapped), `recovery_coach.html` (upgrade prompts use IAP on iOS), `subscription_management.html` ("Manage in iOS Settings" replaces Stripe portal on iOS). Added `NSFaceIDUsageDescription` to `Info.plist`. Updated `start.sh` with APNs key extraction from `APNS_KEY_CONTENT` env var. Added `PyJWT` and `python-dateutil` to `requirements.txt`. Added RevenueCat API key meta tag and Smart App Banner placeholder to `base.html`. Updated `capacitor.config.json` with Keyboard and LocalNotifications plugin config. All 3 Railway services (web, celery-worker, attractive-forgiveness) deployed successfully.
 - **2026-02-25:** Conversion-focused landing page redesign (`apps/core/templates/core/index.html`). Replaced text-heavy homepage with visual, screenshot-driven design. New split-layout hero with `feed.webp` screenshot showing MyRecoveryCircle product. Added trust strip, 3-step "How It Works" section, dedicated MyRecoveryCircle showcase (with `create-post.webp` screenshot + feature checklist), dedicated Anchor AI Coach showcase (dark blue gradient, logo, "Try Anchor Free" CTA, professional disclaimer). Replaced 7 feature cards (most with empty icons) with 6 cards all using Font Awesome icons. Added visible FAQ accordion (5 items, previously only in JSON-LD schema). Reduced blog section from 6 to 3 highest-traffic articles. Removed SEO prose block, 8-card "Explore Resources" grid, and generic "About Our Mission" section — keywords redistributed into new sections naturally. Accessibility: `aria-expanded` dynamically updates on FAQ toggle, `aria-hidden="true"` on all 27 FA icons, `aria-controls` on FAQ buttons. Performance: `loading="eager"` + `fetchpriority="high"` on hero LCP image, `loading="lazy"` on below-fold images, `width`/`height` attributes to prevent CLS. Replaced `direction: rtl` CSS layout hack with `order` property. All JSON-LD structured data preserved unchanged.
 - **2026-02-24:** Reduced Railway network egress to lower hosting costs. Added `GZipMiddleware` for ~70% compression on all HTML/JSON responses. Extracted 54KB inline CSS from `base.html` (3,290→1,139 lines) into cacheable `static/css/base-inline.css`. Converted 6 demo PNG screenshots (9.5MB) to WebP (503KB, 95% smaller) with `<picture>` fallback in `demo.html`. Removed dead AdSense script (~100KB wasted JS per page). Moved Chart.js (~200KB) from global `base.html` to only `progress.html` and `journal/stats.html` via `extra_js` block. Reduced notification polling from 30s to 120s (75% fewer API requests). Moved session storage from PostgreSQL to Redis (`SESSION_ENGINE = cache`). Set `WHITENOISE_MAX_AGE = 31536000` for 1-year browser caching of static assets. Homepage HTML response now ~15KB gzipped (was 113KB+ uncompressed).
