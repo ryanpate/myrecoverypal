@@ -227,4 +227,42 @@
         MRPNative.share(title, text, url);
     }, true);
 
+    // ========================================
+    // Native Tab Bar — More Menu Logic
+    // ========================================
+    var moreTab = document.getElementById('nativeMoreTab');
+    var moreOverlay = document.getElementById('nativeMoreOverlay');
+    var moreClose = document.getElementById('nativeMoreClose');
+
+    if (moreTab && moreOverlay) {
+        moreTab.addEventListener('click', function(e) {
+            e.preventDefault();
+            moreOverlay.style.display = 'flex';
+            MRPNative.hapticLight();
+        });
+
+        moreOverlay.addEventListener('click', function(e) {
+            if (e.target === moreOverlay) {
+                moreOverlay.style.display = 'none';
+            }
+        });
+
+        if (moreClose) {
+            moreClose.addEventListener('click', function() {
+                moreOverlay.style.display = 'none';
+            });
+        }
+    }
+
+    // Haptic on native tab switch
+    var tabBar = document.getElementById('nativeTabBar');
+    if (tabBar) {
+        tabBar.addEventListener('click', function(e) {
+            var tab = e.target.closest('.native-tab');
+            if (tab && tab.id !== 'nativeMoreTab') {
+                MRPNative.hapticLight();
+            }
+        });
+    }
+
 })();
