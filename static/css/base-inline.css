@@ -173,6 +173,175 @@
     background: #555;
 }
 
+/* ========================================
+   Native Tab Bar (iOS/Android)
+   ======================================== */
+
+/* Hide native tab bar on web */
+.native-tab-bar { display: none !important; }
+.native-more-overlay { display: none !important; }
+
+/* Show native tab bar, hide web bottom nav on native */
+.ios-native-app .web-bottom-nav,
+.android-native-app .web-bottom-nav { display: none !important; }
+
+.ios-native-app .native-tab-bar,
+.android-native-app .native-tab-bar {
+    display: flex !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-lighter, #ffffff);
+    border-top: 0.5px solid rgba(0, 0, 0, 0.15);
+    padding: 6px 0 calc(6px + var(--safe-area-inset-bottom, 0px));
+    z-index: 10000;
+    justify-content: space-around;
+}
+
+.native-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #8e8e93;
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 2px 0;
+    flex: 1;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.15s;
+}
+
+.native-tab i {
+    font-size: 1.3rem;
+    margin-bottom: 2px;
+}
+
+.native-tab.active {
+    color: var(--primary-dark, #1e4d8b);
+}
+
+.native-tab:active {
+    opacity: 0.6;
+}
+
+/* Dark mode */
+[data-theme="dark"] .native-tab-bar {
+    background: #1c1c1e;
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+[data-theme="dark"] .native-tab { color: #8e8e93; }
+[data-theme="dark"] .native-tab.active { color: #64d2ff; }
+
+/* Hide hamburger on native */
+.ios-native-app .hamburger,
+.android-native-app .hamburger { display: none !important; }
+
+/* Adjust body padding for native tab bar */
+.ios-native-app main,
+.android-native-app main {
+    padding-bottom: calc(60px + var(--safe-area-inset-bottom, 0px));
+}
+
+/* ========================================
+   Native "More" Menu
+   ======================================== */
+
+.ios-native-app .native-more-overlay[style*="display: flex"],
+.android-native-app .native-more-overlay[style*="display: flex"] {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 10001;
+    background: rgba(0, 0, 0, 0.4);
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.native-more-menu {
+    background: var(--bg-lighter, #f2f2f7);
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 0 0 calc(16px + var(--safe-area-inset-bottom, 0px));
+    -webkit-overflow-scrolling: touch;
+}
+
+.native-more-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px 12px;
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+}
+
+.native-more-header h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.native-more-header button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #8e8e93;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+.native-more-list {
+    padding: 8px 16px;
+}
+
+.native-more-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    background: white;
+    text-decoration: none;
+    color: var(--text-dark);
+    font-size: 1rem;
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.native-more-item:first-child { border-radius: 12px 12px 0 0; }
+.native-more-item:last-child { border-radius: 0 0 12px 12px; border-bottom: none; }
+
+.native-more-item i:first-child {
+    width: 28px;
+    text-align: center;
+    color: var(--primary-dark, #1e4d8b);
+    margin-right: 14px;
+    font-size: 1.1rem;
+}
+
+.native-more-item span {
+    flex: 1;
+}
+
+.native-chevron {
+    color: #c7c7cc;
+    font-size: 0.8rem;
+}
+
+.native-more-item:active {
+    background: #e5e5ea;
+}
+
+/* Dark mode More menu */
+[data-theme="dark"] .native-more-menu { background: #1c1c1e; }
+[data-theme="dark"] .native-more-item { background: #2c2c2e; color: #fff; }
+[data-theme="dark"] .native-more-item:active { background: #3a3a3c; }
+[data-theme="dark"] .native-chevron { color: #48484a; }
+
+/* Hide keyboard-open for native tab bar too */
+.keyboard-open .native-tab-bar { display: none !important; }
+
 /* Note: All color variables are defined in static/css/main.css */
 
 * {
