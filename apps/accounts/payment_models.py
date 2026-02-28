@@ -56,6 +56,18 @@ class Subscription(models.Model):
         blank=True
     )
 
+    SUBSCRIPTION_SOURCE_CHOICES = [
+        ('stripe', 'Stripe (Web)'),
+        ('apple', 'Apple (iOS IAP)'),
+        ('manual', 'Manual'),
+    ]
+
+    subscription_source = models.CharField(
+        max_length=10,
+        choices=SUBSCRIPTION_SOURCE_CHOICES,
+        default='stripe'
+    )
+
     # Stripe IDs
     stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
     stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)

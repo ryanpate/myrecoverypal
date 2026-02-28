@@ -31,6 +31,13 @@
     <meta name="theme-color" content="#1e4d8b">
     <meta name="mobile-web-app-capable" content="yes">
 
+    <!-- Smart App Banner (shows "Open in App" on iOS Safari) -->
+    <!-- Replace YOUR_APP_STORE_ID with actual ID after App Store approval -->
+    {% comment %}<meta name="apple-itunes-app" content="app-id=YOUR_APP_STORE_ID">{% endcomment %}
+
+    <!-- RevenueCat API Key for iOS IAP (set via settings) -->
+    {% if REVENUECAT_IOS_API_KEY %}<meta name="revenuecat-api-key" content="{{ REVENUECAT_IOS_API_KEY }}">{% endif %}
+
     <!-- Page Title -->
     <title>{% block title %}{{ seo_title|default:"MyRecoveryPal - Your Recovery Support Community" }}{% endblock %}</title>
 
@@ -1091,8 +1098,12 @@
         }
     </script>
 
+    <!-- Capacitor Native Features (native app only) -->
+    <script src="{% static 'js/capacitor-native.js' %}"></script>
     <!-- Capacitor Push Notifications (native app only) -->
     <script src="{% static 'js/capacitor-push.js' %}"></script>
+    <!-- Capacitor In-App Purchases (iOS only) -->
+    <script src="{% static 'js/capacitor-iap.js' %}"></script>
 
     <!-- Additional Scripts -->
     {% block extra_js %}{% endblock %}

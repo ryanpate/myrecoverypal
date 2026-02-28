@@ -25,10 +25,18 @@
   "license": "ISC",
   "dependencies": {
     "@capacitor/android": "^7.4.4",
+    "@capacitor/app": "^7.1.2",
+    "@capacitor/browser": "^7.0.4",
     "@capacitor/cli": "^7.4.4",
     "@capacitor/core": "^7.4.4",
+    "@capacitor/haptics": "^7.0.3",
     "@capacitor/ios": "^7.4.4",
+    "@capacitor/keyboard": "^7.0.4",
+    "@capacitor/local-notifications": "^7.0.5",
+    "@capacitor/preferences": "^7.0.4",
     "@capacitor/push-notifications": "^7.0.3",
-    "@capacitor/status-bar": "^7.0.1"
+    "@capacitor/share": "^7.0.4",
+    "@capacitor/status-bar": "^7.0.1",
+    "@revenuecat/purchases-capacitor": "^11.3.2"
   }
 }

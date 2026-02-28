@@ -1285,12 +1285,15 @@
                 <div class="upgrade-card-text">
                     Upgrade to Premium for 20 messages per day with Anchor, plus unlimited groups, advanced analytics, and more.
                 </div>
-                <a href="{% url 'accounts:pricing' %}" class="btn-upgrade">
+                <a href="{% url 'accounts:pricing' %}" class="btn-upgrade stripe-only">
                     <i class="fas fa-crown"></i> Upgrade to Premium
                 </a>
-                <a href="{% url 'accounts:pricing' %}" class="upgrade-trial-link">
+                <a href="{% url 'accounts:pricing' %}" class="upgrade-trial-link stripe-only">
                     Try Premium Free for 14 Days
                 </a>
+                <button class="btn-upgrade iap-only" onclick="if(window.MRPIAP) window.MRPIAP.showPurchaseUI();" style="border: none; cursor: pointer;">
+                    <i class="fas fa-crown"></i> Subscribe with Apple
+                </button>
             </div>
         </div>
         {% else %}
@@ -1560,7 +1563,11 @@
                             var banner = document.createElement('div');
                             banner.id = 'upgradeBanner';
                             banner.style.cssText = 'background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 0.75rem 1rem; text-align: center; font-size: 0.9rem; font-weight: 500;';
-                            banner.innerHTML = 'Last free message! <a href="{% url "accounts:pricing" %}" style="color: white; font-weight: 700; text-decoration: underline;">Upgrade for 20 messages/day</a>';
+                            if (window.MRPIAP) {
+                                banner.innerHTML = 'Last free message! <a href="#" onclick="if(window.MRPIAP) window.MRPIAP.showPurchaseUI(); return false;" style="color: white; font-weight: 700; text-decoration: underline;">Upgrade for 20 messages/day</a>';
+                            } else {
+                                banner.innerHTML = 'Last free message! <a href="{% url "accounts:pricing" %}" style="color: white; font-weight: 700; text-decoration: underline;">Upgrade for 20 messages/day</a>';
+                            }
                             inputArea.parentNode.insertBefore(banner, inputArea);
                         }
                     }

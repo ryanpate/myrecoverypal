@@ -181,6 +181,7 @@ urlpatterns = [
     path('subscription/reactivate/', payment_views.reactivate_subscription, name='reactivate_subscription'),
     path('subscription/portal/', payment_views.create_customer_portal_session, name='customer_portal'),
     path('webhook/stripe/', payment_views.stripe_webhook, name='stripe_webhook'),
+    path('api/ios-subscription/sync/', payment_views.ios_subscription_sync, name='ios_subscription_sync'),
 
     # AI Recovery Coach
     path('recovery-coach/', views.recovery_coach, name='recovery_coach'),

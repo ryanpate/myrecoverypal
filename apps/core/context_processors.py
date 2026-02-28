@@ -30,4 +30,5 @@ def seo_defaults(request):
         'site_name': 'MyRecoveryPal',
         'twitter_site': '@myrecoverypal',  # Update with your Twitter handle
         'twitter_creator': '@myrecoverypal',  # Update with your Twitter handle
+        'REVENUECAT_IOS_API_KEY': getattr(settings, 'REVENUECAT_IOS_API_KEY', ''),
     }

@@ -20,6 +20,14 @@
       "style": "Light",
       "backgroundColor": "#1e4d8b",
       "overlaysWebView": false
+    },
+    "Keyboard": {
+      "resize": "body",
+      "resizeOnFullScreen": true
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon",
+      "iconColor": "#1e4d8b"
     }
   }
 }

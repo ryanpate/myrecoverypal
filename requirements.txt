@@ -54,6 +54,10 @@ whitenoise==6.6.0
 # Push notifications (FCM for Android, APNs for iOS)
 firebase-admin==6.5.0
 httpx[http2]==0.27.0  # HTTP/2 client for APNs
+PyJWT==2.8.0  # JWT tokens for APNs authentication
 
 # AI Recovery Coach
 anthropic>=0.42.0
+
+# Date parsing (iOS subscription sync)
+python-dateutil==2.8.2

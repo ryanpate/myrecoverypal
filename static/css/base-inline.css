@@ -4,7 +4,23 @@
     --safe-area-inset-right: env(safe-area-inset-right);
     --safe-area-inset-bottom: env(safe-area-inset-bottom);
     --safe-area-inset-left: env(safe-area-inset-left);
+    --keyboard-height: 0px;
 }
+
+/* ========================================
+   Capacitor Native App Overrides
+   ======================================== */
+
+/* Hide bottom nav and sticky CTA when keyboard is open */
+.keyboard-open .mobile-bottom-nav { display: none !important; }
+.keyboard-open .mobile-sticky-cta { display: none !important; }
+
+/* Hide Stripe-only elements inside iOS native app */
+.ios-native-app .stripe-only { display: none !important; }
+
+/* Show IAP-only elements only inside iOS native app */
+.iap-only { display: none !important; }
+.ios-native-app .iap-only { display: block !important; }
 
 /* Note: All color variables are defined in static/css/main.css */
 

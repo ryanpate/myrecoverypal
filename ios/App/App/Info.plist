@@ -49,6 +49,8 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>NSFaceIDUsageDescription</key>
+	<string>MyRecoveryPal can use Face ID to protect your private journal entries.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>MyRecoveryPal needs camera access to take photos for your posts and profile.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

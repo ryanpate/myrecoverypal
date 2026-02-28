@@ -49,7 +49,8 @@
 
                         {% if subscription.is_premium or subscription.is_pro %}
                             <hr>
-                            <div class="btn-group-vertical btn-group-sm w-100" role="group">
+                            <!-- Stripe management (hidden on iOS) -->
+                            <div class="btn-group-vertical btn-group-sm w-100 stripe-only" role="group">
                                 {% if subscription.can_upgrade %}
                                     <a href="{% url 'accounts:pricing' %}" class="btn btn-primary">
                                         <i class="fas fa-arrow-up"></i> Upgrade Plan
@@ -72,6 +73,12 @@
                                         <i class="fas fa-times"></i> Cancel Subscription
                                     </button>
                                 {% endif %}
+                            </div>
+                            <!-- iOS IAP management (shown only on iOS) -->
+                            <div class="btn-group-vertical btn-group-sm w-100 iap-only" role="group">
+                                <button class="btn btn-outline-primary" onclick="if(window.MRPIAP) window.MRPIAP.manageSubscription();">
+                                    <i class="fas fa-cog"></i> Manage in iOS Settings
+                                </button>
                             </div>
 
                             {% if subscription.canceled_at %}

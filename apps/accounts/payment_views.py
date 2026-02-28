@@ -478,6 +478,57 @@ def reactivate_subscription(request):
 
 
 @login_required
+@require_POST
+def ios_subscription_sync(request):
+    """
+    Sync iOS in-app purchase subscription state from RevenueCat.
+    Called by capacitor-iap.js after purchase/restore.
+    """
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    is_premium = data.get('is_premium', False)
+    product_id = data.get('product_id')
+    expires_date = data.get('expires_date')
+
+    # Get or create subscription record
+    subscription, created = Subscription.objects.get_or_create(
+        user=request.user,
+        defaults={'tier': 'free', 'status': 'active'}
+    )
+
+    # Only update if this is an Apple-sourced subscription
+    # Don't overwrite active Stripe subscriptions
+    if subscription.subscription_source == 'stripe' and subscription.is_premium():
+        logger.info(f'Skipping iOS sync for user {request.user.id} — active Stripe subscription')
+        return JsonResponse({'status': 'skipped', 'reason': 'active_stripe_subscription'})
+
+    if is_premium:
+        subscription.tier = 'premium'
+        subscription.status = 'active'
+        subscription.subscription_source = 'apple'
+        if expires_date:
+            try:
+                from dateutil.parser import parse as parse_date
+                subscription.current_period_end = parse_date(expires_date)
+            except (ValueError, ImportError):
+                pass
+        subscription.save()
+        logger.info(f'iOS subscription activated for user {request.user.id}')
+    else:
+        # Only downgrade if the subscription was Apple-sourced
+        if subscription.subscription_source == 'apple':
+            subscription.tier = 'free'
+            subscription.status = 'canceled'
+            subscription.save()
+            logger.info(f'iOS subscription expired for user {request.user.id}')
+
+    return JsonResponse({'status': 'ok', 'is_premium': is_premium})
+
+
+@login_required
 def create_customer_portal_session(request):
     """
     Create Stripe Customer Portal session for managing payment methods

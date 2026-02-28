@@ -238,10 +238,16 @@
                         {% if user_subscription.tier == 'premium' and user_subscription.is_active %}
                             <button class="btn btn-light btn-block" disabled>Current Plan</button>
                         {% else %}
-                            <button class="btn btn-light btn-block subscribe-btn"
+                            <!-- Stripe button (hidden on iOS native app via CSS) -->
+                            <button class="btn btn-light btn-block subscribe-btn stripe-only"
                                     data-plan-id="{{ plan.id }}"
                                     data-plan-name="{{ plan.name }}">
                                 Start 14-Day Free Trial
+                            </button>
+                            <!-- IAP button (shown only on iOS native app via CSS) -->
+                            <button class="btn btn-light btn-block iap-only iap-subscribe-btn"
+                                    onclick="if(window.MRPIAP) window.MRPIAP.showPurchaseUI();">
+                                Subscribe with Apple
                             </button>
                         {% endif %}
                     </div>
@@ -322,7 +328,8 @@
                     </div>
                     <div id="collapse4" class="collapse" data-parent="#faqAccordion">
                         <div class="card-body">
-                            We accept all major credit cards (Visa, Mastercard, American Express, Discover) through our secure payment processor, Stripe.
+                            <span class="stripe-only">We accept all major credit cards (Visa, Mastercard, American Express, Discover) through our secure payment processor, Stripe.</span>
+                            <span class="iap-only">Subscriptions are processed securely through your Apple ID account. You can manage or cancel your subscription in iOS Settings at any time.</span>
                         </div>
                     </div>
                 </div>
@@ -331,7 +338,15 @@
     </div>
 </div>
 
-<!-- Stripe Checkout Integration -->
+<!-- Restore Purchases (iOS only) -->
+<div class="text-center iap-only" style="margin-top: -1rem; margin-bottom: 2rem;">
+    <button class="btn btn-link text-muted" onclick="if(window.MRPIAP) window.MRPIAP.restorePurchases().then(function(r){ if(window.MRPIAP.isPremium) window.location.reload(); else alert('No previous purchases found.'); });">
+        <i class="fas fa-redo"></i> Restore Previous Purchases
+    </button>
+</div>
+
+<!-- Stripe Checkout Integration (hidden on iOS native app) -->
+<div class="stripe-only">
 <script src="https://js.stripe.com/v3/"></script>
 <script>
     const stripe = Stripe('{{ stripe_publishable_key }}');
@@ -377,4 +392,5 @@
         });
     });
 </script>
+</div>
 {% endblock %}
