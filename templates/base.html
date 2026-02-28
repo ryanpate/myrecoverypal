@@ -144,6 +144,18 @@
 </head>
 
 <body>
+    <!-- Biometric Lock Screen (native app only -- hidden by default) -->
+    <div id="biometricLockScreen" class="biometric-lock-screen" style="display: none;">
+        <div class="biometric-lock-content">
+            <img src="{% static 'images/logo.svg' %}" alt="MyRecoveryPal" class="biometric-lock-logo">
+            <h2>MyRecoveryPal</h2>
+            <p>Tap to unlock</p>
+            <button id="biometricUnlockBtn" class="biometric-unlock-btn">
+                <i class="fas fa-fingerprint" aria-hidden="true"></i> Unlock
+            </button>
+        </div>
+    </div>
+
     <!-- Skip to main content link for accessibility -->
     <a href="#main" class="skip-link">Skip to main content</a>
 
@@ -1104,6 +1116,90 @@
     <script src="{% static 'js/capacitor-push.js' %}"></script>
     <!-- Capacitor In-App Purchases (iOS only) -->
     <script src="{% static 'js/capacitor-iap.js' %}"></script>
+    <!-- Capacitor Biometric Auth (native app only) -->
+    <script src="{% static 'js/capacitor-biometric.js' %}"></script>
+
+    <!-- Biometric App Lock behavior (native app only) -->
+    <script>
+    (function() {
+        'use strict';
+        // Only run inside Capacitor native shell
+        if (!window.Capacitor || !window.Capacitor.isNativePlatform()) return;
+
+        var lockScreen = document.getElementById('biometricLockScreen');
+        var unlockBtn = document.getElementById('biometricUnlockBtn');
+        if (!lockScreen || !unlockBtn) return;
+
+        function showLockScreen() {
+            lockScreen.style.display = 'flex';
+        }
+
+        function hideLockScreen() {
+            lockScreen.style.display = 'none';
+        }
+
+        function attemptUnlock() {
+            if (!window.MRPBiometric) {
+                hideLockScreen();
+                return;
+            }
+            window.MRPBiometric.authenticate('Unlock MyRecoveryPal').then(function() {
+                hideLockScreen();
+                if (window.MRPNative && window.MRPNative.hapticSuccess) {
+                    window.MRPNative.hapticSuccess();
+                }
+            }).catch(function() {
+                // Authentication failed or cancelled -- keep lock screen visible
+                console.log('[Biometric] Unlock failed or cancelled');
+            });
+        }
+
+        // Tap Unlock button to retry
+        unlockBtn.addEventListener('click', function() {
+            attemptUnlock();
+        });
+
+        // On page load: check if we should lock
+        function checkInitialLock() {
+            if (!window.MRPBiometric) return;
+            window.MRPBiometric.shouldLockOnResume().then(function(shouldLock) {
+                if (shouldLock) {
+                    showLockScreen();
+                    attemptUnlock();
+                }
+            });
+        }
+
+        // Wait for MRPBiometric to be ready (it loads in the script above)
+        if (window.MRPBiometric) {
+            checkInitialLock();
+        } else {
+            // Small delay to allow biometric script to initialize
+            setTimeout(checkInitialLock, 100);
+        }
+
+        // Listen for app state changes to track background time and re-lock
+        var AppPlugin = window.Capacitor.Plugins.App;
+        if (AppPlugin) {
+            AppPlugin.addListener('appStateChange', function(state) {
+                if (!window.MRPBiometric) return;
+
+                if (!state.isActive) {
+                    // App going to background -- record timestamp
+                    window.MRPBiometric.setLastBackground();
+                } else {
+                    // App coming to foreground -- check if we should lock
+                    window.MRPBiometric.shouldLockOnResume().then(function(shouldLock) {
+                        if (shouldLock) {
+                            showLockScreen();
+                            attemptUnlock();
+                        }
+                    });
+                }
+            });
+        }
+    })();
+    </script>
 
     <!-- Additional Scripts -->
     {% block extra_js %}{% endblock %}
