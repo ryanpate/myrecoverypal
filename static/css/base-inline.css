@@ -235,6 +235,34 @@
     display: none;
 }
 
+/* Replace CSS-drawn hamburger lines with Font Awesome icon on native */
+.ios-native-app .hamburger-line,
+.android-native-app .hamburger-line {
+    display: none !important;
+}
+
+.ios-native-app .hamburger,
+.android-native-app .hamburger {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.ios-native-app .hamburger::before,
+.android-native-app .hamburger::before {
+    content: '\f0c9'; /* fa-bars */
+    font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 1.25rem;
+    color: var(--primary-dark, #1e4d8b);
+}
+
+/* When menu is open, show X icon instead of bars */
+.ios-native-app .hamburger.active::before,
+.android-native-app .hamburger.active::before {
+    content: '\f00d'; /* fa-xmark */
+}
+
 /* Native grouped-list sections */
 .ios-native-app .mobile-menu-nav,
 .android-native-app .mobile-menu-nav {
