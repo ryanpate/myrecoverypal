@@ -17,6 +17,10 @@
     // Add platform class to body for CSS targeting
     document.body.classList.add(platform + '-native-app');
 
+    // Hide hamburger menu on native (replaced by tab bar)
+    var hamburger = document.getElementById('hamburgerBtn');
+    if (hamburger) hamburger.style.display = 'none';
+
     // ========================================
     // Native Features API (window.MRPNative)
     // ========================================
