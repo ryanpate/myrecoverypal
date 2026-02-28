@@ -231,12 +231,19 @@
 
 .ios-native-app .mobile-menu-close,
 .android-native-app .mobile-menu-close {
-    background: rgba(0, 0, 0, 0.06);
+    background: #e5e5ea;
+    width: 30px;
+    height: 30px;
+    top: calc(14px + env(safe-area-inset-top, 0px));
+    right: 16px;
 }
 
 .ios-native-app .mobile-menu-close svg,
 .android-native-app .mobile-menu-close svg {
-    stroke: #3a3a3c;
+    stroke: #8e8e93;
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.5;
 }
 
 /* Native grouped-list sections */
@@ -427,7 +434,7 @@
 [data-theme="dark"] .android-native-app .mobile-menu-close,
 .ios-native-app[data-theme="dark"] .mobile-menu-close,
 .android-native-app[data-theme="dark"] .mobile-menu-close {
-    background: rgba(255, 255, 255, 0.1);
+    background: #3a3a3c;
 }
 
 [data-theme="dark"] .ios-native-app .mobile-menu-close svg,
