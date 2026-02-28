@@ -173,6 +173,332 @@
     background: #555;
 }
 
+/* ========================================
+   Native Menu Styling (iOS/Android)
+   Restyled hamburger menu for native feel.
+   Web version completely unchanged.
+   ======================================== */
+
+/* Blur backdrop on native */
+.ios-native-app .mobile-nav-overlay.active,
+.android-native-app .mobile-nav-overlay.active {
+    background: rgba(0, 0, 0, 0.3);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+/* Wider menu panel with frosted glass on native */
+.ios-native-app .mobile-slide-menu,
+.android-native-app .mobile-slide-menu {
+    width: 300px;
+    right: -300px;
+    background: #f2f2f7;
+    box-shadow: -4px 0 30px rgba(0, 0, 0, 0.15);
+    padding-top: env(safe-area-inset-top, 0px);
+}
+
+.ios-native-app .mobile-slide-menu.active,
+.android-native-app .mobile-slide-menu.active {
+    transform: translateX(-300px);
+}
+
+/* Native menu header — subtle, no gradient */
+.ios-native-app .mobile-menu-header,
+.android-native-app .mobile-menu-header {
+    background: transparent;
+    padding: calc(12px + env(safe-area-inset-top, 0px)) 20px 16px;
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+}
+
+.ios-native-app .mobile-menu-user-info h3,
+.android-native-app .mobile-menu-user-info h3 {
+    color: #000;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.ios-native-app .mobile-menu-user-info p,
+.android-native-app .mobile-menu-user-info p {
+    color: #8e8e93;
+    font-size: 0.85rem;
+}
+
+.ios-native-app .mobile-menu-avatar,
+.android-native-app .mobile-menu-avatar {
+    background: #e5e5ea;
+    color: #3a3a3c;
+}
+
+.ios-native-app .mobile-menu-close,
+.android-native-app .mobile-menu-close {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.ios-native-app .mobile-menu-close svg,
+.android-native-app .mobile-menu-close svg {
+    stroke: #3a3a3c;
+}
+
+/* Native grouped-list sections */
+.ios-native-app .mobile-menu-nav,
+.android-native-app .mobile-menu-nav {
+    padding: 0 16px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.ios-native-app .mobile-menu-section,
+.android-native-app .mobile-menu-section {
+    padding: 0;
+    border-bottom: none;
+    margin-top: 20px;
+}
+
+.ios-native-app .mobile-menu-section:first-child,
+.android-native-app .mobile-menu-section:first-child {
+    margin-top: 12px;
+}
+
+/* Section labels — iOS settings style */
+.ios-native-app .mobile-menu-label,
+.android-native-app .mobile-menu-label {
+    padding: 0 16px 6px;
+    font-size: 0.8rem;
+    color: #6d6d72;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-weight: 400;
+}
+
+/* Rounded card group for menu items */
+.ios-native-app .mobile-menu-nav a,
+.android-native-app .mobile-menu-nav a {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    color: #1c1c1e;
+    font-size: 1rem;
+    font-weight: 400;
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.1s;
+    /* Reset any inline styles that were set */
+    border-left: none !important;
+}
+
+/* First and last items get rounded corners (card shape) */
+.ios-native-app .mobile-menu-section a:first-of-type,
+.android-native-app .mobile-menu-section a:first-of-type {
+    border-radius: 12px 12px 0 0;
+}
+
+.ios-native-app .mobile-menu-section a:last-of-type,
+.android-native-app .mobile-menu-section a:last-of-type {
+    border-radius: 0 0 12px 12px;
+    border-bottom: none;
+}
+
+/* Single item gets full rounding */
+.ios-native-app .mobile-menu-section a:first-of-type:last-of-type,
+.android-native-app .mobile-menu-section a:first-of-type:last-of-type {
+    border-radius: 12px;
+}
+
+/* Active tap state */
+.ios-native-app .mobile-menu-nav a:active,
+.android-native-app .mobile-menu-nav a:active {
+    background: #e5e5ea;
+}
+
+/* Icon styling — uniform color, width */
+.ios-native-app .mobile-menu-nav a i,
+.android-native-app .mobile-menu-nav a i {
+    width: 28px;
+    text-align: center;
+    color: var(--primary-dark, #1e4d8b);
+    margin-right: 12px;
+    font-size: 1.05rem;
+}
+
+/* Override special inline background styles on native */
+.ios-native-app .mobile-menu-nav a[style*="background"],
+.android-native-app .mobile-menu-nav a[style*="background"] {
+    background: white !important;
+    color: #1c1c1e !important;
+}
+
+/* Chevron pseudo-element on every menu link */
+.ios-native-app .mobile-menu-nav a::after,
+.android-native-app .mobile-menu-nav a::after {
+    content: '\f054'; /* fa-chevron-right */
+    font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 0.7rem;
+    color: #c7c7cc;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* Badge positioning with chevron */
+.ios-native-app .mobile-menu-nav a .badge,
+.android-native-app .mobile-menu-nav a .badge {
+    float: none;
+    margin-left: auto;
+    margin-right: 8px;
+    background: #ff3b30;
+    font-size: 0.7rem;
+    padding: 2px 7px;
+    border-radius: 10px;
+}
+
+/* Native menu footer */
+.ios-native-app .mobile-menu-footer,
+.android-native-app .mobile-menu-footer {
+    background: transparent;
+    border-top: none;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+}
+
+.ios-native-app .mobile-theme-toggle,
+.android-native-app .mobile-theme-toggle {
+    background: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+.ios-native-app .mobile-logout-btn,
+.android-native-app .mobile-logout-btn {
+    background: white;
+    color: #ff3b30;
+    border-radius: 12px;
+    font-weight: 400;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.ios-native-app .mobile-logout-btn:active,
+.android-native-app .mobile-logout-btn:active {
+    background: #e5e5ea;
+}
+
+/* Hide "Install App" link on native (already installed) */
+.ios-native-app #mobileInstallLink,
+.android-native-app #mobileInstallLink {
+    display: none !important;
+}
+
+/* ========================================
+   Native Menu Dark Mode
+   ======================================== */
+
+[data-theme="dark"] .ios-native-app .mobile-slide-menu,
+[data-theme="dark"] .android-native-app .mobile-slide-menu,
+.ios-native-app[data-theme="dark"] .mobile-slide-menu,
+.android-native-app[data-theme="dark"] .mobile-slide-menu {
+    background: #1c1c1e;
+}
+
+[data-theme="dark"] .ios-native-app .mobile-menu-header,
+[data-theme="dark"] .android-native-app .mobile-menu-header,
+.ios-native-app[data-theme="dark"] .mobile-menu-header,
+.android-native-app[data-theme="dark"] .mobile-menu-header {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .ios-native-app .mobile-menu-user-info h3,
+[data-theme="dark"] .android-native-app .mobile-menu-user-info h3,
+.ios-native-app[data-theme="dark"] .mobile-menu-user-info h3,
+.android-native-app[data-theme="dark"] .mobile-menu-user-info h3 {
+    color: #fff;
+}
+
+[data-theme="dark"] .ios-native-app .mobile-menu-avatar,
+[data-theme="dark"] .android-native-app .mobile-menu-avatar,
+.ios-native-app[data-theme="dark"] .mobile-menu-avatar,
+.android-native-app[data-theme="dark"] .mobile-menu-avatar {
+    background: #3a3a3c;
+    color: #fff;
+}
+
+[data-theme="dark"] .ios-native-app .mobile-menu-close,
+[data-theme="dark"] .android-native-app .mobile-menu-close,
+.ios-native-app[data-theme="dark"] .mobile-menu-close,
+.android-native-app[data-theme="dark"] .mobile-menu-close {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .ios-native-app .mobile-menu-close svg,
+[data-theme="dark"] .android-native-app .mobile-menu-close svg,
+.ios-native-app[data-theme="dark"] .mobile-menu-close svg,
+.android-native-app[data-theme="dark"] .mobile-menu-close svg {
+    stroke: #fff;
+}
+
+[data-theme="dark"] .ios-native-app .mobile-menu-label,
+[data-theme="dark"] .android-native-app .mobile-menu-label,
+.ios-native-app[data-theme="dark"] .mobile-menu-label,
+.android-native-app[data-theme="dark"] .mobile-menu-label {
+    color: #8e8e93;
+}
+
+[data-theme="dark"] .ios-native-app .mobile-menu-nav a,
+[data-theme="dark"] .android-native-app .mobile-menu-nav a,
+.ios-native-app[data-theme="dark"] .mobile-menu-nav a,
+.android-native-app[data-theme="dark"] .mobile-menu-nav a {
+    background: #2c2c2e;
+    color: #fff;
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .ios-native-app .mobile-menu-nav a[style*="background"],
+[data-theme="dark"] .android-native-app .mobile-menu-nav a[style*="background"],
+.ios-native-app[data-theme="dark"] .mobile-menu-nav a[style*="background"],
+.android-native-app[data-theme="dark"] .mobile-menu-nav a[style*="background"] {
+    background: #2c2c2e !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .ios-native-app .mobile-menu-nav a:active,
+[data-theme="dark"] .android-native-app .mobile-menu-nav a:active,
+.ios-native-app[data-theme="dark"] .mobile-menu-nav a:active,
+.android-native-app[data-theme="dark"] .mobile-menu-nav a:active {
+    background: #3a3a3c;
+}
+
+[data-theme="dark"] .ios-native-app .mobile-menu-nav a::after,
+[data-theme="dark"] .android-native-app .mobile-menu-nav a::after,
+.ios-native-app[data-theme="dark"] .mobile-menu-nav a::after,
+.android-native-app[data-theme="dark"] .mobile-menu-nav a::after {
+    color: #48484a;
+}
+
+[data-theme="dark"] .ios-native-app .mobile-theme-toggle,
+[data-theme="dark"] .android-native-app .mobile-theme-toggle,
+.ios-native-app[data-theme="dark"] .mobile-theme-toggle,
+.android-native-app[data-theme="dark"] .mobile-theme-toggle {
+    background: #2c2c2e;
+    color: #fff;
+    border: none;
+}
+
+[data-theme="dark"] .ios-native-app .mobile-logout-btn,
+[data-theme="dark"] .android-native-app .mobile-logout-btn,
+.ios-native-app[data-theme="dark"] .mobile-logout-btn,
+.android-native-app[data-theme="dark"] .mobile-logout-btn {
+    background: #2c2c2e;
+    color: #ff453a;
+}
+
+[data-theme="dark"] .ios-native-app .mobile-menu-footer,
+[data-theme="dark"] .android-native-app .mobile-menu-footer,
+.ios-native-app[data-theme="dark"] .mobile-menu-footer,
+.android-native-app[data-theme="dark"] .mobile-menu-footer {
+    background: transparent;
+}
+
 /* Note: All color variables are defined in static/css/main.css */
 
 * {
