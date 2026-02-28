@@ -167,4 +167,35 @@
     // Check availability on load
     MRPBiometric.checkAvailability();
 
+    // ========================================
+    // Journal Biometric Gate
+    // ========================================
+    // Requires biometric auth before accessing /journal/* pages
+    (function() {
+        if (window.location.pathname.indexOf('/journal') !== 0) return;
+
+        MRPBiometric.isJournalLockEnabled().then(function(enabled) {
+            if (!enabled) return;
+
+            // Hide the page while authenticating
+            document.documentElement.style.visibility = 'hidden';
+
+            MRPBiometric.authenticate('Access your private journal').then(function() {
+                // Success -- reveal the page
+                document.documentElement.style.visibility = '';
+                if (window.MRPNative && window.MRPNative.hapticSuccess) {
+                    window.MRPNative.hapticSuccess();
+                }
+            }).catch(function() {
+                // Failed or cancelled -- restore visibility and navigate away
+                document.documentElement.style.visibility = '';
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    window.location.href = '/accounts/social-feed/';
+                }
+            });
+        });
+    })();
+
 })();
