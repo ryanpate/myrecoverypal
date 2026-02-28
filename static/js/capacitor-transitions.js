@@ -190,11 +190,6 @@
         var anchor = e.target.closest('a');
         if (!anchor) return;
 
-        // Do NOT intercept native tab bar or more menu links -- they have their own handling
-        if (anchor.closest('.native-tab-bar') || anchor.closest('.native-more-menu')) {
-            return;
-        }
-
         if (!shouldTransition(anchor)) return;
 
         e.preventDefault();
