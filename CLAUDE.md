@@ -1,6 +1,6 @@
 # CLAUDE.md - MyRecoveryPal Development Guide
 
-**Last Updated:** 2026-02-25
+**Last Updated:** 2026-02-28
 **Project:** MyRecoveryPal - Social Recovery Platform
 **Tech Stack:** Django 5.0.10, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
@@ -273,18 +273,22 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 - **Celery 5.3.4** - Background tasks
 
 ### Integrations
-- **Stripe** - Subscriptions (14-day premium trial on signup)
+- **Stripe** - Subscriptions (14-day premium trial on signup) — hidden inside iOS app per Guideline 3.1
+- **RevenueCat** - StoreKit 2 IAP wrapper for iOS subscriptions (free tier up to $2,500/mo revenue)
 - **Cloudinary** - Media storage
 - **SendGrid** - Email (production), Resend API key also configured
 - **Sentry** - Error monitoring
 - **Anthropic** - AI Recovery Coach (Claude Haiku)
-- **Firebase** - Push notifications (configured, needs implementation)
+- **Firebase** - Push notifications (Android FCM configured)
+- **APNs** - iOS push notifications (HTTP/2 via httpx + PyJWT)
 
 ### Mobile
 - **Capacitor 7.4.4** - Native wrapper (iOS + Android projects tracked in git)
-- **Firebase Cloud Messaging** - Push notifications (Android configured, iOS pending Apple Developer enrollment)
+- **10 Capacitor plugins:** push-notifications, status-bar, haptics, share, app, keyboard, browser, local-notifications, preferences, RevenueCat
+- **Firebase Cloud Messaging** - Push notifications (Android configured)
+- **APNs** - iOS push notifications (backend ready, needs key deployment to Railway)
 - **Android:** Release AAB built and ready for Google Play upload
-- **iOS:** Compiles clean, ready to archive once Apple Developer account is active
+- **iOS:** Native features layer complete, IAP integrated, ready for Xcode Archive + App Store submission
 
 ---
 
@@ -426,6 +430,16 @@ STRIPE_PUBLISHABLE_KEY=...
 RESEND_API_KEY=<resend-api-key>
 ANTHROPIC_API_KEY=<anthropic-api-key>
 SENTRY_DSN=...
+
+# iOS Push Notifications (APNs)
+APNS_KEY_CONTENT=<raw .p8 file content>
+APNS_KEY_ID=<10-char key ID>
+APNS_TEAM_ID=<Apple team ID>
+APNS_KEY_PATH=/app/apns-auth-key.p8
+APNS_USE_SANDBOX=false
+
+# iOS In-App Purchases
+REVENUECAT_IOS_API_KEY=<revenuecat-ios-api-key>
 ```
 
 ---
@@ -583,30 +597,74 @@ High-volume keyword blog posts (83K combined monthly searches):
 - [x] Native iOS/Android projects tracked in git (removed from `.gitignore`)
 - [x] Android: Release signing keystore generated and configured in `build.gradle`
 - [x] Android: Release AAB built (`android/app/build/outputs/bundle/release/app-release.aab`, 3.4 MB)
-- [x] iOS: Info.plist updated (background modes, camera/photo privacy descriptions)
+- [x] iOS: Info.plist updated (background modes, camera/photo/FaceID privacy descriptions)
 - [x] iOS: AppDelegate.swift updated with push notification token forwarding
 - [x] iOS: Xcode 26.2 compatibility fix (SUPPORTED_PLATFORMS in project.pbxproj)
 - [x] iOS: Release build verified (compiles clean)
+- [x] iOS: Native features layer (`static/js/capacitor-native.js`) — haptics, native share sheet, keyboard tracking, app state, back button handler
+- [x] iOS: RevenueCat/StoreKit 2 IAP bridge (`static/js/capacitor-iap.js`) — purchase flow, restore, sync with Django backend
+- [x] iOS: Server-side iOS subscription sync endpoint (`/accounts/api/ios-subscription/sync/`)
+- [x] iOS: `subscription_source` field on Subscription model (stripe/apple/manual) — migration 0020
+- [x] iOS: Stripe UI hidden / IAP shown inside native app via `.stripe-only` / `.iap-only` CSS classes
+- [x] iOS: Templates updated — pricing.html, recovery_coach.html, subscription_management.html
+- [x] iOS: APNs key extraction in `start.sh` from `APNS_KEY_CONTENT` env var
+- [x] iOS: Capacitor plugins installed (haptics, share, app, keyboard, browser, local-notifications, preferences, RevenueCat)
+- [x] iOS: `capacitor.config.json` updated with Keyboard + LocalNotifications config
 
 #### Remaining - Manual Steps
 - [ ] **Android: Upload AAB to Google Play Console** (account ready)
 - [ ] **Android: Complete store listing** (screenshots, description, data safety)
 - [ ] **Android: Submit for review** (expect 1-3 days)
-- [ ] **iOS: Enroll in Apple Developer Program** ($99/yr) - CRITICAL PATH BLOCKER
-- [ ] **iOS: Configure Xcode signing** (set team, add Push Notifications capability)
-- [ ] **iOS: Archive and submit** via App Store Connect
+- [ ] **iOS: Create APNs Auth Key** in Apple Developer Portal → download `.p8` file
+- [ ] **iOS: Configure Xcode signing** (set team, add Push Notifications + In-App Purchase capabilities)
+- [ ] **iOS: Set up RevenueCat** — create project, add iOS app, create "premium" entitlement, copy API key
+- [ ] **iOS: Create subscription products** in App Store Connect (monthly $4.99, yearly $29.99)
+- [ ] **iOS: Set Railway env vars** — `APNS_KEY_CONTENT`, `APNS_KEY_ID`, `APNS_TEAM_ID`, `REVENUECAT_IOS_API_KEY`
+- [ ] **iOS: Archive and submit** via Xcode → App Store Connect
+- [ ] **iOS: Complete App Store metadata** (screenshots, description, privacy nutrition labels, review notes)
+- [ ] **iOS: Create demo account** (`review@myrecoverypal.com`) with sample data for Apple review
 - [ ] App Store Optimization (ASO): keywords, screenshots, description
 - [ ] Request reviews from existing users
+- [ ] Uncomment Smart App Banner `<meta>` tag in `base.html` after approval (replace `YOUR_APP_STORE_ID`)
 
 #### App Store Listing Details
 - **App name:** MyRecoveryPal
 - **Bundle ID:** `com.myrecoverypal.app`
 - **Category:** Health & Fitness
+- **Secondary Category:** Social Networking
 - **Version:** 1.0.0
+- **Subtitle:** Recovery Community & AI Coach
 - **Short description:** "Connect with others in recovery. Social feed, groups, AI coach & more."
 - **Privacy policy:** `https://www.myrecoverypal.com/privacy/`
-- **Target age:** 18+
-- **Apple review notes:** Include that app provides native push notifications, offline fallback, and native splash screen beyond web experience
+- **Target age:** 17+ (references alcohol/drug use in recovery context)
+- **Keywords:** sobriety, recovery, sober, addiction, AA, NA, support, community, coach, tracker, journal, mental health, 12 step
+- **Apple review notes:** Emphasize native features (haptics, share sheet, push, keyboard, camera), Capacitor as legitimate native framework, IAP sandbox testing instructions, health disclaimer, block/report moderation
+
+#### iOS Native Features (Guideline 4.2 Compliance)
+| Feature | Plugin | File |
+|---------|--------|------|
+| Haptic feedback (like, check-in, share, follow) | `@capacitor/haptics` | `capacitor-native.js` |
+| Native share sheet | `@capacitor/share` | `capacitor-native.js` |
+| Keyboard height tracking + bottom nav hide | `@capacitor/keyboard` | `capacitor-native.js` |
+| App state change (refresh on foreground) | `@capacitor/app` | `capacitor-native.js` |
+| Back button handler (Android) | `@capacitor/app` | `capacitor-native.js` |
+| Local notification scheduling | `@capacitor/local-notifications` | `capacitor-native.js` |
+| In-app purchases (StoreKit 2) | `@revenuecat/purchases-capacitor` | `capacitor-iap.js` |
+| Push notifications | `@capacitor/push-notifications` | `capacitor-push.js` |
+
+#### iOS IAP Architecture
+```
+User taps Subscribe → capacitor-iap.js → RevenueCat SDK → Apple StoreKit 2
+                                        ↓ (on success)
+                              POST /accounts/api/ios-subscription/sync/
+                                        ↓
+                              Django Subscription model updated
+                              (subscription_source = 'apple')
+```
+- Stripe buttons hidden on iOS via `.ios-native-app .stripe-only { display: none }`
+- IAP buttons shown on iOS via `.ios-native-app .iap-only { display: block }`
+- Body class `ios-native-app` set by `capacitor-native.js` on platform detection
+- Server-side sync does NOT overwrite active Stripe subscriptions
 
 #### Keystore Info (SAVE SECURELY)
 - **File:** `android/app/myrecoverypal-release.keystore` (gitignored)
@@ -620,8 +678,9 @@ High-volume keyword blog posts (83K combined monthly searches):
 
 ### Current State
 - **Revenue:** $0
-- **Monetization:** Freemium ($4.99/mo Premium) + BetterHelp affiliate + Ko-fi/BMAC donations
-- **Stripe:** Configured with Free + Premium tiers, 14-day trial on signup
+- **Monetization:** Freemium ($4.99/mo or $29.99/yr Premium) + BetterHelp affiliate + Ko-fi/BMAC donations
+- **Stripe:** Web subscriptions (Free + Premium tiers, 14-day trial on signup)
+- **Apple IAP:** iOS subscriptions via RevenueCat/StoreKit 2 (same tiers, Apple takes 15-30% cut)
 - **AI Coach:** "Anchor" - 3 free trial messages, 20/day for Premium
 
 ### IMMEDIATE - ✅ ALL COMPLETE
@@ -749,7 +808,11 @@ apps/
 ├── accounts/              # Social features (PRIMARY)
 │   ├── models.py         # All social models
 │   ├── views.py          # All social views
+│   ├── payment_views.py  # Stripe + iOS IAP subscription views
+│   ├── payment_models.py # Subscription, Transaction, Invoice models
 │   ├── invite_models.py  # Invite/waitlist system
+│   ├── coach_service.py  # AI Recovery Coach (Claude Haiku)
+│   ├── push_notifications.py  # FCM + APNs push delivery
 │   └── signals.py        # Activity creation
 ├── blog/                  # Community blog
 ├── journal/               # Private journaling
@@ -760,7 +823,14 @@ apps/
 resources/                 # Resource library
 recovery_hub/             # Django config
 templates/                # Global templates
-static/                   # CSS, JS, images
+static/
+├── css/base-inline.css   # Main stylesheet (extracted from base.html)
+└── js/
+    ├── capacitor-native.js  # Native features (haptics, share, keyboard, app state)
+    ├── capacitor-push.js    # Push notification registration + deep linking
+    └── capacitor-iap.js     # iOS StoreKit 2 IAP via RevenueCat
+ios/                       # Capacitor iOS project (tracked in git)
+android/                   # Capacitor Android project (tracked in git)
 ```
 
 ---
@@ -903,6 +973,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-02-28:** iOS App Store publication — native features, IAP, and APNs. Installed 8 new Capacitor plugins (`@capacitor/haptics`, `share`, `app`, `keyboard`, `browser`, `local-notifications`, `preferences`, `@revenuecat/purchases-capacitor`) bringing total to 10 iOS plugins. Created `static/js/capacitor-native.js` — native features bridge providing haptic feedback on like/check-in/share/follow actions, native share sheet override, keyboard height tracking (hides bottom nav via `.keyboard-open` CSS class), Android back button handler, app state change listener (refreshes notification count on foreground), platform detection (`ios-native-app` body class). Created `static/js/capacitor-iap.js` — RevenueCat/StoreKit 2 IAP bridge handling purchase flow with bottom sheet modal, restore purchases, entitlement checking, and server-side sync to Django. Added `ios_subscription_sync` POST endpoint at `/accounts/api/ios-subscription/sync/` that receives RevenueCat `customerInfo`, updates `Subscription` model with `subscription_source='apple'`, and does NOT overwrite active Stripe subscriptions. Added `subscription_source` field (stripe/apple/manual) to `Subscription` model (migration 0020). Added `.stripe-only` / `.iap-only` CSS toggle classes to `base-inline.css` — Stripe UI hidden and IAP UI shown when `body.ios-native-app` is present. Updated `pricing.html` (Stripe buttons wrapped with `.stripe-only`, IAP + Restore Purchases buttons added with `.iap-only`, Stripe checkout script wrapped), `recovery_coach.html` (upgrade prompts use IAP on iOS), `subscription_management.html` ("Manage in iOS Settings" replaces Stripe portal on iOS). Added `NSFaceIDUsageDescription` to `Info.plist`. Updated `start.sh` with APNs key extraction from `APNS_KEY_CONTENT` env var. Added `PyJWT` and `python-dateutil` to `requirements.txt`. Added RevenueCat API key meta tag and Smart App Banner placeholder to `base.html`. Updated `capacitor.config.json` with Keyboard and LocalNotifications plugin config. All 3 Railway services (web, celery-worker, attractive-forgiveness) deployed successfully.
 - **2026-02-25:** Conversion-focused landing page redesign (`apps/core/templates/core/index.html`). Replaced text-heavy homepage with visual, screenshot-driven design. New split-layout hero with `feed.webp` screenshot showing MyRecoveryCircle product. Added trust strip, 3-step "How It Works" section, dedicated MyRecoveryCircle showcase (with `create-post.webp` screenshot + feature checklist), dedicated Anchor AI Coach showcase (dark blue gradient, logo, "Try Anchor Free" CTA, professional disclaimer). Replaced 7 feature cards (most with empty icons) with 6 cards all using Font Awesome icons. Added visible FAQ accordion (5 items, previously only in JSON-LD schema). Reduced blog section from 6 to 3 highest-traffic articles. Removed SEO prose block, 8-card "Explore Resources" grid, and generic "About Our Mission" section — keywords redistributed into new sections naturally. Accessibility: `aria-expanded` dynamically updates on FAQ toggle, `aria-hidden="true"` on all 27 FA icons, `aria-controls` on FAQ buttons. Performance: `loading="eager"` + `fetchpriority="high"` on hero LCP image, `loading="lazy"` on below-fold images, `width`/`height` attributes to prevent CLS. Replaced `direction: rtl` CSS layout hack with `order` property. All JSON-LD structured data preserved unchanged.
 - **2026-02-24:** Reduced Railway network egress to lower hosting costs. Added `GZipMiddleware` for ~70% compression on all HTML/JSON responses. Extracted 54KB inline CSS from `base.html` (3,290→1,139 lines) into cacheable `static/css/base-inline.css`. Converted 6 demo PNG screenshots (9.5MB) to WebP (503KB, 95% smaller) with `<picture>` fallback in `demo.html`. Removed dead AdSense script (~100KB wasted JS per page). Moved Chart.js (~200KB) from global `base.html` to only `progress.html` and `journal/stats.html` via `extra_js` block. Reduced notification polling from 30s to 120s (75% fewer API requests). Moved session storage from PostgreSQL to Redis (`SESSION_ENGINE = cache`). Set `WHITENOISE_MAX_AGE = 31536000` for 1-year browser caching of static assets. Homepage HTML response now ~15KB gzipped (was 113KB+ uncompressed).
 - **2026-02-21:** Implemented all 15 code changes from 30-Day Revenue & Marketing Plan. Conversion funnel fixes: updated sitemap.xml with 7 missing URLs, registration page now mentions AI Coach + 14-day trial, removed fabricated aggregateRating from AI Coach landing page, added AI Coach promo card to social feed sidebar, added therapy cost comparison to pricing page. Email sequences: welcome day 1/3/7 emails now promote Anchor (AI Coach), new day 5 premium trial nudge email with Celery task (`send_premium_trial_nudge`, runs daily at 11 AM). AI Coach UX: progressive upgrade hints (toast after message 1, persistent banner after message 2). Blog CTAs: rewrote AI Coach CTA with crisis-moment copy, optimized BetterHelp affiliate CTA with recovery-specific angle and UTM params. AI Coach landing page: added 3-column therapy cost comparison section. Added `premium_nudge_sent` field to User model (migration 0019).
