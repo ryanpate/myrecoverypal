@@ -525,7 +525,7 @@
     </div>
     <!-- Mobile Bottom Navigation Bar -->
     {% if user.is_authenticated %}
-    <nav class="mobile-bottom-nav web-bottom-nav" id="mobileBottomNav">
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
         <a href="{% url 'accounts:social_feed' %}" class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">
             <span>Circle</span>
         </a>
@@ -543,7 +543,7 @@
         </a>
     </nav>
     {% else %}
-    <nav class="mobile-bottom-nav web-bottom-nav" id="mobileBottomNav">
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
         <a href="{% url 'core:index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
             <span>Home</span>
         </a>
@@ -560,67 +560,6 @@
     </nav>
     {% endif %}
 
-    <!-- Native iOS/Android Tab Bar (replaces web bottom nav in native app) -->
-    {% if user.is_authenticated %}
-    <nav class="native-tab-bar" id="nativeTabBar">
-        <a href="{% url 'accounts:social_feed' %}" class="native-tab {% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}" data-haptic="light">
-            <i class="{% if request.resolver_match.url_name == 'social_feed' %}fas{% else %}far{% endif %} fa-newspaper"></i>
-            <span>Feed</span>
-        </a>
-        <a href="{% url 'accounts:groups_list' %}" class="native-tab {% if 'group' in request.resolver_match.url_name %}active{% endif %}" data-haptic="light">
-            <i class="{% if 'group' in request.resolver_match.url_name %}fas{% else %}far{% endif %} fa-users"></i>
-            <span>Groups</span>
-        </a>
-        <a href="{% url 'accounts:recovery_coach' %}" class="native-tab {% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}" data-haptic="light">
-            <i class="{% if request.resolver_match.url_name == 'recovery_coach' %}fas{% else %}far{% endif %} fa-comment-dots"></i>
-            <span>Coach</span>
-        </a>
-        <a href="{% url 'journal:entry_list' %}" class="native-tab {% if 'journal' in request.resolver_match.namespace %}active{% endif %}" data-haptic="light">
-            <i class="{% if 'journal' in request.resolver_match.namespace %}fas{% else %}far{% endif %} fa-book"></i>
-            <span>Journal</span>
-        </a>
-        <a href="#" class="native-tab" id="nativeMoreTab" data-haptic="light">
-            <i class="fas fa-ellipsis-h"></i>
-            <span>More</span>
-        </a>
-    </nav>
-
-    <!-- Native "More" Menu Overlay -->
-    <div class="native-more-overlay" id="nativeMoreOverlay" style="display: none;">
-        <div class="native-more-menu" id="nativeMoreMenu">
-            <div class="native-more-header">
-                <h3>More</h3>
-                <button id="nativeMoreClose" aria-label="Close">&times;</button>
-            </div>
-            <div class="native-more-list">
-                <a href="{% url 'accounts:profile' username=user.username %}" class="native-more-item">
-                    <i class="fas fa-user"></i><span>Profile</span><i class="fas fa-chevron-right native-chevron"></i>
-                </a>
-                <a href="{% url 'accounts:milestones' %}" class="native-more-item">
-                    <i class="fas fa-trophy"></i><span>Milestones</span><i class="fas fa-chevron-right native-chevron"></i>
-                </a>
-                <a href="{% url 'accounts:community' %}" class="native-more-item">
-                    <i class="fas fa-users"></i><span>Community</span><i class="fas fa-chevron-right native-chevron"></i>
-                </a>
-                <a href="{% url 'accounts:challenges_home' %}" class="native-more-item">
-                    <i class="fas fa-flag-checkered"></i><span>Challenges</span><i class="fas fa-chevron-right native-chevron"></i>
-                </a>
-                <a href="{% url 'accounts:messages' %}" class="native-more-item">
-                    <i class="fas fa-envelope"></i><span>Messages</span><i class="fas fa-chevron-right native-chevron"></i>
-                </a>
-                <a href="{% url 'accounts:progress' %}" class="native-more-item">
-                    <i class="fas fa-chart-line"></i><span>My Progress</span><i class="fas fa-chevron-right native-chevron"></i>
-                </a>
-                <a href="{% url 'accounts:edit_profile' %}" class="native-more-item">
-                    <i class="fas fa-cog"></i><span>Settings</span><i class="fas fa-chevron-right native-chevron"></i>
-                </a>
-                <a href="{% url 'accounts:subscription_management' %}" class="native-more-item">
-                    <i class="fas fa-crown"></i><span>Subscription</span><i class="fas fa-chevron-right native-chevron"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-    {% endif %}
 
     <!-- Trial Countdown Banner -->
     {% if user.is_authenticated and user_subscription and user_subscription.status == 'trialing' and user_subscription.trial_end %}
