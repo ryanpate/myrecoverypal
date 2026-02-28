@@ -17,10 +17,6 @@
     // Add platform class to body for CSS targeting
     document.body.classList.add(platform + '-native-app');
 
-    // Hide hamburger menu on native (replaced by tab bar)
-    var hamburger = document.getElementById('hamburgerBtn');
-    if (hamburger) hamburger.style.display = 'none';
-
     // ========================================
     // Native Features API (window.MRPNative)
     // ========================================
@@ -227,42 +223,11 @@
         MRPNative.share(title, text, url);
     }, true);
 
-    // ========================================
-    // Native Tab Bar — More Menu Logic
-    // ========================================
-    var moreTab = document.getElementById('nativeMoreTab');
-    var moreOverlay = document.getElementById('nativeMoreOverlay');
-    var moreClose = document.getElementById('nativeMoreClose');
-
-    if (moreTab && moreOverlay) {
-        moreTab.addEventListener('click', function(e) {
-            e.preventDefault();
-            moreOverlay.style.display = 'flex';
+    // Haptic feedback when hamburger menu opens
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('#hamburgerBtn')) {
             MRPNative.hapticLight();
-        });
-
-        moreOverlay.addEventListener('click', function(e) {
-            if (e.target === moreOverlay) {
-                moreOverlay.style.display = 'none';
-            }
-        });
-
-        if (moreClose) {
-            moreClose.addEventListener('click', function() {
-                moreOverlay.style.display = 'none';
-            });
         }
-    }
-
-    // Haptic on native tab switch
-    var tabBar = document.getElementById('nativeTabBar');
-    if (tabBar) {
-        tabBar.addEventListener('click', function(e) {
-            var tab = e.target.closest('.native-tab');
-            if (tab && tab.id !== 'nativeMoreTab') {
-                MRPNative.hapticLight();
-            }
-        });
-    }
+    });
 
 })();
