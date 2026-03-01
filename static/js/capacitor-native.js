@@ -266,9 +266,9 @@
         MRPNative.share(title, text, url);
     }, true);
 
-    // Haptic feedback when hamburger menu opens
+    // Haptic feedback when hamburger menu opens or tab tapped
     document.addEventListener('click', function(e) {
-        if (e.target.closest('#hamburgerBtn')) {
+        if (e.target.closest('#hamburgerBtn') || e.target.closest('.native-tab')) {
             MRPNative.hapticLight();
         }
     });
