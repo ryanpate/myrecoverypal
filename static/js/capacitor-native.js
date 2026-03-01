@@ -70,6 +70,7 @@
         // Create bell element
         var bell = document.createElement('div');
         bell.className = 'native-notif-bell';
+        bell.setAttribute('aria-label', 'Notifications');
         bell.innerHTML = '<i class="fas fa-bell" aria-hidden="true"></i><span class="native-notif-badge" id="nativeNotifBadge"></span>';
         bell.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -311,5 +312,33 @@
             MRPNative.hapticLight();
         }
     });
+
+    // ========================================
+    // Status Bar Style — Sync with Theme
+    // ========================================
+    // Dark text for light mode, light text for dark mode
+    (function syncStatusBarWithTheme() {
+        if (!Plugins.StatusBar) return;
+
+        function applyStatusBarStyle() {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+                         document.body.getAttribute('data-theme') === 'dark';
+            Plugins.StatusBar.setStyle({ style: isDark ? 'LIGHT' : 'DARK' });
+        }
+
+        // Set on load
+        applyStatusBarStyle();
+
+        // Watch for theme changes (MutationObserver on data-theme attribute)
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(m) {
+                if (m.attributeName === 'data-theme') {
+                    applyStatusBarStyle();
+                }
+            });
+        });
+        observer.observe(document.documentElement, { attributes: true });
+        observer.observe(document.body, { attributes: true });
+    })();
 
 })();
