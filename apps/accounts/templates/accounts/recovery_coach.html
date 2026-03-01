@@ -263,121 +263,150 @@
         color: #dc2626;
     }
 
-    /* Disclaimer Banner */
-    .coach-disclaimer {
-        padding: 0;
+    /* Compact disclaimer bar (always visible) */
+    .coach-disclaimer-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.35rem 1rem;
         background: #fef3c7;
-        border-bottom: 2px solid #f59e0b;
+        border-bottom: 1px solid #f59e0b;
         flex-shrink: 0;
+        font-size: 0.75rem;
+        color: #92400e;
     }
 
-    .disclaimer-bar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.5rem 1.25rem;
-        cursor: pointer;
-        user-select: none;
-    }
-
-    .disclaimer-bar:hover {
-        background: rgba(245, 158, 11, 0.08);
-    }
-
-    .disclaimer-bar-left {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .disclaimer-bar-left i {
+    .coach-disclaimer-bar i {
         color: #d97706;
-        font-size: 0.9rem;
     }
 
-    .disclaimer-bar-left strong {
-        color: #92400e;
-        font-size: 0.8rem;
-    }
-
-    .disclaimer-bar-left .disclaimer-crisis-inline {
-        font-size: 0.75rem;
-        color: #92400e;
-        margin-left: 0.5rem;
-    }
-
-    .disclaimer-bar-left .disclaimer-crisis-inline a {
+    .coach-disclaimer-bar a {
         color: #dc2626;
         font-weight: 700;
         text-decoration: underline;
     }
 
-    .disclaimer-toggle-icon {
+    .coach-disclaimer-bar .disclaimer-link {
         color: #92400e;
-        font-size: 0.75rem;
-        transition: transform 0.2s ease;
+        text-decoration: underline;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    /* Disclaimer modal overlay */
+    .disclaimer-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .disclaimer-modal-overlay.active {
+        display: flex;
+    }
+
+    .disclaimer-modal {
+        background: white;
+        border-radius: 16px;
+        max-width: 440px;
+        width: 100%;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .disclaimer-modal-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1.25rem 1.5rem 1rem;
+        border-bottom: 1px solid #f59e0b;
+        background: #fef3c7;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .disclaimer-modal-header i {
+        color: #d97706;
+        font-size: 1.25rem;
+    }
+
+    .disclaimer-modal-header h3 {
+        margin: 0;
+        font-size: 1.05rem;
+        color: #92400e;
+        font-weight: 700;
+    }
+
+    .disclaimer-modal-body {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .disclaimer-modal-body p {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: #374151;
+        margin: 0 0 1rem;
+    }
+
+    .disclaimer-modal-body strong {
+        color: #1f2937;
+    }
+
+    .disclaimer-modal-crisis {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        background: #fef2f2;
+        border-radius: 10px;
+        border: 1px solid #fecaca;
+        margin-bottom: 1rem;
+    }
+
+    .disclaimer-modal-crisis i {
+        color: #dc2626;
+        font-size: 1rem;
+        margin-top: 2px;
         flex-shrink: 0;
     }
 
-    .coach-disclaimer.expanded .disclaimer-toggle-icon {
-        transform: rotate(180deg);
-    }
-
-    .disclaimer-details {
-        display: none;
-        padding: 0 1.25rem 0.75rem;
-    }
-
-    .coach-disclaimer.expanded .disclaimer-details {
-        display: block;
-    }
-
-    .disclaimer-text {
-        font-size: 0.78rem;
-        color: #78350f;
+    .disclaimer-modal-crisis span {
+        font-size: 0.85rem;
         line-height: 1.5;
-        margin: 0 0 0.4rem;
-    }
-
-    .disclaimer-text a {
-        color: #92400e;
-        font-weight: 700;
-        text-decoration: underline;
-    }
-
-    .disclaimer-text a:hover {
-        color: #78350f;
-    }
-
-    .disclaimer-crisis {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding-top: 0.4rem;
-        border-top: 1px solid rgba(245, 158, 11, 0.3);
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #92400e;
-    }
-
-    .disclaimer-crisis i {
-        color: #dc2626;
-    }
-
-    .disclaimer-crisis a {
-        color: #dc2626;
-        font-weight: 700;
-        text-decoration: underline;
-    }
-
-    .disclaimer-crisis a:hover {
         color: #991b1b;
     }
 
-    @media (max-width: 768px) {
-        .disclaimer-bar-left .disclaimer-crisis-inline {
-            display: none;
-        }
+    .disclaimer-modal-crisis a {
+        color: #dc2626;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    .disclaimer-modal-footer {
+        padding: 0 1.5rem 1.25rem;
+    }
+
+    .disclaimer-accept-btn {
+        display: block;
+        width: 100%;
+        padding: 0.85rem;
+        background: var(--gradient-primary, linear-gradient(135deg, #1e4d8b, #2d6bc4));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+    .disclaimer-accept-btn:hover {
+        opacity: 0.9;
     }
 
     /* ==============================
@@ -963,54 +992,52 @@
         color: #fca5a5;
     }
 
-    [data-theme="dark"] .coach-disclaimer {
+    [data-theme="dark"] .coach-disclaimer-bar {
+        background: #2a1f00;
+        border-color: #a16207;
+        color: #fde68a;
+    }
+
+    [data-theme="dark"] .coach-disclaimer-bar i {
+        color: #fbbf24;
+    }
+
+    [data-theme="dark"] .coach-disclaimer-bar a {
+        color: #f87171;
+    }
+
+    [data-theme="dark"] .coach-disclaimer-bar .disclaimer-link {
+        color: #fde68a;
+    }
+
+    [data-theme="dark"] .disclaimer-modal {
+        background: #1e1e1e;
+    }
+
+    [data-theme="dark"] .disclaimer-modal-header {
         background: #2a1f00;
         border-color: #a16207;
     }
 
-    [data-theme="dark"] .disclaimer-bar:hover {
-        background: rgba(251, 191, 36, 0.08);
-    }
-
-    [data-theme="dark"] .disclaimer-bar-left i {
-        color: #fbbf24;
-    }
-
-    [data-theme="dark"] .disclaimer-bar-left strong {
+    [data-theme="dark"] .disclaimer-modal-header h3 {
         color: #fde68a;
     }
 
-    [data-theme="dark"] .disclaimer-bar-left .disclaimer-crisis-inline {
-        color: #fde68a;
+    [data-theme="dark"] .disclaimer-modal-body p {
+        color: #d1d5db;
     }
 
-    [data-theme="dark"] .disclaimer-bar-left .disclaimer-crisis-inline a {
-        color: #f87171;
+    [data-theme="dark"] .disclaimer-modal-body strong {
+        color: #f3f4f6;
     }
 
-    [data-theme="dark"] .disclaimer-toggle-icon {
-        color: #fde68a;
+    [data-theme="dark"] .disclaimer-modal-crisis {
+        background: #2a1010;
+        border-color: #7f1d1d;
     }
 
-    [data-theme="dark"] .disclaimer-text {
-        color: #fcd34d;
-    }
-
-    [data-theme="dark"] .disclaimer-text a {
-        color: #fde68a;
-    }
-
-    [data-theme="dark"] .disclaimer-crisis {
-        border-color: rgba(251, 191, 36, 0.2);
-        color: #fde68a;
-    }
-
-    [data-theme="dark"] .disclaimer-crisis i {
-        color: #f87171;
-    }
-
-    [data-theme="dark"] .disclaimer-crisis a {
-        color: #f87171;
+    [data-theme="dark"] .disclaimer-modal-crisis span {
+        color: #fca5a5;
     }
 
     [data-theme="dark"] .msg-row.assistant .msg-bubble {
@@ -1193,23 +1220,37 @@
             </div>
         </div>
 
-        <!-- Disclaimer (collapsible) -->
-        <div class="coach-disclaimer {% if not chat_messages %}expanded{% endif %}" id="coachDisclaimer">
-            <div class="disclaimer-bar" onclick="document.getElementById('coachDisclaimer').classList.toggle('expanded')">
-                <div class="disclaimer-bar-left">
-                    <i class="fas fa-triangle-exclamation"></i>
-                    <strong>AI tool, not a medical professional.</strong>
-                    <span class="disclaimer-crisis-inline">Crisis? <a href="tel:988" onclick="event.stopPropagation()">988</a> | <a href="tel:911" onclick="event.stopPropagation()">911</a></span>
+        <!-- Compact disclaimer bar (always visible) -->
+        <div class="coach-disclaimer-bar">
+            <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
+            <span>AI tool, not a medical professional. Crisis? <a href="tel:988">988</a> | <a href="tel:911">911</a>
+            &middot; <span class="disclaimer-link" onclick="document.getElementById('disclaimerModal').classList.add('active')">Details</span></span>
+        </div>
+
+        <!-- Disclaimer modal (shows on first visit, or when "Details" is clicked) -->
+        <div class="disclaimer-modal-overlay" id="disclaimerModal">
+            <div class="disclaimer-modal">
+                <div class="disclaimer-modal-header">
+                    <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
+                    <h3>Important: AI Disclaimer</h3>
                 </div>
-                <i class="fas fa-chevron-down disclaimer-toggle-icon"></i>
-            </div>
-            <div class="disclaimer-details">
-                <p class="disclaimer-text">
-                    Anchor is an AI-powered companion for general recovery support and encouragement only. It is <strong>not</strong> a licensed therapist, counselor, doctor, or medical provider. Anchor cannot diagnose conditions, prescribe treatments, or provide medical advice. Responses are generated by artificial intelligence and may not always be accurate. Do not rely on Anchor as a substitute for professional treatment, therapy, or medical care. Always consult a qualified healthcare provider for medical or mental health concerns.
-                </p>
-                <div class="disclaimer-crisis">
-                    <i class="fas fa-phone-volume"></i>
-                    In crisis or danger? Call <a href="tel:988">988</a> (Suicide & Crisis Lifeline) &bull; Text HOME to <a href="sms:741741">741741</a> &bull; Call <a href="tel:911">911</a> for emergencies
+                <div class="disclaimer-modal-body">
+                    <p>
+                        Anchor is an AI-powered companion for general recovery support and encouragement only. It is <strong>not</strong> a licensed therapist, counselor, doctor, or medical provider.
+                    </p>
+                    <p>
+                        Anchor cannot diagnose conditions, prescribe treatments, or provide medical advice. Responses are generated by artificial intelligence and <strong>may not always be accurate</strong>.
+                    </p>
+                    <p>
+                        Do not rely on Anchor as a substitute for professional treatment, therapy, or medical care. Always consult a qualified healthcare provider for medical or mental health concerns.
+                    </p>
+                    <div class="disclaimer-modal-crisis">
+                        <i class="fas fa-phone-volume" aria-hidden="true"></i>
+                        <span>In crisis or danger? Call <a href="tel:988">988</a> (Suicide &amp; Crisis Lifeline) &bull; Text HOME to <a href="sms:741741">741741</a> &bull; Call <a href="tel:911">911</a> for emergencies</span>
+                    </div>
+                </div>
+                <div class="disclaimer-modal-footer">
+                    <button class="disclaimer-accept-btn" onclick="acceptDisclaimer()">I Understand</button>
                 </div>
             </div>
         </div>
@@ -1328,6 +1369,23 @@
 
 {% block extra_js %}
 <script>
+// Disclaimer modal — show on first visit, remember acceptance
+function acceptDisclaimer() {
+    document.getElementById('disclaimerModal').classList.remove('active');
+    try { localStorage.setItem('anchor_disclaimer_accepted', '1'); } catch(e) {}
+}
+
+(function() {
+    try {
+        if (!localStorage.getItem('anchor_disclaimer_accepted')) {
+            document.getElementById('disclaimerModal').classList.add('active');
+        }
+    } catch(e) {
+        // localStorage unavailable — show modal anyway
+        document.getElementById('disclaimerModal').classList.add('active');
+    }
+})();
+
 (function() {
     // DOM refs
     var chatMessages = document.getElementById('chatMessages');
