@@ -17,12 +17,47 @@
     .create-post-box {
         background: white;
         border-radius: 12px;
-        padding: 1rem;
+        padding: 0.75rem 1rem;
         margin-bottom: 1rem;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        position: sticky;
-        top: 70px;
-        z-index: 100;
+    }
+
+    /* Compact bar (collapsed state) */
+    .create-post-compact {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        min-height: 32px;
+    }
+
+    .create-post-compact .placeholder-text {
+        flex: 1;
+        color: #999;
+        font-size: 0.95rem;
+    }
+
+    .create-post-compact .camera-icon {
+        color: #bbb;
+        font-size: 1.1rem;
+        padding: 4px;
+    }
+
+    /* Expanded state */
+    .create-post-box.expanded {
+        padding: 1rem;
+    }
+
+    .create-post-box.expanded .create-post-compact {
+        display: none;
+    }
+
+    .create-post-full {
+        display: none;
+    }
+
+    .create-post-box.expanded .create-post-full {
+        display: block;
     }
 
     .create-post-header {
@@ -340,10 +375,6 @@
     @media (min-width: 768px) {
         .social-feed-container {
             padding: 2rem 1rem;
-        }
-
-        .create-post-box {
-            top: 80px;
         }
     }
 
@@ -705,71 +736,200 @@
     .edit-modal-save:hover {
         background: #45a372;
     }
+
+    /* Inline suggested users (between posts) */
+    .inline-suggestions {
+        background: white;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .inline-suggestions-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .inline-suggestions-header h4 {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #888;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .inline-suggestions-header a {
+        font-size: 0.8rem;
+        color: var(--primary-light);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .inline-suggestions-row {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .inline-suggestion-card {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 0;
+    }
+
+    .inline-suggestion-card .suggestion-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .inline-suggestion-card .suggestion-avatar-initials {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: white;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+
+    .inline-suggestion-card .suggestion-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .inline-suggestion-card .suggestion-name {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--text-dark);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+        text-decoration: none;
+    }
+
+    .inline-suggestion-card .follow-btn-inline {
+        background: var(--accent-green);
+        color: white;
+        border: none;
+        padding: 0.3rem 0.6rem;
+        border-radius: 16px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+    }
+
+    .inline-suggestion-card .follow-btn-inline:hover {
+        background: #45a372;
+    }
+
+    .inline-suggestion-card .follow-btn-inline.following {
+        background: #e8e8e8;
+        color: #666;
+    }
+
+    @media (max-width: 480px) {
+        .inline-suggestions-row {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+
+    /* Dark mode: compact create-post + inline suggestions */
+    [data-theme="dark"] .create-post-compact .placeholder-text {
+        color: #888;
+    }
+
+    [data-theme="dark"] .create-post-compact .camera-icon {
+        color: #666;
+    }
+
+    [data-theme="dark"] .inline-suggestions {
+        background: #1e1e1e;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="dark"] .inline-suggestions-header h4 {
+        color: #999;
+    }
+
+    [data-theme="dark"] .inline-suggestion-card .suggestion-name {
+        color: #e0e0e0;
+    }
+
+    [data-theme="dark"] .inline-suggestion-card .follow-btn-inline.following {
+        background: #333;
+        color: #999;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="social-feed-container">
     {% if user.is_authenticated %}
-    <!-- AI Coach Promotion Card -->
-    {% if not is_premium %}
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.25); color: white;">
-        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-            <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex-shrink: 0;">
-                <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-            <div>
-                <div style="font-weight: 700; font-size: 1rem;">Talk to Anchor</div>
-                <div style="font-size: 0.85rem; opacity: 0.9;">Your AI Recovery Coach</div>
-            </div>
-        </div>
-        <p style="margin: 0 0 0.75rem 0; font-size: 0.9rem; opacity: 0.95; line-height: 1.5;">Struggling right now? Anchor is here 24/7 with personalized support, coping strategies, and encouragement.</p>
-        <a href="{% url 'accounts:recovery_coach' %}" style="display: block; text-align: center; background: rgba(255,255,255,0.95); color: #667eea; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.background='white'" onmouseout="this.style.background='rgba(255,255,255,0.95)'">
-            3 free messages &mdash; try now
-        </a>
-    </div>
-    {% endif %}
-
     <!-- Create Post Box (Only for authenticated users) -->
-    <div class="create-post-box">
-        <div class="create-post-header">
+    <div class="create-post-box" id="createPostBox">
+        <!-- Compact bar (collapsed state) -->
+        <div class="create-post-compact" id="createPostCompact">
             <div class="avatar-initials avatar-small" style="background: hsl({{ user.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ user.username|slice:":1"|upper }}</div>
-            <span style="font-weight: 500;">What's on your mind, {{ user.get_full_name|default:user.username }}?</span>
+            <span class="placeholder-text">Share something...</span>
+            <i class="fas fa-camera camera-icon" aria-hidden="true"></i>
         </div>
-        <form id="create-post-form" enctype="multipart/form-data">
-            {% csrf_token %}
-            <textarea
-                class="post-textarea"
-                name="content"
-                id="post-content"
-                placeholder="Share your journey, wins, or words of encouragement..."
-            ></textarea>
 
-            <!-- Image Preview -->
-            <div id="image-preview-container" style="display: none; padding: 0.5rem; margin-top: 0.5rem;">
-                <div style="position: relative; display: inline-block;">
-                    <img id="image-preview" src="" alt="Preview" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
-                    <button type="button" id="remove-image-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
+        <!-- Full form (expanded state) -->
+        <div class="create-post-full">
+            <div class="create-post-header">
+                <div class="avatar-initials avatar-small" style="background: hsl({{ user.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ user.username|slice:":1"|upper }}</div>
+                <span style="font-weight: 500;">What's on your mind, {{ user.get_full_name|default:user.username }}?</span>
             </div>
+            <form id="create-post-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <textarea
+                    class="post-textarea"
+                    name="content"
+                    id="post-content"
+                    placeholder="Share your journey, wins, or words of encouragement..."
+                ></textarea>
 
-            <div class="post-actions">
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="file" name="image" id="post-image-input" accept="image/*" style="display: none;">
-                    <button type="button" id="add-photo-btn" class="action-btn" style="padding: 0.25rem 0.75rem; margin: 0;">
-                        <i class="fas fa-image"></i>
-                    </button>
-                    <select name="visibility" class="visibility-select">
-                        <option value="public">🌍 Everyone</option>
-                        <option value="friends">👥 Friends</option>
-                        <option value="private">🔒 Only Me</option>
-                    </select>
+                <!-- Image Preview -->
+                <div id="image-preview-container" style="display: none; padding: 0.5rem; margin-top: 0.5rem;">
+                    <div style="position: relative; display: inline-block;">
+                        <img id="image-preview" src="" alt="Preview" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
+                        <button type="button" id="remove-image-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 </div>
-                <button type="submit" class="post-btn" id="post-submit-btn" disabled>Post</button>
-            </div>
-        </form>
+
+                <div class="post-actions">
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="file" name="image" id="post-image-input" accept="image/*" style="display: none;">
+                        <button type="button" id="add-photo-btn" class="action-btn" style="padding: 0.25rem 0.75rem; margin: 0;">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        <select name="visibility" class="visibility-select">
+                            <option value="public">🌍 Everyone</option>
+                            <option value="friends">👥 Friends</option>
+                            <option value="private">🔒 Only Me</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="post-btn" id="post-submit-btn" disabled>Post</button>
+                </div>
+            </form>
+        </div>
     </div>
     {% else %}
     <!-- Welcome Banner for Anonymous Users -->
@@ -778,46 +938,6 @@
             <h3>Welcome to MyRecoveryCircle</h3>
             <p>See what our community is sharing. Join free to connect with others in recovery.</p>
         </div>
-    </div>
-    {% endif %}
-
-    <!-- Welcome Section for New Users -->
-    {% if user.is_authenticated and show_suggestions and suggested_users %}
-    <div class="welcome-section">
-        <div class="welcome-header">
-            {% if is_new_user %}
-            <h2>Welcome to your recovery circle!</h2>
-            <p>Follow some members to fill your feed with inspiration and support</p>
-            {% else %}
-            <h2>People you might like</h2>
-            <p>Connect with more members of the community</p>
-            {% endif %}
-        </div>
-
-        <div class="suggested-users-grid">
-            {% for member in suggested_users %}
-            <div class="suggested-user-card" data-username="{{ member.username }}">
-                {% if member.avatar %}
-                <img src="{{ member.avatar.url }}" alt="{{ member.username }}" class="suggested-avatar">
-                {% else %}
-                <div class="suggested-avatar-initials" style="background: hsl({{ member.id|add:100 }}, 45%, 50%);">
-                    {{ member.first_name|default:member.username|slice:":1"|upper }}
-                </div>
-                {% endif %}
-                <a href="{% url 'accounts:profile' member.username %}" class="suggested-name">{{ member.get_full_name|default:member.username }}</a>
-                <div class="suggested-bio">
-                    {% if member.bio %}{{ member.bio|truncatewords:10 }}{% else %}Member of the community{% endif %}
-                </div>
-                <button class="follow-btn-small follow-suggested-btn" data-username="{{ member.username }}">
-                    <i class="fas fa-plus"></i> Follow
-                </button>
-            </div>
-            {% endfor %}
-        </div>
-
-        <a href="{% url 'accounts:enhanced_community' %}" class="view-all-link">
-            View all members <i class="fas fa-arrow-right"></i>
-        </a>
     </div>
     {% endif %}
 
@@ -908,6 +1028,12 @@
                     </form>
                 </div>
             </div>
+            {% if forloop.counter == 3 and show_suggestions and suggested_users %}
+            {% include 'accounts/partials/inline_suggestions.html' %}
+            {% endif %}
+            {% if forloop.last and forloop.counter < 3 and show_suggestions and suggested_users %}
+            {% include 'accounts/partials/inline_suggestions.html' %}
+            {% endif %}
             {% endfor %}
 
             {% if user.is_authenticated %}
@@ -1050,6 +1176,31 @@ function toggleComments(postId) {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOMContentLoaded fired - initializing social feed JS');
 
+    // Compact create-post bar — expand on tap
+    const createPostBox = document.getElementById('createPostBox');
+    const createPostCompact = document.getElementById('createPostCompact');
+
+    if (createPostCompact) {
+        createPostCompact.addEventListener('click', function() {
+            createPostBox.classList.add('expanded');
+            const ta = document.getElementById('post-content');
+            if (ta) setTimeout(() => ta.focus(), 100);
+        });
+    }
+
+    // Collapse create-post when clicking outside (only if empty)
+    document.addEventListener('click', function(e) {
+        if (createPostBox && createPostBox.classList.contains('expanded') && !createPostBox.contains(e.target)) {
+            const ta = document.getElementById('post-content');
+            const imgInput = document.getElementById('post-image-input');
+            const hasContent = ta && ta.value.trim().length > 0;
+            const hasImage = imgInput && imgInput.files.length > 0;
+            if (!hasContent && !hasImage) {
+                createPostBox.classList.remove('expanded');
+            }
+        }
+    });
+
     // Post content handling
     const textarea = document.getElementById('post-content');
     const submitBtn = document.getElementById('post-submit-btn');
@@ -1177,7 +1328,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.follow-suggested-btn').forEach(btn => {
         btn.addEventListener('click', async function() {
             const username = this.dataset.username;
-            const card = this.closest('.suggested-user-card');
+            const card = this.closest('.suggested-user-card') || this.closest('.inline-suggestion-card');
 
             try {
                 const response = await fetch(`/accounts/follow/${username}/`, {
@@ -1197,10 +1348,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.disabled = true;
 
                     // Animate the card to show it's been followed
-                    card.style.transition = 'all 0.3s ease';
-                    setTimeout(() => {
-                        card.style.opacity = '0.6';
-                    }, 300);
+                    if (card) {
+                        card.style.transition = 'all 0.3s ease';
+                        setTimeout(() => {
+                            card.style.opacity = '0.6';
+                        }, 300);
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
