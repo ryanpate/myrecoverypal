@@ -636,6 +636,55 @@ body.android-native-app {
     display: none;
 }
 
+/* Native notification bell (injected by JS) */
+.native-notif-bell {
+    position: relative;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    text-decoration: none;
+}
+
+.native-notif-bell i {
+    font-size: 1.2rem;
+    color: #1c1c1e;
+}
+
+.native-notif-badge {
+    position: absolute;
+    top: 2px;
+    right: 0;
+    background: #ff3b30;
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid white;
+}
+
+.native-notif-badge:empty,
+.native-notif-badge[data-count="0"] {
+    display: none;
+}
+
+/* Dark mode for native bell */
+[data-theme="dark"] .native-notif-bell i {
+    color: #fff;
+}
+
+[data-theme="dark"] .native-notif-badge {
+    border-color: #1c1c1e;
+}
+
 /* Note: All color variables are defined in static/css/main.css */
 
 * {

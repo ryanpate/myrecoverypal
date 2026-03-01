@@ -61,6 +61,45 @@
     })();
 
     // ========================================
+    // Native Notification Bell
+    // Inject bell icon with badge into nav bar.
+    // ========================================
+    (function rebuildNavForNative() {
+        var navRight = document.querySelector('.nav-right');
+        if (!navRight) return;
+
+        // Create bell element
+        var bell = document.createElement('a');
+        bell.className = 'native-notif-bell';
+        bell.href = '/accounts/notifications/';
+        bell.innerHTML = '<i class="fas fa-bell" aria-hidden="true"></i><span class="native-notif-badge" id="nativeNotifBadge"></span>';
+
+        // Insert bell before hamburger
+        var hamburger = document.getElementById('hamburgerBtn');
+        if (hamburger) {
+            navRight.insertBefore(bell, hamburger);
+        }
+
+        // Hook into existing updateNotificationIndicator to also update bell badge
+        var origUpdate = window.updateNotificationIndicator;
+        window.updateNotificationIndicator = function(count) {
+            // Call original (updates the dot)
+            if (origUpdate) origUpdate(count);
+            // Update native bell badge
+            var badge = document.getElementById('nativeNotifBadge');
+            if (badge) {
+                badge.textContent = count > 0 ? (count > 99 ? '99+' : count) : '';
+                badge.setAttribute('data-count', count);
+            }
+            // Also update tab bar badge
+            var tabBadge = document.getElementById('nativeTabNotifBadge');
+            if (tabBadge) {
+                tabBadge.textContent = count > 0 ? (count > 99 ? '99+' : count) : '';
+            }
+        };
+    })();
+
+    // ========================================
     // Native Features API (window.MRPNative)
     // ========================================
     var MRPNative = {
