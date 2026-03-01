@@ -18,6 +18,49 @@
     document.body.classList.add(platform + '-native-app');
 
     // ========================================
+    // Native Hamburger Menu Rebuild
+    // Replace CSS-drawn hamburger lines and SVG close button
+    // with proper Font Awesome icons via direct DOM manipulation.
+    // ========================================
+    (function rebuildHamburger() {
+        var hamburger = document.getElementById('hamburgerBtn');
+        if (!hamburger) return;
+
+        // Remove the three <span class="hamburger-line"> children
+        var lines = hamburger.querySelectorAll('.hamburger-line');
+        for (var i = 0; i < lines.length; i++) {
+            lines[i].remove();
+        }
+
+        // Insert a Font Awesome bars icon
+        var icon = document.createElement('i');
+        icon.className = 'fas fa-bars';
+        icon.style.fontSize = '1.3rem';
+        icon.style.color = '#1e4d8b';
+        icon.setAttribute('aria-hidden', 'true');
+        hamburger.appendChild(icon);
+        hamburger.style.display = 'flex';
+        hamburger.style.alignItems = 'center';
+        hamburger.style.justifyContent = 'center';
+
+        // Observe the .active class toggle to swap bars ↔ xmark
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(m) {
+                if (m.attributeName === 'class') {
+                    icon.className = hamburger.classList.contains('active')
+                        ? 'fas fa-xmark'
+                        : 'fas fa-bars';
+                }
+            });
+        });
+        observer.observe(hamburger, { attributes: true });
+
+        // Hide the SVG close button inside the slide menu
+        var closeBtn = document.querySelector('.mobile-menu-close');
+        if (closeBtn) closeBtn.style.display = 'none';
+    })();
+
+    // ========================================
     // Native Features API (window.MRPNative)
     // ========================================
     var MRPNative = {
