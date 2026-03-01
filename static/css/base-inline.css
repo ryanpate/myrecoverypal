@@ -595,6 +595,47 @@ body.android-native-app {
     color: #4db8e8;
 }
 
+/* ========================================
+   Native Nav Bar — Ultra-Minimal
+   Icon only, no logo text, tighter padding.
+   ======================================== */
+
+/* Tighter nav container padding */
+.ios-native-app .nav-container,
+.android-native-app .nav-container {
+    padding: 6px 12px;
+}
+
+/* Hide logo text — icon only */
+.ios-native-app .logo-text,
+.android-native-app .logo-text {
+    display: none;
+}
+
+/* Smaller logo icon */
+.ios-native-app .logo-img,
+.android-native-app .logo-img {
+    height: 28px;
+}
+
+/* Tighter logo gap */
+.ios-native-app .logo-container,
+.android-native-app .logo-container {
+    gap: 0;
+}
+
+/* Hide theme toggle from nav on native (still in hamburger menu) */
+.ios-native-app .theme-toggle,
+.android-native-app .theme-toggle {
+    display: none;
+}
+
+/* Hide the old notification dot on native */
+.ios-native-app .notification-indicator,
+.android-native-app .notification-indicator {
+    display: none;
+}
+
 /* Note: All color variables are defined in static/css/main.css */
 
 * {
