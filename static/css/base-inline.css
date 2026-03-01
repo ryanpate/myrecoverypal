@@ -488,10 +488,8 @@
    Icon only, bell + badge, hamburger.
    ======================================== */
 
-/* Nav itself: account for overlaying status bar */
+/* Nav itself: frosted glass effect on native */
 .ios-native-app nav {
-    padding-top: env(safe-area-inset-top, 47px);
-    background: rgba(255, 255, 255, 0.98);
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
 }
@@ -679,8 +677,8 @@
 }
 
 /* Add bottom padding to body for native tabs */
-.ios-native-app body,
-.android-native-app body {
+body.ios-native-app,
+body.android-native-app {
     padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
 }
 

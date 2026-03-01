@@ -17,10 +17,11 @@
     // Add platform class to body for CSS targeting
     document.body.classList.add(platform + '-native-app');
 
-    // Show splash overlay while page loads
+    // Show splash overlay only on first load per app session
     var splash = document.getElementById('nativeSplashOverlay');
-    if (splash) {
+    if (splash && !sessionStorage.getItem('mrp_splash_shown')) {
         splash.style.display = 'flex';
+        sessionStorage.setItem('mrp_splash_shown', '1');
     }
 
     // ========================================
