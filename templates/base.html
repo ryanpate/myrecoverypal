@@ -144,6 +144,14 @@
 </head>
 
 <body>
+    <!-- Native App Loading Overlay (hidden on web) -->
+    <div id="nativeSplashOverlay" class="native-splash-overlay" style="display:none;">
+        <div class="native-splash-content">
+            <img src="{% static 'images/logo.svg' %}" alt="" class="native-splash-logo" aria-hidden="true">
+            <div class="native-splash-pulse"></div>
+        </div>
+    </div>
+
     <!-- Biometric Lock Screen (native app only -- hidden by default) -->
     <div id="biometricLockScreen" class="biometric-lock-screen" style="display: none;">
         <div class="biometric-lock-content">

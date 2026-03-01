@@ -17,6 +17,12 @@
     // Add platform class to body for CSS targeting
     document.body.classList.add(platform + '-native-app');
 
+    // Show splash overlay while page loads
+    var splash = document.getElementById('nativeSplashOverlay');
+    if (splash) {
+        splash.style.display = 'flex';
+    }
+
     // ========================================
     // Native Hamburger Menu Rebuild
     // Replace CSS-drawn hamburger lines and SVG close button
@@ -347,5 +353,20 @@
         observer.observe(document.documentElement, { attributes: true });
         observer.observe(document.body, { attributes: true });
     })();
+
+    // ========================================
+    // Dismiss Splash Overlay
+    // ========================================
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            var splash = document.getElementById('nativeSplashOverlay');
+            if (splash) {
+                splash.classList.add('fade-out');
+                setTimeout(function() {
+                    splash.style.display = 'none';
+                }, 400);
+            }
+        }, 300); // Brief delay so content is painted
+    });
 
 })();
