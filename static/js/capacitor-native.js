@@ -97,6 +97,11 @@
                 badge.textContent = count > 0 ? (count > 99 ? '99+' : count) : '';
                 badge.setAttribute('data-count', count);
             }
+            // Also update tab bar badge
+            var tabBadge = document.getElementById('nativeTabNotifBadge');
+            if (tabBadge) {
+                tabBadge.textContent = count > 0 ? (count > 99 ? '99+' : count) : '';
+            }
         };
     })();
 
@@ -257,6 +262,7 @@
 
         // Walk up to find the actual interactive element
         var el = target.closest('[data-haptic]') ||
+                 target.closest('.native-tab') ||
                  target.closest('.like-btn, .reaction-btn, .react-btn') ||
                  target.closest('.checkin-mood-btn, .quick-checkin-btn, [name="mood"]') ||
                  target.closest('.share-btn, .milestone-share-btn, [data-share]') ||
@@ -266,7 +272,8 @@
         if (!el) return;
 
         // Determine haptic type
-        if (el.matches('.like-btn, .reaction-btn, .react-btn') ||
+        if (el.matches('.native-tab') ||
+            el.matches('.like-btn, .reaction-btn, .react-btn') ||
             el.getAttribute('data-haptic') === 'light') {
             MRPNative.hapticLight();
         } else if (el.matches('.checkin-mood-btn, .quick-checkin-btn, [name="mood"]') ||

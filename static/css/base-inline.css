@@ -596,6 +596,116 @@
     border-color: #1c1c1e;
 }
 
+/* ========================================
+   Native Bottom Tab Bar (iOS/Android)
+   Hidden on web. 5 tabs with icons.
+   ======================================== */
+
+.native-bottom-tabs {
+    display: none; /* Hidden on web */
+}
+
+.ios-native-app .native-bottom-tabs,
+.android-native-app .native-bottom-tabs {
+    display: flex !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.98);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-top: 0.5px solid rgba(0, 0, 0, 0.12);
+    padding: 6px 0;
+    padding-bottom: max(6px, env(safe-area-inset-bottom, 0px));
+    z-index: 1050;
+}
+
+/* Hide web bottom nav on native */
+.ios-native-app .mobile-bottom-nav,
+.android-native-app .mobile-bottom-nav {
+    display: none !important;
+}
+
+.native-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-decoration: none;
+    color: #8e8e93;
+    font-size: 0.6rem;
+    padding: 4px 0;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    letter-spacing: 0.01em;
+}
+
+.native-tab i {
+    font-size: 1.25rem;
+    margin-bottom: 2px;
+}
+
+.native-tab.active {
+    color: var(--primary-dark, #1e4d8b);
+}
+
+.native-tab.active i {
+    font-weight: 900;
+}
+
+/* Notification badge on tab */
+.native-tab-badge {
+    position: absolute;
+    top: 0;
+    right: 50%;
+    transform: translateX(12px);
+    background: #ff3b30;
+    color: white;
+    font-size: 0.55rem;
+    font-weight: 700;
+    min-width: 14px;
+    height: 14px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+}
+
+.native-tab-badge:empty {
+    display: none;
+}
+
+/* Add bottom padding to body for native tabs */
+.ios-native-app body,
+.android-native-app body {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Hide tabs when keyboard is open */
+.keyboard-open .native-bottom-tabs {
+    display: none !important;
+}
+
+/* ---- Native Bottom Tabs Dark Mode ---- */
+.ios-native-app[data-theme="dark"] .native-bottom-tabs,
+[data-theme="dark"] .ios-native-app .native-bottom-tabs {
+    background: rgba(28, 28, 30, 0.98);
+    border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.ios-native-app[data-theme="dark"] .native-tab,
+[data-theme="dark"] .ios-native-app .native-tab {
+    color: #636366;
+}
+
+.ios-native-app[data-theme="dark"] .native-tab.active,
+[data-theme="dark"] .ios-native-app .native-tab.active {
+    color: #4db8e8;
+}
+
 /* Note: All color variables are defined in static/css/main.css */
 
 * {

@@ -560,6 +560,32 @@
     </nav>
     {% endif %}
 
+    <!-- Native Bottom Tab Bar (iOS/Android — hidden on web) -->
+    {% if user.is_authenticated %}
+    <nav class="native-bottom-tabs" id="nativeBottomTabs">
+        <a href="{% url 'accounts:social_feed' %}" class="native-tab {% if request.resolver_match.url_name == 'social_feed' or request.resolver_match.url_name == 'hybrid_landing' %}active{% endif %}" data-tab="feed">
+            <i class="fas fa-house" aria-hidden="true"></i>
+            <span>Feed</span>
+        </a>
+        <a href="{% url 'accounts:recovery_coach' %}" class="native-tab {% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}" data-tab="coach">
+            <i class="fas fa-robot" aria-hidden="true"></i>
+            <span>Coach</span>
+        </a>
+        <a href="{% url 'accounts:dashboard' %}" class="native-tab {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" data-tab="checkin">
+            <i class="fas fa-circle-check" aria-hidden="true"></i>
+            <span>Check-in</span>
+        </a>
+        <a href="{% url 'accounts:notifications' %}" class="native-tab {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}" data-tab="notifications">
+            <i class="fas fa-bell" aria-hidden="true"></i>
+            <span>Alerts</span>
+            <span class="native-tab-badge" id="nativeTabNotifBadge"></span>
+        </a>
+        <a href="{% url 'accounts:profile' username=user.username %}" class="native-tab {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" data-tab="profile">
+            <i class="fas fa-user" aria-hidden="true"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+    {% endif %}
 
     <!-- Trial Countdown Banner -->
     {% if user.is_authenticated and user_subscription and user_subscription.status == 'trialing' and user_subscription.trial_end %}
