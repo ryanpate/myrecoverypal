@@ -140,18 +140,10 @@
     </script>
     {% block structured_data %}{% endblock %}
 
-    <link rel="stylesheet" href="{% static 'css/base-inline.css' %}?v=20260301b">
+    <link rel="stylesheet" href="{% static 'css/base-inline.css' %}?v=20260301c">
 </head>
 
 <body>
-    <!-- Native App Loading Overlay (hidden on web) -->
-    <div id="nativeSplashOverlay" class="native-splash-overlay" style="display:none;">
-        <div class="native-splash-content">
-            <img src="{% static 'images/logo.svg' %}" alt="" class="native-splash-logo" aria-hidden="true">
-            <div class="native-splash-pulse"></div>
-        </div>
-    </div>
-
     <!-- Biometric Lock Screen (native app only -- hidden by default) -->
     <div id="biometricLockScreen" class="biometric-lock-screen" style="display: none;">
         <div class="biometric-lock-content">
@@ -564,33 +556,6 @@
         </a>
         <a href="{% url 'accounts:login' %}">
             <span>Login</span>
-        </a>
-    </nav>
-    {% endif %}
-
-    <!-- Native Bottom Tab Bar (iOS/Android — hidden on web) -->
-    {% if user.is_authenticated %}
-    <nav class="native-bottom-tabs" id="nativeBottomTabs">
-        <a href="{% url 'accounts:social_feed' %}" class="native-tab {% if request.resolver_match.url_name == 'social_feed' or request.resolver_match.url_name == 'hybrid_landing' %}active{% endif %}" data-tab="feed">
-            <i class="fas fa-house" aria-hidden="true"></i>
-            <span>Feed</span>
-        </a>
-        <a href="{% url 'accounts:recovery_coach' %}" class="native-tab {% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}" data-tab="coach">
-            <i class="fas fa-robot" aria-hidden="true"></i>
-            <span>Coach</span>
-        </a>
-        <a href="{% url 'accounts:dashboard' %}" class="native-tab {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" data-tab="checkin">
-            <i class="fas fa-circle-check" aria-hidden="true"></i>
-            <span>Check-in</span>
-        </a>
-        <a href="{% url 'accounts:notifications' %}" class="native-tab {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}" data-tab="notifications">
-            <i class="fas fa-bell" aria-hidden="true"></i>
-            <span>Alerts</span>
-            <span class="native-tab-badge" id="nativeTabNotifBadge"></span>
-        </a>
-        <a href="{% url 'accounts:profile' username=user.username %}" class="native-tab {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" data-tab="profile">
-            <i class="fas fa-user" aria-hidden="true"></i>
-            <span>Profile</span>
         </a>
     </nav>
     {% endif %}
@@ -1146,13 +1111,13 @@
     </script>
 
     <!-- Capacitor Native Features (native app only) -->
-    <script src="{% static 'js/capacitor-native.js' %}?v=20260301b"></script>
+    <script src="{% static 'js/capacitor-native.js' %}?v=20260301c"></script>
     <!-- Capacitor Push Notifications (native app only) -->
-    <script src="{% static 'js/capacitor-push.js' %}?v=20260301b"></script>
+    <script src="{% static 'js/capacitor-push.js' %}?v=20260301c"></script>
     <!-- Capacitor In-App Purchases (iOS only) -->
-    <script src="{% static 'js/capacitor-iap.js' %}?v=20260301b"></script>
+    <script src="{% static 'js/capacitor-iap.js' %}?v=20260301c"></script>
     <!-- Capacitor Biometric Auth (native app only) -->
-    <script src="{% static 'js/capacitor-biometric.js' %}?v=20260301b"></script>
+    <script src="{% static 'js/capacitor-biometric.js' %}?v=20260301c"></script>
 
     <!-- Biometric App Lock behavior (native app only) -->
     <script>
@@ -1237,10 +1202,10 @@
     </script>
 
     <!-- Capacitor Page Transitions + Gestures (native app only) -->
-    <script src="{% static 'js/capacitor-transitions.js' %}?v=20260301b"></script>
+    <script src="{% static 'js/capacitor-transitions.js' %}?v=20260301c"></script>
 
     <!-- Capacitor Offline Mode (native app only) -->
-    <script src="{% static 'js/capacitor-offline.js' %}?v=20260301b"></script>
+    <script src="{% static 'js/capacitor-offline.js' %}?v=20260301c"></script>
 
     <!-- Additional Scripts -->
     {% block extra_js %}{% endblock %}

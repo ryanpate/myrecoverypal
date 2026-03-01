@@ -17,13 +17,6 @@
     // Add platform class to body for CSS targeting
     document.body.classList.add(platform + '-native-app');
 
-    // Show splash overlay only on first load per app session
-    var splash = document.getElementById('nativeSplashOverlay');
-    if (splash && !sessionStorage.getItem('mrp_splash_shown')) {
-        splash.style.display = 'flex';
-        sessionStorage.setItem('mrp_splash_shown', '1');
-    }
-
     // ========================================
     // Native Hamburger Menu Rebuild
     // Replace CSS-drawn hamburger lines and SVG close button
@@ -65,51 +58,6 @@
         // Hide the SVG close button inside the slide menu
         var closeBtn = document.querySelector('.mobile-menu-close');
         if (closeBtn) closeBtn.style.display = 'none';
-    })();
-
-    // ========================================
-    // Native Notification Bell
-    // ========================================
-    (function rebuildNavForNative() {
-        var navRight = document.querySelector('.nav-right');
-        if (!navRight) return;
-
-        // Create bell element
-        var bell = document.createElement('div');
-        bell.className = 'native-notif-bell';
-        bell.setAttribute('aria-label', 'Notifications');
-        bell.innerHTML = '<i class="fas fa-bell" aria-hidden="true"></i><span class="native-notif-badge" id="nativeNotifBadge"></span>';
-        bell.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (typeof toggleNotifications === 'function') {
-                toggleNotifications();
-            }
-            MRPNative.hapticLight();
-        });
-
-        // Insert bell before hamburger
-        var hamburger = document.getElementById('hamburgerBtn');
-        if (hamburger) {
-            navRight.insertBefore(bell, hamburger);
-        }
-
-        // Hook into existing notification check to update bell badge
-        var origUpdate = window.updateNotificationIndicator;
-        window.updateNotificationIndicator = function(count) {
-            // Call original
-            if (origUpdate) origUpdate(count);
-            // Update native bell badge
-            var badge = document.getElementById('nativeNotifBadge');
-            if (badge) {
-                badge.textContent = count > 0 ? (count > 99 ? '99+' : count) : '';
-                badge.setAttribute('data-count', count);
-            }
-            // Also update tab bar badge
-            var tabBadge = document.getElementById('nativeTabNotifBadge');
-            if (tabBadge) {
-                tabBadge.textContent = count > 0 ? (count > 99 ? '99+' : count) : '';
-            }
-        };
     })();
 
     // ========================================
@@ -269,7 +217,6 @@
 
         // Walk up to find the actual interactive element
         var el = target.closest('[data-haptic]') ||
-                 target.closest('.native-tab') ||
                  target.closest('.like-btn, .reaction-btn, .react-btn') ||
                  target.closest('.checkin-mood-btn, .quick-checkin-btn, [name="mood"]') ||
                  target.closest('.share-btn, .milestone-share-btn, [data-share]') ||
@@ -279,8 +226,7 @@
         if (!el) return;
 
         // Determine haptic type
-        if (el.matches('.native-tab') ||
-            el.matches('.like-btn, .reaction-btn, .react-btn') ||
+        if (el.matches('.like-btn, .reaction-btn, .react-btn') ||
             el.getAttribute('data-haptic') === 'light') {
             MRPNative.hapticLight();
         } else if (el.matches('.checkin-mood-btn, .quick-checkin-btn, [name="mood"]') ||
@@ -325,49 +271,6 @@
         if (e.target.closest('#hamburgerBtn')) {
             MRPNative.hapticLight();
         }
-    });
-
-    // ========================================
-    // Status Bar Style — Sync with Theme
-    // ========================================
-    // Dark text for light mode, light text for dark mode
-    (function syncStatusBarWithTheme() {
-        if (!Plugins.StatusBar) return;
-
-        function applyStatusBarStyle() {
-            var isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
-                         document.body.getAttribute('data-theme') === 'dark';
-            Plugins.StatusBar.setStyle({ style: isDark ? 'LIGHT' : 'DARK' });
-        }
-
-        // Set on load
-        applyStatusBarStyle();
-
-        // Watch for theme changes (MutationObserver on data-theme attribute)
-        var observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(m) {
-                if (m.attributeName === 'data-theme') {
-                    applyStatusBarStyle();
-                }
-            });
-        });
-        observer.observe(document.documentElement, { attributes: true });
-        observer.observe(document.body, { attributes: true });
-    })();
-
-    // ========================================
-    // Dismiss Splash Overlay
-    // ========================================
-    window.addEventListener('load', function() {
-        setTimeout(function() {
-            var splash = document.getElementById('nativeSplashOverlay');
-            if (splash) {
-                splash.classList.add('fade-out');
-                setTimeout(function() {
-                    splash.style.display = 'none';
-                }, 400);
-            }
-        }, 300); // Brief delay so content is painted
     });
 
 })();
