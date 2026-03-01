@@ -140,10 +140,18 @@
     </script>
     {% block structured_data %}{% endblock %}
 
-    <link rel="stylesheet" href="{% static 'css/base-inline.css' %}?v=20260301g">
+    <link rel="stylesheet" href="{% static 'css/base-inline.css' %}?v=20260301h">
 </head>
 
 <body>
+    <!-- Native App Loading Overlay (hidden on web) -->
+    <div id="nativeSplashOverlay" class="native-splash-overlay" style="display:none;">
+        <div class="native-splash-content">
+            <img src="{% static 'images/logo.svg' %}" alt="" class="native-splash-logo" aria-hidden="true">
+            <div class="native-splash-pulse"></div>
+        </div>
+    </div>
+
     <!-- Biometric Lock Screen (native app only -- hidden by default) -->
     <div id="biometricLockScreen" class="biometric-lock-screen" style="display: none;">
         <div class="biometric-lock-content">
@@ -1138,13 +1146,13 @@
     </script>
 
     <!-- Capacitor Native Features (native app only) -->
-    <script src="{% static 'js/capacitor-native.js' %}?v=20260301g"></script>
+    <script src="{% static 'js/capacitor-native.js' %}?v=20260301h"></script>
     <!-- Capacitor Push Notifications (native app only) -->
-    <script src="{% static 'js/capacitor-push.js' %}?v=20260301g"></script>
+    <script src="{% static 'js/capacitor-push.js' %}?v=20260301h"></script>
     <!-- Capacitor In-App Purchases (iOS only) -->
-    <script src="{% static 'js/capacitor-iap.js' %}?v=20260301g"></script>
+    <script src="{% static 'js/capacitor-iap.js' %}?v=20260301h"></script>
     <!-- Capacitor Biometric Auth (native app only) -->
-    <script src="{% static 'js/capacitor-biometric.js' %}?v=20260301g"></script>
+    <script src="{% static 'js/capacitor-biometric.js' %}?v=20260301h"></script>
 
     <!-- Biometric App Lock behavior (native app only) -->
     <script>
@@ -1229,10 +1237,10 @@
     </script>
 
     <!-- Capacitor Page Transitions + Gestures (native app only) -->
-    <script src="{% static 'js/capacitor-transitions.js' %}?v=20260301g"></script>
+    <script src="{% static 'js/capacitor-transitions.js' %}?v=20260301h"></script>
 
     <!-- Capacitor Offline Mode (native app only) -->
-    <script src="{% static 'js/capacitor-offline.js' %}?v=20260301g"></script>
+    <script src="{% static 'js/capacitor-offline.js' %}?v=20260301h"></script>
 
     <!-- Additional Scripts -->
     {% block extra_js %}{% endblock %}

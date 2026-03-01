@@ -18,6 +18,19 @@
     document.body.classList.add(platform + '-native-app');
 
     // ========================================
+    // Native Splash Overlay (first load only)
+    // ========================================
+    var splashShown = false;
+    (function showSplash() {
+        if (sessionStorage.getItem('mrp_splash_shown')) return;
+        var splash = document.getElementById('nativeSplashOverlay');
+        if (!splash) return;
+        splash.style.display = 'flex';
+        splashShown = true;
+        sessionStorage.setItem('mrp_splash_shown', '1');
+    })();
+
+    // ========================================
     // Native Hamburger Menu Rebuild
     // Replace CSS-drawn hamburger lines and SVG close button
     // with proper Font Awesome icons via direct DOM manipulation.
@@ -311,5 +324,22 @@
             MRPNative.hapticLight();
         }
     });
+
+    // ========================================
+    // Dismiss Splash Overlay on Page Load
+    // ========================================
+    if (splashShown) {
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                var splash = document.getElementById('nativeSplashOverlay');
+                if (splash) {
+                    splash.classList.add('fade-out');
+                    setTimeout(function() {
+                        splash.style.display = 'none';
+                    }, 400);
+                }
+            }, 300);
+        });
+    }
 
 })();

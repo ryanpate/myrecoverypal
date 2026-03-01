@@ -685,6 +685,60 @@ body.android-native-app {
     border-color: #1c1c1e;
 }
 
+/* ========================================
+   Native Splash / Loading Overlay
+   Shows once per app session while page loads.
+   ======================================== */
+
+.native-splash-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 100000;
+    background: #1e4d8b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s ease-out;
+}
+
+.native-splash-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.native-splash-content {
+    text-align: center;
+    position: relative;
+}
+
+.native-splash-logo {
+    width: 80px;
+    height: 80px;
+    animation: splashPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes splashPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: 0.85; }
+}
+
+.native-splash-pulse {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: splashRing 1.5s ease-out infinite;
+}
+
+@keyframes splashRing {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+}
+
 /* Note: All color variables are defined in static/css/main.css */
 
 * {
