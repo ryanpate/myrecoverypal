@@ -190,6 +190,11 @@
         var anchor = e.target.closest('a');
         if (!anchor) return;
 
+        // Let native bottom tabs navigate normally without transition
+        if (anchor.closest('.native-bottom-tabs')) {
+            return;
+        }
+
         if (!shouldTransition(anchor)) return;
 
         e.preventDefault();
