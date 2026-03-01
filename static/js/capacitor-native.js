@@ -61,6 +61,45 @@
     })();
 
     // ========================================
+    // Native Notification Bell
+    // ========================================
+    (function rebuildNavForNative() {
+        var navRight = document.querySelector('.nav-right');
+        if (!navRight) return;
+
+        // Create bell element
+        var bell = document.createElement('div');
+        bell.className = 'native-notif-bell';
+        bell.innerHTML = '<i class="fas fa-bell" aria-hidden="true"></i><span class="native-notif-badge" id="nativeNotifBadge"></span>';
+        bell.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (typeof toggleNotifications === 'function') {
+                toggleNotifications();
+            }
+            MRPNative.hapticLight();
+        });
+
+        // Insert bell before hamburger
+        var hamburger = document.getElementById('hamburgerBtn');
+        if (hamburger) {
+            navRight.insertBefore(bell, hamburger);
+        }
+
+        // Hook into existing notification check to update bell badge
+        var origUpdate = window.updateNotificationIndicator;
+        window.updateNotificationIndicator = function(count) {
+            // Call original
+            if (origUpdate) origUpdate(count);
+            // Update native bell badge
+            var badge = document.getElementById('nativeNotifBadge');
+            if (badge) {
+                badge.textContent = count > 0 ? (count > 99 ? '99+' : count) : '';
+                badge.setAttribute('data-count', count);
+            }
+        };
+    })();
+
+    // ========================================
     // Native Features API (window.MRPNative)
     // ========================================
     var MRPNative = {
