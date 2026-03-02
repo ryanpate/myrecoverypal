@@ -884,7 +884,11 @@
     <div class="create-post-box" id="createPostBox">
         <!-- Compact bar (collapsed state) -->
         <div class="create-post-compact" id="createPostCompact">
+            {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="avatar-small" style="border-radius: 50%; object-fit: cover;">
+            {% else %}
             <div class="avatar-initials avatar-small" style="background: hsl({{ user.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ user.username|slice:":1"|upper }}</div>
+            {% endif %}
             <span class="placeholder-text">Share something...</span>
             <i class="fas fa-camera camera-icon" aria-hidden="true"></i>
         </div>
@@ -892,7 +896,11 @@
         <!-- Full form (expanded state) -->
         <div class="create-post-full">
             <div class="create-post-header">
+                {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="avatar-small" style="border-radius: 50%; object-fit: cover;">
+                {% else %}
                 <div class="avatar-initials avatar-small" style="background: hsl({{ user.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ user.username|slice:":1"|upper }}</div>
+                {% endif %}
                 <span style="font-weight: 500;">What's on your mind, {{ user.get_full_name|default:user.username }}?</span>
             </div>
             <form id="create-post-form" enctype="multipart/form-data">
@@ -955,7 +963,11 @@
             <div class="post-card" data-post-id="{{ post.id }}">
                 <!-- Post Header -->
                 <div class="social-post-header">
+                    {% if post.author.avatar %}
+                    <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username }}" class="avatar-medium" style="border-radius: 50%; object-fit: cover;">
+                    {% else %}
                     <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
+                    {% endif %}
                     <div class="post-author-info">
                         <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
                         <div class="post-meta">@{{ post.author.username }} · {{ post.created_at|timesince }} ago</div>
@@ -1008,7 +1020,11 @@
                     <div class="comments-list">
                         {% for comment in post.comments.all %}
                         <div class="comment">
+                            {% if comment.author.avatar %}
+                            <img src="{{ comment.author.avatar.url }}" alt="{{ comment.author.username }}" class="comment-avatar" style="border-radius: 50%; object-fit: cover;">
+                            {% else %}
                             <div class="avatar-initials comment-avatar" style="background: hsl({{ comment.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ comment.author.username|slice:":1"|upper }}</div>
+                            {% endif %}
                             <div class="comment-content">
                                 <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</div>
                                 <div class="comment-text">{{ comment.content }}</div>
@@ -1153,7 +1169,8 @@ const currentUser = {
     username: "{{ user.username|escapejs }}",
     fullName: "{{ user.get_full_name|default:user.username|escapejs }}",
     avatarInitial: "{{ user.username|slice:':1'|upper|escapejs }}",
-    avatarColor: "hsl({{ user.id|add:100 }}, 45%, 50%)"
+    avatarColor: "hsl({{ user.id|add:100 }}, 45%, 50%)",
+    avatarUrl: "{% if user.avatar %}{{ user.avatar.url }}{% endif %}"
 };
 {% else %}
 const currentUser = null;
@@ -1454,7 +1471,10 @@ document.addEventListener('DOMContentLoaded', function() {
             optimisticComment.className = 'comment optimistic';
             optimisticComment.id = tempId;
             optimisticComment.innerHTML = `
-                <div class="avatar-initials comment-avatar" style="background: ${currentUser.avatarColor}; border-radius: 50%;">${currentUser.avatarInitial}</div>
+                ${currentUser.avatarUrl
+                    ? `<img src="${currentUser.avatarUrl}" alt="${currentUser.username}" class="comment-avatar" style="border-radius: 50%; object-fit: cover;">`
+                    : `<div class="avatar-initials comment-avatar" style="background: ${currentUser.avatarColor}; border-radius: 50%;">${currentUser.avatarInitial}</div>`
+                }
                 <div class="comment-content">
                     <div class="comment-author">${currentUser.fullName}</div>
                     <div class="comment-text">${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
