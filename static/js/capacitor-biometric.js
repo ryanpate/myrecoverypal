@@ -33,6 +33,17 @@
         return;
     }
 
+    // Map native LABiometryType rawValue integers to readable strings
+    // 0 = none, 1 = touchId, 2 = faceId, 3 = fingerprintAuthentication
+    var BIOMETRY_TYPE_MAP = {
+        0: 'none',
+        1: 'touchId',
+        2: 'faceId',
+        3: 'fingerprintAuthentication',
+        4: 'faceAuthentication',
+        5: 'irisAuthentication'
+    };
+
     // Preference keys
     var PREF_APP_LOCK = 'biometric_app_lock_enabled';
     var PREF_JOURNAL_LOCK = 'biometric_journal_lock_enabled';
@@ -46,7 +57,7 @@
     // ========================================
     var MRPBiometric = {
         available: false,
-        biometryType: 'none', // 'none', 'touchId', 'faceId', 'fingerprintAuthentication', 'irisAuthentication'
+        biometryType: 'none', // 'none', 'touchId', 'faceId', 'fingerprintAuthentication'
 
         /**
          * Check if biometric authentication is available on this device.
@@ -55,8 +66,10 @@
         checkAvailability: function() {
             return BiometricAuth.checkBiometry().then(function(result) {
                 MRPBiometric.available = result.isAvailable;
-                MRPBiometric.biometryType = result.biometryType || 'none';
-                console.log('[Biometric] Available:', result.isAvailable, 'Type:', result.biometryType);
+                // Native returns biometryType as integer (LABiometryType rawValue)
+                var rawType = result.biometryType;
+                MRPBiometric.biometryType = BIOMETRY_TYPE_MAP[rawType] || (typeof rawType === 'string' ? rawType : 'none');
+                console.log('[Biometric] Available:', result.isAvailable, 'Type:', MRPBiometric.biometryType, '(raw:', rawType + ')');
                 return result;
             }).catch(function(err) {
                 console.warn('[Biometric] checkBiometry error:', err);
@@ -69,11 +82,13 @@
         /**
          * Prompt the user for biometric authentication.
          * Falls back to device passcode if biometrics fail.
+         * Uses internalAuthenticate (the native method name exposed by
+         * @aparajita/capacitor-biometric-auth on the Capacitor proxy).
          * @param {string} reason - The reason string shown to the user
          * @returns {Promise} Resolves on success, rejects on failure/cancel
          */
         authenticate: function(reason) {
-            return BiometricAuth.authenticate({
+            return BiometricAuth.internalAuthenticate({
                 reason: reason || 'Verify your identity',
                 cancelTitle: 'Cancel',
                 allowDeviceCredential: true,
