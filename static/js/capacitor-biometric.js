@@ -19,7 +19,8 @@
     }
 
     var Plugins = window.Capacitor.Plugins;
-    var BiometricAuth = Plugins.BiometricAuth;
+    // @aparajita/capacitor-biometric-auth registers as 'BiometricAuthNative'
+    var BiometricAuth = Plugins.BiometricAuthNative || Plugins.BiometricAuth;
     var Preferences = Plugins.Preferences;
 
     if (!BiometricAuth) {
