@@ -185,6 +185,7 @@
     background: rgba(0, 0, 0, 0.3);
     -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
+    z-index: 1055;
 }
 
 /* Wider menu panel with frosted glass on native */
@@ -195,6 +196,7 @@
     background: #f2f2f7;
     box-shadow: -4px 0 30px rgba(0, 0, 0, 0.15);
     padding-top: env(safe-area-inset-top, 0px);
+    z-index: 1060;
 }
 
 .ios-native-app .mobile-slide-menu.active,
@@ -239,7 +241,7 @@
 .ios-native-app .mobile-menu-nav,
 .android-native-app .mobile-menu-nav {
     padding: 0 16px;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
 }
 
 .ios-native-app .mobile-menu-section,
