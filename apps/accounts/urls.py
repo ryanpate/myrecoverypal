@@ -70,7 +70,7 @@ urlpatterns = [
     path('comment-on-activity/<int:activity_id>/', views.comment_on_activity, name='comment_on_activity'),
 
     # Social Feed URLs (MyRecoveryCircle)
-    path('social-feed/', views.hybrid_landing_view, name='social_feed'),
+    path('social-feed/', views.social_feed_view, name='social_feed'),
     path('social-feed/posts/', views.social_feed_posts_api, name='social_feed_posts_api'),
     path('social-feed/create/', views.create_social_post, name='create_social_post'),
     path('social-feed/post/<int:post_id>/like/', views.like_social_post, name='like_social_post'),

@@ -140,7 +140,7 @@
     </script>
     {% block structured_data %}{% endblock %}
 
-    <link rel="stylesheet" href="{% static 'css/base-inline.css' %}?v=20260301i">
+    <link rel="stylesheet" href="{% static 'css/base-inline.css' %}?v=20260301j">
 </head>
 
 <body>
@@ -716,8 +716,10 @@
         }
 
         // PWA Install prompt with iOS and Firefox support
+        // Skip entirely inside Capacitor native app — PWA install is not applicable
+        const isNativeApp = window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
         let deferredPrompt;
-        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isIOS = !isNativeApp && /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
         const isFirefoxAndroid = isFirefox && /Android/i.test(navigator.userAgent);
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -758,7 +760,7 @@
         }
 
         // Show install prompt for Firefox users
-        if (isFirefox && !isStandalone && !isIOS && !installBannerDismissed) {
+        if (isFirefox && !isNativeApp && !isStandalone && !isIOS && !installBannerDismissed) {
             const installBanner = document.getElementById('installBanner');
             if (installBanner) {
                 if (isFirefoxAndroid) {
@@ -798,15 +800,17 @@
             }
         }
 
-        // Standard install prompt for Chrome/Edge/Android
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const installBanner = document.getElementById('installBanner');
-            if (installBanner && !isIOS && !isFirefox && !installBannerDismissed) {
-                installBanner.classList.add('show');
-            }
-        });
+        // Standard install prompt for Chrome/Edge/Android (skip in native app)
+        if (!isNativeApp) {
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                const installBanner = document.getElementById('installBanner');
+                if (installBanner && !isIOS && !isFirefox && !installBannerDismissed) {
+                    installBanner.classList.add('show');
+                }
+            });
+        }
 
         // Handle install button click
         const installBtn = document.getElementById('installBtn');
@@ -1146,13 +1150,13 @@
     </script>
 
     <!-- Capacitor Native Features (native app only) -->
-    <script src="{% static 'js/capacitor-native.js' %}?v=20260301i"></script>
+    <script src="{% static 'js/capacitor-native.js' %}?v=20260301j"></script>
     <!-- Capacitor Push Notifications (native app only) -->
-    <script src="{% static 'js/capacitor-push.js' %}?v=20260301i"></script>
+    <script src="{% static 'js/capacitor-push.js' %}?v=20260301j"></script>
     <!-- Capacitor In-App Purchases (iOS only) -->
-    <script src="{% static 'js/capacitor-iap.js' %}?v=20260301i"></script>
+    <script src="{% static 'js/capacitor-iap.js' %}?v=20260301j"></script>
     <!-- Capacitor Biometric Auth (native app only) -->
-    <script src="{% static 'js/capacitor-biometric.js' %}?v=20260301i"></script>
+    <script src="{% static 'js/capacitor-biometric.js' %}?v=20260301j"></script>
 
     <!-- Biometric App Lock behavior (native app only) -->
     <script>
@@ -1237,10 +1241,10 @@
     </script>
 
     <!-- Capacitor Page Transitions + Gestures (native app only) -->
-    <script src="{% static 'js/capacitor-transitions.js' %}?v=20260301i"></script>
+    <script src="{% static 'js/capacitor-transitions.js' %}?v=20260301j"></script>
 
     <!-- Capacitor Offline Mode (native app only) -->
-    <script src="{% static 'js/capacitor-offline.js' %}?v=20260301i"></script>
+    <script src="{% static 'js/capacitor-offline.js' %}?v=20260301j"></script>
 
     <!-- Additional Scripts -->
     {% block extra_js %}{% endblock %}
