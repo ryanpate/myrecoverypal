@@ -19,19 +19,31 @@
     }
 
     var Plugins = window.Capacitor.Plugins;
+
+    // Debug: log all available plugin names
+    console.log('[Biometric] DEBUG: Capacitor platform:', window.Capacitor.getPlatform());
+    console.log('[Biometric] DEBUG: Available plugins:', Object.keys(Plugins));
+    console.log('[Biometric] DEBUG: BiometricAuthNative:', typeof Plugins.BiometricAuthNative);
+    console.log('[Biometric] DEBUG: BiometricAuth:', typeof Plugins.BiometricAuth);
+
     // @aparajita/capacitor-biometric-auth registers as 'BiometricAuthNative'
     var BiometricAuth = Plugins.BiometricAuthNative || Plugins.BiometricAuth;
     var Preferences = Plugins.Preferences;
 
+    console.log('[Biometric] DEBUG: Resolved BiometricAuth:', BiometricAuth);
+    console.log('[Biometric] DEBUG: Preferences:', typeof Preferences);
+
     if (!BiometricAuth) {
-        console.warn('[Biometric] BiometricAuth plugin not available');
+        console.warn('[Biometric] BiometricAuth plugin not available — exiting');
         return;
     }
 
     if (!Preferences) {
-        console.warn('[Biometric] Preferences plugin not available');
+        console.warn('[Biometric] Preferences plugin not available — exiting');
         return;
     }
+
+    console.log('[Biometric] DEBUG: Plugin resolved, proceeding with init');
 
     // Map native LABiometryType rawValue integers to readable strings
     // 0 = none, 1 = touchId, 2 = faceId, 3 = fingerprintAuthentication
@@ -181,7 +193,12 @@
     window.MRPBiometric = MRPBiometric;
 
     // Check availability on load
-    MRPBiometric.checkAvailability();
+    console.log('[Biometric] DEBUG: Calling checkAvailability...');
+    MRPBiometric.checkAvailability().then(function(result) {
+        console.log('[Biometric] DEBUG: checkAvailability result:', JSON.stringify(result));
+        console.log('[Biometric] DEBUG: MRPBiometric.available:', MRPBiometric.available);
+        console.log('[Biometric] DEBUG: MRPBiometric.biometryType:', MRPBiometric.biometryType);
+    });
 
     // ========================================
     // Journal Biometric Gate
@@ -226,8 +243,14 @@
         }
 
         // Wait for availability check to complete before rendering
+        console.log('[Biometric] DEBUG: On edit-profile page, checking availability for settings UI...');
         MRPBiometric.checkAvailability().then(function(result) {
-            if (!result.isAvailable) return;
+            console.log('[Biometric] DEBUG: Edit profile checkAvailability result:', JSON.stringify(result));
+            if (!result.isAvailable) {
+                console.log('[Biometric] DEBUG: Biometry not available, skipping settings UI');
+                return;
+            }
+            console.log('[Biometric] DEBUG: Biometry available! Injecting settings UI...');
 
             // Determine the label based on biometry type
             var bioLabel = 'Face ID';
