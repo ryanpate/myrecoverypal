@@ -3895,11 +3895,10 @@ def social_feed_view(request):
                 context['discover_posts'] = discover_posts
 
         return render(request, 'accounts/social_feed.html', context)
-    except Exception:
-        # Migration not run yet, show empty feed
-        from django.contrib import messages
-        messages.warning(request, 'Social feed is currently being set up. Please check back soon!')
-        return redirect('accounts:dashboard')
+    except Exception as e:
+        import traceback, logging
+        logging.getLogger(__name__).error(f"Error in social_feed_view: {e}\n{traceback.format_exc()}")
+        raise
 
 
 def hybrid_landing_view(request):
