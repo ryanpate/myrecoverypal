@@ -149,6 +149,7 @@ MIDDLEWARE = [
     'apps.accounts.middleware.DatabaseConnectionMiddleware',  # Fix stale DB connections
     'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static files
     'django.middleware.gzip.GZipMiddleware',  # Compress HTML/JSON responses (reduces egress ~70%)
+    'apps.accounts.middleware.NoCacheHTMLMiddleware',  # Prevent WKWebView from caching HTML
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

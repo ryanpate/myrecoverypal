@@ -38,6 +38,26 @@ class DatabaseConnectionMiddleware:
                 conn.close()
         return None
 
+class NoCacheHTMLMiddleware:
+    """
+    Set Cache-Control: no-cache on HTML responses so WKWebView
+    (Capacitor iOS) always fetches fresh pages from the server.
+    Static assets are unaffected (served by WhiteNoise with 1-year cache).
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        content_type = response.get('Content-Type', '')
+        if 'text/html' in content_type:
+            response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            response['Pragma'] = 'no-cache'
+            response['Expires'] = '0'
+        return response
+
+
 class UpdateLastActivityMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
