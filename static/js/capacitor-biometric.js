@@ -192,12 +192,69 @@
 
     window.MRPBiometric = MRPBiometric;
 
+    // Key for tracking if we've offered biometric setup
+    var PREF_BIO_OFFERED = 'biometric_setup_offered';
+
     // Check availability on load
     console.log('[Biometric] DEBUG: Calling checkAvailability...');
     MRPBiometric.checkAvailability().then(function(result) {
         console.log('[Biometric] DEBUG: checkAvailability result:', JSON.stringify(result));
         console.log('[Biometric] DEBUG: MRPBiometric.available:', MRPBiometric.available);
         console.log('[Biometric] DEBUG: MRPBiometric.biometryType:', MRPBiometric.biometryType);
+
+        if (!result.isAvailable) return;
+
+        // First-launch prompt: offer to enable Face ID / Touch ID
+        // Only show once per install (stored in Preferences)
+        return MRPBiometric.isAppLockEnabled().then(function(alreadyEnabled) {
+            if (alreadyEnabled) return; // Already set up
+
+            return Preferences.get({ key: PREF_BIO_OFFERED }).then(function(offered) {
+                if (offered.value === 'true') return; // Already asked
+
+                // Mark as offered so we only ask once
+                Preferences.set({ key: PREF_BIO_OFFERED, value: 'true' });
+
+                // Determine label
+                var bioLabel = 'Face ID';
+                if (MRPBiometric.biometryType === 'touchId') bioLabel = 'Touch ID';
+                else if (MRPBiometric.biometryType === 'fingerprintAuthentication') bioLabel = 'Fingerprint';
+
+                // Show native-style prompt
+                var overlay = document.createElement('div');
+                overlay.id = 'biometricSetupPrompt';
+                overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;';
+                overlay.innerHTML =
+                    '<div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
+                        '<div style="font-size:48px;margin-bottom:12px;">' +
+                            (MRPBiometric.biometryType === 'faceId' ? '<i class="fas fa-face-viewfinder" style="color:#007AFF;"></i>' : '<i class="fas fa-fingerprint" style="color:#007AFF;"></i>') +
+                        '</div>' +
+                        '<h3 style="margin:0 0 8px;font-size:18px;font-weight:600;color:#1c1c1e;">Enable ' + bioLabel + '?</h3>' +
+                        '<p style="margin:0 0 20px;font-size:14px;color:#666;line-height:1.4;">Secure your recovery data with ' + bioLabel + '. You can change this later in settings.</p>' +
+                        '<button id="bioSetupEnable" style="width:100%;padding:14px;border:none;border-radius:12px;background:#007AFF;color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:8px;">Enable ' + bioLabel + '</button>' +
+                        '<button id="bioSetupSkip" style="width:100%;padding:14px;border:none;border-radius:12px;background:transparent;color:#007AFF;font-size:16px;cursor:pointer;">Not Now</button>' +
+                    '</div>';
+
+                document.body.appendChild(overlay);
+
+                document.getElementById('bioSetupEnable').addEventListener('click', function() {
+                    MRPBiometric.authenticate('Enable ' + bioLabel + ' for MyRecoveryPal').then(function() {
+                        MRPBiometric.setAppLockEnabled(true);
+                        MRPBiometric.setJournalLockEnabled(true);
+                        overlay.remove();
+                        if (window.MRPNative && window.MRPNative.hapticSuccess) {
+                            window.MRPNative.hapticSuccess();
+                        }
+                    }).catch(function() {
+                        overlay.remove();
+                    });
+                });
+
+                document.getElementById('bioSetupSkip').addEventListener('click', function() {
+                    overlay.remove();
+                });
+            });
+        });
     });
 
     // ========================================
