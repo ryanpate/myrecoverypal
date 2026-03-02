@@ -3868,7 +3868,7 @@ def social_feed_view(request):
                 ).exclude(
                     id__in=following_ids
                 ).annotate(
-                    followers_count=Count('followers', filter=Q(followers__connection_type='follow')),
+                    followers_count=Count('follower_connections', filter=Q(follower_connections__connection_type='follow')),
                     posts_count=Count('social_posts')
                 ).filter(
                     posts_count__gt=0  # Only suggest users who have posted
