@@ -871,15 +871,39 @@ def quick_checkin(request):
     # Get optional gratitude
     gratitude = request.POST.get('gratitude', '').strip()[:280]  # Limit to 280 chars
 
-    # Create the check-in with defaults
+    # Get optional energy_level (1-5, default 3)
+    try:
+        energy_level = int(request.POST.get('energy_level', 3))
+        energy_level = max(1, min(5, energy_level))
+    except (ValueError, TypeError):
+        energy_level = 3
+
+    # Get optional craving_level (0-4, default 0)
+    try:
+        craving_level = int(request.POST.get('craving_level', 0))
+        craving_level = max(0, min(4, craving_level))
+    except (ValueError, TypeError):
+        craving_level = 0
+
+    # Get optional text fields (max 300 chars each)
+    challenge = request.POST.get('challenge', '').strip()[:300]
+    goal = request.POST.get('goal', '').strip()[:300]
+
+    # Get optional is_shared (default True for community engagement)
+    is_shared_raw = request.POST.get('is_shared', 'true')
+    is_shared = is_shared_raw not in ('false', '0', 'False')
+
+    # Create the check-in
     checkin = DailyCheckIn.objects.create(
         user=request.user,
         date=today,
         mood=mood,
-        craving_level=0,
-        energy_level=3,
+        craving_level=craving_level,
+        energy_level=energy_level,
         gratitude=gratitude,
-        is_shared=True  # Default to shared for community engagement
+        challenge=challenge,
+        goal=goal,
+        is_shared=is_shared,
     )
 
     # Build activity description
