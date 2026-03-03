@@ -166,73 +166,11 @@
         setTimeout(function() { waitForBiometric(cb, (attempts || 0) + 1); }, 100);
     }
 
-    waitForBiometric(function() {
-        var bio = window.MRPBiometric;
-        if (!bio.available) return;
-
-        // Check if biometric login is enabled AND credentials are stored
-        Promise.all([
-            bio.isBiometricLoginEnabled(),
-            bio.getLoginCredentials()
-        ]).then(function(results) {
-            var enabled = results[0];
-            var creds = results[1];
-            if (!enabled || !creds) return;
-
-            // Update label for biometry type
-            var bioLabel = 'Face ID';
-            if (bio.biometryType === 'touchId') bioLabel = 'Touch ID';
-            else if (bio.biometryType === 'fingerprintAuthentication') bioLabel = 'Fingerprint';
-            label.textContent = 'Sign in with ' + bioLabel;
-
-            // Show the section
-            section.style.display = 'block';
-
-            // Handle biometric login tap
-            btn.addEventListener('click', function() {
-                bio.authenticate('Sign in to MyRecoveryPal').then(function() {
-                    // Fill form fields and submit
-                    var usernameField = document.getElementById('id_username');
-                    var passwordField = document.getElementById('id_password');
-                    if (usernameField && passwordField) {
-                        usernameField.value = creds.username;
-                        passwordField.value = creds.password;
-                        form.submit();
-                    }
-                    if (window.MRPNative && window.MRPNative.hapticSuccess) {
-                        window.MRPNative.hapticSuccess();
-                    }
-                }).catch(function() {
-                    // Show toast on failure
-                    if (window.MRPNative && window.MRPNative.hapticWarning) {
-                        window.MRPNative.hapticWarning();
-                    }
-                    showToast('Authentication failed. Please try again or use your password.');
-                });
-            });
-        });
-
-        // Intercept successful password login to save credentials
-        form.addEventListener('submit', function(e) {
-            // Only intercept if biometric login is enabled
-            bio.isBiometricLoginEnabled().then(function(enabled) {
-                if (!enabled) return;
-
-                var usernameField = document.getElementById('id_username');
-                var passwordField = document.getElementById('id_password');
-                if (!usernameField || !passwordField) return;
-
-                var username = usernameField.value.trim();
-                var password = passwordField.value;
-                if (!username || !password) return;
-
-                // Save credentials -- they'll persist even if login fails,
-                // but will be overwritten on next successful login attempt.
-                // This is simpler and avoids needing to intercept the response.
-                bio.saveLoginCredentials(username, password);
-            });
-        });
-    });
+    function getBioLabel(bio) {
+        if (bio.biometryType === 'touchId') return 'Touch ID';
+        if (bio.biometryType === 'fingerprintAuthentication') return 'Fingerprint';
+        return 'Face ID';
+    }
 
     function showToast(msg) {
         var existing = document.querySelector('.bio-login-toast');
@@ -244,6 +182,136 @@
         document.body.appendChild(toast);
         setTimeout(function() { toast.remove(); }, 3000);
     }
+
+    function doBiometricLogin(bio, creds) {
+        bio.authenticate('Sign in to MyRecoveryPal').then(function() {
+            var usernameField = document.getElementById('id_username');
+            var passwordField = document.getElementById('id_password');
+            if (usernameField && passwordField) {
+                usernameField.value = creds.username;
+                passwordField.value = creds.password;
+                form.submit();
+            }
+            if (window.MRPNative && window.MRPNative.hapticSuccess) {
+                window.MRPNative.hapticSuccess();
+            }
+        }).catch(function() {
+            if (window.MRPNative && window.MRPNative.hapticWarning) {
+                window.MRPNative.hapticWarning();
+            }
+            showToast('Authentication failed. Use your password to sign in.');
+        });
+    }
+
+    waitForBiometric(function() {
+        var bio = window.MRPBiometric;
+        if (!bio.available) return;
+
+        var bioLabel = getBioLabel(bio);
+
+        // Check if biometric login is enabled AND credentials are stored
+        Promise.all([
+            bio.isBiometricLoginEnabled(),
+            bio.getLoginCredentials()
+        ]).then(function(results) {
+            var enabled = results[0];
+            var creds = results[1];
+
+            if (enabled && creds) {
+                // ---- Returning user with saved credentials ----
+                // Show the button and auto-trigger Face ID
+                label.textContent = 'Sign in with ' + bioLabel;
+                section.style.display = 'block';
+
+                // Auto-trigger biometric on page load
+                doBiometricLogin(bio, creds);
+
+                // Also allow manual tap
+                btn.addEventListener('click', function() {
+                    doBiometricLogin(bio, creds);
+                });
+            }
+        });
+
+        // ---- Save credentials on every password login ----
+        // Prevent default, save credentials, then submit.
+        // This ensures the async Preferences.set completes before navigating.
+        var formSubmitting = false;
+        form.addEventListener('submit', function(e) {
+            var usernameField = document.getElementById('id_username');
+            var passwordField = document.getElementById('id_password');
+            if (!usernameField || !passwordField) return;
+
+            var username = usernameField.value.trim();
+            var password = passwordField.value;
+            if (!username || !password) return;
+
+            // If biometric login is enabled, pause submission to save credentials
+            if (!formSubmitting) {
+                e.preventDefault();
+                formSubmitting = true;
+
+                bio.isBiometricLoginEnabled().then(function(enabled) {
+                    if (enabled) {
+                        return bio.saveLoginCredentials(username, password);
+                    }
+                }).then(function() {
+                    form.submit();
+                }).catch(function() {
+                    form.submit();
+                });
+            }
+        });
+
+        // ---- First-launch setup prompt ----
+        // Only show once, only on this login page
+        var PREF_BIO_OFFERED = 'biometric_setup_offered';
+        var Preferences = window.Capacitor.Plugins.Preferences;
+        if (!Preferences) return;
+
+        bio.isBiometricLoginEnabled().then(function(alreadyEnabled) {
+            if (alreadyEnabled) return;
+
+            return Preferences.get({ key: PREF_BIO_OFFERED }).then(function(offered) {
+                if (offered.value === 'true') return;
+
+                // Mark as offered so we only ask once
+                Preferences.set({ key: PREF_BIO_OFFERED, value: 'true' });
+
+                var overlay = document.createElement('div');
+                overlay.id = 'biometricSetupPrompt';
+                overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;';
+                overlay.innerHTML =
+                    '<div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
+                        '<div style="font-size:48px;margin-bottom:12px;">' +
+                            (bio.biometryType === 'faceId' ? '<i class="fas fa-face-viewfinder" style="color:#007AFF;"></i>' : '<i class="fas fa-fingerprint" style="color:#007AFF;"></i>') +
+                        '</div>' +
+                        '<h3 style="margin:0 0 8px;font-size:18px;font-weight:600;color:#1c1c1e;">Sign in with ' + bioLabel + '?</h3>' +
+                        '<p style="margin:0 0 20px;font-size:14px;color:#666;line-height:1.4;">After your next login, ' + bioLabel + ' will let you sign in instantly. Your credentials are saved securely on this device.</p>' +
+                        '<button id="bioSetupEnable" style="width:100%;padding:14px;border:none;border-radius:12px;background:#007AFF;color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:8px;">Enable ' + bioLabel + '</button>' +
+                        '<button id="bioSetupSkip" style="width:100%;padding:14px;border:none;border-radius:12px;background:transparent;color:#007AFF;font-size:16px;cursor:pointer;">Not Now</button>' +
+                    '</div>';
+
+                document.body.appendChild(overlay);
+
+                document.getElementById('bioSetupEnable').addEventListener('click', function() {
+                    // Just enable the preference — no Face ID check needed here.
+                    // Credentials will be saved on the next password login.
+                    bio.setBiometricLoginEnabled(true);
+                    bio.setJournalLockEnabled(true);
+                    overlay.remove();
+                    if (window.MRPNative && window.MRPNative.hapticSuccess) {
+                        window.MRPNative.hapticSuccess();
+                    }
+                    showToast(bioLabel + ' enabled! Sign in to save your credentials.');
+                });
+
+                document.getElementById('bioSetupSkip').addEventListener('click', function() {
+                    overlay.remove();
+                });
+            });
+        });
+    });
 })();
 </script>
 {% endblock %}
