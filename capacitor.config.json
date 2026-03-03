@@ -3,8 +3,7 @@
   "appName": "MyRecoveryPal",
   "webDir": "www",
   "server": {
-    "url": "https://www.myrecoverypal.com",
-    "cleartext": true
+    "url": "https://www.myrecoverypal.com"
   },
   "plugins": {
     "PushNotifications": {
