@@ -24,6 +24,7 @@
     // @aparajita/capacitor-biometric-auth registers as 'BiometricAuthNative'
     var BiometricAuth = Plugins.BiometricAuthNative || Plugins.BiometricAuth;
     var Preferences = Plugins.Preferences;
+    var SecureStorage = Plugins.SecureStorage;
 
     if (!BiometricAuth) {
         console.warn('[Biometric] BiometricAuth plugin not available');
@@ -33,6 +34,10 @@
     if (!Preferences) {
         console.warn('[Biometric] Preferences plugin not available');
         return;
+    }
+
+    if (!SecureStorage) {
+        console.warn('[Biometric] SecureStorage plugin not available — credentials will not be stored securely');
     }
 
     // Map native LABiometryType rawValue integers to readable strings
@@ -121,8 +126,13 @@
          * @returns {Promise}
          */
         saveLoginCredentials: function(username, password) {
-            return Preferences.set({ key: PREF_LOGIN_USER, value: username }).then(function() {
-                return Preferences.set({ key: PREF_LOGIN_PASS, value: password });
+            if (!SecureStorage) {
+                return Preferences.set({ key: PREF_LOGIN_USER, value: username }).then(function() {
+                    return Preferences.set({ key: PREF_LOGIN_PASS, value: password });
+                });
+            }
+            return SecureStorage.internalSetItem({ prefixedKey: PREF_LOGIN_USER, data: username }).then(function() {
+                return SecureStorage.internalSetItem({ prefixedKey: PREF_LOGIN_PASS, data: password });
             });
         },
 
@@ -131,11 +141,22 @@
          * @returns {Promise<{username: string, password: string}|null>}
          */
         getLoginCredentials: function() {
-            return Preferences.get({ key: PREF_LOGIN_USER }).then(function(userResult) {
-                if (!userResult.value) return null;
-                return Preferences.get({ key: PREF_LOGIN_PASS }).then(function(passResult) {
-                    if (!passResult.value) return null;
-                    return { username: userResult.value, password: passResult.value };
+            if (!SecureStorage) {
+                return Preferences.get({ key: PREF_LOGIN_USER }).then(function(userResult) {
+                    if (!userResult.value) return null;
+                    return Preferences.get({ key: PREF_LOGIN_PASS }).then(function(passResult) {
+                        if (!passResult.value) return null;
+                        return { username: userResult.value, password: passResult.value };
+                    });
+                }).catch(function() {
+                    return null;
+                });
+            }
+            return SecureStorage.internalGetItem({ prefixedKey: PREF_LOGIN_USER }).then(function(userResult) {
+                if (!userResult.data) return null;
+                return SecureStorage.internalGetItem({ prefixedKey: PREF_LOGIN_PASS }).then(function(passResult) {
+                    if (!passResult.data) return null;
+                    return { username: userResult.data, password: passResult.data };
                 });
             }).catch(function() {
                 return null;
@@ -147,9 +168,18 @@
          * @returns {Promise}
          */
         clearLoginCredentials: function() {
-            return Preferences.remove({ key: PREF_LOGIN_USER }).then(function() {
+            // Clear from both stores (handles migration from old Preferences storage)
+            var clearPrefs = Preferences.remove({ key: PREF_LOGIN_USER }).then(function() {
                 return Preferences.remove({ key: PREF_LOGIN_PASS });
-            });
+            }).catch(function() {});
+
+            if (!SecureStorage) return clearPrefs;
+
+            var clearSecure = SecureStorage.internalRemoveItem({ prefixedKey: PREF_LOGIN_USER }).then(function() {
+                return SecureStorage.internalRemoveItem({ prefixedKey: PREF_LOGIN_PASS });
+            }).catch(function() {});
+
+            return Promise.all([clearPrefs, clearSecure]);
         },
 
         /**
@@ -181,6 +211,23 @@
 
     // Check availability on load (sets .available and .biometryType)
     MRPBiometric.checkAvailability();
+
+    // Migrate credentials from Preferences (UserDefaults) to SecureStorage (Keychain)
+    if (SecureStorage) {
+        Preferences.get({ key: PREF_LOGIN_USER }).then(function(userResult) {
+            if (!userResult.value) return;
+            Preferences.get({ key: PREF_LOGIN_PASS }).then(function(passResult) {
+                if (!passResult.value) return;
+                SecureStorage.internalSetItem({ prefixedKey: PREF_LOGIN_USER, data: userResult.value }).then(function() {
+                    return SecureStorage.internalSetItem({ prefixedKey: PREF_LOGIN_PASS, data: passResult.value });
+                }).then(function() {
+                    Preferences.remove({ key: PREF_LOGIN_USER });
+                    Preferences.remove({ key: PREF_LOGIN_PASS });
+                    console.log('[Biometric] Migrated credentials to Keychain');
+                });
+            });
+        }).catch(function() {});
+    }
 
     // ========================================
     // Journal Biometric Gate
