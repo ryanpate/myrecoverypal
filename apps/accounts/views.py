@@ -1095,7 +1095,17 @@ def progress_view(request):
             next_milestone = m
             break
     else:
-        next_milestone = days_sober + 365  # Next yearly milestone
+        # Beyond fixed milestones: use actual calendar year anniversaries
+        if request.user.sobriety_date:
+            from dateutil.relativedelta import relativedelta
+            today = timezone.now().date()
+            years_sober = relativedelta(today, request.user.sobriety_date).years
+            last_anniversary = request.user.sobriety_date + relativedelta(years=years_sober)
+            next_anniversary = request.user.sobriety_date + relativedelta(years=years_sober + 1)
+            current_milestone = (last_anniversary - request.user.sobriety_date).days
+            next_milestone = (next_anniversary - request.user.sobriety_date).days
+        else:
+            next_milestone = days_sober + 365
 
     if next_milestone > current_milestone:
         milestone_progress = round(((days_sober - current_milestone) / (next_milestone - current_milestone)) * 100)
@@ -2602,20 +2612,24 @@ class ProfileView(DetailView):
                 milestones = [1, 7, 14, 30, 60, 90, 100, 180, 270, 365, 500, 730, 1000, 1095, 1460, 1825, 2555, 3650]
 
                 next_milestone = None
+                prev_milestone = 0
                 for m in milestones:
                     if days_sober < m:
                         next_milestone = m
                         break
+                    prev_milestone = m
+
+                if not next_milestone:
+                    # Beyond fixed milestones: use calendar year anniversaries
+                    from dateutil.relativedelta import relativedelta
+                    today = timezone.now().date()
+                    years_sober = relativedelta(today, profile_user.sobriety_date).years
+                    last_anniversary = profile_user.sobriety_date + relativedelta(years=years_sober)
+                    next_anniversary = profile_user.sobriety_date + relativedelta(years=years_sober + 1)
+                    prev_milestone = (last_anniversary - profile_user.sobriety_date).days
+                    next_milestone = (next_anniversary - profile_user.sobriety_date).days
 
                 if next_milestone:
-                    # Find previous milestone for progress calculation
-                    prev_milestone = 0
-                    for m in milestones:
-                        if m < next_milestone and days_sober >= m:
-                            prev_milestone = m
-                        elif m >= next_milestone:
-                            break
-
                     days_in_range = next_milestone - prev_milestone
                     days_completed = days_sober - prev_milestone
                     progress = int((days_completed / days_in_range) * 100) if days_in_range > 0 else 0

@@ -140,9 +140,14 @@ class User(AbstractUser):
 
     def get_sobriety_milestone(self):
         days = self.get_days_sober()
-        if days >= 365:
-            years = days // 365
-            return f"{years} year{'s' if years > 1 else ''}"
+        if days >= 365 and self.sobriety_date:
+            from dateutil.relativedelta import relativedelta
+            rd = relativedelta(timezone.now().date(), self.sobriety_date)
+            years = rd.years
+            if years >= 1:
+                return f"{years} year{'s' if years > 1 else ''}"
+            months = rd.months + (rd.years * 12)
+            return f"{months} month{'s' if months > 1 else ''}"
         elif days >= 30:
             months = days // 30
             return f"{months} month{'s' if months > 1 else ''}"
@@ -225,12 +230,24 @@ class User(AbstractUser):
                     'days_until': milestone - days
                 }
 
-        # Beyond 5 years, next milestone is next year anniversary
-        years = (days // 365) + 1
-        next_milestone = years * 365
+        # Beyond 5 years, use actual calendar year anniversaries
+        if self.sobriety_date:
+            from dateutil.relativedelta import relativedelta
+            today = timezone.now().date()
+            years_sober = relativedelta(today, self.sobriety_date).years
+            next_anniversary = self.sobriety_date + relativedelta(years=years_sober + 1)
+            days_until = (next_anniversary - today).days
+            # Express as total days from sobriety_date for consistency
+            next_milestone_days = (next_anniversary - self.sobriety_date).days
+            return {
+                'days': next_milestone_days,
+                'days_until': days_until
+            }
+
+        # Fallback if no sobriety_date
         return {
-            'days': next_milestone,
-            'days_until': next_milestone - days
+            'days': days + 365,
+            'days_until': 365
         }
 
     def get_profile_completion(self):
