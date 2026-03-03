@@ -319,7 +319,7 @@
                 likesSpan.textContent = count + ' like' + (count !== 1 ? 's' : '');
             }
 
-            fetch('/accounts/social-feed/' + postId + '/like/', {
+            fetch('/accounts/social-feed/post/' + postId + '/like/', {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': document.querySelector('.feed-fragment input[name="csrfmiddlewaretoken"]').value,
@@ -358,7 +358,7 @@
         if (!content) return;
 
         var formData = new FormData(form);
-        fetch('/accounts/social-feed/' + postId + '/comment/', {
+        fetch('/accounts/social-feed/post/' + postId + '/comment/', {
             method: 'POST',
             body: formData,
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
