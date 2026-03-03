@@ -1095,8 +1095,13 @@ def progress_view(request):
         milestone_progress = 100
     days_to_milestone = next_milestone - days_sober
 
+    # Today's check-in for inline check-in widget
+    todays_checkin = DailyCheckIn.objects.filter(user=request.user, date=today).first()
+
     context = {
         'days': days,
+        'today': today,
+        'todays_checkin': todays_checkin,
         'chart_data': json.dumps(chart_data),
         'total_checkins': total_checkins,
         'checkin_rate': checkin_rate,
