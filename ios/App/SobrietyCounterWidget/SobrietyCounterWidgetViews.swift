@@ -9,13 +9,38 @@ extension Color {
     static let mrpGreen = Color(red: 82/255, green: 183/255, blue: 136/255)     // #52b788
 }
 
-// MARK: - Entry View (routes to correct size)
+// MARK: - Background Gradient
+
+private var widgetGradient: LinearGradient {
+    LinearGradient(
+        gradient: Gradient(colors: [.mrpBlue, .mrpLightBlue]),
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+}
+
+// MARK: - Entry View (routes to correct size, applies background)
 
 struct SobrietyWidgetEntryView: View {
     var entry: SobrietyEntry
     @Environment(\.widgetFamily) var family
 
     var body: some View {
+        if #available(iOSApplicationExtension 17.0, *) {
+            widgetContent
+                .containerBackground(for: .widget) {
+                    widgetGradient
+                }
+        } else {
+            ZStack {
+                widgetGradient
+                widgetContent
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var widgetContent: some View {
         switch family {
         case .systemSmall:
             SmallWidgetView(entry: entry)
@@ -33,13 +58,7 @@ struct SmallWidgetView: View {
     var entry: SobrietyEntry
 
     var body: some View {
-        ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [.mrpBlue, .mrpLightBlue]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-
+        Group {
             if entry.sobrietyDate != nil {
                 VStack(spacing: 4) {
                     Text("\(entry.daysSober)")
@@ -100,13 +119,7 @@ struct MediumWidgetView: View {
     var entry: SobrietyEntry
 
     var body: some View {
-        ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [.mrpBlue, .mrpLightBlue]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-
+        Group {
             if entry.sobrietyDate != nil {
                 HStack(spacing: 16) {
                     // Left: Progress Ring
@@ -220,20 +233,20 @@ struct MediumWidgetView: View {
 struct SobrietyWidget_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            SmallWidgetView(entry: SobrietyEntry(
+            SobrietyWidgetEntryView(entry: SobrietyEntry(
                 date: Date(), daysSober: 42, sobrietyDate: Date(),
                 currentMilestone: 30, nextMilestone: 60, progress: 0.4, displayName: "Ryan"
             ))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
 
-            MediumWidgetView(entry: SobrietyEntry(
+            SobrietyWidgetEntryView(entry: SobrietyEntry(
                 date: Date(), daysSober: 42, sobrietyDate: Date(),
                 currentMilestone: 30, nextMilestone: 60, progress: 0.4, displayName: "Ryan"
             ))
             .previewContext(WidgetPreviewContext(family: .systemMedium))
 
             // Empty state
-            SmallWidgetView(entry: SobrietyEntry(
+            SobrietyWidgetEntryView(entry: SobrietyEntry(
                 date: Date(), daysSober: 0, sobrietyDate: nil,
                 currentMilestone: 0, nextMilestone: 1, progress: 0, displayName: ""
             ))

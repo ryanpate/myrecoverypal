@@ -117,11 +117,17 @@ struct SobrietyCounterWidget: Widget {
     let kind = "SobrietyCounterWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: SobrietyTimelineProvider()) { entry in
+        let config = StaticConfiguration(kind: kind, provider: SobrietyTimelineProvider()) { entry in
             SobrietyWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Sobriety Counter")
         .description("Track your days in recovery.")
         .supportedFamilies([.systemSmall, .systemMedium])
+
+        if #available(iOSApplicationExtension 17.0, *) {
+            return config.contentMarginsDisabled()
+        } else {
+            return config
+        }
     }
 }
