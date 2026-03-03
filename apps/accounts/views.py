@@ -3943,6 +3943,10 @@ def social_feed_view(request):
                 discover_posts = [p for p in visible_posts if p.author_id not in following_ids and p.author_id != user.id][:5]
                 context['discover_posts'] = discover_posts
 
+        # Return fragment template if requested (for AJAX tab loading on progress page)
+        if request.GET.get('fragment') == '1' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return render(request, 'accounts/social_feed_fragment.html', context)
+
         return render(request, 'accounts/social_feed.html', context)
     except Exception as e:
         import traceback, logging

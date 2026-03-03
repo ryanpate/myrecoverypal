@@ -1,0 +1,389 @@
+{% load static %}
+{# Fragment template for AJAX loading in progress page feed tab #}
+{# No {% extends %} - this is injected into an existing page #}
+
+<style>
+/* Feed fragment styles (scoped to avoid conflicts with progress page) */
+.feed-fragment .social-feed-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+.feed-fragment .create-post-box {
+    background: white;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.feed-fragment .create-post-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+.feed-fragment .placeholder-text {
+    color: #888;
+    flex: 1;
+}
+.feed-fragment .create-post-full {
+    display: none;
+}
+.feed-fragment .create-post-box.expanded .create-post-compact { display: none; }
+.feed-fragment .create-post-box.expanded .create-post-full { display: block; }
+.feed-fragment .post-textarea {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #eee;
+    padding: 0.5rem 0;
+    font-size: 1rem;
+    resize: none;
+    min-height: 80px;
+    outline: none;
+}
+.feed-fragment .post-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+.feed-fragment .post-btn {
+    background: linear-gradient(135deg, #1e4d8b, #4db8e8);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 0.4rem 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.feed-fragment .post-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.feed-fragment .post-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.feed-fragment .social-post-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+.feed-fragment .avatar-medium { width: 40px; height: 40px; }
+.feed-fragment .avatar-initials {
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 600; font-size: 0.9rem;
+}
+.feed-fragment .post-author-name { font-weight: 600; color: #1f2937; }
+.feed-fragment .post-meta { font-size: 0.8rem; color: #6b7280; }
+.feed-fragment .post-content { line-height: 1.6; color: #374151; margin-bottom: 0.5rem; white-space: pre-wrap; }
+.feed-fragment .post-image { width: 100%; border-radius: 8px; margin-top: 0.5rem; }
+.feed-fragment .post-engagement {
+    display: flex; gap: 1rem; padding: 0.5rem 0;
+    font-size: 0.85rem; color: #6b7280;
+}
+.feed-fragment .post-actions-bar {
+    display: flex; gap: 0.5rem;
+    padding-top: 0.5rem; border-top: 1px solid #f3f4f6;
+}
+.feed-fragment .action-btn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+    padding: 0.5rem; border: none; background: none;
+    color: #6b7280; cursor: pointer; border-radius: 8px; font-size: 0.9rem;
+}
+.feed-fragment .action-btn:hover { background: #f3f4f6; }
+.feed-fragment .action-btn.liked { color: #ef4444; }
+.feed-fragment .action-btn.liked i { color: #ef4444; }
+.feed-fragment .comments-section {
+    border-top: 1px solid #f3f4f6;
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+}
+.feed-fragment .comment {
+    display: flex; gap: 0.5rem; margin-bottom: 0.75rem;
+}
+.feed-fragment .comment-avatar { width: 28px; height: 28px; flex-shrink: 0; }
+.feed-fragment .comment-author { font-weight: 600; font-size: 0.85rem; }
+.feed-fragment .comment-text { font-size: 0.9rem; color: #374151; }
+.feed-fragment .comment-time { font-size: 0.75rem; color: #9ca3af; }
+.feed-fragment .comment-form {
+    display: flex; gap: 0.5rem; margin-top: 0.5rem;
+}
+.feed-fragment .comment-input {
+    flex: 1; border: 1px solid #e5e7eb; border-radius: 20px;
+    padding: 0.4rem 0.75rem; font-size: 0.85rem; outline: none;
+}
+.feed-fragment .comment-submit {
+    background: none; border: none; color: #1e4d8b;
+    cursor: pointer; font-size: 0.9rem;
+}
+.feed-fragment .checkin-post-card {
+    background: #f0fdf4; border-radius: 10px; padding: 0.75rem; margin-bottom: 0.5rem;
+}
+.feed-fragment .checkin-post-mood { font-weight: 600; margin-bottom: 0.25rem; }
+.feed-fragment .checkin-post-gratitude { color: #374151; font-style: italic; font-size: 0.9rem; }
+.feed-fragment .visibility-select {
+    border: 1px solid #d1d5db; border-radius: 8px; padding: 0.25rem 0.5rem;
+    font-size: 0.8rem; background: white;
+}
+.feed-fragment .empty-state {
+    text-align: center; padding: 3rem 1rem; color: #6b7280;
+}
+.feed-fragment .empty-state i { font-size: 3rem; margin-bottom: 1rem; display: block; }
+
+/* Dark mode */
+[data-theme="dark"] .feed-fragment .create-post-box,
+[data-theme="dark"] .feed-fragment .post-card { background: #1f2937; }
+[data-theme="dark"] .feed-fragment .post-author-name { color: #f3f4f6; }
+[data-theme="dark"] .feed-fragment .post-content { color: #d1d5db; }
+[data-theme="dark"] .feed-fragment .post-textarea { color: #e5e7eb; background: transparent; border-bottom-color: #374151; }
+[data-theme="dark"] .feed-fragment .action-btn { color: #9ca3af; }
+[data-theme="dark"] .feed-fragment .action-btn:hover { background: #374151; }
+[data-theme="dark"] .feed-fragment .comment-input { background: #111827; border-color: #374151; color: #e5e7eb; }
+[data-theme="dark"] .feed-fragment .checkin-post-card { background: #064e3b; }
+</style>
+
+<div class="feed-fragment">
+<div class="social-feed-container">
+    <!-- Create Post Box -->
+    <div class="create-post-box" id="fragmentCreatePost">
+        <div class="create-post-compact" onclick="this.parentElement.classList.add('expanded')">
+            {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="avatar-medium" style="border-radius: 50%; object-fit: cover; width:36px; height:36px;">
+            {% else %}
+            <div class="avatar-initials" style="width:36px;height:36px;border-radius:50%;background:hsl({{ user.id|add:100 }}, 45%, 50%);">{{ user.username|slice:":1"|upper }}</div>
+            {% endif %}
+            <span class="placeholder-text">Share something with the community...</span>
+        </div>
+        <div class="create-post-full">
+            <form id="fragment-post-form">
+                {% csrf_token %}
+                <textarea class="post-textarea" name="content" placeholder="Share your journey, wins, or encouragement..."></textarea>
+                <div class="post-actions">
+                    <select name="visibility" class="visibility-select">
+                        <option value="public">Everyone</option>
+                        <option value="friends">Friends</option>
+                    </select>
+                    <button type="submit" class="post-btn" disabled>Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Feed Posts -->
+    <div id="fragmentPostsContainer">
+        {% if posts %}
+            {% for post in posts %}
+            <div class="post-card" data-post-id="{{ post.id }}">
+                <div class="social-post-header">
+                    {% if post.author.avatar %}
+                    <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username }}" class="avatar-medium" style="border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                    <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
+                    {% endif %}
+                    <div class="post-author-info">
+                        <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
+                        <div class="post-meta">@{{ post.author.username }} · {{ post.created_at|timesince }} ago</div>
+                    </div>
+                </div>
+
+                {% if post.linked_checkin %}
+                <div class="checkin-post-card">
+                    <div class="checkin-post-mood"><i class="fas fa-heart" aria-hidden="true"></i> {{ post.linked_checkin.get_mood_display_with_emoji }}</div>
+                    {% if post.linked_checkin.gratitude %}
+                    <div class="checkin-post-gratitude">"{{ post.linked_checkin.gratitude }}"</div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="post-content">{{ post.content }}</div>
+                {% endif %}
+
+                {% if post.image %}
+                <img src="{{ post.image.url }}" alt="Post image" class="post-image" loading="lazy">
+                {% endif %}
+
+                <div class="post-engagement">
+                    <span class="likes-count">{{ post.likes.count }} like{{ post.likes.count|pluralize }}</span>
+                    <span class="comments-count">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
+                </div>
+
+                <div class="post-actions-bar">
+                    <button class="action-btn frag-like-btn {% if user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
+                        <i class="{% if user in post.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                        <span>Like</span>
+                    </button>
+                    <button class="action-btn frag-comment-toggle" data-post-id="{{ post.id }}">
+                        <i class="far fa-comment"></i>
+                        <span>Comment</span>
+                    </button>
+                </div>
+
+                <div class="comments-section" id="frag-comments-{{ post.id }}" style="display: none;">
+                    <div class="comments-list">
+                        {% for comment in post.comments.all %}
+                        <div class="comment">
+                            {% if comment.author.avatar %}
+                            <img src="{{ comment.author.avatar.url }}" alt="{{ comment.author.username }}" class="comment-avatar" style="border-radius: 50%; object-fit: cover;">
+                            {% else %}
+                            <div class="avatar-initials comment-avatar" style="background: hsl({{ comment.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ comment.author.username|slice:":1"|upper }}</div>
+                            {% endif %}
+                            <div class="comment-content">
+                                <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</div>
+                                <div class="comment-text">{{ comment.content }}</div>
+                                <div class="comment-time">{{ comment.created_at|timesince }} ago</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <form class="comment-form frag-comment-form" data-post-id="{{ post.id }}">
+                        {% csrf_token %}
+                        <input type="text" class="comment-input" placeholder="Write a comment..." name="content" required>
+                        <button type="submit" class="comment-submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-comments"></i>
+                <h3>No posts yet</h3>
+                <p>Be the first to share something with the community!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+</div>
+
+<script>
+// Feed fragment JS — handles interactions within the AJAX-loaded feed tab
+(function() {
+    var container = document.querySelector('.feed-fragment');
+    if (!container) return;
+
+    // Create post form
+    var postForm = document.getElementById('fragment-post-form');
+    if (postForm) {
+        var textarea = postForm.querySelector('textarea');
+        var submitBtn = postForm.querySelector('.post-btn');
+
+        textarea.addEventListener('input', function() {
+            submitBtn.disabled = !this.value.trim();
+        });
+
+        postForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Posting...';
+
+            var formData = new FormData(postForm);
+            fetch('/accounts/social-feed/create/', {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    // Reload feed to show new post
+                    window.location.hash = 'feed';
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Could not create post.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Post';
+                }
+            })
+            .catch(function() {
+                alert('Network error.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Post';
+            });
+        });
+    }
+
+    // Like buttons
+    container.addEventListener('click', function(e) {
+        var likeBtn = e.target.closest('.frag-like-btn');
+        if (likeBtn) {
+            var postId = likeBtn.dataset.postId;
+            var isLiked = likeBtn.classList.contains('liked');
+            var icon = likeBtn.querySelector('i');
+            var likesSpan = likeBtn.closest('.post-card').querySelector('.likes-count');
+
+            // Optimistic toggle
+            likeBtn.classList.toggle('liked');
+            icon.className = isLiked ? 'far fa-heart' : 'fas fa-heart';
+            if (likesSpan) {
+                var count = parseInt(likesSpan.textContent) + (isLiked ? -1 : 1);
+                likesSpan.textContent = count + ' like' + (count !== 1 ? 's' : '');
+            }
+
+            fetch('/accounts/social-feed/' + postId + '/like/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('.feed-fragment input[name="csrfmiddlewaretoken"]').value,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            }).catch(function() {
+                // Rollback on error
+                likeBtn.classList.toggle('liked');
+                icon.className = isLiked ? 'fas fa-heart' : 'far fa-heart';
+            });
+        }
+
+        // Comment toggle
+        var commentBtn = e.target.closest('.frag-comment-toggle');
+        if (commentBtn) {
+            var postId = commentBtn.dataset.postId;
+            var section = document.getElementById('frag-comments-' + postId);
+            if (section) {
+                section.style.display = section.style.display === 'none' ? 'block' : 'none';
+                if (section.style.display === 'block') {
+                    section.querySelector('.comment-input').focus();
+                }
+            }
+        }
+    });
+
+    // Comment forms
+    container.addEventListener('submit', function(e) {
+        var form = e.target.closest('.frag-comment-form');
+        if (!form) return;
+        e.preventDefault();
+
+        var postId = form.dataset.postId;
+        var input = form.querySelector('.comment-input');
+        var content = input.value.trim();
+        if (!content) return;
+
+        var formData = new FormData(form);
+        fetch('/accounts/social-feed/' + postId + '/comment/', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                // Add comment to list
+                var list = form.closest('.comments-section').querySelector('.comments-list');
+                var div = document.createElement('div');
+                div.className = 'comment';
+                div.innerHTML = '<div class="comment-content"><div class="comment-author">' +
+                    (data.author_name || 'You') + '</div><div class="comment-text">' +
+                    content + '</div><div class="comment-time">Just now</div></div>';
+                list.appendChild(div);
+                input.value = '';
+
+                // Update count
+                var countSpan = document.querySelector('.post-card[data-post-id="' + postId + '"] .comments-count');
+                if (countSpan) {
+                    var c = parseInt(countSpan.textContent) + 1;
+                    countSpan.textContent = c + ' comment' + (c !== 1 ? 's' : '');
+                }
+            }
+        });
+    });
+})();
+</script>
