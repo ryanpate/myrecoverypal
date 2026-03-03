@@ -136,7 +136,6 @@ struct MediumWidgetView: View {
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundColor(.white.opacity(0.6))
                             .textCase(.uppercase)
-                            .tracking(0.5)
 
                         Text(entry.daysSober == 1 ? "1 Day Sober" : "\(entry.daysSober) Days Sober")
                             .font(.system(size: 18, weight: .bold))

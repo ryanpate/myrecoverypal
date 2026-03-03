@@ -4,10 +4,28 @@ require 'xcodeproj'
 project_path = File.join(__dir__, '..', 'ios', 'App', 'App.xcodeproj')
 project = Xcodeproj::Project.open(project_path)
 
-# Check if target already exists
-if project.targets.any? { |t| t.name == 'SobrietyCounterWidget' }
-  puts "Target 'SobrietyCounterWidget' already exists. Skipping."
-  exit 0
+# Remove existing target if present (for re-running after path fix)
+existing_target = project.targets.find { |t| t.name == 'SobrietyCounterWidget' }
+if existing_target
+  puts "Removing existing SobrietyCounterWidget target for re-creation..."
+  existing_target.build_phases.each(&:remove_from_project)
+  existing_target.dependencies.each(&:remove_from_project)
+  existing_target.build_configurations.each(&:remove_from_project)
+  existing_target.remove_from_project
+
+  # Remove existing widget file group
+  existing_group = project.main_group.children.find { |g| g.display_name == 'SobrietyCounterWidget' }
+  existing_group.remove_from_project if existing_group
+
+  # Remove embed phase from app target
+  app_t = project.targets.find { |t| t.name == 'App' }
+  if app_t
+    app_t.build_phases.select { |p|
+      p.is_a?(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase) && p.name == 'Embed App Extensions'
+    }.each(&:remove_from_project)
+    # Remove widget dependency
+    app_t.dependencies.select { |d| d.target&.name == 'SobrietyCounterWidget' rescue false }.each(&:remove_from_project)
+  end
 end
 
 # Create the widget extension target
@@ -40,20 +58,20 @@ end
 # Create file group
 widget_group = project.main_group.new_group('SobrietyCounterWidget', 'SobrietyCounterWidget')
 
-# Add source files
+# Add source files (paths relative to group, which already has SobrietyCounterWidget path)
 swift_files = [
-  'SobrietyCounterWidget/SobrietyCounterWidget.swift',
-  'SobrietyCounterWidget/SobrietyCounterWidgetViews.swift'
+  'SobrietyCounterWidget.swift',
+  'SobrietyCounterWidgetViews.swift'
 ]
 
-swift_files.each do |path|
-  file_ref = widget_group.new_file(path)
+swift_files.each do |filename|
+  file_ref = widget_group.new_file(filename)
   widget_target.source_build_phase.add_file_reference(file_ref)
 end
 
 # Add Info.plist and entitlements as file references (not in build phase)
-widget_group.new_file('SobrietyCounterWidget/Info.plist')
-widget_group.new_file('SobrietyCounterWidget/SobrietyCounterWidget.entitlements')
+widget_group.new_file('Info.plist')
+widget_group.new_file('SobrietyCounterWidget.entitlements')
 
 # Embed the widget extension in the main app
 app_target = project.targets.find { |t| t.name == 'App' }
@@ -80,11 +98,11 @@ end
 # if they aren't already there
 app_group = project.main_group.find_subpath('App', false)
 if app_group
-  ['App/WidgetBridge.swift', 'App/MyViewController.swift'].each do |path|
+  ['WidgetBridge.swift', 'MyViewController.swift'].each do |filename|
     # Check if file reference already exists
-    existing = app_group.files.find { |f| f.path == File.basename(path) }
+    existing = app_group.files.find { |f| f.path == filename }
     unless existing
-      file_ref = app_group.new_file(path)
+      file_ref = app_group.new_file(filename)
       app_target.source_build_phase.add_file_reference(file_ref) if app_target
     end
   end
