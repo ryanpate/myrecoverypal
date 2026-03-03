@@ -290,7 +290,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 - **Firebase Cloud Messaging** - Push notifications (Android configured)
 - **APNs** - iOS push notifications (backend ready, needs key deployment to Railway)
 - **Android:** Release AAB built and ready for Google Play upload
-- **iOS:** Native features complete (Face ID, ultra-minimal nav, 5-tab bottom bar, splash overlay, transitions, offline mode), IAP integrated, ready for Xcode Archive + App Store submission
+- **iOS:** Native features complete (Face ID login, ultra-minimal nav, 5-tab bottom bar, splash overlay, transitions, offline mode), IAP integrated, ready for Xcode Archive + App Store submission
 
 ---
 
@@ -612,7 +612,7 @@ High-volume keyword blog posts (83K combined monthly searches):
 - [x] iOS: APNs key extraction in `start.sh` from `APNS_KEY_CONTENT` env var
 - [x] iOS: Capacitor plugins installed (haptics, share, app, keyboard, browser, local-notifications, preferences, RevenueCat, biometric-auth)
 - [x] iOS: `capacitor.config.json` updated with Keyboard + LocalNotifications config
-- [x] iOS: Face ID / biometric lock (`static/js/capacitor-biometric.js`) — app lock (5-min timeout), journal lock, settings toggles on edit profile page
+- [x] iOS: Face ID / biometric login (`static/js/capacitor-biometric.js`) — biometric sign-in on login page (credential storage), journal lock, settings toggles on edit profile page
 - [x] iOS: Native-styled hamburger menu — iOS grouped-list cards, chevrons, blur backdrop, FA icons (replaced tab bar)
 - [x] iOS: Page transitions + swipe gestures (`static/js/capacitor-transitions.js`) — edge swipe back, 250ms slide transitions, View Transition API support (iOS 18+), pull-to-refresh
 - [x] iOS: Offline mode (`static/js/capacitor-offline.js`) — IndexedDB cache for posts/journal, write queue with auto-flush on reconnect, fetch interceptor for cache-first reads
@@ -644,7 +644,7 @@ High-volume keyword blog posts (83K combined monthly searches):
 - **Privacy policy:** `https://www.myrecoverypal.com/privacy/`
 - **Target age:** 17+ (references alcohol/drug use in recovery context)
 - **Keywords:** sobriety, recovery, sober, addiction, AA, NA, support, community, coach, tracker, journal, mental health, 12 step
-- **Apple review notes:** Emphasize native features (Face ID lock, native-styled menu with haptics, share sheet, push, swipe gestures, page transitions, offline mode, keyboard), Capacitor as legitimate native framework, IAP sandbox testing instructions, health disclaimer modal, block/report moderation
+- **Apple review notes:** Emphasize native features (Face ID login, native-styled menu with haptics, share sheet, push, swipe gestures, page transitions, offline mode, keyboard), Capacitor as legitimate native framework, IAP sandbox testing instructions, health disclaimer modal, block/report moderation
 
 #### iOS Native Features (Guideline 4.2 Compliance)
 | Feature | Plugin | File |
@@ -657,7 +657,7 @@ High-volume keyword blog posts (83K combined monthly searches):
 | Local notification scheduling | `@capacitor/local-notifications` | `capacitor-native.js` |
 | In-app purchases (StoreKit 2) | `@revenuecat/purchases-capacitor` | `capacitor-iap.js` |
 | Push notifications | `@capacitor/push-notifications` | `capacitor-push.js` |
-| Face ID / Touch ID lock (app + journal) | `@aparajita/capacitor-biometric-auth` | `capacitor-biometric.js` |
+| Face ID / Touch ID login + journal lock | `@aparajita/capacitor-biometric-auth` | `capacitor-biometric.js` |
 | Native-styled hamburger menu (grouped cards, chevrons, blur) | Pure CSS/JS | `capacitor-native.js` + `base-inline.css` |
 | Hamburger icon swap (FA bars ↔ xmark via MutationObserver) | Pure JS | `capacitor-native.js` |
 | Page transitions (250ms slide) | Pure CSS/JS + View Transition API | `capacitor-transitions.js` |
@@ -846,7 +846,7 @@ static/
     ├── capacitor-native.js      # Native features (haptics, share, keyboard, app state, menu rebuild)
     ├── capacitor-push.js        # Push notification registration + deep linking
     ├── capacitor-iap.js         # iOS StoreKit 2 IAP via RevenueCat
-    ├── capacitor-biometric.js   # Face ID / Touch ID lock (app + journal + settings)
+    ├── capacitor-biometric.js   # Face ID / Touch ID login + journal lock + settings
     ├── capacitor-transitions.js # Page transitions, swipe gestures, pull-to-refresh
     └── capacitor-offline.js     # IndexedDB cache, write queue, offline detection
 ios/                       # Capacitor iOS project (tracked in git)
@@ -993,6 +993,7 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-03-02:** Moved Face ID from app lock to login page biometric sign-in. Removed 5-minute background timeout lock screen (HTML overlay in `base.html`, CSS in `base-inline.css`, JS `appStateChange` listener). Replaced `isAppLockEnabled`/`setAppLockEnabled`/`shouldLockOnResume`/`setLastBackground` with `isBiometricLoginEnabled`/`setBiometricLoginEnabled`/`saveLoginCredentials`/`getLoginCredentials`/`clearLoginCredentials` in `capacitor-biometric.js`. Added "Sign in with Face ID" button to `login.html` (native only) — checks stored credentials + biometric auth, auto-fills and submits form. Credentials saved on successful password login when biometric login is enabled. Updated first-launch setup prompt text ("Sign in with Face ID" instead of "Lock App"). Updated settings toggles ("Sign in with [Face ID]" instead of "Lock App with [Face ID]"), disabling clears stored credentials. Journal lock remains independent and unchanged. Bumped static file `?v=` from `20260302g` to `20260302h`.
 - **2026-03-01:** Native iOS UX overhaul — ultra-minimal nav, 5-tab bottom bar, notification bell, splash screen, social-first landing. Features added incrementally (one at a time) to avoid CSS conflicts with generic `nav{}` rule. Added 5-tab native bottom bar HTML in `base.html` (Feed `fa-house`, Coach `fa-robot`, Check-in `fa-circle-check`, Alerts `fa-bell` with badge, Profile `fa-user`), with CSS: hidden on web (`display:none`), `display:flex !important` + `position:fixed; bottom:0` on native, `top:auto` to override inherited `nav{top:0}`, frosted glass backdrop blur, safe-area padding, keyboard-open auto-hide, dark mode. Hides web `.mobile-bottom-nav` on native. Added haptic feedback on tab taps. Added ultra-minimal native nav bar CSS: hides logo text (icon only, 28px), tighter padding (6px 12px), hides theme toggle and notification dot on native. Injects notification bell with iOS-style red badge (99+ cap) before hamburger via JS, hooks `updateNotificationIndicator` for live badge updates on both bell and tab bar. Added animated splash/loading overlay (`#nativeSplashOverlay`): blue background with pulsing logo and expanding ring animation, shown once per session via `sessionStorage` flag, fades out after `window.load` + 300ms. Changed `LOGIN_REDIRECT_URL` from `accounts:hybrid_landing` to `accounts:social_feed` (social-first philosophy). Excluded `.native-bottom-tabs` from page transition click handler. All changes scoped to `.ios-native-app`/`.android-native-app` — web completely unchanged except login redirect.
 - **2026-02-28:** Removed native tab bar, replaced with iOS-styled hamburger menu. Deleted tab bar HTML (nav + More menu overlay) from `base.html`, 169 lines of tab bar/More menu CSS from `base-inline.css`, and tab bar JS from `capacitor-native.js` and `capacitor-transitions.js`. Added native menu CSS overrides scoped to `.ios-native-app`/`.android-native-app`: blur backdrop, 300px panel with `#f2f2f7` background, grouped-list card sections (12px radius), chevron pseudo-elements (FA `\f054`), uppercase section labels, red logout, hidden Install App link, full dark mode. JS rebuilds hamburger button on native: removes CSS `<span>` lines, inserts FA `fa-bars` icon, `MutationObserver` swaps to `fa-xmark` on `.active` toggle, hides SVG close button (tap overlay to dismiss). Added cache-busting `?v=` query strings to all static CSS/JS in `base.html` (WhiteNoise uses `StaticFilesStorage` with 1-year cache, no filename hashing). Replaced AI Coach full-page disclaimer with accept-once modal popup (localStorage `anchor_disclaimer_accepted`) + compact one-line bar with "Details" re-open link. Web version completely unchanged.
 - **2026-02-28:** iOS native features layer — Face ID, tab bar, transitions, offline mode. Installed `@aparajita/capacitor-biometric-auth` v9.1.2 (Capacitor 7 compatible). Created `static/js/capacitor-biometric.js` — two-layer biometric protection: app lock (auto-locks after 5+ min background, Face ID/Touch ID prompt with device passcode fallback) and journal lock (separate biometric gate on `/journal/` pages, redirects on denial). iOS-style toggle switches injected on edit-profile page via JS (adapts labels to detected biometry type — Face ID/Touch ID/Fingerprint). Created iOS-style 5-tab bottom navigation bar (Feed, Groups, Coach, Journal, More) replacing the web hamburger menu on native. "More" tab opens a bottom-sheet menu with 8 items (Profile, Milestones, Community, Challenges, Messages, Progress, Settings, Subscription) styled as iOS grouped-list with chevrons. Web bottom nav preserved unchanged via `.web-bottom-nav` class scoping. Hamburger hidden on native via JS. Created `static/js/capacitor-transitions.js` — edge swipe back gesture (30px edge zone, 80px threshold, visual chevron indicator), 250ms CSS page transitions matching iOS UIKit timing (slideInRight/slideOutLeft/slideOutRight), View Transition API support for iOS 18+ with CSS fallback, enhanced pull-to-refresh with rotation physics (120px threshold). Click delegation intercepts internal links for transitions but excludes tab bar and More menu. Created `static/js/capacitor-offline.js` — IndexedDB database (`mrp_offline`) with 5 object stores (posts, journal, checkins, write_queue, meta), social feed post caching (last 50), journal entry caching, write queue for offline mutations (auto-flushes on reconnect and app foreground), fetch interceptor (cache-first for GET `/social-feed/posts/`, queues non-GET when offline), amber offline banner. All features guard on `window.Capacitor.isNativePlatform()` — zero impact on web. All CSS scoped to `.ios-native-app` / `.android-native-app` body classes. Full dark mode support for tab bar, More menu, and biometric settings. Xcode build verified (BUILD SUCCEEDED). Total: 12 Capacitor plugins, 6 native JS modules.
