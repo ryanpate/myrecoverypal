@@ -3888,11 +3888,11 @@ def social_feed_view(request):
                 ).exclude(
                     id__in=following_ids
                 ).annotate(
-                    followers_count=Count('follower_connections', filter=Q(follower_connections__connection_type='follow')),
+                    annotated_followers=Count('follower_connections', filter=Q(follower_connections__connection_type='follow')),
                     posts_count=Count('social_posts')
                 ).filter(
                     posts_count__gt=0  # Only suggest users who have posted
-                ).order_by('-followers_count', '-posts_count')[:6]
+                ).order_by('-annotated_followers', '-posts_count')[:6]
 
                 # Fallback: if no users have posted, get any active users
                 if not suggested_users.exists():
