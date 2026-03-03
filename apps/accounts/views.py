@@ -90,7 +90,7 @@ def register_view(request):
                     )
 
                 # Redirect to social feed - onboarding is now progressive
-                return redirect('accounts:social_feed')
+                return redirect('accounts:progress')
         else:
             form = CustomUserCreationForm()
 
@@ -134,7 +134,7 @@ def register_view(request):
                 )
 
             # Redirect to social feed - onboarding is now progressive
-            return redirect('accounts:social_feed')
+            return redirect('accounts:progress')
     else:
         # Pre-fill invite code if provided in URL
         initial = {'invite_code': invite_code} if invite_code else {}
@@ -165,7 +165,7 @@ def onboarding_view(request):
 
     # If already completed onboarding, redirect to social feed
     if user.has_completed_onboarding:
-        return redirect('accounts:social_feed')
+        return redirect('accounts:progress')
 
     # A/B Testing: Get user's variant and track onboarding start
     ab_variant = ABTestingService.get_variant(user, 'onboarding_flow')
@@ -272,7 +272,7 @@ def onboarding_view(request):
             user.save()
             ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding')
             messages.success(request, "Welcome to MyRecoveryPal!")
-            return redirect('accounts:social_feed')
+            return redirect('accounts:progress')
 
     # GET request - build context for current step
     context = {
@@ -360,7 +360,7 @@ def skip_onboarding(request):
     user.has_completed_onboarding = True
     user.save()
     messages.info(request, "You can complete your profile anytime in Settings.")
-    return redirect('accounts:social_feed')
+    return redirect('accounts:progress')
 
 
 @login_required
