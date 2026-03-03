@@ -18,7 +18,7 @@ struct SobrietyEntry: TimelineEntry {
 struct MilestoneHelper {
     static let milestones = [1, 7, 14, 30, 60, 90, 180, 365, 730, 1095, 1460, 1825]
 
-    static func calculate(daysSober: Int) -> (current: Int, next: Int, progress: Double) {
+    static func calculate(daysSober: Int, sobrietyDate: Date?) -> (current: Int, next: Int, progress: Double) {
         var current = 0
         var next = milestones.first ?? 1
 
@@ -31,11 +31,28 @@ struct MilestoneHelper {
             }
         }
 
-        // If past all milestones, next is the next yearly
-        if daysSober >= (milestones.last ?? 1825) {
-            current = daysSober - (daysSober % 365)
-            if current == daysSober { current = daysSober - 365 }
-            next = current + 365
+        // Past all fixed milestones: use calendar-based year anniversaries
+        if daysSober >= (milestones.last ?? 1825), let sobrietyDate = sobrietyDate {
+            let calendar = Calendar.current
+            let today = calendar.startOfDay(for: Date())
+            let startDay = calendar.startOfDay(for: sobrietyDate)
+            let yearsSober = calendar.dateComponents([.year], from: startDay, to: today).year ?? 0
+
+            // Last anniversary (yearsSober years after sobriety date)
+            let lastAnniversary = calendar.date(byAdding: .year, value: yearsSober, to: startDay) ?? today
+            // Next anniversary
+            let nextAnniversary = calendar.date(byAdding: .year, value: yearsSober + 1, to: startDay) ?? today
+
+            let daysFromStart = calendar.dateComponents([.day], from: startDay, to: lastAnniversary).day ?? daysSober
+            let daysToNext = calendar.dateComponents([.day], from: startDay, to: nextAnniversary).day ?? (daysSober + 365)
+
+            current = daysFromStart
+            next = daysToNext
+
+            // If today IS the anniversary, show it as reached
+            if lastAnniversary == today {
+                current = daysFromStart
+            }
         }
 
         let range = Double(next - current)
@@ -96,7 +113,7 @@ struct SobrietyTimelineProvider: TimelineProvider {
         }
 
         let daysSober = Calendar.current.dateComponents([.day], from: sobrietyDate, to: Date()).day ?? 0
-        let milestone = MilestoneHelper.calculate(daysSober: daysSober)
+        let milestone = MilestoneHelper.calculate(daysSober: daysSober, sobrietyDate: sobrietyDate)
 
         return SobrietyEntry(
             date: Date(),
