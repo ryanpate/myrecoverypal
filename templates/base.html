@@ -38,6 +38,12 @@
     <!-- RevenueCat API Key for iOS IAP (set via settings) -->
     {% if REVENUECAT_IOS_API_KEY %}<meta name="revenuecat-api-key" content="{{ REVENUECAT_IOS_API_KEY }}">{% endif %}
 
+    <!-- Sobriety date for iOS widget (App Group UserDefaults sync) -->
+    {% if user.is_authenticated and user.sobriety_date %}
+    <meta name="sobriety-date" content="{{ user.sobriety_date|date:'Y-m-d' }}">
+    <meta name="display-name" content="{{ user.get_short_name }}">
+    {% endif %}
+
     <!-- Page Title -->
     <title>{% block title %}{{ seo_title|default:"MyRecoveryPal - Your Recovery Support Community" }}{% endblock %}</title>
 
@@ -1151,6 +1157,8 @@
 
     <!-- Capacitor Offline Mode (native app only) -->
     <script src="{% static 'js/capacitor-offline.js' %}?v=20260303a"></script>
+    <!-- Capacitor Widget Bridge (native app only) -->
+    <script src="{% static 'js/capacitor-widget.js' %}?v=20260303d"></script>
 
     <!-- Additional Scripts -->
     {% block extra_js %}{% endblock %}
