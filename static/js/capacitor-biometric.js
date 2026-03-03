@@ -6,9 +6,11 @@
  * Exposes window.MRPBiometric with:
  *   - checkAvailability()
  *   - authenticate(reason)
- *   - isAppLockEnabled() / setAppLockEnabled(enabled)
+ *   - isBiometricLoginEnabled() / setBiometricLoginEnabled(enabled)
+ *   - saveLoginCredentials(username, password)
+ *   - getLoginCredentials()
+ *   - clearLoginCredentials()
  *   - isJournalLockEnabled() / setJournalLockEnabled(enabled)
- *   - setLastBackground() / shouldLockOnResume()
  */
 (function() {
     'use strict';
@@ -45,12 +47,10 @@
     };
 
     // Preference keys
-    var PREF_APP_LOCK = 'biometric_app_lock_enabled';
+    var PREF_BIO_LOGIN = 'biometric_login_enabled';
     var PREF_JOURNAL_LOCK = 'biometric_journal_lock_enabled';
-    var PREF_LAST_BACKGROUND = 'biometric_last_background_ts';
-
-    // Lock timeout: 5 minutes in milliseconds
-    var LOCK_TIMEOUT_MS = 5 * 60 * 1000;
+    var PREF_LOGIN_USER = 'biometric_login_username';
+    var PREF_LOGIN_PASS = 'biometric_login_password';
 
     // ========================================
     // MRPBiometric API
@@ -81,8 +81,6 @@
         /**
          * Prompt the user for biometric authentication.
          * Falls back to device passcode if biometrics fail.
-         * Uses internalAuthenticate (the native method name exposed by
-         * @aparajita/capacitor-biometric-auth on the Capacitor proxy).
          * @param {string} reason - The reason string shown to the user
          * @returns {Promise} Resolves on success, rejects on failure/cancel
          */
@@ -96,11 +94,11 @@
         },
 
         /**
-         * Check if app-level biometric lock is enabled.
+         * Check if biometric login is enabled.
          * @returns {Promise<boolean>}
          */
-        isAppLockEnabled: function() {
-            return Preferences.get({ key: PREF_APP_LOCK }).then(function(result) {
+        isBiometricLoginEnabled: function() {
+            return Preferences.get({ key: PREF_BIO_LOGIN }).then(function(result) {
                 return result.value === 'true';
             }).catch(function() {
                 return false;
@@ -108,24 +106,60 @@
         },
 
         /**
-         * Enable or disable app-level biometric lock.
+         * Enable or disable biometric login.
          * @param {boolean} enabled
          * @returns {Promise}
          */
-        setAppLockEnabled: function(enabled) {
-            return Preferences.set({ key: PREF_APP_LOCK, value: String(!!enabled) });
+        setBiometricLoginEnabled: function(enabled) {
+            return Preferences.set({ key: PREF_BIO_LOGIN, value: String(!!enabled) });
+        },
+
+        /**
+         * Save login credentials for biometric login.
+         * @param {string} username
+         * @param {string} password
+         * @returns {Promise}
+         */
+        saveLoginCredentials: function(username, password) {
+            return Preferences.set({ key: PREF_LOGIN_USER, value: username }).then(function() {
+                return Preferences.set({ key: PREF_LOGIN_PASS, value: password });
+            });
+        },
+
+        /**
+         * Get stored login credentials.
+         * @returns {Promise<{username: string, password: string}|null>}
+         */
+        getLoginCredentials: function() {
+            return Preferences.get({ key: PREF_LOGIN_USER }).then(function(userResult) {
+                if (!userResult.value) return null;
+                return Preferences.get({ key: PREF_LOGIN_PASS }).then(function(passResult) {
+                    if (!passResult.value) return null;
+                    return { username: userResult.value, password: passResult.value };
+                });
+            }).catch(function() {
+                return null;
+            });
+        },
+
+        /**
+         * Clear stored login credentials.
+         * @returns {Promise}
+         */
+        clearLoginCredentials: function() {
+            return Preferences.remove({ key: PREF_LOGIN_USER }).then(function() {
+                return Preferences.remove({ key: PREF_LOGIN_PASS });
+            });
         },
 
         /**
          * Check if journal-specific biometric lock is enabled.
-         * Defaults to true when app lock is enabled and this pref has never been set.
          * @returns {Promise<boolean>}
          */
         isJournalLockEnabled: function() {
             return Preferences.get({ key: PREF_JOURNAL_LOCK }).then(function(result) {
                 if (result.value === null || result.value === undefined) {
-                    // Default: enabled when app lock is enabled
-                    return MRPBiometric.isAppLockEnabled();
+                    return false;
                 }
                 return result.value === 'true';
             }).catch(function() {
@@ -140,40 +174,6 @@
          */
         setJournalLockEnabled: function(enabled) {
             return Preferences.set({ key: PREF_JOURNAL_LOCK, value: String(!!enabled) });
-        },
-
-        /**
-         * Record the current timestamp as the last time the app went to background.
-         * Called when appStateChange fires with isActive=false.
-         */
-        setLastBackground: function() {
-            return Preferences.set({
-                key: PREF_LAST_BACKGROUND,
-                value: String(Date.now())
-            });
-        },
-
-        /**
-         * Determine if the app should show the lock screen on resume.
-         * Returns true if app lock is enabled AND 5+ minutes have elapsed since background.
-         * @returns {Promise<boolean>}
-         */
-        shouldLockOnResume: function() {
-            return MRPBiometric.isAppLockEnabled().then(function(enabled) {
-                if (!enabled) return false;
-
-                return Preferences.get({ key: PREF_LAST_BACKGROUND }).then(function(result) {
-                    if (!result.value) return false;
-
-                    var lastBg = parseInt(result.value, 10);
-                    if (isNaN(lastBg)) return false;
-
-                    var elapsed = Date.now() - lastBg;
-                    return elapsed >= LOCK_TIMEOUT_MS;
-                });
-            }).catch(function() {
-                return false;
-            });
         }
     };
 
@@ -188,7 +188,7 @@
 
         // First-launch prompt: offer to enable Face ID / Touch ID
         // Only show once per install (stored in Preferences)
-        return MRPBiometric.isAppLockEnabled().then(function(alreadyEnabled) {
+        return MRPBiometric.isBiometricLoginEnabled().then(function(alreadyEnabled) {
             if (alreadyEnabled) return; // Already set up
 
             return Preferences.get({ key: PREF_BIO_OFFERED }).then(function(offered) {
@@ -211,8 +211,8 @@
                         '<div style="font-size:48px;margin-bottom:12px;">' +
                             (MRPBiometric.biometryType === 'faceId' ? '<i class="fas fa-face-viewfinder" style="color:#007AFF;"></i>' : '<i class="fas fa-fingerprint" style="color:#007AFF;"></i>') +
                         '</div>' +
-                        '<h3 style="margin:0 0 8px;font-size:18px;font-weight:600;color:#1c1c1e;">Enable ' + bioLabel + '?</h3>' +
-                        '<p style="margin:0 0 20px;font-size:14px;color:#666;line-height:1.4;">Secure your recovery data with ' + bioLabel + '. You can change this later in settings.</p>' +
+                        '<h3 style="margin:0 0 8px;font-size:18px;font-weight:600;color:#1c1c1e;">Sign in with ' + bioLabel + '?</h3>' +
+                        '<p style="margin:0 0 20px;font-size:14px;color:#666;line-height:1.4;">Use ' + bioLabel + ' to quickly sign in to MyRecoveryPal. Your credentials will be saved securely on this device.</p>' +
                         '<button id="bioSetupEnable" style="width:100%;padding:14px;border:none;border-radius:12px;background:#007AFF;color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:8px;">Enable ' + bioLabel + '</button>' +
                         '<button id="bioSetupSkip" style="width:100%;padding:14px;border:none;border-radius:12px;background:transparent;color:#007AFF;font-size:16px;cursor:pointer;">Not Now</button>' +
                     '</div>';
@@ -221,7 +221,7 @@
 
                 document.getElementById('bioSetupEnable').addEventListener('click', function() {
                     MRPBiometric.authenticate('Enable ' + bioLabel + ' for MyRecoveryPal').then(function() {
-                        MRPBiometric.setAppLockEnabled(true);
+                        MRPBiometric.setBiometricLoginEnabled(true);
                         MRPBiometric.setJournalLockEnabled(true);
                         overlay.remove();
                         if (window.MRPNative && window.MRPNative.hapticSuccess) {
@@ -298,13 +298,13 @@
             section.className = 'form-section biometric-settings-section';
             section.innerHTML =
                 '<h3><i class="fas fa-fingerprint" aria-hidden="true"></i> Security</h3>' +
-                '<div class="biometric-setting-row" id="biometricAppLockRow">' +
+                '<div class="biometric-setting-row" id="biometricLoginRow">' +
                     '<div class="biometric-setting-info">' +
-                        '<div class="biometric-setting-label">Lock App with ' + bioLabel + '</div>' +
-                        '<div class="biometric-setting-desc">Require biometric auth on app launch</div>' +
+                        '<div class="biometric-setting-label">Sign in with ' + bioLabel + '</div>' +
+                        '<div class="biometric-setting-desc">Use biometric auth on the login page</div>' +
                     '</div>' +
                     '<label class="biometric-switch">' +
-                        '<input type="checkbox" id="biometricAppLockToggle">' +
+                        '<input type="checkbox" id="biometricLoginToggle">' +
                         '<span class="biometric-slider"></span>' +
                     '</label>' +
                 '</div>' +
@@ -340,58 +340,40 @@
                 container.appendChild(section);
             }
 
-            var appLockToggle = document.getElementById('biometricAppLockToggle');
+            var loginToggle = document.getElementById('biometricLoginToggle');
             var journalLockToggle = document.getElementById('biometricJournalLockToggle');
-            var journalRow = document.getElementById('biometricJournalLockRow');
 
             // Load current state
-            MRPBiometric.isAppLockEnabled().then(function(enabled) {
-                appLockToggle.checked = enabled;
-                updateJournalRowState(enabled);
+            MRPBiometric.isBiometricLoginEnabled().then(function(enabled) {
+                loginToggle.checked = enabled;
             });
 
             MRPBiometric.isJournalLockEnabled().then(function(enabled) {
                 journalLockToggle.checked = enabled;
             });
 
-            function updateJournalRowState(appLockEnabled) {
-                if (appLockEnabled) {
-                    journalRow.style.opacity = '1';
-                    journalLockToggle.disabled = false;
-                } else {
-                    journalRow.style.opacity = '0.4';
-                    journalLockToggle.disabled = true;
-                }
-            }
-
             // Wire up change events
-            appLockToggle.addEventListener('change', function() {
-                var enabled = appLockToggle.checked;
+            loginToggle.addEventListener('change', function() {
+                var enabled = loginToggle.checked;
 
                 if (enabled) {
                     // Verify biometric auth before enabling
-                    MRPBiometric.authenticate('Enable ' + bioLabel + ' lock').then(function() {
-                        MRPBiometric.setAppLockEnabled(true);
-                        updateJournalRowState(true);
-                        // Auto-enable journal lock when app lock is turned on
-                        journalLockToggle.checked = true;
-                        MRPBiometric.setJournalLockEnabled(true);
+                    MRPBiometric.authenticate('Enable ' + bioLabel + ' sign-in').then(function() {
+                        MRPBiometric.setBiometricLoginEnabled(true);
                         if (window.MRPNative && window.MRPNative.hapticSuccess) {
                             window.MRPNative.hapticSuccess();
                         }
                     }).catch(function() {
                         // Auth failed -- revert toggle
-                        appLockToggle.checked = false;
+                        loginToggle.checked = false;
                         if (window.MRPNative && window.MRPNative.hapticWarning) {
                             window.MRPNative.hapticWarning();
                         }
                     });
                 } else {
-                    MRPBiometric.setAppLockEnabled(false);
-                    updateJournalRowState(false);
-                    // Disable journal lock when app lock is turned off
-                    journalLockToggle.checked = false;
-                    MRPBiometric.setJournalLockEnabled(false);
+                    MRPBiometric.setBiometricLoginEnabled(false);
+                    // Clear stored credentials when disabling
+                    MRPBiometric.clearLoginCredentials();
                     if (window.MRPNative && window.MRPNative.hapticMedium) {
                         window.MRPNative.hapticMedium();
                     }
