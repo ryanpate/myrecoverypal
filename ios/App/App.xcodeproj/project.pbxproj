@@ -15,12 +15,43 @@
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		802CED822F53915700BFAFEF /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 802CED812F53915700BFAFEF /* StoreKit.framework */; };
+		8424C6772D0A7801819B2619 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDC83A0E55979E316C0379E0 /* Foundation.framework */; };
+		94DC0D3BB969199A3E585C5A /* WidgetBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA6C99C800349DE731EFAD2 /* WidgetBridge.swift */; };
+		953D6A8FC49FE8DA00A46BD9 /* SobrietyCounterWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8991E5E0F36E3DBE8BEC7DD /* SobrietyCounterWidget.swift */; };
 		963FD41A504EC6379A40E6C3 /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443512C95668536597C4E494 /* Pods_App.framework */; };
+		C2BBF53BED4F7A9269A78EDD /* SobrietyCounterWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A594CBB11B40C8E7E9935FF1 /* SobrietyCounterWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D118D85AE871D0BFD18B56FF /* SobrietyCounterWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A187D03ECF6A362C42BF3A /* SobrietyCounterWidgetViews.swift */; };
+		DFFF0B819DF00949AA129598 /* MyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DED13EFE97331F1733AEC2B /* MyViewController.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D840DAB5F1DE87697B77C989 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0974600F5AAA8CBB49A747A4;
+			remoteInfo = SobrietyCounterWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0128C9EFF8D1219338AFF884 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C2BBF53BED4F7A9269A78EDD /* SobrietyCounterWidget.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2EA5F596E21ADCC706F62BD3 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
 		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
+		33A187D03ECF6A362C42BF3A /* SobrietyCounterWidgetViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SobrietyCounterWidgetViews.swift; path = SobrietyCounterWidget/SobrietyCounterWidgetViews.swift; sourceTree = "<group>"; };
 		443512C95668536597C4E494 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
 		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -30,9 +61,16 @@
 		504EC3111FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
+		6CA6C99C800349DE731EFAD2 /* WidgetBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetBridge.swift; path = App/WidgetBridge.swift; sourceTree = "<group>"; };
 		802CED802F5390D400BFAFEF /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		802CED812F53915700BFAFEF /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		81463C5B59ACA98FA156FEED /* SobrietyCounterWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; name = SobrietyCounterWidget.entitlements; path = SobrietyCounterWidget/SobrietyCounterWidget.entitlements; sourceTree = "<group>"; };
 		82A6E4C30DD937F8C6BBE6C4 /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
+		8DED13EFE97331F1733AEC2B /* MyViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MyViewController.swift; path = App/MyViewController.swift; sourceTree = "<group>"; };
+		A594CBB11B40C8E7E9935FF1 /* SobrietyCounterWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SobrietyCounterWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3575C236B2EDB4868791927 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = SobrietyCounterWidget/Info.plist; sourceTree = "<group>"; };
+		E8991E5E0F36E3DBE8BEC7DD /* SobrietyCounterWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SobrietyCounterWidget.swift; path = SobrietyCounterWidget/SobrietyCounterWidget.swift; sourceTree = "<group>"; };
+		EDC83A0E55979E316C0379E0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +83,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		65FEB413B0B1ADB3843DB2A8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8424C6772D0A7801819B2619 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -53,8 +99,17 @@
 			children = (
 				802CED812F53915700BFAFEF /* StoreKit.framework */,
 				443512C95668536597C4E494 /* Pods_App.framework */,
+				4F8923C9B7F2B1CCECF1029D /* iOS */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4F8923C9B7F2B1CCECF1029D /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				EDC83A0E55979E316C0379E0 /* Foundation.framework */,
+			);
+			name = iOS;
 			sourceTree = "<group>";
 		};
 		504EC2FB1FED79650016851F = {
@@ -64,6 +119,7 @@
 				504EC3051FED79650016851F /* Products */,
 				27E2DDA53C4D2A4D1A88CE4A /* Frameworks */,
 				82AC11E44F1DDA98F85BB719 /* Pods */,
+				7745FB50936C865BA97BCF12 /* SobrietyCounterWidget */,
 			);
 			sourceTree = "<group>";
 		};
@@ -71,6 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				504EC3041FED79650016851F /* App.app */,
+				A594CBB11B40C8E7E9935FF1 /* SobrietyCounterWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -87,8 +144,22 @@
 				504EC3131FED79650016851F /* Info.plist */,
 				2FAD9762203C412B000D30F8 /* config.xml */,
 				50B271D01FEDC1A000F3C39B /* public */,
+				6CA6C99C800349DE731EFAD2 /* WidgetBridge.swift */,
+				8DED13EFE97331F1733AEC2B /* MyViewController.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		7745FB50936C865BA97BCF12 /* SobrietyCounterWidget */ = {
+			isa = PBXGroup;
+			children = (
+				E8991E5E0F36E3DBE8BEC7DD /* SobrietyCounterWidget.swift */,
+				33A187D03ECF6A362C42BF3A /* SobrietyCounterWidgetViews.swift */,
+				B3575C236B2EDB4868791927 /* Info.plist */,
+				81463C5B59ACA98FA156FEED /* SobrietyCounterWidget.entitlements */,
+			);
+			name = SobrietyCounterWidget;
+			path = SobrietyCounterWidget;
 			sourceTree = "<group>";
 		};
 		82AC11E44F1DDA98F85BB719 /* Pods */ = {
@@ -104,6 +175,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0974600F5AAA8CBB49A747A4 /* SobrietyCounterWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6F78FA4585A395F65C486299 /* Build configuration list for PBXNativeTarget "SobrietyCounterWidget" */;
+			buildPhases = (
+				4E149EA0A4494129D36B2B30 /* Sources */,
+				65FEB413B0B1ADB3843DB2A8 /* Frameworks */,
+				E026C0FAA351D766FFED06A5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SobrietyCounterWidget;
+			productName = SobrietyCounterWidget;
+			productReference = A594CBB11B40C8E7E9935FF1 /* SobrietyCounterWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		504EC3031FED79650016851F /* App */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */;
@@ -113,10 +201,12 @@
 				504EC3011FED79650016851F /* Frameworks */,
 				504EC3021FED79650016851F /* Resources */,
 				33D4B60362D531BDDA27611D /* [CP] Embed Pods Frameworks */,
+				0128C9EFF8D1219338AFF884 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				385DBFC2F2576B5A7163A7F1 /* PBXTargetDependency */,
 			);
 			name = App;
 			productName = App;
@@ -153,6 +243,7 @@
 			projectRoot = "";
 			targets = (
 				504EC3031FED79650016851F /* App */,
+				0974600F5AAA8CBB49A747A4 /* SobrietyCounterWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -168,6 +259,13 @@
 				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
 				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
 				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E026C0FAA351D766FFED06A5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,15 +312,35 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4E149EA0A4494129D36B2B30 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				953D6A8FC49FE8DA00A46BD9 /* SobrietyCounterWidget.swift in Sources */,
+				D118D85AE871D0BFD18B56FF /* SobrietyCounterWidgetViews.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		504EC3001FED79650016851F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
+				94DC0D3BB969199A3E585C5A /* WidgetBridge.swift in Sources */,
+				DFFF0B819DF00949AA129598 /* MyViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		385DBFC2F2576B5A7163A7F1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = SobrietyCounterWidget;
+			target = 0974600F5AAA8CBB49A747A4 /* SobrietyCounterWidget */;
+			targetProxy = D840DAB5F1DE87697B77C989 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		504EC30B1FED79650016851F /* Main.storyboard */ = {
@@ -244,6 +362,26 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4CA99D4AE236F66D90779B26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = SobrietyCounterWidget/SobrietyCounterWidget.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SobrietyCounterWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.myrecoverypal.app.SobrietyCounterWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 		504EC3141FED79650016851F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -398,6 +536,27 @@
 			};
 			name = Release;
 		};
+		EFD9F5E7CC7BB4EF21728EFD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = SobrietyCounterWidget/SobrietyCounterWidget.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SobrietyCounterWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.myrecoverypal.app.SobrietyCounterWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -415,6 +574,15 @@
 			buildConfigurations = (
 				504EC3171FED79650016851F /* Debug */,
 				504EC3181FED79650016851F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6F78FA4585A395F65C486299 /* Build configuration list for PBXNativeTarget "SobrietyCounterWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EFD9F5E7CC7BB4EF21728EFD /* Release */,
+				4CA99D4AE236F66D90779B26 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
