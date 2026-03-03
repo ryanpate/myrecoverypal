@@ -896,11 +896,26 @@ def quick_checkin(request):
         content_object=checkin
     )
 
+    # Optionally share check-in as a social post
+    share_to_feed = request.POST.get('share_to_feed') == 'true'
+    if share_to_feed:
+        mood_display = checkin.get_mood_display_with_emoji()
+        post_content = f"Checked in feeling {mood_display}"
+        if gratitude:
+            post_content += f"\n\nGrateful for: {gratitude}"
+        SocialPost.objects.create(
+            author=request.user,
+            content=post_content,
+            visibility='public',
+            linked_checkin=checkin
+        )
+
     return JsonResponse({
         'success': True,
         'mood': mood,
         'mood_display': checkin.get_mood_display(),
-        'message': 'Check-in complete! 🌟'
+        'message': 'Check-in complete! 🌟',
+        'shared_to_feed': share_to_feed,
     })
 
 
@@ -3801,7 +3816,7 @@ def social_feed_view(request):
         user = request.user
 
         # Get posts visible to the current user
-        posts = SocialPost.objects.select_related('author').prefetch_related(
+        posts = SocialPost.objects.select_related('author', 'linked_checkin').prefetch_related(
             'likes',
             'comments__author'
         ).order_by('-created_at')
@@ -3846,6 +3861,11 @@ def social_feed_view(request):
 
         # For authenticated users, check if feed is empty/sparse and add suggestions
         if user.is_authenticated:
+            # Today's check-in for the widget
+            today = timezone.now().date()
+            todays_checkin = DailyCheckIn.objects.filter(user=user, date=today).first()
+            context['todays_checkin'] = todays_checkin
+            context['checkin_streak'] = user.get_checkin_streak()
             context['is_premium'] = hasattr(user, 'subscription') and user.subscription.is_premium()
             profile_completion = user.get_profile_completion()
             context['profile_completion'] = profile_completion
@@ -3935,7 +3955,7 @@ def hybrid_landing_view(request):
             user_groups = user.get_joined_groups()[:3]
 
             # Social feed data - Get posts visible to the current user
-            posts = SocialPost.objects.select_related('author').prefetch_related(
+            posts = SocialPost.objects.select_related('author', 'linked_checkin').prefetch_related(
                 'likes',
                 'comments__author'
             ).order_by('-created_at')
@@ -4044,7 +4064,7 @@ def social_feed_posts_api(request):
     try:
         if user.is_authenticated:
             # Get all posts with related data
-            posts = SocialPost.objects.select_related('author').prefetch_related(
+            posts = SocialPost.objects.select_related('author', 'linked_checkin').prefetch_related(
                 'likes',
                 'comments__author'
             ).order_by('-created_at')
@@ -4053,7 +4073,7 @@ def social_feed_posts_api(request):
             visible_posts = [post for post in posts if post.is_visible_to(user)]
         else:
             # For unauthenticated users, only show public posts
-            visible_posts = list(SocialPost.objects.select_related('author').prefetch_related(
+            visible_posts = list(SocialPost.objects.select_related('author', 'linked_checkin').prefetch_related(
                 'likes',
                 'comments__author'
             ).filter(visibility='public').order_by('-created_at'))
@@ -4107,6 +4127,11 @@ def social_feed_posts_api(request):
                 'user_liked': user_liked,
                 'is_own_post': is_own_post,
                 'comments': comments_data,
+                'is_checkin': post.linked_checkin_id is not None,
+                'checkin_data': {
+                    'mood_emoji': post.linked_checkin.get_mood_display_with_emoji(),
+                    'gratitude': post.linked_checkin.gratitude or '',
+                } if post.linked_checkin_id else None,
             })
 
         return JsonResponse({

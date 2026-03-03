@@ -848,6 +848,301 @@
         }
     }
 
+    /* Check-in widget */
+    .checkin-widget {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .checkin-widget-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .checkin-widget-header i {
+        color: var(--primary-dark, #6c5ce7);
+    }
+
+    .checkin-mood-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.25rem;
+    }
+
+    .checkin-mood-btn {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.5rem 0.25rem;
+        border: 2px solid transparent;
+        border-radius: 10px;
+        background: #f8f9fa;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 1.3rem;
+    }
+
+    .checkin-mood-btn .mood-label {
+        font-size: 0.65rem;
+        color: #888;
+        font-weight: 500;
+    }
+
+    .checkin-mood-btn:hover {
+        background: #f0ebff;
+        border-color: #d4ccf0;
+    }
+
+    .checkin-mood-btn.selected {
+        border-color: var(--primary-dark, #6c5ce7);
+        background: linear-gradient(135deg, #f0ebff, #e8e0ff);
+        transform: scale(1.05);
+    }
+
+    .checkin-mood-btn.selected .mood-label {
+        color: var(--primary-dark, #6c5ce7);
+        font-weight: 600;
+    }
+
+    .checkin-expand {
+        display: none;
+        margin-top: 0.75rem;
+        animation: checkinExpand 0.25s ease;
+    }
+
+    .checkin-expand.visible {
+        display: block;
+    }
+
+    @keyframes checkinExpand {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .checkin-gratitude-input {
+        width: 100%;
+        padding: 0.6rem 0.75rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        resize: none;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+
+    .checkin-gratitude-input:focus {
+        outline: none;
+        border-color: var(--primary-dark, #6c5ce7);
+        box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.15);
+    }
+
+    .checkin-bottom-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.6rem;
+    }
+
+    .checkin-share-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.8rem;
+        color: #666;
+        cursor: pointer;
+    }
+
+    .checkin-share-toggle input[type="checkbox"] {
+        accent-color: var(--primary-dark, #6c5ce7);
+        width: 16px;
+        height: 16px;
+    }
+
+    .checkin-submit-btn {
+        padding: 0.5rem 1.25rem;
+        background: var(--primary-dark, #6c5ce7);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .checkin-submit-btn:hover {
+        background: #5a4bd1;
+    }
+
+    .checkin-submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* Already checked in state */
+    .checkin-widget-done {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.25rem 0;
+    }
+
+    .checkin-done-mood {
+        font-size: 1.8rem;
+        line-height: 1;
+    }
+
+    .checkin-done-info {
+        flex: 1;
+    }
+
+    .checkin-done-info .done-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .checkin-done-info .done-mood {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .checkin-streak-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.6rem;
+        background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #e65100;
+    }
+
+    .checkin-progress-link {
+        font-size: 0.8rem;
+        color: var(--primary-dark, #6c5ce7);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .checkin-progress-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Check-in post card in feed */
+    .checkin-post-card {
+        background: linear-gradient(135deg, #f8f5ff, #f0ebff);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        margin: 0.25rem 0;
+    }
+
+    .checkin-post-mood {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .checkin-post-mood i {
+        font-size: 0.75rem;
+        color: var(--primary-dark, #6c5ce7);
+    }
+
+    .checkin-post-gratitude {
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: #555;
+        font-style: italic;
+        padding-left: 0.5rem;
+        border-left: 2px solid var(--primary-dark, #6c5ce7);
+    }
+
+    /* Dark mode: check-in widget */
+    [data-theme="dark"] .checkin-widget {
+        background: #1e1e1e;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="dark"] .checkin-widget-header {
+        color: #e0e0e0;
+    }
+
+    [data-theme="dark"] .checkin-mood-btn {
+        background: #2a2a2a;
+    }
+
+    [data-theme="dark"] .checkin-mood-btn .mood-label {
+        color: #999;
+    }
+
+    [data-theme="dark"] .checkin-mood-btn:hover {
+        background: #333;
+        border-color: #555;
+    }
+
+    [data-theme="dark"] .checkin-mood-btn.selected {
+        background: linear-gradient(135deg, #2d2650, #3a2d6e);
+        border-color: #7c6dd8;
+    }
+
+    [data-theme="dark"] .checkin-mood-btn.selected .mood-label {
+        color: #b4a6f0;
+    }
+
+    [data-theme="dark"] .checkin-gratitude-input {
+        background: #2a2a2a;
+        border-color: #444;
+        color: #e0e0e0;
+    }
+
+    [data-theme="dark"] .checkin-gratitude-input:focus {
+        border-color: #7c6dd8;
+    }
+
+    [data-theme="dark"] .checkin-share-toggle {
+        color: #aaa;
+    }
+
+    [data-theme="dark"] .checkin-done-info .done-label {
+        color: #e0e0e0;
+    }
+
+    [data-theme="dark"] .checkin-done-info .done-mood {
+        color: #999;
+    }
+
+    [data-theme="dark"] .checkin-streak-badge {
+        background: linear-gradient(135deg, #3e2c00, #5a3e00);
+        color: #ffb74d;
+    }
+
+    [data-theme="dark"] .checkin-post-card {
+        background: linear-gradient(135deg, #1e1a2e, #2a2440);
+    }
+
+    [data-theme="dark"] .checkin-post-mood {
+        color: #e0e0e0;
+    }
+
+    [data-theme="dark"] .checkin-post-gratitude {
+        color: #bbb;
+        border-left-color: #7c6dd8;
+    }
+
     /* Dark mode: compact create-post + inline suggestions */
     [data-theme="dark"] .create-post-compact .placeholder-text {
         color: #888;
@@ -939,6 +1234,50 @@
             </form>
         </div>
     </div>
+    <!-- Check-in Widget -->
+    {% if todays_checkin %}
+    <div class="checkin-widget">
+        <div class="checkin-widget-header">
+            <i class="fas fa-check-circle" aria-hidden="true"></i> Today's Check-in
+        </div>
+        <div class="checkin-widget-done">
+            <div class="checkin-done-mood">{% if todays_checkin.mood == 1 %}😰{% elif todays_checkin.mood == 2 %}😔{% elif todays_checkin.mood == 3 %}😐{% elif todays_checkin.mood == 4 %}😊{% elif todays_checkin.mood == 5 %}😄{% elif todays_checkin.mood == 6 %}🌟{% endif %}</div>
+            <div class="checkin-done-info">
+                <div class="done-label">{{ todays_checkin.get_mood_display_with_emoji }}</div>
+                <div class="done-mood">Checked in {{ todays_checkin.created_at|timesince }} ago</div>
+            </div>
+            {% if checkin_streak and checkin_streak > 1 %}
+            <div class="checkin-streak-badge">🔥 {{ checkin_streak }} day streak</div>
+            {% endif %}
+            <a href="{% url 'accounts:progress' %}" class="checkin-progress-link">Progress</a>
+        </div>
+    </div>
+    {% elif user.is_authenticated %}
+    <div class="checkin-widget" id="checkinWidget">
+        <div class="checkin-widget-header">
+            <i class="fas fa-heart" aria-hidden="true"></i> How are you feeling today?
+        </div>
+        <div class="checkin-mood-row" id="checkinMoodRow">
+            <button type="button" class="checkin-mood-btn" data-mood="1"><span>😰</span><span class="mood-label">Struggling</span></button>
+            <button type="button" class="checkin-mood-btn" data-mood="2"><span>😔</span><span class="mood-label">Down</span></button>
+            <button type="button" class="checkin-mood-btn" data-mood="3"><span>😐</span><span class="mood-label">Okay</span></button>
+            <button type="button" class="checkin-mood-btn" data-mood="4"><span>😊</span><span class="mood-label">Good</span></button>
+            <button type="button" class="checkin-mood-btn" data-mood="5"><span>😄</span><span class="mood-label">Great</span></button>
+            <button type="button" class="checkin-mood-btn" data-mood="6"><span>🌟</span><span class="mood-label">Amazing</span></button>
+        </div>
+        <div class="checkin-expand" id="checkinExpand">
+            <textarea class="checkin-gratitude-input" id="checkinGratitude" placeholder="What are you grateful for today? (optional)" rows="2" maxlength="280"></textarea>
+            <div class="checkin-bottom-row">
+                <label class="checkin-share-toggle">
+                    <input type="checkbox" id="checkinShareToggle" checked>
+                    <i class="fas fa-globe" aria-hidden="true"></i> Share to feed
+                </label>
+                <button type="button" class="checkin-submit-btn" id="checkinSubmitBtn">Check In</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     {% else %}
     <!-- Welcome Banner for Anonymous Users -->
     <div class="guest-welcome-banner">
@@ -990,7 +1329,16 @@
                 </div>
 
                 <!-- Post Content -->
+                {% if post.linked_checkin %}
+                <div class="checkin-post-card">
+                    <div class="checkin-post-mood"><i class="fas fa-heart" aria-hidden="true"></i> {{ post.linked_checkin.get_mood_display_with_emoji }}</div>
+                    {% if post.linked_checkin.gratitude %}
+                    <div class="checkin-post-gratitude">"{{ post.linked_checkin.gratitude }}"</div>
+                    {% endif %}
+                </div>
+                {% else %}
                 <div class="post-content">{{ post.content }}</div>
+                {% endif %}
 
                 <!-- Post Image -->
                 {% if post.image %}
@@ -1659,6 +2007,82 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Check-in widget handlers
+    const checkinMoodRow = document.getElementById('checkinMoodRow');
+    const checkinExpand = document.getElementById('checkinExpand');
+    const checkinSubmitBtn = document.getElementById('checkinSubmitBtn');
+    let selectedMood = null;
+
+    if (checkinMoodRow) {
+        checkinMoodRow.addEventListener('click', function(e) {
+            const btn = e.target.closest('.checkin-mood-btn');
+            if (!btn) return;
+
+            // Deselect all, select this one
+            checkinMoodRow.querySelectorAll('.checkin-mood-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedMood = btn.dataset.mood;
+
+            // Show expand section
+            if (checkinExpand) checkinExpand.classList.add('visible');
+
+            // Haptic feedback (native app)
+            if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+                try { window.Capacitor.Plugins.Haptics.impact({ style: 'LIGHT' }); } catch(e) {}
+            }
+        });
+    }
+
+    if (checkinSubmitBtn) {
+        checkinSubmitBtn.addEventListener('click', async function() {
+            if (!selectedMood) return;
+
+            const gratitude = (document.getElementById('checkinGratitude') || {}).value || '';
+            const shareToFeed = (document.getElementById('checkinShareToggle') || {}).checked || false;
+
+            checkinSubmitBtn.disabled = true;
+            checkinSubmitBtn.textContent = 'Saving...';
+
+            try {
+                const formData = new FormData();
+                formData.append('mood', selectedMood);
+                formData.append('gratitude', gratitude.trim());
+                formData.append('share_to_feed', shareToFeed ? 'true' : 'false');
+
+                const response = await fetch('{% url "accounts:quick_checkin" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Haptic feedback on success (native app)
+                    if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+                        try { window.Capacitor.Plugins.Haptics.notification({ type: 'SUCCESS' }); } catch(e) {}
+                    }
+                    showToast(data.message || 'Check-in complete!', 'success');
+                    setTimeout(() => window.location.reload(), 600);
+                } else if (data.already_checked_in) {
+                    showToast('You already checked in today!', 'info');
+                    setTimeout(() => window.location.reload(), 600);
+                } else {
+                    showToast(data.error || 'Failed to check in', 'error');
+                    checkinSubmitBtn.disabled = false;
+                    checkinSubmitBtn.textContent = 'Check In';
+                }
+            } catch (error) {
+                console.error('Check-in error:', error);
+                showToast('Failed to check in. Please try again.', 'error');
+                checkinSubmitBtn.disabled = false;
+                checkinSubmitBtn.textContent = 'Check In';
+            }
+        });
+    }
 
     // Helper function to get CSRF token
     function getCookie(name) {

@@ -1657,6 +1657,10 @@ class SocialPost(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='social_posts')
     content = models.TextField(blank=True, help_text="Share your thoughts, wins, or encouragement")
     image = models.ImageField(upload_to='social_posts/', blank=True, null=True)
+    linked_checkin = models.ForeignKey(
+        'DailyCheckIn', on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='social_posts'
+    )
     visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='public')
 
     # Engagement
