@@ -68,6 +68,7 @@
         margin-bottom: 2rem;
         color: white;
         box-shadow: 0 10px 40px rgba(82, 183, 136, 0.2);
+        position: relative;
     }
 
     .milestone-header {
@@ -129,6 +130,7 @@
         gap: 1rem;
         margin-bottom: 2rem;
         align-items: center;
+        position: relative;
     }
 
     .week-card {
@@ -224,6 +226,7 @@
         padding: 1.5rem;
         margin-bottom: 1.5rem;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        position: relative;
     }
 
     .chart-title {
@@ -435,186 +438,1137 @@
             text-align: center;
         }
     }
+
+    /* ===== Landing Tab Bar ===== */
+    .landing-tabs {
+        display: flex;
+        max-width: 1000px;
+        margin: 1.5rem auto 0;
+        padding: 0 1rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .landing-tab {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.85rem 1rem;
+        background: none;
+        border: none;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #888;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .landing-tab:hover {
+        color: #555;
+    }
+
+    .landing-tab.active {
+        color: #1e4d8b;
+        border-bottom-color: #1e4d8b;
+    }
+
+    .landing-tab i {
+        font-size: 1rem;
+    }
+
+    [data-theme="dark"] .landing-tabs {
+        border-bottom-color: #404040;
+    }
+
+    [data-theme="dark"] .landing-tab {
+        color: #888;
+    }
+
+    [data-theme="dark"] .landing-tab:hover {
+        color: #bbb;
+    }
+
+    [data-theme="dark"] .landing-tab.active {
+        color: #6cb4ee;
+        border-bottom-color: #6cb4ee;
+    }
+
+    /* ===== Inline Check-in Card ===== */
+    .inline-checkin-card {
+        max-width: 1000px;
+        margin: 1.5rem auto;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    .inline-checkin-card h3 {
+        margin: 0 0 0.25rem;
+        font-size: 1.15rem;
+        color: #333;
+    }
+
+    .inline-checkin-card .checkin-subtitle {
+        margin: 0 0 1.25rem;
+        font-size: 0.85rem;
+        color: #888;
+    }
+
+    .mood-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .mood-option {
+        position: relative;
+    }
+
+    .mood-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .mood-option label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.75rem 0.25rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .mood-option label .mood-emoji {
+        font-size: 1.75rem;
+        line-height: 1;
+    }
+
+    .mood-option label .mood-label {
+        font-size: 0.7rem;
+        color: #888;
+        font-weight: 500;
+    }
+
+    .mood-option label:hover {
+        border-color: #93c5fd;
+        background: #f0f7ff;
+    }
+
+    .mood-option input[type="radio"]:checked + label {
+        border-color: #1e4d8b;
+        background: #eff6ff;
+        box-shadow: 0 0 0 1px #1e4d8b;
+    }
+
+    .mood-option input[type="radio"]:checked + label .mood-label {
+        color: #1e4d8b;
+        font-weight: 600;
+    }
+
+    .slider-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .slider-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.4rem;
+    }
+
+    .slider-group input[type="range"] {
+        width: 100%;
+        accent-color: #1e4d8b;
+    }
+
+    .slider-value {
+        text-align: center;
+        font-size: 0.8rem;
+        color: #666;
+        margin-top: 0.25rem;
+    }
+
+    .gratitude-section {
+        margin-bottom: 1.25rem;
+    }
+
+    .gratitude-section label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.4rem;
+    }
+
+    .gratitude-section textarea {
+        width: 100%;
+        padding: 0.6rem 0.75rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        resize: vertical;
+        min-height: 60px;
+        font-family: inherit;
+        transition: border-color 0.2s;
+    }
+
+    .gratitude-section textarea:focus {
+        outline: none;
+        border-color: #1e4d8b;
+        box-shadow: 0 0 0 3px rgba(30, 77, 139, 0.1);
+    }
+
+    .quick-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-top: 0.5rem;
+    }
+
+    .quick-tag {
+        display: inline-block;
+        padding: 0.3rem 0.75rem;
+        background: #f0f7ff;
+        color: #1e4d8b;
+        border: 1px solid #dbeafe;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        user-select: none;
+    }
+
+    .quick-tag:hover {
+        background: #dbeafe;
+    }
+
+    .quick-tag.selected {
+        background: #1e4d8b;
+        color: white;
+        border-color: #1e4d8b;
+    }
+
+    .optional-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .optional-fields label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.4rem;
+    }
+
+    .optional-fields .field-hint {
+        font-weight: 400;
+        color: #aaa;
+        font-size: 0.75rem;
+    }
+
+    .optional-fields textarea {
+        width: 100%;
+        padding: 0.6rem 0.75rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        resize: vertical;
+        min-height: 50px;
+        font-family: inherit;
+        transition: border-color 0.2s;
+    }
+
+    .optional-fields textarea:focus {
+        outline: none;
+        border-color: #1e4d8b;
+        box-shadow: 0 0 0 3px rgba(30, 77, 139, 0.1);
+    }
+
+    .checkin-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .share-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: #666;
+        cursor: pointer;
+    }
+
+    .share-toggle input[type="checkbox"] {
+        display: none;
+    }
+
+    .toggle-track {
+        position: relative;
+        width: 40px;
+        height: 22px;
+        background: #ccc;
+        border-radius: 11px;
+        transition: background 0.2s;
+        flex-shrink: 0;
+    }
+
+    .toggle-track::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 18px;
+        height: 18px;
+        background: white;
+        border-radius: 50%;
+        transition: transform 0.2s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .share-toggle input[type="checkbox"]:checked + .toggle-track {
+        background: #52b788;
+    }
+
+    .share-toggle input[type="checkbox"]:checked + .toggle-track::after {
+        transform: translateX(18px);
+    }
+
+    .btn-checkin-submit {
+        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
+        color: white;
+        border: none;
+        padding: 0.7rem 2rem;
+        border-radius: 25px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-checkin-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(30, 77, 139, 0.3);
+    }
+
+    .btn-checkin-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* ===== Checked-in Done Bar ===== */
+    .checkin-done-bar {
+        max-width: 1000px;
+        margin: 1.5rem auto;
+        padding: 1rem 1.5rem;
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border: 1px solid #bbf7d0;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .checkin-done-bar .done-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .checkin-done-bar .done-check {
+        width: 32px;
+        height: 32px;
+        background: #22c55e;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .checkin-done-bar .done-text {
+        font-size: 0.95rem;
+        color: #166534;
+        font-weight: 600;
+    }
+
+    .checkin-done-bar .done-mood {
+        font-size: 0.85rem;
+        color: #15803d;
+        font-weight: 400;
+    }
+
+    .streak-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.3rem 0.75rem;
+        background: linear-gradient(135deg, #ffa502 0%, #ff6348 100%);
+        color: white;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .done-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    [data-theme="dark"] .checkin-done-bar {
+        background: linear-gradient(135deg, #14532d 0%, #166534 100%);
+        border-color: #15803d;
+    }
+
+    [data-theme="dark"] .checkin-done-bar .done-text {
+        color: #bbf7d0;
+    }
+
+    [data-theme="dark"] .checkin-done-bar .done-mood {
+        color: #86efac;
+    }
+
+    /* ===== Section Share Buttons ===== */
+    .section-share-btn {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border: none;
+        border-radius: 50%;
+        color: #888;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        z-index: 2;
+    }
+
+    .section-share-btn:hover {
+        background: rgba(30, 77, 139, 0.1);
+        color: #1e4d8b;
+        transform: scale(1.1);
+    }
+
+    .milestone-card .section-share-btn {
+        background: rgba(255, 255, 255, 0.25);
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .milestone-card .section-share-btn:hover {
+        background: rgba(255, 255, 255, 0.4);
+        color: white;
+    }
+
+    .share-btn-small {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border: none;
+        border-radius: 50%;
+        color: #888;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .share-btn-small:hover {
+        background: rgba(30, 77, 139, 0.1);
+        color: #1e4d8b;
+    }
+
+    .share-dropdown {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        right: 0;
+        min-width: 200px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        z-index: 100;
+        padding: 0.5rem 0;
+        opacity: 0;
+        transform: translateY(-8px);
+        pointer-events: none;
+        transition: all 0.2s;
+    }
+
+    .share-dropdown.visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .share-dropdown a,
+    .share-dropdown button {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        width: 100%;
+        padding: 0.6rem 1rem;
+        background: none;
+        border: none;
+        color: #333;
+        font-size: 0.85rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background 0.15s;
+        text-align: left;
+    }
+
+    .share-dropdown a:hover,
+    .share-dropdown button:hover {
+        background: #f5f5f5;
+    }
+
+    .share-dropdown a i,
+    .share-dropdown button i {
+        width: 18px;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+    [data-theme="dark"] .share-dropdown {
+        background: #2a2a2a;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="dark"] .share-dropdown a,
+    [data-theme="dark"] .share-dropdown button {
+        color: #e0e0e0;
+    }
+
+    [data-theme="dark"] .share-dropdown a:hover,
+    [data-theme="dark"] .share-dropdown button:hover {
+        background: #333;
+    }
+
+    /* Stats grid wrapper needs relative position for share btn */
+    .stats-grid-wrapper {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .stats-grid-wrapper .stats-grid {
+        margin-bottom: 0;
+    }
+
+    /* ===== Feed Skeleton ===== */
+    .feed-skeleton {
+        max-width: 700px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .skeleton-post {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .skeleton-post .sk-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .skeleton-post .sk-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+        background-size: 200% 100%;
+        animation: skeletonShimmer 1.5s infinite;
+    }
+
+    .skeleton-post .sk-line {
+        height: 12px;
+        border-radius: 6px;
+        background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+        background-size: 200% 100%;
+        animation: skeletonShimmer 1.5s infinite;
+    }
+
+    .skeleton-post .sk-line.short {
+        width: 40%;
+    }
+
+    .skeleton-post .sk-line.medium {
+        width: 65%;
+    }
+
+    .skeleton-post .sk-line.long {
+        width: 90%;
+    }
+
+    .skeleton-post .sk-body {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    @keyframes skeletonShimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    [data-theme="dark"] .skeleton-post {
+        background: var(--card-bg);
+    }
+
+    [data-theme="dark"] .skeleton-post .sk-avatar,
+    [data-theme="dark"] .skeleton-post .sk-line {
+        background: linear-gradient(90deg, #333 25%, #3a3a3a 50%, #333 75%);
+        background-size: 200% 100%;
+        animation: skeletonShimmer 1.5s infinite;
+    }
+
+    /* ===== Dark Mode for Inline Check-in ===== */
+    [data-theme="dark"] .inline-checkin-card {
+        background: var(--card-bg);
+    }
+
+    [data-theme="dark"] .inline-checkin-card h3 {
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .inline-checkin-card .checkin-subtitle {
+        color: #999;
+    }
+
+    [data-theme="dark"] .mood-option label {
+        border-color: #404040;
+        background: transparent;
+    }
+
+    [data-theme="dark"] .mood-option label:hover {
+        border-color: #6cb4ee;
+        background: rgba(108, 180, 238, 0.08);
+    }
+
+    [data-theme="dark"] .mood-option input[type="radio"]:checked + label {
+        border-color: #6cb4ee;
+        background: rgba(108, 180, 238, 0.12);
+        box-shadow: 0 0 0 1px #6cb4ee;
+    }
+
+    [data-theme="dark"] .mood-option input[type="radio"]:checked + label .mood-label {
+        color: #6cb4ee;
+    }
+
+    [data-theme="dark"] .slider-group label,
+    [data-theme="dark"] .gratitude-section label,
+    [data-theme="dark"] .optional-fields label {
+        color: #ccc;
+    }
+
+    [data-theme="dark"] .gratitude-section textarea,
+    [data-theme="dark"] .optional-fields textarea {
+        background: #2a2a2a;
+        border-color: #404040;
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .gratitude-section textarea:focus,
+    [data-theme="dark"] .optional-fields textarea:focus {
+        border-color: #6cb4ee;
+        box-shadow: 0 0 0 3px rgba(108, 180, 238, 0.15);
+    }
+
+    [data-theme="dark"] .quick-tag {
+        background: rgba(108, 180, 238, 0.1);
+        color: #6cb4ee;
+        border-color: rgba(108, 180, 238, 0.2);
+    }
+
+    [data-theme="dark"] .quick-tag:hover {
+        background: rgba(108, 180, 238, 0.2);
+    }
+
+    [data-theme="dark"] .quick-tag.selected {
+        background: #6cb4ee;
+        color: #111;
+        border-color: #6cb4ee;
+    }
+
+    [data-theme="dark"] .share-toggle {
+        color: #aaa;
+    }
+
+    [data-theme="dark"] .toggle-track {
+        background: #555;
+    }
+
+    [data-theme="dark"] .slider-value {
+        color: #aaa;
+    }
+
+    [data-theme="dark"] .section-share-btn {
+        background: rgba(0, 0, 0, 0.3);
+        color: #999;
+    }
+
+    [data-theme="dark"] .section-share-btn:hover {
+        background: rgba(108, 180, 238, 0.2);
+        color: #6cb4ee;
+    }
+
+    /* ===== Responsive: 576px ===== */
+    @media (max-width: 576px) {
+        .mood-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .slider-row {
+            grid-template-columns: 1fr;
+        }
+
+        .optional-fields {
+            grid-template-columns: 1fr;
+        }
+
+        .checkin-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .checkin-footer .btn-checkin-submit {
+            width: 100%;
+            text-align: center;
+        }
+
+        .checkin-done-bar {
+            flex-direction: column;
+            text-align: center;
+            gap: 0.75rem;
+        }
+
+        .checkin-done-bar .done-left {
+            justify-content: center;
+        }
+
+        .done-actions {
+            justify-content: center;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="progress-container">
-    <!-- Header -->
-    <div class="progress-header">
-        <h1><i class="fas fa-chart-line"></i> My Progress</h1>
-        <p>Track your mood, cravings, and energy over time</p>
+<!-- ===== Tab Bar ===== -->
+<div class="landing-tabs">
+    <button class="landing-tab active" data-tab="progress" id="tabProgress">
+        <i class="fas fa-chart-line" aria-hidden="true"></i> My Progress
+    </button>
+    <button class="landing-tab" data-tab="feed" id="tabFeed">
+        <i class="fas fa-comments" aria-hidden="true"></i> My Feed
+    </button>
+</div>
 
-        <div class="time-selector">
-            <a href="?days=7" class="time-btn {% if days == 7 %}active{% endif %}">7 Days</a>
-            <a href="?days=30" class="time-btn {% if days == 30 %}active{% endif %}">30 Days</a>
-            <a href="?days=90" class="time-btn {% if days == 90 %}active{% endif %}">90 Days</a>
-        </div>
-    </div>
+<!-- ===== Progress Tab Content ===== -->
+<div id="progressContent">
 
-    {% if days_sober %}
-    <!-- Milestone Progress -->
-    <div class="milestone-card">
-        <div class="milestone-header">
-            <div>
-                <div class="milestone-days">{{ days_sober }}</div>
-                <div class="milestone-label">Days Sober</div>
+    <!-- ===== Inline Check-in ===== -->
+    {% if not todays_checkin %}
+    <div class="inline-checkin-card">
+        <h3><i class="fas fa-sun" aria-hidden="true"></i> How are you feeling today?</h3>
+        <p class="checkin-subtitle">Your daily check-in helps track your recovery journey</p>
+
+        <form id="inlineCheckinForm">
+            {% csrf_token %}
+
+            <!-- Mood Grid -->
+            <div class="mood-grid">
+                <div class="mood-option">
+                    <input type="radio" name="mood" id="mood1" value="1">
+                    <label for="mood1">
+                        <span class="mood-emoji">😰</span>
+                        <span class="mood-label">Struggling</span>
+                    </label>
+                </div>
+                <div class="mood-option">
+                    <input type="radio" name="mood" id="mood2" value="2">
+                    <label for="mood2">
+                        <span class="mood-emoji">😔</span>
+                        <span class="mood-label">Down</span>
+                    </label>
+                </div>
+                <div class="mood-option">
+                    <input type="radio" name="mood" id="mood3" value="3">
+                    <label for="mood3">
+                        <span class="mood-emoji">😐</span>
+                        <span class="mood-label">Okay</span>
+                    </label>
+                </div>
+                <div class="mood-option">
+                    <input type="radio" name="mood" id="mood4" value="4">
+                    <label for="mood4">
+                        <span class="mood-emoji">😊</span>
+                        <span class="mood-label">Good</span>
+                    </label>
+                </div>
+                <div class="mood-option">
+                    <input type="radio" name="mood" id="mood5" value="5">
+                    <label for="mood5">
+                        <span class="mood-emoji">😄</span>
+                        <span class="mood-label">Great</span>
+                    </label>
+                </div>
+                <div class="mood-option">
+                    <input type="radio" name="mood" id="mood6" value="6">
+                    <label for="mood6">
+                        <span class="mood-emoji">🌟</span>
+                        <span class="mood-label">Amazing</span>
+                    </label>
+                </div>
             </div>
-            <div class="milestone-next">
-                <div class="milestone-next-label">Next Milestone</div>
-                <div class="milestone-next-days">{{ next_milestone }} days</div>
+
+            <!-- Energy & Craving Sliders -->
+            <div class="slider-row">
+                <div class="slider-group">
+                    <label for="energySlider">Energy Level</label>
+                    <input type="range" id="energySlider" name="energy_level" min="1" max="5" value="3">
+                    <div class="slider-value" id="energyValue">3</div>
+                </div>
+                <div class="slider-group">
+                    <label for="cravingSlider">Craving Level</label>
+                    <input type="range" id="cravingSlider" name="craving_level" min="0" max="4" value="0">
+                    <div class="slider-value" id="cravingValue">None</div>
+                </div>
             </div>
-        </div>
-        <div class="milestone-progress-bar">
-            <div class="milestone-progress-fill" style="width: {{ milestone_progress }}%"></div>
-        </div>
-        <div class="milestone-progress-text">
-            {% if days_to_milestone > 0 %}
-            {{ days_to_milestone }} days until your next milestone
-            {% else %}
-            You've reached {{ next_milestone }} days! Amazing!
-            {% endif %}
-        </div>
-    </div>
-    {% endif %}
 
-    {% if total_checkins > 0 %}
-    <!-- Weekly Comparison -->
-    {% if weekly_comparison.last_week.count > 0 %}
-    <div class="weekly-comparison">
-        <div class="week-card">
-            <div class="week-label">Last Week</div>
-            <div class="week-mood">{{ weekly_comparison.last_week.avg_mood }}</div>
-            <div class="week-details">{{ weekly_comparison.last_week.count }} check-ins</div>
-        </div>
-        <div class="week-change">
-            {% if weekly_comparison.mood_change > 0 %}
-            <div class="change-arrow up"><i class="fas fa-arrow-up"></i></div>
-            <div class="change-percent positive">+{{ weekly_comparison.mood_change }}%</div>
-            {% elif weekly_comparison.mood_change < 0 %}
-            <div class="change-arrow down"><i class="fas fa-arrow-down"></i></div>
-            <div class="change-percent negative">{{ weekly_comparison.mood_change }}%</div>
-            {% else %}
-            <div class="change-arrow same"><i class="fas fa-equals"></i></div>
-            <div class="change-percent">No change</div>
-            {% endif %}
-        </div>
-        <div class="week-card">
-            <div class="week-label">This Week</div>
-            <div class="week-mood">{{ weekly_comparison.this_week.avg_mood }}</div>
-            <div class="week-details">{{ weekly_comparison.this_week.count }} check-ins</div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Statistics Grid -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-value">{{ total_checkins }}</div>
-            <div class="stat-label">Check-ins</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value mood">{{ avg_mood }} {{ avg_mood_emoji }}</div>
-            <div class="stat-label">Avg Mood</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value streak">{{ current_streak }}</div>
-            <div class="stat-label">Day Streak</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value">{{ checkin_rate }}%</div>
-            <div class="stat-label">Check-in Rate</div>
-        </div>
-    </div>
-
-    <!-- Insights -->
-    {% if best_mood_checkin %}
-    <div class="insight-card">
-        <div class="insight-title"><i class="fas fa-lightbulb" style="color: #ffa502;"></i> Insights</div>
-        <div class="insight-text">
-            Your best day was <strong>{{ best_mood_checkin.date|date:"M d" }}</strong> when you felt {{ best_mood_checkin.get_mood_display }}.
-            {% if zero_craving_days > 0 %}
-            You had <strong>{{ zero_craving_days }} days</strong> with zero cravings!
-            {% endif %}
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Main Mood Chart -->
-    <div class="chart-card">
-        <div class="chart-title">
-            <i class="fas fa-smile" style="color: #52b788;"></i>
-            Mood Trend
-        </div>
-        <div class="chart-container">
-            <canvas id="moodChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Secondary Charts Row -->
-    <div class="secondary-charts">
-        <div class="chart-card">
-            <div class="chart-title">
-                <i class="fas fa-fire" style="color: #ff6b6b;"></i>
-                Craving Levels
+            <!-- Gratitude -->
+            <div class="gratitude-section">
+                <label for="gratitudeText">What are you grateful for today?</label>
+                <textarea id="gratitudeText" name="gratitude" rows="2" placeholder="Today I'm grateful for..." maxlength="280"></textarea>
+                <div class="quick-tags">
+                    <span class="quick-tag" data-value="My sobriety">My sobriety</span>
+                    <span class="quick-tag" data-value="My family">My family</span>
+                    <span class="quick-tag" data-value="Good sleep">Good sleep</span>
+                    <span class="quick-tag" data-value="This community">This community</span>
+                    <span class="quick-tag" data-value="A new day">A new day</span>
+                </div>
             </div>
-            <div class="chart-container-small">
-                <canvas id="cravingChart"></canvas>
-            </div>
-        </div>
 
-        <div class="chart-card">
-            <div class="chart-title">
-                <i class="fas fa-bolt" style="color: #4db8e8;"></i>
-                Energy Levels
+            <!-- Optional: Challenge & Goal -->
+            <div class="optional-fields">
+                <div>
+                    <label>Biggest challenge <span class="field-hint">(optional)</span></label>
+                    <textarea name="challenge" rows="2" placeholder="What's your biggest challenge today?" maxlength="300"></textarea>
+                </div>
+                <div>
+                    <label>Today's goal <span class="field-hint">(optional)</span></label>
+                    <textarea name="goal" rows="2" placeholder="One goal for today..." maxlength="300"></textarea>
+                </div>
             </div>
-            <div class="chart-container-small">
-                <canvas id="energyChart"></canvas>
-            </div>
-        </div>
 
-        <div class="chart-card">
-            <div class="chart-title">
-                <i class="fas fa-chart-pie" style="color: #a855f7;"></i>
-                Mood Distribution
+            <!-- Footer: Share toggle + Submit -->
+            <div class="checkin-footer">
+                <label class="share-toggle">
+                    <input type="checkbox" name="is_shared" value="true" checked>
+                    <span class="toggle-track"></span>
+                    Share to feed
+                </label>
+                <button type="submit" class="btn-checkin-submit" id="checkinSubmitBtn">
+                    <i class="fas fa-check" aria-hidden="true"></i> Check In
+                </button>
             </div>
-            <div class="chart-container-small">
-                <canvas id="moodPieChart"></canvas>
-            </div>
-        </div>
+        </form>
     </div>
-
-    <!-- Check-in Calendar Heatmap -->
-    <div class="chart-card">
-        <div class="chart-title">
-            <i class="fas fa-calendar-check" style="color: #22c55e;"></i>
-            Check-in Calendar (Last 90 Days)
-        </div>
-        <div class="heatmap-container">
-            <div id="heatmapGrid" class="heatmap-grid"></div>
-        </div>
-        <div class="heatmap-legend">
-            <span>Less</span>
-            <div class="heatmap-legend-item" style="background: #eee;"></div>
-            <div class="heatmap-legend-item level-1" style="background: #fef3c7;"></div>
-            <div class="heatmap-legend-item level-3" style="background: #a3e635;"></div>
-            <div class="heatmap-legend-item level-5" style="background: #22c55e;"></div>
-            <div class="heatmap-legend-item level-6" style="background: #16a34a;"></div>
-            <span>Better Mood</span>
-        </div>
-    </div>
-
     {% else %}
-    <!-- Empty State -->
-    <div class="empty-state">
-        <i class="fas fa-chart-bar"></i>
-        <h3>No check-ins yet</h3>
-        <p>Start tracking your mood, cravings, and energy to see your progress visualized here.</p>
-        <a href="{% url 'accounts:daily_checkin' %}" class="btn-checkin">
-            <i class="fas fa-plus"></i> Do Your First Check-in
-        </a>
+    <!-- Checked-in Today Bar -->
+    <div class="checkin-done-bar">
+        <div class="done-left">
+            <div class="done-check"><i class="fas fa-check" aria-hidden="true"></i></div>
+            <div>
+                <div class="done-text">Checked in today</div>
+                <div class="done-mood">Feeling {{ todays_checkin.get_mood_display }}</div>
+            </div>
+        </div>
+        <div class="done-actions">
+            {% if current_streak > 1 %}
+            <span class="streak-badge">🔥 {{ current_streak }}-day streak</span>
+            {% endif %}
+            <button class="share-btn-small" data-share="checkin" data-text="I just checked in on MyRecoveryPal! {% if current_streak > 1 %}🔥 {{ current_streak }}-day streak! {% endif %}#recovery #MyRecoveryPal" aria-label="Share check-in">
+                <i class="fas fa-share-nodes" aria-hidden="true"></i>
+            </button>
+        </div>
     </div>
     {% endif %}
+
+    <div class="progress-container">
+        <!-- Header -->
+        <div class="progress-header">
+            <h1><i class="fas fa-chart-line"></i> My Progress</h1>
+            <p>Track your mood, cravings, and energy over time</p>
+
+            <div class="time-selector">
+                <a href="?days=7" class="time-btn {% if days == 7 %}active{% endif %}">7 Days</a>
+                <a href="?days=30" class="time-btn {% if days == 30 %}active{% endif %}">30 Days</a>
+                <a href="?days=90" class="time-btn {% if days == 90 %}active{% endif %}">90 Days</a>
+            </div>
+        </div>
+
+        {% if days_sober %}
+        <!-- Milestone Progress -->
+        <div class="milestone-card">
+            <button class="section-share-btn" data-share="milestone" data-text="I'm {{ days_sober }} days sober! Next milestone: {{ next_milestone }} days. #recovery #MyRecoveryPal" aria-label="Share"><i class="fas fa-share-nodes" aria-hidden="true"></i></button>
+            <div class="milestone-header">
+                <div>
+                    <div class="milestone-days">{{ days_sober }}</div>
+                    <div class="milestone-label">Days Sober</div>
+                </div>
+                <div class="milestone-next">
+                    <div class="milestone-next-label">Next Milestone</div>
+                    <div class="milestone-next-days">{{ next_milestone }} days</div>
+                </div>
+            </div>
+            <div class="milestone-progress-bar">
+                <div class="milestone-progress-fill" style="width: {{ milestone_progress }}%"></div>
+            </div>
+            <div class="milestone-progress-text">
+                {% if days_to_milestone > 0 %}
+                {{ days_to_milestone }} days until your next milestone
+                {% else %}
+                You've reached {{ next_milestone }} days! Amazing!
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if total_checkins > 0 %}
+        <!-- Weekly Comparison -->
+        {% if weekly_comparison.last_week.count > 0 %}
+        <div class="weekly-comparison">
+            {% if weekly_comparison.mood_change > 0 %}
+            <button class="section-share-btn" data-share="weekly" data-text="My mood improved {{ weekly_comparison.mood_change }}% this week! #recovery #MyRecoveryPal" aria-label="Share"><i class="fas fa-share-nodes" aria-hidden="true"></i></button>
+            {% endif %}
+            <div class="week-card">
+                <div class="week-label">Last Week</div>
+                <div class="week-mood">{{ weekly_comparison.last_week.avg_mood }}</div>
+                <div class="week-details">{{ weekly_comparison.last_week.count }} check-ins</div>
+            </div>
+            <div class="week-change">
+                {% if weekly_comparison.mood_change > 0 %}
+                <div class="change-arrow up"><i class="fas fa-arrow-up"></i></div>
+                <div class="change-percent positive">+{{ weekly_comparison.mood_change }}%</div>
+                {% elif weekly_comparison.mood_change < 0 %}
+                <div class="change-arrow down"><i class="fas fa-arrow-down"></i></div>
+                <div class="change-percent negative">{{ weekly_comparison.mood_change }}%</div>
+                {% else %}
+                <div class="change-arrow same"><i class="fas fa-equals"></i></div>
+                <div class="change-percent">No change</div>
+                {% endif %}
+            </div>
+            <div class="week-card">
+                <div class="week-label">This Week</div>
+                <div class="week-mood">{{ weekly_comparison.this_week.avg_mood }}</div>
+                <div class="week-details">{{ weekly_comparison.this_week.count }} check-ins</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Statistics Grid -->
+        <div class="stats-grid-wrapper">
+            <button class="section-share-btn" data-share="stats" data-text="{{ total_checkins }} check-ins, {{ checkin_rate }}% rate, {{ avg_mood }} avg mood on MyRecoveryPal #recovery" aria-label="Share"><i class="fas fa-share-nodes" aria-hidden="true"></i></button>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">{{ total_checkins }}</div>
+                    <div class="stat-label">Check-ins</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value mood">{{ avg_mood }} {{ avg_mood_emoji }}</div>
+                    <div class="stat-label">Avg Mood</div>
+                </div>
+                <div class="stat-card" style="position:relative;">
+                    <button class="section-share-btn" data-share="streak" data-text="🔥 {{ current_streak }}-day check-in streak on MyRecoveryPal! #recovery" aria-label="Share" style="top:0.5rem;right:0.5rem;width:28px;height:28px;font-size:0.75rem;"><i class="fas fa-share-nodes" aria-hidden="true"></i></button>
+                    <div class="stat-value streak">{{ current_streak }}</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ checkin_rate }}%</div>
+                    <div class="stat-label">Check-in Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insights -->
+        {% if best_mood_checkin %}
+        <div class="insight-card">
+            <div class="insight-title"><i class="fas fa-lightbulb" style="color: #ffa502;"></i> Insights</div>
+            <div class="insight-text">
+                Your best day was <strong>{{ best_mood_checkin.date|date:"M d" }}</strong> when you felt {{ best_mood_checkin.get_mood_display }}.
+                {% if zero_craving_days > 0 %}
+                You had <strong>{{ zero_craving_days }} days</strong> with zero cravings!
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Main Mood Chart -->
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="fas fa-smile" style="color: #52b788;"></i>
+                Mood Trend
+            </div>
+            <div class="chart-container">
+                <canvas id="moodChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Secondary Charts Row -->
+        <div class="secondary-charts">
+            <div class="chart-card">
+                <div class="chart-title">
+                    <i class="fas fa-fire" style="color: #ff6b6b;"></i>
+                    Craving Levels
+                </div>
+                <div class="chart-container-small">
+                    <canvas id="cravingChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-title">
+                    <i class="fas fa-bolt" style="color: #4db8e8;"></i>
+                    Energy Levels
+                </div>
+                <div class="chart-container-small">
+                    <canvas id="energyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-title">
+                    <i class="fas fa-chart-pie" style="color: #a855f7;"></i>
+                    Mood Distribution
+                </div>
+                <div class="chart-container-small">
+                    <canvas id="moodPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Check-in Calendar Heatmap -->
+        <div class="chart-card">
+            <button class="section-share-btn" data-share="heatmap" data-text="My 90-day recovery check-in calendar #recovery #MyRecoveryPal" aria-label="Share"><i class="fas fa-share-nodes" aria-hidden="true"></i></button>
+            <div class="chart-title">
+                <i class="fas fa-calendar-check" style="color: #22c55e;"></i>
+                Check-in Calendar (Last 90 Days)
+            </div>
+            <div class="heatmap-container">
+                <div id="heatmapGrid" class="heatmap-grid"></div>
+            </div>
+            <div class="heatmap-legend">
+                <span>Less</span>
+                <div class="heatmap-legend-item" style="background: #eee;"></div>
+                <div class="heatmap-legend-item level-1" style="background: #fef3c7;"></div>
+                <div class="heatmap-legend-item level-3" style="background: #a3e635;"></div>
+                <div class="heatmap-legend-item level-5" style="background: #22c55e;"></div>
+                <div class="heatmap-legend-item level-6" style="background: #16a34a;"></div>
+                <span>Better Mood</span>
+            </div>
+        </div>
+
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <i class="fas fa-chart-bar"></i>
+            <h3>No check-ins yet</h3>
+            <p>Start tracking your mood, cravings, and energy to see your progress visualized here.</p>
+            <a href="{% url 'accounts:daily_checkin' %}" class="btn-checkin">
+                <i class="fas fa-plus"></i> Do Your First Check-in
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div><!-- end #progressContent -->
+
+<!-- ===== Feed Tab Content ===== -->
+<div id="feedContent" style="display:none;">
+    <div class="feed-skeleton" id="feedSkeleton">
+        <div class="skeleton-post">
+            <div class="sk-header">
+                <div class="sk-avatar"></div>
+                <div style="flex:1;">
+                    <div class="sk-line short" style="margin-bottom:0.4rem;"></div>
+                    <div class="sk-line" style="width:25%;height:8px;"></div>
+                </div>
+            </div>
+            <div class="sk-body">
+                <div class="sk-line long"></div>
+                <div class="sk-line medium"></div>
+            </div>
+        </div>
+        <div class="skeleton-post">
+            <div class="sk-header">
+                <div class="sk-avatar"></div>
+                <div style="flex:1;">
+                    <div class="sk-line short" style="margin-bottom:0.4rem;"></div>
+                    <div class="sk-line" style="width:30%;height:8px;"></div>
+                </div>
+            </div>
+            <div class="sk-body">
+                <div class="sk-line long"></div>
+                <div class="sk-line medium"></div>
+                <div class="sk-line short"></div>
+            </div>
+        </div>
+        <div class="skeleton-post">
+            <div class="sk-header">
+                <div class="sk-avatar"></div>
+                <div style="flex:1;">
+                    <div class="sk-line" style="width:35%;margin-bottom:0.4rem;"></div>
+                    <div class="sk-line" style="width:20%;height:8px;"></div>
+                </div>
+            </div>
+            <div class="sk-body">
+                <div class="sk-line long"></div>
+                <div class="sk-line short"></div>
+            </div>
+        </div>
+    </div>
+    <div id="feedInner"></div>
 </div>
 {% endblock %}
 
@@ -900,4 +1854,305 @@
     observer.observe(document.documentElement, { attributes: true });
 </script>
 {% endif %}
+
+<!-- ===== Tab Switching ===== -->
+<script>
+(function() {
+    var tabProgress = document.getElementById('tabProgress');
+    var tabFeed = document.getElementById('tabFeed');
+    var progressContent = document.getElementById('progressContent');
+    var feedContent = document.getElementById('feedContent');
+    var feedSkeleton = document.getElementById('feedSkeleton');
+    var feedInner = document.getElementById('feedInner');
+    var feedLoaded = false;
+
+    function switchTab(tab) {
+        if (tab === 'progress') {
+            tabProgress.classList.add('active');
+            tabFeed.classList.remove('active');
+            progressContent.style.display = '';
+            feedContent.style.display = 'none';
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+        } else if (tab === 'feed') {
+            tabFeed.classList.add('active');
+            tabProgress.classList.remove('active');
+            progressContent.style.display = 'none';
+            feedContent.style.display = '';
+            history.replaceState(null, '', '#feed');
+
+            if (!feedLoaded) {
+                feedLoaded = true;
+                fetch('{% url "accounts:social_feed" %}?fragment=1', {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(function(resp) { return resp.text(); })
+                .then(function(html) {
+                    feedInner.innerHTML = html;
+                    feedSkeleton.style.display = 'none';
+                })
+                .catch(function() {
+                    feedSkeleton.style.display = 'none';
+                    feedInner.innerHTML = '<div style="text-align:center;padding:3rem 1rem;color:#888;">' +
+                        '<p>Could not load feed. <a href="{% url "accounts:social_feed" %}">Open full feed</a></p></div>';
+                });
+            }
+        }
+    }
+
+    tabProgress.addEventListener('click', function() { switchTab('progress'); });
+    tabFeed.addEventListener('click', function() { switchTab('feed'); });
+
+    // Check hash on load
+    if (window.location.hash === '#feed') {
+        switchTab('feed');
+    }
+})();
+</script>
+
+<!-- ===== Inline Check-in ===== -->
+<script>
+(function() {
+    var form = document.getElementById('inlineCheckinForm');
+    if (!form) return;
+
+    var cravingLabelsMap = ['None', 'Mild', 'Moderate', 'Strong', 'Intense'];
+
+    // Energy slider display
+    var energySlider = document.getElementById('energySlider');
+    var energyValue = document.getElementById('energyValue');
+    if (energySlider && energyValue) {
+        energySlider.addEventListener('input', function() {
+            energyValue.textContent = this.value;
+        });
+    }
+
+    // Craving slider display
+    var cravingSlider = document.getElementById('cravingSlider');
+    var cravingValue = document.getElementById('cravingValue');
+    if (cravingSlider && cravingValue) {
+        cravingSlider.addEventListener('input', function() {
+            cravingValue.textContent = cravingLabelsMap[parseInt(this.value)] || this.value;
+        });
+    }
+
+    // Quick tags
+    var gratitudeText = document.getElementById('gratitudeText');
+    var quickTags = form.querySelectorAll('.quick-tag');
+    quickTags.forEach(function(tag) {
+        tag.addEventListener('click', function() {
+            var val = this.getAttribute('data-value');
+            if (this.classList.contains('selected')) {
+                // Remove from textarea
+                var current = gratitudeText.value;
+                current = current.replace(val, '').replace(/,\s*,/g, ',').replace(/^,\s*|,\s*$/g, '').trim();
+                gratitudeText.value = current;
+                this.classList.remove('selected');
+            } else {
+                var current = gratitudeText.value.trim();
+                if (current && !current.endsWith(',')) {
+                    current += ', ';
+                }
+                gratitudeText.value = current + val;
+                this.classList.add('selected');
+            }
+        });
+    });
+
+    // Form submit
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var submitBtn = document.getElementById('checkinSubmitBtn');
+        var moodInput = form.querySelector('input[name="mood"]:checked');
+        if (!moodInput) {
+            alert('Please select how you are feeling.');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Saving...';
+
+        var formData = new FormData(form);
+        // The share toggle: if unchecked, it won't be in FormData, so set explicitly
+        if (!form.querySelector('input[name="is_shared"]').checked) {
+            formData.set('is_shared', 'false');
+        }
+
+        fetch('{% url "accounts:quick_checkin" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function(resp) { return resp.json(); })
+        .then(function(data) {
+            if (data.success) {
+                // Replace form with done bar
+                var card = document.querySelector('.inline-checkin-card');
+                var moodDisplay = data.mood_display || 'Good';
+                card.outerHTML = '<div class="checkin-done-bar">' +
+                    '<div class="done-left">' +
+                    '<div class="done-check"><i class="fas fa-check" aria-hidden="true"></i></div>' +
+                    '<div><div class="done-text">Checked in today</div>' +
+                    '<div class="done-mood">Feeling ' + moodDisplay + '</div></div></div>' +
+                    '<div class="done-actions">' +
+                    '<button class="share-btn-small" data-share="checkin" data-text="I just checked in on MyRecoveryPal! #recovery #MyRecoveryPal" aria-label="Share check-in">' +
+                    '<i class="fas fa-share-nodes" aria-hidden="true"></i></button>' +
+                    '</div></div>';
+                // Reload after short delay to update charts
+                setTimeout(function() { window.location.reload(); }, 800);
+            } else {
+                alert(data.error || data.message || 'Could not save check-in.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Check In';
+            }
+        })
+        .catch(function() {
+            alert('Network error. Please try again.');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Check In';
+        });
+    });
+})();
+</script>
+
+<!-- ===== Share Buttons ===== -->
+<script>
+(function() {
+    var activeDropdown = null;
+
+    function getCSRFToken() {
+        // Try meta tag first
+        var meta = document.querySelector('meta[name="csrf-token"]');
+        if (meta) return meta.getAttribute('content');
+        // Try form hidden input
+        var input = document.querySelector('input[name="csrfmiddlewaretoken"]');
+        if (input) return input.value;
+        // Try cookie
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var c = cookies[i].trim();
+            if (c.startsWith('csrftoken=')) {
+                return c.substring('csrftoken='.length);
+            }
+        }
+        return '';
+    }
+
+    function closeDropdown() {
+        if (activeDropdown) {
+            activeDropdown.classList.remove('visible');
+            setTimeout(function() {
+                if (activeDropdown && activeDropdown.parentNode) {
+                    activeDropdown.parentNode.removeChild(activeDropdown);
+                }
+                activeDropdown = null;
+            }, 200);
+        }
+    }
+
+    function showShareDropdown(btn, text) {
+        closeDropdown();
+
+        var siteUrl = 'https://www.myrecoverypal.com';
+        var shareUrl = siteUrl + '{% url "accounts:progress" %}';
+        var encodedText = encodeURIComponent(text);
+        var encodedUrl = encodeURIComponent(shareUrl);
+
+        var dropdown = document.createElement('div');
+        dropdown.className = 'share-dropdown';
+        dropdown.innerHTML =
+            '<a href="https://twitter.com/intent/tweet?text=' + encodedText + '&url=' + encodedUrl + '" target="_blank" rel="noopener">' +
+            '<i class="fab fa-x-twitter" aria-hidden="true"></i> Post on X</a>' +
+            '<a href="https://www.facebook.com/sharer/sharer.php?u=' + encodedUrl + '&quote=' + encodedText + '" target="_blank" rel="noopener">' +
+            '<i class="fab fa-facebook" aria-hidden="true"></i> Share on Facebook</a>' +
+            '<a href="https://wa.me/?text=' + encodedText + '%20' + encodedUrl + '" target="_blank" rel="noopener">' +
+            '<i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>' +
+            '<button class="share-copy-link"><i class="fas fa-link" aria-hidden="true"></i> Copy Link</button>' +
+            '<button class="share-post-feed"><i class="fas fa-pen-to-square" aria-hidden="true"></i> Post to Feed</button>';
+
+        // Position relative to button's parent (which is position:relative)
+        var parent = btn.closest('.milestone-card, .weekly-comparison, .chart-card, .stats-grid-wrapper, .stat-card, .checkin-done-bar');
+        if (parent) {
+            parent.style.position = 'relative';
+            parent.appendChild(dropdown);
+        } else {
+            btn.parentNode.style.position = 'relative';
+            btn.parentNode.appendChild(dropdown);
+        }
+
+        // Copy link
+        dropdown.querySelector('.share-copy-link').addEventListener('click', function() {
+            navigator.clipboard.writeText(shareUrl).then(function() {
+                this.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Copied!';
+            }.bind(this)).catch(function() {});
+            closeDropdown();
+        });
+
+        // Post to feed
+        dropdown.querySelector('.share-post-feed').addEventListener('click', function() {
+            var csrf = getCSRFToken();
+            var body = new FormData();
+            body.append('content', text + '\n\n' + shareUrl);
+            body.append('visibility', 'public');
+            body.append('csrfmiddlewaretoken', csrf);
+
+            fetch('{% url "accounts:create_social_post" %}', {
+                method: 'POST',
+                body: body,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(function(resp) { return resp.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    alert('Posted to your feed!');
+                } else {
+                    alert(data.error || 'Could not post.');
+                }
+            })
+            .catch(function() {
+                alert('Network error. Please try again.');
+            });
+            closeDropdown();
+        });
+
+        activeDropdown = dropdown;
+        // Trigger visibility after a frame for CSS transition
+        requestAnimationFrame(function() {
+            dropdown.classList.add('visible');
+        });
+    }
+
+    // Event delegation for share buttons
+    document.addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-share]');
+        if (btn) {
+            e.preventDefault();
+            e.stopPropagation();
+            var text = btn.getAttribute('data-text') || '';
+
+            // Try native share first
+            if (navigator.share) {
+                navigator.share({
+                    title: 'MyRecoveryPal',
+                    text: text,
+                    url: 'https://www.myrecoverypal.com{% url "accounts:progress" %}'
+                }).catch(function() {
+                    // User cancelled or not supported — show dropdown fallback
+                    showShareDropdown(btn, text);
+                });
+            } else {
+                showShareDropdown(btn, text);
+            }
+            return;
+        }
+
+        // Close dropdown on outside click
+        if (activeDropdown && !e.target.closest('.share-dropdown')) {
+            closeDropdown();
+        }
+    });
+})();
+</script>
 {% endblock %}
