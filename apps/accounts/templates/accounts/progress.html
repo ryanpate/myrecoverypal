@@ -508,226 +508,86 @@
         border-bottom-color: #6cb4ee;
     }
 
-    /* ===== Inline Check-in Card ===== */
-    .inline-checkin-card {
+    /* ===== Inline Check-in Prompt ===== */
+    .checkin-prompt-bar {
         max-width: 1000px;
         margin: 1.5rem auto;
-        padding: 1.5rem;
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    }
-
-    .inline-checkin-card h3 {
-        margin: 0 0 0.25rem;
-        font-size: 1.15rem;
-        color: #333;
-    }
-
-    .inline-checkin-card .checkin-subtitle {
-        margin: 0 0 1.25rem;
-        font-size: 0.85rem;
-        color: #888;
-    }
-
-    .mood-grid {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 0.5rem;
-        margin-bottom: 1.25rem;
-    }
-
-    .mood-option {
-        position: relative;
-    }
-
-    .mood-option input[type="radio"] {
-        position: absolute;
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    .mood-option label {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.25rem;
-        padding: 0.75rem 0.25rem;
-        border: 2px solid #e5e7eb;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.2s;
-        text-align: center;
-    }
-
-    .mood-option label .mood-emoji {
-        font-size: 1.75rem;
-        line-height: 1;
-    }
-
-    .mood-option label .mood-label {
-        font-size: 0.7rem;
-        color: #888;
-        font-weight: 500;
-    }
-
-    .mood-option label:hover {
-        border-color: #93c5fd;
-        background: #f0f7ff;
-    }
-
-    .mood-option input[type="radio"]:checked + label {
-        border-color: #1e4d8b;
-        background: #eff6ff;
-        box-shadow: 0 0 0 1px #1e4d8b;
-    }
-
-    .mood-option input[type="radio"]:checked + label .mood-label {
-        color: #1e4d8b;
-        font-weight: 600;
-    }
-
-    .slider-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-bottom: 1.25rem;
-    }
-
-    .slider-group label {
-        display: block;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #555;
-        margin-bottom: 0.4rem;
-    }
-
-    .slider-group input[type="range"] {
-        width: 100%;
-        accent-color: #1e4d8b;
-    }
-
-    .slider-value {
-        text-align: center;
-        font-size: 0.8rem;
-        color: #666;
-        margin-top: 0.25rem;
-    }
-
-    .gratitude-section {
-        margin-bottom: 1.25rem;
-    }
-
-    .gratitude-section label {
-        display: block;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #555;
-        margin-bottom: 0.4rem;
-    }
-
-    .gratitude-section textarea {
-        width: 100%;
-        padding: 0.6rem 0.75rem;
-        border: 1.5px solid #e5e7eb;
-        border-radius: 10px;
-        font-size: 0.9rem;
-        resize: vertical;
-        min-height: 60px;
-        font-family: inherit;
-        transition: border-color 0.2s;
-    }
-
-    .gratitude-section textarea:focus {
-        outline: none;
-        border-color: #1e4d8b;
-        box-shadow: 0 0 0 3px rgba(30, 77, 139, 0.1);
-    }
-
-    .quick-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.4rem;
-        margin-top: 0.5rem;
-    }
-
-    .quick-tag {
-        display: inline-block;
-        padding: 0.3rem 0.75rem;
-        background: #f0f7ff;
-        color: #1e4d8b;
-        border: 1px solid #dbeafe;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        user-select: none;
-    }
-
-    .quick-tag:hover {
-        background: #dbeafe;
-    }
-
-    .quick-tag.selected {
-        background: #1e4d8b;
-        color: white;
-        border-color: #1e4d8b;
-    }
-
-    .optional-fields {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-bottom: 1.25rem;
-    }
-
-    .optional-fields label {
-        display: block;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #555;
-        margin-bottom: 0.4rem;
-    }
-
-    .optional-fields .field-hint {
-        font-weight: 400;
-        color: #aaa;
-        font-size: 0.75rem;
-    }
-
-    .optional-fields textarea {
-        width: 100%;
-        padding: 0.6rem 0.75rem;
-        border: 1.5px solid #e5e7eb;
-        border-radius: 10px;
-        font-size: 0.9rem;
-        resize: vertical;
-        min-height: 50px;
-        font-family: inherit;
-        transition: border-color 0.2s;
-    }
-
-    .optional-fields textarea:focus {
-        outline: none;
-        border-color: #1e4d8b;
-        box-shadow: 0 0 0 3px rgba(30, 77, 139, 0.1);
-    }
-
-    .checkin-footer {
+        padding: 0.85rem 1.25rem;
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        border: 1px solid #bfdbfe;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 1rem;
     }
 
-    .share-toggle {
+    .checkin-prompt-bar .prompt-left {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.75rem;
+        min-width: 0;
+    }
+
+    .checkin-prompt-bar .prompt-icon {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #1e4d8b 0%, #3b82f6 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .checkin-prompt-bar .prompt-text {
+        font-size: 0.95rem;
+        color: #1e3a5f;
+        font-weight: 600;
+    }
+
+    .checkin-prompt-bar .prompt-sub {
+        font-size: 0.8rem;
+        color: #64748b;
+        font-weight: 400;
+    }
+
+    .btn-checkin-prompt {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1.1rem;
+        background: linear-gradient(135deg, #1e4d8b 0%, #3b82f6 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
         font-size: 0.85rem;
-        color: #666;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
         cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+    .btn-checkin-prompt:hover {
+        opacity: 0.9;
+        color: white;
+        text-decoration: none;
+    }
+
+    [data-theme="dark"] .checkin-prompt-bar {
+        background: linear-gradient(135deg, #1e293b 0%, #1e3a5f 100%);
+        border-color: #334155;
+    }
+
+    [data-theme="dark"] .checkin-prompt-bar .prompt-text {
+        color: #e2e8f0;
+    }
+
+    [data-theme="dark"] .checkin-prompt-bar .prompt-sub {
+        color: #94a3b8;
     }
 
     .share-toggle input[type="checkbox"] {
@@ -763,30 +623,6 @@
 
     .share-toggle input[type="checkbox"]:checked + .toggle-track::after {
         transform: translateX(18px);
-    }
-
-    .btn-checkin-submit {
-        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
-        color: white;
-        border: none;
-        padding: 0.7rem 2rem;
-        border-radius: 25px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .btn-checkin-submit:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 15px rgba(30, 77, 139, 0.3);
-    }
-
-    .btn-checkin-submit:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
     }
 
     /* ===== Checked-in Done Bar ===== */
@@ -1075,90 +911,6 @@
         animation: skeletonShimmer 1.5s infinite;
     }
 
-    /* ===== Dark Mode for Inline Check-in ===== */
-    [data-theme="dark"] .inline-checkin-card {
-        background: #1f2937;
-    }
-
-    [data-theme="dark"] .inline-checkin-card h3 {
-        color: #e4e4e7;
-    }
-
-    [data-theme="dark"] .inline-checkin-card .checkin-subtitle {
-        color: #999;
-    }
-
-    [data-theme="dark"] .mood-option label {
-        border-color: #404040;
-        background: transparent;
-    }
-
-    [data-theme="dark"] .mood-option label:hover {
-        border-color: #6cb4ee;
-        background: rgba(108, 180, 238, 0.08);
-    }
-
-    [data-theme="dark"] .mood-option input[type="radio"]:checked + label {
-        border-color: #6cb4ee;
-        background: rgba(108, 180, 238, 0.12);
-        box-shadow: 0 0 0 1px #6cb4ee;
-    }
-
-    [data-theme="dark"] .mood-option label .mood-label {
-        color: #ccc;
-    }
-
-    [data-theme="dark"] .mood-option input[type="radio"]:checked + label .mood-label {
-        color: #6cb4ee;
-    }
-
-    [data-theme="dark"] .slider-group label,
-    [data-theme="dark"] .gratitude-section label,
-    [data-theme="dark"] .optional-fields label {
-        color: #ccc;
-    }
-
-    [data-theme="dark"] .gratitude-section textarea,
-    [data-theme="dark"] .optional-fields textarea {
-        background: #2a2a2a;
-        border-color: #404040;
-        color: #e4e4e7;
-    }
-
-    [data-theme="dark"] .gratitude-section textarea:focus,
-    [data-theme="dark"] .optional-fields textarea:focus {
-        border-color: #6cb4ee;
-        box-shadow: 0 0 0 3px rgba(108, 180, 238, 0.15);
-    }
-
-    [data-theme="dark"] .quick-tag {
-        background: rgba(108, 180, 238, 0.1);
-        color: #6cb4ee;
-        border-color: rgba(108, 180, 238, 0.2);
-    }
-
-    [data-theme="dark"] .quick-tag:hover {
-        background: rgba(108, 180, 238, 0.2);
-    }
-
-    [data-theme="dark"] .quick-tag.selected {
-        background: #6cb4ee;
-        color: #fff;
-        border-color: #6cb4ee;
-    }
-
-    [data-theme="dark"] .share-toggle {
-        color: #aaa;
-    }
-
-    [data-theme="dark"] .toggle-track {
-        background: #555;
-    }
-
-    [data-theme="dark"] .slider-value {
-        color: #aaa;
-    }
-
     [data-theme="dark"] .section-share-btn {
         background: rgba(0, 0, 0, 0.3);
         color: #999;
@@ -1203,36 +955,16 @@
         color: #bbb;
     }
 
-    [data-theme="dark"] .optional-fields .field-hint {
-        color: #999;
-    }
-
-    [data-theme="dark"] .btn-checkin-submit {
-        color: #fff;
-    }
-
     /* ===== Responsive: 576px ===== */
     @media (max-width: 576px) {
-        .mood-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-
-        .slider-row {
-            grid-template-columns: 1fr;
-        }
-
-        .optional-fields {
-            grid-template-columns: 1fr;
-        }
-
-        .checkin-footer {
+        .checkin-prompt-bar {
             flex-direction: column;
-            align-items: stretch;
+            text-align: center;
+            gap: 0.75rem;
         }
 
-        .checkin-footer .btn-checkin-submit {
-            width: 100%;
-            text-align: center;
+        .checkin-prompt-bar .prompt-left {
+            justify-content: center;
         }
 
         .checkin-done-bar {
@@ -1266,112 +998,19 @@
 <!-- ===== Progress Tab Content ===== -->
 <div id="progressContent">
 
-    <!-- ===== Inline Check-in ===== -->
-    <!-- Both sections rendered; JS picks the correct one based on client's local date -->
-    <div class="inline-checkin-card" id="checkinFormCard" style="display:none;">
-        <h3><i class="fas fa-sun" aria-hidden="true"></i> How are you feeling today?</h3>
-        <p class="checkin-subtitle">Your daily check-in helps track your recovery journey</p>
-
-        <form id="inlineCheckinForm">
-            {% csrf_token %}
-
-            <!-- Mood Grid -->
-            <div class="mood-grid">
-                <div class="mood-option">
-                    <input type="radio" name="mood" id="mood1" value="1">
-                    <label for="mood1">
-                        <span class="mood-emoji">😰</span>
-                        <span class="mood-label">Struggling</span>
-                    </label>
-                </div>
-                <div class="mood-option">
-                    <input type="radio" name="mood" id="mood2" value="2">
-                    <label for="mood2">
-                        <span class="mood-emoji">😔</span>
-                        <span class="mood-label">Down</span>
-                    </label>
-                </div>
-                <div class="mood-option">
-                    <input type="radio" name="mood" id="mood3" value="3">
-                    <label for="mood3">
-                        <span class="mood-emoji">😐</span>
-                        <span class="mood-label">Okay</span>
-                    </label>
-                </div>
-                <div class="mood-option">
-                    <input type="radio" name="mood" id="mood4" value="4">
-                    <label for="mood4">
-                        <span class="mood-emoji">😊</span>
-                        <span class="mood-label">Good</span>
-                    </label>
-                </div>
-                <div class="mood-option">
-                    <input type="radio" name="mood" id="mood5" value="5">
-                    <label for="mood5">
-                        <span class="mood-emoji">😄</span>
-                        <span class="mood-label">Great</span>
-                    </label>
-                </div>
-                <div class="mood-option">
-                    <input type="radio" name="mood" id="mood6" value="6">
-                    <label for="mood6">
-                        <span class="mood-emoji">🌟</span>
-                        <span class="mood-label">Amazing</span>
-                    </label>
-                </div>
+    <!-- ===== Inline Check-in Prompt ===== -->
+    <!-- Compact prompt bar when not yet checked in; JS toggles visibility -->
+    <div class="checkin-prompt-bar" id="checkinFormCard" style="display:none;">
+        <div class="prompt-left">
+            <div class="prompt-icon"><i class="fas fa-sun" aria-hidden="true"></i></div>
+            <div>
+                <div class="prompt-text">How are you feeling today?</div>
+                <div class="prompt-sub">Check in to update your progress</div>
             </div>
-
-            <!-- Energy & Craving Sliders -->
-            <div class="slider-row">
-                <div class="slider-group">
-                    <label for="energySlider">Energy Level</label>
-                    <input type="range" id="energySlider" name="energy_level" min="1" max="5" value="3">
-                    <div class="slider-value" id="energyValue">3</div>
-                </div>
-                <div class="slider-group">
-                    <label for="cravingSlider">Craving Level</label>
-                    <input type="range" id="cravingSlider" name="craving_level" min="0" max="4" value="0">
-                    <div class="slider-value" id="cravingValue">None</div>
-                </div>
-            </div>
-
-            <!-- Gratitude -->
-            <div class="gratitude-section">
-                <label for="gratitudeText">What are you grateful for today?</label>
-                <textarea id="gratitudeText" name="gratitude" rows="2" placeholder="Today I'm grateful for..." maxlength="280"></textarea>
-                <div class="quick-tags">
-                    <span class="quick-tag" data-value="My sobriety">My sobriety</span>
-                    <span class="quick-tag" data-value="My family">My family</span>
-                    <span class="quick-tag" data-value="Good sleep">Good sleep</span>
-                    <span class="quick-tag" data-value="This community">This community</span>
-                    <span class="quick-tag" data-value="A new day">A new day</span>
-                </div>
-            </div>
-
-            <!-- Optional: Challenge & Goal -->
-            <div class="optional-fields">
-                <div>
-                    <label>Biggest challenge <span class="field-hint">(optional)</span></label>
-                    <textarea name="challenge" rows="2" placeholder="What's your biggest challenge today?" maxlength="300"></textarea>
-                </div>
-                <div>
-                    <label>Today's goal <span class="field-hint">(optional)</span></label>
-                    <textarea name="goal" rows="2" placeholder="One goal for today..." maxlength="300"></textarea>
-                </div>
-            </div>
-
-            <!-- Footer: Share toggle + Submit -->
-            <div class="checkin-footer">
-                <label class="share-toggle">
-                    <input type="checkbox" name="is_shared" value="true" checked>
-                    <span class="toggle-track"></span>
-                    Share to feed
-                </label>
-                <button type="submit" class="btn-checkin-submit" id="checkinSubmitBtn">
-                    <i class="fas fa-check" aria-hidden="true"></i> Check In
-                </button>
-            </div>
-        </form>
+        </div>
+        <a href="{% url 'accounts:daily_checkin' %}" class="btn-checkin-prompt">
+            <i class="fas fa-circle-check" aria-hidden="true"></i> Check In
+        </a>
     </div>
 
     <!-- Checked-in Today Bar -->
@@ -1994,7 +1633,7 @@
 })();
 </script>
 
-<!-- ===== Inline Check-in ===== -->
+<!-- ===== Inline Check-in (removed — prompt bar links to full page) ===== -->
 <script>
 (function() {
     var form = document.getElementById('inlineCheckinForm');
