@@ -756,14 +756,20 @@ a:hover {
 }
 
 /* Override Bootstrap primary colors */
-.btn-primary {
+.btn-primary,
+a.btn-primary,
+a.btn-primary:link,
+a.btn-primary:visited {
     background-color: var(--accent-green) !important;
     border-color: var(--accent-green) !important;
+    color: #fff !important;
 }
 
-.btn-primary:hover {
+.btn-primary:hover,
+a.btn-primary:hover {
     background-color: #45a675 !important;
     border-color: #45a675 !important;
+    color: #fff !important;
 }
 
 .bg-primary {
@@ -1500,10 +1506,13 @@ nav {
 }
 
 /* CTA Button */
-.cta-button {
+.cta-button,
+a.cta-button,
+a.cta-button:link,
+a.cta-button:visited {
     padding: 0.6rem 1.5rem;
     background: var(--accent-green);
-    color: white;
+    color: #fff !important;
     text-decoration: none;
     border-radius: 50px;
     font-weight: 600;
@@ -1512,11 +1521,12 @@ nav {
     border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.cta-button:hover {
+.cta-button:hover,
+a.cta-button:hover {
     background: #45a675;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
-    color: white;
+    color: #fff !important;
 }
 
 /* Mobile Menu */

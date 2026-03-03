@@ -919,7 +919,7 @@ a:hover {
 .download-button {
     padding: 0.75rem 1.5rem;
     background: var(--accent-green);
-    color: white;
+    color: #fff !important;
     border: none;
     border-radius: 50px;
     font-weight: 600;
@@ -939,7 +939,7 @@ a:hover {
     background: #45a675;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
-    color: white;
+    color: #fff !important;
 }
 
 .btn-secondary {

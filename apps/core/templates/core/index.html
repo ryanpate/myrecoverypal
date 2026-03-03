@@ -260,11 +260,14 @@
         gap: 0.75rem;
     }
 
-    .cta-button {
+    .cta-button,
+    a.cta-button,
+    a.cta-button:link,
+    a.cta-button:visited {
         display: inline-block;
         padding: 0.95rem 2.5rem;
         background: #52b788;
-        color: white;
+        color: #fff !important;
         text-decoration: none;
         border-radius: 50px;
         font-weight: 700;
@@ -293,10 +296,11 @@
         height: 300px;
     }
 
-    .cta-button:hover {
+    .cta-button:hover,
+    a.cta-button:hover {
         transform: translateY(-3px);
         background: #45a675;
-        color: white;
+        color: #fff !important;
         border-color: rgba(255, 255, 255, 0.7);
         box-shadow: 0 8px 25px rgba(82, 183, 136, 0.45);
     }
