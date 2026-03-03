@@ -10,7 +10,7 @@
         return;
     }
 
-    var WidgetBridge = window.Capacitor.registerPlugin('WidgetBridge');
+    var WidgetBridge = window.Capacitor.Plugins.WidgetBridge;
 
     function syncWidgetData() {
         var meta = document.querySelector('meta[name="sobriety-date"]');
