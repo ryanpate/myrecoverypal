@@ -41,6 +41,20 @@
         return '';
     }
 
+    function showIAPToast(message, type) {
+        var toast = document.createElement('div');
+        toast.className = 'iap-toast iap-toast-' + (type || 'info');
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        // Trigger reflow then add visible class for animation
+        toast.offsetHeight;
+        toast.classList.add('iap-toast-visible');
+        setTimeout(function() {
+            toast.classList.remove('iap-toast-visible');
+            setTimeout(function() { toast.remove(); }, 300);
+        }, 3000);
+    }
+
     var MRPIAP = {
         initialized: false,
         offerings: null,
@@ -184,7 +198,7 @@
             MRPIAP.getOfferings().then(function(offerings) {
                 if (!offerings || !offerings.current || !offerings.current.availablePackages ||
                     offerings.current.availablePackages.length === 0) {
-                    alert('No subscription plans available at this time. Please try again later.');
+                    showIAPToast('No subscription plans available. Please try again later.', 'error');
                     return;
                 }
 
@@ -220,7 +234,7 @@
                                 btn.textContent = 'Subscribe';
                             } else {
                                 btn.textContent = 'Subscribe';
-                                alert('Purchase failed. Please try again.');
+                                showIAPToast('Purchase failed. Please try again.', 'error');
                                 console.error('[IAP] Purchase error:', err);
                             }
                         });
@@ -239,18 +253,18 @@
                             } else {
                                 restoreBtn.disabled = false;
                                 restoreBtn.textContent = 'Restore Purchases';
-                                alert('No previous purchases found.');
+                                showIAPToast('No previous purchases found.', 'info');
                             }
                         }).catch(function() {
                             restoreBtn.disabled = false;
                             restoreBtn.textContent = 'Restore Purchases';
-                            alert('Could not restore purchases. Please try again.');
+                            showIAPToast('Could not restore purchases. Please try again.', 'error');
                         });
                     });
                 }
             }).catch(function(err) {
                 console.error('[IAP] Error loading offerings:', err);
-                alert('Could not load subscription plans. Please try again.');
+                showIAPToast('Could not load subscription plans. Please try again.', 'error');
             });
         },
 
@@ -335,7 +349,14 @@
         '.iap-buy-btn:disabled { opacity: 0.6; }' +
         '.iap-restore-btn { background: none; border: none; color: #1e4d8b; font-size: 0.85rem; cursor: pointer; margin: 8px 0; text-decoration: underline; }' +
         '[data-theme="dark"] .iap-restore-btn { color: #8ab4f8; }' +
-        '.iap-terms { font-size: 0.7rem; color: #999; margin: 12px 0 0; line-height: 1.4; }';
+        '.iap-terms { font-size: 0.7rem; color: #999; margin: 12px 0 0; line-height: 1.4; }' +
+        '.iap-toast { position: fixed; top: calc(20px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%) translateY(-20px); background: #333; color: white; padding: 12px 20px; border-radius: 10px; font-size: 0.9rem; z-index: 10001; opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none; max-width: 90%; text-align: center; }' +
+        '.iap-toast-visible { opacity: 1; transform: translateX(-50%) translateY(0); }' +
+        '.iap-toast-error { background: #c0392b; }' +
+        '.iap-toast-info { background: #2d6cb5; }' +
+        '[data-theme="dark"] .iap-toast { background: #444; }' +
+        '[data-theme="dark"] .iap-toast-error { background: #e74c3c; }' +
+        '[data-theme="dark"] .iap-toast-info { background: #4a90d9; }';
     document.head.appendChild(style);
 
 })();
