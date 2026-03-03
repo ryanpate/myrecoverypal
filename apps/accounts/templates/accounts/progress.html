@@ -1267,8 +1267,8 @@
 <div id="progressContent">
 
     <!-- ===== Inline Check-in ===== -->
-    {% if not todays_checkin %}
-    <div class="inline-checkin-card">
+    <!-- Both sections rendered; JS picks the correct one based on client's local date -->
+    <div class="inline-checkin-card" id="checkinFormCard" style="display:none;">
         <h3><i class="fas fa-sun" aria-hidden="true"></i> How are you feeling today?</h3>
         <p class="checkin-subtitle">Your daily check-in helps track your recovery journey</p>
 
@@ -1373,14 +1373,16 @@
             </div>
         </form>
     </div>
-    {% else %}
+
     <!-- Checked-in Today Bar -->
-    <div class="checkin-done-bar">
+    <div class="checkin-done-bar" id="checkinDoneBar" style="display:none;"
+         data-checkin-date="{% if todays_checkin %}{{ todays_checkin.date|date:'Y-m-d' }}{% endif %}"
+         data-has-checkin="{% if todays_checkin %}true{% else %}false{% endif %}">
         <div class="done-left">
             <div class="done-check"><i class="fas fa-check" aria-hidden="true"></i></div>
             <div>
                 <div class="done-text">Checked in today</div>
-                <div class="done-mood">Feeling {{ todays_checkin.get_mood_display }}</div>
+                <div class="done-mood">Feeling {% if todays_checkin %}{{ todays_checkin.get_mood_display }}{% endif %}</div>
             </div>
         </div>
         <div class="done-actions">
@@ -1392,7 +1394,6 @@
             </button>
         </div>
     </div>
-    {% endif %}
 
     <div class="progress-container">
         <!-- Header -->
@@ -1913,6 +1914,32 @@
 </script>
 {% endif %}
 
+<!-- ===== Check-in Date Resolution (client timezone) ===== -->
+<script>
+(function() {
+    var doneBar = document.getElementById('checkinDoneBar');
+    var formCard = document.getElementById('checkinFormCard');
+    if (!doneBar || !formCard) return;
+
+    var hasCheckin = doneBar.getAttribute('data-has-checkin') === 'true';
+    var checkinDate = doneBar.getAttribute('data-checkin-date');
+
+    // Get client's local date as YYYY-MM-DD
+    var now = new Date();
+    var localDate = now.getFullYear() + '-' +
+        String(now.getMonth() + 1).padStart(2, '0') + '-' +
+        String(now.getDate()).padStart(2, '0');
+
+    if (hasCheckin && checkinDate === localDate) {
+        // Check-in is from today in user's timezone — show done bar
+        doneBar.style.display = '';
+    } else {
+        // No check-in today in user's timezone — show form
+        formCard.style.display = '';
+    }
+})();
+</script>
+
 <!-- ===== Tab Switching ===== -->
 <script>
 (function() {
@@ -2031,6 +2058,12 @@
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Saving...';
 
         var formData = new FormData(form);
+        // Send client's local date so server uses correct timezone
+        var now = new Date();
+        var localDate = now.getFullYear() + '-' +
+            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+            String(now.getDate()).padStart(2, '0');
+        formData.set('local_date', localDate);
         // The share toggle: if unchecked, it won't be in FormData, so set explicitly
         if (!form.querySelector('input[name="is_shared"]').checked) {
             formData.set('is_shared', 'false');

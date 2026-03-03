@@ -833,7 +833,15 @@ def daily_checkin_view(request):
 @require_POST
 def quick_checkin(request):
     """AJAX endpoint for one-tap check-in from the feed"""
-    today = timezone.now().date()
+    # Use client's local date if provided, fall back to UTC
+    client_date = request.POST.get('local_date', '').strip()
+    if client_date:
+        try:
+            today = datetime.strptime(client_date, '%Y-%m-%d').date()
+        except ValueError:
+            today = timezone.now().date()
+    else:
+        today = timezone.now().date()
 
     # Check if already checked in today
     existing_checkin = DailyCheckIn.objects.filter(
@@ -1096,7 +1104,13 @@ def progress_view(request):
     days_to_milestone = next_milestone - days_sober
 
     # Today's check-in for inline check-in widget
-    todays_checkin = DailyCheckIn.objects.filter(user=request.user, date=today).first()
+    # Fetch check-ins from today and yesterday (UTC) so the client-side JS
+    # can determine the correct one based on the user's local timezone
+    todays_checkin = DailyCheckIn.objects.filter(
+        user=request.user,
+        date__gte=today - timedelta(days=1),
+        date__lte=today,
+    ).order_by('-date').first()
 
     context = {
         'days': days,
