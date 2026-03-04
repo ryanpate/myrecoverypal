@@ -747,6 +747,7 @@ CELERY_TASK_RESULT_EXPIRES = 3600  # Expire results after 1 hour instead of defa
 # Payment Processing
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
 
 # AI Recovery Coach
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')

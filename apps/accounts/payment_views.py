@@ -20,6 +20,7 @@ from .payment_models import (
     Subscription, Transaction, PaymentMethod,
     Invoice, SubscriptionPlan
 )
+from .email_service import send_email
 
 logger = logging.getLogger(__name__)
 
@@ -86,6 +87,27 @@ def create_checkout_session(request):
                 subscription.stripe_customer_id = stripe_customer_id
                 subscription.save()
 
+        # Check if user is still in their initial trial (no prior Stripe subscription)
+        trial_kwargs = {}
+        if subscription and not subscription.stripe_subscription_id:
+            # First-time subscriber — give 14-day free trial on Stripe side
+            trial_kwargs['subscription_data'] = {
+                'trial_period_days': 14,
+                'metadata': {
+                    'user_id': str(request.user.id),
+                    'plan_id': str(plan.id),
+                    'tier': plan.tier,
+                },
+            }
+        else:
+            trial_kwargs['subscription_data'] = {
+                'metadata': {
+                    'user_id': str(request.user.id),
+                    'plan_id': str(plan.id),
+                    'tier': plan.tier,
+                },
+            }
+
         # Create Checkout Session
         checkout_session = stripe.checkout.Session.create(
             customer=stripe_customer_id,
@@ -105,6 +127,7 @@ def create_checkout_session(request):
                 'user_id': request.user.id,
                 'plan_id': plan.id,
             },
+            **trial_kwargs,
         )
 
         return JsonResponse({
@@ -136,10 +159,19 @@ def payment_success(request):
 
             # Update local subscription
             subscription = request.user.subscription
-            subscription.tier = 'premium'  # Default to premium, adjust based on price
+            price_id = stripe_subscription['items']['data'][0]['price']['id']
+
+            # Determine tier from SubscriptionPlan by matching Stripe price ID
+            try:
+                plan = SubscriptionPlan.objects.get(stripe_price_id=price_id, is_active=True)
+                subscription.tier = plan.tier
+                subscription.billing_period = plan.billing_period
+            except SubscriptionPlan.DoesNotExist:
+                subscription.tier = 'premium'  # Fallback
+
             subscription.status = stripe_subscription.status
             subscription.stripe_subscription_id = stripe_subscription.id
-            subscription.stripe_price_id = stripe_subscription['items']['data'][0]['price']['id']
+            subscription.stripe_price_id = price_id
             subscription.current_period_start = timezone.datetime.fromtimestamp(
                 stripe_subscription.current_period_start, tz=timezone.utc
             )
@@ -184,7 +216,7 @@ def stripe_webhook(request):
     """
     payload = request.body
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
-    webhook_secret = settings.STRIPE_WEBHOOK_SECRET if hasattr(settings, 'STRIPE_WEBHOOK_SECRET') else None
+    webhook_secret = getattr(settings, 'STRIPE_WEBHOOK_SECRET', '')
 
     if not webhook_secret:
         logger.warning('Stripe webhook secret not configured')
@@ -248,6 +280,28 @@ def handle_checkout_session_completed(session):
             stripe_subscription = stripe.Subscription.retrieve(subscription_id)
             subscription.stripe_subscription_id = subscription_id
             subscription.status = stripe_subscription.status
+            subscription.subscription_source = 'stripe'
+
+            # Set tier from subscription metadata or price ID
+            metadata = stripe_subscription.get('metadata', {})
+            tier = metadata.get('tier', '')
+            if tier in ['premium', 'pro']:
+                subscription.tier = tier
+            else:
+                # Fallback: look up from SubscriptionPlan
+                price_id = stripe_subscription['items']['data'][0]['price']['id']
+                try:
+                    plan = SubscriptionPlan.objects.get(stripe_price_id=price_id, is_active=True)
+                    subscription.tier = plan.tier
+                except SubscriptionPlan.DoesNotExist:
+                    subscription.tier = 'premium'
+
+            subscription.current_period_start = timezone.datetime.fromtimestamp(
+                stripe_subscription.current_period_start, tz=timezone.utc
+            )
+            subscription.current_period_end = timezone.datetime.fromtimestamp(
+                stripe_subscription.current_period_end, tz=timezone.utc
+            )
             subscription.save()
 
         logger.info(f'Checkout completed for subscription {subscription.id}')
@@ -315,7 +369,30 @@ def handle_invoice_payment_failed(invoice):
 
         logger.warning(f'Payment failed for subscription {subscription.id}')
 
-        # TODO: Send email notification to user
+        # Notify user of payment failure
+        try:
+            user = subscription.user
+            send_email(
+                subject='Action Required: Payment Failed - MyRecoveryPal',
+                plain_message=(
+                    f'Hi {user.first_name or user.username},\n\n'
+                    'We were unable to process your subscription payment. '
+                    'Please update your payment method to continue enjoying Premium features.\n\n'
+                    'Visit https://www.myrecoverypal.com/accounts/subscription/ to update your payment info.\n\n'
+                    'Your recovery journey matters to us,\nThe MyRecoveryPal Team'
+                ),
+                html_message=_billing_email_html(
+                    user,
+                    'Payment Failed',
+                    'We were unable to process your subscription payment. '
+                    'Please update your payment method to continue enjoying Premium features.',
+                    'Update Payment Method',
+                    'https://www.myrecoverypal.com/accounts/subscription/'
+                ),
+                recipient_email=user.email,
+            )
+        except Exception as email_err:
+            logger.error(f'Failed to send payment failure email: {email_err}')
 
     except Subscription.DoesNotExist:
         logger.error(f'Subscription not found for customer {customer_id}')
@@ -364,7 +441,30 @@ def handle_subscription_deleted(stripe_subscription):
 
         logger.info(f'Subscription canceled: {subscription.id}')
 
-        # TODO: Send email notification to user
+        # Notify user of cancellation
+        try:
+            user = subscription.user
+            send_email(
+                subject='Your Premium Subscription Has Ended - MyRecoveryPal',
+                plain_message=(
+                    f'Hi {user.first_name or user.username},\n\n'
+                    'Your Premium subscription has ended. You still have full access to our '
+                    'free features including the social feed, groups, and daily check-ins.\n\n'
+                    'If you\'d like to resubscribe, visit https://www.myrecoverypal.com/accounts/pricing/\n\n'
+                    'Your recovery journey continues,\nThe MyRecoveryPal Team'
+                ),
+                html_message=_billing_email_html(
+                    user,
+                    'Subscription Ended',
+                    'Your Premium subscription has ended. You still have full access to our '
+                    'free features including the social feed, groups, and daily check-ins.',
+                    'Resubscribe to Premium',
+                    'https://www.myrecoverypal.com/accounts/pricing/'
+                ),
+                recipient_email=user.email,
+            )
+        except Exception as email_err:
+            logger.error(f'Failed to send cancellation email: {email_err}')
 
     except Subscription.DoesNotExist:
         logger.error(f'Subscription not found: {subscription_id}')
@@ -379,7 +479,32 @@ def handle_trial_will_end(stripe_subscription):
 
         logger.info(f'Trial ending soon for subscription {subscription.id}')
 
-        # TODO: Send email notification to user
+        # Notify user that trial is ending in 3 days
+        try:
+            user = subscription.user
+            send_email(
+                subject='Your Free Trial Ends Soon - MyRecoveryPal',
+                plain_message=(
+                    f'Hi {user.first_name or user.username},\n\n'
+                    'Your 14-day free trial of MyRecoveryPal Premium ends in 3 days. '
+                    'After that, your card on file will be charged.\n\n'
+                    'To keep Premium: No action needed - your subscription continues automatically.\n'
+                    'To cancel: Visit https://www.myrecoverypal.com/accounts/subscription/\n\n'
+                    'Thank you for being part of the recovery community,\nThe MyRecoveryPal Team'
+                ),
+                html_message=_billing_email_html(
+                    user,
+                    'Your Trial Ends in 3 Days',
+                    'Your 14-day free trial of MyRecoveryPal Premium ends in 3 days. '
+                    'After that, your card on file will be charged automatically. '
+                    'No action needed to keep Premium &mdash; or manage your subscription below.',
+                    'Manage Subscription',
+                    'https://www.myrecoverypal.com/accounts/subscription/'
+                ),
+                recipient_email=user.email,
+            )
+        except Exception as email_err:
+            logger.error(f'Failed to send trial ending email: {email_err}')
 
     except Subscription.DoesNotExist:
         logger.error(f'Subscription not found: {subscription_id}')
@@ -554,3 +679,24 @@ def create_customer_portal_session(request):
         logger.error(f'Error creating portal session: {e}')
         messages.error(request, 'There was an error accessing the billing portal. Please try again.')
         return redirect('accounts:subscription_management')
+
+
+def _billing_email_html(user, heading, body_text, cta_label, cta_url):
+    """Generate a simple branded HTML email for billing notifications."""
+    name = user.first_name or user.username
+    return f'''<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px;background:#f4f4f4;">
+<div style="background:white;border-radius:15px;padding:40px;box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+  <div style="text-align:center;margin-bottom:30px;">
+    <span style="font-size:32px;font-weight:700;background:linear-gradient(135deg,#1e4d8b 0%,#4db8e8 60%,#52b788 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">MyRecoveryPal</span>
+  </div>
+  <h2 style="color:#1e4d8b;margin:0 0 15px;">{heading}</h2>
+  <p>Hi {name},</p>
+  <p>{body_text}</p>
+  <div style="text-align:center;margin:30px 0;">
+    <a href="{cta_url}" style="display:inline-block;background:linear-gradient(135deg,#1e4d8b,#4db8e8);color:white;padding:12px 30px;border-radius:25px;text-decoration:none;font-weight:600;">{cta_label}</a>
+  </div>
+  <p style="color:#666;font-size:14px;">Your recovery journey matters to us.<br>The MyRecoveryPal Team</p>
+</div>
+</body></html>'''
