@@ -173,6 +173,13 @@
     // Only run inside Capacitor native shell
     if (!window.Capacitor || !window.Capacitor.isNativePlatform()) return;
 
+    // Prevent keyboard from auto-opening on native — dismiss autofocus
+    var autoFocused = document.querySelector('input[autofocus], input:focus');
+    if (autoFocused) autoFocused.blur();
+    // Also remove the autofocus attribute so it doesn't re-trigger
+    var af = document.querySelector('input[autofocus]');
+    if (af) af.removeAttribute('autofocus');
+
     var section = document.getElementById('biometricLoginSection');
     var btn = document.getElementById('biometricLoginBtn');
     var label = document.getElementById('biometricLoginLabel');
@@ -318,6 +325,9 @@
                             '<button id="bioSetupEnable" style="width:100%;padding:14px;border:none;border-radius:12px;background:#007AFF;color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:8px;">Enable ' + bioLabel + '</button>' +
                             '<button id="bioSetupSkip" style="width:100%;padding:14px;border:none;border-radius:12px;background:transparent;color:#007AFF;font-size:16px;cursor:pointer;">Not Now</button>' +
                         '</div>';
+
+                    // Dismiss keyboard before showing overlay
+                    if (document.activeElement) document.activeElement.blur();
 
                     document.body.appendChild(overlay);
 
