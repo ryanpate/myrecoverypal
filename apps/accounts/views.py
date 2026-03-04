@@ -772,7 +772,15 @@ def dashboard_view(request):
 @login_required
 def daily_checkin_view(request):
     """Handle daily check-in submissions"""
-    today = timezone.now().date()
+    # Use client's local date if provided, fall back to UTC
+    client_date = request.POST.get('local_date', '').strip() or request.GET.get('local_date', '').strip()
+    if client_date:
+        try:
+            today = datetime.strptime(client_date, '%Y-%m-%d').date()
+        except ValueError:
+            today = timezone.now().date()
+    else:
+        today = timezone.now().date()
 
     # Check if user already checked in today
     existing_checkin = DailyCheckIn.objects.filter(
@@ -1122,8 +1130,9 @@ def progress_view(request):
         is_milestone_day = rd.months == 0 and rd.days == 0
 
     # Today's check-in for inline check-in widget
-    # Fetch check-ins from today and yesterday (UTC) so the client-side JS
-    # can determine the correct one based on the user's local timezone
+    # Fetch today and yesterday (UTC) because check-in dates are stored in UTC
+    # but users think in local time. The client-side JS compares the stored
+    # date against the user's local date to decide what to show.
     todays_checkin = DailyCheckIn.objects.filter(
         user=request.user,
         date__gte=today - timedelta(days=1),

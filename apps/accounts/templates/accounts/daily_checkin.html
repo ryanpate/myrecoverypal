@@ -433,6 +433,7 @@
             <!-- Check-in Form -->
             <form method="post" id="checkin-form">
                 {% csrf_token %}
+                <input type="hidden" name="local_date" id="localDateInput">
 
                 <!-- Mood Selection -->
                 <div class="form-section">
@@ -578,6 +579,15 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Set local date for timezone-correct check-in
+    var ld = document.getElementById('localDateInput');
+    if (ld) {
+        var now = new Date();
+        ld.value = now.getFullYear() + '-' +
+            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+            String(now.getDate()).padStart(2, '0');
+    }
+
     // Mood selection
     document.querySelectorAll('.mood-option').forEach(option => {
         option.addEventListener('click', function() {
