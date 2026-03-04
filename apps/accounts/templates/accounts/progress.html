@@ -1076,7 +1076,7 @@
             <div class="milestone-header">
                 <div>
                     <div class="milestone-days">{{ days_sober }}</div>
-                    <div class="milestone-label">Days Sober</div>
+                    <div class="milestone-label">Days Sober{% if years_sober %} ({{ years_sober }} year{{ years_sober|pluralize }} {% if months_sober %}{{ months_sober }} mo{% endif %}){% endif %}</div>
                 </div>
                 <div class="milestone-next">
                     {% if is_milestone_day %}
@@ -1092,7 +1092,7 @@
             </div>
             <div class="milestone-progress-text">
                 {% if is_milestone_day %}
-                You did it! {{ days_sober }} days of recovery!
+                You did it! {% if years_sober %}{{ years_sober }} year{{ years_sober|pluralize }}{% if months_sober %} {{ months_sober }} month{{ months_sober|pluralize }}{% endif %} — {% endif %}{{ days_sober }} days of recovery!
                 {% elif days_to_milestone > 0 %}
                 {{ days_to_milestone }} days until your next milestone
                 {% else %}

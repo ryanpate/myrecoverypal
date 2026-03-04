@@ -1163,7 +1163,16 @@ def progress_view(request):
         'days_to_milestone': days_to_milestone,
         'current_milestone': current_milestone,
         'is_milestone_day': is_milestone_day,
+        'years_sober': 0,
+        'months_sober': 0,
     }
+
+    # Compute years/months for display
+    if request.user.sobriety_date and days_sober >= 365:
+        from dateutil.relativedelta import relativedelta
+        rd = relativedelta(timezone.now().date(), request.user.sobriety_date)
+        context['years_sober'] = rd.years
+        context['months_sober'] = rd.months
 
     return render(request, 'accounts/progress.html', context)
 
