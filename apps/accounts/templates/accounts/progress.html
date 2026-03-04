@@ -1000,6 +1000,57 @@
             justify-content: center;
         }
     }
+
+    /* ===== Premium Gate Overlay ===== */
+    .premium-gate-overlay-card {
+        background: white;
+    }
+
+    .premium-gate-heading {
+        color: #1e293b;
+    }
+
+    .premium-gate-subtitle {
+        color: #64748b;
+    }
+
+    .premium-gate-feature {
+        color: #334155;
+    }
+
+    .premium-gate-price-note {
+        color: #94a3b8;
+    }
+
+    /* ===== Dark Mode: Premium Gate ===== */
+    [data-theme="dark"] .premium-gate-container .premium-gate-preview .stat-card {
+        background: #2d2d2d;
+    }
+
+    [data-theme="dark"] .premium-gate-container .premium-gate-preview .chart-card {
+        background: #2d2d2d;
+    }
+
+    [data-theme="dark"] .premium-gate-overlay-card {
+        background: #1f2937;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="dark"] .premium-gate-heading {
+        color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .premium-gate-subtitle {
+        color: #94a3b8;
+    }
+
+    [data-theme="dark"] .premium-gate-feature {
+        color: #cbd5e1;
+    }
+
+    [data-theme="dark"] .premium-gate-price-note {
+        color: #64748b;
+    }
 </style>
 {% endblock %}
 
@@ -1103,6 +1154,95 @@
         {% endif %}
 
         {% if total_checkins > 0 %}
+
+        {% if is_free_user %}
+        <!-- ===== Premium Analytics Gate (Free Users) ===== -->
+        <div class="premium-gate-container" style="position: relative; margin-bottom: 2rem;">
+            <!-- Blurred sample charts preview -->
+            <div class="premium-gate-preview" style="filter: blur(6px); pointer-events: none; user-select: none; opacity: 0.6;">
+                <!-- Sample stats grid -->
+                <div class="stats-grid" style="margin-bottom: 1.5rem;">
+                    <div class="stat-card">
+                        <div class="stat-value">--</div>
+                        <div class="stat-label">Check-ins</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value mood">-- </div>
+                        <div class="stat-label">Avg Mood</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value streak">--</div>
+                        <div class="stat-label">Day Streak</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">--%</div>
+                        <div class="stat-label">Check-in Rate</div>
+                    </div>
+                </div>
+
+                <!-- Sample mood chart placeholder -->
+                <div class="chart-card" style="margin-bottom: 1.5rem;">
+                    <div class="chart-title">
+                        <i class="fas fa-smile" style="color: #52b788;"></i> Mood Trend
+                    </div>
+                    <div style="height: 200px; background: linear-gradient(180deg, rgba(82, 183, 136, 0.08) 0%, rgba(82, 183, 136, 0.02) 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <svg width="100%" height="120" viewBox="0 0 400 120" preserveAspectRatio="none" style="padding: 0 1rem;">
+                            <path d="M0,80 Q50,60 100,70 T200,40 T300,55 T400,30" stroke="#52b788" stroke-width="3" fill="none" opacity="0.5"/>
+                            <path d="M0,80 Q50,60 100,70 T200,40 T300,55 T400,30 V120 H0 Z" fill="rgba(82, 183, 136, 0.1)"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Sample secondary charts -->
+                <div class="secondary-charts">
+                    <div class="chart-card">
+                        <div class="chart-title">
+                            <i class="fas fa-fire" style="color: #ff6b6b;"></i> Craving Levels
+                        </div>
+                        <div style="height: 150px; background: linear-gradient(180deg, rgba(255, 107, 107, 0.08) 0%, transparent 100%); border-radius: 12px;"></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-title">
+                            <i class="fas fa-bolt" style="color: #4db8e8;"></i> Energy Levels
+                        </div>
+                        <div style="height: 150px; background: linear-gradient(180deg, rgba(77, 184, 232, 0.08) 0%, transparent 100%); border-radius: 12px;"></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-title">
+                            <i class="fas fa-chart-pie" style="color: #a855f7;"></i> Mood Distribution
+                        </div>
+                        <div style="height: 150px; background: linear-gradient(180deg, rgba(168, 85, 247, 0.08) 0%, transparent 100%); border-radius: 12px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upgrade overlay -->
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; width: 90%; max-width: 440px; text-align: center;">
+                <div class="premium-gate-overlay-card" style="border-radius: 20px; padding: 2.5rem 2rem; box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);">
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;">
+                        <i class="fas fa-lock" style="color: white; font-size: 1.5rem;" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="premium-gate-heading" style="margin: 0 0 0.5rem; font-size: 1.35rem;">Unlock Your Full Analytics</h3>
+                    <p class="premium-gate-subtitle" style="margin: 0 0 1.25rem; font-size: 0.95rem; line-height: 1.5;">
+                        See mood trends, craving patterns, energy levels, insights, and your 90-day check-in calendar.
+                    </p>
+                    <ul style="list-style: none; padding: 0; margin: 0 0 1.5rem; text-align: left;">
+                        <li class="premium-gate-feature" style="padding: 0.4rem 0; font-size: 0.9rem;"><i class="fas fa-check-circle" style="color: #52b788; margin-right: 0.5rem;" aria-hidden="true"></i> Mood, craving & energy charts</li>
+                        <li class="premium-gate-feature" style="padding: 0.4rem 0; font-size: 0.9rem;"><i class="fas fa-check-circle" style="color: #52b788; margin-right: 0.5rem;" aria-hidden="true"></i> Weekly comparison & insights</li>
+                        <li class="premium-gate-feature" style="padding: 0.4rem 0; font-size: 0.9rem;"><i class="fas fa-check-circle" style="color: #52b788; margin-right: 0.5rem;" aria-hidden="true"></i> 90-day check-in heatmap</li>
+                        <li class="premium-gate-feature" style="padding: 0.4rem 0; font-size: 0.9rem;"><i class="fas fa-check-circle" style="color: #52b788; margin-right: 0.5rem;" aria-hidden="true"></i> AI Recovery Coach (20 msgs/day)</li>
+                    </ul>
+                    <a href="{% url 'accounts:pricing' %}" style="display: block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 0.85rem 1.5rem; border-radius: 12px; font-weight: 600; font-size: 1rem; text-decoration: none; margin-bottom: 0.75rem; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(102,126,234,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+                        Try Premium Free for 14 Days
+                    </a>
+                    <p class="premium-gate-price-note" style="font-size: 0.8rem; margin: 0;">Just $0.16/day. Cancel anytime.</p>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+        <!-- ===== Premium Analytics (Premium Users) ===== -->
+
         <!-- Weekly Comparison -->
         {% if weekly_comparison.last_week.count > 0 %}
         <div class="weekly-comparison">
@@ -1147,7 +1287,7 @@
                     <div class="stat-label">Avg Mood</div>
                 </div>
                 <div class="stat-card" style="position:relative;">
-                    <button class="section-share-btn" data-share="streak" data-text="🔥 {{ current_streak }}-day check-in streak on MyRecoveryPal! #recovery" aria-label="Share" style="top:0.5rem;right:0.5rem;width:28px;height:28px;font-size:0.75rem;"><i class="fas fa-share-nodes" aria-hidden="true"></i></button>
+                    <button class="section-share-btn" data-share="streak" data-text="{{ current_streak }}-day check-in streak on MyRecoveryPal! #recovery" aria-label="Share" style="top:0.5rem;right:0.5rem;width:28px;height:28px;font-size:0.75rem;"><i class="fas fa-share-nodes" aria-hidden="true"></i></button>
                     <div class="stat-value streak">{{ current_streak }}</div>
                     <div class="stat-label">Day Streak</div>
                 </div>
@@ -1236,6 +1376,9 @@
             </div>
         </div>
 
+        {% endif %}
+        {# end is_free_user / premium gate #}
+
         {% else %}
         <!-- Empty State -->
         <div class="empty-state">
@@ -1299,6 +1442,7 @@
 {% endblock %}
 
 {% block extra_js %}
+{% if not is_free_user %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 {% if total_checkins > 0 %}
 <script>
@@ -1580,6 +1724,7 @@
     observer.observe(document.documentElement, { attributes: true });
 </script>
 {% endif %}
+{% endif %}{# end if not is_free_user — Chart.js guard #}
 
 <!-- ===== Check-in Date Resolution (client timezone) ===== -->
 <script>
