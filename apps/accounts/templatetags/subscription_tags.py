@@ -30,3 +30,12 @@ def trial_urgency_class(days):
         return 'trial-warning'   # Orange
     else:
         return 'trial-normal'    # Blue/Purple
+
+
+@register.filter
+def is_premium_member(user):
+    """Check if a user has an active premium subscription. Safe for template use."""
+    try:
+        return user.subscription.is_premium()
+    except Exception:
+        return False

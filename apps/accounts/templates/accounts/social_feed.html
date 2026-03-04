@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static subscription_tags %}
 <!-- Deploy timestamp: 2026-01-17-v6 -->
 
 {% block title %}MyRecoveryCircle - MyRecoveryPal{% endblock %}
@@ -200,6 +200,20 @@
         line-height: 1.3;
     }
 
+    .premium-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.65rem;
+        color: #f59e0b;
+        margin-left: 0.25rem;
+        vertical-align: middle;
+    }
+
+    [data-theme="dark"] .premium-badge {
+        color: #fbbf24;
+    }
+
     .post-meta {
         font-size: 0.85rem;
         color: #666;
@@ -207,6 +221,72 @@
         display: block;
         line-height: 1.3;
     }
+
+    /* Anchor AI Coach Teaser Card */
+    .anchor-teaser-card {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        background: linear-gradient(135deg, #f0f4ff 0%, #f5f0ff 100%);
+        border: 1px solid rgba(102, 126, 234, 0.15);
+        border-radius: 16px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .anchor-teaser-icon {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    .anchor-teaser-title {
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .anchor-teaser-text {
+        font-size: 0.85rem;
+        color: #64748b;
+        line-height: 1.4;
+        margin-bottom: 0.75rem;
+    }
+
+    .anchor-teaser-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white !important;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .anchor-teaser-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    [data-theme="dark"] .anchor-teaser-card {
+        background: linear-gradient(135deg, #1e1b4b 0%, #2d1b69 100%);
+        border-color: rgba(102, 126, 234, 0.25);
+    }
+
+    [data-theme="dark"] .anchor-teaser-title { color: #e2e8f0; }
+    [data-theme="dark"] .anchor-teaser-text { color: #94a3b8; }
 
     .post-content {
         padding: 0 1rem 1rem 1rem;
@@ -1308,7 +1388,7 @@
                     <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
                     {% endif %}
                     <div class="post-author-info">
-                        <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
+                        <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}{% if post.author|is_premium_member %} <span class="premium-badge" title="Premium Member"><i class="fas fa-star" aria-hidden="true"></i></span>{% endif %}</div>
                         <div class="post-meta">@{{ post.author.username }} · {{ post.created_at|timesince }} ago</div>
                     </div>
                     {% if post.author == user or user.is_staff %}
@@ -1397,6 +1477,21 @@
             {% endif %}
             {% if forloop.last and forloop.counter < 3 and show_suggestions and suggested_users %}
             {% include 'accounts/partials/inline_suggestions.html' %}
+            {% endif %}
+            {% if forloop.counter == 5 and not is_premium %}
+            <!-- Inline Anchor AI Coach teaser for free users -->
+            <div class="anchor-teaser-card">
+                <div class="anchor-teaser-icon">
+                    <i class="fas fa-robot" aria-hidden="true"></i>
+                </div>
+                <div class="anchor-teaser-body">
+                    <div class="anchor-teaser-title">Need someone to talk to right now?</div>
+                    <div class="anchor-teaser-text">Anchor AI Coach is available 24/7 — share what's on your mind, work through cravings, or just vent.</div>
+                    <a href="{% url 'accounts:recovery_coach' %}" class="anchor-teaser-btn">
+                        <i class="fas fa-comment-dots" aria-hidden="true"></i> Talk to Anchor
+                    </a>
+                </div>
+            </div>
             {% endif %}
             {% endfor %}
 

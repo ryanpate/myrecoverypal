@@ -827,7 +827,13 @@ def daily_checkin_view(request):
                     content_object=checkin
                 )
 
-            messages.success(request, 'Daily check-in completed! 🌟')
+            messages.success(request, 'Daily check-in completed!')
+            if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
+                messages.info(
+                    request,
+                    '<a href="/accounts/progress/" style="color: #667eea; text-decoration: underline;">See your mood trends over time</a> with Premium analytics.',
+                    extra_tags='safe'
+                )
             return redirect('accounts:dashboard')
 
     context = {
@@ -1869,11 +1875,12 @@ def join_group(request, group_id):
                 status__in=['active', 'moderator', 'admin']
             ).count()
 
-            if current_groups >= 2:
+            if current_groups >= 5:
                 return JsonResponse({
                     'success': False,
-                    'message': 'You\'ve reached the free tier limit of 2 groups. Upgrade to Premium for unlimited groups!',
-                    'redirect': '/accounts/pricing/'
+                    'message': 'You\'ve reached the free limit of 5 groups. Upgrade to Premium for unlimited groups!',
+                    'redirect': '/accounts/pricing/',
+                    'show_upgrade': True
                 })
 
         # Check if group is full
@@ -3900,7 +3907,7 @@ def social_feed_view(request):
         user = request.user
 
         # Get posts visible to the current user
-        posts = SocialPost.objects.select_related('author', 'linked_checkin').prefetch_related(
+        posts = SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
             'likes',
             'comments__author'
         ).order_by('-created_at')
@@ -4043,7 +4050,7 @@ def hybrid_landing_view(request):
             user_groups = user.get_joined_groups()[:3]
 
             # Social feed data - Get posts visible to the current user
-            posts = SocialPost.objects.select_related('author', 'linked_checkin').prefetch_related(
+            posts = SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
                 'likes',
                 'comments__author'
             ).order_by('-created_at')
@@ -4104,7 +4111,7 @@ def hybrid_landing_view(request):
             })
         else:
             # For unauthenticated users, only show public posts
-            visible_posts = list(SocialPost.objects.select_related('author').prefetch_related(
+            visible_posts = list(SocialPost.objects.select_related('author', 'author__subscription').prefetch_related(
                 'likes',
                 'comments__author'
             ).filter(visibility='public'))
@@ -4152,7 +4159,7 @@ def social_feed_posts_api(request):
     try:
         if user.is_authenticated:
             # Get all posts with related data
-            posts = SocialPost.objects.select_related('author', 'linked_checkin').prefetch_related(
+            posts = SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
                 'likes',
                 'comments__author'
             ).order_by('-created_at')
@@ -4161,7 +4168,7 @@ def social_feed_posts_api(request):
             visible_posts = [post for post in posts if post.is_visible_to(user)]
         else:
             # For unauthenticated users, only show public posts
-            visible_posts = list(SocialPost.objects.select_related('author', 'linked_checkin').prefetch_related(
+            visible_posts = list(SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
                 'likes',
                 'comments__author'
             ).filter(visibility='public').order_by('-created_at'))

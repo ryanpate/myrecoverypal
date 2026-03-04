@@ -1,4 +1,4 @@
-{% load static %}
+{% load static subscription_tags %}
 {# Fragment template for AJAX loading in progress page feed tab #}
 {# No {% extends %} - this is injected into an existing page #}
 
@@ -76,6 +76,7 @@
     color: white; font-weight: 600; font-size: 0.9rem;
 }
 .feed-fragment .post-author-name { font-weight: 600; color: #1f2937; }
+.feed-fragment .premium-badge { font-size: 0.65rem; color: #f59e0b; margin-left: 0.25rem; vertical-align: middle; }
 .feed-fragment .post-meta { font-size: 0.8rem; color: #6b7280; }
 .feed-fragment .post-content { line-height: 1.6; color: #374151; margin-bottom: 0.5rem; white-space: pre-wrap; }
 .feed-fragment .post-image { width: 100%; border-radius: 8px; margin-top: 0.5rem; }
@@ -195,7 +196,7 @@
                     <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
                     {% endif %}
                     <div class="post-author-info">
-                        <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
+                        <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}{% if post.author|is_premium_member %} <span class="premium-badge" title="Premium Member"><i class="fas fa-star" aria-hidden="true"></i></span>{% endif %}</div>
                         <div class="post-meta">@{{ post.author.username }} · {{ post.created_at|timesince }} ago</div>
                     </div>
                 </div>

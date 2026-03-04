@@ -22,4 +22,5 @@ urlpatterns = [
     # Stats and settings
     path('stats/', views.journal_stats, name='stats'),
     path('reminders/', views.manage_reminders, name='manage_reminders'),
+    path('export/', views.export_entries, name='export_entries'),
 ]

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -9,6 +10,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from .models import JournalEntry, JournalPrompt, JournalStreak, JournalReminder
 from .forms import JournalEntryForm, GuidedJournalForm, JournalReminderForm
+import csv
 import random
 
 @login_required
@@ -297,3 +299,29 @@ def manage_reminders(request):
             form = JournalReminderForm(initial={'time': '20:00'})  # Default 8 PM
     
     return render(request, 'journal/reminder_form.html', {'form': form})
+
+
+@login_required
+def export_entries(request):
+    """Export all journal entries as CSV. Premium only."""
+    if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
+        messages.warning(request, 'Journal export is a Premium feature.')
+        return redirect('accounts:pricing')
+
+    entries = JournalEntry.objects.filter(user=request.user).order_by('-created_at')
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="myrecoverypal-journal.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Date', 'Title', 'Content', 'Mood', 'Tags'])
+    for entry in entries:
+        writer.writerow([
+            entry.created_at.strftime('%Y-%m-%d %H:%M'),
+            entry.title,
+            entry.content,
+            getattr(entry, 'mood', ''),
+            getattr(entry, 'tags', ''),
+        ])
+
+    return response
