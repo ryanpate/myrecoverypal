@@ -717,7 +717,7 @@ body {
 /* Skip to main content link for accessibility */
 .skip-link {
     position: absolute;
-    top: -40px;
+    top: -100px;
     left: 0;
     background: var(--primary-dark);
     color: white;
@@ -725,10 +725,12 @@ body {
     text-decoration: none;
     z-index: 10001;
     border-radius: 0 0 5px 0;
+    opacity: 0;
 }
 
 .skip-link:focus {
     top: 0;
+    opacity: 1;
 }
 
 /* Default heading colors for regular content */
