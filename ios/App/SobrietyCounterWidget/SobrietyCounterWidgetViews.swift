@@ -120,9 +120,9 @@ struct MediumWidgetView: View {
 
     var body: some View {
         Group {
-            if entry.sobrietyDate != nil {
+            if let sobrietyDate = entry.sobrietyDate {
                 HStack(spacing: 16) {
-                    // Left: Progress Ring
+                    // Left: Progress Ring with years/months breakdown
                     ZStack {
                         Circle()
                             .stroke(Color.white.opacity(0.2), lineWidth: 8)
@@ -130,29 +130,53 @@ struct MediumWidgetView: View {
                             .trim(from: 0, to: CGFloat(entry.progress))
                             .stroke(Color.mrpGreen, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                             .rotationEffect(.degrees(-90))
-                        VStack(spacing: 0) {
-                            Text("\(entry.daysSober)")
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
-                                .minimumScaleFactor(0.5)
-                                .lineLimit(1)
-                            Text("days")
-                                .font(.system(size: 10, weight: .medium))
-                                .foregroundColor(.white.opacity(0.8))
+                        VStack(spacing: 2) {
+                            if entry.yearsSober > 0 {
+                                Text("\(entry.yearsSober)")
+                                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                                    .foregroundColor(.white)
+                                Text(entry.yearsSober == 1 ? "year" : "years")
+                                    .font(.system(size: 10, weight: .medium))
+                                    .foregroundColor(.white.opacity(0.8))
+                                Text("\(entry.monthsSober) mo")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundColor(.mrpGreen)
+                            } else if entry.monthsSober > 0 {
+                                Text("\(entry.monthsSober)")
+                                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                                    .foregroundColor(.white)
+                                Text(entry.monthsSober == 1 ? "month" : "months")
+                                    .font(.system(size: 10, weight: .medium))
+                                    .foregroundColor(.white.opacity(0.8))
+                            } else {
+                                Text("\(entry.daysSober)")
+                                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                                    .foregroundColor(.white)
+                                    .minimumScaleFactor(0.5)
+                                    .lineLimit(1)
+                                Text(entry.daysSober == 1 ? "day" : "days")
+                                    .font(.system(size: 10, weight: .medium))
+                                    .foregroundColor(.white.opacity(0.8))
+                            }
                         }
                     }
                     .frame(width: 90, height: 90)
 
                     // Right: Details
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("MyRecoveryPal")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.6))
-                            .textCase(.uppercase)
-
+                    VStack(alignment: .leading, spacing: 4) {
                         Text(entry.daysSober == 1 ? "1 Day Sober" : "\(entry.daysSober) Days Sober")
                             .font(.system(size: 18, weight: .bold))
                             .foregroundColor(.white)
+
+                        // Sobriety date
+                        HStack(spacing: 4) {
+                            Image(systemName: "calendar")
+                                .font(.system(size: 10))
+                                .foregroundColor(.white.opacity(0.6))
+                            Text("Since \(formatDate(sobrietyDate))")
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(.white.opacity(0.7))
+                        }
 
                         Spacer().frame(height: 2)
 
@@ -163,7 +187,7 @@ struct MediumWidgetView: View {
                                 Image(systemName: "flag.fill")
                                     .font(.system(size: 10))
                                     .foregroundColor(.mrpGreen)
-                                Text("\(daysTo) days to \(formatMilestone(entry.nextMilestone))")
+                                Text("\(daysTo) \(daysTo == 1 ? "day" : "days") to \(formatMilestone(entry.nextMilestone))")
                                     .font(.system(size: 12, weight: .medium))
                                     .foregroundColor(.white.opacity(0.85))
                             }
@@ -226,6 +250,12 @@ struct MediumWidgetView: View {
             return "\(days) days"
         }
     }
+
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d, yyyy"
+        return formatter.string(from: date)
+    }
 }
 
 // MARK: - Previews
@@ -234,21 +264,24 @@ struct SobrietyWidget_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             SobrietyWidgetEntryView(entry: SobrietyEntry(
-                date: Date(), daysSober: 42, sobrietyDate: Date(),
-                currentMilestone: 30, nextMilestone: 60, progress: 0.4, displayName: "Ryan"
+                date: Date(), daysSober: 2921, sobrietyDate: Date(),
+                currentMilestone: 2555, nextMilestone: 2922, progress: 0.99, displayName: "Ryan",
+                yearsSober: 7, monthsSober: 11
             ))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
 
             SobrietyWidgetEntryView(entry: SobrietyEntry(
-                date: Date(), daysSober: 42, sobrietyDate: Date(),
-                currentMilestone: 30, nextMilestone: 60, progress: 0.4, displayName: "Ryan"
+                date: Date(), daysSober: 2921, sobrietyDate: Date(),
+                currentMilestone: 2555, nextMilestone: 2922, progress: 0.99, displayName: "Ryan",
+                yearsSober: 7, monthsSober: 11
             ))
             .previewContext(WidgetPreviewContext(family: .systemMedium))
 
             // Empty state
             SobrietyWidgetEntryView(entry: SobrietyEntry(
                 date: Date(), daysSober: 0, sobrietyDate: nil,
-                currentMilestone: 0, nextMilestone: 1, progress: 0, displayName: ""
+                currentMilestone: 0, nextMilestone: 1, progress: 0, displayName: "",
+                yearsSober: 0, monthsSober: 0
             ))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
         }

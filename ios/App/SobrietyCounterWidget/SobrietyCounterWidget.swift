@@ -11,6 +11,8 @@ struct SobrietyEntry: TimelineEntry {
     let nextMilestone: Int
     let progress: Double
     let displayName: String
+    let yearsSober: Int
+    let monthsSober: Int
 }
 
 // MARK: - Milestone Logic
@@ -74,7 +76,9 @@ struct SobrietyTimelineProvider: TimelineProvider {
             currentMilestone: 30,
             nextMilestone: 60,
             progress: 0.4,
-            displayName: ""
+            displayName: "",
+            yearsSober: 0,
+            monthsSober: 1
         )
     }
 
@@ -108,12 +112,16 @@ struct SobrietyTimelineProvider: TimelineProvider {
                 currentMilestone: 0,
                 nextMilestone: 1,
                 progress: 0,
-                displayName: displayName
+                displayName: displayName,
+                yearsSober: 0,
+                monthsSober: 0
             )
         }
 
-        let daysSober = Calendar.current.dateComponents([.day], from: sobrietyDate, to: Date()).day ?? 0
+        let calendar = Calendar.current
+        let daysSober = calendar.dateComponents([.day], from: sobrietyDate, to: Date()).day ?? 0
         let milestone = MilestoneHelper.calculate(daysSober: daysSober, sobrietyDate: sobrietyDate)
+        let components = calendar.dateComponents([.year, .month], from: sobrietyDate, to: Date())
 
         return SobrietyEntry(
             date: Date(),
@@ -122,7 +130,9 @@ struct SobrietyTimelineProvider: TimelineProvider {
             currentMilestone: milestone.current,
             nextMilestone: milestone.next,
             progress: milestone.progress,
-            displayName: displayName
+            displayName: displayName,
+            yearsSober: components.year ?? 0,
+            monthsSober: components.month ?? 0
         )
     }
 }
