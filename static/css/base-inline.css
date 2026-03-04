@@ -1307,23 +1307,6 @@ nav {
     border-left: 4px solid #ffc107;
 }
 
-/* Challenge menu item highlight 
-.nav-links a[href*="challenges"] {
-    position: relative;
-}
-
-.nav-links a[href*="challenges"]::before {
-    content: '';
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    width: 8px;
-    height: 8px;
-    background: #52b788;
-    border-radius: 50%;
-    opacity: 0.8;
-} */
-
 /* Navigation Links */
 .nav-links {
     display: flex;
@@ -1369,30 +1352,49 @@ nav {
     width: 100%;
 }
 
-/* MyRecoveryCircle button styling - more prominent */
-.nav-links a.myrecoverycircle-btn {
-    background: var(--accent-green);
-    color: white;
+/* Anchor AI CTA Button in Nav */
+.nav-links a.anchor-ai-cta {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff !important;
     padding: 0.5rem 1rem;
     border-radius: 25px;
     font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     transition: all 0.3s ease;
+    text-decoration: none;
+    position: relative;
+    animation: anchor-pulse 2s ease-in-out 3;
 }
 
-.nav-links a.myrecoverycircle-btn:hover {
-    background: #45a372;
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(82, 183, 136, 0.4);
+.nav-links a.anchor-ai-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    color: #fff !important;
 }
 
-.nav-links a.myrecoverycircle-btn::after {
+.nav-links a.anchor-ai-cta::after {
     display: none;
 }
 
-.nav-links a.myrecoverycircle-btn.active {
-    background: #45a372;
-    color: white;
+.nav-links a.anchor-ai-cta.active {
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #667eea;
+}
+
+@keyframes anchor-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(102, 126, 234, 0); }
+}
+
+/* Anchor AI accent in mobile bottom nav */
+.mobile-bottom-nav a.anchor-bottom-tab {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.mobile-bottom-nav a.anchor-bottom-tab.active {
+    color: #764ba2;
 }
 
 /* User Menu Styles */
@@ -1529,6 +1531,36 @@ a.cta-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
     color: #fff !important;
+}
+
+/* Nav Login Link */
+.nav-login-link {
+    color: var(--text-dark, #333);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    transition: color 0.3s ease;
+}
+
+.nav-login-link:hover {
+    color: var(--primary-light);
+}
+
+[data-theme="dark"] .nav-login-link {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .nav-links a.anchor-ai-cta {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff !important;
+}
+
+[data-theme="dark"] .mobile-bottom-nav a.anchor-bottom-tab {
+    color: #8b9cf7;
+}
+
+[data-theme="dark"] .mobile-bottom-nav a.anchor-bottom-tab.active {
+    color: #a78bfa;
 }
 
 /* Mobile Menu */
