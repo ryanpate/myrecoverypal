@@ -1113,6 +1113,14 @@ def progress_view(request):
         milestone_progress = 100
     days_to_milestone = next_milestone - days_sober
 
+    # Check if today is exactly a milestone day
+    is_milestone_day = days_sober in milestones
+    if not is_milestone_day and request.user.sobriety_date and days_sober >= 365:
+        # Check year anniversaries
+        from dateutil.relativedelta import relativedelta
+        rd = relativedelta(timezone.now().date(), request.user.sobriety_date)
+        is_milestone_day = rd.months == 0 and rd.days == 0
+
     # Today's check-in for inline check-in widget
     # Fetch check-ins from today and yesterday (UTC) so the client-side JS
     # can determine the correct one based on the user's local timezone
@@ -1145,6 +1153,7 @@ def progress_view(request):
         'next_milestone': next_milestone,
         'days_to_milestone': days_to_milestone,
         'current_milestone': current_milestone,
+        'is_milestone_day': is_milestone_day,
     }
 
     return render(request, 'accounts/progress.html', context)

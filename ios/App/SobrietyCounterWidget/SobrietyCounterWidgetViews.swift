@@ -7,16 +7,30 @@ extension Color {
     static let mrpBlue = Color(red: 30/255, green: 77/255, blue: 139/255)       // #1e4d8b
     static let mrpLightBlue = Color(red: 45/255, green: 108/255, blue: 181/255) // #2d6cb5
     static let mrpGreen = Color(red: 82/255, green: 183/255, blue: 136/255)     // #52b788
+    static let mrpGold = Color(red: 255/255, green: 193/255, blue: 7/255)       // #ffc107
+    static let mrpGoldDark = Color(red: 255/255, green: 160/255, blue: 0/255)   // #ffa000
 }
 
 // MARK: - Background Gradient
 
-private var widgetGradient: LinearGradient {
-    LinearGradient(
-        gradient: Gradient(colors: [.mrpBlue, .mrpLightBlue]),
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+private func widgetGradient(isMilestone: Bool) -> LinearGradient {
+    if isMilestone {
+        return LinearGradient(
+            gradient: Gradient(colors: [
+                Color(red: 255/255, green: 160/255, blue: 0/255),   // warm gold
+                Color(red: 255/255, green: 193/255, blue: 7/255),   // bright gold
+                Color(red: 255/255, green: 160/255, blue: 0/255)    // warm gold
+            ]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    } else {
+        return LinearGradient(
+            gradient: Gradient(colors: [.mrpBlue, .mrpLightBlue]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
 }
 
 // MARK: - Entry View (routes to correct size, applies background)
@@ -29,11 +43,11 @@ struct SobrietyWidgetEntryView: View {
         if #available(iOSApplicationExtension 17.0, *) {
             widgetContent
                 .containerBackground(for: .widget) {
-                    widgetGradient
+                    widgetGradient(isMilestone: entry.isMilestoneDay)
                 }
         } else {
             ZStack {
-                widgetGradient
+                widgetGradient(isMilestone: entry.isMilestoneDay)
                 widgetContent
             }
         }
@@ -61,6 +75,11 @@ struct SmallWidgetView: View {
         Group {
             if entry.sobrietyDate != nil {
                 VStack(spacing: 4) {
+                    if entry.isMilestoneDay {
+                        Text("🎉")
+                            .font(.system(size: 20))
+                    }
+
                     Text("\(entry.daysSober)")
                         .font(.system(size: 48, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
@@ -75,7 +94,7 @@ struct SmallWidgetView: View {
 
                     Text(milestoneText)
                         .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.mrpGreen)
+                        .foregroundColor(entry.isMilestoneDay ? .white : .mrpGreen)
                         .lineLimit(1)
                 }
                 .padding(.vertical, 12)
@@ -96,6 +115,7 @@ struct SmallWidgetView: View {
 
     private var milestoneText: String {
         let daysTo = entry.nextMilestone - entry.daysSober
+        if entry.isMilestoneDay { return "🏆 Milestone reached!" }
         if daysTo <= 0 { return "Milestone reached!" }
         return "\(daysTo)d to \(formatMilestone(entry.nextMilestone))"
     }
@@ -118,6 +138,10 @@ struct SmallWidgetView: View {
 struct MediumWidgetView: View {
     var entry: SobrietyEntry
 
+    private var ringAccentColor: Color {
+        entry.isMilestoneDay ? .mrpGold : .mrpGreen
+    }
+
     var body: some View {
         Group {
             if let sobrietyDate = entry.sobrietyDate {
@@ -127,10 +151,14 @@ struct MediumWidgetView: View {
                         Circle()
                             .stroke(Color.white.opacity(0.2), lineWidth: 8)
                         Circle()
-                            .trim(from: 0, to: CGFloat(entry.progress))
-                            .stroke(Color.mrpGreen, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                            .trim(from: 0, to: CGFloat(entry.isMilestoneDay ? 1.0 : entry.progress))
+                            .stroke(ringAccentColor, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                             .rotationEffect(.degrees(-90))
                         VStack(spacing: 2) {
+                            if entry.isMilestoneDay {
+                                Text("🎉")
+                                    .font(.system(size: 14))
+                            }
                             if entry.yearsSober > 0 {
                                 Text("\(entry.yearsSober)")
                                     .font(.system(size: 28, weight: .bold, design: .rounded))
@@ -138,9 +166,11 @@ struct MediumWidgetView: View {
                                 Text(entry.yearsSober == 1 ? "year" : "years")
                                     .font(.system(size: 10, weight: .medium))
                                     .foregroundColor(.white.opacity(0.8))
-                                Text("\(entry.monthsSober) mo")
-                                    .font(.system(size: 11, weight: .semibold))
-                                    .foregroundColor(.mrpGreen)
+                                if !entry.isMilestoneDay {
+                                    Text("\(entry.monthsSober) mo")
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundColor(ringAccentColor)
+                                }
                             } else if entry.monthsSober > 0 {
                                 Text("\(entry.monthsSober)")
                                     .font(.system(size: 28, weight: .bold, design: .rounded))
@@ -162,9 +192,16 @@ struct MediumWidgetView: View {
                     }
                     .frame(width: 90, height: 90)
 
-                    // Right: Details
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(entry.daysSober == 1 ? "1 Day Sober" : "\(entry.daysSober) Days Sober")
+                    // Right: Details (vertically centered)
+                    VStack(spacing: 6) {
+                        // Days sober title
+                        if entry.isMilestoneDay {
+                            Text("🏆 Milestone!")
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundColor(.white)
+                        }
+
+                        Text(entry.daysSober == 1 ? "1 Day Sober" : "\(formatNumber(entry.daysSober)) Days Sober")
                             .font(.system(size: 18, weight: .bold))
                             .foregroundColor(.white)
 
@@ -178,11 +215,18 @@ struct MediumWidgetView: View {
                                 .foregroundColor(.white.opacity(0.7))
                         }
 
-                        Spacer().frame(height: 2)
-
-                        // Next milestone
+                        // Next milestone or celebration
                         let daysTo = entry.nextMilestone - entry.daysSober
-                        if daysTo > 0 {
+                        if entry.isMilestoneDay {
+                            HStack(spacing: 4) {
+                                Image(systemName: "star.fill")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.white)
+                                Text(milestoneReachedLabel)
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundColor(.white)
+                            }
+                        } else if daysTo > 0 {
                             HStack(spacing: 4) {
                                 Image(systemName: "flag.fill")
                                     .font(.system(size: 10))
@@ -191,31 +235,24 @@ struct MediumWidgetView: View {
                                     .font(.system(size: 12, weight: .medium))
                                     .foregroundColor(.white.opacity(0.85))
                             }
-                        } else {
-                            HStack(spacing: 4) {
-                                Image(systemName: "star.fill")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.mrpGreen)
-                                Text("Milestone reached!")
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(.mrpGreen)
-                            }
                         }
 
-                        // Progress bar
-                        GeometryReader { geo in
-                            ZStack(alignment: .leading) {
-                                RoundedRectangle(cornerRadius: 3)
-                                    .fill(Color.white.opacity(0.2))
-                                    .frame(height: 6)
-                                RoundedRectangle(cornerRadius: 3)
-                                    .fill(Color.mrpGreen)
-                                    .frame(width: geo.size.width * CGFloat(entry.progress), height: 6)
+                        // Progress bar (hide on milestone day — ring is full)
+                        if !entry.isMilestoneDay {
+                            GeometryReader { geo in
+                                ZStack(alignment: .leading) {
+                                    RoundedRectangle(cornerRadius: 3)
+                                        .fill(Color.white.opacity(0.2))
+                                        .frame(height: 6)
+                                    RoundedRectangle(cornerRadius: 3)
+                                        .fill(Color.mrpGreen)
+                                        .frame(width: geo.size.width * CGFloat(entry.progress), height: 6)
+                                }
                             }
+                            .frame(height: 6)
                         }
-                        .frame(height: 6)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
@@ -237,6 +274,22 @@ struct MediumWidgetView: View {
             }
         }
         .widgetURL(URL(string: "myrecoverypal://social-feed"))
+    }
+
+    private var milestoneReachedLabel: String {
+        if entry.yearsSober > 0 {
+            return "\(entry.yearsSober) \(entry.yearsSober == 1 ? "year" : "years") sober!"
+        } else if entry.monthsSober > 0 {
+            return "\(entry.monthsSober) \(entry.monthsSober == 1 ? "month" : "months") sober!"
+        } else {
+            return "\(entry.daysSober) \(entry.daysSober == 1 ? "day" : "days") sober!"
+        }
+    }
+
+    private func formatNumber(_ n: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: n)) ?? "\(n)"
     }
 
     private func formatMilestone(_ days: Int) -> String {
@@ -263,27 +316,50 @@ struct MediumWidgetView: View {
 struct SobrietyWidget_Previews: PreviewProvider {
     static var previews: some View {
         Group {
+            // Normal state — small
             SobrietyWidgetEntryView(entry: SobrietyEntry(
                 date: Date(), daysSober: 2921, sobrietyDate: Date(),
                 currentMilestone: 2555, nextMilestone: 2922, progress: 0.99, displayName: "Ryan",
-                yearsSober: 7, monthsSober: 11
+                yearsSober: 7, monthsSober: 11, isMilestoneDay: false
             ))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
+            .previewDisplayName("Small")
 
+            // Normal state — medium
             SobrietyWidgetEntryView(entry: SobrietyEntry(
                 date: Date(), daysSober: 2921, sobrietyDate: Date(),
                 currentMilestone: 2555, nextMilestone: 2922, progress: 0.99, displayName: "Ryan",
-                yearsSober: 7, monthsSober: 11
+                yearsSober: 7, monthsSober: 11, isMilestoneDay: false
             ))
             .previewContext(WidgetPreviewContext(family: .systemMedium))
+            .previewDisplayName("Medium")
+
+            // Milestone day — small
+            SobrietyWidgetEntryView(entry: SobrietyEntry(
+                date: Date(), daysSober: 2922, sobrietyDate: Date(),
+                currentMilestone: 2922, nextMilestone: 3287, progress: 0.0, displayName: "Ryan",
+                yearsSober: 8, monthsSober: 0, isMilestoneDay: true
+            ))
+            .previewContext(WidgetPreviewContext(family: .systemSmall))
+            .previewDisplayName("Small — Milestone")
+
+            // Milestone day — medium
+            SobrietyWidgetEntryView(entry: SobrietyEntry(
+                date: Date(), daysSober: 2922, sobrietyDate: Date(),
+                currentMilestone: 2922, nextMilestone: 3287, progress: 0.0, displayName: "Ryan",
+                yearsSober: 8, monthsSober: 0, isMilestoneDay: true
+            ))
+            .previewContext(WidgetPreviewContext(family: .systemMedium))
+            .previewDisplayName("Medium — Milestone")
 
             // Empty state
             SobrietyWidgetEntryView(entry: SobrietyEntry(
                 date: Date(), daysSober: 0, sobrietyDate: nil,
                 currentMilestone: 0, nextMilestone: 1, progress: 0, displayName: "",
-                yearsSober: 0, monthsSober: 0
+                yearsSober: 0, monthsSober: 0, isMilestoneDay: false
             ))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
+            .previewDisplayName("Empty")
         }
     }
 }

@@ -13,6 +13,7 @@ struct SobrietyEntry: TimelineEntry {
     let displayName: String
     let yearsSober: Int
     let monthsSober: Int
+    let isMilestoneDay: Bool
 }
 
 // MARK: - Milestone Logic
@@ -61,6 +62,27 @@ struct MilestoneHelper {
         let progress = range > 0 ? Double(daysSober - current) / range : 1.0
         return (current, next, min(max(progress, 0), 1))
     }
+
+    /// Check if today is exactly a milestone day
+    static func isMilestoneDay(daysSober: Int, sobrietyDate: Date?) -> Bool {
+        // Check fixed milestones
+        if milestones.contains(daysSober) {
+            return true
+        }
+        // Check year anniversaries for long-term sobriety
+        if let sobrietyDate = sobrietyDate {
+            let calendar = Calendar.current
+            let today = calendar.startOfDay(for: Date())
+            let startDay = calendar.startOfDay(for: sobrietyDate)
+            let components = calendar.dateComponents([.month, .day], from: startDay)
+            let todayComponents = calendar.dateComponents([.month, .day], from: today)
+            // Anniversary if same month+day and at least 1 year
+            if components.month == todayComponents.month && components.day == todayComponents.day && daysSober >= 365 {
+                return true
+            }
+        }
+        return false
+    }
 }
 
 // MARK: - Timeline Provider
@@ -78,7 +100,8 @@ struct SobrietyTimelineProvider: TimelineProvider {
             progress: 0.4,
             displayName: "",
             yearsSober: 0,
-            monthsSober: 1
+            monthsSober: 1,
+            isMilestoneDay: false
         )
     }
 
@@ -114,7 +137,8 @@ struct SobrietyTimelineProvider: TimelineProvider {
                 progress: 0,
                 displayName: displayName,
                 yearsSober: 0,
-                monthsSober: 0
+                monthsSober: 0,
+                isMilestoneDay: false
             )
         }
 
@@ -122,6 +146,7 @@ struct SobrietyTimelineProvider: TimelineProvider {
         let daysSober = calendar.dateComponents([.day], from: sobrietyDate, to: Date()).day ?? 0
         let milestone = MilestoneHelper.calculate(daysSober: daysSober, sobrietyDate: sobrietyDate)
         let components = calendar.dateComponents([.year, .month], from: sobrietyDate, to: Date())
+        let isMilestone = MilestoneHelper.isMilestoneDay(daysSober: daysSober, sobrietyDate: sobrietyDate)
 
         return SobrietyEntry(
             date: Date(),
@@ -132,7 +157,8 @@ struct SobrietyTimelineProvider: TimelineProvider {
             progress: milestone.progress,
             displayName: displayName,
             yearsSober: components.year ?? 0,
-            monthsSober: components.month ?? 0
+            monthsSober: components.month ?? 0,
+            isMilestoneDay: isMilestone
         )
     }
 }

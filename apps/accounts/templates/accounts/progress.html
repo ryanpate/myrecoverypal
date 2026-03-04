@@ -71,6 +71,25 @@
         position: relative;
     }
 
+    /* Milestone celebration state */
+    .milestone-card.milestone-celebration {
+        background: linear-gradient(135deg, #ffa000 0%, #ffc107 50%, #ffa000 100%);
+        box-shadow: 0 10px 40px rgba(255, 193, 7, 0.35);
+        animation: milestone-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes milestone-glow {
+        0%, 100% { box-shadow: 0 10px 40px rgba(255, 193, 7, 0.35); }
+        50% { box-shadow: 0 10px 60px rgba(255, 193, 7, 0.55); }
+    }
+
+    .milestone-celebration-banner {
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
     .milestone-header {
         display: flex;
         justify-content: space-between;
@@ -1049,23 +1068,32 @@
 
         {% if days_sober %}
         <!-- Milestone Progress -->
-        <div class="milestone-card">
-            <button class="section-share-btn" data-share="milestone" data-text="I'm {{ days_sober }} days sober! Next milestone: {{ next_milestone }} days. #recovery #MyRecoveryPal" aria-label="Share"><i class="fas fa-share-nodes" aria-hidden="true"></i></button>
+        <div class="milestone-card{% if is_milestone_day %} milestone-celebration{% endif %}">
+            <button class="section-share-btn" data-share="milestone" data-text="I'm {{ days_sober }} days sober! {% if is_milestone_day %}Milestone reached! {% endif %}#recovery #MyRecoveryPal" aria-label="Share"><i class="fas fa-share-nodes" aria-hidden="true"></i></button>
+            {% if is_milestone_day %}
+            <div class="milestone-celebration-banner">🎉 🏆 Milestone Reached! 🏆 🎉</div>
+            {% endif %}
             <div class="milestone-header">
                 <div>
                     <div class="milestone-days">{{ days_sober }}</div>
                     <div class="milestone-label">Days Sober</div>
                 </div>
                 <div class="milestone-next">
+                    {% if is_milestone_day %}
+                    <div class="milestone-next-days">🏆 Congratulations!</div>
+                    {% else %}
                     <div class="milestone-next-label">Next Milestone</div>
                     <div class="milestone-next-days">{{ next_milestone }} days</div>
+                    {% endif %}
                 </div>
             </div>
             <div class="milestone-progress-bar">
-                <div class="milestone-progress-fill" style="width: {{ milestone_progress }}%"></div>
+                <div class="milestone-progress-fill" style="width: {% if is_milestone_day %}100{% else %}{{ milestone_progress }}{% endif %}%"></div>
             </div>
             <div class="milestone-progress-text">
-                {% if days_to_milestone > 0 %}
+                {% if is_milestone_day %}
+                You did it! {{ days_sober }} days of recovery!
+                {% elif days_to_milestone > 0 %}
                 {{ days_to_milestone }} days until your next milestone
                 {% else %}
                 You've reached {{ next_milestone }} days! Amazing!
