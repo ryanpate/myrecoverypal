@@ -191,7 +191,8 @@
             <div class="post-card" data-post-id="{{ post.id }}">
                 <div class="social-post-header">
                     {% if post.author.avatar %}
-                    <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username }}" class="avatar-medium" style="border-radius: 50%; object-fit: cover;">
+                    <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username|slice:":1"|upper }}" class="avatar-medium" style="border-radius: 50%; object-fit: cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="avatar-initials avatar-medium" style="display:none;background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
                     {% else %}
                     <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
                     {% endif %}
