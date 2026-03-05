@@ -1428,7 +1428,7 @@
                 <!-- Engagement Stats -->
                 <div class="post-engagement">
                     <span class="likes-count">{{ post.likes.count }} like{{ post.likes.count|pluralize }}</span>
-                    <span class="comments-count">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
+                    <span class="comments-count" style="cursor:pointer;" onclick="toggleComments('{{ post.id }}')">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
                 </div>
 
                 <!-- Action Buttons -->

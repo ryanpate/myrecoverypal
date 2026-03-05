@@ -218,7 +218,7 @@
 
                 <div class="post-engagement">
                     <span class="likes-count">{{ post.likes.count }} like{{ post.likes.count|pluralize }}</span>
-                    <span class="comments-count">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
+                    <span class="comments-count" style="cursor:pointer;" onclick="var s=document.getElementById('frag-comments-{{ post.id }}');if(s)s.style.display=s.style.display==='none'?'block':'none';">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
                 </div>
 
                 <div class="post-actions-bar">
