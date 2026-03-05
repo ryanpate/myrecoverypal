@@ -75,10 +75,20 @@
                                 {% endif %}
                             </div>
                             <!-- iOS IAP management (shown only on iOS) -->
-                            <div class="btn-group-vertical btn-group-sm w-100 iap-only" role="group">
-                                <button class="btn btn-outline-primary" onclick="if(window.MRPIAP) window.MRPIAP.manageSubscription();">
-                                    <i class="fas fa-cog"></i> Manage in iOS Settings
-                                </button>
+                            <div class="iap-only" style="margin-top: 1rem;">
+                                <div style="background: #f0f4ff; border-radius: 12px; padding: 1.25rem; text-align: center;">
+                                    <i class="fab fa-apple" style="font-size: 2rem; color: #333; margin-bottom: 0.5rem;"></i>
+                                    <p style="font-weight: 600; margin-bottom: 0.25rem;">Apple Subscription</p>
+                                    <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
+                                        Your subscription is managed through your Apple ID. You can change your plan, update payment, or cancel from Apple's subscription settings.
+                                    </p>
+                                    <button class="btn btn-primary btn-block" onclick="if(window.MRPIAP) window.MRPIAP.manageSubscription();" style="border-radius: 10px; padding: 0.75rem; font-weight: 600;">
+                                        <i class="fas fa-external-link-alt"></i> Open Subscription Settings
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-block btn-sm" onclick="if(window.MRPIAP) window.MRPIAP.restorePurchases();" style="border-radius: 10px; margin-top: 0.5rem;">
+                                        <i class="fas fa-redo"></i> Restore Purchases
+                                    </button>
+                                </div>
                             </div>
 
                             {% if subscription.canceled_at %}
@@ -150,13 +160,11 @@
                 <div class="card-body">
                     {% if subscription and subscription.is_premium %}
                         <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited groups</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited messaging</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Advanced journaling</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Private groups</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Ad-free experience</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Custom themes</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Priority support</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Anchor AI Coach (20 msgs/day)</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited groups & private groups</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited journal & export</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> 90-day analytics & charts</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Premium badge</li>
                         </ul>
                     {% elif subscription and subscription.is_pro %}
                         <ul class="list-unstyled">
@@ -168,12 +176,16 @@
                         </ul>
                     {% else %}
                         <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Basic profile</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Social feed & messaging</li>
                             <li class="mb-2"><i class="fas fa-check text-success"></i> Join up to 5 groups</li>
                             <li class="mb-2"><i class="fas fa-check text-success"></i> 3 AI Coach trial messages</li>
                             <li class="mb-2"><i class="fas fa-check text-success"></i> 30-day journal</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited messaging</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Daily check-ins & streaks</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Home screen sobriety widget</li>
                         </ul>
+                        <a href="{% url 'accounts:pricing' %}" class="btn btn-sm btn-primary btn-block">
+                            <i class="fas fa-crown"></i> Upgrade to Premium
+                        </a>
                     {% endif %}
                 </div>
             </div>
