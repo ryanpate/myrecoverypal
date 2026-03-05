@@ -2,7 +2,7 @@
 <div class="inline-suggestions">
     <div class="inline-suggestions-header">
         <h4>People you might like</h4>
-        <a href="{% url 'accounts:enhanced_community' %}">See all</a>
+        <a href="{% url 'accounts:community' %}">See all</a>
     </div>
     <div class="inline-suggestions-row">
         {% for member in suggested_users|slice:":3" %}
