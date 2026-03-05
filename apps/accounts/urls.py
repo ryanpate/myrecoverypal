@@ -183,6 +183,9 @@ urlpatterns = [
     path('webhook/stripe/', payment_views.stripe_webhook, name='stripe_webhook'),
     path('api/ios-subscription/sync/', payment_views.ios_subscription_sync, name='ios_subscription_sync'),
 
+    # Admin utilities
+    path('admin/fix-avatar-urls/', views.fix_avatar_urls_view, name='fix_avatar_urls'),
+
     # AI Recovery Coach
     path('recovery-coach/', views.recovery_coach, name='recovery_coach'),
     path('recovery-coach/send/', views.coach_send_message, name='coach_send_message'),

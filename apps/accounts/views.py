@@ -4846,3 +4846,43 @@ def delete_account(request):
         return redirect('core:index')
 
     return render(request, 'accounts/delete_account.html')
+
+
+def fix_avatar_urls_view(request):
+    """Fix avatar fields with full Cloudinary URLs. Staff-only or secret key."""
+    import os
+    import re
+
+    admin_secret = os.environ.get('ADMIN_SECRET_KEY', '')
+    secret_key = request.GET.get('key', '')
+    is_authorized = (
+        (request.user.is_authenticated and request.user.is_staff) or
+        (admin_secret and secret_key == admin_secret)
+    )
+    if not is_authorized:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    dry_run = request.GET.get('dry_run', '1') == '1'
+    results = []
+
+    for user in User.objects.exclude(avatar='').exclude(avatar__isnull=True):
+        val = str(user.avatar)
+        if 'cloudinary.com' not in val and 'http' not in val:
+            continue
+
+        match = re.search(r'avatars/[^/]+\.\w+$', val)
+        if match:
+            new_val = match.group(0)
+            results.append({'user': user.username, 'old': val, 'new': new_val})
+            if not dry_run:
+                user.avatar = new_val
+                user.save(update_fields=['avatar'])
+        else:
+            results.append({'user': user.username, 'old': val, 'error': 'could not parse'})
+
+    return JsonResponse({
+        'dry_run': dry_run,
+        'fixed': len([r for r in results if 'new' in r]),
+        'results': results,
+        'hint': 'Add ?dry_run=0 to apply fixes' if dry_run else 'Fixes applied'
+    })
