@@ -1623,17 +1623,6 @@ function toggleComments(postId) {
     }
 }
 
-// Event delegation fallback for comment toggle (in case onclick doesn't fire)
-document.addEventListener('click', function(e) {
-    var btn = e.target.closest('.comment-toggle-btn');
-    if (btn) {
-        e.preventDefault();
-        e.stopPropagation();
-        var postId = btn.getAttribute('data-post-id');
-        if (postId) toggleComments(postId);
-    }
-});
-
 // Current user data for optimistic UI
 {% if user.is_authenticated %}
 var currentUser = {
