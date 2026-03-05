@@ -1,6 +1,6 @@
 # CLAUDE.md - MyRecoveryPal Development Guide
 
-**Last Updated:** 2026-02-28
+**Last Updated:** 2026-03-03
 **Project:** MyRecoveryPal - Social Recovery Platform
 **Tech Stack:** Django 5.0.10, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
@@ -617,6 +617,17 @@ High-volume keyword blog posts (83K combined monthly searches):
 - [x] iOS: Page transitions + swipe gestures (`static/js/capacitor-transitions.js`) — edge swipe back, 250ms slide transitions, View Transition API support (iOS 18+), pull-to-refresh
 - [x] iOS: Offline mode (`static/js/capacitor-offline.js`) — IndexedDB cache for posts/journal, write queue with auto-flush on reconnect, fetch interceptor for cache-first reads
 
+#### Pre-Submission Fixes (Priority: CRITICAL for Apple Approval)
+- [ ] **Move credential storage from `@capacitor/preferences` to iOS Keychain** — `capacitor-biometric.js` stores login passwords in `UserDefaults` (plaintext). Use `@capacitor-community/secure-storage-plugin` or native Keychain wrapper. Apple Guideline 5.1.1 (Data Security) requires encrypted storage for credentials.
+- [ ] **Remove `"cleartext": true` from `capacitor.config.json`** — App Transport Security (ATS) exception is a red flag for Apple review. Server already uses HTTPS so cleartext is unnecessary.
+- [ ] **Change `aps-environment` from `development` to `production`** in `ios/App/App/App.entitlements` before archive build.
+- [ ] **Replace `alert()` calls in `capacitor-iap.js` with toast/modal UI** — native `alert()` looks non-native and may trigger Guideline 4.0 concerns.
+- [ ] **Add Apple review notes template** to App Store Connect: explain Capacitor as legitimate native framework, list all native features (Face ID, haptics, share sheet, push, swipe gestures, transitions, offline mode), include IAP sandbox testing instructions, note health disclaimer modal and block/report moderation.
+
+#### High-Impact Native Features (Strengthen Guideline 4.2 Compliance)
+- [x] **Add WidgetKit sobriety counter widget** (Swift native extension) — displays days sober on home screen with small (day count + milestone countdown) and medium (progress ring with years/months breakdown, sobriety date, milestone progress bar) sizes. App Group `group.com.myrecoverypal.app` shared UserDefaults, WidgetBridge Capacitor plugin for JS↔native data sync, calendar-based milestone calculations (handles leap years). Widget Extension target with `DEVELOPMENT_TEAM` configured.
+- [ ] **Wire local notification scheduling to sobriety milestones** — schedule notifications at app launch for upcoming milestones (7, 14, 30, 60, 90, 180, 365 days). `@capacitor/local-notifications` plugin already installed but not wired to milestone logic.
+
 #### Remaining - Manual Steps
 - [ ] **Android: Upload AAB to Google Play Console** (account ready)
 - [ ] **Android: Complete store listing** (screenshots, description, data safety)
@@ -644,7 +655,7 @@ High-volume keyword blog posts (83K combined monthly searches):
 - **Privacy policy:** `https://www.myrecoverypal.com/privacy/`
 - **Target age:** 17+ (references alcohol/drug use in recovery context)
 - **Keywords:** sobriety, recovery, sober, addiction, AA, NA, support, community, coach, tracker, journal, mental health, 12 step
-- **Apple review notes:** Emphasize native features (Face ID login, native-styled menu with haptics, share sheet, push, swipe gestures, page transitions, offline mode, keyboard), Capacitor as legitimate native framework, IAP sandbox testing instructions, health disclaimer modal, block/report moderation
+- **Apple review notes:** Emphasize native features (Face ID login, native-styled menu with haptics, share sheet, push, swipe gestures, page transitions, offline mode, keyboard, WidgetKit home screen widget), Capacitor as legitimate native framework, IAP sandbox testing instructions, health disclaimer modal, block/report moderation
 
 #### iOS Native Features (Guideline 4.2 Compliance)
 | Feature | Plugin | File |
@@ -668,6 +679,7 @@ High-volume keyword blog posts (83K combined monthly searches):
 | 5-tab bottom bar (Feed, Coach, Check-in, Alerts, Profile) | Pure CSS/JS | `capacitor-native.js` + `base-inline.css` + `base.html` |
 | Animated splash/loading overlay (sessionStorage, once per session) | Pure CSS/JS | `capacitor-native.js` + `base-inline.css` + `base.html` |
 | Notification bell with red badge (99+ cap, live updates) | Pure JS | `capacitor-native.js` + `base-inline.css` |
+| WidgetKit sobriety counter (small + medium, progress ring, milestones) | Native Swift WidgetKit | `SobrietyCounterWidget/` (Swift extension) |
 
 #### iOS IAP Architecture
 ```
@@ -850,6 +862,10 @@ static/
     ├── capacitor-transitions.js # Page transitions, swipe gestures, pull-to-refresh
     └── capacitor-offline.js     # IndexedDB cache, write queue, offline detection
 ios/                       # Capacitor iOS project (tracked in git)
+├── App/SobrietyCounterWidget/  # WidgetKit extension (Swift)
+│   ├── SobrietyCounterWidget.swift       # Data model, milestone logic, timeline provider
+│   └── SobrietyCounterWidgetViews.swift  # SwiftUI views (small + medium)
+├── App/Plugins/WidgetBridgePlugin.swift  # Capacitor↔Widget data bridge
 android/                   # Capacitor Android project (tracked in git)
 ```
 
@@ -993,6 +1009,8 @@ Notification (group types):
 
 ## Changelog
 
+- **2026-03-03:** WidgetKit sobriety counter widget complete (small + medium sizes). Small widget shows day count + milestone countdown. Medium widget redesigned with years/months breakdown in progress ring (shows "7 years 11 mo" for >1yr, months for <1yr, days for <1mo), sobriety date ("Since Mar 4, 2018"), milestone countdown, and progress bar. Fixed milestone calculation bug in both iOS widget (`SobrietyCounterWidget.swift`) and web (`models.py`, `views.py`) — was using `days / 365` which doesn't account for leap years (showed "365 days to next milestone" instead of "1 day"). Replaced with calendar-based year anniversaries using `Calendar.dateComponents` (Swift) and `dateutil.relativedelta` (Python). Fixed widget extension Xcode signing (`DEVELOPMENT_TEAM = 454YNT65J3`). Redesigned My Progress page check-in — replaced full-screen inline form (mood grid, sliders, gratitude textarea) with compact one-line prompt bar linking to dedicated check-in page, removed ~431 lines of unused CSS. Fixed follow button overflowing off screen on community/members page — removed hardcoded `min-width: 250px`, switched to auto-sizing with `white-space: nowrap`. Fixed keyboard auto-opening on login page covering Face ID setup popup — removed `autofocus` attribute and blur focused input on native, dismiss keyboard before showing overlay. Monetization decision: widget, progress, and check-in features stay free (retention tools at 18 users); Premium reserved for AI Coach, unlimited groups, analytics.
+- **2026-03-03:** Fixed Face ID setup prompt not appearing on fresh install. Root cause: `waitForBiometric` found `window.MRPBiometric` immediately (set synchronously) then checked `bio.available` which was `false` because `checkAvailability()` is async and hadn't resolved. Fix: replaced synchronous check with `bio.checkAvailability().then(function(result) { if (!result.isAvailable) return; ... })` in `login.html`. Fixed button text invisible on landing page and login page in iOS WKWebView — despite `.cta-button { color: white }` being set in multiple stylesheets, text wasn't rendering white. Added `color: #fff !important` with `a.cta-button:link` and `a.cta-button:visited` pseudo-class selectors across `base-inline.css`, `main.css`, and `index.html`. Fixed `.btn-primary` on login page missing explicit `color: #fff`. Added dark mode overrides for login page (auth container, form inputs, labels, links). Bumped static `?v=` to `20260303c`.
 - **2026-03-02:** Moved Face ID from app lock to login page biometric sign-in. Removed 5-minute background timeout lock screen (HTML overlay in `base.html`, CSS in `base-inline.css`, JS `appStateChange` listener). Replaced `isAppLockEnabled`/`setAppLockEnabled`/`shouldLockOnResume`/`setLastBackground` with `isBiometricLoginEnabled`/`setBiometricLoginEnabled`/`saveLoginCredentials`/`getLoginCredentials`/`clearLoginCredentials` in `capacitor-biometric.js`. Added "Sign in with Face ID" button to `login.html` (native only) — checks stored credentials + biometric auth, auto-fills and submits form. Credentials saved on successful password login when biometric login is enabled. Updated first-launch setup prompt text ("Sign in with Face ID" instead of "Lock App"). Updated settings toggles ("Sign in with [Face ID]" instead of "Lock App with [Face ID]"), disabling clears stored credentials. Journal lock remains independent and unchanged. Bumped static file `?v=` from `20260302g` to `20260302h`.
 - **2026-03-01:** Native iOS UX overhaul — ultra-minimal nav, 5-tab bottom bar, notification bell, splash screen, social-first landing. Features added incrementally (one at a time) to avoid CSS conflicts with generic `nav{}` rule. Added 5-tab native bottom bar HTML in `base.html` (Feed `fa-house`, Coach `fa-robot`, Check-in `fa-circle-check`, Alerts `fa-bell` with badge, Profile `fa-user`), with CSS: hidden on web (`display:none`), `display:flex !important` + `position:fixed; bottom:0` on native, `top:auto` to override inherited `nav{top:0}`, frosted glass backdrop blur, safe-area padding, keyboard-open auto-hide, dark mode. Hides web `.mobile-bottom-nav` on native. Added haptic feedback on tab taps. Added ultra-minimal native nav bar CSS: hides logo text (icon only, 28px), tighter padding (6px 12px), hides theme toggle and notification dot on native. Injects notification bell with iOS-style red badge (99+ cap) before hamburger via JS, hooks `updateNotificationIndicator` for live badge updates on both bell and tab bar. Added animated splash/loading overlay (`#nativeSplashOverlay`): blue background with pulsing logo and expanding ring animation, shown once per session via `sessionStorage` flag, fades out after `window.load` + 300ms. Changed `LOGIN_REDIRECT_URL` from `accounts:hybrid_landing` to `accounts:social_feed` (social-first philosophy). Excluded `.native-bottom-tabs` from page transition click handler. All changes scoped to `.ios-native-app`/`.android-native-app` — web completely unchanged except login redirect.
 - **2026-02-28:** Removed native tab bar, replaced with iOS-styled hamburger menu. Deleted tab bar HTML (nav + More menu overlay) from `base.html`, 169 lines of tab bar/More menu CSS from `base-inline.css`, and tab bar JS from `capacitor-native.js` and `capacitor-transitions.js`. Added native menu CSS overrides scoped to `.ios-native-app`/`.android-native-app`: blur backdrop, 300px panel with `#f2f2f7` background, grouped-list card sections (12px radius), chevron pseudo-elements (FA `\f054`), uppercase section labels, red logout, hidden Install App link, full dark mode. JS rebuilds hamburger button on native: removes CSS `<span>` lines, inserts FA `fa-bars` icon, `MutationObserver` swaps to `fa-xmark` on `.active` toggle, hides SVG close button (tap overlay to dismiss). Added cache-busting `?v=` query strings to all static CSS/JS in `base.html` (WhiteNoise uses `StaticFilesStorage` with 1-year cache, no filename hashing). Replaced AI Coach full-page disclaimer with accept-once modal popup (localStorage `anchor_disclaimer_accepted`) + compact one-line bar with "Details" re-open link. Web version completely unchanged.

@@ -273,8 +273,8 @@
                                 <i class="fas fa-newspaper"></i> Blog
                             </a>
                             <hr>
-                            <a href="{% url 'accounts:subscription_management' %}">
-                                <i class="fas fa-crown"></i> Subscription
+                            <a href="{% url 'accounts:subscription_management' %}" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)); border-left: 3px solid #f5a623; font-weight: 600;">
+                                <i class="fas fa-crown" style="color: #f5a623;"></i> Subscription
                             </a>
                             <a href="{% url 'accounts:invite_friends' %}" style="color: #52b788;">
                                 <i class="fas fa-user-plus"></i> Invite Friends
@@ -393,6 +393,11 @@
                     style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15)); border-left: 3px solid #667eea; font-weight: 600;">
                     <i class="fas fa-robot" style="margin-right: 0.5rem;"></i> Anchor AI Coach
                 </a>
+                <a href="{% url 'accounts:subscription_management' %}"
+                    class="{% if request.resolver_match.url_name == 'subscription_management' %}active{% endif %}"
+                    style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)); border-left: 3px solid #f5a623; font-weight: 600;">
+                    <i class="fas fa-crown" style="margin-right: 0.5rem; color: #f5a623;"></i> Subscription
+                </a>
             </div>
 
             {% if user.is_authenticated %}
@@ -429,10 +434,6 @@
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-newspaper" style="margin-right: 0.5rem;"></i> Blog
-                </a>
-                <a href="{% url 'accounts:subscription_management' %}"
-                    class="{% if request.resolver_match.url_name == 'subscription_management' %}active{% endif %}">
-                    <i class="fas fa-crown" style="margin-right: 0.5rem;"></i> Subscription
                 </a>
                 <a href="{% url 'accounts:invite_friends' %}"
                     class="{% if request.resolver_match.url_name == 'invite_friends' %}active{% endif %}"
