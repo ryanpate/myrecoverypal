@@ -1786,6 +1786,13 @@
                 .then(function(html) {
                     feedInner.innerHTML = html;
                     feedSkeleton.style.display = 'none';
+                    // innerHTML doesn't execute <script> tags — extract and run them
+                    var scripts = feedInner.querySelectorAll('script');
+                    scripts.forEach(function(oldScript) {
+                        var newScript = document.createElement('script');
+                        newScript.textContent = oldScript.textContent;
+                        oldScript.parentNode.replaceChild(newScript, oldScript);
+                    });
                 })
                 .catch(function() {
                     feedSkeleton.style.display = 'none';

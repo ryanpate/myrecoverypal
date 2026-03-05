@@ -49,6 +49,8 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>MyRecoveryPal can use Face ID to protect your private journal entries.</string>
 	<key>NSCameraUsageDescription</key>

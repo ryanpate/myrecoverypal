@@ -1598,16 +1598,45 @@
 
 {% block extra_js %}
 <script>
-// Test if this script block loads - BUILD 2026-01-17-v6
+// Test if this script block loads - BUILD 2026-03-05-v1
 console.log('=== SOCIAL FEED JS LOADED ===');
 window.onerror = function(msg, url, line) {
     console.error('JS Error:', msg, 'at line', line);
     return false;
 };
 
+// Global function for comment toggle - defined FIRST before any template code
+function toggleComments(postId) {
+    console.log('toggleComments called with postId:', postId);
+    var section = document.getElementById('comments-' + postId);
+    console.log('Found section:', section);
+    if (section) {
+        var isHidden = section.style.display === 'none' || section.style.display === '';
+        section.style.display = isHidden ? 'block' : 'none';
+        console.log('Set display to:', section.style.display);
+        if (isHidden) {
+            var input = section.querySelector('.comment-input');
+            if (input) input.focus();
+        }
+    } else {
+        console.error('Could not find comments section for post:', postId);
+    }
+}
+
+// Event delegation fallback for comment toggle (in case onclick doesn't fire)
+document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.comment-toggle-btn');
+    if (btn) {
+        e.preventDefault();
+        e.stopPropagation();
+        var postId = btn.getAttribute('data-post-id');
+        if (postId) toggleComments(postId);
+    }
+});
+
 // Current user data for optimistic UI
 {% if user.is_authenticated %}
-const currentUser = {
+var currentUser = {
     id: {{ user.id }},
     username: "{{ user.username|escapejs }}",
     fullName: "{{ user.get_full_name|default:user.username|escapejs }}",
@@ -1616,22 +1645,8 @@ const currentUser = {
     avatarUrl: "{% if user.avatar %}{{ user.avatar.url }}{% endif %}"
 };
 {% else %}
-const currentUser = null;
+var currentUser = null;
 {% endif %}
-
-// Global function for comment toggle - called via onclick
-function toggleComments(postId) {
-    console.log('toggleComments called with postId:', postId);
-    const section = document.getElementById('comments-' + postId);
-    console.log('Found section:', section);
-    if (section) {
-        const isHidden = section.style.display === 'none' || section.style.display === '';
-        section.style.display = isHidden ? 'block' : 'none';
-        console.log('Set display to:', section.style.display);
-    } else {
-        console.error('Could not find comments section for post:', postId);
-    }
-}
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOMContentLoaded fired - initializing social feed JS');

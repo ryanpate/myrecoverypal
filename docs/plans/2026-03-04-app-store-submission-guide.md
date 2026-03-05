@@ -15,7 +15,7 @@ Go to `https://www.myrecoverypal.com/accounts/register/` and create:
 
 - **Email:** `review@myrecoverypal.com`
 - **Username:** `applereview`
-- **Password:** 2026SppStore!
+- **Password:** 2026AppStore!
 
 Then populate it with data:
 
