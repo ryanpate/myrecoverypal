@@ -20,6 +20,7 @@
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		802CED822F53915700BFAFEF /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 802CED812F53915700BFAFEF /* StoreKit.framework */; };
+		8091CBCF2F5A622B005CED78 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8091CBCE2F5A622B005CED78 /* PrivacyInfo.xcprivacy */; };
 		8137A207493F3EEA856E976D /* SobrietyCounterWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = E3DBA7C402CF04F06D84A77D /* SobrietyCounterWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		963FD41A504EC6379A40E6C3 /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443512C95668536597C4E494 /* Pods_App.framework */; };
 /* End PBXBuildFile section */
@@ -64,6 +65,7 @@
 		6EB6E08377D85E2DECC82D89 /* SobrietyCounterWidgetViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SobrietyCounterWidgetViews.swift; sourceTree = "<group>"; };
 		802CED802F5390D400BFAFEF /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		802CED812F53915700BFAFEF /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		8091CBCE2F5A622B005CED78 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		82A6E4C30DD937F8C6BBE6C4 /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
 		9FB615B9E780C619D424276D /* MyViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MyViewController.swift; sourceTree = "<group>"; };
 		B28FC4B73ACB0596C4AE7485 /* SobrietyCounterWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SobrietyCounterWidget.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 		504EC3061FED79650016851F /* App */ = {
 			isa = PBXGroup;
 			children = (
+				8091CBCE2F5A622B005CED78 /* PrivacyInfo.xcprivacy */,
 				802CED802F5390D400BFAFEF /* App.entitlements */,
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
@@ -148,7 +151,6 @@
 				82A6E4C30DD937F8C6BBE6C4 /* Pods-App.debug.xcconfig */,
 				2EA5F596E21ADCC706F62BD3 /* Pods-App.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -168,7 +170,6 @@
 				68AA6D1D66060947BD0D8283 /* Info.plist */,
 				D8A2FB03875A9B5286B8C75E /* SobrietyCounterWidget.entitlements */,
 			);
-			name = SobrietyCounterWidget;
 			path = SobrietyCounterWidget;
 			sourceTree = "<group>";
 		};
@@ -254,6 +255,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */,
+				8091CBCF2F5A622B005CED78 /* PrivacyInfo.xcprivacy in Resources */,
 				50B271D11FEDC1A000F3C39B /* public in Resources */,
 				504EC30F1FED79650016851F /* Assets.xcassets in Resources */,
 				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
@@ -532,9 +534,13 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.myrecoverypal.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -553,9 +559,13 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.myrecoverypal.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
