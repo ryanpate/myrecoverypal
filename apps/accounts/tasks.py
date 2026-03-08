@@ -330,7 +330,7 @@ def send_weekly_digests(self):
                 connection_type='follow'
             ).values_list('following_id', flat=True)
             popular_posts = SocialPost.objects.filter(
-                user_id__in=following_ids,
+                author_id__in=following_ids,
                 created_at__gte=one_week_ago,
                 visibility='public'
             ).annotate(
