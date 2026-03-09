@@ -827,6 +827,18 @@ def daily_checkin_view(request):
                     content_object=checkin
                 )
 
+                # Also create a SocialPost so it appears on the feed
+                mood_display = checkin.get_mood_display_with_emoji()
+                post_content = f"Checked in feeling {mood_display}"
+                if gratitude:
+                    post_content += f"\n\nGrateful for: {gratitude}"
+                SocialPost.objects.create(
+                    author=request.user,
+                    content=post_content,
+                    visibility='public',
+                    linked_checkin=checkin
+                )
+
             messages.success(request, 'Daily check-in completed!')
             if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
                 messages.info(
