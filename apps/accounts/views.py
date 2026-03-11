@@ -4898,3 +4898,35 @@ def fix_avatar_urls_view(request):
         'results': results,
         'hint': 'Add ?dry_run=0 to apply fixes' if dry_run else 'Fixes applied'
     })
+
+
+def setup_review_account_view(request):
+    """Run setup_review_account management command via HTTP. Staff-only or secret key."""
+    import os
+    from django.core.management import call_command
+    from io import StringIO
+
+    admin_secret = os.environ.get('ADMIN_SECRET_KEY', '')
+    secret_key = request.GET.get('key', '')
+    is_authorized = (
+        (request.user.is_authenticated and request.user.is_staff) or
+        (admin_secret and secret_key == admin_secret)
+    )
+    if not is_authorized:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    out = StringIO()
+    err = StringIO()
+    try:
+        call_command('setup_review_account', stdout=out, stderr=err)
+        return JsonResponse({
+            'status': 'success',
+            'output': out.getvalue(),
+            'errors': err.getvalue(),
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'error': str(e),
+            'output': out.getvalue(),
+        }, status=500)

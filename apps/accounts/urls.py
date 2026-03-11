@@ -185,6 +185,7 @@ urlpatterns = [
 
     # Admin utilities
     path('admin/fix-avatar-urls/', views.fix_avatar_urls_view, name='fix_avatar_urls'),
+    path('admin/setup-review-account/', views.setup_review_account_view, name='setup_review_account'),
 
     # AI Recovery Coach
     path('recovery-coach/', views.recovery_coach, name='recovery_coach'),
