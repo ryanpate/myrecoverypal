@@ -22,6 +22,7 @@ class Command(BaseCommand):
     help = 'Populate the applereview account with demo data for App Store review'
 
     REVIEW_USERNAME = 'applereview'
+    EXPIRED_USERNAME = 'applereview2'
 
     def handle(self, *args, **options):
         try:
@@ -44,6 +45,104 @@ class Command(BaseCommand):
         self._create_coach_conversation(user)
 
         self.stdout.write(self.style.SUCCESS('Review account setup complete!'))
+
+        # Set up the expired-trial account for Apple review (Guideline 2.1)
+        self._setup_expired_account()
+
+    def _setup_expired_account(self):
+        """Create/update a second demo account with an expired trial subscription."""
+        self.stdout.write('\n--- Setting up expired-trial review account ---')
+
+        user, created = User.objects.get_or_create(
+            username=self.EXPIRED_USERNAME,
+            defaults={
+                'email': 'review2@myrecoverypal.com',
+            }
+        )
+        if created:
+            user.set_password('applereview2')
+            self.stdout.write(f'  Created user: {self.EXPIRED_USERNAME}')
+        else:
+            self.stdout.write(f'  User already exists: {self.EXPIRED_USERNAME}')
+
+        user.first_name = 'Jordan'
+        user.last_name = 'T.'
+        user.bio = 'Taking it one day at a time. Grateful for every morning I wake up clear-headed.'
+        user.sobriety_date = date(2025, 12, 1)
+        user.recovery_goals = 'Build healthy habits and stay connected with supportive people.'
+        user.recovery_stage = 'early'
+        user.interests = 'fitness,meditation,journaling'
+        user.is_profile_public = True
+        user.show_sobriety_date = True
+        user.allow_messages = True
+        user.has_completed_onboarding = True
+        user.location = 'United States'
+        user.save()
+
+        # Create an expired trial subscription
+        from apps.accounts.payment_models import Subscription
+        sub, _ = Subscription.objects.get_or_create(
+            user=user,
+            defaults={
+                'tier': 'free',
+                'status': 'expired',
+                'subscription_source': 'manual',
+                'current_period_start': timezone.now() - timedelta(days=21),
+                'current_period_end': timezone.now() - timedelta(days=7),
+                'trial_end': timezone.now() - timedelta(days=7),
+            }
+        )
+        sub.tier = 'free'
+        sub.status = 'expired'
+        sub.subscription_source = 'manual'
+        sub.current_period_start = timezone.now() - timedelta(days=21)
+        sub.current_period_end = timezone.now() - timedelta(days=7)
+        sub.trial_end = timezone.now() - timedelta(days=7)
+        sub.save()
+
+        # Add some check-ins so the account looks real
+        from apps.accounts.models import DailyCheckIn
+        for days_ago in [1, 2, 3]:
+            DailyCheckIn.objects.get_or_create(
+                user=user,
+                date=date.today() - timedelta(days=days_ago),
+                defaults={
+                    'mood': random.randint(5, 8),
+                    'energy_level': random.randint(5, 7),
+                    'craving_level': random.randint(2, 5),
+                    'gratitude': 'Grateful for another sober day.',
+                    'is_shared': False,
+                }
+            )
+
+        # Use up the 3 free AI Coach trial messages
+        from apps.accounts.models import RecoveryCoachSession, CoachMessage
+        session, _ = RecoveryCoachSession.objects.get_or_create(
+            user=user, is_active=True, defaults={'title': 'Recovery Chat'}
+        )
+        if not CoachMessage.objects.filter(session=session).exists():
+            trial_messages = [
+                {'role': 'user', 'content': 'I need some help with cravings.'},
+                {'role': 'assistant', 'content': 'I\'m here for you. Let\'s talk about what you\'re feeling right now.'},
+                {'role': 'user', 'content': 'It\'s been tough this week at work.'},
+                {'role': 'assistant', 'content': 'Work stress is one of the most common triggers. Let\'s explore some coping strategies.'},
+                {'role': 'user', 'content': 'What can I do when I feel the urge?'},
+                {'role': 'assistant', 'content': 'There are several techniques: deep breathing, calling your sponsor, or going for a walk. Which sounds most accessible right now?'},
+            ]
+            for msg in trial_messages:
+                CoachMessage.objects.create(
+                    session=session,
+                    role=msg['role'],
+                    content=msg['content'],
+                    tokens_used=random.randint(30, 100),
+                )
+
+        self.stdout.write(self.style.SUCCESS(
+            f'  Expired-trial account ready: {self.EXPIRED_USERNAME} / applereview2\n'
+            f'  - Trial expired 7 days ago\n'
+            f'  - 3 AI Coach trial messages used\n'
+            f'  - Will see upgrade prompts when using AI Coach or premium features'
+        ))
 
     def _setup_profile(self, user):
         self.stdout.write('  Setting up profile...')

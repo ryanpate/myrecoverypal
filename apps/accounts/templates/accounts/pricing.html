@@ -338,9 +338,23 @@
     </div>
 </div>
 
-<!-- Restore Purchases (iOS only) -->
-<div class="text-center iap-only" style="margin-top: -1rem; margin-bottom: 2rem;">
-    <button class="btn btn-link text-muted" onclick="if(window.MRPIAP) window.MRPIAP.restorePurchases().then(function(r){ if(window.MRPIAP.isPremium) window.location.reload(); else alert('No previous purchases found.'); });">
+<!-- Subscription Terms & Restore Purchases (iOS only) -->
+<div class="iap-only" style="margin-top: -1rem; margin-bottom: 2rem; text-align: center;">
+    <div style="max-width: 500px; margin: 0 auto 1rem; padding: 0 1rem;">
+        <p style="font-size: 0.75rem; color: #888; line-height: 1.5;">
+            <strong>MyRecoveryPal Premium</strong> is an auto-renewable subscription.
+            Monthly ($4.99/month) and Annual ($29.99/year) plans available.
+            Payment will be charged to your Apple ID account at confirmation of purchase.
+            Subscription automatically renews unless canceled at least 24 hours before the end of the current period.
+            Manage and cancel subscriptions in Settings &gt; Apple ID &gt; Subscriptions.
+        </p>
+        <p style="font-size: 0.8rem; margin-top: 0.5rem;">
+            <a href="{% url 'core:terms' %}" style="color: #1e4d8b; text-decoration: underline;">Terms of Use</a>
+            &nbsp;|&nbsp;
+            <a href="{% url 'core:privacy' %}" style="color: #1e4d8b; text-decoration: underline;">Privacy Policy</a>
+        </p>
+    </div>
+    <button class="btn btn-link text-muted" onclick="if(window.MRPIAP) window.MRPIAP.restorePurchases().then(function(r){ if(window.MRPIAP.isPremium) window.location.reload(); else { var t=document.createElement('div');t.className='alert alert-info text-center';t.style.cssText='position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 24px;border-radius:10px;';t.textContent='No previous purchases found.';document.body.appendChild(t);setTimeout(function(){t.remove();},3000); } });">
         <i class="fas fa-redo"></i> Restore Previous Purchases
     </button>
 </div>

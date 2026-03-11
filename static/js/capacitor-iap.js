@@ -278,23 +278,34 @@
             for (var i = 0; i < packages.length; i++) {
                 var pkg = packages[i];
                 var product = pkg.product;
+                var periodName = pkg.packageType === 'MONTHLY' ? 'Monthly' :
+                                 pkg.packageType === 'ANNUAL' ? 'Annual' : '';
                 var label = pkg.packageType === 'MONTHLY' ? '/month' :
                             pkg.packageType === 'ANNUAL' ? '/year' : '';
+                var lengthDesc = pkg.packageType === 'MONTHLY' ? '1 month' :
+                                 pkg.packageType === 'ANNUAL' ? '1 year' : '';
                 var badge = pkg.packageType === 'ANNUAL' ? '<span class="iap-save-badge">BEST VALUE</span>' : '';
 
                 html += '<div class="iap-package">' +
                     badge +
+                    '<div class="iap-product-title" style="font-weight:600;margin-bottom:4px;">' + periodName + '</div>' +
                     '<div class="iap-price">' + product.priceString + '<span class="iap-period">' + label + '</span></div>' +
-                    '<div class="iap-product-title">' + product.title + '</div>' +
+                    '<div class="iap-length" style="font-size:0.75rem;color:#888;margin:2px 0 8px;">Subscription length: ' + lengthDesc + '</div>' +
                     '<button class="iap-buy-btn">Subscribe</button>' +
                     '</div>';
             }
 
             html += '</div>' +
                 '<button class="iap-restore-btn">Restore Purchases</button>' +
-                '<p class="iap-terms">Payment will be charged to your Apple ID account. ' +
+                '<p class="iap-terms">Payment will be charged to your Apple ID account at confirmation of purchase. ' +
                 'Subscription automatically renews unless canceled at least 24 hours before the end of the current period. ' +
-                'Manage subscriptions in iOS Settings.</p>' +
+                'Your account will be charged for renewal within 24 hours prior to the end of the current period. ' +
+                'Manage and cancel subscriptions in your device Settings &gt; Apple ID &gt; Subscriptions.</p>' +
+                '<p class="iap-terms" style="margin-top:8px;">' +
+                '<a href="https://www.myrecoverypal.com/terms/" target="_blank" style="color:#1e4d8b;text-decoration:underline;">Terms of Use</a>' +
+                ' &nbsp;|&nbsp; ' +
+                '<a href="https://www.myrecoverypal.com/privacy/" target="_blank" style="color:#1e4d8b;text-decoration:underline;">Privacy Policy</a>' +
+                '</p>' +
                 '</div>';
 
             return html;
