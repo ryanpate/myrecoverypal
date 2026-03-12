@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Newsletter Archive - MyRecoveryPal{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
+    <h1 style="margin-bottom: 0.5rem;">Newsletter Archive</h1>
+    <p style="color: var(--text-muted, #6c757d); margin-bottom: 2rem;">Past issues of our recovery community newsletter.</p>
+
+    {% if newsletters %}
+        <div class="newsletter-list">
+            {% for newsletter in newsletters %}
+                <div class="card" style="margin-bottom: 1rem; padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="margin: 0 0 0.5rem;">
+                        <a href="{% url 'newsletter:preview' newsletter.pk %}" style="color: var(--text-color, #333); text-decoration: none;">
+                            {{ newsletter.subject }}
+                        </a>
+                    </h3>
+                    <p style="color: var(--text-muted, #6c757d); font-size: 0.875rem; margin: 0;">
+                        {{ newsletter.sent_at|date:"F j, Y" }}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+            <nav style="margin-top: 2rem; text-align: center;">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}" style="margin-right: 1rem;">Previous</a>
+                {% endif %}
+                <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" style="margin-left: 1rem;">Next</a>
+                {% endif %}
+            </nav>
+        {% endif %}
+    {% else %}
+        <p>No newsletters have been published yet.</p>
+    {% endif %}
+
+    <p style="margin-top: 2rem;">
+        <a href="{% url 'newsletter:subscribe' %}">Subscribe to our newsletter</a>
+    </p>
+</div>
+{% endblock %}
