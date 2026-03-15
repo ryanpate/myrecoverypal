@@ -333,7 +333,7 @@ def send_weekly_digests(self):
                 author_id__in=following_ids,
                 created_at__gte=one_week_ago,
                 visibility='public'
-            ).annotate(
+            ).select_related('author').annotate(
                 like_count=db_models.Count('likes')
             ).order_by('-like_count')[:3]
 
