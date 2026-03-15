@@ -752,6 +752,9 @@ STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
 # AI Recovery Coach
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 
+# iOS In-App Purchases (RevenueCat)
+REVENUECAT_IOS_API_KEY = os.environ.get('REVENUECAT_IOS_API_KEY', '')
+
 # Push Notification Services
 # Firebase Cloud Messaging (Android/Web)
 # Download service account JSON from Firebase Console → Project Settings → Service Accounts
