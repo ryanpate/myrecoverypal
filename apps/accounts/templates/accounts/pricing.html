@@ -246,7 +246,7 @@
                             </button>
                             <!-- IAP button (shown only on iOS native app via CSS) -->
                             <button class="btn btn-light btn-block iap-only iap-subscribe-btn"
-                                    onclick="if(window.MRPIAP) window.MRPIAP.showPurchaseUI();">
+                                    onclick="console.log('[IAP] Button clicked, MRPIAP exists:', !!window.MRPIAP); if(window.MRPIAP) { window.MRPIAP.showPurchaseUI(); } else { document.title='IAP NOT LOADED'; }">
                                 Subscribe with Apple
                             </button>
                         {% endif %}

@@ -9,16 +9,21 @@
     // Only run inside iOS Capacitor native app
     if (!window.Capacitor || !window.Capacitor.isNativePlatform() ||
         window.Capacitor.getPlatform() !== 'ios') {
+        console.log('[IAP] Not running in iOS native app, skipping. Capacitor:', !!window.Capacitor, 'isNative:', window.Capacitor && window.Capacitor.isNativePlatform(), 'platform:', window.Capacitor && window.Capacitor.getPlatform());
         return;
     }
+
+    console.log('[IAP] Running in iOS native app, initializing...');
 
     var Purchases = window.Capacitor.Plugins.RevenueCatPurchases ||
                     window.Capacitor.Plugins.Purchases;
 
     if (!Purchases) {
-        console.warn('[IAP] RevenueCat plugin not available');
+        console.warn('[IAP] RevenueCat plugin not available. Available plugins:', Object.keys(window.Capacitor.Plugins || {}));
         return;
     }
+
+    console.log('[IAP] RevenueCat plugin found');
 
     // RevenueCat iOS API key — set via Django template or config
     // This will be populated from the server-rendered page
@@ -29,6 +34,8 @@
         console.warn('[IAP] No RevenueCat API key configured');
         return;
     }
+
+    console.log('[IAP] API key found, proceeding with setup');
 
     function getCSRFToken() {
         var cookies = document.cookie.split(';');
