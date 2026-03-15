@@ -419,7 +419,7 @@ class GroupChallengeForm(forms.ModelForm):
             'completion_message': forms.Textarea(attrs={'rows': 2}),
         }
 
-    def __init__(self, user=None, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
         if user:
