@@ -74,17 +74,16 @@
         init: function() {
             if (MRPIAP.initialized) return Promise.resolve();
 
-            return Purchases.configure({
-                apiKey: apiKey
-            }).then(function() {
+            try {
+                Purchases.configure({ apiKey: apiKey });
                 MRPIAP.initialized = true;
                 console.log('[IAP] RevenueCat initialized');
                 return MRPIAP.checkEntitlements();
-            }).catch(function(err) {
+            } catch (err) {
                 console.error('[IAP] Init error:', err);
                 showIAPToast('Could not connect to App Store. Please try again.', 'error');
                 return Promise.reject(err);
-            });
+            }
         },
 
         /**
