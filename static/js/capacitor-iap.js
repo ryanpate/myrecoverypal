@@ -75,6 +75,8 @@
                 return MRPIAP.checkEntitlements();
             }).catch(function(err) {
                 console.error('[IAP] Init error:', err);
+                showIAPToast('Could not connect to App Store. Please try again.', 'error');
+                return Promise.reject(err);
             });
         },
 
@@ -188,6 +190,8 @@
             if (!MRPIAP.initialized) {
                 MRPIAP.init().then(function() {
                     MRPIAP._displayPurchaseSheet();
+                }).catch(function(err) {
+                    console.error('[IAP] Could not initialize for purchase:', err);
                 });
             } else {
                 MRPIAP._displayPurchaseSheet();
