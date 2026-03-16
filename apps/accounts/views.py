@@ -4567,6 +4567,58 @@ def reply_to_comment(request, comment_id):
 
 @login_required
 @require_POST
+def edit_comment(request, comment_id):
+    """Edit a comment (only by author)"""
+    try:
+        comment = get_object_or_404(SocialPostComment, id=comment_id)
+
+        if comment.author != request.user:
+            return JsonResponse({'error': 'You can only edit your own comments'}, status=403)
+
+        content = request.POST.get('content', '').strip()
+        if not content:
+            return JsonResponse({'error': 'Comment content is required'}, status=400)
+
+        if len(content) > 500:
+            return JsonResponse({'error': 'Comment is too long (max 500 characters)'}, status=400)
+
+        comment.content = content
+        comment.save()
+
+        return JsonResponse({
+            'success': True,
+            'content': comment.content,
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=503)
+
+
+@login_required
+@require_POST
+def delete_comment(request, comment_id):
+    """Delete a comment (only by author or post author or staff)"""
+    try:
+        comment = get_object_or_404(SocialPostComment, id=comment_id)
+
+        if comment.author != request.user and comment.post.author != request.user and not request.user.is_staff:
+            return JsonResponse({'error': 'You do not have permission to delete this comment'}, status=403)
+
+        post_id = comment.post.id
+        comment.delete()
+
+        # Return updated comment count
+        comment_count = SocialPostComment.objects.filter(post_id=post_id).count()
+
+        return JsonResponse({
+            'success': True,
+            'comment_count': comment_count,
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=503)
+
+
+@login_required
+@require_POST
 def edit_social_post(request, post_id):
     """Edit a social post (only by author or admin)"""
     try:

@@ -389,6 +389,51 @@
         margin-top: 0.25rem;
     }
 
+    .comment-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 0.25rem;
+    }
+
+    .comment-actions {
+        display: inline-flex;
+        gap: 0.5rem;
+        opacity: 0;
+        transition: opacity 0.15s;
+    }
+
+    .comment:hover .comment-actions {
+        opacity: 1;
+    }
+
+    @media (hover: none) {
+        .comment-actions {
+            opacity: 1;
+        }
+    }
+
+    .comment-action-btn {
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        font-size: 0.75rem;
+        padding: 0;
+    }
+
+    .comment-action-btn:hover {
+        color: var(--primary-light);
+    }
+
+    .comment-action-btn .fa-trash-alt {
+        color: inherit;
+    }
+
+    .comment-action-btn:hover .fa-trash-alt {
+        color: #dc3545;
+    }
+
     .comment-form {
         display: flex;
         gap: 0.5rem;
@@ -1448,7 +1493,7 @@
                 <div class="comments-section" id="comments-{{ post.id }}" style="display: none;">
                     <div class="comments-list">
                         {% for comment in post.comments.all %}
-                        <div class="comment">
+                        <div class="comment" id="comment-{{ comment.id }}">
                             {% if comment.author.avatar %}
                             <img src="{{ comment.author.avatar.url }}" alt="{{ comment.author.username }}" class="comment-avatar" style="border-radius: 50%; object-fit: cover;">
                             {% else %}
@@ -1457,7 +1502,19 @@
                             <div class="comment-content">
                                 <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</div>
                                 <div class="comment-text">{{ comment.content }}</div>
-                                <div class="comment-time">{{ comment.created_at|timesince }} ago</div>
+                                <div class="comment-meta">
+                                    <span class="comment-time">{{ comment.created_at|timesince }} ago</span>
+                                    {% if comment.author == user %}
+                                    <span class="comment-actions">
+                                        <button class="comment-action-btn edit-comment-btn" data-comment-id="{{ comment.id }}" data-content="{{ comment.content|escapejs }}"><i class="fas fa-pencil-alt"></i> Edit</button>
+                                        <button class="comment-action-btn delete-comment-btn" data-comment-id="{{ comment.id }}" data-post-id="{{ post.id }}"><i class="fas fa-trash-alt"></i> Delete</button>
+                                    </span>
+                                    {% elif post.author == user or user.is_staff %}
+                                    <span class="comment-actions">
+                                        <button class="comment-action-btn delete-comment-btn" data-comment-id="{{ comment.id }}" data-post-id="{{ post.id }}"><i class="fas fa-trash-alt"></i> Delete</button>
+                                    </span>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
@@ -1581,6 +1638,18 @@
             </div>
             {% endif %}
         {% endif %}
+    </div>
+</div>
+
+<!-- Edit Comment Modal -->
+<div class="edit-modal-overlay" id="editCommentModal">
+    <div class="edit-modal">
+        <h3><i class="fas fa-edit"></i> Edit Comment</h3>
+        <textarea id="editCommentContent" placeholder="Edit your comment..." maxlength="500"></textarea>
+        <div class="edit-modal-actions">
+            <button class="edit-modal-cancel" onclick="closeEditCommentModal()">Cancel</button>
+            <button class="edit-modal-save" id="saveCommentEditBtn">Save Changes</button>
+        </div>
     </div>
 </div>
 
@@ -1926,7 +1995,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="comment-content">
                     <div class="comment-author">${currentUser.fullName}</div>
                     <div class="comment-text">${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
-                    <div class="comment-time"><i class="fas fa-spinner fa-spin"></i> Sending...</div>
+                    <div class="comment-meta">
+                        <span class="comment-time"><i class="fas fa-spinner fa-spin"></i> Sending...</span>
+                    </div>
                 </div>
             `;
 
@@ -1970,9 +2041,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (comment) {
                         comment.classList.remove('optimistic');
                         comment.id = `comment-${data.comment.id}`;
-                        const timeEl = comment.querySelector('.comment-time');
-                        if (timeEl) {
-                            timeEl.innerHTML = 'Just now';
+                        const escapedContent = content.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                        const metaEl = comment.querySelector('.comment-meta');
+                        if (metaEl) {
+                            metaEl.innerHTML = `<span class="comment-time">Just now</span>
+                                <span class="comment-actions">
+                                    <button class="comment-action-btn edit-comment-btn" data-comment-id="${data.comment.id}" data-content="${escapedContent}"><i class="fas fa-pencil-alt"></i> Edit</button>
+                                    <button class="comment-action-btn delete-comment-btn" data-comment-id="${data.comment.id}" data-post-id="${postId}"><i class="fas fa-trash-alt"></i> Delete</button>
+                                </span>`;
                         }
                     }
                 } else {
@@ -2198,6 +2274,107 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         return cookieValue;
+    }
+});
+
+// --- Comment Edit/Delete ---
+
+let currentEditCommentId = null;
+
+function closeEditCommentModal() {
+    document.getElementById('editCommentModal').style.display = 'none';
+    document.getElementById('editCommentContent').value = '';
+    currentEditCommentId = null;
+}
+
+document.getElementById('editCommentModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeEditCommentModal();
+    }
+});
+
+// Use event delegation for edit/delete comment buttons (works with dynamically added comments)
+document.addEventListener('click', function(e) {
+    // Edit comment
+    var editBtn = e.target.closest('.edit-comment-btn');
+    if (editBtn) {
+        e.stopPropagation();
+        currentEditCommentId = editBtn.dataset.commentId;
+        document.getElementById('editCommentContent').value = editBtn.dataset.content;
+        document.getElementById('editCommentModal').style.display = 'flex';
+        return;
+    }
+
+    // Delete comment
+    var deleteBtn = e.target.closest('.delete-comment-btn');
+    if (deleteBtn) {
+        e.stopPropagation();
+        if (!confirm('Delete this comment?')) return;
+
+        var commentId = deleteBtn.dataset.commentId;
+        var postId = deleteBtn.dataset.postId;
+        var commentEl = document.getElementById('comment-' + commentId);
+
+        fetch('/accounts/social-feed/comment/' + commentId + '/delete/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                if (commentEl) commentEl.remove();
+                // Update comment count
+                var countEl = document.querySelector('[data-post-id="' + postId + '"].comment-toggle-btn span');
+                if (countEl) {
+                    var c = data.comment_count;
+                    countEl.textContent = c + ' comment' + (c !== 1 ? 's' : '');
+                }
+            } else {
+                showToast(data.error || 'Failed to delete comment', 'error');
+            }
+        })
+        .catch(function() {
+            showToast('Failed to delete comment. Please try again.', 'error');
+        });
+        return;
+    }
+});
+
+// Save comment edit
+document.getElementById('saveCommentEditBtn').addEventListener('click', async function() {
+    var content = document.getElementById('editCommentContent').value.trim();
+    if (!content) {
+        showToast('Comment cannot be empty', 'error');
+        return;
+    }
+
+    try {
+        var formData = new FormData();
+        formData.append('content', content);
+
+        var response = await fetch('/accounts/social-feed/comment/' + currentEditCommentId + '/edit/', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }
+        });
+
+        var data = await response.json();
+
+        if (data.success) {
+            var commentEl = document.getElementById('comment-' + currentEditCommentId);
+            if (commentEl) {
+                commentEl.querySelector('.comment-text').textContent = data.content;
+                // Update the edit button's data-content so re-editing works
+                var editBtn = commentEl.querySelector('.edit-comment-btn');
+                if (editBtn) editBtn.dataset.content = data.content;
+            }
+            closeEditCommentModal();
+        } else {
+            showToast(data.error || 'Failed to edit comment', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Failed to edit comment', 'error');
     }
 });
 

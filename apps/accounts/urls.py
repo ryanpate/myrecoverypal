@@ -80,6 +80,8 @@ urlpatterns = [
     path('social-feed/post/<int:post_id>/edit/', views.edit_social_post, name='edit_social_post'),
     path('social-feed/comment/<int:comment_id>/like/', views.like_comment, name='like_comment'),
     path('social-feed/comment/<int:comment_id>/reply/', views.reply_to_comment, name='reply_to_comment'),
+    path('social-feed/comment/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
+    path('social-feed/comment/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
 
     # Follow/Following System
     path('follow/<str:username>/', views.follow_user, name='follow_user'),
