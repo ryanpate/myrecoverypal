@@ -108,6 +108,13 @@
 .feed-fragment .comment-author { font-weight: 600; font-size: 0.85rem; }
 .feed-fragment .comment-text { font-size: 0.9rem; color: #374151; }
 .feed-fragment .comment-time { font-size: 0.75rem; color: #9ca3af; }
+.feed-fragment .comment-meta { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.15rem; }
+.feed-fragment .comment-actions { display: inline-flex; gap: 0.5rem; opacity: 0; transition: opacity 0.15s; }
+.feed-fragment .comment:hover .comment-actions { opacity: 1; }
+@media (hover: none) { .feed-fragment .comment-actions { opacity: 1; } }
+.feed-fragment .comment-action-btn { background: none; border: none; color: #999; cursor: pointer; font-size: 0.75rem; padding: 0; }
+.feed-fragment .comment-action-btn:hover { color: #1e4d8b; }
+.feed-fragment .comment-action-btn:hover .fa-trash-alt { color: #dc3545; }
 .feed-fragment .comment-form {
     display: flex; gap: 0.5rem; margin-top: 0.5rem;
 }
@@ -149,6 +156,8 @@
 [data-theme="dark"] .feed-fragment .comment-text { color: #d1d5db; }
 [data-theme="dark"] .feed-fragment .comment-author { color: #e5e7eb; }
 [data-theme="dark"] .feed-fragment .comment-submit { color: #6cb4ee; }
+[data-theme="dark"] .feed-fragment .comment-action-btn { color: #6b7280; }
+[data-theme="dark"] .feed-fragment .comment-action-btn:hover { color: #6cb4ee; }
 [data-theme="dark"] .feed-fragment .post-meta { color: #9ca3af; }
 [data-theme="dark"] .feed-fragment .post-btn { color: #fff; }
 [data-theme="dark"] .feed-fragment .visibility-select { background: #374151; border-color: #4b5563; color: #e5e7eb; }
@@ -245,7 +254,19 @@
                             <div class="comment-content">
                                 <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</div>
                                 <div class="comment-text">{{ comment.content }}</div>
-                                <div class="comment-time">{{ comment.created_at|timesince }} ago</div>
+                                <div class="comment-meta">
+                                    <span class="comment-time">{{ comment.created_at|timesince }} ago</span>
+                                    {% if comment.author == user %}
+                                    <span class="comment-actions">
+                                        <button class="comment-action-btn frag-edit-comment-btn" data-comment-id="{{ comment.id }}" data-content="{{ comment.content|escapejs }}"><i class="fas fa-pencil-alt"></i> Edit</button>
+                                        <button class="comment-action-btn frag-delete-comment-btn" data-comment-id="{{ comment.id }}" data-post-id="{{ post.id }}"><i class="fas fa-trash-alt"></i> Delete</button>
+                                    </span>
+                                    {% elif post.author == user or user.is_staff %}
+                                    <span class="comment-actions">
+                                        <button class="comment-action-btn frag-delete-comment-btn" data-comment-id="{{ comment.id }}" data-post-id="{{ post.id }}"><i class="fas fa-trash-alt"></i> Delete</button>
+                                    </span>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
@@ -360,6 +381,68 @@
         }
     });
 
+    // Delete comment
+    container.addEventListener('click', function(e) {
+        var deleteBtn = e.target.closest('.frag-delete-comment-btn');
+        if (deleteBtn) {
+            if (!confirm('Delete this comment?')) return;
+            var commentId = deleteBtn.dataset.commentId;
+            var postId = deleteBtn.dataset.postId;
+            var commentEl = deleteBtn.closest('.comment');
+            var csrfToken = container.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+            fetch('/accounts/social-feed/comment/' + commentId + '/delete/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    commentEl.remove();
+                    var countSpan = container.querySelector('.post-card[data-post-id="' + postId + '"] .comments-count');
+                    if (countSpan) {
+                        countSpan.textContent = data.comment_count + ' comment' + (data.comment_count !== 1 ? 's' : '');
+                    }
+                } else {
+                    alert(data.error || 'Could not delete comment.');
+                }
+            });
+        }
+
+        // Edit comment
+        var editBtn = e.target.closest('.frag-edit-comment-btn');
+        if (editBtn) {
+            var commentId = editBtn.dataset.commentId;
+            var currentContent = editBtn.dataset.content;
+            var newContent = prompt('Edit comment:', currentContent);
+            if (newContent === null || newContent.trim() === '' || newContent.trim() === currentContent) return;
+            var csrfToken = container.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+            fetch('/accounts/social-feed/comment/' + commentId + '/edit/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'content=' + encodeURIComponent(newContent.trim())
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    var commentEl = editBtn.closest('.comment');
+                    commentEl.querySelector('.comment-text').textContent = data.content;
+                    editBtn.dataset.content = data.content;
+                } else {
+                    alert(data.error || 'Could not edit comment.');
+                }
+            });
+        }
+    });
+
     // Comment forms
     container.addEventListener('submit', function(e) {
         var form = e.target.closest('.frag-comment-form');
@@ -384,9 +467,13 @@
                 var list = form.closest('.comments-section').querySelector('.comments-list');
                 var div = document.createElement('div');
                 div.className = 'comment';
+                var escapedContent = content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                var escapedForAttr = content.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 div.innerHTML = '<div class="comment-content"><div class="comment-author">' +
-                    (data.author_name || 'You') + '</div><div class="comment-text">' +
-                    content + '</div><div class="comment-time">Just now</div></div>';
+                    ((data.comment && data.comment.author && data.comment.author.full_name) || 'You') + '</div><div class="comment-text">' +
+                    escapedContent + '</div><div class="comment-meta"><span class="comment-time">Just now</span>' +
+                    '<span class="comment-actions"><button class="comment-action-btn frag-edit-comment-btn" data-comment-id="' + data.comment.id + '" data-content="' + escapedForAttr + '"><i class="fas fa-pencil-alt"></i> Edit</button>' +
+                    '<button class="comment-action-btn frag-delete-comment-btn" data-comment-id="' + data.comment.id + '" data-post-id="' + postId + '"><i class="fas fa-trash-alt"></i> Delete</button></span></div></div>';
                 list.appendChild(div);
                 input.value = '';
 
