@@ -24,7 +24,15 @@ class DatabaseConnectionMiddleware:
         # Close stale connections before processing
         close_old_connections()
 
-        response = self.get_response(request)
+        try:
+            response = self.get_response(request)
+        except (OperationalError, InterfaceError):
+            # Connection died mid-request — close all and retry once
+            logger.warning("Database connection lost mid-request, retrying with fresh connection")
+            for conn in connections.all():
+                conn.close()
+            response = self.get_response(request)
+
         return response
 
     def process_exception(self, request, exception):
