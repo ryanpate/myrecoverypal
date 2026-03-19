@@ -20,17 +20,41 @@ class DatabaseConnectionMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
+    def _close_all_connections(self):
+        """Force-close all database connections so Django opens fresh ones."""
+        for conn in connections.all():
+            try:
+                conn.close()
+            except Exception:
+                pass
+            # If conn.close() failed to clear the underlying connection
+            # (e.g. psycopg2 raises on an already-dead socket), null it out
+            # so Django doesn't try to reuse it.
+            if conn.connection is not None:
+                try:
+                    conn.connection.close()
+                except Exception:
+                    pass
+                conn.connection = None
+
     def __call__(self, request):
-        # Close stale connections before processing
+        # Validate existing connections — closes those past conn_max_age
         close_old_connections()
+
+        # Proactively verify the default connection is alive.
+        # Railway's proxy can kill idle connections before conn_max_age expires.
+        try:
+            connection.ensure_connection()
+        except (OperationalError, InterfaceError):
+            logger.warning("Stale database connection detected pre-request, reconnecting")
+            self._close_all_connections()
 
         try:
             response = self.get_response(request)
-        except (OperationalError, InterfaceError):
+        except (OperationalError, InterfaceError) as e:
             # Connection died mid-request — close all and retry once
-            logger.warning("Database connection lost mid-request, retrying with fresh connection")
-            for conn in connections.all():
-                conn.close()
+            logger.warning("Database connection lost mid-request (%s), retrying", e)
+            self._close_all_connections()
             response = self.get_response(request)
 
         return response
@@ -41,9 +65,8 @@ class DatabaseConnectionMiddleware:
         so the next request starts fresh.
         """
         if isinstance(exception, (OperationalError, InterfaceError)):
-            logger.warning(f"Database connection error during request: {exception}")
-            for conn in connections.all():
-                conn.close()
+            logger.warning("Database connection error during request: %s", exception)
+            self._close_all_connections()
         return None
 
 class NoCacheHTMLMiddleware:
