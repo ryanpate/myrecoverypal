@@ -926,6 +926,72 @@
     }
 
     /* ================================================
+       APP DOWNLOAD SECTION
+    ================================================ */
+    .app-download-section {
+        padding: 5rem 2rem;
+        background: linear-gradient(135deg, #f0f7ff 0%, #f0faf5 100%);
+    }
+
+    .app-download-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .app-download-text h2 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #1e4d8b;
+        margin-bottom: 1rem;
+    }
+
+    .app-download-text p {
+        color: #555;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        max-width: 650px;
+        margin: 0 auto 1.5rem;
+    }
+
+    .app-store-link {
+        display: inline-block;
+        transition: transform 0.3s ease;
+        margin-bottom: 2rem;
+    }
+
+    .app-store-link:hover {
+        transform: scale(1.05);
+    }
+
+    .app-download-features {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .app-feature-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: white;
+        color: #1e4d8b;
+        font-size: 0.88rem;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        border: 1px solid #dde4f0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .app-feature-pill i {
+        color: #52b788;
+        font-size: 0.85rem;
+    }
+
+    /* ================================================
        MOBILE RESPONSIVE
     ================================================ */
     @media (max-width: 768px) {
@@ -1037,6 +1103,7 @@
             <span class="hero-trust-badge"><i class="fas fa-check-circle" aria-hidden="true"></i> Free to Join</span>
             <span class="hero-trust-badge"><i class="fas fa-lock" aria-hidden="true"></i> Private &amp; Secure</span>
             <span class="hero-trust-badge"><i class="fas fa-robot" aria-hidden="true"></i> AI Coach Included</span>
+            <span class="hero-trust-badge"><i class="fab fa-apple" aria-hidden="true"></i> Available on iOS</span>
         </div>
 
         {% if user.is_authenticated %}
@@ -1046,7 +1113,10 @@
         {% else %}
         <div class="hero-cta-group">
             <a href="{% url 'accounts:register' %}" class="cta-button cta-button-pulse">Join Free Today</a>
-            <a href="{% url 'core:demo' %}" class="hero-secondary-link">See how it works <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <a href="https://apps.apple.com/us/app/myrecoverypal/id6760084657" class="hero-secondary-link"><i class="fab fa-apple" aria-hidden="true"></i> Download iOS App</a>
+                <a href="{% url 'core:demo' %}" class="hero-secondary-link">See how it works <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            </div>
         </div>
         {% endif %}
     </div>
@@ -1077,6 +1147,10 @@
         <div class="trust-strip-item">
             <i class="fas fa-robot" aria-hidden="true"></i>
             24/7 AI-powered recovery support
+        </div>
+        <div class="trust-strip-item">
+            <i class="fab fa-apple" aria-hidden="true"></i>
+            <a href="https://apps.apple.com/us/app/myrecoverypal/id6760084657" style="color: inherit; text-decoration: none;">Available on the App Store</a>
         </div>
     </div>
 </section>
@@ -1286,7 +1360,38 @@
 </section>
 
 <!-- ================================================
-     SECTION 8: FINAL CTA BANNER
+     SECTION 8: DOWNLOAD THE APP
+================================================ -->
+<section class="app-download-section">
+    <div class="container">
+        <div class="app-download-inner">
+            <div class="app-download-text">
+                <span class="badge-pill" style="background: linear-gradient(135deg, #1e4d8b, #4db8e8);">NEW</span>
+                <h2>Get the Free iOS App</h2>
+                <p>Take your recovery community everywhere. MyRecoveryPal for iPhone includes Face ID sign-in, push notifications, a home screen sobriety widget, and full access to Anchor AI Coach.</p>
+                <a href="https://apps.apple.com/us/app/myrecoverypal/id6760084657" class="app-store-link" aria-label="Download MyRecoveryPal on the App Store">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="150" height="50" role="img" aria-hidden="true">
+                        <rect width="120" height="40" rx="6" fill="#000"/>
+                        <text x="42" y="13" fill="#fff" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="7" font-weight="400">Download on the</text>
+                        <text x="42" y="27" fill="#fff" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="600">App Store</text>
+                        <text x="16" y="27" fill="#fff" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="22"></text>
+                    </svg>
+                </a>
+            </div>
+            <div class="app-download-features">
+                <div class="app-feature-pill"><i class="fas fa-fingerprint" aria-hidden="true"></i> Face ID Login</div>
+                <div class="app-feature-pill"><i class="fas fa-bell" aria-hidden="true"></i> Push Notifications</div>
+                <div class="app-feature-pill"><i class="fas fa-th-large" aria-hidden="true"></i> Home Screen Widget</div>
+                <div class="app-feature-pill"><i class="fas fa-robot" aria-hidden="true"></i> AI Coach</div>
+                <div class="app-feature-pill"><i class="fas fa-hand-pointer" aria-hidden="true"></i> Haptic Feedback</div>
+                <div class="app-feature-pill"><i class="fas fa-share-nodes" aria-hidden="true"></i> Native Sharing</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================
+     SECTION 9: FINAL CTA BANNER
 ================================================ -->
 <section class="cta-banner">
     <div class="container">
@@ -1302,7 +1407,7 @@
 </section>
 
 <!-- ================================================
-     SECTION 9: BLOG ARTICLES
+     SECTION 10: BLOG ARTICLES
 ================================================ -->
 <section class="blog-section">
     <div class="container">
