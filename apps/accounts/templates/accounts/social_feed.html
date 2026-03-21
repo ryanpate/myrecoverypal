@@ -1473,14 +1473,14 @@
 
                 <!-- Engagement Stats -->
                 <div class="post-engagement">
-                    <span class="likes-count">{{ post.likes.count }} like{{ post.likes.count|pluralize }}</span>
+                    <span class="likes-count">{{ post.reaction_count }} like{{ post.reaction_count|pluralize }}</span>
                     <span class="comments-count" style="cursor:pointer;" onclick="toggleComments('{{ post.id }}')">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="post-actions-bar">
-                    <button class="action-btn like-btn {% if user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
-                        <i class="{% if user in post.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                    <button class="action-btn like-btn {% if post.user_has_reacted %}liked{% endif %}" data-post-id="{{ post.id }}">
+                        <i class="{% if post.user_has_reacted %}fas{% else %}far{% endif %} fa-heart"></i>
                         <span>Like</span>
                     </button>
                     <button class="action-btn comment-toggle-btn" data-post-id="{{ post.id }}" onclick="toggleComments('{{ post.id }}'); return false;">

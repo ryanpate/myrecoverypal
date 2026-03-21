@@ -751,7 +751,7 @@ def dashboard_view(request):
     # Social posts for mobile feed (gracefully handle if table doesn't exist yet)
     try:
         social_posts = SocialPost.objects.select_related('author').prefetch_related(
-            'likes',
+            'reactions',
             'comments__author'
         ).all()[:10]
 
@@ -759,6 +759,8 @@ def dashboard_view(request):
         visible_social_posts = []
         for post in social_posts:
             if post.is_visible_to(user):
+                post.reaction_count = len(post.reactions.all())
+                post.user_has_reacted = any(r.user_id == user.id for r in post.reactions.all())
                 visible_social_posts.append(post)
 
         context['social_posts'] = visible_social_posts
@@ -3920,7 +3922,7 @@ def social_feed_view(request):
 
         # Get posts visible to the current user
         posts = SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
-            'likes',
+            'reactions',
             'comments__author'
         ).order_by('-created_at')
 
@@ -3935,6 +3937,14 @@ def social_feed_view(request):
 
         for post in posts:
             if post.is_visible_to(user if user.is_authenticated else None):
+                # Annotate reaction count and user's reaction using prefetched data
+                post.reaction_count = len(post.reactions.all())
+                post.user_has_reacted = False
+                if user.is_authenticated:
+                    for r in post.reactions.all():
+                        if r.user_id == user.id:
+                            post.user_has_reacted = True
+                            break
                 visible_posts.append(post)
                 # Track posts from followed users
                 if user.is_authenticated and post.author_id in following_ids:
@@ -4063,7 +4073,7 @@ def hybrid_landing_view(request):
 
             # Social feed data - Get posts visible to the current user
             posts = SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
-                'likes',
+                'reactions',
                 'comments__author'
             ).order_by('-created_at')
 
@@ -4071,6 +4081,8 @@ def hybrid_landing_view(request):
             visible_posts = []
             for post in posts:
                 if post.is_visible_to(user):
+                    post.reaction_count = len(post.reactions.all())
+                    post.user_has_reacted = any(r.user_id == user.id for r in post.reactions.all())
                     visible_posts.append(post)
 
             # Check-in streak
@@ -4124,9 +4136,12 @@ def hybrid_landing_view(request):
         else:
             # For unauthenticated users, only show public posts
             visible_posts = list(SocialPost.objects.select_related('author', 'author__subscription').prefetch_related(
-                'likes',
+                'reactions',
                 'comments__author'
             ).filter(visibility='public'))
+            for post in visible_posts:
+                post.reaction_count = len(post.reactions.all())
+                post.user_has_reacted = False
 
         # Pagination (same for both authenticated and unauthenticated)
         paginator = Paginator(visible_posts, 15)
@@ -4172,7 +4187,7 @@ def social_feed_posts_api(request):
         if user.is_authenticated:
             # Get all posts with related data
             posts = SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
-                'likes',
+                'reactions',
                 'comments__author'
             ).order_by('-created_at')
 
@@ -4181,7 +4196,7 @@ def social_feed_posts_api(request):
         else:
             # For unauthenticated users, only show public posts
             visible_posts = list(SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
-                'likes',
+                'reactions',
                 'comments__author'
             ).filter(visibility='public').order_by('-created_at'))
 
@@ -4208,8 +4223,8 @@ def social_feed_posts_api(request):
                     'created_at': timesince(comment.created_at) + ' ago',
                 })
 
-            # Check if current user liked this post
-            user_liked = user.is_authenticated and post.likes.filter(id=user.id).exists()
+            # Check if current user reacted to this post
+            user_liked = user.is_authenticated and any(r.user_id == user.id for r in post.reactions.all())
 
             # Check if post belongs to current user
             is_own_post = user.is_authenticated and post.author.id == user.id
@@ -4229,7 +4244,7 @@ def social_feed_posts_api(request):
                 'image_url': post.image.url if post.image else None,
                 'visibility': post.visibility,
                 'created_at': timesince(post.created_at) + ' ago',
-                'likes_count': post.likes.count(),
+                'likes_count': len(post.reactions.all()),
                 'comments_count': post.comments.count(),
                 'user_liked': user_liked,
                 'is_own_post': is_own_post,

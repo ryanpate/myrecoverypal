@@ -1156,9 +1156,9 @@
                         <img src="{{ post.image.url }}" alt="Image shared by {{ post.author.username }} in recovery community" class="mobile-post-image">
                         {% endif %}
                         <div class="mobile-post-engagement">
-                            <button class="mobile-action-btn mobile-like-btn {% if user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
-                                <i class="{% if user in post.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
-                                <span>{{ post.likes.count }}</span>
+                            <button class="mobile-action-btn mobile-like-btn {% if post.user_has_reacted %}liked{% endif %}" data-post-id="{{ post.id }}">
+                                <i class="{% if post.user_has_reacted %}fas{% else %}far{% endif %} fa-heart"></i>
+                                <span>{{ post.reaction_count }}</span>
                             </button>
                             <button class="mobile-action-btn" onclick="window.location.href='{% url 'accounts:social_feed' %}'">
                                 <i class="far fa-comment"></i>

@@ -1847,7 +1847,7 @@
 
                         <!-- Engagement Stats -->
                         <div class="post-engagement">
-                            <span class="likes-count">{{ post.likes.count }} like{{ post.likes.count|pluralize }}</span>
+                            <span class="likes-count">{{ post.reaction_count }} like{{ post.reaction_count|pluralize }}</span>
                             <span class="comments-count {% if user.is_authenticated %}comment-toggle-link{% endif %}" data-post-id="{{ post.id }}" style="{% if user.is_authenticated %}cursor: pointer; user-select: none;{% endif %}" {% if user.is_authenticated %}onclick="toggleComments('{{ post.id }}'); return false;"{% endif %}>{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
                         </div>
 
@@ -1861,8 +1861,8 @@
                                     <button class="reaction-btn" data-reaction="strong" title="Strength">💪</button>
                                     <button class="reaction-btn" data-reaction="celebrate" title="Celebrate">🎉</button>
                                 </div>
-                                <button class="post-action-btn react-btn {% if user in post.likes.all %}reacted{% endif %}" data-post-id="{{ post.id }}">
-                                    <span class="user-reaction">{% if user in post.likes.all %}❤️{% else %}<i class="far fa-heart"></i>{% endif %}</span>
+                                <button class="post-action-btn react-btn {% if post.user_has_reacted %}reacted{% endif %}" data-post-id="{{ post.id }}">
+                                    <span class="user-reaction">{% if post.user_has_reacted %}❤️{% else %}<i class="far fa-heart"></i>{% endif %}</span>
                                     <span>React</span>
                                 </button>
                             </div>
