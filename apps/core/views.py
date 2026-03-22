@@ -225,7 +225,13 @@ Sitemap: https://www.myrecoverypal.com/sitemap.xml
 
 # Custom Error Handlers
 def custom_404(request, exception):
-    """Custom 404 error page"""
+    """Custom 404 error page — logs the missing URL for debugging"""
+    import logging
+    logger = logging.getLogger('django.request')
+    logger.warning('404 Not Found: %s (Referer: %s, UA: %s)',
+                   request.get_full_path(),
+                   request.META.get('HTTP_REFERER', 'none'),
+                   request.META.get('HTTP_USER_AGENT', 'none')[:100])
     return render(request, '404.html', status=404)
 
 

@@ -21,7 +21,7 @@ Allow: /support/
 
 # Allow public account pages (login, signup)
 Allow: /accounts/login/
-Allow: /accounts/signup/
+Allow: /accounts/register/
 Allow: /accounts/password-reset/
 
 # Disallow private/user content

@@ -5,11 +5,21 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
+from django.views.generic import RedirectView
 from apps.core.views import robots_txt_view, ads_txt_view
 from recovery_hub.sitemaps import sitemaps
 from apps.accounts.admin_dashboard import engagement_dashboard, ab_test_results
 
 urlpatterns = [
+    # Redirects for common 404 sources (old URLs, common crawl patterns)
+    path('accounts/signup/', RedirectView.as_view(pattern_name='accounts:register', permanent=True)),
+    path('signup/', RedirectView.as_view(pattern_name='accounts:register', permanent=True)),
+    path('register/', RedirectView.as_view(pattern_name='accounts:register', permanent=True)),
+    path('login/', RedirectView.as_view(pattern_name='accounts:login', permanent=True)),
+    path('feed/', RedirectView.as_view(pattern_name='accounts:social_feed', permanent=True)),
+    path('dashboard/', RedirectView.as_view(pattern_name='accounts:dashboard', permanent=True)),
+    path('profile/', RedirectView.as_view(pattern_name='accounts:dashboard', permanent=True)),
+
     # Custom admin dashboards (must be before admin.site.urls)
     path('admin/dashboard/ab-tests/', ab_test_results, name='admin_ab_test_results'),
     path('admin/dashboard/', engagement_dashboard, name='admin_engagement_dashboard'),
