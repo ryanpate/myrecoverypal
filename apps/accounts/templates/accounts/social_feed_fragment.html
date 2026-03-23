@@ -164,6 +164,28 @@
 [data-theme="dark"] .feed-fragment .empty-state { color: #9ca3af; }
 [data-theme="dark"] .feed-fragment .checkin-post-mood { color: #d1fae5; }
 [data-theme="dark"] .feed-fragment .checkin-post-gratitude { color: #a7f3d0; }
+
+/* Link preview cards */
+.feed-fragment .post-content a { color: #1e4d8b; text-decoration: none; word-break: break-all; }
+.feed-fragment .post-content a:hover { text-decoration: underline; }
+[data-theme="dark"] .feed-fragment .post-content a { color: #6cb4ee; }
+.feed-fragment .link-preview {
+    display: flex; border: 1px solid #e0e0e0; border-radius: 12px;
+    overflow: hidden; margin-top: 0.75rem; text-decoration: none;
+    color: inherit; background: #fafafa; transition: background 0.2s;
+}
+.feed-fragment .link-preview:hover { background: #f0f0f0; text-decoration: none; color: inherit; }
+.feed-fragment .link-preview.no-image { flex-direction: column; }
+.feed-fragment .link-preview-image { width: 120px; min-height: 90px; object-fit: cover; flex-shrink: 0; background: #e8e8e8; }
+.feed-fragment .link-preview-body { padding: 0.75rem; min-width: 0; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0.25rem; }
+.feed-fragment .link-preview-domain { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.02em; display: flex; align-items: center; gap: 0.35rem; }
+.feed-fragment .link-preview-domain img { width: 14px; height: 14px; border-radius: 2px; }
+.feed-fragment .link-preview-title { font-size: 0.9rem; font-weight: 600; color: #333; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.feed-fragment .link-preview-desc { font-size: 0.8rem; color: #666; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+[data-theme="dark"] .feed-fragment .link-preview { border-color: #404040; background: #1a1a2e; }
+[data-theme="dark"] .feed-fragment .link-preview:hover { background: #252540; }
+[data-theme="dark"] .feed-fragment .link-preview-title { color: #e0e0e0; }
+[data-theme="dark"] .feed-fragment .link-preview-desc { color: #aaa; }
 </style>
 
 <div class="feed-fragment">
@@ -219,7 +241,7 @@
                     {% endif %}
                 </div>
                 {% else %}
-                <div class="post-content">{{ post.content }}</div>
+                <div class="post-content">{{ post.content|urlize }}</div>
                 {% endif %}
 
                 {% if post.image %}
@@ -486,5 +508,53 @@
             }
         });
     });
+})();
+
+// Link previews for fragment
+(function() {
+    var previewCache = {};
+    var PREVIEW_URL = '{% url "accounts:link_preview_api" %}';
+
+    function escapeHtml(str) {
+        var d = document.createElement('div'); d.textContent = str; return d.innerHTML;
+    }
+
+    function createPreviewCard(data, href) {
+        var card = document.createElement('a');
+        card.href = href; card.target = '_blank'; card.rel = 'noopener';
+        card.className = 'link-preview' + (data.image ? '' : ' no-image');
+        var h = '';
+        if (data.image) h += '<img class="link-preview-image" src="' + escapeHtml(data.image) + '" alt="" loading="lazy" onerror="this.remove();this.parentElement&&this.parentElement.classList.add(\'no-image\')">';
+        h += '<div class="link-preview-body"><div class="link-preview-domain"><img src="https://www.google.com/s2/favicons?domain=' + encodeURIComponent(data.domain) + '&sz=32" alt="" width="14" height="14" onerror="this.remove()">' + escapeHtml(data.site_name || data.domain) + '</div>';
+        if (data.title) h += '<div class="link-preview-title">' + escapeHtml(data.title) + '</div>';
+        if (data.description) h += '<div class="link-preview-desc">' + escapeHtml(data.description) + '</div>';
+        h += '</div>';
+        card.innerHTML = h;
+        return card;
+    }
+
+    function processPostContent(el) {
+        var links = el.querySelectorAll('a[href]');
+        if (!links.length) return;
+        var link = null;
+        for (var i = 0; i < links.length; i++) {
+            if (links[i].href && links[i].href.match(/^https?:\/\//)) { link = links[i]; break; }
+        }
+        if (!link) return;
+        var href = link.href;
+        if (previewCache[href] !== undefined) {
+            if (previewCache[href]) el.appendChild(createPreviewCard(previewCache[href], href));
+            return;
+        }
+        fetch(PREVIEW_URL + '?url=' + encodeURIComponent(href), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function(r) { if (!r.ok) throw new Error(''); return r.json(); })
+        .then(function(data) {
+            if (data.title || data.description) { previewCache[href] = data; el.appendChild(createPreviewCard(data, href)); }
+            else { previewCache[href] = null; }
+        })
+        .catch(function() { previewCache[href] = null; });
+    }
+
+    document.querySelectorAll('.feed-fragment .post-content').forEach(processPostContent);
 })();
 </script>

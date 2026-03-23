@@ -4997,3 +4997,101 @@ def setup_review_account_view(request):
             'error': str(e),
             'output': out.getvalue(),
         }, status=500)
+
+
+@login_required
+def link_preview_api(request):
+    """Fetch Open Graph metadata for a URL to render link preview cards."""
+    import re
+    import urllib.request
+    import urllib.error
+    from html.parser import HTMLParser
+
+    url = request.GET.get('url', '').strip()
+    if not url:
+        return JsonResponse({'error': 'No URL provided'}, status=400)
+
+    # Basic URL validation
+    if not re.match(r'^https?://', url):
+        return JsonResponse({'error': 'Invalid URL'}, status=400)
+
+    # Block private/internal IPs (SSRF protection)
+    from urllib.parse import urlparse
+    parsed = urlparse(url)
+    hostname = parsed.hostname or ''
+    if hostname in ('localhost', '127.0.0.1', '0.0.0.0', '::1') or hostname.startswith('10.') or hostname.startswith('192.168.') or hostname.startswith('172.'):
+        return JsonResponse({'error': 'Invalid URL'}, status=400)
+
+    class OGParser(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.og = {}
+            self.title = ''
+            self._in_title = False
+            self._done = False
+
+        def handle_starttag(self, tag, attrs):
+            if self._done:
+                return
+            attrs_dict = dict(attrs)
+            if tag == 'meta':
+                prop = attrs_dict.get('property', '') or attrs_dict.get('name', '')
+                content = attrs_dict.get('content', '')
+                if prop in ('og:title', 'og:description', 'og:image', 'og:site_name'):
+                    self.og[prop] = content
+                elif prop == 'description' and 'og:description' not in self.og:
+                    self.og['og:description'] = content
+            elif tag == 'title':
+                self._in_title = True
+
+        def handle_data(self, data):
+            if self._in_title:
+                self.title += data
+
+        def handle_endtag(self, tag):
+            if tag == 'title':
+                self._in_title = False
+            if tag == 'head':
+                self._done = True
+
+    try:
+        req = urllib.request.Request(url, headers={
+            'User-Agent': 'Mozilla/5.0 (compatible; MyRecoveryPal/1.0; +https://www.myrecoverypal.com)',
+            'Accept': 'text/html',
+        })
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            # Only parse HTML responses
+            content_type = resp.headers.get('Content-Type', '')
+            if 'text/html' not in content_type:
+                return JsonResponse({'error': 'Not HTML'}, status=400)
+            # Read max 100KB
+            body = resp.read(102400).decode('utf-8', errors='replace')
+
+        parser = OGParser()
+        parser.feed(body)
+
+        title = parser.og.get('og:title', parser.title or '').strip()
+        description = parser.og.get('og:description', '').strip()
+        image = parser.og.get('og:image', '').strip()
+        site_name = parser.og.get('og:site_name', '').strip()
+
+        if not title and not description:
+            return JsonResponse({'error': 'No metadata found'}, status=404)
+
+        # Truncate long values
+        if len(title) > 120:
+            title = title[:117] + '...'
+        if len(description) > 200:
+            description = description[:197] + '...'
+
+        return JsonResponse({
+            'title': title,
+            'description': description,
+            'image': image,
+            'site_name': site_name,
+            'domain': parsed.netloc,
+        })
+    except (urllib.error.URLError, urllib.error.HTTPError, OSError, ValueError):
+        return JsonResponse({'error': 'Could not fetch URL'}, status=502)
+    except Exception:
+        return JsonResponse({'error': 'Preview unavailable'}, status=500)

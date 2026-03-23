@@ -297,6 +297,124 @@
         word-wrap: break-word;
     }
 
+    .post-content a {
+        color: #1e4d8b;
+        text-decoration: none;
+        word-break: break-all;
+    }
+
+    .post-content a:hover {
+        text-decoration: underline;
+    }
+
+    [data-theme="dark"] .post-content a {
+        color: #6cb4ee;
+    }
+
+    /* Link Preview Cards */
+    .link-preview {
+        display: flex;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-top: 0.75rem;
+        text-decoration: none;
+        color: inherit;
+        background: #fafafa;
+        transition: background 0.2s;
+    }
+
+    .link-preview:hover {
+        background: #f0f0f0;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .link-preview-image {
+        width: 120px;
+        min-height: 90px;
+        object-fit: cover;
+        flex-shrink: 0;
+        background: #e8e8e8;
+    }
+
+    .link-preview-body {
+        padding: 0.75rem;
+        min-width: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+
+    .link-preview-domain {
+        font-size: 0.75rem;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .link-preview-domain img {
+        width: 14px;
+        height: 14px;
+        border-radius: 2px;
+    }
+
+    .link-preview-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #333;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .link-preview-desc {
+        font-size: 0.8rem;
+        color: #666;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* No-image layout: stack vertically */
+    .link-preview.no-image {
+        flex-direction: column;
+    }
+
+    [data-theme="dark"] .link-preview {
+        border-color: #404040;
+        background: #1a1a2e;
+    }
+
+    [data-theme="dark"] .link-preview:hover {
+        background: #252540;
+    }
+
+    [data-theme="dark"] .link-preview-title {
+        color: #e0e0e0;
+    }
+
+    [data-theme="dark"] .link-preview-desc {
+        color: #aaa;
+    }
+
+    [data-theme="dark"] .link-preview-domain {
+        color: #888;
+    }
+
+    [data-theme="dark"] .link-preview-image {
+        background: #333;
+    }
+
     .post-image {
         width: 100%;
         max-height: 500px;
@@ -1463,7 +1581,7 @@
                     {% endif %}
                 </div>
                 {% else %}
-                <div class="post-content">{{ post.content }}</div>
+                <div class="post-content">{{ post.content|urlize }}</div>
                 {% endif %}
 
                 <!-- Post Image -->
@@ -2140,9 +2258,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (data.success) {
-                // Update the post content in the DOM
+                // Update the post content in the DOM — linkify URLs
                 const postCard = document.querySelector(`.post-card[data-post-id="${currentEditPostId}"]`);
-                postCard.querySelector('.post-content').textContent = data.content;
+                const postEl = postCard.querySelector('.post-content');
+                // Remove existing link previews
+                postEl.querySelectorAll('.link-preview').forEach(function(p) { p.remove(); });
+                // Linkify: replace URLs with anchor tags
+                const escaped = data.content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                postEl.innerHTML = escaped.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+                // Re-run link preview
+                if (typeof processPostContentForPreviews === 'function') processPostContentForPreviews(postEl);
                 closeEditModal();
             } else {
                 alert(data.error || 'Failed to edit post');
@@ -2390,5 +2515,112 @@ document.getElementById('editPostModal').addEventListener('click', function(e) {
         closeEditModal();
     }
 });
+
+// ===== Link Preview Cards =====
+(function() {
+    var previewCache = {};
+    var PREVIEW_URL = '{% url "accounts:link_preview_api" %}';
+
+    function createPreviewCard(data, href) {
+        var card = document.createElement('a');
+        card.href = href;
+        card.target = '_blank';
+        card.rel = 'noopener';
+        card.className = 'link-preview' + (data.image ? '' : ' no-image');
+
+        var html = '';
+        if (data.image) {
+            html += '<img class="link-preview-image" src="' + escapeHtml(data.image) + '" alt="" loading="lazy" onerror="this.remove();this.parentElement&&this.parentElement.classList.add(\'no-image\')">';
+        }
+        html += '<div class="link-preview-body">';
+        html += '<div class="link-preview-domain">';
+        html += '<img src="https://www.google.com/s2/favicons?domain=' + encodeURIComponent(data.domain) + '&sz=32" alt="" width="14" height="14" onerror="this.remove()">';
+        html += escapeHtml(data.site_name || data.domain);
+        html += '</div>';
+        if (data.title) {
+            html += '<div class="link-preview-title">' + escapeHtml(data.title) + '</div>';
+        }
+        if (data.description) {
+            html += '<div class="link-preview-desc">' + escapeHtml(data.description) + '</div>';
+        }
+        html += '</div>';
+        card.innerHTML = html;
+        return card;
+    }
+
+    function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function processPostContent(el) {
+        var links = el.querySelectorAll('a[href]');
+        if (!links.length) return;
+
+        // Use the first external link for preview
+        var link = null;
+        for (var i = 0; i < links.length; i++) {
+            var href = links[i].href;
+            if (href && href.match(/^https?:\/\//)) {
+                link = links[i];
+                break;
+            }
+        }
+        if (!link) return;
+
+        var href = link.href;
+        if (previewCache[href] !== undefined) {
+            if (previewCache[href]) {
+                el.appendChild(createPreviewCard(previewCache[href], href));
+            }
+            return;
+        }
+
+        fetch(PREVIEW_URL + '?url=' + encodeURIComponent(href), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(resp) {
+            if (!resp.ok) throw new Error('fail');
+            return resp.json();
+        })
+        .then(function(data) {
+            if (data.title || data.description) {
+                previewCache[href] = data;
+                el.appendChild(createPreviewCard(data, href));
+            } else {
+                previewCache[href] = null;
+            }
+        })
+        .catch(function() {
+            previewCache[href] = null;
+        });
+    }
+
+    // Expose for use after edits
+    window.processPostContentForPreviews = processPostContent;
+
+    // Process existing posts
+    document.querySelectorAll('.post-content').forEach(processPostContent);
+
+    // Observe for dynamically added posts (infinite scroll)
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+            m.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1) {
+                    var contents = node.querySelectorAll ? node.querySelectorAll('.post-content') : [];
+                    contents.forEach(processPostContent);
+                    if (node.classList && node.classList.contains('post-content')) {
+                        processPostContent(node);
+                    }
+                }
+            });
+        });
+    });
+    var container = document.getElementById('postsContainer');
+    if (container) {
+        observer.observe(container, { childList: true, subtree: true });
+    }
+})();
 </script>
 {% endblock %}

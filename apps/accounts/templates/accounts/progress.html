@@ -1051,6 +1051,188 @@
     [data-theme="dark"] .premium-gate-price-note {
         color: #64748b;
     }
+
+    /* ===== Native App Mobile Overrides ===== */
+    .ios-native-app .progress-container,
+    .android-native-app .progress-container {
+        max-width: 100%;
+        padding: 0 0.75rem;
+        margin: 1rem auto;
+    }
+
+    .ios-native-app .progress-header,
+    .android-native-app .progress-header {
+        padding: 1.25rem 1rem;
+        border-radius: 16px;
+        margin-bottom: 1.25rem;
+    }
+
+    .ios-native-app .progress-header h1,
+    .android-native-app .progress-header h1 {
+        font-size: 1.35rem;
+    }
+
+    .ios-native-app .time-selector,
+    .android-native-app .time-selector {
+        margin-top: 1rem;
+    }
+
+    .ios-native-app .time-btn,
+    .android-native-app .time-btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .ios-native-app .milestone-card,
+    .android-native-app .milestone-card {
+        padding: 1.25rem 1rem;
+        border-radius: 16px;
+        margin-bottom: 1.25rem;
+    }
+
+    .ios-native-app .milestone-days,
+    .android-native-app .milestone-days {
+        font-size: 2rem;
+    }
+
+    .ios-native-app .milestone-next-days,
+    .android-native-app .milestone-next-days {
+        font-size: 1.25rem;
+    }
+
+    .ios-native-app .stats-grid,
+    .android-native-app .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .ios-native-app .stat-card,
+    .android-native-app .stat-card {
+        padding: 1rem;
+        border-radius: 12px;
+    }
+
+    .ios-native-app .stat-value,
+    .android-native-app .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .ios-native-app .chart-card,
+    .android-native-app .chart-card {
+        padding: 1rem;
+        border-radius: 16px;
+        margin-bottom: 1rem;
+    }
+
+    .ios-native-app .chart-container,
+    .android-native-app .chart-container {
+        height: 200px;
+    }
+
+    .ios-native-app .chart-container-small,
+    .android-native-app .chart-container-small {
+        height: 160px;
+    }
+
+    .ios-native-app .secondary-charts,
+    .android-native-app .secondary-charts {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .ios-native-app .weekly-comparison,
+    .android-native-app .weekly-comparison {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .ios-native-app .week-change,
+    .android-native-app .week-change {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .ios-native-app .change-arrow,
+    .android-native-app .change-arrow {
+        font-size: 1.5rem;
+        transform: rotate(90deg);
+    }
+
+    .ios-native-app .week-card,
+    .android-native-app .week-card {
+        padding: 1rem;
+        border-radius: 12px;
+    }
+
+    .ios-native-app .heatmap-grid,
+    .android-native-app .heatmap-grid {
+        min-width: unset;
+        grid-template-columns: repeat(13, minmax(0, 1fr));
+        gap: 2px;
+    }
+
+    .ios-native-app .heatmap-day,
+    .android-native-app .heatmap-day {
+        width: 100%;
+        aspect-ratio: 1;
+        height: auto;
+    }
+
+    .ios-native-app .heatmap-container,
+    .android-native-app .heatmap-container {
+        overflow-x: hidden;
+    }
+
+    .ios-native-app .insight-card,
+    .android-native-app .insight-card {
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+
+    .ios-native-app .landing-tabs,
+    .android-native-app .landing-tabs {
+        margin: 0.75rem auto 0;
+        padding: 0;
+    }
+
+    .ios-native-app .landing-tab,
+    .android-native-app .landing-tab {
+        padding: 0.7rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .ios-native-app .checkin-prompt-bar,
+    .android-native-app .checkin-prompt-bar {
+        margin: 1rem 0.75rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .ios-native-app .checkin-done-bar,
+    .android-native-app .checkin-done-bar {
+        margin: 1rem 0.75rem;
+        padding: 0.85rem 1rem;
+    }
+
+    .ios-native-app .empty-state,
+    .android-native-app .empty-state {
+        padding: 2.5rem 1.25rem;
+        border-radius: 16px;
+    }
+
+    /* Premium gate on native */
+    .ios-native-app .premium-gate-container,
+    .android-native-app .premium-gate-container {
+        overflow: hidden;
+        border-radius: 16px;
+    }
+
+    .ios-native-app .premium-gate-overlay-card,
+    .android-native-app .premium-gate-overlay-card {
+        padding: 1.5rem 1.25rem !important;
+    }
 </style>
 {% endblock %}
 
