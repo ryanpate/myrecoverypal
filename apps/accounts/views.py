@@ -818,18 +818,8 @@ def daily_checkin_view(request):
                 is_shared=is_shared
             )
 
-            # Create activity if shared
             if is_shared:
-                ActivityFeed.objects.create(
-                    user=request.user,
-                    activity_type='check_in_posted',
-                    title=f"Daily Check-in: {checkin.get_mood_display_with_emoji()}",
-                    description=f"Feeling {checkin.get_mood_display().lower()}" +
-                    (f" - {gratitude[:100]}..." if gratitude else ""),
-                    content_object=checkin
-                )
-
-                # Also create a SocialPost so it appears on the feed
+                # Create a SocialPost so it appears on the feed
                 mood_display = checkin.get_mood_display_with_emoji()
                 post_content = f"Checked in feeling {mood_display}"
                 if gratitude:
@@ -839,6 +829,16 @@ def daily_checkin_view(request):
                     content=post_content,
                     visibility='public',
                     linked_checkin=checkin
+                )
+            else:
+                # Private check-in: create ActivityFeed entry so it shows in user's own activity
+                ActivityFeed.objects.create(
+                    user=request.user,
+                    activity_type='check_in_posted',
+                    title=f"Daily Check-in: {checkin.get_mood_display_with_emoji()}",
+                    description=f"Feeling {checkin.get_mood_display().lower()}" +
+                    (f" - {gratitude[:100]}..." if gratitude else ""),
+                    content_object=checkin
                 )
 
             messages.success(request, 'Daily check-in completed!')
@@ -942,20 +942,6 @@ def quick_checkin(request):
         is_shared=is_shared,
     )
 
-    # Build activity description
-    description = f"Checked in feeling {checkin.get_mood_display().lower()}"
-    if gratitude:
-        description += f" — Grateful for: {gratitude[:100]}{'...' if len(gratitude) > 100 else ''}"
-
-    # Create activity for the feed
-    ActivityFeed.objects.create(
-        user=request.user,
-        activity_type='check_in_posted',
-        title=f"Daily Check-in: {checkin.get_mood_display()}",
-        description=description,
-        content_object=checkin
-    )
-
     # Optionally share check-in as a social post
     share_to_feed = request.POST.get('share_to_feed') == 'true'
     if share_to_feed:
@@ -968,6 +954,18 @@ def quick_checkin(request):
             content=post_content,
             visibility='public',
             linked_checkin=checkin
+        )
+    else:
+        # Private check-in: create ActivityFeed entry so it shows in user's own activity
+        description = f"Checked in feeling {checkin.get_mood_display().lower()}"
+        if gratitude:
+            description += f" — Grateful for: {gratitude[:100]}{'...' if len(gratitude) > 100 else ''}"
+        ActivityFeed.objects.create(
+            user=request.user,
+            activity_type='check_in_posted',
+            title=f"Daily Check-in: {checkin.get_mood_display()}",
+            description=description,
+            content_object=checkin
         )
 
     return JsonResponse({
