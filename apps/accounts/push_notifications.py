@@ -153,7 +153,7 @@ def _get_apns_auth_token():
         return None
 
 
-def send_apns_notification(token, title, body, data=None):
+def send_apns_notification(token, title, body, data=None, badge_count=None):
     """
     Send push notification via Apple Push Notification service (iOS).
     Uses HTTP/2 with JWT authentication.
@@ -163,6 +163,7 @@ def send_apns_notification(token, title, body, data=None):
         title: Notification title
         body: Notification body message
         data: Optional dict of additional data
+        badge_count: App icon badge number (defaults to 1)
 
     Returns:
         bool: True if sent successfully, False otherwise
@@ -206,7 +207,7 @@ def send_apns_notification(token, title, body, data=None):
                     "title": title,
                     "body": body,
                 },
-                "badge": 1,
+                "badge": badge_count if badge_count is not None else 1,
                 "sound": "default",
             }
         }
@@ -261,7 +262,7 @@ def send_push_to_user(user, title, body, data=None):
     Returns:
         dict: Results with success/failure counts per platform
     """
-    from .models import DeviceToken
+    from .models import DeviceToken, Notification
 
     results = {
         'android': {'sent': 0, 'failed': 0},
@@ -271,13 +272,16 @@ def send_push_to_user(user, title, body, data=None):
 
     device_tokens = DeviceToken.objects.filter(user=user, active=True)
 
+    # Get actual unread notification count for accurate iOS badge
+    unread_count = Notification.objects.filter(recipient=user, is_read=False).count()
+
     for device in device_tokens:
         success = False
 
         if device.platform == 'android':
             success = send_fcm_notification(device.token, title, body, data)
         elif device.platform == 'ios':
-            success = send_apns_notification(device.token, title, body, data)
+            success = send_apns_notification(device.token, title, body, data, badge_count=unread_count)
         elif device.platform == 'web':
             success = send_fcm_notification(device.token, title, body, data)
 

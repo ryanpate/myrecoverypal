@@ -109,6 +109,16 @@
             if (tabBadge) {
                 tabBadge.textContent = count > 0 ? (count > 99 ? '99+' : count) : '';
             }
+            // Update iOS app icon badge
+            if (count === 0) {
+                // Clear app icon badge and delivered notifications
+                if (Plugins.PushNotifications) {
+                    Plugins.PushNotifications.removeAllDeliveredNotifications().catch(function() {});
+                }
+                if (Plugins.Badge) {
+                    Plugins.Badge.clear().catch(function() {});
+                }
+            }
         };
     })();
 

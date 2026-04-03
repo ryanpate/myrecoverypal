@@ -1075,6 +1075,13 @@
                 if (response.ok) {
                     loadNotifications();
                     checkNotifications();
+                    // Clear iOS app icon badge
+                    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+                        var PushPlugin = window.Capacitor.Plugins.PushNotifications;
+                        if (PushPlugin) {
+                            PushPlugin.removeAllDeliveredNotifications().catch(function() {});
+                        }
+                    }
                 }
             } catch (error) {
                 console.error('Error marking all as read:', error);
@@ -1098,9 +1105,9 @@
     </script>
 
     <!-- Capacitor Native Features (native app only) -->
-    <script src="{% static 'js/capacitor-native.js' %}?v=20260303a"></script>
+    <script src="{% static 'js/capacitor-native.js' %}?v=20260403a"></script>
     <!-- Capacitor Push Notifications (native app only) -->
-    <script src="{% static 'js/capacitor-push.js' %}?v=20260303a"></script>
+    <script src="{% static 'js/capacitor-push.js' %}?v=20260403a"></script>
     <!-- Capacitor In-App Purchases (iOS only) -->
     <script src="{% static 'js/capacitor-iap.js' %}?v=20260315c"></script>
     <!-- Capacitor Biometric Auth (native app only) -->

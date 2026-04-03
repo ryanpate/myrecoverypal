@@ -112,10 +112,16 @@
         // Notification received while app is in foreground
         PushNotifications.addListener('pushNotificationReceived', function(notification) {
             console.log('[CapPush] Foreground notification:', notification.title);
+            // Refresh the in-app notification count
+            if (window.checkNotifications) {
+                window.checkNotifications();
+            }
         });
 
-        // Notification tapped - handle deep linking
+        // Notification tapped - clear app badge and handle deep linking
         PushNotifications.addListener('pushNotificationActionPerformed', function(action) {
+            // Clear the app icon badge when user taps a notification
+            PushNotifications.removeAllDeliveredNotifications().catch(function() {});
             var data = action.notification.data;
             if (data && data.url) {
                 // Navigate to the relevant page
