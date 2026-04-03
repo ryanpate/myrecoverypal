@@ -144,7 +144,7 @@
 
 /* Dark Mode - Navigation */
 [data-theme="dark"] .navbar,
-[data-theme="dark"] nav,
+[data-theme="dark"] #siteNav,
 [data-theme="dark"] .nav-container {
     background: var(--nav-bg) !important;
     border-bottom-color: var(--border-color);

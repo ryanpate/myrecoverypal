@@ -279,7 +279,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // Add scroll effect to navigation (theme-aware)
 window.addEventListener('scroll', function() {
-    const nav = document.querySelector('nav');
+    const nav = document.getElementById('siteNav');
     if (nav) {
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         if (window.scrollY > 50) {

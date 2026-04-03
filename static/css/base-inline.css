@@ -1220,7 +1220,7 @@ a.btn-primary:hover {
 /* ========================================
    NAVIGATION STYLES
    ======================================== */
-nav {
+#siteNav {
     position: fixed;
     top: 0;
     width: 100%;
@@ -2092,7 +2092,7 @@ footer {
     }
 
     /* Mobile navigation */
-    nav {
+    #siteNav {
         padding: 0.5rem 0;
     }
 
@@ -2360,7 +2360,7 @@ footer {
    ======================================== */
 @media (orientation: landscape) and (max-width: 915px) {
     /* Prevent overflow on the nav element */
-    nav {
+    #siteNav {
         width: 100%;
         overflow-x: hidden;
         padding-left: env(safe-area-inset-left, 0);

@@ -98,7 +98,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=20260304b">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=20260403a">
 
     <!-- Additional CSS -->
     {% block extra_css %}{% endblock %}
@@ -145,7 +145,7 @@
     </script>
     {% block structured_data %}{% endblock %}
 
-    <link rel="stylesheet" href="{% static 'css/base-inline.css' %}?v=20260304b">
+    <link rel="stylesheet" href="{% static 'css/base-inline.css' %}?v=20260403a">
 </head>
 
 <body>
@@ -178,7 +178,7 @@
     </div>
 
     <!-- Navigation -->
-    <nav>
+    <nav id="siteNav">
         <div class="nav-container">
             <div class="nav-left">
                 <a href="{% url 'core:index' %}" class="logo-container">
@@ -654,7 +654,7 @@
     <!-- Chart.js loaded only on pages that need it via extra_js block -->
 
     <!-- Main JS (theme toggle, etc.) -->
-    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/main.js' %}?v=20260403a"></script>
 
     <script>
         // Mobile detection
@@ -862,7 +862,7 @@
 
         // Add scroll effect to navigation
         window.addEventListener('scroll', function () {
-            const nav = document.querySelector('nav');
+            const nav = document.getElementById('siteNav');
             if (window.scrollY > 50) {
                 nav.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
             } else {
