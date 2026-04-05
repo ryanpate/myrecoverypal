@@ -19,6 +19,14 @@ urlpatterns = [
     path('feed/', RedirectView.as_view(pattern_name='accounts:social_feed', permanent=True)),
     path('dashboard/', RedirectView.as_view(pattern_name='accounts:dashboard', permanent=True)),
     path('profile/', RedirectView.as_view(pattern_name='accounts:dashboard', permanent=True)),
+    # Short paths users/search engines might try
+    path('community/', RedirectView.as_view(pattern_name='accounts:community', permanent=True)),
+    path('groups/', RedirectView.as_view(pattern_name='accounts:groups', permanent=True)),
+    path('meetings/', RedirectView.as_view(url='/support/meetings/', permanent=True)),
+    path('coach/', RedirectView.as_view(pattern_name='accounts:recovery_coach', permanent=True)),
+    path('ai-coach/', RedirectView.as_view(pattern_name='accounts:recovery_coach', permanent=True)),
+    path('pricing/', RedirectView.as_view(pattern_name='accounts:pricing', permanent=True)),
+    path('home/', RedirectView.as_view(url='/', permanent=True)),
 
     # Custom admin dashboards (must be before admin.site.urls)
     path('admin/dashboard/ab-tests/', ab_test_results, name='admin_ab_test_results'),

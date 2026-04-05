@@ -58,8 +58,7 @@ class StaticViewSitemap(Sitemap):
             ('core:terms', 0.5),  # Terms of service
             ('core:cookies', 0.4),  # Cookie policy
 
-            # Store
-            ('store:product_list', 0.5),  # Store
+            # Store removed from sitemap — "Coming Soon" placeholder wastes crawl budget
         ]
 
     def location(self, item):
