@@ -4,10 +4,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
-from django.db.models import Q, F
+from django.db.models import Q, F, Count
 from django.urls import reverse_lazy
 from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
+from django.core.cache import cache
 from django.core.management import call_command
 from io import StringIO
 from .models import Post, Category, Tag, Comment
@@ -53,14 +54,18 @@ class PostListView(ListView):
             status='published'
         ).order_by('-published_at')[:5]
 
-        # Add stats
-        context['posts_count'] = Post.objects.filter(
-            status='published').count()
-        context['authors_count'] = Post.objects.filter(
-            status='published'
-        ).values('author').distinct().count()
-        context['comments_count'] = Comment.objects.filter(
-            is_approved=True).count()
+        # Stats change infrequently (only on new post/comment) — cache 10min.
+        # Replaces 3 separate COUNT/DISTINCT queries per blog page load.
+        stats = cache.get('blog_stats')
+        if stats is None:
+            published_posts = Post.objects.filter(status='published')
+            stats = {
+                'posts_count': published_posts.count(),
+                'authors_count': published_posts.values('author').distinct().count(),
+                'comments_count': Comment.objects.filter(is_approved=True).count(),
+            }
+            cache.set('blog_stats', stats, 600)  # 10 minutes
+        context.update(stats)
 
         return context
 

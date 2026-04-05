@@ -42,11 +42,14 @@ def journal_dashboard(request):
         days_with_cravings=Count('id', filter=Q(cravings_today=True))
     )
     
-    # Get a daily prompt suggestion
-    user_days_sober = user.get_days_sober()
-    relevant_prompts = [p for p in JournalPrompt.objects.filter(is_active=True) 
-                       if p.is_relevant_for_user(user)]
-    daily_prompt = random.choice(relevant_prompts) if relevant_prompts else None
+    # Get a daily prompt suggestion (filter in DB, then random via order_by('?'))
+    user_days_sober = user.get_days_sober() or 0
+    daily_prompt = JournalPrompt.objects.filter(
+        is_active=True,
+        min_days_sober__lte=user_days_sober,
+    ).filter(
+        Q(max_days_sober__isnull=True) | Q(max_days_sober__gte=user_days_sober)
+    ).order_by('?').first()
     
     context = {
         'streak': streak,

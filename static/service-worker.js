@@ -1,7 +1,7 @@
 // MyRecoveryPal Service Worker
-// Version 2.3 - Improved caching strategy and API exclusions
+// Version 2.4 - Bound HTML cache, evict stale hashed-asset caches from v2.3
 
-const CACHE_VERSION = 'myrecoverypal-v24';
+const CACHE_VERSION = 'myrecoverypal-v25';
 const CACHE_NAMES = {
   static: `${CACHE_VERSION}-static`,
   dynamic: `${CACHE_VERSION}-dynamic`,
@@ -118,6 +118,8 @@ async function networkFirstStrategy(request) {
     if (response && response.status === 200) {
       const cache = await caches.open(CACHE_NAMES.dynamic);
       cache.put(request, response.clone());
+      // Bound the dynamic HTML cache (was unbounded, would grow forever)
+      limitCacheSize(CACHE_NAMES.dynamic, DYNAMIC_CACHE_LIMIT);
     }
     return response;
   } catch (error) {
