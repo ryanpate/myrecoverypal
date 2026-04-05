@@ -759,8 +759,10 @@ def dashboard_view(request):
         visible_social_posts = []
         for post in social_posts:
             if post.is_visible_to(user):
-                post.reaction_count = len(post.reactions.all())
-                post.user_has_reacted = any(r.user_id == user.id for r in post.reactions.all())
+                # Single pass over prefetched reactions (cache list once)
+                reactions_list = list(post.reactions.all())
+                post.reaction_count = len(reactions_list)
+                post.user_has_reacted = any(r.user_id == user.id for r in reactions_list)
                 visible_social_posts.append(post)
 
         context['social_posts'] = visible_social_posts
@@ -1066,27 +1068,36 @@ def progress_view(request):
     last_week_start = this_week_start - timedelta(days=7)
     last_week_end = this_week_start - timedelta(days=1)
 
-    this_week_checkins = DailyCheckIn.objects.filter(
+    # Single aggregate query per week (replaces 6+ separate COUNT/SUM queries)
+    this_week_stats = DailyCheckIn.objects.filter(
         user=request.user,
         date__gte=this_week_start,
         date__lte=today
+    ).aggregate(
+        count=Count('id'),
+        avg_mood=Avg('mood'),
+        avg_craving=Avg('craving_level'),
     )
-    last_week_checkins = DailyCheckIn.objects.filter(
+    last_week_stats = DailyCheckIn.objects.filter(
         user=request.user,
         date__gte=last_week_start,
         date__lte=last_week_end
+    ).aggregate(
+        count=Count('id'),
+        avg_mood=Avg('mood'),
+        avg_craving=Avg('craving_level'),
     )
 
     weekly_comparison = {
         'this_week': {
-            'count': this_week_checkins.count(),
-            'avg_mood': round(sum(c.mood for c in this_week_checkins) / this_week_checkins.count(), 1) if this_week_checkins.count() > 0 else 0,
-            'avg_craving': round(sum(c.craving_level for c in this_week_checkins) / this_week_checkins.count(), 1) if this_week_checkins.count() > 0 else 0,
+            'count': this_week_stats['count'],
+            'avg_mood': round(this_week_stats['avg_mood'], 1) if this_week_stats['avg_mood'] else 0,
+            'avg_craving': round(this_week_stats['avg_craving'], 1) if this_week_stats['avg_craving'] is not None else 0,
         },
         'last_week': {
-            'count': last_week_checkins.count(),
-            'avg_mood': round(sum(c.mood for c in last_week_checkins) / last_week_checkins.count(), 1) if last_week_checkins.count() > 0 else 0,
-            'avg_craving': round(sum(c.craving_level for c in last_week_checkins) / last_week_checkins.count(), 1) if last_week_checkins.count() > 0 else 0,
+            'count': last_week_stats['count'],
+            'avg_mood': round(last_week_stats['avg_mood'], 1) if last_week_stats['avg_mood'] else 0,
+            'avg_craving': round(last_week_stats['avg_craving'], 1) if last_week_stats['avg_craving'] is not None else 0,
         },
     }
 
@@ -3935,14 +3946,13 @@ def social_feed_view(request):
 
         for post in posts:
             if post.is_visible_to(user if user.is_authenticated else None):
-                # Annotate reaction count and user's reaction using prefetched data
-                post.reaction_count = len(post.reactions.all())
-                post.user_has_reacted = False
-                if user.is_authenticated:
-                    for r in post.reactions.all():
-                        if r.user_id == user.id:
-                            post.user_has_reacted = True
-                            break
+                # Single pass over prefetched reactions (cache list once)
+                reactions_list = list(post.reactions.all())
+                post.reaction_count = len(reactions_list)
+                post.user_has_reacted = (
+                    user.is_authenticated
+                    and any(r.user_id == user.id for r in reactions_list)
+                )
                 visible_posts.append(post)
                 # Track posts from followed users
                 if user.is_authenticated and post.author_id in following_ids:
@@ -4079,8 +4089,10 @@ def hybrid_landing_view(request):
             visible_posts = []
             for post in posts:
                 if post.is_visible_to(user):
-                    post.reaction_count = len(post.reactions.all())
-                    post.user_has_reacted = any(r.user_id == user.id for r in post.reactions.all())
+                    # Single pass over prefetched reactions (cache list once)
+                    reactions_list = list(post.reactions.all())
+                    post.reaction_count = len(reactions_list)
+                    post.user_has_reacted = any(r.user_id == user.id for r in reactions_list)
                     visible_posts.append(post)
 
             # Check-in streak
@@ -4138,7 +4150,7 @@ def hybrid_landing_view(request):
                 'comments__author'
             ).filter(visibility='public'))
             for post in visible_posts:
-                post.reaction_count = len(post.reactions.all())
+                post.reaction_count = len(list(post.reactions.all()))
                 post.user_has_reacted = False
 
         # Pagination (same for both authenticated and unauthenticated)
@@ -4205,9 +4217,13 @@ def social_feed_posts_api(request):
         # Serialize posts
         posts_data = []
         for post in page_obj:
-            # Get comments for this post
+            # Use prefetched relations (avoid triggering new queries via .count())
+            all_comments = list(post.comments.all())
+            all_reactions = list(post.reactions.all())
+
+            # Get first 5 comments for display
             comments_data = []
-            for comment in post.comments.all()[:5]:  # Limit to 5 comments initially
+            for comment in all_comments[:5]:
                 comments_data.append({
                     'id': comment.id,
                     'author': {
@@ -4222,7 +4238,7 @@ def social_feed_posts_api(request):
                 })
 
             # Check if current user reacted to this post
-            user_liked = user.is_authenticated and any(r.user_id == user.id for r in post.reactions.all())
+            user_liked = user.is_authenticated and any(r.user_id == user.id for r in all_reactions)
 
             # Check if post belongs to current user
             is_own_post = user.is_authenticated and post.author.id == user.id
@@ -4242,8 +4258,8 @@ def social_feed_posts_api(request):
                 'image_url': post.image.url if post.image else None,
                 'visibility': post.visibility,
                 'created_at': timesince(post.created_at) + ' ago',
-                'likes_count': len(post.reactions.all()),
-                'comments_count': post.comments.count(),
+                'likes_count': len(all_reactions),
+                'comments_count': len(all_comments),
                 'user_liked': user_liked,
                 'is_own_post': is_own_post,
                 'comments': comments_data,

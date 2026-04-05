@@ -255,8 +255,8 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 #### Technical Debt (Priority: LOW)
 1. ~~Service worker caching review~~ ✅ COMPLETE
 2. Improved offline support
-3. Performance audit (N+1 queries)
-4. **Static file cache busting** — WhiteNoise uses `StaticFilesStorage` (no content hashing) with 1-year cache. Must bump `?v=` query string in `base.html` when changing any static CSS/JS file, or switch to `CompressedManifestStaticFilesStorage`
+3. ~~Performance audit (N+1 queries)~~ ✅ Phase 1 complete (reaction/comment N+1 fixed, progress view aggregates batched)
+4. ~~Static file cache busting~~ ✅ COMPLETE — migrated to `CompressedManifestStaticFilesStorage` (content-hashed + pre-brotli). `{% static %}` auto-generates hashed URLs.
 
 #### Infrastructure - ALL COMPLETE ✅
 1. ~~Enable mobile push (FCM/APNs)~~ ✅ COMPLETE

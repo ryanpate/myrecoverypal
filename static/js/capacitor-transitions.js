@@ -53,6 +53,9 @@
             }
         }, { passive: true });
 
+        var rafPending = false;
+        var latestDx = 0;
+
         document.addEventListener('touchmove', function(e) {
             if (!swiping || cancelled) return;
             if (!e.touches || e.touches.length === 0) return;
@@ -73,11 +76,17 @@
             // Only show for rightward swipes
             if (dx <= 0) return;
 
-            if (indicator) {
-                indicator.style.left = Math.min(dx - 10, 60) + 'px';
-                indicator.classList.add('visible');
-                // Scale opacity based on progress toward threshold
-                indicator.style.opacity = Math.min(dx / DISTANCE_THRESHOLD, 1);
+            // Throttle DOM writes to animation frame (cheap to read/calc, expensive to write)
+            latestDx = dx;
+            if (!rafPending) {
+                rafPending = true;
+                requestAnimationFrame(function() {
+                    rafPending = false;
+                    if (!indicator || !swiping || cancelled) return;
+                    indicator.style.left = Math.min(latestDx - 10, 60) + 'px';
+                    indicator.classList.add('visible');
+                    indicator.style.opacity = Math.min(latestDx / DISTANCE_THRESHOLD, 1);
+                });
             }
         }, { passive: true });
 
@@ -242,6 +251,9 @@
             }
         }, { passive: true });
 
+        var pullRafPending = false;
+        var pullIcon = null;
+
         document.addEventListener('touchmove', function(e) {
             if (!pulling) return;
             if (!e.touches || e.touches.length === 0) return;
@@ -263,18 +275,25 @@
                 return;
             }
 
-            if (pullIndicator) {
-                pullIndicator.classList.add('visible');
-                // Rotate the arrow based on pull distance (0 to 180 degrees)
-                var rotation = Math.min((dy / PULL_THRESHOLD) * 180, 180);
-                var icon = pullIndicator.querySelector('i');
-                if (icon) {
-                    icon.style.transform = 'rotate(' + rotation + 'deg)';
-                }
-                // Scale opacity with distance
-                pullIndicator.style.opacity = Math.min(dy / PULL_THRESHOLD, 1);
-                // Move indicator down slightly with pull
-                pullIndicator.style.top = 'calc(' + Math.min(dy * 0.3, 60) + 'px + var(--safe-area-inset-top, 0px))';
+            // Throttle DOM writes to animation frame
+            if (!pullRafPending) {
+                pullRafPending = true;
+                requestAnimationFrame(function() {
+                    pullRafPending = false;
+                    if (!pullIndicator || !pulling) return;
+                    var d = lastPullDistance;
+                    pullIndicator.classList.add('visible');
+                    // Rotate the arrow based on pull distance (0 to 180 degrees)
+                    var rotation = Math.min((d / PULL_THRESHOLD) * 180, 180);
+                    if (!pullIcon) pullIcon = pullIndicator.querySelector('i');
+                    if (pullIcon) {
+                        pullIcon.style.transform = 'rotate(' + rotation + 'deg)';
+                    }
+                    // Scale opacity with distance
+                    pullIndicator.style.opacity = Math.min(d / PULL_THRESHOLD, 1);
+                    // Move indicator down slightly with pull
+                    pullIndicator.style.top = 'calc(' + Math.min(d * 0.3, 60) + 'px + var(--safe-area-inset-top, 0px))';
+                });
             }
         }, { passive: true });
 

@@ -88,9 +88,13 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',  # Add before django.contrib.staticfiles
     'django.contrib.staticfiles',
-    'cloudinary',  # Add after staticfiles
+    # cloudinary_storage listed AFTER staticfiles so Django's built-in
+    # collectstatic command wins (cloudinary_storage's override blocks
+    # unhashed file copies, which breaks WhiteNoise static serving).
+    # MediaCloudinaryStorage still works for user media uploads.
+    'cloudinary_storage',
+    'cloudinary',
     'django.contrib.sites',
     'django.contrib.humanize',
 
@@ -288,14 +292,17 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 
 # WhiteNoise for serving static files
-# Note: CompressedManifestStaticFilesStorage/CompressedStaticFilesStorage fail due to
-# DRF missing font references and WHITENOISE_ROOT conflicts with collectstatic.
-# Compression is handled by GZipMiddleware at request time instead.
-STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
+# CompressedManifestStaticFilesStorage generates content-hashed filenames
+# (e.g. base-inline.abc123.css) for automatic cache busting on deploy.
+# MANIFEST_STRICT=False treats missing references as warnings (DRF CSS
+# references font variants that may not exist) rather than build failures.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # WhiteNoise settings
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = DEBUG
+# Don't fail if a referenced static file is missing (warn instead)
+WHITENOISE_MANIFEST_STRICT = False
 # Long-lived cache for hashed files (1 year) - browsers won't re-request
 WHITENOISE_MAX_AGE = 31536000  # 1 year for hashed files
 

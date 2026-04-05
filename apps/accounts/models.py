@@ -559,6 +559,10 @@ class ActivityFeed(models.Model):
         ordering = ['-created_at']
         verbose_name = 'Activity Feed Item'
         verbose_name_plural = 'Activity Feed Items'
+        indexes = [
+            models.Index(fields=['user', '-created_at']),
+            models.Index(fields=['-created_at']),
+        ]
 
     def __str__(self):
         return f"{self.user.username} - {self.get_activity_type_display()}"
