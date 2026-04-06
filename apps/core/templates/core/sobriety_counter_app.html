@@ -66,6 +66,30 @@
         "@type": "Answer",
         "text": "Your sobriety date is the day after your last drink or drug use. Enter this date into MyRecoveryPal and the app automatically calculates your days, weeks, months, and years sober."
       }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the best sobriety tracker app for free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MyRecoveryPal offers the most features for free: day counter, milestone celebrations, daily mood check-ins, social community, recovery groups, accountability partners, and a private journal. Optional Premium is $4.99/month for AI coach and advanced analytics."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a free sobriety counter with no ads?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. MyRecoveryPal's free tier has no ads. The app earns revenue from optional Premium subscriptions, not advertising. Your recovery experience is never interrupted by ads."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use a sobriety counter app for AA or NA?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. MyRecoveryPal works with any recovery program — AA, NA, SMART Recovery, or independent sobriety. Many members use sobriety counter apps alongside their chip or medallion system."
+      }
     }
   ]
 }
@@ -1045,7 +1069,23 @@
         </div>
         <div class="faq-item">
             <h3>Does MyRecoveryPal work on desktop?</h3>
-            <p>Yes! Unlike I Am Sober, Sober Time, and Nomo which are mobile-only, MyRecoveryPal is a full web app. Access your sobriety counter from any device with a web browser.</p>
+            <p>Yes! Unlike I Am Sober, Sober Time, and Nomo which are mobile-only, MyRecoveryPal is a full web app. Access your sobriety counter from any device with a web browser. An iOS app is also available.</p>
+        </div>
+        <div class="faq-item">
+            <h3>What is the best sobriety tracker app for free?</h3>
+            <p>MyRecoveryPal offers the most features for free among sobriety tracker apps: day counter, milestone celebrations, daily mood check-ins, social community feed, recovery groups, accountability partners, private journal, and a free <a href="{% url 'core:sobriety_calculator' %}">sobriety calculator</a>. The optional Premium tier ($4.99/month) adds an AI recovery coach, unlimited groups, and advanced analytics.</p>
+        </div>
+        <div class="faq-item">
+            <h3>How do I count my sober days?</h3>
+            <p>Enter your sobriety date (the day after your last drink or use) into any sobriety counter app. The app automatically counts every day since then. MyRecoveryPal shows your total in days, weeks, months, and years, plus alerts you when you hit milestones like 30 days, 90 days, or 1 year.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Is there a free sobriety counter with no ads?</h3>
+            <p>Yes. MyRecoveryPal's free tier has no ads. The app earns revenue from optional Premium subscriptions and affiliate partnerships, not advertising. Your recovery experience is never interrupted by ads.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Can I use a sobriety counter app for AA or NA?</h3>
+            <p>Absolutely. MyRecoveryPal works with any recovery program — AA, NA, SMART Recovery, Celebrate Recovery, or independent sobriety. The app tracks clean time regardless of your approach. Many AA and NA members use sobriety counter apps alongside their chip/medallion system for digital tracking.</p>
         </div>
     </div>
 </section>
@@ -1084,30 +1124,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const today = new Date();
     dateInput.max = today.toISOString().split('T')[0];
 
-    dateInput.addEventListener('change', function() {
-        if (!this.value) return;
-
-        const sobrietyDate = new Date(this.value);
+    function updateMiniCalc(sobrietyDate) {
         const now = new Date();
         const diffTime = now - sobrietyDate;
         const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-        if (totalDays < 0) {
-            resultDiv.style.display = 'none';
-            return;
-        }
-
-        const years = Math.floor(totalDays / 365);
-        const months = Math.floor(totalDays / 30);
-        const weeks = Math.floor(totalDays / 7);
+        if (totalDays < 0) { resultDiv.style.display = 'none'; return; }
 
         document.getElementById('mini-days-count').textContent = totalDays.toLocaleString();
-        document.getElementById('mini-years').textContent = years;
-        document.getElementById('mini-months').textContent = months;
-        document.getElementById('mini-weeks').textContent = weeks;
-
+        document.getElementById('mini-years').textContent = Math.floor(totalDays / 365);
+        document.getElementById('mini-months').textContent = Math.floor(totalDays / 30);
+        document.getElementById('mini-weeks').textContent = Math.floor(totalDays / 7);
         resultDiv.style.display = 'block';
+    }
+
+    dateInput.addEventListener('change', function() {
+        if (this.value) updateMiniCalc(new Date(this.value));
     });
+
+    // Pre-populate with 90-day demo so Google sees real content
+    const demoDate = new Date();
+    demoDate.setDate(demoDate.getDate() - 90);
+    updateMiniCalc(demoDate);
 });
 </script>
 {% endblock %}
