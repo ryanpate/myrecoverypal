@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 from django.db.models import Q, Count, Prefetch, Avg
 from django.utils import timezone
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
 from .models import GroupPost, User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, ActivityComment, UserConnection, SponsorRelationship, RecoveryPal, RecoveryGroup, GroupMembership, SocialPost, SocialPostComment, PostReaction
 from .forms import CustomUserCreationForm, UserProfileForm, MilestoneForm, SupportMessageForm, SponsorRequestForm, RecoveryPalForm, RecoveryGroupForm, GroupPostForm, GroupMembershipForm
@@ -5134,3 +5134,21 @@ def link_preview_api(request):
         return JsonResponse({'error': 'Could not fetch URL'}, status=502)
     except Exception:
         return JsonResponse({'error': 'Preview unavailable'}, status=500)
+
+
+@login_required
+def milestone_image_view(request, days):
+    """Generate and return a shareable milestone image as PNG."""
+    from apps.accounts.milestone_image import generate_milestone_image
+
+    fmt = request.GET.get('format', 'story')
+    if fmt not in ('story', 'square'):
+        fmt = 'story'
+
+    days = max(1, min(days, 36500))
+
+    img_bytes = generate_milestone_image(days, fmt)
+    response = HttpResponse(img_bytes, content_type='image/png')
+    response['Content-Disposition'] = f'inline; filename="milestone-{days}-days.png"'
+    response['Cache-Control'] = 'public, max-age=86400'
+    return response

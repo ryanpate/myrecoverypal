@@ -196,4 +196,7 @@ urlpatterns = [
     path('recovery-coach/new/', views.coach_new_session, name='coach_new_session'),
     path('recovery-coach/session/<int:session_id>/', views.coach_load_session, name='coach_load_session'),
 
+    # Milestone image generation
+    path('milestone-image/<int:days>/', views.milestone_image_view, name='milestone_image'),
+
 ]
