@@ -10,5 +10,8 @@ fi
 echo "Running database migrations..."
 python manage.py migrate --noinput
 
+# Seed recovery quotes if table is empty (one-time init)
+python manage.py seed_recovery_quotes 2>/dev/null || true
+
 echo "Starting gunicorn..."
 exec gunicorn recovery_hub.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --access-logfile - --error-logfile -
