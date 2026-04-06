@@ -8,17 +8,22 @@
     /* ==============================
        RECOVERY COACH - LAYOUT
        ============================== */
-    /* Coach page — fixed between nav and tab bar, fills exactly */
+    /* Coach page — flows naturally below body padding-top, stretches to fill viewport */
     .coach-page {
-        position: fixed;
-        top: 0; /* JS sets this to actual nav height */
-        left: 0;
-        right: 0;
-        bottom: 0; /* JS sets this to actual tab bar height */
         display: flex;
+        flex-direction: row;
+        /* Height = viewport minus body's padding-top (nav) minus body's padding-bottom (tabs) */
+        height: calc(100vh - calc(56px + var(--safe-area-inset-top, 0px)) - calc(68px + env(safe-area-inset-bottom, 0px)));
+        max-width: 100%;
         overflow: hidden;
         background: var(--bg-light);
-        z-index: 1;
+    }
+
+    /* Non-native: no tab bar, just subtract nav */
+    @supports not (padding: env(safe-area-inset-bottom)) {
+        .coach-page {
+            height: calc(100vh - 56px);
+        }
     }
 
     /* ==============================
@@ -1412,45 +1417,6 @@
 
 {% block extra_js %}
 <script>
-// Position coach page: fixed between nav and tab bar
-(function() {
-    var nav = document.getElementById('siteNav');
-    var page = document.querySelector('.coach-page');
-    if (!nav || !page) return;
-
-    function resize() {
-        // Top: measure actual nav height
-        page.style.top = nav.getBoundingClientRect().height + 'px';
-
-        // Bottom: measure tab bar, or use CSS-computed body padding-bottom
-        var tabs = document.getElementById('nativeBottomTabs');
-        var tabH = 0;
-        if (tabs) {
-            var style = window.getComputedStyle(tabs);
-            if (style.display !== 'none') {
-                tabH = tabs.offsetHeight;
-            }
-        }
-        if (tabH === 0) {
-            // Read the body's computed padding-bottom (set by CSS for native)
-            var bodyPB = parseInt(window.getComputedStyle(document.body).paddingBottom, 10);
-            if (bodyPB > 20) tabH = bodyPB;
-        }
-        page.style.bottom = Math.max(tabH, 0) + 'px';
-    }
-
-    resize();
-    window.addEventListener('resize', resize);
-    window.addEventListener('load', resize);
-    // Capacitor-native.js toggles tabs async — retry until stable
-    var attempts = 0;
-    var interval = setInterval(function() {
-        resize();
-        attempts++;
-        if (attempts > 10) clearInterval(interval);
-    }, 300);
-})();
-
 // Disclaimer modal — show on first visit, remember acceptance
 function acceptDisclaimer() {
     document.getElementById('disclaimerModal').classList.remove('active');
