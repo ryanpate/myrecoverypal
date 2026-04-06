@@ -740,3 +740,107 @@ def send_premium_trial_nudge(self):
 
     logger.info(f"Premium trial nudge: sent={sent_count}, failed={failed_count}")
     return {'sent': sent_count, 'failed': failed_count}
+
+
+@shared_task(bind=True, max_retries=3)
+def send_trial_ending_notifications(self):
+    """
+    Notify users whose 14-day Premium trial ends tomorrow.
+    Sends email + creates in-app notification.
+    Runs daily at 10:00 AM.
+    """
+    from .models import User, Notification
+    from .payment_models import Subscription
+
+    site_url = getattr(settings, 'SITE_URL', 'https://www.myrecoverypal.com')
+
+    # Find subscriptions where trial ends within next 24-48 hours
+    now = timezone.now()
+    tomorrow_start = now + timedelta(hours=24)
+    tomorrow_end = now + timedelta(hours=48)
+
+    expiring_subs = Subscription.objects.filter(
+        status='trialing',
+        trial_end__gte=tomorrow_start,
+        trial_end__lt=tomorrow_end,
+    ).select_related('user')
+
+    sent_count = 0
+    for sub in expiring_subs:
+        user = sub.user
+
+        # Skip if we already notified (check for existing notification)
+        if Notification.objects.filter(
+            recipient=user,
+            notification_type='system',
+            extra_data__contains='trial_ending',
+        ).exists():
+            continue
+
+        # Create in-app notification
+        try:
+            Notification.objects.create(
+                recipient=user,
+                sender=user,
+                notification_type='system',
+                message='Your Premium trial ends tomorrow. Keep unlimited AI Coach, groups, and analytics.',
+                link='/accounts/pricing/',
+                extra_data={'type': 'trial_ending'},
+            )
+        except Exception as e:
+            logger.error(f"Error creating trial-ending notification for {user.email}: {e}")
+
+        # Send email
+        try:
+            subject = f"Your Premium trial ends tomorrow, {user.first_name or user.username}"
+            plain_message = (
+                f"Hi {user.first_name or user.username},\n\n"
+                f"Your 14-day Premium trial on MyRecoveryPal ends tomorrow.\n\n"
+                f"With Premium, you keep:\n"
+                f"- AI Recovery Coach (20 messages/day)\n"
+                f"- Unlimited recovery groups\n"
+                f"- 90-day progress analytics\n"
+                f"- Journal export\n\n"
+                f"Continue for just $4.99/month:\n"
+                f"{site_url}/accounts/pricing/\n\n"
+                f"Your recovery journey matters. We're here for you.\n"
+                f"- The MyRecoveryPal Team"
+            )
+
+            html_message = f"""
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #1e4d8b, #4db8e8); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+                    <h1 style="color: white; margin: 0; font-size: 24px;">Your Premium Trial Ends Tomorrow</h1>
+                </div>
+                <div style="padding: 30px; background: white;">
+                    <p style="color: #333; font-size: 16px;">Hi {user.first_name or user.username},</p>
+                    <p style="color: #555; font-size: 15px; line-height: 1.6;">Your 14-day Premium trial ends tomorrow. After that, you'll still have your free account, but you'll lose access to:</p>
+                    <ul style="color: #555; font-size: 15px; line-height: 1.8;">
+                        <li><strong>AI Recovery Coach Anchor</strong> — 20 messages/day (drops to 10 lifetime)</li>
+                        <li><strong>Unlimited recovery groups</strong> (drops to 5)</li>
+                        <li><strong>90-day progress analytics</strong> (drops to 7-day)</li>
+                        <li><strong>Journal export</strong></li>
+                    </ul>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="{site_url}/accounts/pricing/" style="display: inline-block; background: linear-gradient(135deg, #52b788, #40916c); color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px;">Keep Premium — $4.99/month</a>
+                    </div>
+                    <p style="color: #888; font-size: 13px; text-align: center;">Cancel anytime. No questions asked.</p>
+                </div>
+            </div>
+            """
+
+            success = send_email(
+                subject=subject,
+                plain_message=plain_message,
+                html_message=html_message,
+                recipient_email=user.email,
+            )
+
+            if success:
+                sent_count += 1
+                logger.info(f"Sent trial-ending notification to {user.email}")
+        except Exception as e:
+            logger.error(f"Error sending trial-ending email to {user.email}: {e}")
+
+    logger.info(f"Trial-ending notifications: sent={sent_count}")
+    return {'sent': sent_count}

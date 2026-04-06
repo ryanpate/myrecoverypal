@@ -741,6 +741,11 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_premium_trial_nudge',
         'schedule': crontab(hour=11, minute=0),  # Daily at 11 AM
     },
+    # Trial-ending notification - daily at 10 AM for trials expiring tomorrow
+    'send-trial-ending-notifications': {
+        'task': 'apps.accounts.tasks.send_trial_ending_notifications',
+        'schedule': crontab(hour=10, minute=0),  # Daily at 10 AM
+    },
 }
 
 # Celery worker memory optimization (Railway cost reduction)

@@ -157,6 +157,21 @@
         </div>
     </div>
 
+    <!-- Trial Ending Banner (shows last 2 days of Premium trial) -->
+    {% if trial_ending_soon %}
+    <div id="trialBanner" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 10px 16px; text-align: center; font-size: 0.9rem; font-weight: 500; position: relative; z-index: 1000;">
+        {% if trial_days_left == 0 %}
+        Your Premium trial ends today.
+        {% elif trial_days_left == 1 %}
+        Your Premium trial ends tomorrow.
+        {% else %}
+        Your Premium trial ends in {{ trial_days_left }} days.
+        {% endif %}
+        <a href="{% url 'accounts:pricing' %}" style="color: white; font-weight: 700; text-decoration: underline; margin-left: 8px;">Keep Premium &mdash; $4.99/mo</a>
+        <button onclick="document.getElementById('trialBanner').style.display='none'" style="background: none; border: none; color: white; opacity: 0.7; cursor: pointer; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;" aria-label="Dismiss">&times;</button>
+    </div>
+    {% endif %}
+
     <!-- Skip to main content link for accessibility -->
     <a href="#main" class="skip-link">Skip to main content</a>
 

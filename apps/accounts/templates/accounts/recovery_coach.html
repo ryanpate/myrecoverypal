@@ -1322,7 +1322,7 @@
                 <div class="upgrade-card-icon">
                     <i class="fas fa-lock"></i>
                 </div>
-                <div class="upgrade-card-title">You've used all 3 free messages</div>
+                <div class="upgrade-card-title">You've used all 10 free messages</div>
                 <div class="upgrade-card-text">
                     Upgrade to Premium for 20 messages per day with Anchor, plus unlimited groups, advanced analytics, and more.
                 </div>
@@ -1608,27 +1608,12 @@ function acceptDisclaimer() {
             isSending = false;
             updateSendBtn();
 
-            // Progressive upgrade hints for free users
+            // Progressive upgrade hints for free users (triggers at 7/10 and 9/10)
             if (!isPremium) {
-                if (messagesUsed === 1 && messageLimit === 3) {
-                    showToast('2 free messages remaining. Loving Anchor? Try Premium free for 14 days.', 6000);
-                } else if (messagesUsed === 2 && messageLimit === 3) {
-                    // Show persistent banner above input
-                    var existingBanner = document.getElementById('upgradeBanner');
-                    if (!existingBanner) {
-                        var inputArea = document.querySelector('.chat-input-area');
-                        if (inputArea) {
-                            var banner = document.createElement('div');
-                            banner.id = 'upgradeBanner';
-                            banner.style.cssText = 'background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 0.75rem 1rem; text-align: center; font-size: 0.9rem; font-weight: 500;';
-                            if (window.MRPIAP) {
-                                banner.innerHTML = 'Last free message! <a href="#" onclick="if(window.MRPIAP) window.MRPIAP.showPurchaseUI(); return false;" style="color: white; font-weight: 700; text-decoration: underline;">Upgrade for 20 messages/day</a>';
-                            } else {
-                                banner.innerHTML = 'Last free message! <a href="{% url "accounts:pricing" %}" style="color: white; font-weight: 700; text-decoration: underline;">Upgrade for 20 messages/day</a>';
-                            }
-                            inputArea.parentNode.insertBefore(banner, inputArea);
-                        }
-                    }
+                if (messagesUsed === 7 && messageLimit === 10) {
+                    showToast('3 free messages remaining. Loving Anchor? Try Premium for 20 messages/day.', 6000);
+                } else if (messagesUsed === 9 && messageLimit === 10) {
+                    showToast('Last free message! Upgrade to Premium for 20 messages/day.', 8000);
                 }
             }
 

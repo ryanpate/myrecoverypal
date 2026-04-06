@@ -131,7 +131,7 @@ def can_send_message(user):
         return True, None
     else:
         total = get_total_free_messages(user)
-        if total >= 3:
+        if total >= 10:
             return False, "upgrade_required"
         return True, None
 

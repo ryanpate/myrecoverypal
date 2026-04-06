@@ -4816,7 +4816,7 @@ def recovery_coach(request):
         'limit_reason': reason,
         'is_premium': is_premium,
         'messages_used': get_message_count_today(request.user) if is_premium else get_total_free_messages(request.user),
-        'message_limit': 20 if is_premium else 3,
+        'message_limit': 20 if is_premium else 10,
         'sessions': RecoveryCoachSession.objects.filter(user=request.user).order_by('-updated_at')[:10],
     }
     return render(request, 'accounts/recovery_coach.html', context)
@@ -4872,7 +4872,7 @@ def coach_send_message(request):
     return JsonResponse({
         'response': response_text,
         'messages_used': get_message_count_today(request.user) if is_premium else get_total_free_messages(request.user),
-        'message_limit': 20 if is_premium else 3,
+        'message_limit': 20 if is_premium else 10,
     })
 
 
