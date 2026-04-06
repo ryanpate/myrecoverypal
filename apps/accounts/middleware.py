@@ -89,6 +89,48 @@ class NoCacheHTMLMiddleware:
         return response
 
 
+class SEONoIndexMiddleware:
+    """
+    Add X-Robots-Tag: noindex on pages that should not be indexed:
+    - Login/register with ?next= parameters (creates infinite URL variants)
+    - Any /accounts/ page behind auth (dashboard, profile, etc.)
+    Only affects crawlers — transparent to users.
+    """
+    NOINDEX_PREFIXES = (
+        '/accounts/dashboard',
+        '/accounts/edit-profile',
+        '/accounts/messages',
+        '/accounts/notifications',
+        '/accounts/milestones',
+        '/accounts/social-feed',
+        '/accounts/progress',
+        '/accounts/recovery-coach',
+        '/accounts/subscription',
+        '/journal/',
+        '/admin/',
+    )
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        path = request.path
+
+        # Noindex login/register with ?next= query params
+        if path in ('/accounts/login/', '/accounts/register/') and request.GET.get('next'):
+            response['X-Robots-Tag'] = 'noindex, nofollow'
+            return response
+
+        # Noindex authenticated-only pages
+        for prefix in self.NOINDEX_PREFIXES:
+            if path.startswith(prefix):
+                response['X-Robots-Tag'] = 'noindex, nofollow'
+                return response
+
+        return response
+
+
 class UpdateLastActivityMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response

@@ -12,8 +12,9 @@ def seo_defaults(request):
     Usage in templates: {{ seo_title }}, {{ seo_description }}, etc.
     """
     
-    # Get current URL for canonical and Open Graph
+    # Get current URL for canonical and Open Graph — force www for consistency
     current_url = request.build_absolute_uri()
+    current_url = current_url.replace('://myrecoverypal.com', '://www.myrecoverypal.com')
     
     # Default values
     default_title = "MyRecoveryPal - Your Recovery Support Community"

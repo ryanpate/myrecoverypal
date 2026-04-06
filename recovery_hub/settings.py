@@ -135,7 +135,9 @@ if DEBUG:
 
 SITE_ID = 1
 # Get site domain from environment or use default
-SITE_DOMAIN = os.environ.get('SITE_DOMAIN', 'myrecoverypal.com')
+# Force www — non-www duplicates cause de-indexing (23 canonical conflicts in GSC)
+PREPEND_WWW = True
+SITE_DOMAIN = os.environ.get('SITE_DOMAIN', 'www.myrecoverypal.com')
 SITE_URL = os.environ.get('SITE_URL', f'https://{SITE_DOMAIN}')
 
 # SEO Defaults
@@ -163,6 +165,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'apps.accounts.rate_limiting.RateLimitMiddleware',  # Rate limiting protection
+    'apps.accounts.middleware.SEONoIndexMiddleware',  # X-Robots-Tag: noindex on auth-only pages
 ]
 
 # Add debug toolbar middleware in development

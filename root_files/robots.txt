@@ -34,9 +34,19 @@ Disallow: /accounts/milestones/
 Disallow: /accounts/groups/
 Disallow: /accounts/challenges/
 Disallow: /accounts/community/
+Disallow: /accounts/social-feed/
+Disallow: /accounts/progress/
+Disallow: /accounts/recovery-coach/
+Disallow: /accounts/subscription/
 Disallow: /journal/
 Disallow: /admin/
 Disallow: /api/
+
+# Block query-parameter variants that create duplicate content
+Disallow: /accounts/login/?
+Disallow: /accounts/register/?
+Disallow: /blog/?page=
+Disallow: /blog/?filter=
 
 # Disallow system pages
 Disallow: /media/private/
