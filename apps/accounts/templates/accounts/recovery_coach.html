@@ -9,23 +9,14 @@
        RECOVERY COACH - LAYOUT
        ============================== */
     /* Coach page fills remaining viewport below the site nav.
-       Body padding-top is set globally and handles nav + safe-area.
-       We just need to fill from there to the bottom. */
+       Height is set by JS on load (measures actual nav height)
+       to avoid hardcoded pixel guessing. Fallback to 100% if JS fails. */
     .coach-page {
         display: flex;
-        /* Use dvh (dynamic viewport height) which excludes browser chrome,
-           fall back to vh for older browsers. Subtract body padding-top. */
-        height: calc(100dvh - 56px - var(--safe-area-inset-top, 0px));
-        height: calc(100vh - 56px - var(--safe-area-inset-top, 0px));
+        height: 100%; /* JS overrides this with exact calc */
         max-width: 100%;
         overflow: hidden;
         background: var(--bg-light);
-    }
-
-    /* On native iOS/Android, also subtract bottom tab bar */
-    .ios-native-app .coach-page,
-    .android-native-app .coach-page {
-        height: calc(100vh - 56px - var(--safe-area-inset-top, 0px) - 68px - env(safe-area-inset-bottom, 0px));
     }
 
     /* ==============================
@@ -1234,27 +1225,22 @@
 
     <!-- Chat Area -->
     <main class="chat-main">
-        <!-- Header -->
+        <!-- Header — clean action bar, no redundant branding -->
         <div class="chat-top-bar">
             <div class="chat-top-bar-left">
-                <div class="coach-icon">
-                    <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor AI Coach">
-                </div>
-                <div class="coach-info-name">
-                    Anchor
-                    {% if is_premium %}
-                    <span class="premium-tag"><i class="fas fa-crown"></i> Pro</span>
-                    {% endif %}
-                </div>
+                <span style="font-weight: 700; color: var(--primary-dark); font-size: 1rem;">Anchor</span>
+                {% if is_premium %}
+                <span class="premium-tag"><i class="fas fa-crown"></i> Pro</span>
+                {% endif %}
             </div>
-            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                 <form method="post" action="{% url 'accounts:coach_new_session' %}" style="margin: 0;">
                     {% csrf_token %}
-                    <button type="submit" style="background: var(--accent-green); color: white; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 4px; white-space: nowrap;" title="New conversation">
+                    <button type="submit" style="background: var(--accent-green); color: white; border: none; border-radius: 20px; padding: 7px 14px; cursor: pointer; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 5px; white-space: nowrap;" title="New conversation">
                         <i class="fas fa-plus" aria-hidden="true"></i> New
                     </button>
                 </form>
-                <button onclick="document.getElementById('sidebarToggle').click()" style="background: none; border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; padding: 6px 8px; cursor: pointer; color: var(--text-dark); font-size: 0.85rem;" title="Conversation history">
+                <button onclick="document.getElementById('sidebarToggle').click()" style="background: none; border: 1.5px solid var(--border-color, #e2e8f0); border-radius: 20px; padding: 7px 10px; cursor: pointer; color: var(--text-dark); font-size: 0.85rem;" title="Conversation history">
                     <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
                 </button>
                 <div class="msg-counter {% if messages_used >= message_limit %}counter-empty{% elif message_limit > 0 and messages_used >= message_limit|add:"-2" %}counter-low{% endif %}" id="messagesCounter">
@@ -1413,6 +1399,24 @@
 
 {% block extra_js %}
 <script>
+// Size coach page to fill viewport below nav, above tab bar
+(function() {
+    var nav = document.getElementById('siteNav');
+    var page = document.querySelector('.coach-page');
+    if (!nav || !page) return;
+    function resize() {
+        var navH = nav.getBoundingClientRect().height;
+        var tabH = 0;
+        var tabs = document.getElementById('nativeBottomTabs');
+        if (tabs && tabs.offsetParent !== null) {
+            tabH = tabs.getBoundingClientRect().height;
+        }
+        page.style.height = (window.innerHeight - navH - tabH) + 'px';
+    }
+    resize();
+    window.addEventListener('resize', resize);
+})();
+
 // Disclaimer modal — show on first visit, remember acceptance
 function acceptDisclaimer() {
     document.getElementById('disclaimerModal').classList.remove('active');
