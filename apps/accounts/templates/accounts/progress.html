@@ -1310,6 +1310,11 @@
                 <div>
                     <div class="milestone-days">{{ days_sober }}</div>
                     <div class="milestone-label">Days Sober{% if years_sober %} ({{ years_sober }} year{{ years_sober|pluralize }} {% if months_sober %}{{ months_sober }} mo{% endif %}){% endif %}</div>
+                    {% if user.recovery_start_date and user.recovery_start_date != user.sobriety_date %}
+                    <p style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-top: 0.35rem; margin-bottom: 0;">
+                        <i class="fas fa-calendar-alt" aria-hidden="true"></i> In recovery since {{ user.recovery_start_date|date:"N j, Y" }}
+                    </p>
+                    {% endif %}
                 </div>
                 <div class="milestone-next">
                     {% if is_milestone_day %}
@@ -1630,6 +1635,30 @@
     </div>
     <div id="feedInner"></div>
 </div>
+
+<!-- Log a Slip link -->
+<div style="text-align: center; margin: 2rem 0; padding: 1rem; border-top: 1px solid #eee;">
+    <a href="{% url 'accounts:log_slip' %}" style="color: #999; text-decoration: none; font-size: 0.9rem;">
+        <i class="fas fa-pen-to-square" aria-hidden="true"></i> Had a slip? Log it privately
+    </a>
+</div>
+
+{% if relapse_logs %}
+<div style="max-width: 1000px; margin: 0 auto 2rem; padding: 0 1rem;">
+    <h3 style="color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 1rem; cursor: pointer;" onclick="var el=document.getElementById('slipHistory'); el.style.display = el.style.display === 'none' ? 'block' : 'none'">
+        <i class="fas fa-history" aria-hidden="true"></i> Slip History ({{ relapse_logs|length }}) <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+    </h3>
+    <div id="slipHistory" style="display: none;">
+        {% for log in relapse_logs %}
+        <div style="background: #f8f9fa; border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem; border-left: 3px solid var(--primary-light);">
+            <div style="font-weight: 600; color: var(--primary-dark);">{{ log.relapse_date|date:"N j, Y" }}</div>
+            {% if log.trigger %}<div style="color: #666; font-size: 0.9rem; margin-top: 0.25rem;">Trigger: {{ log.trigger }}</div>{% endif %}
+            {% if log.notes %}<div style="color: #555; font-size: 0.9rem; margin-top: 0.25rem;">{{ log.notes }}</div>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block extra_js %}

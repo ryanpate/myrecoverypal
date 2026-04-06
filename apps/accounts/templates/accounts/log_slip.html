@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Log a Slip - MyRecoveryPal{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 100px auto 2rem; padding: 0 1rem;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;"><i class="fas fa-hand-holding-heart" aria-hidden="true" style="color: var(--primary-light);"></i></div>
+        <h1 style="color: var(--primary-dark); font-size: 1.8rem; margin-bottom: 0.5rem;">Log a Slip</h1>
+        <p style="color: #666; font-size: 1.05rem; line-height: 1.6;">
+            Progress, not perfection. Logging a slip is a sign of honesty and strength.
+            Your recovery journey continues.
+        </p>
+    </div>
+
+    <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+        <form method="post" action="{% url 'accounts:log_slip' %}">
+            {% csrf_token %}
+
+            <div style="margin-bottom: 1.5rem;">
+                <label for="slip_date" style="display: block; font-weight: 600; color: var(--primary-dark); margin-bottom: 0.5rem;">When did the slip happen?</label>
+                <input type="date" name="slip_date" id="slip_date" value="{{ today|date:'Y-m-d' }}" max="{{ today|date:'Y-m-d' }}" required
+                       style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label for="substance" style="display: block; font-weight: 600; color: var(--primary-dark); margin-bottom: 0.5rem;">What was involved? <span style="font-weight: 400; color: #999;">(optional)</span></label>
+                <input type="text" name="substance" id="substance" placeholder="e.g., alcohol, pills"
+                       style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label for="trigger" style="display: block; font-weight: 600; color: var(--primary-dark); margin-bottom: 0.5rem;">What triggered it? <span style="font-weight: 400; color: #999;">(optional)</span></label>
+                <input type="text" name="trigger" id="trigger" placeholder="e.g., stress, social event, loneliness"
+                       style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label for="notes" style="display: block; font-weight: 600; color: var(--primary-dark); margin-bottom: 0.5rem;">Notes to yourself <span style="font-weight: 400; color: #999;">(optional, private)</span></label>
+                <textarea name="notes" id="notes" rows="3" placeholder="What would you do differently? What did you learn?"
+                          style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; resize: vertical; box-sizing: border-box;"></textarea>
+            </div>
+
+            <div style="background: #fff3cd; border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem; font-size: 0.9rem; color: #856404;">
+                <i class="fas fa-lock" aria-hidden="true"></i> <strong>This is completely private.</strong> Only you can see your slip history. It will not appear on your profile or in the social feed.
+            </div>
+
+            <button type="submit" style="width: 100%; padding: 0.875rem; background: var(--primary-dark); color: white; border: none; border-radius: 50px; font-weight: 600; font-size: 1.05rem; cursor: pointer;">
+                Log Slip &amp; Continue My Journey
+            </button>
+
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="{% url 'accounts:progress' %}" style="color: #999; text-decoration: none; font-size: 0.9rem;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

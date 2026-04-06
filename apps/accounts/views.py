@@ -1152,6 +1152,10 @@ def progress_view(request):
         context['years_sober'] = rd.years
         context['months_sober'] = rd.months
 
+    from apps.accounts.models import RelapseLog
+    relapse_logs = RelapseLog.objects.filter(user=request.user)[:20]
+    context['relapse_logs'] = relapse_logs
+
     return render(request, 'accounts/progress.html', context)
 
 
@@ -5111,6 +5115,69 @@ def create_sponsor_invite(request):
         'share_text': share_text,
         'role': role,
     })
+
+
+@login_required
+def log_slip_view(request):
+    """Log a slip/relapse without destroying recovery history."""
+    from .models import RelapseLog, ActivityFeed
+
+    user = request.user
+
+    if request.method == 'POST':
+        slip_date_str = request.POST.get('slip_date', '').strip()
+        notes = request.POST.get('notes', '').strip()
+        substance = request.POST.get('substance', '').strip()
+        trigger = request.POST.get('trigger', '').strip()
+
+        if not slip_date_str:
+            messages.error(request, 'Please enter the date of the slip.')
+            return redirect('accounts:log_slip')
+
+        try:
+            from datetime import datetime
+            slip_date = datetime.strptime(slip_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            messages.error(request, 'Invalid date format.')
+            return redirect('accounts:log_slip')
+
+        # Preserve original recovery start date
+        if user.sobriety_date and not user.recovery_start_date:
+            user.recovery_start_date = user.sobriety_date
+
+        # Create relapse log
+        RelapseLog.objects.create(
+            user=user,
+            relapse_date=slip_date,
+            notes=notes,
+            substance=substance,
+            trigger=trigger,
+        )
+
+        # Reset current streak to day after slip
+        from datetime import timedelta
+        user.sobriety_date = slip_date + timedelta(days=1)
+        user.save(update_fields=['sobriety_date', 'recovery_start_date'])
+
+        # Private activity entry
+        ActivityFeed.objects.create(
+            user=user,
+            activity_type='check_in_posted',
+            title='Logged a slip',
+            description='Continuing the recovery journey.',
+        )
+
+        messages.success(
+            request,
+            'Logging a slip takes courage. Your recovery journey continues.'
+        )
+        return redirect('accounts:progress')
+
+    context = {
+        'today': timezone.now().date(),
+        'days_sober': user.get_days_sober(),
+    }
+    return render(request, 'accounts/log_slip.html', context)
 
 
 @login_required

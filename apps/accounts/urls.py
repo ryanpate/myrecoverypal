@@ -202,4 +202,7 @@ urlpatterns = [
     # Milestone image generation
     path('milestone-image/<int:days>/', views.milestone_image_view, name='milestone_image'),
 
+    # Relapse / slip tracking
+    path('log-slip/', views.log_slip_view, name='log_slip'),
+
 ]
