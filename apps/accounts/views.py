@@ -805,6 +805,7 @@ def daily_checkin_view(request):
         challenge = request.POST.get('challenge', '')
         goal = request.POST.get('goal', '')
         is_shared = request.POST.get('is_shared') == 'on'
+        pledge_taken = request.POST.get('pledge_taken') == 'on'
 
         if mood:
             # Create check-in with all the fields from your form
@@ -817,7 +818,9 @@ def daily_checkin_view(request):
                 gratitude=gratitude,
                 challenge=challenge,
                 goal=goal,
-                is_shared=is_shared
+                is_shared=is_shared,
+                pledge_taken=pledge_taken,
+                pledge_time=timezone.now() if pledge_taken else None,
             )
 
             if is_shared:
@@ -841,6 +844,16 @@ def daily_checkin_view(request):
                     description=f"Feeling {checkin.get_mood_display().lower()}" +
                     (f" - {gratitude[:100]}..." if gratitude else ""),
                     content_object=checkin
+                )
+
+            # Create pledge activity for social proof
+            if pledge_taken:
+                ActivityFeed.objects.create(
+                    user=request.user,
+                    activity_type='check_in_posted',
+                    title=f"{request.user.first_name or request.user.username} took today's pledge",
+                    description="I pledge to stay sober today",
+                    content_object=checkin,
                 )
 
             messages.success(request, 'Daily check-in completed!')
@@ -3979,6 +3992,12 @@ def social_feed_view(request):
             'is_gated': is_gated,
             'total_posts_count': total_posts_count,
         }
+
+        # Daily recovery thought for feed
+        from apps.accounts.models import DailyRecoveryThought
+        context['daily_thought'] = DailyRecoveryThought.objects.filter(
+            date=timezone.now().date()
+        ).first()
 
         # For authenticated users, check if feed is empty/sparse and add suggestions
         if user.is_authenticated:

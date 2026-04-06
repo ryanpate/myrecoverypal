@@ -255,7 +255,7 @@ def send_checkin_reminders(self):
             plain_message = strip_tags(html_message)
 
             success, error = send_email(
-                subject="Don't break your streak! Check in today 🔥",
+                subject=f"Take your daily pledge and check in, {user.first_name or user.username}",
                 plain_message=plain_message,
                 html_message=html_message,
                 recipient_email=user.email,
@@ -844,3 +844,36 @@ def send_trial_ending_notifications(self):
 
     logger.info(f"Trial-ending notifications: sent={sent_count}")
     return {'sent': sent_count}
+
+@shared_task(bind=True, max_retries=3)
+def publish_daily_thought(self):
+    """
+    Ensure today has a DailyRecoveryThought.
+    If no pre-seeded quote exists for today, recycle one from 30+ days ago.
+    Runs daily at 6:00 AM UTC.
+    """
+    from .models import DailyRecoveryThought
+
+    today = timezone.now().date()
+
+    if DailyRecoveryThought.objects.filter(date=today).exists():
+        logger.info(f"Daily thought already exists for {today}")
+        return {'status': 'already_exists'}
+
+    thirty_days_ago = today - timedelta(days=30)
+    old_quote = DailyRecoveryThought.objects.filter(
+        date__lte=thirty_days_ago
+    ).order_by('?').first()
+
+    if old_quote:
+        DailyRecoveryThought.objects.create(
+            quote=old_quote.quote,
+            author_attribution=old_quote.author_attribution,
+            reflection_prompt=old_quote.reflection_prompt,
+            date=today,
+        )
+        logger.info(f"Recycled daily thought for {today}")
+        return {'status': 'recycled'}
+
+    logger.warning(f"No quotes available to recycle for {today}")
+    return {'status': 'no_quotes'}
