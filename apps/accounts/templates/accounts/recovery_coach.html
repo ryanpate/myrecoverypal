@@ -8,15 +8,15 @@
     /* ==============================
        RECOVERY COACH - LAYOUT
        ============================== */
-    /* Override body padding — coach page manages its own spacing */
-    body {
-        padding-top: 0 !important;
-    }
-
+    /* Coach page fills remaining viewport below the site nav.
+       Body padding-top is set globally and handles nav + safe-area.
+       We just need to fill from there to the bottom. */
     .coach-page {
         display: flex;
-        height: calc(100vh - 56px - env(safe-area-inset-top, 0px));
-        margin-top: calc(56px + env(safe-area-inset-top, 0px));
+        /* Use dvh (dynamic viewport height) which excludes browser chrome,
+           fall back to vh for older browsers. Subtract body padding-top. */
+        height: calc(100dvh - 56px - var(--safe-area-inset-top, 0px));
+        height: calc(100vh - 56px - var(--safe-area-inset-top, 0px));
         max-width: 100%;
         overflow: hidden;
         background: var(--bg-light);
@@ -25,7 +25,7 @@
     /* On native iOS/Android, also subtract bottom tab bar */
     .ios-native-app .coach-page,
     .android-native-app .coach-page {
-        height: calc(100vh - 56px - env(safe-area-inset-top, 0px) - 68px - env(safe-area-inset-bottom, 0px));
+        height: calc(100vh - 56px - var(--safe-area-inset-top, 0px) - 68px - env(safe-area-inset-bottom, 0px));
     }
 
     /* ==============================
