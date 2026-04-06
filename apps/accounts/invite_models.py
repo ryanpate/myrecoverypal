@@ -156,7 +156,18 @@ class InviteCode(models.Model):
     
     # Notes
     notes = models.TextField(blank=True)
-    
+
+    # Invite role — determines relationship created on registration
+    ROLE_CHOICES = (
+        ('general', 'General'),
+        ('sponsor', 'Sponsor'),
+        ('pal', 'Recovery Pal'),
+    )
+    role = models.CharField(
+        max_length=20, choices=ROLE_CHOICES, default='general',
+        help_text="Relationship to create when invitee registers"
+    )
+
     class Meta:
         ordering = ['-created_at']
         verbose_name = 'Invite Code'

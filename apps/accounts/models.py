@@ -61,6 +61,10 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     sobriety_date = models.DateField(
         null=True, blank=True, help_text="Your sobriety start date")
+    recovery_start_date = models.DateField(
+        null=True, blank=True,
+        help_text="Original date recovery journey began. Never resets on relapse."
+    )
     recovery_goals = models.TextField(
         blank=True, help_text="Your personal recovery goals")
     is_sponsor = models.BooleanField(
@@ -680,6 +684,26 @@ class DailyRecoveryThought(models.Model):
 
     def __str__(self):
         return f"{self.date}: {self.quote[:50]}..."
+
+
+class RelapseLog(models.Model):
+    """Tracks slips/relapses without destroying recovery history."""
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='relapse_logs')
+    relapse_date = models.DateField()
+    notes = models.TextField(blank=True)
+    substance = models.CharField(max_length=100, blank=True)
+    trigger = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-relapse_date']
+        indexes = [
+            models.Index(fields=['user', '-relapse_date']),
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.relapse_date}"
 
 
 class ActivityComment(models.Model):
