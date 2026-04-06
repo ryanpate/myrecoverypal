@@ -186,25 +186,11 @@
     }
 
     /* Chat Header */
-    .chat-top-bar {
-        padding: 6px 10px;
-        background: var(--bg-lighter);
-        border-bottom: 1px solid var(--border-color, #e2e8f0);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-shrink: 0;
-    }
-
-    .chat-top-bar-left {
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-    }
-
-    /* Hide the large coach icon and subtitle in the top bar — redundant with tab */
+    /* Top bar removed — actions moved into chat area */
+    .chat-top-bar { display: none; }
     .coach-icon { display: none; }
     .coach-info-label { display: none; }
+    .coach-disclaimer-bar { display: none; }
 
     .coach-info-name {
         font-size: 1.1rem;
@@ -1235,32 +1221,7 @@
 
     <!-- Chat Area -->
     <main class="chat-main">
-        <!-- Header — single compact bar with actions + disclaimer merged -->
-        <div class="chat-top-bar" style="flex-wrap: wrap; padding: 4px 10px; gap: 0;">
-            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 4px;">
-                <span style="font-weight: 700; color: var(--primary-dark); font-size: 0.9rem;">Anchor{% if is_premium %} <span class="premium-tag" style="font-size: 0.55rem; padding: 1px 4px;"><i class="fas fa-crown"></i> Pro</span>{% endif %}</span>
-                <div style="display: flex; align-items: center; gap: 4px;">
-                    <form method="post" action="{% url 'accounts:coach_new_session' %}" style="margin: 0;">
-                        {% csrf_token %}
-                        <button type="submit" style="background: var(--accent-green); color: white; border: none; border-radius: 5px; padding: 3px 7px; cursor: pointer; font-size: 0.65rem; font-weight: 600; display: flex; align-items: center; gap: 2px; line-height: 1.2;" title="New conversation">
-                            <i class="fas fa-plus" aria-hidden="true" style="font-size: 0.6rem;"></i> New
-                        </button>
-                    </form>
-                    <button onclick="document.getElementById('sidebarToggle').click()" style="background: none; border: 1px solid #ddd; border-radius: 5px; padding: 3px 6px; cursor: pointer; color: #666; font-size: 0.65rem; line-height: 1.2;" title="History">
-                        <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
-                    </button>
-                    <div class="msg-counter {% if messages_used >= message_limit %}counter-empty{% elif message_limit > 0 and messages_used >= message_limit|add:"-2" %}counter-low{% endif %}" id="messagesCounter" style="font-size: 0.65rem; padding: 2px 6px;">
-                        <i class="fas fa-message" style="font-size: 0.6rem;"></i>
-                        <span class="counter-short">{{ messages_used }}/{{ message_limit }}</span>
-                    </div>
-                </div>
-            </div>
-            <div style="width: 100%; text-align: center; font-size: 0.6rem; color: #92400e; background: #fef3c7; margin: 3px -10px -4px; padding: 2px 10px; border-top: 1px solid #f59e0b;">
-                <i class="fas fa-triangle-exclamation" aria-hidden="true" style="font-size: 0.55rem;"></i>
-                AI tool, not medical professional. Crisis? <a href="tel:988" style="color: #92400e; font-weight: 600;">988</a> | <a href="tel:911" style="color: #92400e; font-weight: 600;">911</a>
-                &middot; <span class="disclaimer-link" onclick="document.getElementById('disclaimerModal').classList.add('active')" style="cursor: pointer; text-decoration: underline;">Details</span>
-            </div>
-        </div>
+        <!-- No separate top bar — actions are inside the chat area -->
 
         <!-- Disclaimer modal (shows on first visit, or when "Details" is clicked) -->
         <div class="disclaimer-modal-overlay" id="disclaimerModal">
@@ -1292,6 +1253,25 @@
 
         <!-- Messages -->
         <div class="chat-messages" id="chatMessages">
+            <!-- Action bar inside chat area — always visible at top -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-shrink: 0;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <form method="post" action="{% url 'accounts:coach_new_session' %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <button type="submit" style="background: var(--accent-green); color: white; border: none; border-radius: 20px; padding: 8px 14px; cursor: pointer; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-plus" aria-hidden="true"></i> New Chat
+                        </button>
+                    </form>
+                    <button onclick="document.getElementById('sidebarToggle').click()" style="background: var(--bg-lighter); border: 1px solid #ddd; border-radius: 20px; padding: 8px 14px; cursor: pointer; color: var(--text-dark); font-size: 0.8rem; font-weight: 500; display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-clock-rotate-left" aria-hidden="true"></i> History
+                    </button>
+                </div>
+                <div class="msg-counter {% if messages_used >= message_limit %}counter-empty{% elif message_limit > 0 and messages_used >= message_limit|add:"-2" %}counter-low{% endif %}" id="messagesCounter">
+                    <i class="fas fa-message"></i>
+                    <span class="counter-short">{{ messages_used }}/{{ message_limit }}</span>
+                </div>
+            </div>
+
             {% if chat_messages %}
                 {% for msg in chat_messages %}
                 <div class="msg-row {{ msg.role }}">
@@ -1309,8 +1289,15 @@
                 </div>
                 {% endfor %}
             {% else %}
-                <!-- Welcome state -->
+                <!-- Welcome state — flows naturally in the scrollable chat area -->
                 <div class="welcome-state" id="welcomeState">
+                    <!-- Disclaimer as first element -->
+                    <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 10px; padding: 8px 12px; font-size: 0.75rem; color: #92400e; text-align: center; margin-bottom: 1rem; width: 100%;">
+                        <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
+                        AI tool, not a medical professional. Crisis? <a href="tel:988" style="color: #92400e; font-weight: 600;">988</a> | <a href="tel:911" style="color: #92400e; font-weight: 600;">911</a>
+                        &middot; <span class="disclaimer-link" onclick="document.getElementById('disclaimerModal').classList.add('active')" style="cursor: pointer; text-decoration: underline;">Details</span>
+                    </div>
+
                     <div class="welcome-icon-circle">
                         <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor AI Coach">
                     </div>
