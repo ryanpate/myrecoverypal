@@ -89,6 +89,40 @@ def register_view(request):
                         days_sober=0
                     )
 
+                # Handle invite code role-based relationship
+                invite_code_str = request.POST.get('invite_code', '') or request.GET.get('invite', '')
+                if invite_code_str:
+                    try:
+                        invite_obj = InviteCode.objects.get(code=invite_code_str, status='active')
+                        if invite_obj.created_by and invite_obj.role == 'sponsor':
+                            SponsorRelationship.objects.get_or_create(
+                                sponsor=user,
+                                sponsee=invite_obj.created_by,
+                                defaults={'status': 'pending'}
+                            )
+                            Notification.objects.create(
+                                recipient=invite_obj.created_by,
+                                sender=user,
+                                notification_type='sponsor_request',
+                                message=f'{user.first_name or user.username} joined as your sponsor!',
+                            )
+                        elif invite_obj.created_by and invite_obj.role == 'pal':
+                            u1 = min(user, invite_obj.created_by, key=lambda u: u.id)
+                            u2 = max(user, invite_obj.created_by, key=lambda u: u.id)
+                            RecoveryPal.objects.get_or_create(
+                                user1=u1, user2=u2,
+                                defaults={'status': 'pending'}
+                            )
+                            Notification.objects.create(
+                                recipient=invite_obj.created_by,
+                                sender=user,
+                                notification_type='pal_request',
+                                message=f'{user.first_name or user.username} joined as your recovery pal!',
+                            )
+                        invite_obj.use_code(user)
+                    except Exception:
+                        pass
+
                 # Redirect to social feed - onboarding is now progressive
                 return redirect('accounts:progress')
         else:
@@ -151,204 +185,72 @@ def register_view(request):
 @login_required
 def onboarding_view(request):
     """
-    Multi-step onboarding wizard for new users (5 steps + completion).
-    Step 1: Recovery Stage - Where are you in your journey?
-    Step 2: Interests - What matters most to you?
-    Step 3: Profile - Let people recognize you
-    Step 4: Privacy - You're in control
-    Step 5: Connect - People on a similar path
-    Step 6: Complete - You're all set!
+    Simplified 3-step onboarding wizard.
+    Step 1: Recovery Type
+    Step 2: Name + Sobriety Date
+    Step 3: Welcome / Complete
     """
-    from .models import RECOVERY_STAGE_CHOICES, INTEREST_CATEGORIES
+    from .models import RECOVERY_STAGE_CHOICES
 
     user = request.user
 
-    # If already completed onboarding, redirect to social feed
     if user.has_completed_onboarding:
         return redirect('accounts:progress')
 
-    # A/B Testing: Get user's variant and track onboarding start
-    ab_variant = ABTestingService.get_variant(user, 'onboarding_flow')
-    ab_config = ABTestingService.get_variant_config(user, 'onboarding_flow')
-
-    # Track that user started onboarding (only tracked once per user)
     ABTestingService.track_conversion(user, 'onboarding_flow', 'started_onboarding')
 
-    # Get current step from query param (default to 1)
     step = int(request.GET.get('step', 1))
-
-    # Clamp step to valid range
-    step = max(1, min(step, 6))
+    step = max(1, min(step, 3))
 
     if request.method == 'POST':
         if step == 1:
-            # Step 1: Recovery Stage
             recovery_stage = request.POST.get('recovery_stage', '').strip()
-            sobriety_date = request.POST.get('sobriety_date', '').strip()
-
             if recovery_stage:
                 user.recovery_stage = recovery_stage
-
-            if sobriety_date:
-                try:
-                    from datetime import datetime
-                    user.sobriety_date = datetime.strptime(sobriety_date, '%Y-%m-%d').date()
-                except ValueError:
-                    pass
-
-            user.save()
+                user.save(update_fields=['recovery_stage'])
             ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_step_1')
             return redirect(reverse('accounts:onboarding') + '?step=2')
 
         elif step == 2:
-            # Step 2: Interests (multi-select)
-            interests = request.POST.getlist('interests')
-            user.interests = interests
+            first_name = request.POST.get('first_name', '').strip()
+            sobriety_date = request.POST.get('sobriety_date', '').strip()
+
+            if first_name:
+                user.first_name = first_name[:30]
+
+            if sobriety_date:
+                try:
+                    from datetime import datetime
+                    parsed_date = datetime.strptime(sobriety_date, '%Y-%m-%d').date()
+                    user.sobriety_date = parsed_date
+                    if not user.recovery_start_date:
+                        user.recovery_start_date = parsed_date
+                except ValueError:
+                    pass
+
             user.save()
             ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_step_2')
             return redirect(reverse('accounts:onboarding') + '?step=3')
 
         elif step == 3:
-            # Step 3: Profile (avatar, name, bio)
-            first_name = request.POST.get('first_name', '').strip()
-            bio = request.POST.get('bio', '').strip()
-
-            if first_name:
-                user.first_name = first_name[:30]
-            user.bio = bio[:500]
-
-            # Handle avatar upload
-            if 'avatar' in request.FILES:
-                try:
-                    avatar_file = request.FILES['avatar']
-                    result = cloudinary.uploader.upload(
-                        avatar_file,
-                        folder='avatars/',
-                        transformation=[
-                            {'width': 300, 'height': 300, 'crop': 'fill', 'gravity': 'face'}
-                        ]
-                    )
-                    user.avatar = result['secure_url']
-                except Exception as e:
-                    messages.warning(request, 'Could not upload photo. You can add it later.')
-
-            user.save()
-            ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_step_3')
-            return redirect(reverse('accounts:onboarding') + '?step=4')
-
-        elif step == 4:
-            # Step 4: Privacy
-            is_profile_public = request.POST.get('is_profile_public') == 'on'
-            user.is_profile_public = is_profile_public
-            user.save()
-            ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_step_4')
-            return redirect(reverse('accounts:onboarding') + '?step=5')
-
-        elif step == 5:
-            # Step 5: Follow suggested users
-            users_to_follow = request.POST.getlist('follow_users')
-            followed_count = 0
-
-            for user_id in users_to_follow:
-                try:
-                    user_to_follow = User.objects.get(id=user_id)
-                    if user_to_follow != user:
-                        user.follow_user(user_to_follow)
-                        followed_count += 1
-                except User.DoesNotExist:
-                    pass
-
-            ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_step_5')
-            if followed_count > 0:
-                ABTestingService.track_conversion(user, 'onboarding_flow', 'followed_user',
-                                                  {'count': followed_count})
-
-            # Redirect to completion screen
-            return redirect(reverse('accounts:onboarding') + '?step=6')
-
-        elif step == 6:
-            # Step 6: Completion - mark onboarding done
             user.has_completed_onboarding = True
-            user.save()
+            user.save(update_fields=['has_completed_onboarding'])
             ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding')
             messages.success(request, "Welcome to MyRecoveryPal!")
-            return redirect('accounts:progress')
+            return redirect('accounts:social_feed')
 
-    # GET request - build context for current step
     context = {
         'step': step,
-        'total_steps': 5,  # Don't count completion as a step
-        'progress_percent': int((min(step, 5) / 5) * 100),
-        # A/B Testing context
-        'ab_variant': ab_variant,
-        'ab_config': ab_config,
-        'skip_allowed': ab_config.get('skip_allowed', False),
+        'total_steps': 3,
+        'progress_percent': int((min(step, 3) / 3) * 100),
+        'days_sober': user.get_days_sober() if user.sobriety_date else None,
     }
 
-    if step == 1:
-        # Recovery stage choices
-        context['recovery_stages'] = RECOVERY_STAGE_CHOICES
-        context['current_stage'] = user.recovery_stage
-
-    elif step == 2:
-        # Interest categories
-        context['interest_categories'] = INTEREST_CATEGORIES
-        context['selected_interests'] = user.interests or []
-
-    elif step == 5:
-        # Get suggested users matched by recovery stage and interests
-        excluded_ids = list(user.get_following().values_list('id', flat=True))
-        excluded_ids.append(user.id)
-
-        # Start with users at the same recovery stage
-        suggested = []
-
-        if user.recovery_stage:
-            stage_matches = User.objects.filter(
-                is_active=True,
-                is_profile_public=True,
-                recovery_stage=user.recovery_stage,
-            ).exclude(
-                id__in=excluded_ids
-            ).exclude(
-                avatar=''
-            ).order_by('-last_seen', '-date_joined')[:4]
-            suggested.extend(list(stage_matches))
-
-        # Add users with similar interests
-        if user.interests:
-            already_ids = [u.id for u in suggested]
-            for interest in user.interests[:3]:  # Check top 3 interests
-                interest_matches = User.objects.filter(
-                    is_active=True,
-                    is_profile_public=True,
-                    interests__contains=interest,
-                ).exclude(
-                    id__in=excluded_ids + already_ids
-                ).order_by('-last_seen')[:2]
-                for u in interest_matches:
-                    if u.id not in already_ids and len(suggested) < 8:
-                        suggested.append(u)
-                        already_ids.append(u.id)
-
-        # Fill remaining slots with active users
-        if len(suggested) < 6:
-            already_ids = [u.id for u in suggested]
-            more_users = User.objects.filter(
-                is_active=True,
-                is_profile_public=True,
-            ).exclude(
-                id__in=excluded_ids + already_ids
-            ).exclude(
-                bio=''
-            ).order_by('-last_seen', '-date_joined')[:8 - len(suggested)]
-            suggested.extend(list(more_users))
-
-        context['suggested_users'] = suggested[:8]
-
-    elif step == 6:
-        # Completion screen - show summary
-        context['days_sober'] = user.get_days_sober() if user.sobriety_date else None
+    # Add recovery stage choices for step 1
+    try:
+        context['recovery_stage_choices'] = RECOVERY_STAGE_CHOICES
+    except Exception:
+        context['recovery_stage_choices'] = []
 
     return render(request, 'accounts/onboarding.html', context)
 
@@ -5134,6 +5036,47 @@ def link_preview_api(request):
         return JsonResponse({'error': 'Could not fetch URL'}, status=502)
     except Exception:
         return JsonResponse({'error': 'Preview unavailable'}, status=500)
+
+
+@login_required
+def create_sponsor_invite(request):
+    """Generate an invite link with sponsor/pal role and return share data."""
+    from .invite_models import InviteCode
+
+    role = request.GET.get('role', 'sponsor')
+    if role not in ('sponsor', 'pal'):
+        role = 'sponsor'
+
+    invite = InviteCode.objects.create(
+        created_by=request.user,
+        role=role,
+        max_uses=1,
+        uses_remaining=1,
+        notes=f'{role.title()} invite from {request.user.username}',
+    )
+
+    site_url = getattr(settings, 'SITE_URL', 'https://www.myrecoverypal.com')
+    invite_url = f'{site_url}/accounts/register/?invite={invite.code}'
+
+    if role == 'sponsor':
+        share_text = (
+            f"I'm using MyRecoveryPal for my recovery journey. "
+            f"I'd love for you to be my sponsor on the app. "
+            f"Join here: {invite_url}"
+        )
+    else:
+        share_text = (
+            f"I'm using MyRecoveryPal for my recovery. "
+            f"Want to be recovery pals? Join here: {invite_url}"
+        )
+
+    return JsonResponse({
+        'success': True,
+        'invite_url': invite_url,
+        'invite_code': invite.code,
+        'share_text': share_text,
+        'role': role,
+    })
 
 
 @login_required

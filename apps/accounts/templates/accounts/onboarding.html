@@ -146,14 +146,9 @@
     }
 
     .stage-info h4 {
-        margin: 0 0 0.25rem;
+        margin: 0;
         font-size: 1rem;
         color: #1a1a2e;
-    }
-
-    .stage-info span {
-        font-size: 0.8rem;
-        color: #888;
     }
 
     .stage-check {
@@ -172,135 +167,6 @@
     .stage-card.selected .stage-check {
         background: var(--accent);
         border-color: var(--accent);
-        color: white;
-    }
-
-    /* Date Input */
-    .date-section {
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #eee;
-    }
-
-    .date-section label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: #333;
-    }
-
-    .date-section small {
-        display: block;
-        color: #888;
-        font-size: 0.85rem;
-        margin-top: 0.25rem;
-    }
-
-    /* Interest Categories */
-    .interest-category {
-        margin-bottom: 1.5rem;
-    }
-
-    .interest-category h4 {
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #888;
-        margin: 0 0 0.75rem;
-    }
-
-    .interest-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .interest-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.6rem 1rem;
-        background: #f8f9fa;
-        border: 2px solid transparent;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-size: 0.9rem;
-        color: #555;
-    }
-
-    .interest-chip:hover {
-        background: white;
-        border-color: var(--secondary);
-    }
-
-    .interest-chip.selected {
-        background: linear-gradient(135deg, #e8f7f0 0%, #e0f4f8 100%);
-        border-color: var(--accent);
-        color: #1a1a2e;
-    }
-
-    .interest-chip input[type="checkbox"] {
-        display: none;
-    }
-
-    .interest-chip i {
-        font-size: 0.85rem;
-    }
-
-    /* Profile Section */
-    .avatar-upload {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .avatar-preview {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #e8e8e8, #f5f5f5);
-        margin: 0 auto 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        border: 4px solid #f0f0f0;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .avatar-preview:hover {
-        border-color: var(--secondary);
-        transform: scale(1.02);
-    }
-
-    .avatar-preview img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .avatar-preview i {
-        font-size: 3rem;
-        color: #ccc;
-    }
-
-    .avatar-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.6rem 1.25rem;
-        background: #f8f9fa;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        color: #666;
-        font-size: 0.9rem;
-        transition: all 0.2s ease;
-    }
-
-    .avatar-btn:hover {
-        background: var(--secondary);
         color: white;
     }
 
@@ -324,6 +190,7 @@
         font-size: 1rem;
         transition: all 0.2s ease;
         background: #fafafa;
+        box-sizing: border-box;
     }
 
     .form-control:focus {
@@ -333,210 +200,57 @@
         box-shadow: 0 0 0 4px rgba(77, 184, 232, 0.1);
     }
 
-    textarea.form-control {
-        min-height: 80px;
-        resize: vertical;
-    }
-
     .form-hint {
         font-size: 0.8rem;
         color: #888;
         margin-top: 0.25rem;
     }
 
-    /* Privacy Toggle */
-    .privacy-toggle {
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        padding: 1.5rem;
-        background: #f8f9fa;
-        border-radius: 16px;
-    }
-
-    .toggle-switch {
-        position: relative;
-        width: 52px;
-        height: 28px;
-        flex-shrink: 0;
-    }
-
-    .toggle-switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    .toggle-slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: #ddd;
-        border-radius: 28px;
-        transition: 0.3s;
-    }
-
-    .toggle-slider:before {
-        position: absolute;
-        content: "";
-        height: 22px;
-        width: 22px;
-        left: 3px;
-        bottom: 3px;
-        background: white;
-        border-radius: 50%;
-        transition: 0.3s;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .toggle-switch input:checked + .toggle-slider {
-        background: var(--accent);
-    }
-
-    .toggle-switch input:checked + .toggle-slider:before {
-        transform: translateX(24px);
-    }
-
-    .toggle-label h4 {
-        margin: 0 0 0.25rem;
-        font-size: 1rem;
-        color: #1a1a2e;
-    }
-
-    .toggle-label p {
-        margin: 0;
-        font-size: 0.85rem;
-        color: #666;
-    }
-
-    /* User Cards */
-    .users-grid {
-        display: grid;
-        gap: 0.75rem;
-    }
-
-    .user-card {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 0.875rem 1rem;
-        background: #f8f9fa;
-        border: 2px solid transparent;
-        border-radius: 14px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .user-card:hover {
-        background: white;
-        border-color: var(--secondary);
-    }
-
-    .user-card.selected {
-        background: linear-gradient(135deg, #e8f7f0 0%, #e0f4f8 100%);
-        border-color: var(--accent);
-    }
-
-    .user-card input {
+    /* Days counter preview */
+    .days-preview {
         display: none;
-    }
-
-    .user-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        overflow: hidden;
-        flex-shrink: 0;
-        display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: white;
-    }
-
-    .user-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .user-info {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .user-name {
-        font-weight: 600;
-        color: #1a1a2e;
-        margin-bottom: 0.15rem;
-    }
-
-    .user-bio {
-        font-size: 0.8rem;
-        color: #666;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .user-badge {
-        font-size: 0.75rem;
-        color: var(--accent);
-        font-weight: 500;
-    }
-
-    .user-check {
-        width: 24px;
-        height: 24px;
-        border: 2px solid #ddd;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: transparent;
-        flex-shrink: 0;
-    }
-
-    .user-card.selected .user-check {
-        background: var(--accent);
-        border-color: var(--accent);
-        color: white;
-    }
-
-    .follow-all-btn {
-        display: block;
-        width: 100%;
-        padding: 0.75rem;
-        margin-top: 1rem;
-        background: transparent;
-        border: 2px dashed #ddd;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+        padding: 0.875rem 1rem;
+        background: linear-gradient(135deg, #e8f7f0 0%, #e0f4f8 100%);
         border-radius: 12px;
-        color: #666;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
+        color: var(--accent);
+        font-weight: 600;
+        animation: fadeIn 0.3s ease;
     }
 
-    .follow-all-btn:hover {
-        border-color: var(--secondary);
-        color: var(--secondary);
+    .days-preview.visible {
+        display: flex;
     }
 
-    .empty-state {
+    .days-preview .days-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-4px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Skip link */
+    .skip-link {
+        display: block;
         text-align: center;
-        padding: 2rem;
-        color: #888;
+        margin-top: 0.75rem;
+        color: #aaa;
+        font-size: 0.875rem;
+        text-decoration: none;
+        cursor: pointer;
+        background: none;
+        border: none;
+        width: 100%;
+        padding: 0.5rem;
     }
 
-    .empty-state i {
-        font-size: 2.5rem;
-        color: #ddd;
-        margin-bottom: 0.75rem;
+    .skip-link:hover {
+        color: #666;
     }
 
     /* Completion Screen */
@@ -556,6 +270,12 @@
         justify-content: center;
         color: white;
         font-size: 2.5rem;
+        animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+        from { transform: scale(0.5); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
     }
 
     .completion-screen h2 {
@@ -564,61 +284,50 @@
         margin: 0 0 0.5rem;
     }
 
-    .completion-screen p {
+    .completion-screen > p {
         color: #666;
-        margin: 0 0 2rem;
+        margin: 0 0 1.5rem;
+        font-size: 1rem;
     }
 
     .sober-badge {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
+        padding: 0.875rem 1.75rem;
         background: linear-gradient(135deg, #e8f7f0 0%, #e0f4f8 100%);
         border-radius: 30px;
-        margin-bottom: 2rem;
-        color: var(--accent);
-        font-weight: 600;
-    }
-
-    .next-steps {
-        text-align: left;
-        background: #f8f9fa;
-        border-radius: 16px;
-        padding: 1.25rem;
         margin-bottom: 1.5rem;
-    }
-
-    .next-steps h4 {
-        margin: 0 0 0.75rem;
-        font-size: 0.9rem;
-        color: #888;
-    }
-
-    .next-step-item {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.5rem 0;
-        color: #555;
-        font-size: 0.9rem;
-    }
-
-    .next-step-item i {
         color: var(--accent);
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .sober-badge .sober-number {
+        font-size: 1.75rem;
+        animation: countUp 0.6s ease-out;
+    }
+
+    @keyframes countUp {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .completion-note {
+        font-size: 0.8rem;
+        color: #aaa;
+        margin-top: 0.75rem;
     }
 
     /* Navigation */
     .nav-buttons {
-        display: flex;
-        gap: 0.75rem;
         margin-top: 2rem;
         padding-top: 1.5rem;
         border-top: 1px solid #eee;
     }
 
     .btn {
-        flex: 1;
+        width: 100%;
         padding: 1rem 1.5rem;
         border-radius: 14px;
         font-weight: 600;
@@ -631,73 +340,17 @@
         gap: 0.5rem;
         text-decoration: none;
         border: none;
+        box-sizing: border-box;
     }
 
     .btn-primary {
         background: var(--gradient);
-        color: white;
+        color: white !important;
     }
 
     .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(77, 184, 232, 0.35);
-    }
-
-    .btn-secondary {
-        background: #f0f0f0;
-        color: #666;
-        flex: 0 0 auto;
-        padding: 1rem;
-    }
-
-    .btn-secondary:hover {
-        background: #e8e8e8;
-    }
-
-    .btn-skip {
-        background: none;
-        color: #999;
-        border: none;
-        font-size: 0.9rem;
-        cursor: pointer;
-        padding: 0.5rem;
-    }
-
-    .btn-skip:hover {
-        color: #666;
-    }
-
-    .nav-row {
-        display: flex;
-        gap: 0.75rem;
-        width: 100%;
-    }
-
-    .nav-row .btn-primary {
-        flex: 1;
-    }
-
-    .btn-skip-later {
-        display: block;
-        width: 100%;
-        text-align: center;
-        padding: 0.75rem;
-        margin-top: 0.75rem;
-        background: transparent;
-        color: #888;
-        text-decoration: none;
-        font-size: 0.9rem;
-        border-radius: 10px;
-        transition: all 0.2s ease;
-    }
-
-    .btn-skip-later:hover {
-        background: #f5f5f5;
-        color: #666;
-    }
-
-    .btn-skip-later i {
-        margin-right: 0.4rem;
     }
 
     /* Responsive */
@@ -718,18 +371,51 @@
         .stage-card {
             padding: 0.875rem 1rem;
         }
+    }
 
-        .interest-chip {
-            padding: 0.5rem 0.875rem;
-            font-size: 0.85rem;
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+        body {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a2a3a 100%);
         }
-
+        .onboarding-card {
+            background: #1e2d3d;
+        }
+        .progress-dots {
+            background: #162230;
+        }
+        .step-header h2 {
+            color: #f0f4f8;
+        }
+        .step-header p, .form-group label {
+            color: #aac4dc;
+        }
+        .stage-card {
+            background: #162230;
+            color: #f0f4f8;
+        }
+        .stage-card:hover {
+            background: #1e2d3d;
+        }
+        .stage-info h4 {
+            color: #f0f4f8;
+        }
+        .form-control {
+            background: #162230;
+            border-color: #2a3d52;
+            color: #f0f4f8;
+        }
+        .form-control:focus {
+            background: #1e2d3d;
+        }
         .nav-buttons {
-            flex-direction: column-reverse;
+            border-top-color: #2a3d52;
         }
-
-        .btn-secondary {
-            width: 100%;
+        .completion-screen h2 {
+            color: #f0f4f8;
+        }
+        .completion-screen > p {
+            color: #aac4dc;
         }
     }
 </style>
@@ -738,267 +424,116 @@
 {% block content %}
 <div class="onboarding-container">
     <div class="onboarding-card">
-        <!-- Progress Dots -->
-        {% if step <= 5 %}
+        <!-- Progress Dots (3 steps) -->
         <div class="progress-dots">
-            {% for i in "12345" %}
+            {% for i in "123" %}
             <div class="progress-dot {% if forloop.counter == step %}active{% elif forloop.counter < step %}completed{% endif %}"></div>
             {% endfor %}
         </div>
-        {% endif %}
 
         <div class="onboarding-content">
-            <form method="post" enctype="multipart/form-data">
+            <form method="post">
                 {% csrf_token %}
 
                 {% if step == 1 %}
-                <!-- Step 1: Recovery Stage -->
+                <!-- Step 1: Recovery Type -->
                 <div class="step-header">
                     <div class="step-icon">
-                        <i class="fas fa-seedling"></i>
+                        <i class="fas fa-seedling" aria-hidden="true"></i>
                     </div>
-                    <h2>Where are you in your journey?</h2>
+                    <h2>What brings you here?</h2>
                     <p>This helps us connect you with the right people</p>
                 </div>
 
                 <div class="stage-grid">
-                    {% for value, label in recovery_stages %}
-                    <label class="stage-card {% if current_stage == value %}selected{% endif %}" data-stage="{{ value }}">
-                        <input type="radio" name="recovery_stage" value="{{ value }}" {% if current_stage == value %}checked{% endif %}>
+                    {% for value, label in recovery_stage_choices %}
+                    <label class="stage-card {% if user.recovery_stage == value %}selected{% endif %}" data-value="{{ value }}">
+                        <input type="radio" name="recovery_stage" value="{{ value }}" {% if user.recovery_stage == value %}checked{% endif %}>
                         <div class="stage-icon">
                             {% if value == 'starting' %}
-                            <i class="fas fa-sun"></i>
+                            <i class="fas fa-sun" aria-hidden="true"></i>
                             {% elif value == 'building' %}
-                            <i class="fas fa-hammer"></i>
+                            <i class="fas fa-hammer" aria-hidden="true"></i>
                             {% elif value == 'growing' %}
-                            <i class="fas fa-leaf"></i>
+                            <i class="fas fa-leaf" aria-hidden="true"></i>
                             {% elif value == 'thriving' %}
-                            <i class="fas fa-tree"></i>
+                            <i class="fas fa-tree" aria-hidden="true"></i>
                             {% else %}
-                            <i class="fas fa-hands-helping"></i>
+                            <i class="fas fa-hands-helping" aria-hidden="true"></i>
                             {% endif %}
                         </div>
                         <div class="stage-info">
                             <h4>{{ label }}</h4>
                         </div>
                         <div class="stage-check">
-                            <i class="fas fa-check"></i>
+                            <i class="fas fa-check" aria-hidden="true"></i>
                         </div>
                     </label>
                     {% endfor %}
                 </div>
 
-                <div class="date-section">
-                    <label for="sobriety_date">When did you start? (optional)</label>
-                    <input type="date" class="form-control" id="sobriety_date" name="sobriety_date"
-                           value="{% if user.sobriety_date %}{{ user.sobriety_date|date:'Y-m-d' }}{% endif %}">
-                    <small class="form-hint">We'll celebrate your milestones with you</small>
-                </div>
-
                 {% elif step == 2 %}
-                <!-- Step 2: Interests -->
+                <!-- Step 2: Name + Sobriety Date -->
                 <div class="step-header">
                     <div class="step-icon">
-                        <i class="fas fa-heart"></i>
+                        <i class="fas fa-user" aria-hidden="true"></i>
                     </div>
-                    <h2>What matters most to you?</h2>
-                    <p>Select any that resonate with you</p>
-                </div>
-
-                {% for category, interests in interest_categories.items %}
-                <div class="interest-category">
-                    <h4>
-                        {% if category == 'recovery_focus' %}Recovery Focus
-                        {% elif category == 'activities' %}Activities I Enjoy
-                        {% elif category == 'support_type' %}Support Preferences
-                        {% else %}Goals I'm Working On
-                        {% endif %}
-                    </h4>
-                    <div class="interest-grid">
-                        {% for value, label in interests %}
-                        <label class="interest-chip {% if value in selected_interests %}selected{% endif %}">
-                            <input type="checkbox" name="interests" value="{{ value }}" {% if value in selected_interests %}checked{% endif %}>
-                            {{ label }}
-                        </label>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endfor %}
-
-                {% elif step == 3 %}
-                <!-- Step 3: Profile -->
-                <div class="step-header">
-                    <div class="step-icon">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h2>Let people recognize you</h2>
-                    <p>Add a photo and introduce yourself</p>
-                </div>
-
-                <div class="avatar-upload">
-                    <div class="avatar-preview" onclick="document.getElementById('avatar-input').click()">
-                        {% if user.avatar %}
-                        <img src="{{ user.avatar.url }}" alt="Profile photo" id="avatar-preview-img">
-                        {% else %}
-                        <i class="fas fa-camera" id="avatar-placeholder"></i>
-                        <img src="" alt="" id="avatar-preview-img" style="display: none;">
-                        {% endif %}
-                    </div>
-                    <button type="button" class="avatar-btn" onclick="document.getElementById('avatar-input').click()">
-                        <i class="fas fa-camera"></i> Add Photo
-                    </button>
-                    <input type="file" id="avatar-input" name="avatar" accept="image/*" style="display: none;">
+                    <h2>Let's personalize your experience</h2>
+                    <p>A little info helps us support you better</p>
                 </div>
 
                 <div class="form-group">
                     <label for="first_name">What should we call you?</label>
                     <input type="text" class="form-control" id="first_name" name="first_name"
-                           placeholder="Your first name" value="{{ user.first_name }}" maxlength="30">
+                           placeholder="Your first name" value="{{ user.first_name }}" maxlength="30" autocomplete="given-name">
                 </div>
 
                 <div class="form-group">
-                    <label for="bio">A little about you</label>
-                    <textarea class="form-control" id="bio" name="bio"
-                              placeholder="What brings you here? What are you passionate about?"
-                              maxlength="500">{{ user.bio }}</textarea>
-                    <small class="form-hint">This helps others connect with you</small>
-                </div>
-
-                {% elif step == 4 %}
-                <!-- Step 4: Privacy -->
-                <div class="step-header">
-                    <div class="step-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h2>You're in control</h2>
-                    <p>Choose how visible you want to be</p>
-                </div>
-
-                <div class="privacy-toggle">
-                    <label class="toggle-switch">
-                        <input type="checkbox" name="is_profile_public" id="is_profile_public" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <div class="toggle-label">
-                        <h4>Make my profile visible</h4>
-                        <p>Others can find you, follow you, and see your posts. You can change this anytime.</p>
+                    <label for="sobriety_date">When did your recovery journey begin? <span style="font-weight:400;color:#aaa;">(optional)</span></label>
+                    <input type="date" class="form-control" id="sobriety_date" name="sobriety_date"
+                           value="{% if user.sobriety_date %}{{ user.sobriety_date|date:'Y-m-d' }}{% endif %}"
+                           max="{% now 'Y-m-d' %}">
+                    <small class="form-hint">We'll celebrate every milestone with you</small>
+                    <div class="days-preview" id="daysPreview">
+                        <i class="fas fa-star" aria-hidden="true"></i>
+                        <span class="days-number" id="daysNumber">0</span>
+                        <span>days on your journey</span>
                     </div>
                 </div>
 
-                <div style="margin-top: 1.5rem; padding: 1rem; background: #f0f8ff; border-radius: 12px; border-left: 4px solid var(--secondary);">
-                    <p style="margin: 0; font-size: 0.9rem; color: #555;">
-                        <i class="fas fa-lock" style="color: var(--secondary); margin-right: 0.5rem;"></i>
-                        <strong>Your journal is always private.</strong> Only you can see your journal entries.
-                    </p>
-                </div>
-
-                {% elif step == 5 %}
-                <!-- Step 5: Connect -->
-                <div class="step-header">
-                    <div class="step-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h2>People on a similar path</h2>
-                    <p>Follow some members to fill your feed</p>
-                </div>
-
-                {% if suggested_users %}
-                <div class="users-grid">
-                    {% for member in suggested_users %}
-                    <label class="user-card" for="follow-{{ member.id }}">
-                        <input type="checkbox" name="follow_users" value="{{ member.id }}" id="follow-{{ member.id }}">
-                        <div class="user-avatar" style="background: {{ member.avatar|default:'linear-gradient(135deg, #4db8e8, #52b788)' }};">
-                            {% if member.avatar %}
-                            <img src="{{ member.avatar.url }}" alt="{{ member.username }}">
-                            {% else %}
-                            {{ member.first_name|default:member.username|slice:":1"|upper }}
-                            {% endif %}
-                        </div>
-                        <div class="user-info">
-                            <div class="user-name">{{ member.get_full_name|default:member.username }}</div>
-                            {% if member.bio %}
-                            <div class="user-bio">{{ member.bio|truncatewords:8 }}</div>
-                            {% endif %}
-                            {% if member.recovery_stage %}
-                            <div class="user-badge">
-                                {% if member.recovery_stage == user.recovery_stage %}Similar journey{% endif %}
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div class="user-check">
-                            <i class="fas fa-check"></i>
-                        </div>
-                    </label>
-                    {% endfor %}
-                </div>
-
-                <button type="button" class="follow-all-btn" onclick="selectAllUsers()">
-                    <i class="fas fa-check-double"></i> Follow All
-                </button>
-                {% else %}
-                <div class="empty-state">
-                    <i class="fas fa-users"></i>
-                    <p>No suggested users yet. You'll discover people as you explore!</p>
-                </div>
-                {% endif %}
-
-                {% elif step == 6 %}
-                <!-- Step 6: Completion -->
+                {% elif step == 3 %}
+                <!-- Step 3: Welcome / Complete -->
                 <div class="completion-screen">
                     <div class="completion-icon">
-                        <i class="fas fa-check"></i>
+                        <i class="fas fa-check" aria-hidden="true"></i>
                     </div>
                     <h2>You're all set!</h2>
-                    <p>Welcome to the MyRecoveryPal community</p>
+                    <p>Your recovery journey starts here. We're with you every step.</p>
 
                     {% if days_sober %}
                     <div class="sober-badge">
-                        <i class="fas fa-star"></i>
-                        {{ days_sober }} days strong
+                        <i class="fas fa-star" aria-hidden="true"></i>
+                        <span class="sober-number">{{ days_sober }}</span>
+                        <span>days strong</span>
                     </div>
                     {% endif %}
-
-                    <div class="next-steps">
-                        <h4>What's next?</h4>
-                        <div class="next-step-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>See what your community is sharing</span>
-                        </div>
-                        <div class="next-step-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Share your own journey</span>
-                        </div>
-                        <div class="next-step-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Join groups that match your interests</span>
-                        </div>
-                    </div>
                 </div>
+
                 {% endif %}
 
-                <!-- Navigation Buttons -->
+                <!-- Navigation -->
                 <div class="nav-buttons">
-                    {% if step == 6 %}
+                    {% if step == 3 %}
                     <button type="submit" class="btn btn-primary">
-                        See Your Feed <i class="fas fa-arrow-right"></i>
+                        Go to My Feed <i class="fas fa-arrow-right" aria-hidden="true"></i>
                     </button>
+                    <p class="completion-note">You can complete your profile anytime</p>
                     {% else %}
-                    <div class="nav-row">
-                        {% if step > 1 %}
-                        <a href="{% url 'accounts:onboarding' %}?step={{ step|add:'-1' }}" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i>
-                        </a>
-                        {% endif %}
-                        <button type="submit" class="btn btn-primary">
-                            {% if step == 5 %}
-                            Almost Done <i class="fas fa-arrow-right"></i>
-                            {% else %}
-                            Continue <i class="fas fa-arrow-right"></i>
-                            {% endif %}
-                        </button>
-                    </div>
-                    <a href="{% url 'accounts:skip_onboarding' %}" class="btn-skip-later">
-                        <i class="fas fa-clock"></i> I'll do this later
+                    <button type="submit" class="btn btn-primary">
+                        Continue <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                    </button>
+                    <a href="{% url 'accounts:skip_onboarding' %}" class="skip-link">
+                        I'll do this later
                     </a>
                     {% endif %}
                 </div>
@@ -1011,61 +546,46 @@
 {% block extra_js %}
 <script>
     // Stage card selection
-    document.querySelectorAll('.stage-card').forEach(card => {
+    document.querySelectorAll('.stage-card').forEach(function(card) {
         card.addEventListener('click', function() {
-            document.querySelectorAll('.stage-card').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('.stage-card').forEach(function(c) {
+                c.classList.remove('selected');
+            });
             this.classList.add('selected');
-            this.querySelector('input').checked = true;
+            this.querySelector('input[type="radio"]').checked = true;
         });
     });
 
-    // Interest chip selection
-    document.querySelectorAll('.interest-chip').forEach(chip => {
-        chip.addEventListener('click', function(e) {
-            if (e.target.tagName !== 'INPUT') {
-                const checkbox = this.querySelector('input');
-                checkbox.checked = !checkbox.checked;
-            }
-            this.classList.toggle('selected', this.querySelector('input').checked);
-        });
-    });
+    // Sobriety date → live day count preview
+    var dateInput = document.getElementById('sobriety_date');
+    var daysPreview = document.getElementById('daysPreview');
+    var daysNumber = document.getElementById('daysNumber');
 
-    // User card selection
-    document.querySelectorAll('.user-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            if (e.target.tagName !== 'INPUT') {
-                const checkbox = this.querySelector('input');
-                checkbox.checked = !checkbox.checked;
-            }
-            this.classList.toggle('selected', this.querySelector('input').checked);
-        });
-    });
-
-    // Avatar preview
-    const avatarInput = document.getElementById('avatar-input');
-    if (avatarInput) {
-        avatarInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const placeholder = document.getElementById('avatar-placeholder');
-                    const preview = document.getElementById('avatar-preview-img');
-                    if (placeholder) placeholder.style.display = 'none';
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+    function updateDaysPreview() {
+        if (!dateInput || !daysPreview) return;
+        var val = dateInput.value;
+        if (!val) {
+            daysPreview.classList.remove('visible');
+            return;
+        }
+        var start = new Date(val);
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        var diff = Math.floor((today - start) / 86400000);
+        if (diff >= 0) {
+            daysNumber.textContent = diff;
+            daysPreview.classList.add('visible');
+        } else {
+            daysPreview.classList.remove('visible');
+        }
     }
 
-    // Follow all users
-    function selectAllUsers() {
-        document.querySelectorAll('.user-card').forEach(card => {
-            card.classList.add('selected');
-            card.querySelector('input').checked = true;
-        });
+    if (dateInput) {
+        dateInput.addEventListener('change', updateDaysPreview);
+        // Show preview immediately if date already set
+        if (dateInput.value) {
+            updateDaysPreview();
+        }
     }
 </script>
 {% endblock %}
