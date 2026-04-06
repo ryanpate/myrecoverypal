@@ -600,8 +600,43 @@
         height: 72px;
         border-radius: 50%;
         overflow: hidden;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
         box-shadow: 0 8px 25px rgba(30, 77, 139, 0.2);
+    }
+
+    /* Scale welcome content for shorter screens (iPhone SE, iPhone 13 mini, etc.) */
+    @media (max-height: 750px) {
+        .welcome-icon-circle {
+            width: 56px;
+            height: 56px;
+            margin-bottom: 0.5rem;
+        }
+        .welcome-heading {
+            font-size: 1.2rem !important;
+            margin-bottom: 0.25rem !important;
+        }
+        .welcome-text {
+            font-size: 0.85rem !important;
+            margin-bottom: 0.75rem !important;
+        }
+        .welcome-chips {
+            gap: 0.5rem !important;
+        }
+        .welcome-chip {
+            padding: 0.5rem 1rem !important;
+            font-size: 0.82rem !important;
+        }
+        .welcome-state {
+            padding: 1rem !important;
+        }
+    }
+
+    /* Even smaller — iPhone SE 1st gen (568px height) */
+    @media (max-height: 600px) {
+        .welcome-icon-circle { display: none; }
+        .welcome-heading { font-size: 1.1rem !important; }
+        .welcome-text { font-size: 0.8rem !important; }
+        .coach-disclaimer-bar { font-size: 0.7rem !important; padding: 0.3rem 0.75rem !important; }
     }
 
     .welcome-icon-circle img {
@@ -1397,9 +1432,10 @@
         }
         // Fallback: on native apps, if tabs not measured yet, use safe estimate
         if (tabH === 0 && document.body.classList.contains('ios-native-app')) {
-            tabH = 80; // 68px bar + ~12px safe area
+            tabH = 95; // 68px bar + ~27px home indicator safe area
         }
-        page.style.bottom = tabH + 'px';
+        // Add 4px buffer to ensure input is never clipped
+        page.style.bottom = (tabH + 4) + 'px';
     }
     resize();
     window.addEventListener('resize', resize);
