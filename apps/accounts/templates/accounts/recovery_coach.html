@@ -1417,32 +1417,38 @@
     var nav = document.getElementById('siteNav');
     var page = document.querySelector('.coach-page');
     if (!nav || !page) return;
+
     function resize() {
-        var navH = nav.getBoundingClientRect().height;
-        page.style.top = navH + 'px';
-        // Tab bar may be shown async by capacitor-native.js — check multiple selectors
+        // Top: measure actual nav height
+        page.style.top = nav.getBoundingClientRect().height + 'px';
+
+        // Bottom: measure tab bar, or use CSS-computed body padding-bottom
         var tabs = document.getElementById('nativeBottomTabs');
         var tabH = 0;
         if (tabs) {
-            var rect = tabs.getBoundingClientRect();
-            // If tab bar is visible and at the bottom of viewport
-            if (rect.height > 0 && rect.top < window.innerHeight) {
-                tabH = window.innerHeight - rect.top;
+            var style = window.getComputedStyle(tabs);
+            if (style.display !== 'none') {
+                tabH = tabs.offsetHeight;
             }
         }
-        // Fallback: on native apps, if tabs not measured yet, use safe estimate
-        if (tabH === 0 && document.body.classList.contains('ios-native-app')) {
-            tabH = 95; // 68px bar + ~27px home indicator safe area
+        if (tabH === 0) {
+            // Read the body's computed padding-bottom (set by CSS for native)
+            var bodyPB = parseInt(window.getComputedStyle(document.body).paddingBottom, 10);
+            if (bodyPB > 20) tabH = bodyPB;
         }
-        // Add 4px buffer to ensure input is never clipped
-        page.style.bottom = (tabH + 4) + 'px';
+        page.style.bottom = Math.max(tabH, 0) + 'px';
     }
+
     resize();
     window.addEventListener('resize', resize);
     window.addEventListener('load', resize);
-    // Retry after 500ms — capacitor-native.js may not have shown tabs yet
-    setTimeout(resize, 500);
-    setTimeout(resize, 1500);
+    // Capacitor-native.js toggles tabs async — retry until stable
+    var attempts = 0;
+    var interval = setInterval(function() {
+        resize();
+        attempts++;
+        if (attempts > 10) clearInterval(interval);
+    }, 300);
 })();
 
 // Disclaimer modal — show on first visit, remember acceptance
