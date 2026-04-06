@@ -633,7 +633,7 @@ High-volume keyword blog posts (83K combined monthly searches):
 - [x] iOS: Offline mode (`static/js/capacitor-offline.js`) — IndexedDB cache for posts/journal, write queue with auto-flush on reconnect, fetch interceptor for cache-first reads
 
 #### Pre-Submission Fixes (Priority: CRITICAL for Apple Approval)
-- [ ] **Move credential storage from `@capacitor/preferences` to iOS Keychain** — `capacitor-biometric.js` stores login passwords in `UserDefaults` (plaintext). Use `@capacitor-community/secure-storage-plugin` or native Keychain wrapper. Apple Guideline 5.1.1 (Data Security) requires encrypted storage for credentials.
+- [x] **Move credential storage from `@capacitor/preferences` to iOS Keychain** ✅ Already implemented — `capacitor-biometric.js` uses `@aparajita/capacitor-secure-storage` (Keychain) as primary with Preferences fallback. Transparent migration at startup moves old plaintext credentials to Keychain and deletes from UserDefaults.
 - [x] **Remove `"cleartext": true` from `capacitor.config.json`** ✅ Already clean — not present in config
 - [x] **Change `aps-environment` from `development` to `production`** ✅ Already set to production in App.entitlements
 - [x] **Replace `alert()` calls in `capacitor-iap.js` with toast/modal UI** ✅ Already cleaned up — no alert() calls found
