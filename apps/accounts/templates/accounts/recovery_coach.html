@@ -15,17 +15,17 @@
 
     .coach-page {
         display: flex;
-        height: calc(100vh - max(76px, 76px + env(safe-area-inset-top)));
-        margin-top: max(76px, calc(76px + env(safe-area-inset-top)));
+        height: calc(100vh - 56px - env(safe-area-inset-top, 0px));
+        margin-top: calc(56px + env(safe-area-inset-top, 0px));
         max-width: 100%;
         overflow: hidden;
         background: var(--bg-light);
     }
 
-    /* On native iOS/Android, account for bottom tab bar */
+    /* On native iOS/Android, also subtract bottom tab bar */
     .ios-native-app .coach-page,
     .android-native-app .coach-page {
-        height: calc(100vh - max(76px, 76px + env(safe-area-inset-top)) - 68px - env(safe-area-inset-bottom, 0px));
+        height: calc(100vh - 56px - env(safe-area-inset-top, 0px) - 68px - env(safe-area-inset-bottom, 0px));
     }
 
     /* ==============================
@@ -189,24 +189,28 @@
 
     /* Chat Header */
     .chat-top-bar {
-        padding: 0.75rem 1.25rem;
+        padding: 0.5rem 0.75rem;
         background: var(--bg-lighter);
         border-bottom: 1px solid var(--border-color, #e2e8f0);
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-shrink: 0;
+        gap: 0.5rem;
+        overflow: hidden;
     }
 
     .chat-top-bar-left {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.5rem;
+        min-width: 0;
+        flex-shrink: 1;
     }
 
     .coach-icon {
-        width: 44px;
-        height: 44px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
         overflow: hidden;
         flex-shrink: 0;
@@ -216,6 +220,16 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+    }
+
+    .coach-info-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .coach-info-label {
+        display: none; /* Hide subtitle on mobile — save space */
     }
 
     .coach-info-name {
@@ -1226,30 +1240,25 @@
                 <div class="coach-icon">
                     <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor AI Coach">
                 </div>
-                <div>
-                    <div class="coach-info-name">
-                        Anchor
-                        {% if is_premium %}
-                        <span class="premium-tag"><i class="fas fa-crown"></i> Pro</span>
-                        {% endif %}
-                    </div>
-                    <div class="coach-info-label">AI Recovery Coach &mdash; Stay Grounded</div>
+                <div class="coach-info-name">
+                    Anchor
+                    {% if is_premium %}
+                    <span class="premium-tag"><i class="fas fa-crown"></i> Pro</span>
+                    {% endif %}
                 </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <!-- New Conversation + History buttons (replace hamburger on native) -->
+            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
                 <form method="post" action="{% url 'accounts:coach_new_session' %}" style="margin: 0;">
                     {% csrf_token %}
-                    <button type="submit" style="background: none; border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--accent-green); font-size: 0.8rem; display: flex; align-items: center; gap: 4px;" title="New conversation">
-                        <i class="fas fa-plus" aria-hidden="true"></i><span class="coach-btn-label"> New</span>
+                    <button type="submit" style="background: var(--accent-green); color: white; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 4px; white-space: nowrap;" title="New conversation">
+                        <i class="fas fa-plus" aria-hidden="true"></i> New
                     </button>
                 </form>
-                <button onclick="document.getElementById('sidebarToggle').click()" style="background: none; border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text-dark); font-size: 0.8rem; display: flex; align-items: center; gap: 4px;" title="Conversation history">
-                    <i class="fas fa-clock-rotate-left" aria-hidden="true"></i><span class="coach-btn-label"> History</span>
+                <button onclick="document.getElementById('sidebarToggle').click()" style="background: none; border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; padding: 6px 8px; cursor: pointer; color: var(--text-dark); font-size: 0.85rem;" title="Conversation history">
+                    <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
                 </button>
                 <div class="msg-counter {% if messages_used >= message_limit %}counter-empty{% elif message_limit > 0 and messages_used >= message_limit|add:"-2" %}counter-low{% endif %}" id="messagesCounter">
                     <i class="fas fa-message"></i>
-                    <span class="counter-text">{{ messages_used }}/{{ message_limit }} {% if is_premium %}today{% else %}messages{% endif %}</span>
                     <span class="counter-short">{{ messages_used }}/{{ message_limit }}</span>
                 </div>
             </div>
