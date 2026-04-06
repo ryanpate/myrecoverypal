@@ -167,6 +167,40 @@ def register_view(request):
                     days_sober=0
                 )
 
+            # Handle invite code role-based relationship
+            invite_code_str = request.POST.get('invite_code', '') or request.GET.get('invite', '')
+            if invite_code_str:
+                try:
+                    invite_obj = InviteCode.objects.get(code=invite_code_str, status='active')
+                    if invite_obj.created_by and invite_obj.role == 'sponsor':
+                        SponsorRelationship.objects.get_or_create(
+                            sponsor=user,
+                            sponsee=invite_obj.created_by,
+                            defaults={'status': 'pending'}
+                        )
+                        Notification.objects.create(
+                            recipient=invite_obj.created_by,
+                            sender=user,
+                            notification_type='sponsor_request',
+                            message=f'{user.first_name or user.username} joined as your sponsor!',
+                        )
+                    elif invite_obj.created_by and invite_obj.role == 'pal':
+                        u1 = min(user, invite_obj.created_by, key=lambda u: u.id)
+                        u2 = max(user, invite_obj.created_by, key=lambda u: u.id)
+                        RecoveryPal.objects.get_or_create(
+                            user1=u1, user2=u2,
+                            defaults={'status': 'pending'}
+                        )
+                        Notification.objects.create(
+                            recipient=invite_obj.created_by,
+                            sender=user,
+                            notification_type='pal_request',
+                            message=f'{user.first_name or user.username} joined as your recovery pal!',
+                        )
+                    invite_obj.use_code(user)
+                except Exception:
+                    pass
+
             # Redirect to social feed - onboarding is now progressive
             return redirect('accounts:progress')
     else:
