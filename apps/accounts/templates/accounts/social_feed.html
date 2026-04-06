@@ -1399,6 +1399,7 @@
 
     <!-- Feed Posts -->
     <div id="postsContainer" class="content-container loading">
+        {% include 'accounts/partials/_daily_thought.html' %}
         {% if posts %}
             {% for post in posts %}
             <div class="post-card" data-post-id="{{ post.id }}">

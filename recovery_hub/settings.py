@@ -746,6 +746,11 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_trial_ending_notifications',
         'schedule': crontab(hour=10, minute=0),  # Daily at 10 AM
     },
+    # Daily recovery thought — ensures a quote exists for today's feed
+    'publish-daily-thought': {
+        'task': 'apps.accounts.tasks.publish_daily_thought',
+        'schedule': crontab(hour=6, minute=0),  # Daily at 6 AM UTC
+    },
 }
 
 # Celery worker memory optimization (Railway cost reduction)

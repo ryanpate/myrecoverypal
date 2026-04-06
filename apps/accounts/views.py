@@ -4162,6 +4162,12 @@ def hybrid_landing_view(request):
                 'profile_completion': profile_completion,
                 'show_profile_banner': not profile_completion['is_complete'] and not user.has_completed_onboarding,
             })
+
+            # Daily recovery thought
+            from apps.accounts.models import DailyRecoveryThought
+            context['daily_thought'] = DailyRecoveryThought.objects.filter(
+                date=timezone.now().date()
+            ).first()
         else:
             # For unauthenticated users, only show public posts
             visible_posts = list(SocialPost.objects.select_related('author', 'author__subscription').prefetch_related(

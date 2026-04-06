@@ -1,0 +1,20 @@
+{% if daily_thought %}
+<div style="background: linear-gradient(135deg, var(--primary-dark), var(--primary-light)); border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; color: white; text-align: center;">
+    <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; margin-bottom: 1rem;">
+        <i class="fas fa-sun" aria-hidden="true"></i> Daily Recovery Thought
+    </div>
+    <blockquote style="font-size: 1.25rem; font-style: italic; line-height: 1.6; margin: 0 0 1rem 0; padding: 0;">
+        &ldquo;{{ daily_thought.quote }}&rdquo;
+    </blockquote>
+    {% if daily_thought.author_attribution %}
+    <div style="font-size: 0.9rem; opacity: 0.85; margin-bottom: 1rem;">
+        &mdash; {{ daily_thought.author_attribution }}
+    </div>
+    {% endif %}
+    {% if daily_thought.reflection_prompt %}
+    <div style="font-size: 0.95rem; opacity: 0.9; background: rgba(255,255,255,0.15); border-radius: 10px; padding: 0.75rem 1rem; display: inline-block;">
+        <i class="fas fa-comment-dots" aria-hidden="true"></i> {{ daily_thought.reflection_prompt }}
+    </div>
+    {% endif %}
+</div>
+{% endif %}
