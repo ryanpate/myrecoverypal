@@ -641,6 +641,10 @@ class DailyCheckIn(models.Model):
     is_shared = models.BooleanField(
         default=False, help_text="Share with community")
 
+    # Daily pledge
+    pledge_taken = models.BooleanField(default=False)
+    pledge_time = models.DateTimeField(null=True, blank=True)
+
     # Engagement
     likes = models.ManyToManyField(
         User, blank=True, related_name='liked_checkins')
@@ -661,6 +665,21 @@ class DailyCheckIn(models.Model):
     def get_mood_display_with_emoji(self):
         mood_dict = dict(self.MOOD_CHOICES)
         return mood_dict.get(self.mood, '😐 Okay')
+
+
+class DailyRecoveryThought(models.Model):
+    """Daily recovery quotes displayed at the top of the social feed."""
+    quote = models.TextField()
+    author_attribution = models.CharField(max_length=200, blank=True)
+    reflection_prompt = models.CharField(max_length=300, blank=True)
+    date = models.DateField(unique=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.date}: {self.quote[:50]}..."
 
 
 class ActivityComment(models.Model):
