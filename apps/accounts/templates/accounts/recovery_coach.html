@@ -15,11 +15,17 @@
 
     .coach-page {
         display: flex;
-        height: calc(100vh - max(100px, 100px + env(safe-area-inset-top)));
-        margin-top: max(100px, calc(100px + env(safe-area-inset-top)));
+        height: calc(100vh - max(76px, 76px + env(safe-area-inset-top)));
+        margin-top: max(76px, calc(76px + env(safe-area-inset-top)));
         max-width: 100%;
         overflow: hidden;
         background: var(--bg-light);
+    }
+
+    /* On native iOS/Android, account for bottom tab bar */
+    .ios-native-app .coach-page,
+    .android-native-app .coach-page {
+        height: calc(100vh - max(76px, 76px + env(safe-area-inset-top)) - 68px - env(safe-area-inset-bottom, 0px));
     }
 
     /* ==============================
@@ -131,7 +137,7 @@
         opacity: 0.4;
     }
 
-    /* Mobile sidebar controls */
+    /* Mobile sidebar controls — hidden by default, shown on small screens */
     .sidebar-toggle-btn {
         display: none;
         position: fixed;
@@ -149,6 +155,17 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         color: var(--text-dark);
         font-size: 1.1rem;
+    }
+
+    /* On native: hide floating hamburger — inline New/History buttons replace it */
+    .ios-native-app .sidebar-toggle-btn,
+    .android-native-app .sidebar-toggle-btn {
+        display: none !important;
+    }
+
+    /* Hide button labels on very small screens */
+    @media (max-width: 380px) {
+        .coach-btn-label { display: none; }
     }
 
     .sidebar-backdrop {
@@ -661,6 +678,12 @@
         flex-shrink: 0;
     }
 
+    /* On native, tab bar handles safe area — don't double-pad */
+    .ios-native-app .chat-input-area,
+    .android-native-app .chat-input-area {
+        padding-bottom: 0.75rem;
+    }
+
     .input-box {
         display: flex;
         align-items: flex-end;
@@ -1155,7 +1178,7 @@
 {% block content %}
 {% csrf_token %}
 
-<!-- Mobile sidebar toggle -->
+<!-- Mobile sidebar toggle (hidden on native, replaced by inline buttons) -->
 <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle sessions">
     <i class="fas fa-bars"></i>
 </button>
@@ -1213,10 +1236,22 @@
                     <div class="coach-info-label">AI Recovery Coach &mdash; Stay Grounded</div>
                 </div>
             </div>
-            <div class="msg-counter {% if messages_used >= message_limit %}counter-empty{% elif message_limit > 0 and messages_used >= message_limit|add:"-2" %}counter-low{% endif %}" id="messagesCounter">
-                <i class="fas fa-message"></i>
-                <span class="counter-text">{{ messages_used }}/{{ message_limit }} {% if is_premium %}today{% else %}messages{% endif %}</span>
-                <span class="counter-short">{{ messages_used }}/{{ message_limit }}</span>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <!-- New Conversation + History buttons (replace hamburger on native) -->
+                <form method="post" action="{% url 'accounts:coach_new_session' %}" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--accent-green); font-size: 0.8rem; display: flex; align-items: center; gap: 4px;" title="New conversation">
+                        <i class="fas fa-plus" aria-hidden="true"></i><span class="coach-btn-label"> New</span>
+                    </button>
+                </form>
+                <button onclick="document.getElementById('sidebarToggle').click()" style="background: none; border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text-dark); font-size: 0.8rem; display: flex; align-items: center; gap: 4px;" title="Conversation history">
+                    <i class="fas fa-clock-rotate-left" aria-hidden="true"></i><span class="coach-btn-label"> History</span>
+                </button>
+                <div class="msg-counter {% if messages_used >= message_limit %}counter-empty{% elif message_limit > 0 and messages_used >= message_limit|add:"-2" %}counter-low{% endif %}" id="messagesCounter">
+                    <i class="fas fa-message"></i>
+                    <span class="counter-text">{{ messages_used }}/{{ message_limit }} {% if is_premium %}today{% else %}messages{% endif %}</span>
+                    <span class="counter-short">{{ messages_used }}/{{ message_limit }}</span>
+                </div>
             </div>
         </div>
 
