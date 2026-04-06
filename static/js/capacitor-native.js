@@ -336,6 +336,71 @@
     });
 
     // ========================================
+    // Milestone Local Notifications
+    // ========================================
+    (function initMilestoneNotifications() {
+        var LocalNotifications = Plugins.LocalNotifications;
+        if (!LocalNotifications) return;
+
+        var metaDate = document.querySelector('meta[name="sobriety-date"]');
+        if (!metaDate || !metaDate.content) return;
+
+        var sobrietyDate = new Date(metaDate.content + 'T00:00:00');
+        if (isNaN(sobrietyDate.getTime())) return;
+
+        var milestones = [
+            { days: 7,   title: '1 Week Sober!',   body: 'You made it through your first week. That takes real strength.' },
+            { days: 14,  title: '2 Weeks Sober!',  body: 'Two weeks strong. Your body and mind are healing.' },
+            { days: 30,  title: '1 Month Sober!',  body: 'One month! This is a major milestone in recovery.' },
+            { days: 60,  title: '2 Months Sober!', body: 'Two months of commitment. You\'re building something lasting.' },
+            { days: 90,  title: '90 Days Sober!',  body: 'The 90-day milestone. A cornerstone of recovery programs worldwide.' },
+            { days: 180, title: '6 Months Sober!', body: 'Half a year! Your dedication is truly inspiring.' },
+            { days: 365, title: '1 Year Sober!',   body: 'Happy soberversary! One year is a life-changing achievement.' },
+        ];
+
+        var now = new Date();
+        var pendingNotifications = [];
+        var baseId = 9000; // Avoid collision with other notification IDs
+
+        milestones.forEach(function(m, i) {
+            var milestoneDate = new Date(sobrietyDate);
+            milestoneDate.setDate(milestoneDate.getDate() + m.days);
+            // Schedule for 9 AM on the milestone day
+            milestoneDate.setHours(9, 0, 0, 0);
+
+            // Only schedule future milestones
+            if (milestoneDate > now) {
+                pendingNotifications.push({
+                    id: baseId + i,
+                    title: m.title,
+                    body: m.body,
+                    schedule: { at: milestoneDate },
+                    sound: 'default',
+                    actionTypeId: '',
+                    extra: { type: 'milestone', days: m.days },
+                });
+            }
+        });
+
+        if (pendingNotifications.length === 0) return;
+
+        LocalNotifications.checkPermissions().then(function(result) {
+            if (result.display !== 'granted') {
+                return LocalNotifications.requestPermissions();
+            }
+            return result;
+        }).then(function(result) {
+            if (result.display === 'granted') {
+                return LocalNotifications.schedule({ notifications: pendingNotifications });
+            }
+        }).then(function() {
+            console.log('[MRP] Scheduled ' + pendingNotifications.length + ' milestone notifications');
+        }).catch(function(err) {
+            console.error('[MRP] Failed to schedule milestone notifications:', err);
+        });
+    })();
+
+    // ========================================
     // Dismiss Splash Overlay on Page Load
     // ========================================
     if (splashShown) {
