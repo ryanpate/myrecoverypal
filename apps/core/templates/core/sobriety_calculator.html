@@ -858,16 +858,7 @@
     </div>
 </section>
 
-<!-- Related Links -->
-<section class="related-section">
-    <h3>More Recovery Tools</h3>
-    <div class="related-grid">
-        <a href="{% url 'core:sobriety_counter_app' %}"><i class="fas fa-stopwatch"></i> Sobriety Counter App</a>
-        <a href="{% url 'core:alcohol_recovery_app' %}"><i class="fas fa-wine-glass-alt"></i> Alcohol Recovery</a>
-        <a href="{% url 'accounts:community' %}"><i class="fas fa-users"></i> Recovery Community</a>
-        <a href="{% url 'accounts:challenges_home' %}"><i class="fas fa-trophy"></i> Recovery Challenges</a>
-    </div>
-</section>
+{% include 'core/partials/_related_tools.html' with exclude='sobriety_calculator' %}
 
 <!-- Final CTA -->
 <section class="final-cta">
