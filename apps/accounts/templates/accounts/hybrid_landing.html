@@ -3161,38 +3161,41 @@ function closeCelebration() {
     }
 }
 
-// Share milestone via native Web Share API
-async function shareMilestone(days, button) {
-    const shareData = {
-        title: 'My Recovery Milestone',
-        text: `🎉 ${days} days sober! #Recovery #MyRecoveryPal #SobrietyMilestone`,
-        url: window.location.origin
-    };
+// Share milestone via native Web Share API or milestone image
+function shareMilestone(days, button) {
+    var imageUrl = '/accounts/milestone-image/' + days + '/?format=story';
+    var shareUrl = window.location.origin + imageUrl;
+
+    if (window.MRPNative && window.MRPNative.share) {
+        window.MRPNative.share(
+            'My Recovery Milestone',
+            'I just hit ' + days + ' days sober on MyRecoveryPal!',
+            shareUrl
+        );
+        return;
+    }
 
     if (navigator.share) {
-        try {
-            await navigator.share(shareData);
-            button.classList.add('shared');
-            button.innerHTML = '<i class="fas fa-check"></i>';
-            setTimeout(() => {
-                button.classList.remove('shared');
-                button.innerHTML = '<i class="fas fa-share-alt"></i>';
-            }, 2000);
-        } catch (err) {
+        navigator.share({
+            title: 'My Recovery Milestone',
+            text: 'I just hit ' + days + ' days sober on MyRecoveryPal!',
+            url: shareUrl,
+        }).then(function() {
+            if (button) {
+                var icon = button.querySelector('i');
+                if (icon) { icon.className = 'fas fa-check'; }
+                setTimeout(function() {
+                    if (icon) { icon.className = 'fas fa-share-alt'; }
+                }, 2000);
+            }
+        }).catch(function(err) {
             console.log('Share cancelled or failed:', err);
-        }
-    } else {
-        // Fallback: copy to clipboard
-        const shareText = `🎉 ${days} days sober! #Recovery #MyRecoveryPal #SobrietyMilestone\n\nJoin the supportive community at ${window.location.origin}`;
-        navigator.clipboard.writeText(shareText).then(() => {
-            button.classList.add('shared');
-            button.innerHTML = '<i class="fas fa-check"></i>';
-            setTimeout(() => {
-                button.classList.remove('shared');
-                button.innerHTML = '<i class="fas fa-share-alt"></i>';
-            }, 2000);
         });
+        return;
     }
+
+    // Fallback: open image in new tab
+    window.open(shareUrl, '_blank');
 }
 
 // Add fadeOut animation dynamically
