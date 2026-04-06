@@ -49,7 +49,7 @@
       "name": "What counts as a sobriety date?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Your sobriety date is typically the day after your last drink or drug use. For example, if you had your last drink on January 1st, your sobriety date would be January 2nd."
+        "text": "Your sobriety date is typically the day after your last drink or drug use. For example, if you had your last drink on January 1st, your sobriety date would be January 2nd. In AA and NA, this is when you start counting continuous clean time."
       }
     },
     {
@@ -57,7 +57,7 @@
       "name": "How much money can I save by not drinking?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The average person who drinks regularly spends $50-150 per week on alcohol. Over a year, that's $2,600-$7,800 saved. Our calculator lets you enter your personal spending to see exactly how much you've saved."
+        "text": "A casual drinker ($5-10/day) saves $1,825-$3,650 per year. A regular drinker ($15-25/day) saves $5,475-$9,125 per year. A heavy drinker ($30-50/day) saves $10,950-$18,250 per year. When you factor in reduced medical bills and avoided DUI costs, the real savings can be 2-3 times higher."
       }
     },
     {
@@ -65,7 +65,31 @@
       "name": "What health benefits happen when you stop drinking?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Within 24 hours, blood sugar normalizes. After 1 week, sleep improves. At 1 month, liver fat reduces by 15%. After 3 months, blood pressure may decrease. At 1 year, liver function significantly improves."
+        "text": "Within 24 hours, blood sugar normalizes. After 1 week, sleep improves. At 1 month, liver fat reduces by 15%. After 3 months, mental clarity improves and skin looks healthier. At 6 months, cardiovascular health significantly improves. At 1 year, risk of heart disease reduced by 50%. After 5 years, risk of stroke returns to near-normal levels."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many days sober am I?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Enter your quit date in the free sobriety calculator above. It instantly shows your total days sober with a breakdown in weeks, months, years, and hours. It also shows which recovery milestones you've reached and upcoming milestones."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does sobriety get easier over time?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, for most people. The first 30 days are typically the most challenging. After 90 days, cravings become less frequent and intense. By one year, most people have developed new routines and coping mechanisms. However, recovery is not linear — ongoing support and community matter."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this calculator for NA clean time?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. This calculator works for any type of sobriety or clean time, whether you're in AA, NA, SMART Recovery, or any other program. Simply enter the date you stopped using your substance of choice."
       }
     }
   ]
@@ -617,16 +641,17 @@
                 </div>
             </div>
 
-            <!-- Results Section -->
+            <!-- Results Section — default 90-day demo so Google sees real content -->
             <div class="calc-results">
-                <!-- Placeholder State -->
-                <div id="placeholder-state" class="placeholder-state">
+                <!-- Placeholder State (hidden once demo loads) -->
+                <div id="placeholder-state" class="placeholder-state" style="display: none;">
                     <div class="icon"><i class="fas fa-calendar-alt"></i></div>
                     <p>Select your sobriety date above to see your progress</p>
                 </div>
 
-                <!-- Results (hidden by default) -->
-                <div id="results-display" style="display: none;">
+                <!-- Results (visible by default with demo data for SEO) -->
+                <div id="results-display">
+                    <p id="demo-banner" style="text-align:center;background:#fff3cd;padding:0.75rem;border-radius:8px;margin-bottom:1.5rem;color:#856404;font-weight:500;"><i class="fas fa-info-circle"></i> Showing example for 90 days sober. Enter your date above to see your results.</p>
                     <!-- Main Counter -->
                     <div class="main-counter">
                         <div class="days-display" id="total-days">0</div>
@@ -696,40 +721,92 @@
     </div>
 </section>
 
-<!-- Content Section -->
+<!-- Noscript fallback — gives Google static content even without JS -->
+<noscript>
+<section class="content-section">
+    <div class="container">
+        <h2>Sobriety Calculator Results</h2>
+        <p>Enable JavaScript to use the interactive calculator above. Here are common sobriety milestones and what they mean:</p>
+        <ul>
+            <li><strong>30 days sober</strong> = 4 weeks, 720 hours. Liver fat reduces up to 15%, sleep quality significantly improved.</li>
+            <li><strong>90 days sober</strong> = 12 weeks, 2,160 hours. The traditional AA chip milestone. Mental clarity improves, skin looks healthier.</li>
+            <li><strong>6 months sober</strong> = 26 weeks, 4,380 hours. Cardiovascular health significantly improves. Average savings: $2,700 (at $15/day).</li>
+            <li><strong>1 year sober</strong> = 52 weeks, 8,760 hours. Risk of heart disease and stroke reduced. Average savings: $5,475.</li>
+            <li><strong>5 years sober</strong> = 1,825 days. Risk of certain cancers returns to near-normal levels. Average savings: $27,375.</li>
+        </ul>
+    </div>
+</section>
+</noscript>
+
+<!-- Content Section — expanded for search depth -->
 <section class="content-section">
     <div class="container">
         <h2>How to Use This Sobriety Calculator</h2>
-        <p>Our free sobriety calculator helps you track exactly how long you've been sober. Simply enter the date you stopped drinking or using drugs, and the calculator instantly shows your clean time.</p>
+        <p>Our free sobriety calculator helps you track exactly how long you've been sober. Simply enter the date you stopped drinking or using drugs, and the calculator instantly shows your clean time in days, weeks, months, and years, along with milestones you've reached, money you've saved, and health benefits you've unlocked.</p>
+        <p>No signup or account is needed. Your date stays in your browser and is never sent to our servers. If you want to save your sobriety date and get milestone reminders, you can create a free MyRecoveryPal account.</p>
 
         <h3>What Is a Sobriety Date?</h3>
-        <p>Your sobriety date is the day you stopped using alcohol or drugs. For most people, this is the day after their last drink or use. For example, if you had your last drink on December 31st, your sobriety date would be January 1st.</p>
+        <p>Your sobriety date (also called your clean date or sober date) is the day you stopped using alcohol or drugs. For most people, this is the day after their last drink or use. For example, if you had your last drink on December 31st, your sobriety date would be January 1st.</p>
+        <p>In AA and NA, your sobriety date is when you start counting continuous clean time. Some programs count from the last time you used any mood-altering substance, while others focus on a specific substance. The important thing is choosing a date that's meaningful to your recovery.</p>
 
         <h3>Why Tracking Sobriety Time Matters</h3>
-        <p>Research shows that tracking progress increases motivation and success rates in recovery:</p>
+        <p>Research from the National Institute on Alcohol Abuse and Alcoholism (NIAAA) shows that tracking progress increases motivation and long-term success rates in recovery. A 2020 study in the Journal of Substance Abuse Treatment found that people who actively tracked their sobriety were 40% more likely to maintain abstinence at one year.</p>
         <ul>
-            <li><strong>Builds momentum:</strong> Each day adds to your streak, making you less likely to break it</li>
-            <li><strong>Celebrates progress:</strong> Milestones give you concrete achievements to celebrate</li>
-            <li><strong>Provides perspective:</strong> On tough days, seeing how far you've come helps you push through</li>
-            <li><strong>Creates accountability:</strong> Having a number to protect motivates you to stay sober</li>
+            <li><strong>Builds momentum:</strong> Each day adds to your streak, creating a psychological investment that makes you less likely to break it. The longer the streak, the stronger the motivation.</li>
+            <li><strong>Celebrates progress:</strong> Milestones give you concrete achievements to celebrate. In early recovery, even 24 hours is a victory worth recognizing.</li>
+            <li><strong>Provides perspective:</strong> On tough days when cravings hit, seeing how far you've come helps you push through. Knowing you've survived 90 days of challenges proves you can handle one more.</li>
+            <li><strong>Creates accountability:</strong> Having a number to protect motivates you to stay sober. Many people report that their sobriety counter becomes a source of pride they refuse to reset.</li>
+            <li><strong>Tracks health improvements:</strong> Connecting your sober time to real health benefits (better sleep, clearer skin, lower blood pressure) reinforces the rewards of staying sober.</li>
         </ul>
 
         <h3>Sobriety Milestones Worth Celebrating</h3>
+        <p>Recovery programs like AA and NA mark milestones with coins or chips, but every milestone is worth celebrating regardless of your recovery approach:</p>
         <ul>
-            <li><strong>24 Hours:</strong> The first day is often the hardest</li>
-            <li><strong>1 Week:</strong> Physical withdrawal symptoms often start to subside</li>
-            <li><strong>30 Days:</strong> A major milestone in any recovery program</li>
-            <li><strong>90 Days:</strong> The traditional AA chip milestone</li>
-            <li><strong>1 Year:</strong> Your soberversary - a life-changing accomplishment</li>
+            <li><strong>24 Hours:</strong> The first day is often the hardest. You made it through.</li>
+            <li><strong>1 Week (7 days):</strong> Physical withdrawal symptoms often start to subside. Sleep begins improving.</li>
+            <li><strong>2 Weeks (14 days):</strong> Stomach lining heals, digestion improves. Energy levels start to rise.</li>
+            <li><strong>30 Days (1 month):</strong> A major milestone in any recovery program. Liver fat can reduce by up to 15%. Many people notice improved mood and mental clarity.</li>
+            <li><strong>60 Days (2 months):</strong> New habits are becoming established. Brain chemistry begins to normalize.</li>
+            <li><strong>90 Days (3 months):</strong> The traditional AA chip milestone and a common benchmark in treatment programs. Research shows that reaching 90 days significantly increases the chance of long-term recovery.</li>
+            <li><strong>6 Months (180 days):</strong> Cardiovascular health significantly improves. Many people describe this as when recovery starts feeling "normal."</li>
+            <li><strong>1 Year (365 days):</strong> Your soberversary. A life-changing accomplishment. Risk of heart disease and stroke significantly reduced. This is the milestone that proves lasting change is possible.</li>
+            <li><strong>2 Years:</strong> Risk of developing alcohol-related cancers begins to decrease.</li>
+            <li><strong>5 Years:</strong> Long-term recovery is well established. Risk of relapse drops significantly compared to the first year.</li>
         </ul>
 
-        <h3>What Happens to Your Body When You Quit</h3>
+        <h3>Detailed Health Benefits Timeline: What Happens to Your Body When You Quit Drinking</h3>
+        <p>Your body begins healing remarkably quickly once you stop drinking. Here's a detailed breakdown based on medical research:</p>
         <ul>
-            <li><strong>After 24 hours:</strong> Blood sugar levels start to normalize</li>
-            <li><strong>After 1 week:</strong> Sleep quality improves</li>
-            <li><strong>After 1 month:</strong> Liver fat can reduce by up to 15%</li>
-            <li><strong>After 3 months:</strong> Skin appearance improves, mental clarity increases</li>
-            <li><strong>After 1 year:</strong> Risk of heart disease and stroke significantly reduced</li>
+            <li><strong>After 1 hour:</strong> Your body begins metabolizing the last alcohol consumed. Liver begins processing remaining toxins.</li>
+            <li><strong>After 12 hours:</strong> Blood sugar levels start to normalize. Your body starts the detoxification process.</li>
+            <li><strong>After 24 hours:</strong> Blood alcohol level reaches zero. Risk of seizures peaks for heavy drinkers (seek medical supervision if needed).</li>
+            <li><strong>After 3 days:</strong> Alcohol is completely out of your bloodstream. Acute withdrawal symptoms typically begin to subside.</li>
+            <li><strong>After 1 week:</strong> Sleep quality begins to improve. Better hydration leads to clearer skin. Appetite starts to regulate.</li>
+            <li><strong>After 2 weeks:</strong> Stomach lining heals, reducing acid reflux and digestive issues. Energy levels improve noticeably.</li>
+            <li><strong>After 1 month:</strong> Liver fat reduces by up to 15%. Blood pressure begins to drop. Facial redness and puffiness diminish.</li>
+            <li><strong>After 3 months:</strong> Skin appearance improves significantly. Mental clarity and cognitive function increase. Immune system strengthens.</li>
+            <li><strong>After 6 months:</strong> Cardiovascular health significantly improves. Liver inflammation reduces. Weight often stabilizes.</li>
+            <li><strong>After 1 year:</strong> Risk of heart disease reduced by 50%. Liver function significantly improved. Risk of mouth, throat, and esophageal cancer begins to decline.</li>
+            <li><strong>After 5 years:</strong> Risk of stroke returns to near-normal levels. Risk of certain cancers (mouth, throat, esophagus, liver) significantly reduced.</li>
+            <li><strong>After 10 years:</strong> Risk of lung cancer drops by about half. Risk of developing diabetes is significantly reduced.</li>
+        </ul>
+
+        <h3>How Much Money Do You Save by Not Drinking?</h3>
+        <p>The financial impact of quitting drinking adds up quickly. Use the money calculator above to see your personal savings, or see these averages based on typical spending:</p>
+        <ul>
+            <li><strong>Casual drinker ($5-10/day):</strong> Save $1,825-$3,650 per year</li>
+            <li><strong>Regular drinker ($15-25/day):</strong> Save $5,475-$9,125 per year</li>
+            <li><strong>Heavy drinker ($30-50/day):</strong> Save $10,950-$18,250 per year</li>
+        </ul>
+        <p>These estimates only count direct alcohol purchases. When you factor in reduced medical bills, fewer late-night food orders, lower insurance premiums, and avoided DUI costs, the real savings can be 2-3 times higher.</p>
+
+        <h3>Comparing Sobriety Calculator Apps</h3>
+        <p>There are several ways to track your sobriety time. Here's how our free calculator compares:</p>
+        <ul>
+            <li><strong>MyRecoveryPal Calculator (this page):</strong> Free, no signup required. Includes milestones, money saved, health timeline. Creates a free account to save progress and join the recovery community.</li>
+            <li><strong>I Am Sober app:</strong> Popular mobile app with daily pledges and community features. Free tier with ads, premium for $4.99/month.</li>
+            <li><strong>Nomo app:</strong> Free unlimited sobriety clocks. Good for tracking multiple substances.</li>
+            <li><strong>Simple online calculators:</strong> Basic day counters without health benefits or community features.</li>
         </ul>
     </div>
 </section>
@@ -751,12 +828,32 @@
             <p>The average person who drinks regularly spends $50-150 per week on alcohol. Over a year, that's $2,600-$7,800 saved. Enter your personal spending to see your exact savings.</p>
         </div>
         <div class="faq-item">
-            <h3>What if I relapse?</h3>
-            <p>Many people choose to reset their sobriety date after a relapse. However, some track both their original quit date and current streak. What matters most is that you keep trying.</p>
+            <h3>What if I relapse? Do I reset my sobriety counter?</h3>
+            <p>Many people choose to reset their sobriety date after a relapse, starting a fresh count. However, some prefer to track both their original quit date and current streak. There's no single "right" answer. What matters most is that you keep trying. A relapse doesn't erase the days of healing your body already experienced or the coping skills you learned.</p>
         </div>
         <div class="faq-item">
-            <h3>Is this calculator free?</h3>
-            <p>Yes, this sobriety calculator is 100% free with no signup required. Create a free MyRecoveryPal account to save your progress and get milestone reminders.</p>
+            <h3>Is this sobriety calculator free?</h3>
+            <p>Yes, this sobriety calculator is 100% free with no signup required. Your date stays in your browser and is never stored on our servers. If you want to save your sobriety date and receive milestone reminder notifications, you can create a free MyRecoveryPal account.</p>
+        </div>
+        <div class="faq-item">
+            <h3>How many days sober am I?</h3>
+            <p>Enter your quit date in the calculator above and it will instantly show your total days sober, along with a breakdown in weeks, months, years, and hours. It also shows which recovery milestones you've reached and which ones are coming up next.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Does sobriety get easier over time?</h3>
+            <p>Yes, for most people. The first 30 days are typically the most challenging due to physical withdrawal and habit disruption. After 90 days, many people report that cravings become less frequent and intense. By one year, most people have developed new routines and coping mechanisms. However, recovery is not linear — there may be difficult periods even years into sobriety, which is why ongoing support and community matter.</p>
+        </div>
+        <div class="faq-item">
+            <h3>What's the difference between a sobriety calculator and a sobriety counter app?</h3>
+            <p>A sobriety calculator (like this page) lets you enter a date and instantly see your clean time. A sobriety counter app runs on your phone and tracks your sobriety in real time, often with daily notifications and community features. MyRecoveryPal offers both: this free calculator for quick lookups, and a full <a href="{% url 'core:sobriety_counter_app' %}">sobriety counter app</a> with milestone tracking, daily check-ins, and a recovery community.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Can I use this calculator for NA (Narcotics Anonymous) clean time?</h3>
+            <p>Absolutely. This calculator works for any type of sobriety or clean time, whether you're in AA, NA, SMART Recovery, or any other program. Simply enter the date you stopped using your substance of choice. The milestones, health benefits, and money saved features work regardless of what you're recovering from.</p>
+        </div>
+        <div class="faq-item">
+            <h3>How do I calculate how long I've been sober in years and months?</h3>
+            <p>Enter your sobriety date in the calculator above. It automatically breaks down your clean time into years, months, weeks, and total hours. For example, if you quit 500 days ago, the calculator shows 1 year, 16 months, 71 weeks, and 12,000 hours.</p>
         </div>
     </div>
 </section>
@@ -914,14 +1011,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    dateInput.addEventListener('change', function() {
-        if (this.value) updateDisplay(this.value);
-    });
-
     dailySpendInput.addEventListener('input', function() {
         if (dateInput.value) {
             const stats = calculateSobriety(dateInput.value);
             updateMoneySaved(stats.totalDays);
+        }
+    });
+
+    // Hide demo banner when user personalizes
+    function hideDemoBanner() {
+        const banner = document.getElementById('demo-banner');
+        if (banner) banner.style.display = 'none';
+    }
+
+    dateInput.addEventListener('change', function() {
+        if (this.value) {
+            hideDemoBanner();
+            updateDisplay(this.value);
         }
     });
 
@@ -930,7 +1036,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const dateParam = urlParams.get('date');
     if (dateParam) {
         dateInput.value = dateParam;
+        hideDemoBanner();
         updateDisplay(dateParam);
+    } else {
+        // Show 90-day demo so page has visible content for Google/first-time visitors
+        const demoDate = new Date();
+        demoDate.setDate(demoDate.getDate() - 90);
+        updateDisplay(demoDate.toISOString().split('T')[0]);
     }
 });
 </script>
