@@ -772,8 +772,9 @@ def send_trial_ending_notifications(self):
         # Skip if we already notified (check for existing notification)
         if Notification.objects.filter(
             recipient=user,
-            notification_type='system',
-            extra_data__contains='trial_ending',
+            notification_type='milestone',
+            link='/accounts/pricing/',
+            message__contains='trial ends tomorrow',
         ).exists():
             continue
 
@@ -782,10 +783,10 @@ def send_trial_ending_notifications(self):
             Notification.objects.create(
                 recipient=user,
                 sender=user,
-                notification_type='system',
+                notification_type='milestone',
+                title='Trial Ending Soon',
                 message='Your Premium trial ends tomorrow. Keep unlimited AI Coach, groups, and analytics.',
                 link='/accounts/pricing/',
-                extra_data={'type': 'trial_ending'},
             )
         except Exception as e:
             logger.error(f"Error creating trial-ending notification for {user.email}: {e}")
