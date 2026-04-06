@@ -94,6 +94,9 @@ class SEONoIndexMiddleware:
     Add X-Robots-Tag: noindex on pages that should not be indexed:
     - Login/register with ?next= parameters (creates infinite URL variants)
     - Any /accounts/ page behind auth (dashboard, profile, etc.)
+    - Blog tag/category pages (thin listing pages, 81 in GSC "not indexed")
+    - Any blog URL with ?filter= or ?page= params (near-duplicate content)
+    - Support service filter pages
     Only affects crawlers — transparent to users.
     """
     NOINDEX_PREFIXES = (
@@ -108,6 +111,8 @@ class SEONoIndexMiddleware:
         '/accounts/subscription',
         '/journal/',
         '/admin/',
+        '/blog/tag/',         # Thin tag listing pages (24 base + 73 filter variants)
+        '/blog/category/',    # Thin category listing pages (7 base + 8 filter variants)
     )
 
     def __init__(self, get_response):
@@ -122,7 +127,14 @@ class SEONoIndexMiddleware:
             response['X-Robots-Tag'] = 'noindex, nofollow'
             return response
 
-        # Noindex authenticated-only pages
+        # Noindex blog/support pages with filter/page query params
+        if (path.startswith('/blog/') or path.startswith('/support/')) and (
+            request.GET.get('filter') or request.GET.get('page') or request.GET.get('type')
+        ):
+            response['X-Robots-Tag'] = 'noindex, nofollow'
+            return response
+
+        # Noindex pages matching prefix list
         for prefix in self.NOINDEX_PREFIXES:
             if path.startswith(prefix):
                 response['X-Robots-Tag'] = 'noindex, nofollow'

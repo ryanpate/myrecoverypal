@@ -48,6 +48,11 @@ Disallow: /accounts/register/?
 Disallow: /blog/?page=
 Disallow: /blog/?filter=
 
+# Block thin listing pages (tags/categories generate 100+ near-duplicate URLs)
+Disallow: /blog/tag/
+Disallow: /blog/category/
+Disallow: /support/services/?
+
 # Disallow system pages
 Disallow: /media/private/
 Disallow: /__debug__/
