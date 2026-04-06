@@ -593,13 +593,13 @@ High-volume keyword blog posts (83K combined monthly searches):
 - [x] **Update 2025→2026** on all SEO landing page titles and schema (7 pages) — freshness signal
 - [x] **Rewrite sober-grid-alternative meta tags** — was 622 impressions at position 6 with 0.16% CTR, rewrote title/description to target "Sober Grid shut down" queries
 - [x] **Add Sober Grid shutdown content** — dedicated section with timeline, FAQ expansion, schema FAQ additions targeting position 3-6 queries
-- [ ] **Investigate March impression crash** — impressions dropped from 20-80/day to 2-16/day after March 5. Check Search Console for manual actions, de-indexed pages, or crawl errors
-- [ ] **Fix 404 errors** — 53 "Page Not Found" views in GA. Check server logs and Search Console crawl errors, set up 301 redirects for broken URLs
-- [ ] **Improve /sobriety-calculator/ page** — 142 impressions for "sobriety calculator" but position 89. Needs significant content expansion, more calculator features, FAQs
-- [ ] **Push dopamine-detox blog post to page 1** — position 9.86 with 96 impressions. Add internal links from other pages, expand content, ensure freshness
-- [ ] **Boost /drug-addiction-recovery-app/** — position 15.75, needs internal links and content expansion to reach page 1
-- [ ] **Internal linking overhaul** — every blog post should link to 2-3 landing pages, every landing page to related blog posts. Currently minimal cross-linking
-- [ ] **Remove or noindex /store/ page** — "Coming Soon" placeholder getting indexed, wasting crawl budget
+- [x] **Investigate March impression crash** ✅ Root cause: 85 of 115 indexed pages dropped (115→30). www/non-www duplicate content, 112 thin tag/category pages, auth pages indexed. Fixed with PREPEND_WWW, SEONoIndexMiddleware, robots.txt overhaul.
+- [x] **Fix 404 errors** ✅ Added 14 total 301 redirects for common paths (signup, login, feed, dashboard, community, groups, meetings, coach, pricing, home)
+- [x] **Improve /sobriety-calculator/ page** ✅ Expanded to 1,500+ words, pre-populated 90-day demo, 9 FAQs, noscript fallback, health timeline (12 stages), money savings breakdown
+- [x] **Push dopamine-detox blog post to page 1** ✅ Added internal links from 5 landing pages (homepage, sobriety calculator, alcohol recovery, drug recovery, mental health)
+- [x] **Boost /drug-addiction-recovery-app/** ✅ Added unique drug recovery content section (withdrawal timelines by substance) + internal links via _related_tools partial
+- [x] **Internal linking overhaul** ✅ Created _related_tools.html partial, all 9 landing pages cross-link to top 3 traffic drivers. sober_grid_alternative went from 0→3 landing page links.
+- [x] **Remove or noindex /store/ page** ✅ Noindexed + removed from sitemap + disallowed in robots.txt
 - [ ] **Revive organic social** — dropped from 44% to 2% of traffic. TikTok/IG content creation paused
 
 ### HIGH - App Store Presence
@@ -634,14 +634,14 @@ High-volume keyword blog posts (83K combined monthly searches):
 
 #### Pre-Submission Fixes (Priority: CRITICAL for Apple Approval)
 - [ ] **Move credential storage from `@capacitor/preferences` to iOS Keychain** — `capacitor-biometric.js` stores login passwords in `UserDefaults` (plaintext). Use `@capacitor-community/secure-storage-plugin` or native Keychain wrapper. Apple Guideline 5.1.1 (Data Security) requires encrypted storage for credentials.
-- [ ] **Remove `"cleartext": true` from `capacitor.config.json`** — App Transport Security (ATS) exception is a red flag for Apple review. Server already uses HTTPS so cleartext is unnecessary.
-- [ ] **Change `aps-environment` from `development` to `production`** in `ios/App/App/App.entitlements` before archive build.
-- [ ] **Replace `alert()` calls in `capacitor-iap.js` with toast/modal UI** — native `alert()` looks non-native and may trigger Guideline 4.0 concerns.
+- [x] **Remove `"cleartext": true` from `capacitor.config.json`** ✅ Already clean — not present in config
+- [x] **Change `aps-environment` from `development` to `production`** ✅ Already set to production in App.entitlements
+- [x] **Replace `alert()` calls in `capacitor-iap.js` with toast/modal UI** ✅ Already cleaned up — no alert() calls found
 - [ ] **Add Apple review notes template** to App Store Connect: explain Capacitor as legitimate native framework, list all native features (Face ID, haptics, share sheet, push, swipe gestures, transitions, offline mode), include IAP sandbox testing instructions, note health disclaimer modal and block/report moderation.
 
 #### High-Impact Native Features (Strengthen Guideline 4.2 Compliance)
 - [x] **Add WidgetKit sobriety counter widget** (Swift native extension) — displays days sober on home screen with small (day count + milestone countdown) and medium (progress ring with years/months breakdown, sobriety date, milestone progress bar) sizes. App Group `group.com.myrecoverypal.app` shared UserDefaults, WidgetBridge Capacitor plugin for JS↔native data sync, calendar-based milestone calculations (handles leap years). Widget Extension target with `DEVELOPMENT_TEAM` configured.
-- [ ] **Wire local notification scheduling to sobriety milestones** — schedule notifications at app launch for upcoming milestones (7, 14, 30, 60, 90, 180, 365 days). `@capacitor/local-notifications` plugin already installed but not wired to milestone logic.
+- [x] **Wire local notification scheduling to sobriety milestones** ✅ Schedules 9 AM notifications for upcoming milestones (7, 14, 30, 60, 90, 180, 365 days) via LocalNotifications plugin in capacitor-native.js
 
 #### Remaining - Manual Steps
 - [ ] **Android: Upload AAB to Google Play Console** (account ready)
