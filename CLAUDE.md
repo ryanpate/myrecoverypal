@@ -654,11 +654,11 @@ High-volume keyword blog posts (83K combined monthly searches):
 - [x] **iOS: Create demo account** (`review@myrecoverypal.com` / `applereview`) with sample data via `setup_review_account` management command
 - [x] **iOS: Create App Store Connect record** — app created with bundle ID `com.myrecoverypal.app`
 - [ ] **iOS: Set Railway env vars** — `APNS_KEY_CONTENT`, `APNS_KEY_ID`, `APNS_TEAM_ID`, `REVENUECAT_IOS_API_KEY`
-- [x] **iOS: Archive and submit** via Xcode → App Store Connect (submitted 2026-03-05)
+- [x] **iOS: Archive and submit** via Xcode → App Store Connect (v1.0.0 submitted 2026-03-05, v1.1.0 submitted 2026-04-06)
 - [x] **iOS: Complete App Store metadata** (screenshots, description, privacy nutrition labels, review notes)
 - [x] App Store Optimization (ASO): keywords, screenshots, description
 - [ ] Request reviews from existing users
-- [ ] Uncomment Smart App Banner `<meta>` tag in `base.html` after approval (replace `YOUR_APP_STORE_ID`)
+- [x] Smart App Banner active in `base.html` with App Store ID 6760084657
 
 #### App Store Listing Details
 - **App name:** MyRecoveryPal
