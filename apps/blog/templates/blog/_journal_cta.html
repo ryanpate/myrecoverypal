@@ -1,0 +1,118 @@
+<!-- Journal Product CTA -->
+<style>
+    .journal-cta {
+        margin: 2.5rem 0;
+        padding: 2rem 2rem 1.5rem;
+        background: linear-gradient(135deg, #fefce8 0%, #fff7ed 100%);
+        border: 1px solid #fbbf24;
+        border-left: 4px solid #d97706;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .journal-cta__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #d97706, #92400e);
+        border-radius: 50%;
+        margin-bottom: 1rem;
+    }
+
+    .journal-cta__icon i {
+        color: #fff;
+        font-size: 1.25rem;
+    }
+
+    .journal-cta__heading {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #92400e;
+        margin: 0 0 0.75rem;
+    }
+
+    .journal-cta__body {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #475569;
+        max-width: 540px;
+        margin: 0 auto 1.25rem;
+    }
+
+    .journal-cta__button {
+        display: inline-block;
+        padding: 0.75rem 1.75rem;
+        background: linear-gradient(135deg, #d97706, #92400e);
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .journal-cta__button:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .journal-cta__button i {
+        margin-right: 0.4rem;
+    }
+
+    .journal-cta__disclosure {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin: 1rem auto 0;
+        max-width: 480px;
+        line-height: 1.5;
+    }
+
+    /* Dark mode */
+    [data-theme="dark"] .journal-cta {
+        background: linear-gradient(135deg, #1e293b 0%, #292524 100%);
+        border-color: #78350f;
+        border-left-color: #f59e0b;
+    }
+
+    [data-theme="dark"] .journal-cta__heading {
+        color: #fbbf24;
+    }
+
+    [data-theme="dark"] .journal-cta__body {
+        color: #94a3b8;
+    }
+
+    [data-theme="dark"] .journal-cta__button {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    [data-theme="dark"] .journal-cta__disclosure {
+        color: #64748b;
+    }
+</style>
+
+<div class="journal-cta">
+    <div class="journal-cta__icon">
+        <i class="fas fa-book-open"></i>
+    </div>
+    <h4 class="journal-cta__heading">Put Pen to Paper: 90-Day Recovery Journal</h4>
+    <p class="journal-cta__body">
+        Research shows handwriting deepens self-reflection and strengthens memory.
+        Our guided 90-day journal pairs with your digital tracking &mdash; daily prompts,
+        gratitude exercises, and space to process what screens can't capture.
+    </p>
+    <a href="https://www.amazon.com/dp/B0FR4MPHSW"
+       class="journal-cta__button"
+       target="_blank"
+       rel="noopener noreferrer">
+        <i class="fas fa-shopping-cart"></i> Get the Journal on Amazon
+    </a>
+    <p class="journal-cta__disclosure">
+        Created by the MyRecoveryPal team. Available on Amazon.
+    </p>
+</div>

@@ -139,6 +139,14 @@
             grid-template-columns: 1fr;
         }
     }
+
+    [data-theme="dark"] .journal-product-card {
+        background: linear-gradient(135deg, #1e293b 0%, #292524 100%) !important;
+        border-color: #78350f !important;
+    }
+    [data-theme="dark"] .journal-product-card h4 { color: #fbbf24 !important; }
+    [data-theme="dark"] .journal-product-card p { color: #94a3b8 !important; }
+    [data-theme="dark"] .journal-product-card a[href] { background: linear-gradient(135deg, #f59e0b, #d97706) !important; }
 </style>
 {% endblock %}
 
@@ -268,6 +276,18 @@
                 {% endif %}
             </div>
             {% endif %}
+
+            <!-- Journal Product -->
+            <div class="sidebar-card journal-product-card" style="background: linear-gradient(135deg, #fefce8 0%, #fff7ed 100%); border: 1px solid #fbbf24; text-align: center; padding: 1.25rem;">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📖</div>
+                <h4 style="color: #92400e; margin: 0 0 0.5rem; font-size: 1rem;">90-Day Recovery Journal</h4>
+                <p style="font-size: 0.85rem; color: #78716c; margin: 0 0 0.75rem; line-height: 1.5;">Guided daily prompts, gratitude exercises &amp; reflection space to complement your digital journal.</p>
+                <a href="https://www.amazon.com/dp/B0FR4MPHSW" target="_blank" rel="noopener noreferrer"
+                   style="display: inline-block; padding: 0.5rem 1.25rem; background: linear-gradient(135deg, #d97706, #92400e); color: #fff; font-size: 0.85rem; font-weight: 600; text-decoration: none; border-radius: 8px;">
+                    View on Amazon
+                </a>
+                <p style="font-size: 0.7rem; color: #a8a29e; margin-top: 0.5rem;">By the MyRecoveryPal team</p>
+            </div>
         </div>
     </div>
 </div>
