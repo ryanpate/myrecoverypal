@@ -78,10 +78,26 @@ class PostDetailView(DetailView):
     def get_queryset(self):
         return Post.objects.filter(status='published')
 
+    BOT_PATTERNS = (
+        'bot', 'crawl', 'spider', 'slurp', 'facebookexternalhit',
+        'facebot', 'twitterbot', 'linkedinbot', 'mediumbot', 'whatsapp',
+        'telegrambot', 'discordbot', 'bingpreview', 'googlebot',
+        'yandexbot', 'baiduspider', 'duckduckbot', 'semrushbot',
+        'ahrefsbot', 'mj12bot', 'petalbot', 'bytespider',
+    )
+
+    def _is_bot(self):
+        ua = (self.request.META.get('HTTP_USER_AGENT') or '').lower()
+        return any(p in ua for p in self.BOT_PATTERNS)
+
     def get_object(self):
         obj = super().get_object()
-        # Increment view count
-        Post.objects.filter(pk=obj.pk).update(views=F('views') + 1)
+        # Increment view count once per session per post, skip bots
+        if not self._is_bot():
+            viewed_key = f'viewed_post_{obj.pk}'
+            if not self.request.session.get(viewed_key):
+                Post.objects.filter(pk=obj.pk).update(views=F('views') + 1)
+                self.request.session[viewed_key] = True
         return obj
 
     def get_context_data(self, **kwargs):
