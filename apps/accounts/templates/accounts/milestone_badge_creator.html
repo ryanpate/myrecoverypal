@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Your Milestone Badge - MyRecoveryPal{% endblock %}
+
+{% block og_title %}Create Your Milestone Badge{% endblock %}
+{% block og_description %}Customize and share your recovery milestone badge on MyRecoveryPal.{% endblock %}
+
+{% block content %}
+<style>
+    .badge-creator {
+        max-width: 700px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    .badge-creator h1 {
+        text-align: center;
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+    }
+    .badge-creator .subtitle {
+        text-align: center;
+        color: var(--text-muted, #666);
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+    }
+
+    /* Style picker */
+    .style-picker {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    .style-option {
+        cursor: pointer;
+        border: 3px solid transparent;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: border-color 0.2s, transform 0.2s;
+        position: relative;
+    }
+    .style-option:hover {
+        transform: scale(1.03);
+    }
+    .style-option.selected {
+        border-color: var(--primary-dark, #1e4d8b);
+        box-shadow: 0 0 0 2px var(--primary-light, #2d7dd2);
+    }
+    .style-option img {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        display: block;
+    }
+    .style-option .style-label {
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.3rem 0;
+        background: var(--bg-lighter, #f8f9fa);
+        color: var(--text-primary, #333);
+    }
+    .style-option.selected .style-label {
+        background: var(--primary-dark, #1e4d8b);
+        color: white;
+    }
+
+    /* Form fields */
+    .badge-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+    .form-group label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-primary, #333);
+    }
+    .form-group .hint {
+        font-size: 0.8rem;
+        color: var(--text-muted, #888);
+    }
+    .form-group input,
+    .form-group select {
+        padding: 0.65rem 0.85rem;
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: var(--bg-lighter, #fff);
+        color: var(--text-primary, #333);
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--primary-dark, #1e4d8b);
+        box-shadow: 0 0 0 3px rgba(30, 77, 139, 0.1);
+    }
+
+    /* Preview */
+    .preview-section {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .preview-section h2 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: var(--text-primary, #333);
+    }
+    .preview-container {
+        max-width: 420px;
+        margin: 0 auto;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    .preview-container img {
+        width: 100%;
+        display: block;
+    }
+
+    /* Action buttons */
+    .badge-actions {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+    }
+    .badge-actions .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.2s;
+    }
+    .badge-actions .btn:hover {
+        transform: scale(1.04);
+    }
+    .btn-download {
+        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        color: white;
+    }
+    .btn-share {
+        background: linear-gradient(135deg, var(--accent-green, #28a745), #20c997);
+        color: white;
+    }
+    .btn-copy {
+        background: var(--bg-lighter, #f0f2f5);
+        color: var(--text-primary, #333);
+        border: 1px solid var(--border-color, #ddd);
+    }
+
+    /* Dark mode */
+    [data-theme="dark"] .style-option .style-label {
+        background: var(--bg-card, #2a2a2a);
+    }
+    [data-theme="dark"] .style-option.selected .style-label {
+        background: var(--primary-dark, #1e4d8b);
+    }
+
+    @media (max-width: 480px) {
+        .style-picker {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .badge-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+        .badge-actions .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="badge-creator">
+    <h1>Create Your Milestone Badge</h1>
+    <p class="subtitle">
+        {% if days_sober > 0 %}
+        Customize your badge and share your {{ days_sober }}-day milestone with the world.
+        {% else %}
+        Set your sobriety date in your profile to create a personalized badge.
+        {% endif %}
+    </p>
+
+    <!-- Badge style picker -->
+    <div class="form-group">
+        <label>Choose Your Badge Style</label>
+    </div>
+    <div class="style-picker">
+        <div class="style-option selected" data-style="celebration" onclick="selectStyle(this)">
+            <img src="{% static 'images/badges/badge-celebration.png' %}" alt="Celebration badge" loading="lazy" width="512" height="512">
+            <div class="style-label">Celebration</div>
+        </div>
+        <div class="style-option" data-style="athletic" onclick="selectStyle(this)">
+            <img src="{% static 'images/badges/badge-athletic.png' %}" alt="Athletic badge" loading="lazy" width="512" height="512">
+            <div class="style-label">Athletic</div>
+        </div>
+        <div class="style-option" data-style="elegant" onclick="selectStyle(this)">
+            <img src="{% static 'images/badges/badge-elegant.png' %}" alt="Elegant badge" loading="lazy" width="512" height="512">
+            <div class="style-label">Elegant</div>
+        </div>
+        <div class="style-option" data-style="vintage" onclick="selectStyle(this)">
+            <img src="{% static 'images/badges/badge-vintage.png' %}" alt="Vintage badge" loading="lazy" width="512" height="512">
+            <div class="style-label">Vintage</div>
+        </div>
+    </div>
+
+    <div class="badge-form">
+        <div class="form-group">
+            <label for="badge-name">Display Name (optional)</label>
+            <input type="text" id="badge-name" maxlength="30" placeholder="Leave blank for anonymous" oninput="updatePreview()">
+            <span class="hint">Your name will appear on the badge. Leave blank to keep it private.</span>
+        </div>
+
+        <div class="form-group">
+            <label for="badge-time-format">Time Display</label>
+            <select id="badge-time-format" onchange="updatePreview()">
+                <option value="auto">Auto (best fit)</option>
+                <option value="days">Days only (e.g. 2,958 Days)</option>
+                <option value="months">Months &amp; days (e.g. 3 Months, 1 Day)</option>
+                <option value="years">Years &amp; months (e.g. 8 Years, 1 Month)</option>
+                <option value="full">Full breakdown (e.g. 8 Years, 1 Month, 3 Days)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-section">
+        <h2>Preview</h2>
+        <div class="preview-container">
+            <img id="badge-preview" src="{% url 'accounts:milestone_image' days_sober %}?style=celebration&time_format=auto" alt="Your milestone badge">
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="badge-actions">
+        <a id="btn-download" class="btn btn-download" href="#" download="myrecoverypal-milestone.png">
+            <i class="fas fa-download" aria-hidden="true"></i> Save Badge
+        </a>
+        <button class="btn btn-share" onclick="shareBadge()">
+            <i class="fas fa-share-nodes" aria-hidden="true"></i> Share
+        </button>
+        <button id="btn-copy" class="btn btn-copy" onclick="copyShareLink()">
+            <i class="fas fa-link" aria-hidden="true"></i> Copy Link
+        </button>
+    </div>
+</div>
+
+<script>
+var currentStyle = 'celebration';
+var daysSober = {{ days_sober }};
+var debounceTimer = null;
+
+function selectStyle(el) {
+    document.querySelectorAll('.style-option').forEach(function(opt) {
+        opt.classList.remove('selected');
+    });
+    el.classList.add('selected');
+    currentStyle = el.getAttribute('data-style');
+    updatePreview();
+}
+
+function getParams() {
+    var name = document.getElementById('badge-name').value.trim();
+    var timeFormat = document.getElementById('badge-time-format').value;
+    var params = '?style=' + encodeURIComponent(currentStyle) + '&time_format=' + encodeURIComponent(timeFormat);
+    if (name) {
+        params += '&name=' + encodeURIComponent(name);
+    }
+    return params;
+}
+
+function updatePreview() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(function() {
+        var params = getParams();
+        var imgUrl = '/accounts/milestone-image/' + daysSober + '/' + params;
+        document.getElementById('badge-preview').src = imgUrl;
+        document.getElementById('btn-download').href = imgUrl + '&download=1';
+    }, 400);
+}
+
+function shareBadge() {
+    var params = getParams();
+    var shareUrl = window.location.origin + '/accounts/milestone/' + daysSober + '/' + params;
+    var text = 'Check out my recovery milestone on MyRecoveryPal!';
+
+    if (window.MRPNative && window.MRPNative.share) {
+        window.MRPNative.share('My Recovery Milestone', text, shareUrl);
+        return;
+    }
+
+    if (navigator.share) {
+        navigator.share({ title: 'My Recovery Milestone', text: text, url: shareUrl }).catch(function() {});
+        return;
+    }
+
+    copyShareLink();
+}
+
+function copyShareLink() {
+    var params = getParams();
+    var shareUrl = window.location.origin + '/accounts/milestone/' + daysSober + '/' + params;
+    var btn = document.getElementById('btn-copy');
+
+    navigator.clipboard.writeText(shareUrl).then(function() {
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = 'Copy Link'; }, 2000);
+    }).catch(function() {
+        prompt('Copy this link:', shareUrl);
+    });
+}
+
+// Initial download link
+updatePreview();
+</script>
+{% endblock %}

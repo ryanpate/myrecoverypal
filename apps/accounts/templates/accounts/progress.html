@@ -1342,10 +1342,10 @@
 
         {% if days_sober and days_sober > 0 %}
         <div style="text-align: center; margin: 1rem 0;">
-            <button onclick="shareMilestone({{ days_sober }})"
-                    style="background: linear-gradient(135deg, var(--primary-dark), var(--primary-light)); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
-                <i class="fas fa-share-alt" aria-hidden="true"></i> Share My Progress
-            </button>
+            <a href="{% url 'accounts:milestone_badge_creator' %}"
+               style="display: inline-block; background: linear-gradient(135deg, var(--primary-dark), var(--primary-light)); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: 0.95rem; text-decoration: none;">
+                <i class="fas fa-award" aria-hidden="true"></i> Create &amp; Share Badge
+            </a>
         </div>
         {% endif %}
 
@@ -2174,10 +2174,9 @@
 </script>
 
 <script>
-// Share milestone/progress via native share or milestone image
+// Share milestone/progress via native share or milestone share page
 function shareMilestone(days) {
-    var imageUrl = '/accounts/milestone-image/' + days + '/?format=story';
-    var shareUrl = window.location.origin + imageUrl;
+    var shareUrl = window.location.origin + '/accounts/milestone/' + days + '/';
 
     if (window.MRPNative && window.MRPNative.share) {
         window.MRPNative.share(

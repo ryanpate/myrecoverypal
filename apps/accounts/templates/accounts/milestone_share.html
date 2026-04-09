@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ label }} Sober - MyRecoveryPal Milestone</title>
+
+    <!-- Open Graph for social sharing -->
+    <meta property="og:title" content="{{ label }} Sober - Recovery Milestone">
+    <meta property="og:description" content="Celebrating {{ label }} of recovery on MyRecoveryPal. Every day counts.">
+    <meta property="og:image" content="{{ image_url }}">
+    <meta property="og:image:width" content="1080">
+    <meta property="og:image:height" content="1080">
+    <meta property="og:url" content="{{ share_url }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="MyRecoveryPal">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ label }} Sober - Recovery Milestone">
+    <meta name="twitter:description" content="Celebrating {{ label }} of recovery on MyRecoveryPal. Every day counts.">
+    <meta name="twitter:image" content="{{ image_url }}">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .badge-container {
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
+        .badge-container img {
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+        .cta {
+            margin-top: 1.5rem;
+        }
+        .cta a {
+            display: inline-block;
+            background: linear-gradient(135deg, #1e4d8b, #2d7dd2);
+            color: white;
+            text-decoration: none;
+            padding: 0.85rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
+        .cta a:hover { transform: scale(1.05); }
+        .tagline {
+            margin-top: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="badge-container">
+        <img src="{{ image_url }}" alt="{{ label }} sober milestone badge" width="1080" height="1080">
+        <div class="cta">
+            <a href="https://www.myrecoverypal.com/">Start Your Recovery Journey</a>
+        </div>
+        <p class="tagline">MyRecoveryPal - A Recovery Community Built Together</p>
+    </div>
+</body>
+</html>

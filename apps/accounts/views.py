@@ -5180,19 +5180,66 @@ def log_slip_view(request):
     return render(request, 'accounts/log_slip.html', context)
 
 
-@login_required
 def milestone_image_view(request, days):
-    """Generate and return a shareable milestone image as PNG."""
+    """Generate and return a shareable milestone badge as PNG (public for OG crawlers)."""
     from apps.accounts.milestone_image import generate_milestone_image
-
-    fmt = request.GET.get('format', 'story')
-    if fmt not in ('story', 'square'):
-        fmt = 'story'
+    import re
 
     days = max(1, min(days, 36500))
+    style = request.GET.get('style', 'celebration')
+    name = request.GET.get('name', '')
+    time_format = request.GET.get('time_format', 'auto')
 
-    img_bytes = generate_milestone_image(days, fmt)
+    # Sanitize name — alphanumeric, spaces, and basic punctuation only
+    name = re.sub(r'[^\w\s.\'-]', '', name)[:30]
+
+    img_bytes = generate_milestone_image(days, style=style, name=name, time_format=time_format)
+
+    disposition = 'attachment' if request.GET.get('download') else 'inline'
     response = HttpResponse(img_bytes, content_type='image/png')
-    response['Content-Disposition'] = f'inline; filename="milestone-{days}-days.png"'
+    response['Content-Disposition'] = f'{disposition}; filename="myrecoverypal-milestone-{days}-days.png"'
     response['Cache-Control'] = 'public, max-age=86400'
     return response
+
+
+def milestone_share_view(request, days):
+    """Landing page for shared milestones with OG meta tags for social preview."""
+    from apps.accounts.milestone_image import format_sobriety_time
+
+    days = max(1, min(days, 36500))
+    label = format_sobriety_time(days)
+    style = request.GET.get('style', 'celebration')
+    name = request.GET.get('name', '')
+
+    # Build image URL with same params so OG image matches what was shared
+    image_params = f'?style={style}'
+    if name:
+        image_params += f'&name={name}'
+    image_url = request.build_absolute_uri(
+        reverse('accounts:milestone_image', args=[days]) + image_params
+    )
+    share_url = request.build_absolute_uri(request.get_full_path())
+
+    context = {
+        'days': days,
+        'label': label,
+        'image_url': image_url,
+        'share_url': share_url,
+    }
+    return render(request, 'accounts/milestone_share.html', context)
+
+
+@login_required
+def milestone_badge_creator(request):
+    """Badge customization page — pick style, name, time format, preview, download."""
+    from apps.accounts.milestone_image import BADGE_STYLES, TIME_FORMATS
+
+    user = request.user
+    days_sober = user.get_days_sober() if user.sobriety_date else 0
+
+    context = {
+        'days_sober': days_sober,
+        'badge_styles': BADGE_STYLES,
+        'time_formats': TIME_FORMATS,
+    }
+    return render(request, 'accounts/milestone_badge_creator.html', context)

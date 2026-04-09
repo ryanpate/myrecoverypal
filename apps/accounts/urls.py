@@ -199,8 +199,10 @@ urlpatterns = [
     # Sponsor invite
     path('invite/sponsor/', views.create_sponsor_invite, name='create_sponsor_invite'),
 
-    # Milestone image generation
+    # Milestone badges
     path('milestone-image/<int:days>/', views.milestone_image_view, name='milestone_image'),
+    path('milestone/<int:days>/', views.milestone_share_view, name='milestone_share'),
+    path('milestone-badge/', views.milestone_badge_creator, name='milestone_badge_creator'),
 
     # Relapse / slip tracking
     path('log-slip/', views.log_slip_view, name='log_slip'),
