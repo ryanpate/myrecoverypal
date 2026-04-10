@@ -15,6 +15,9 @@ BADGE_STYLES = {
     'athletic': {'file': 'badge-athletic.png', 'label': 'Athletic'},
     'elegant': {'file': 'badge-elegant.png', 'label': 'Elegant'},
     'vintage': {'file': 'badge-vintage.png', 'label': 'Vintage'},
+    'comic': {'file': 'badge-comic.png', 'label': 'Comic'},
+    'crystal': {'file': 'badge-crystal.png', 'label': 'Crystal'},
+    'anime': {'file': 'badge-anime.png', 'label': 'Anime'},
 }
 
 TIME_FORMATS = {
