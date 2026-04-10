@@ -9,7 +9,7 @@
 {% block content %}
 <style>
     .badge-creator {
-        max-width: 700px;
+        max-width: 740px;
         margin: 2rem auto;
         padding: 0 1rem;
     }
@@ -37,12 +37,9 @@
         border: 3px solid transparent;
         border-radius: 12px;
         overflow: hidden;
-        transition: border-color 0.2s, transform 0.2s;
-        position: relative;
+        transition: border-color 0.2s, transform 0.15s;
     }
-    .style-option:hover {
-        transform: scale(1.03);
-    }
+    .style-option:hover { transform: scale(1.03); }
     .style-option.selected {
         border-color: var(--primary-dark, #1e4d8b);
         box-shadow: 0 0 0 2px var(--primary-light, #2d7dd2);
@@ -66,33 +63,38 @@
         color: white;
     }
 
-    /* Form fields */
+    /* Form */
     .badge-form {
         display: flex;
         flex-direction: column;
-        gap: 1.25rem;
+        gap: 1.1rem;
         margin-bottom: 2rem;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
     }
     .form-group {
         display: flex;
         flex-direction: column;
-        gap: 0.4rem;
+        gap: 0.35rem;
     }
     .form-group label {
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         color: var(--text-primary, #333);
     }
     .form-group .hint {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: var(--text-muted, #888);
     }
-    .form-group input,
+    .form-group input[type="text"],
     .form-group select {
-        padding: 0.65rem 0.85rem;
+        padding: 0.6rem 0.75rem;
         border: 1px solid var(--border-color, #ddd);
         border-radius: 8px;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         background: var(--bg-lighter, #fff);
         color: var(--text-primary, #333);
     }
@@ -100,17 +102,112 @@
     .form-group select:focus {
         outline: none;
         border-color: var(--primary-dark, #1e4d8b);
-        box-shadow: 0 0 0 3px rgba(30, 77, 139, 0.1);
+        box-shadow: 0 0 0 3px rgba(30,77,139,0.1);
+    }
+
+    /* Range slider */
+    .range-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .range-row input[type="range"] {
+        flex: 1;
+        accent-color: var(--primary-dark, #1e4d8b);
+    }
+    .range-val {
+        min-width: 36px;
+        text-align: right;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted, #666);
+    }
+
+    /* Color swatches */
+    .color-swatches {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .swatch {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid var(--border-color, #ccc);
+        cursor: pointer;
+        transition: transform 0.15s;
+        position: relative;
+    }
+    .swatch:hover { transform: scale(1.15); }
+    .swatch.selected {
+        border-color: var(--primary-dark, #1e4d8b);
+        box-shadow: 0 0 0 2px var(--primary-light, #2d7dd2);
+    }
+    .swatch-white { background: #fff; }
+    .swatch-gold { background: #d4af37; }
+    .swatch-silver { background: #c0c0c0; }
+    .swatch-black { background: #141414; }
+    .swatch-cream { background: #fffdd0; }
+    .swatch-bronze { background: #8c6e32; }
+    .color-custom {
+        width: 32px;
+        height: 32px;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        border-radius: 50%;
+        background: none;
+    }
+    .color-custom::-webkit-color-swatch-wrapper { padding: 0; }
+    .color-custom::-webkit-color-swatch { border: 2px solid var(--border-color, #ccc); border-radius: 50%; }
+
+    /* Toggle */
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .toggle-switch {
+        position: relative;
+        width: 44px;
+        height: 24px;
+    }
+    .toggle-switch input { display: none; }
+    .toggle-slider {
+        position: absolute;
+        inset: 0;
+        background: #ccc;
+        border-radius: 24px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .toggle-slider::before {
+        content: '';
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: white;
+        left: 3px;
+        top: 3px;
+        transition: 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-slider {
+        background: var(--primary-dark, #1e4d8b);
+    }
+    .toggle-switch input:checked + .toggle-slider::before {
+        transform: translateX(20px);
     }
 
     /* Preview */
     .preview-section {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
     }
     .preview-section h2 {
         font-size: 1.1rem;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
         color: var(--text-primary, #333);
     }
     .preview-container {
@@ -119,13 +216,36 @@
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        position: relative;
     }
     .preview-container img {
         width: 100%;
         display: block;
     }
+    .preview-loading {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+    }
+    .preview-loading.active { opacity: 1; }
+    .preview-loading::after {
+        content: '';
+        width: 32px;
+        height: 32px;
+        border: 3px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Action buttons */
+    /* Actions */
     .badge-actions {
         display: flex;
         gap: 0.75rem;
@@ -146,9 +266,7 @@
         text-decoration: none;
         transition: transform 0.2s;
     }
-    .badge-actions .btn:hover {
-        transform: scale(1.04);
-    }
+    .badge-actions .btn:hover { transform: scale(1.04); }
     .btn-download {
         background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
         color: white;
@@ -164,25 +282,14 @@
     }
 
     /* Dark mode */
-    [data-theme="dark"] .style-option .style-label {
-        background: var(--bg-card, #2a2a2a);
-    }
-    [data-theme="dark"] .style-option.selected .style-label {
-        background: var(--primary-dark, #1e4d8b);
-    }
+    [data-theme="dark"] .style-option .style-label { background: var(--bg-card, #2a2a2a); }
+    [data-theme="dark"] .style-option.selected .style-label { background: var(--primary-dark, #1e4d8b); }
 
-    @media (max-width: 480px) {
-        .style-picker {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        .badge-actions {
-            flex-direction: column;
-            align-items: center;
-        }
-        .badge-actions .btn {
-            width: 100%;
-            justify-content: center;
-        }
+    @media (max-width: 520px) {
+        .style-picker { grid-template-columns: repeat(2, 1fr); }
+        .form-row { grid-template-columns: 1fr; }
+        .badge-actions { flex-direction: column; align-items: center; }
+        .badge-actions .btn { width: 100%; justify-content: center; }
     }
 </style>
 
@@ -190,51 +297,91 @@
     <h1>Create Your Milestone Badge</h1>
     <p class="subtitle">
         {% if days_sober > 0 %}
-        Customize your badge and share your {{ days_sober }}-day milestone with the world.
+        Customize your {{ days_sober }}-day milestone badge — pick a style, position your text, and save or share it.
         {% else %}
         Set your sobriety date in your profile to create a personalized badge.
         {% endif %}
     </p>
 
     <!-- Badge style picker -->
-    <div class="form-group">
-        <label>Choose Your Badge Style</label>
-    </div>
+    <div class="form-group"><label>Badge Style</label></div>
     <div class="style-picker">
         <div class="style-option selected" data-style="celebration" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-celebration.png' %}" alt="Celebration badge" loading="lazy" width="512" height="512">
+            <img src="{% static 'images/badges/badge-celebration.png' %}" alt="Celebration" loading="lazy" width="256" height="256">
             <div class="style-label">Celebration</div>
         </div>
         <div class="style-option" data-style="athletic" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-athletic.png' %}" alt="Athletic badge" loading="lazy" width="512" height="512">
+            <img src="{% static 'images/badges/badge-athletic.png' %}" alt="Athletic" loading="lazy" width="256" height="256">
             <div class="style-label">Athletic</div>
         </div>
         <div class="style-option" data-style="elegant" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-elegant.png' %}" alt="Elegant badge" loading="lazy" width="512" height="512">
+            <img src="{% static 'images/badges/badge-elegant.png' %}" alt="Elegant" loading="lazy" width="256" height="256">
             <div class="style-label">Elegant</div>
         </div>
         <div class="style-option" data-style="vintage" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-vintage.png' %}" alt="Vintage badge" loading="lazy" width="512" height="512">
+            <img src="{% static 'images/badges/badge-vintage.png' %}" alt="Vintage" loading="lazy" width="256" height="256">
             <div class="style-label">Vintage</div>
         </div>
     </div>
 
     <div class="badge-form">
-        <div class="form-group">
-            <label for="badge-name">Display Name (optional)</label>
-            <input type="text" id="badge-name" maxlength="30" placeholder="Leave blank for anonymous" oninput="updatePreview()">
-            <span class="hint">Your name will appear on the badge. Leave blank to keep it private.</span>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="badge-name">Display Name</label>
+                <input type="text" id="badge-name" maxlength="30" placeholder="Optional — leave blank for anonymous" oninput="scheduleUpdate()">
+            </div>
+            <div class="form-group">
+                <label for="badge-time-format">Time Display</label>
+                <select id="badge-time-format" onchange="updatePreview()">
+                    <option value="auto">Auto (best fit)</option>
+                    <option value="days">Days only</option>
+                    <option value="months">Months &amp; days</option>
+                    <option value="years">Years &amp; months</option>
+                    <option value="full">Full breakdown</option>
+                </select>
+            </div>
         </div>
 
         <div class="form-group">
-            <label for="badge-time-format">Time Display</label>
-            <select id="badge-time-format" onchange="updatePreview()">
-                <option value="auto">Auto (best fit)</option>
-                <option value="days">Days only (e.g. 2,958 Days)</option>
-                <option value="months">Months &amp; days (e.g. 3 Months, 1 Day)</option>
-                <option value="years">Years &amp; months (e.g. 8 Years, 1 Month)</option>
-                <option value="full">Full breakdown (e.g. 8 Years, 1 Month, 3 Days)</option>
-            </select>
+            <label>Text Position (top ← → bottom)</label>
+            <div class="range-row">
+                <span class="range-val">Top</span>
+                <input type="range" id="badge-text-y" min="0" max="100" value="82" oninput="updatePreview()">
+                <span class="range-val">Bottom</span>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Font Size</label>
+                <div class="range-row">
+                    <input type="range" id="badge-font-size" min="24" max="96" value="48" oninput="updateFontLabel(); updatePreview()">
+                    <span class="range-val" id="font-size-label">48px</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Text Outline</label>
+                <div class="toggle-row">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="badge-outline" checked onchange="updatePreview()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="hint">Dark border around letters for readability</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Text Color</label>
+            <div class="color-swatches">
+                <div class="swatch swatch-white selected" data-color="white" onclick="selectColor(this)" title="White"></div>
+                <div class="swatch swatch-gold" data-color="gold" onclick="selectColor(this)" title="Gold"></div>
+                <div class="swatch swatch-silver" data-color="silver" onclick="selectColor(this)" title="Silver"></div>
+                <div class="swatch swatch-black" data-color="black" onclick="selectColor(this)" title="Black"></div>
+                <div class="swatch swatch-cream" data-color="cream" onclick="selectColor(this)" title="Cream"></div>
+                <div class="swatch swatch-bronze" data-color="bronze" onclick="selectColor(this)" title="Bronze"></div>
+                <input type="color" class="color-custom" id="badge-custom-color" value="#ffffff" onchange="selectCustomColor(this)" title="Custom color">
+            </div>
         </div>
     </div>
 
@@ -242,7 +389,8 @@
     <div class="preview-section">
         <h2>Preview</h2>
         <div class="preview-container">
-            <img id="badge-preview" src="{% url 'accounts:milestone_image' days_sober %}?style=celebration&time_format=auto" alt="Your milestone badge">
+            <img id="badge-preview" src="{% url 'accounts:milestone_image' days_sober %}?style=celebration&text_y=82&font_size=48&color=white&outline=1" alt="Your milestone badge">
+            <div class="preview-loading" id="preview-loading"></div>
         </div>
     </div>
 
@@ -262,59 +410,94 @@
 
 <script>
 var currentStyle = 'celebration';
+var currentColor = 'white';
 var daysSober = {{ days_sober }};
 var debounceTimer = null;
 
 function selectStyle(el) {
-    document.querySelectorAll('.style-option').forEach(function(opt) {
-        opt.classList.remove('selected');
-    });
+    document.querySelectorAll('.style-option').forEach(function(o) { o.classList.remove('selected'); });
     el.classList.add('selected');
     currentStyle = el.getAttribute('data-style');
     updatePreview();
 }
 
+function selectColor(el) {
+    document.querySelectorAll('.swatch').forEach(function(s) { s.classList.remove('selected'); });
+    el.classList.add('selected');
+    currentColor = el.getAttribute('data-color');
+    updatePreview();
+}
+
+function selectCustomColor(el) {
+    document.querySelectorAll('.swatch').forEach(function(s) { s.classList.remove('selected'); });
+    currentColor = el.value;
+    updatePreview();
+}
+
+function updateFontLabel() {
+    document.getElementById('font-size-label').textContent = document.getElementById('badge-font-size').value + 'px';
+}
+
 function getParams() {
     var name = document.getElementById('badge-name').value.trim();
     var timeFormat = document.getElementById('badge-time-format').value;
-    var params = '?style=' + encodeURIComponent(currentStyle) + '&time_format=' + encodeURIComponent(timeFormat);
+    var textY = document.getElementById('badge-text-y').value;
+    var fontSize = document.getElementById('badge-font-size').value;
+    var outline = document.getElementById('badge-outline').checked ? '1' : '0';
+
+    var params = 'style=' + encodeURIComponent(currentStyle)
+        + '&time_format=' + encodeURIComponent(timeFormat)
+        + '&text_y=' + textY
+        + '&font_size=' + fontSize
+        + '&color=' + encodeURIComponent(currentColor)
+        + '&outline=' + outline;
+
     if (name) {
         params += '&name=' + encodeURIComponent(name);
     }
     return params;
 }
 
+function scheduleUpdate() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(updatePreview, 500);
+}
+
 function updatePreview() {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(function() {
-        var params = getParams();
-        var imgUrl = '/accounts/milestone-image/' + daysSober + '/' + params;
-        document.getElementById('badge-preview').src = imgUrl;
-        document.getElementById('btn-download').href = imgUrl + '&download=1';
-    }, 400);
+    var params = getParams();
+    var imgUrl = '/accounts/milestone-image/' + daysSober + '/?' + params;
+
+    var loading = document.getElementById('preview-loading');
+    loading.classList.add('active');
+
+    var img = document.getElementById('badge-preview');
+    img.onload = function() { loading.classList.remove('active'); };
+    img.onerror = function() { loading.classList.remove('active'); };
+    img.src = imgUrl;
+
+    document.getElementById('btn-download').href = imgUrl + '&download=1';
 }
 
 function shareBadge() {
     var params = getParams();
-    var shareUrl = window.location.origin + '/accounts/milestone/' + daysSober + '/' + params;
+    var shareUrl = window.location.origin + '/accounts/milestone/' + daysSober + '/?' + params;
     var text = 'Check out my recovery milestone on MyRecoveryPal!';
 
     if (window.MRPNative && window.MRPNative.share) {
         window.MRPNative.share('My Recovery Milestone', text, shareUrl);
         return;
     }
-
     if (navigator.share) {
         navigator.share({ title: 'My Recovery Milestone', text: text, url: shareUrl }).catch(function() {});
         return;
     }
-
     copyShareLink();
 }
 
 function copyShareLink() {
     var params = getParams();
-    var shareUrl = window.location.origin + '/accounts/milestone/' + daysSober + '/' + params;
+    var shareUrl = window.location.origin + '/accounts/milestone/' + daysSober + '/?' + params;
     var btn = document.getElementById('btn-copy');
 
     navigator.clipboard.writeText(shareUrl).then(function() {
@@ -324,8 +507,5 @@ function copyShareLink() {
         prompt('Copy this link:', shareUrl);
     });
 }
-
-// Initial download link
-updatePreview();
 </script>
 {% endblock %}

@@ -5193,7 +5193,21 @@ def milestone_image_view(request, days):
     # Sanitize name — alphanumeric, spaces, and basic punctuation only
     name = re.sub(r'[^\w\s.\'-]', '', name)[:30]
 
-    img_bytes = generate_milestone_image(days, style=style, name=name, time_format=time_format)
+    text_y = request.GET.get('text_y', '50')
+    font_size = request.GET.get('font_size', '48')
+    color = request.GET.get('color', 'white')
+    outline = request.GET.get('outline', '1') == '1'
+
+    try:
+        text_y = int(text_y)
+        font_size = int(font_size)
+    except (ValueError, TypeError):
+        text_y, font_size = 50, 48
+
+    img_bytes = generate_milestone_image(
+        days, style=style, name=name, time_format=time_format,
+        text_y=text_y, font_size=font_size, color=color, outline=outline,
+    )
 
     disposition = 'attachment' if request.GET.get('download') else 'inline'
     response = HttpResponse(img_bytes, content_type='image/png')
@@ -5212,9 +5226,14 @@ def milestone_share_view(request, days):
     name = request.GET.get('name', '')
 
     # Build image URL with same params so OG image matches what was shared
-    image_params = f'?style={style}'
-    if name:
-        image_params += f'&name={name}'
+    # Pass through all visual params from the query string
+    from urllib.parse import urlencode
+    img_params = {k: v for k, v in request.GET.items() if k in (
+        'style', 'name', 'time_format', 'text_y', 'font_size', 'color', 'outline'
+    )}
+    if not img_params.get('style'):
+        img_params['style'] = style
+    image_params = '?' + urlencode(img_params) if img_params else ''
     image_url = request.build_absolute_uri(
         reverse('accounts:milestone_image', args=[days]) + image_params
     )

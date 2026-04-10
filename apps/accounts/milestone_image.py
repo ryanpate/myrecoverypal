@@ -1,4 +1,5 @@
 """Generate shareable milestone badge images using badge PNG templates."""
+import hashlib
 import os
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
@@ -10,54 +11,10 @@ FONT_PATH = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Inter-Bold.ttf')
 BADGE_DIR = os.path.join(settings.BASE_DIR, 'static', 'images', 'badges')
 
 BADGE_STYLES = {
-    'celebration': {
-        'file': 'badge-celebration.png',
-        'label': 'Celebration',
-        # Text goes between "MILESTONE ACHIEVED!" and "www.myrecoverypal.com"
-        'time_y': 900,
-        'name_y': 945,
-        'time_color': (140, 110, 50, 255),
-        'name_color': (120, 95, 45, 230),
-        'shadow_color': (60, 45, 20, 120),
-        'max_time_font': 54,
-        'max_name_font': 28,
-    },
-    'athletic': {
-        'file': 'badge-athletic.png',
-        'label': 'Athletic',
-        # Text goes below "MILESTONE ACHIEVED!" near the bottom
-        'time_y': 900,
-        'name_y': 945,
-        'time_color': (200, 190, 160, 255),
-        'name_color': (180, 170, 140, 230),
-        'shadow_color': (20, 20, 20, 150),
-        'max_time_font': 54,
-        'max_name_font': 28,
-    },
-    'elegant': {
-        'file': 'badge-elegant.png',
-        'label': 'Elegant',
-        # Text below "MILESTONE ACHIEVED!" at the bottom of the medal
-        'time_y': 880,
-        'name_y': 925,
-        'time_color': (180, 160, 100, 255),
-        'name_color': (160, 140, 90, 230),
-        'shadow_color': (30, 25, 15, 120),
-        'max_time_font': 56,
-        'max_name_font': 30,
-    },
-    'vintage': {
-        'file': 'badge-vintage.png',
-        'label': 'Vintage',
-        # Text below "MILESTONE ACHIEVED!" on the worn bronze medal
-        'time_y': 880,
-        'name_y': 925,
-        'time_color': (200, 185, 140, 255),
-        'name_color': (180, 165, 120, 230),
-        'shadow_color': (30, 25, 15, 150),
-        'max_time_font': 56,
-        'max_name_font': 30,
-    },
+    'celebration': {'file': 'badge-celebration.png', 'label': 'Celebration'},
+    'athletic': {'file': 'badge-athletic.png', 'label': 'Athletic'},
+    'elegant': {'file': 'badge-elegant.png', 'label': 'Elegant'},
+    'vintage': {'file': 'badge-vintage.png', 'label': 'Vintage'},
 }
 
 TIME_FORMATS = {
@@ -67,6 +24,24 @@ TIME_FORMATS = {
     'years': 'Years & months',
     'full': 'Years, months & days',
 }
+
+# Preset colors users can pick from
+TEXT_COLORS = {
+    'white': (255, 255, 255),
+    'gold': (212, 175, 55),
+    'silver': (192, 192, 192),
+    'black': (20, 20, 20),
+    'cream': (255, 253, 208),
+    'bronze': (140, 110, 50),
+}
+
+
+def _hex_to_rgb(hex_str):
+    """Convert '#RRGGBB' to (R, G, B) tuple."""
+    hex_str = hex_str.lstrip('#')
+    if len(hex_str) == 6:
+        return tuple(int(hex_str[i:i+2], 16) for i in (0, 2, 4))
+    return (255, 255, 255)
 
 
 def format_sobriety_time(days, fmt='auto'):
@@ -107,7 +82,7 @@ def format_sobriety_time(days, fmt='auto'):
             parts.append(f'{remaining_days} Day{"s" if remaining_days != 1 else ""}')
         return ', '.join(parts)
 
-    # auto — pick the most natural representation
+    # auto
     if days < 30:
         return f'{days} Day{"s" if days != 1 else ""}'
     if days < 365:
@@ -119,28 +94,50 @@ def format_sobriety_time(days, fmt='auto'):
     return f'{years} Year{"s" if years != 1 else ""}'
 
 
-def generate_milestone_image(days, style='celebration', name='', time_format='auto'):
+def _draw_outlined_text(draw, x, y, text, font, fill, outline_width):
+    """Draw text with a dark outline for readability."""
+    # Outline color: dark version of fill or black
+    outline_color = (0, 0, 0, 220)
+    for dx in range(-outline_width, outline_width + 1):
+        for dy in range(-outline_width, outline_width + 1):
+            if dx != 0 or dy != 0:
+                draw.text((x + dx, y + dy), text, fill=outline_color, font=font)
+    draw.text((x, y), text, fill=fill, font=font)
+
+
+def generate_milestone_image(days, style='celebration', name='', time_format='auto',
+                              text_y=50, font_size=48, color='white', outline=True):
     """Generate a personalized milestone badge image.
 
     Args:
         days: Number of days sober.
         style: Badge style key from BADGE_STYLES.
         name: Optional display name to include on the badge.
-        time_format: How to display sobriety time (auto/days/months/years/full).
-
-    Returns:
-        PNG image bytes.
+        time_format: How to display sobriety time.
+        text_y: Vertical position as percentage (0=top, 100=bottom).
+        font_size: Font size in pixels (24-96).
+        color: Color name from TEXT_COLORS or hex '#RRGGBB'.
+        outline: Whether to draw a dark outline around text.
     """
     if style not in BADGE_STYLES:
         style = 'celebration'
     if time_format not in TIME_FORMATS:
         time_format = 'auto'
+    text_y = max(0, min(100, int(text_y)))
+    font_size = max(24, min(96, int(font_size)))
 
-    # Cache key includes all personalization params
     safe_name = name.strip()[:30] if name else ''
-    import hashlib
-    name_hash = hashlib.md5(safe_name.encode()).hexdigest()[:8] if safe_name else 'anon'
-    cache_key = f'milestone_v4_{days}_{style}_{time_format}_{name_hash}'
+
+    # Resolve color
+    if color.startswith('#'):
+        rgb = _hex_to_rgb(color)
+    else:
+        rgb = TEXT_COLORS.get(color, TEXT_COLORS['white'])
+    fill = (*rgb, 255)
+
+    # Cache key
+    params = f'{days}_{style}_{time_format}_{text_y}_{font_size}_{color}_{int(outline)}_{safe_name}'
+    cache_key = f'milestone_v5_{hashlib.md5(params.encode()).hexdigest()}'
     cached = cache.get(cache_key)
     if cached:
         return cached
@@ -148,62 +145,53 @@ def generate_milestone_image(days, style='celebration', name='', time_format='au
     config = BADGE_STYLES[style]
     badge_path = os.path.join(BADGE_DIR, config['file'])
 
-    # Load and resize the badge template
     badge = Image.open(badge_path).convert('RGBA')
     target = 1080
     badge = badge.resize((target, target), Image.LANCZOS)
 
-    # Create overlay for text
     overlay = Image.new('RGBA', (target, target), (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
 
     cx = target // 2
     time_text = format_sobriety_time(days, time_format)
 
-    # Scale font size based on text length
-    base_font = config['max_time_font']
-    if len(time_text) > 22:
-        font_size = int(base_font * 0.7)
-    elif len(time_text) > 16:
-        font_size = int(base_font * 0.8)
-    elif len(time_text) > 10:
-        font_size = int(base_font * 0.9)
-    else:
-        font_size = base_font
-
     try:
         font_time = ImageFont.truetype(FONT_PATH, font_size)
-        font_name = ImageFont.truetype(FONT_PATH, config['max_name_font'])
+        name_font_size = max(20, font_size - 16)
+        font_name = ImageFont.truetype(FONT_PATH, name_font_size)
     except OSError:
         font_time = ImageFont.load_default()
         font_name = ImageFont.load_default()
 
-    # Draw sobriety time
+    # Convert text_y percentage to pixel position (with margins)
+    margin = 40
+    usable = target - 2 * margin
+    pixel_y = margin + int(usable * text_y / 100)
+
+    # Draw sobriety time — centered horizontally at the user's chosen Y
     bbox = draw.textbbox((0, 0), time_text, font=font_time)
     tw = bbox[2] - bbox[0]
     th = bbox[3] - bbox[1]
     x = cx - tw // 2
-    y = config['time_y'] - th // 2
 
-    # If name is included, shift time up to make room
-    if safe_name:
-        y -= 20
+    outline_w = 3 if outline else 0
+    if outline:
+        _draw_outlined_text(draw, x, pixel_y, time_text, font_time, fill, outline_w)
+    else:
+        draw.text((x, pixel_y), time_text, fill=fill, font=font_time)
 
-    # Shadow
-    draw.text((x + 2, y + 2), time_text, fill=config['shadow_color'], font=font_time)
-    # Main text
-    draw.text((x, y), time_text, fill=config['time_color'], font=font_time)
-
-    # Draw optional name
+    # Draw optional name below sobriety time
     if safe_name:
         bbox = draw.textbbox((0, 0), safe_name, font=font_name)
-        tw = bbox[2] - bbox[0]
-        nx = cx - tw // 2
-        ny = config['name_y']
-        draw.text((nx + 1, ny + 1), safe_name, fill=config['shadow_color'], font=font_name)
-        draw.text((nx, ny), safe_name, fill=config['name_color'], font=font_name)
+        ntw = bbox[2] - bbox[0]
+        nx = cx - ntw // 2
+        ny = pixel_y + th + 10
 
-    # Composite and convert
+        if outline:
+            _draw_outlined_text(draw, nx, ny, safe_name, font_name, fill, max(1, outline_w - 1))
+        else:
+            draw.text((nx, ny), safe_name, fill=fill, font=font_name)
+
     result = Image.alpha_composite(badge, overlay)
     final = result.convert('RGB')
 
