@@ -306,33 +306,29 @@
     <!-- Badge style picker -->
     <div class="form-group"><label>Badge Style</label></div>
     <div class="style-picker">
-        <div class="style-option selected" data-style="celebration" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-celebration.png' %}" alt="Celebration" loading="lazy" width="256" height="256">
-            <div class="style-label">Celebration</div>
+        <div class="style-option selected" data-style="classic" onclick="selectStyle(this)">
+            <img src="{% static 'images/badges/badge-classic.png' %}" alt="Classic" loading="lazy" width="256" height="256">
+            <div class="style-label">Classic</div>
         </div>
-        <div class="style-option" data-style="athletic" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-athletic.png' %}" alt="Athletic" loading="lazy" width="256" height="256">
-            <div class="style-label">Athletic</div>
+        <div class="style-option" data-style="parchment" onclick="selectStyle(this)">
+            <img src="{% static 'images/badges/badge-parchment.png' %}" alt="Parchment" loading="lazy" width="256" height="256">
+            <div class="style-label">Parchment</div>
         </div>
-        <div class="style-option" data-style="elegant" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-elegant.png' %}" alt="Elegant" loading="lazy" width="256" height="256">
-            <div class="style-label">Elegant</div>
+        <div class="style-option" data-style="celestial" onclick="selectStyle(this)">
+            <img src="{% static 'images/badges/badge-celestial.png' %}" alt="Celestial" loading="lazy" width="256" height="256">
+            <div class="style-label">Celestial</div>
         </div>
-        <div class="style-option" data-style="vintage" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-vintage.png' %}" alt="Vintage" loading="lazy" width="256" height="256">
-            <div class="style-label">Vintage</div>
+        <div class="style-option" data-style="antique" onclick="selectStyle(this)">
+            <img src="{% static 'images/badges/badge-antique.png' %}" alt="Antique" loading="lazy" width="256" height="256">
+            <div class="style-label">Antique</div>
         </div>
-        <div class="style-option" data-style="comic" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-comic.png' %}" alt="Comic" loading="lazy" width="256" height="256">
-            <div class="style-label">Comic</div>
+        <div class="style-option" data-style="midnight" onclick="selectStyle(this)">
+            <img src="{% static 'images/badges/badge-midnight.png' %}" alt="Midnight" loading="lazy" width="256" height="256">
+            <div class="style-label">Midnight</div>
         </div>
-        <div class="style-option" data-style="crystal" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-crystal.png' %}" alt="Crystal" loading="lazy" width="256" height="256">
-            <div class="style-label">Crystal</div>
-        </div>
-        <div class="style-option" data-style="anime" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-anime.png' %}" alt="Anime" loading="lazy" width="256" height="256">
-            <div class="style-label">Anime</div>
+        <div class="style-option" data-style="sapphire" onclick="selectStyle(this)">
+            <img src="{% static 'images/badges/badge-sapphire.png' %}" alt="Sapphire" loading="lazy" width="256" height="256">
+            <div class="style-label">Sapphire</div>
         </div>
     </div>
 
@@ -345,31 +341,24 @@
             <div class="form-group">
                 <label for="badge-time-format">Time Display</label>
                 <select id="badge-time-format" onchange="updatePreview()">
-                    <option value="auto">Auto (best fit)</option>
-                    <option value="days">Days only</option>
-                    <option value="months">Months &amp; days</option>
-                    <option value="years">Years &amp; months</option>
-                    <option value="full">Full breakdown</option>
+                    <option value="days">Days</option>
+                    <option value="months" selected>Months</option>
+                    <option value="years">Years</option>
                 </select>
+                <span class="hint">Shown in the center of your badge</span>
             </div>
         </div>
 
-        <div class="form-group">
-            <label>Text Position (top ← → bottom)</label>
-            <div class="range-row">
-                <span class="range-val">Top</span>
-                <input type="range" id="badge-text-y" min="0" max="100" value="82" oninput="updatePreview()">
-                <span class="range-val">Bottom</span>
-            </div>
-        </div>
+        <input type="hidden" id="badge-text-y" value="50">
 
         <div class="form-row">
             <div class="form-group">
                 <label>Font Size</label>
                 <div class="range-row">
-                    <input type="range" id="badge-font-size" min="24" max="96" value="48" oninput="updateFontLabel(); updatePreview()">
-                    <span class="range-val" id="font-size-label">48px</span>
+                    <input type="range" id="badge-font-size" min="40" max="160" value="110" oninput="updateFontLabel(); updatePreview()">
+                    <span class="range-val" id="font-size-label">110px</span>
                 </div>
+                <span class="hint">Auto-shrinks to fit the center circle</span>
             </div>
             <div class="form-group">
                 <label>Text Outline</label>
@@ -401,7 +390,7 @@
     <div class="preview-section">
         <h2>Preview</h2>
         <div class="preview-container">
-            <img id="badge-preview" src="{% url 'accounts:milestone_image' days_sober %}?style=celebration&text_y=82&font_size=48&color=white&outline=1" alt="Your milestone badge">
+            <img id="badge-preview" src="{% url 'accounts:milestone_image' days_sober %}?style=classic&time_format=months&text_y=50&font_size=110&color=white&outline=1" alt="Your milestone badge">
             <div class="preview-loading" id="preview-loading"></div>
         </div>
     </div>
@@ -421,7 +410,7 @@
 </div>
 
 <script>
-var currentStyle = 'celebration';
+var currentStyle = 'classic';
 var currentColor = 'white';
 var daysSober = {{ days_sober }};
 var debounceTimer = null;

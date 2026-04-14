@@ -5186,7 +5186,7 @@ def milestone_image_view(request, days):
     import re
 
     days = max(1, min(days, 36500))
-    style = request.GET.get('style', 'celebration')
+    style = request.GET.get('style', 'classic')
     name = request.GET.get('name', '')
     time_format = request.GET.get('time_format', 'auto')
 
@@ -5194,7 +5194,7 @@ def milestone_image_view(request, days):
     name = re.sub(r'[^\w\s.\'-]', '', name)[:30]
 
     text_y = request.GET.get('text_y', '50')
-    font_size = request.GET.get('font_size', '48')
+    font_size = request.GET.get('font_size', '110')
     color = request.GET.get('color', 'white')
     outline = request.GET.get('outline', '1') == '1'
 
@@ -5202,7 +5202,7 @@ def milestone_image_view(request, days):
         text_y = int(text_y)
         font_size = int(font_size)
     except (ValueError, TypeError):
-        text_y, font_size = 50, 48
+        text_y, font_size = 50, 110
 
     img_bytes = generate_milestone_image(
         days, style=style, name=name, time_format=time_format,
@@ -5222,7 +5222,7 @@ def milestone_share_view(request, days):
 
     days = max(1, min(days, 36500))
     label = format_sobriety_time(days)
-    style = request.GET.get('style', 'celebration')
+    style = request.GET.get('style', 'classic')
     name = request.GET.get('name', '')
 
     # Build image URL with same params so OG image matches what was shared

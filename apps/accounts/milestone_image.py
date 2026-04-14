@@ -11,21 +11,23 @@ FONT_PATH = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Inter-Bold.ttf')
 BADGE_DIR = os.path.join(settings.BASE_DIR, 'static', 'images', 'badges')
 
 BADGE_STYLES = {
-    'celebration': {'file': 'badge-celebration.png', 'label': 'Celebration'},
-    'athletic': {'file': 'badge-athletic.png', 'label': 'Athletic'},
-    'elegant': {'file': 'badge-elegant.png', 'label': 'Elegant'},
-    'vintage': {'file': 'badge-vintage.png', 'label': 'Vintage'},
-    'comic': {'file': 'badge-comic.png', 'label': 'Comic'},
-    'crystal': {'file': 'badge-crystal.png', 'label': 'Crystal'},
-    'anime': {'file': 'badge-anime.png', 'label': 'Anime'},
+    'classic': {'file': 'badge-classic.png', 'label': 'Classic'},
+    'parchment': {'file': 'badge-parchment.png', 'label': 'Parchment'},
+    'celestial': {'file': 'badge-celestial.png', 'label': 'Celestial'},
+    'antique': {'file': 'badge-antique.png', 'label': 'Antique'},
+    'midnight': {'file': 'badge-midnight.png', 'label': 'Midnight'},
+    'sapphire': {'file': 'badge-sapphire.png', 'label': 'Sapphire'},
 }
 
+# Fraction of badge width where the gold center circle sits for text.
+# All "My Recovery Pal" medallion templates share the same center-circle layout.
+CENTER_WIDTH_RATIO = 0.34
+
 TIME_FORMATS = {
-    'auto': 'Auto (best fit)',
-    'days': 'Days only',
-    'months': 'Months & days',
-    'years': 'Years & months',
-    'full': 'Years, months & days',
+    'days': 'Days',
+    'months': 'Months',
+    'years': 'Years',
+    'auto': 'Auto',
 }
 
 # Preset colors users can pick from
@@ -48,52 +50,29 @@ def _hex_to_rgb(hex_str):
 
 
 def format_sobriety_time(days, fmt='auto'):
-    """Format sobriety time based on user's chosen format."""
-    years = days // 365
-    remaining_after_years = days % 365
-    months = remaining_after_years // 30
-    remaining_days = remaining_after_years % 30
+    """Format sobriety time as a short string that fits inside the badge center circle.
 
+    Returns a single-unit string ("90 Days", "6 Months", "2 Years") so it centers
+    cleanly — compound formats wouldn't fit the gold circle without shrinking.
+    """
     if fmt == 'days':
         return f'{days:,} Day{"s" if days != 1 else ""}'
 
     if fmt == 'months':
-        total_months = days // 30
-        d = days % 30
-        parts = []
-        if total_months > 0:
-            parts.append(f'{total_months} Month{"s" if total_months != 1 else ""}')
-        if d > 0 or not parts:
-            parts.append(f'{d} Day{"s" if d != 1 else ""}')
-        return ', '.join(parts)
+        total_months = max(1, days // 30)
+        return f'{total_months} Month{"s" if total_months != 1 else ""}'
 
     if fmt == 'years':
-        parts = []
-        if years > 0:
-            parts.append(f'{years} Year{"s" if years != 1 else ""}')
-        if months > 0 or not parts:
-            parts.append(f'{months} Month{"s" if months != 1 else ""}')
-        return ', '.join(parts)
+        total_years = max(1, days // 365)
+        return f'{total_years} Year{"s" if total_years != 1 else ""}'
 
-    if fmt == 'full':
-        parts = []
-        if years > 0:
-            parts.append(f'{years} Year{"s" if years != 1 else ""}')
-        if months > 0:
-            parts.append(f'{months} Month{"s" if months != 1 else ""}')
-        if remaining_days > 0 or not parts:
-            parts.append(f'{remaining_days} Day{"s" if remaining_days != 1 else ""}')
-        return ', '.join(parts)
-
-    # auto
+    # auto: pick the largest unit that reads naturally
     if days < 30:
         return f'{days} Day{"s" if days != 1 else ""}'
     if days < 365:
-        if remaining_days > 0:
-            return f'{months} Month{"s" if months != 1 else ""}, {remaining_days} Day{"s" if remaining_days != 1 else ""}'
+        months = days // 30
         return f'{months} Month{"s" if months != 1 else ""}'
-    if months > 0:
-        return f'{years} Year{"s" if years != 1 else ""}, {months} Month{"s" if months != 1 else ""}'
+    years = days // 365
     return f'{years} Year{"s" if years != 1 else ""}'
 
 
@@ -108,39 +87,59 @@ def _draw_outlined_text(draw, x, y, text, font, fill, outline_width):
     draw.text((x, y), text, fill=fill, font=font)
 
 
-def generate_milestone_image(days, style='celebration', name='', time_format='auto',
-                              text_y=50, font_size=48, color='white', outline=True):
+def _load_font(size):
+    try:
+        return ImageFont.truetype(FONT_PATH, size)
+    except OSError:
+        return ImageFont.load_default()
+
+
+def _fit_font_to_width(draw, text, max_font, max_width, min_font=24):
+    """Return the largest font (<= max_font) whose rendered text fits within max_width."""
+    size = max_font
+    while size > min_font:
+        font = _load_font(size)
+        bbox = draw.textbbox((0, 0), text, font=font)
+        if (bbox[2] - bbox[0]) <= max_width:
+            return font, size
+        size -= 2
+    return _load_font(min_font), min_font
+
+
+def generate_milestone_image(days, style='classic', name='', time_format='auto',
+                              text_y=50, font_size=110, color='white', outline=True):
     """Generate a personalized milestone badge image.
+
+    Places the sobriety time inside the gold center circle of the badge,
+    auto-shrinking the font if the text would overflow the circle.
 
     Args:
         days: Number of days sober.
         style: Badge style key from BADGE_STYLES.
         name: Optional display name to include on the badge.
-        time_format: How to display sobriety time.
-        text_y: Vertical position as percentage (0=top, 100=bottom).
-        font_size: Font size in pixels (24-96).
+        time_format: How to display sobriety time (days/months/years/etc).
+        text_y: Vertical position as percentage (0=top, 100=bottom). 50 = center.
+        font_size: Maximum font size in pixels (24-160). Shrinks to fit circle.
         color: Color name from TEXT_COLORS or hex '#RRGGBB'.
         outline: Whether to draw a dark outline around text.
     """
     if style not in BADGE_STYLES:
-        style = 'celebration'
+        style = 'classic'
     if time_format not in TIME_FORMATS:
         time_format = 'auto'
     text_y = max(0, min(100, int(text_y)))
-    font_size = max(24, min(96, int(font_size)))
+    font_size = max(24, min(160, int(font_size)))
 
     safe_name = name.strip()[:30] if name else ''
 
-    # Resolve color
     if color.startswith('#'):
         rgb = _hex_to_rgb(color)
     else:
         rgb = TEXT_COLORS.get(color, TEXT_COLORS['white'])
     fill = (*rgb, 255)
 
-    # Cache key
     params = f'{days}_{style}_{time_format}_{text_y}_{font_size}_{color}_{int(outline)}_{safe_name}'
-    cache_key = f'milestone_v5_{hashlib.md5(params.encode()).hexdigest()}'
+    cache_key = f'milestone_v6_{hashlib.md5(params.encode()).hexdigest()}'
     cached = cache.get(cache_key)
     if cached:
         return cached
@@ -158,37 +157,38 @@ def generate_milestone_image(days, style='celebration', name='', time_format='au
     cx = target // 2
     time_text = format_sobriety_time(days, time_format)
 
-    try:
-        font_time = ImageFont.truetype(FONT_PATH, font_size)
-        name_font_size = max(20, font_size - 16)
-        font_name = ImageFont.truetype(FONT_PATH, name_font_size)
-    except OSError:
-        font_time = ImageFont.load_default()
-        font_name = ImageFont.load_default()
+    # Fit time text to the gold center circle width (with a little padding).
+    max_text_width = int(target * CENTER_WIDTH_RATIO) - 20
+    font_time, fitted_size = _fit_font_to_width(draw, time_text, font_size, max_text_width)
 
-    # Convert text_y percentage to pixel position (with margins)
+    name_max_size = max(20, fitted_size - 24)
+    font_name = _load_font(name_max_size)
+    if safe_name:
+        font_name, _ = _fit_font_to_width(draw, safe_name, name_max_size, max_text_width)
+
+    # text_y percentage → pixel position. At 50% the text sits centered on the badge.
     margin = 40
     usable = target - 2 * margin
-    pixel_y = margin + int(usable * text_y / 100)
+    pixel_y_anchor = margin + int(usable * text_y / 100)
 
-    # Draw sobriety time — centered horizontally at the user's chosen Y
     bbox = draw.textbbox((0, 0), time_text, font=font_time)
     tw = bbox[2] - bbox[0]
     th = bbox[3] - bbox[1]
+    # Vertically center the glyphs on the anchor Y
+    time_y = pixel_y_anchor - th // 2 - bbox[1]
     x = cx - tw // 2
 
     outline_w = 3 if outline else 0
     if outline:
-        _draw_outlined_text(draw, x, pixel_y, time_text, font_time, fill, outline_w)
+        _draw_outlined_text(draw, x, time_y, time_text, font_time, fill, outline_w)
     else:
-        draw.text((x, pixel_y), time_text, fill=fill, font=font_time)
+        draw.text((x, time_y), time_text, fill=fill, font=font_time)
 
-    # Draw optional name below sobriety time
     if safe_name:
-        bbox = draw.textbbox((0, 0), safe_name, font=font_name)
-        ntw = bbox[2] - bbox[0]
+        nbbox = draw.textbbox((0, 0), safe_name, font=font_name)
+        ntw = nbbox[2] - nbbox[0]
         nx = cx - ntw // 2
-        ny = pixel_y + th + 10
+        ny = time_y + th + 12
 
         if outline:
             _draw_outlined_text(draw, nx, ny, safe_name, font_name, fill, max(1, outline_w - 1))
