@@ -64,11 +64,31 @@ def _hex_to_rgb(hex_str):
     return (255, 255, 255)
 
 
+def _int_to_roman(num):
+    """Convert an integer (1-3999) to a Roman numeral string, AA-coin style."""
+    if num < 1:
+        return 'I'
+    if num > 3999:
+        return str(num)
+    vals = [
+        (1000, 'M'), (900, 'CM'), (500, 'D'), (400, 'CD'),
+        (100, 'C'), (90, 'XC'), (50, 'L'), (40, 'XL'),
+        (10, 'X'), (9, 'IX'), (5, 'V'), (4, 'IV'), (1, 'I'),
+    ]
+    result = ''
+    for value, numeral in vals:
+        while num >= value:
+            result += numeral
+            num -= value
+    return result
+
+
 def format_sobriety_time(days, fmt='auto'):
     """Format sobriety time as a short string that fits inside the badge center circle.
 
-    Returns a single-unit string ("90 Days", "6 Months", "2 Years") so it centers
+    Returns a single-unit string ("90 Days", "6 Months", "V Years") so it centers
     cleanly — compound formats wouldn't fit the gold circle without shrinking.
+    Year counts render in Roman numerals, matching AA medallion tradition.
     """
     if fmt == 'days':
         return f'{days:,} Day{"s" if days != 1 else ""}'
@@ -79,7 +99,8 @@ def format_sobriety_time(days, fmt='auto'):
 
     if fmt == 'years':
         total_years = max(1, days // 365)
-        return f'{total_years} Year{"s" if total_years != 1 else ""}'
+        roman = _int_to_roman(total_years)
+        return f'{roman} Year{"s" if total_years != 1 else ""}'
 
     # auto: pick the largest unit that reads naturally
     if days < 30:
@@ -154,7 +175,7 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
     fill = (*rgb, 255)
 
     params = f'{days}_{style}_{time_format}_{text_y}_{font_size}_{color}_{int(outline)}_{safe_name}'
-    cache_key = f'milestone_v6_{hashlib.md5(params.encode()).hexdigest()}'
+    cache_key = f'milestone_v7_{hashlib.md5(params.encode()).hexdigest()}'
     cached = cache.get(cache_key)
     if cached:
         return cached
