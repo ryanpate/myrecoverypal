@@ -62,3 +62,11 @@ def notify_users_on_blog_publish(sender, instance, created, **kwargs):
         logger.info(
             f"Created {len(notifications)} notifications for blog post: {instance.title}"
         )
+
+        # bulk_create bypasses post_save, so fan out push notifications via Celery
+        # to keep the publish request fast.
+        try:
+            from apps.blog.tasks import fanout_blog_push_notifications
+            fanout_blog_push_notifications.delay(instance.pk)
+        except Exception as e:
+            logger.warning(f"Failed to enqueue blog push fan-out: {e}")
