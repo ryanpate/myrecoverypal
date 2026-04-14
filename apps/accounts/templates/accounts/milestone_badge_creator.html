@@ -62,6 +62,61 @@
         background: var(--primary-dark, #1e4d8b);
         color: white;
     }
+    .style-option.locked { position: relative; cursor: pointer; }
+    .style-option.locked img { filter: grayscale(0.4) brightness(0.75); }
+    .style-option.locked::after {
+        content: '\f023'; /* fa-lock */
+        font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free';
+        font-weight: 900;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -60%);
+        font-size: 1.6rem;
+        color: #fff;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        pointer-events: none;
+    }
+    .style-option.locked .style-label {
+        background: #2a2a2a;
+        color: #f5d76e;
+    }
+
+    /* Signup banner for anonymous users */
+    .signup-banner {
+        background: linear-gradient(135deg, #1e4d8b, #2d7dd2);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+    .signup-banner strong { font-size: 1.05rem; }
+    .signup-banner p { margin: 0.25rem 0 0; opacity: 0.95; font-size: 0.88rem; }
+    .signup-banner .btn-signup {
+        background: #fff;
+        color: #1e4d8b;
+        padding: 0.55rem 1.15rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    .signup-banner .btn-signup:hover { transform: scale(1.04); }
+
+    /* Anon days input */
+    .days-input-row {
+        display: flex;
+        gap: 0.5rem;
+        align-items: end;
+    }
+    .days-input-row .form-group { flex: 1; }
 
     /* Form */
     .badge-form {
@@ -296,40 +351,51 @@
 <div class="badge-creator">
     <h1>Create Your Milestone Badge</h1>
     <p class="subtitle">
-        {% if days_sober > 0 %}
-        Customize your {{ days_sober }}-day milestone badge — pick a style, position your text, and save or share it.
-        {% else %}
-        Set your sobriety date in your profile to create a personalized badge.
-        {% endif %}
+        Pick a style, enter your time, and save or share your personal recovery medallion.
     </p>
 
+    {% if is_anonymous %}
+    <div class="signup-banner">
+        <div>
+            <strong><i class="fas fa-lock-open" aria-hidden="true"></i> Unlock all {{ badge_styles|length }} medallion styles</strong>
+            <p>Free account unlocks the full collection, auto-tracks your days, and lets you save your badges.</p>
+        </div>
+        <a href="{% url 'accounts:register' %}?next={% url 'accounts:milestone_badge_creator' %}" class="btn-signup">
+            Sign Up Free
+        </a>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="anon-days">Your Sobriety Time</label>
+            <div class="days-input-row">
+                <input type="number" id="anon-days-value" min="1" max="36500" value="{{ days_sober }}" oninput="updateAnonDays()" style="padding: 0.6rem 0.75rem; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 0.9rem;">
+                <select id="anon-days-unit" onchange="updateAnonDays()" style="padding: 0.6rem 0.75rem; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 0.9rem;">
+                    <option value="days" selected>Days</option>
+                    <option value="months">Months</option>
+                    <option value="years">Years</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Badge style picker -->
-    <div class="form-group"><label>Badge Style</label></div>
+    <div class="form-group"><label>Badge Style{% if is_anonymous %} <span style="font-weight: 400; color: var(--text-muted, #888); font-size: 0.8rem;">— {{ free_styles|length }} free, {{ badge_styles|length|add:"-3" }} locked</span>{% endif %}</label></div>
     <div class="style-picker">
-        <div class="style-option selected" data-style="classic" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-classic.png' %}" alt="Classic" loading="lazy" width="256" height="256">
-            <div class="style-label">Classic</div>
+        {% for key, info in badge_styles.items %}
+        {% if is_anonymous and key not in free_styles %}
+        <div class="style-option locked" data-style="{{ key }}" onclick="showSignupPrompt()">
+            <img src="{% static 'images/badges/' %}{{ info.file }}" alt="{{ info.label }}" loading="lazy" width="256" height="256">
+            <div class="style-label">{{ info.label }}</div>
         </div>
-        <div class="style-option" data-style="parchment" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-parchment.png' %}" alt="Parchment" loading="lazy" width="256" height="256">
-            <div class="style-label">Parchment</div>
+        {% else %}
+        <div class="style-option{% if forloop.first %} selected{% endif %}" data-style="{{ key }}" onclick="selectStyle(this)">
+            <img src="{% static 'images/badges/' %}{{ info.file }}" alt="{{ info.label }}" loading="lazy" width="256" height="256">
+            <div class="style-label">{{ info.label }}</div>
         </div>
-        <div class="style-option" data-style="celestial" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-celestial.png' %}" alt="Celestial" loading="lazy" width="256" height="256">
-            <div class="style-label">Celestial</div>
-        </div>
-        <div class="style-option" data-style="antique" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-antique.png' %}" alt="Antique" loading="lazy" width="256" height="256">
-            <div class="style-label">Antique</div>
-        </div>
-        <div class="style-option" data-style="midnight" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-midnight.png' %}" alt="Midnight" loading="lazy" width="256" height="256">
-            <div class="style-label">Midnight</div>
-        </div>
-        <div class="style-option" data-style="sapphire" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/badge-sapphire.png' %}" alt="Sapphire" loading="lazy" width="256" height="256">
-            <div class="style-label">Sapphire</div>
-        </div>
+        {% endif %}
+        {% endfor %}
     </div>
 
     <div class="badge-form">
@@ -414,6 +480,24 @@ var currentStyle = 'classic';
 var currentColor = 'white';
 var daysSober = {{ days_sober }};
 var debounceTimer = null;
+var isAnonymous = {% if is_anonymous %}true{% else %}false{% endif %};
+var signupUrl = '{% url "accounts:register" %}?next={% url "accounts:milestone_badge_creator" %}';
+
+function updateAnonDays() {
+    var val = parseInt(document.getElementById('anon-days-value').value, 10) || 1;
+    var unit = document.getElementById('anon-days-unit').value;
+    var days = val;
+    if (unit === 'months') days = val * 30;
+    else if (unit === 'years') days = val * 365;
+    daysSober = Math.max(1, Math.min(36500, days));
+    scheduleUpdate();
+}
+
+function showSignupPrompt() {
+    if (confirm('Sign up free to unlock this style and all ' + {{ badge_styles|length }} + ' medallion designs. Go to signup?')) {
+        window.location.href = signupUrl;
+    }
+}
 
 function selectStyle(el) {
     document.querySelectorAll('.style-option').forEach(function(o) { o.classList.remove('selected'); });

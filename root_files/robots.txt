@@ -19,10 +19,11 @@ Disallow: /store/
 Allow: /resources/
 Allow: /support/
 
-# Allow public account pages (login, signup)
+# Allow public account pages (login, signup, free tools)
 Allow: /accounts/login/
 Allow: /accounts/register/
 Allow: /accounts/password-reset/
+Allow: /accounts/milestone-badge/
 
 # Disallow private/user content
 Disallow: /accounts/dashboard/

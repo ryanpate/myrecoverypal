@@ -17,7 +17,22 @@ BADGE_STYLES = {
     'antique': {'file': 'badge-antique.png', 'label': 'Antique'},
     'midnight': {'file': 'badge-midnight.png', 'label': 'Midnight'},
     'sapphire': {'file': 'badge-sapphire.png', 'label': 'Sapphire'},
+    'pearl': {'file': 'badge-pearl.png', 'label': 'Pearl'},
+    'silver': {'file': 'badge-silver.png', 'label': 'Silver'},
+    'sunset': {'file': 'badge-sunset.png', 'label': 'Sunset'},
+    'obsidian': {'file': 'badge-obsidian.png', 'label': 'Obsidian'},
+    'phoenix': {'file': 'badge-phoenix.png', 'label': 'Phoenix'},
+    'lighthouse': {'file': 'badge-lighthouse.png', 'label': 'Lighthouse'},
+    'winter': {'file': 'badge-winter.png', 'label': 'Winter'},
+    'blossom': {'file': 'badge-blossom.png', 'label': 'Blossom'},
+    'anchor': {'file': 'badge-anchor.png', 'label': 'Anchor'},
+    'dove': {'file': 'badge-dove.png', 'label': 'Dove'},
+    'mountain': {'file': 'badge-mountain.png', 'label': 'Mountain'},
 }
+
+# Styles available to anonymous (non-signed-in) visitors. The rest are gated
+# behind a free account — signup unlocks the full collection.
+FREE_BADGE_STYLES = {'classic', 'silver', 'mountain'}
 
 # Fraction of badge width where the gold center circle sits for text.
 # All "My Recovery Pal" medallion templates share the same center-circle layout.

@@ -5182,11 +5182,15 @@ def log_slip_view(request):
 
 def milestone_image_view(request, days):
     """Generate and return a shareable milestone badge as PNG (public for OG crawlers)."""
-    from apps.accounts.milestone_image import generate_milestone_image
+    from apps.accounts.milestone_image import generate_milestone_image, FREE_BADGE_STYLES
     import re
 
     days = max(1, min(days, 36500))
     style = request.GET.get('style', 'classic')
+
+    # Gate premium styles — anonymous visitors can only use the free set.
+    if not request.user.is_authenticated and style not in FREE_BADGE_STYLES:
+        style = 'classic'
     name = request.GET.get('name', '')
     time_format = request.GET.get('time_format', 'auto')
 
@@ -5248,17 +5252,28 @@ def milestone_share_view(request, days):
     return render(request, 'accounts/milestone_share.html', context)
 
 
-@login_required
 def milestone_badge_creator(request):
-    """Badge customization page — pick style, name, time format, preview, download."""
-    from apps.accounts.milestone_image import BADGE_STYLES, TIME_FORMATS
+    """Badge customization page — pick style, name, time format, preview, download.
+
+    Public page. Anonymous visitors can use 3 free styles; signing up unlocks
+    the full set. Signed-in users with a sobriety date get days auto-filled.
+    """
+    from apps.accounts.milestone_image import BADGE_STYLES, TIME_FORMATS, FREE_BADGE_STYLES
 
     user = request.user
-    days_sober = user.get_days_sober() if user.sobriety_date else 0
+    if user.is_authenticated and user.sobriety_date:
+        days_sober = user.get_days_sober()
+    else:
+        try:
+            days_sober = max(1, min(36500, int(request.GET.get('days', 90))))
+        except (ValueError, TypeError):
+            days_sober = 90
 
     context = {
         'days_sober': days_sober,
         'badge_styles': BADGE_STYLES,
         'time_formats': TIME_FORMATS,
+        'free_styles': list(FREE_BADGE_STYLES),
+        'is_anonymous': not user.is_authenticated,
     }
     return render(request, 'accounts/milestone_badge_creator.html', context)
