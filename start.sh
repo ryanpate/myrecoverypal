@@ -14,4 +14,4 @@ python manage.py migrate --noinput
 python manage.py seed_recovery_quotes 2>/dev/null || true
 
 echo "Starting gunicorn..."
-exec gunicorn recovery_hub.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --access-logfile - --error-logfile -
+exec gunicorn recovery_hub.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --preload --max-requests 1000 --max-requests-jitter 100 --access-logfile - --error-logfile -
