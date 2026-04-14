@@ -20,6 +20,14 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
+# Push send status constants. Returned by send_fcm_notification /
+# send_apns_notification so callers can distinguish a real "this token
+# is dead, deactivate it" signal from transient/config failures that
+# should NOT permanently disable the device.
+PUSH_SENT = 'sent'
+PUSH_INVALID = 'invalid'  # token is permanently invalid → deactivate
+PUSH_FAILED = 'failed'    # transient/config failure → leave token active
+
 # Firebase Admin SDK initialization (lazy loading)
 _firebase_app = None
 
@@ -67,12 +75,12 @@ def send_fcm_notification(token, title, body, data=None):
         data: Optional dict of additional data
 
     Returns:
-        bool: True if sent successfully, False otherwise
+        str: PUSH_SENT, PUSH_INVALID, or PUSH_FAILED
     """
     app = _get_firebase_app()
     if not app:
         logger.debug(f"FCM not configured - would send: {title}")
-        return False
+        return PUSH_FAILED
 
     try:
         from firebase_admin import messaging
@@ -101,15 +109,39 @@ def send_fcm_notification(token, title, body, data=None):
 
         response = messaging.send(message)
         logger.info(f"FCM notification sent successfully: {response}")
-        return True
+        return PUSH_SENT
 
     except Exception as e:
         error_str = str(e)
         # Check for invalid/unregistered token errors
-        if 'UNREGISTERED' in error_str or 'INVALID' in error_str:
+        if 'UNREGISTERED' in error_str or 'INVALID_ARGUMENT' in error_str or 'NOT_FOUND' in error_str:
             logger.warning(f"FCM token invalid/unregistered: {token[:20]}...")
-            return False
+            return PUSH_INVALID
         logger.error(f"FCM send error: {e}")
+        return PUSH_FAILED
+
+
+def _ensure_apns_key_file(apns_key_path):
+    """
+    Lazily materialize the APNs .p8 key file from the APNS_KEY_CONTENT env
+    var if the file is missing. Lets services that don't run start.sh
+    (e.g. the celery-worker service) still use APNs without duplicating
+    the key-extraction logic in every start command.
+    """
+    if apns_key_path and os.path.exists(apns_key_path):
+        return True
+    key_content = os.environ.get('APNS_KEY_CONTENT')
+    if not key_content or not apns_key_path:
+        return False
+    try:
+        os.makedirs(os.path.dirname(apns_key_path) or '.', exist_ok=True)
+        with open(apns_key_path, 'w') as f:
+            f.write(key_content)
+        os.chmod(apns_key_path, 0o600)
+        logger.info(f"APNs key file materialized at {apns_key_path}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to materialize APNs key file: {e}")
         return False
 
 
@@ -128,7 +160,7 @@ def _get_apns_auth_token():
     if not all([apns_key_path, apns_key_id, apns_team_id]):
         return None
 
-    if not os.path.exists(apns_key_path):
+    if not _ensure_apns_key_file(apns_key_path):
         return None
 
     try:
@@ -166,7 +198,7 @@ def send_apns_notification(token, title, body, data=None, badge_count=None):
         badge_count: App icon badge number (defaults to 1)
 
     Returns:
-        bool: True if sent successfully, False otherwise
+        str: PUSH_SENT, PUSH_INVALID, or PUSH_FAILED
     """
     import json
 
@@ -177,18 +209,18 @@ def send_apns_notification(token, title, body, data=None, badge_count=None):
     apns_topic = getattr(settings, 'APNS_TOPIC', 'com.myrecoverypal.app')
 
     if not all([apns_key_path, apns_key_id, apns_team_id]):
-        logger.debug(f"APNs not configured - would send: {title}")
-        return False
+        logger.warning(f"APNs not configured - would send: {title}")
+        return PUSH_FAILED
 
-    if not os.path.exists(apns_key_path):
+    if not _ensure_apns_key_file(apns_key_path):
         logger.warning(f"APNs key file not found: {apns_key_path}")
-        return False
+        return PUSH_FAILED
 
     # Get auth token
     auth_token = _get_apns_auth_token()
     if not auth_token:
         logger.error("Failed to get APNs auth token")
-        return False
+        return PUSH_FAILED
 
     try:
         import httpx
@@ -233,20 +265,26 @@ def send_apns_notification(token, title, body, data=None, badge_count=None):
 
         if response.status_code == 200:
             logger.info(f"APNs notification sent successfully to {token[:20]}...")
-            return True
-        else:
-            error_body = response.text
-            logger.warning(f"APNs error {response.status_code}: {error_body}")
+            return PUSH_SENT
 
-            # Check for invalid token errors
-            if response.status_code in (400, 410):
-                if 'BadDeviceToken' in error_body or 'Unregistered' in error_body:
-                    logger.warning(f"APNs token invalid: {token[:20]}...")
-            return False
+        error_body = response.text
+        logger.warning(f"APNs error {response.status_code}: {error_body}")
+
+        # Only status 410 (Unregistered) and specific 400 BadDeviceToken
+        # responses mean the token is permanently invalid. Everything else
+        # (rate limits, server errors, auth hiccups) is transient — do NOT
+        # deactivate the device.
+        if response.status_code == 410:
+            return PUSH_INVALID
+        if response.status_code == 400 and (
+            'BadDeviceToken' in error_body or 'Unregistered' in error_body
+        ):
+            return PUSH_INVALID
+        return PUSH_FAILED
 
     except Exception as e:
         logger.error(f"APNs send error: {e}")
-        return False
+        return PUSH_FAILED
 
 
 def send_push_to_user(user, title, body, data=None):
@@ -276,22 +314,27 @@ def send_push_to_user(user, title, body, data=None):
     unread_count = Notification.objects.filter(recipient=user, is_read=False).count()
 
     for device in device_tokens:
-        success = False
-
         if device.platform == 'android':
-            success = send_fcm_notification(device.token, title, body, data)
+            status = send_fcm_notification(device.token, title, body, data)
         elif device.platform == 'ios':
-            success = send_apns_notification(device.token, title, body, data, badge_count=unread_count)
+            status = send_apns_notification(
+                device.token, title, body, data, badge_count=unread_count
+            )
         elif device.platform == 'web':
-            success = send_fcm_notification(device.token, title, body, data)
+            status = send_fcm_notification(device.token, title, body, data)
+        else:
+            status = PUSH_FAILED
 
-        if success:
+        if status == PUSH_SENT:
             results[device.platform]['sent'] += 1
             device.mark_used()
         else:
             results[device.platform]['failed'] += 1
-            # Deactivate invalid tokens
-            if not success:
+            # ONLY deactivate tokens the provider explicitly told us are
+            # permanently invalid. Transient failures (config missing,
+            # network, rate limit, auth hiccup) must NOT nuke the token —
+            # otherwise a single bad run silently kills every device.
+            if status == PUSH_INVALID:
                 device.deactivate()
                 logger.info(f"Deactivated invalid token for {user.username}")
 
