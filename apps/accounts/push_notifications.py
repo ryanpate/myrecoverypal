@@ -391,6 +391,11 @@ class PushNotificationService:
             'body': '{pal_name} is thinking of you - time for a check-in?',
             'icon': '/static/images/favicon_192.png',
         },
+        'checkin_reminder': {
+            'title': 'Daily Check-in',
+            'body': 'Take a moment to check in with yourself today',
+            'icon': '/static/images/favicon_192.png',
+        },
     }
 
     @classmethod
@@ -725,6 +730,41 @@ class PushNotificationService:
 
             logger.info(f"[PUSH] To: {user.email} | Type: meeting_reminder | "
                        f"Title: {title} | Body: {body}")
+
+        return notification
+
+    @classmethod
+    def notify_checkin_reminder(cls, user, streak=0):
+        """
+        Remind a user to complete their daily check-in.
+        Creates in-app notification and dispatches push to all registered devices.
+        """
+        from .models import Notification
+
+        if streak and streak >= 2:
+            body = f"Keep your {streak}-day streak going — tap to check in"
+        else:
+            body = "Take a moment to check in with yourself today"
+
+        notification = Notification.objects.create(
+            recipient=user,
+            sender=None,
+            notification_type='checkin_reminder',
+            title='Daily Check-in',
+            message=body,
+            link='/accounts/daily-checkin/',
+        )
+
+        cls._send_push(
+            recipient=user,
+            notification_type='checkin_reminder',
+            sender=None,
+            data={
+                'type': 'checkin_reminder',
+                'link': '/accounts/daily-checkin/',
+                'streak': str(streak or 0),
+            },
+        )
 
         return notification
 

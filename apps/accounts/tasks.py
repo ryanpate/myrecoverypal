@@ -238,6 +238,8 @@ def send_checkin_reminders(self):
     failed_count = 0
     site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
 
+    from .push_notifications import PushNotificationService
+
     for user in users_with_prior_checkins:
         try:
             # Get their streak info
@@ -263,6 +265,12 @@ def send_checkin_reminders(self):
 
             if not success:
                 raise Exception(f"Failed to send check-in reminder to {user.email}: {error}")
+
+            # In-app notification + push (iOS/Android/web)
+            try:
+                PushNotificationService.notify_checkin_reminder(user, streak=streak)
+            except Exception as push_err:
+                logger.warning(f"Check-in push failed for {user.email}: {push_err}")
 
             user.last_checkin_reminder_sent = timezone.now()
             user.save(update_fields=['last_checkin_reminder_sent'])

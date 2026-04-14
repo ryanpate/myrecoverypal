@@ -1607,6 +1607,7 @@ class Notification(models.Model):
         ('meeting_reminder', 'Meeting Reminder'),
         ('pal_nudge', 'Recovery Pal Nudge'),
         ('new_blog_post', 'New Blog Post'),
+        ('checkin_reminder', 'Check-in Reminder'),
     )
 
     recipient = models.ForeignKey(
@@ -1666,6 +1667,12 @@ class Notification(models.Model):
             'comment': 'fa-comment',
             'like': 'fa-heart',
             'new_blog_post': 'fa-newspaper',
+            'checkin_reminder': 'fa-circle-check',
+            'meeting_reminder': 'fa-calendar-check',
+            'pal_nudge': 'fa-hand-holding-heart',
+            'group_post': 'fa-users',
+            'group_comment': 'fa-comment-dots',
+            'group_join': 'fa-user-plus',
         }
         return icons.get(self.notification_type, 'fa-bell')
 
