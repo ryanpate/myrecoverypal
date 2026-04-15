@@ -1,1 +1,1 @@
-web: gunicorn recovery_hub.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --preload --max-requests 1000 --max-requests-jitter 100 --access-logfile - --error-logfile -
+web: gunicorn recovery_hub.wsgi:application -c gunicorn.conf.py --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --preload --max-requests 1000 --max-requests-jitter 100 --access-logfile - --error-logfile -
