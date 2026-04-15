@@ -5286,7 +5286,8 @@ def share_milestone_to_feed(request):
     and `visibility`. Returns JSON with the new post's id on success.
     """
     import logging
-    from django.core.files.base import ContentFile
+    import traceback
+    from django.core.files.uploadedfile import SimpleUploadedFile
     from apps.accounts.milestone_image import (
         generate_milestone_image, BADGE_STYLES, TIME_FORMATS
     )
@@ -5328,11 +5329,18 @@ def share_milestone_to_feed(request):
             text_y=text_y, font_size=font_size, color=color, outline=outline,
         )
     except Exception as e:
-        logger.error(f"Failed to generate milestone image for feed share: {e}")
+        logger.error(f"share_milestone_to_feed: image generation failed: {e}\n{traceback.format_exc()}")
         return JsonResponse({'error': 'Could not generate badge image'}, status=500)
 
     filename = f"milestone-{days}-{style}-{request.user.id}.png"
-    image_file = ContentFile(img_bytes, name=filename)
+    # SimpleUploadedFile matches the shape of request.FILES entries, so Cloudinary
+    # storage and Django's ImageField validation both handle it the same as a
+    # regular upload.
+    image_file = SimpleUploadedFile(
+        name=filename,
+        content=img_bytes,
+        content_type='image/png',
+    )
 
     try:
         post = SocialPost.objects.create(
@@ -5342,8 +5350,8 @@ def share_milestone_to_feed(request):
             image=image_file,
         )
     except Exception as e:
-        logger.error(f"Failed to create milestone feed post: {e}")
-        return JsonResponse({'error': 'Could not post to feed'}, status=500)
+        logger.error(f"share_milestone_to_feed: post creation failed: {e}\n{traceback.format_exc()}")
+        return JsonResponse({'error': f'Could not post to feed: {type(e).__name__}'}, status=500)
 
     return JsonResponse({
         'success': True,
