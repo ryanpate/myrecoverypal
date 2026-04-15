@@ -496,9 +496,60 @@
         opacity: 0.95;
     }
 
+    /* Celebration Medallion Preview */
+    .celebration-medallion {
+        margin: 1rem auto 1.25rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .celebration-medallion img {
+        width: 180px;
+        height: 180px;
+        border-radius: 20px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.1);
+        animation: medallionPop 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s backwards;
+    }
+    @keyframes medallionPop {
+        0% { transform: scale(0.3) rotate(-20deg); opacity: 0; }
+        100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .celebration-medallion-caption {
+        font-size: 0.8rem;
+        opacity: 0.85;
+        margin-top: 0.6rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Primary badge CTA */
+    .celebration-badge-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, #fff, #fffbe8);
+        color: #667eea;
+        text-decoration: none;
+        padding: 0.95rem 1.75rem;
+        border-radius: 50px;
+        font-size: 0.98rem;
+        font-weight: 700;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        margin-bottom: 1.25rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .celebration-badge-cta:hover {
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+        color: #667eea;
+    }
+    .celebration-badge-cta i { color: #d4af37; font-size: 1.05rem; }
+
     /* Celebration Share Buttons */
     .celebration-share {
-        margin: 1.25rem 0;
+        margin: 0.5rem 0 1.25rem;
     }
 
     .celebration-share-label {
@@ -1404,22 +1455,37 @@
         <div class="celebration-days">{{ milestone_to_celebrate.days }} Days</div>
         <div class="celebration-message">{{ milestone_to_celebrate.message }}</div>
 
-        <!-- Share Your Achievement -->
+        <!-- Personalized medallion preview -->
+        <div class="celebration-medallion">
+            <img src="{% url 'accounts:milestone_image' milestone_to_celebrate.days %}?style=classic&time_format=auto&name={{ user.first_name|default:user.username|urlencode }}"
+                 alt="Your {{ milestone_to_celebrate.days }} day sobriety medallion"
+                 width="240" height="240" loading="eager">
+            <div class="celebration-medallion-caption">Your personal medallion</div>
+        </div>
+
+        <!-- Primary CTA: open badge creator with days prefilled -->
+        <a href="{% url 'accounts:milestone_badge_creator' %}?days={{ milestone_to_celebrate.days }}"
+           class="celebration-badge-cta"
+           data-ga="milestone_modal_badge_create">
+            <i class="fas fa-medal"></i> Customize &amp; Share Your Medallion
+        </a>
+
+        <!-- Quick share row -->
         <div class="celebration-share">
-            <div class="celebration-share-label">Share your achievement:</div>
+            <div class="celebration-share-label">Or share now:</div>
             <div class="celebration-share-buttons">
                 <button class="celebration-share-btn native" onclick="shareMilestone({{ milestone_to_celebrate.days }}, this)" title="Share">
                     <i class="fas fa-share-alt"></i>
                 </button>
-                <a href="https://twitter.com/intent/tweet?text=🎉%20{{ milestone_to_celebrate.days }}%20days%20sober!%20%23Recovery%20%23MyRecoveryPal%20%23SobrietyMilestone"
+                <a href="https://twitter.com/intent/tweet?text=🎉%20{{ milestone_to_celebrate.days }}%20days%20sober!%20%23Recovery%20%23MyRecoveryPal%20%23SobrietyMilestone&url={{ request.scheme }}%3A%2F%2F{{ request.get_host }}{% url 'accounts:milestone_share' milestone_to_celebrate.days %}"
                    target="_blank" rel="noopener" class="celebration-share-btn twitter" title="Share on Twitter/X">
                     <i class="fab fa-twitter"></i>
                 </a>
-                <a href="https://www.facebook.com/sharer/sharer.php?quote=🎉%20{{ milestone_to_celebrate.days }}%20days%20sober!%20%23Recovery%20%23MyRecoveryPal"
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}%3A%2F%2F{{ request.get_host }}{% url 'accounts:milestone_share' milestone_to_celebrate.days %}"
                    target="_blank" rel="noopener" class="celebration-share-btn facebook" title="Share on Facebook">
                     <i class="fab fa-facebook-f"></i>
                 </a>
-                <a href="https://wa.me/?text=🎉%20{{ milestone_to_celebrate.days }}%20days%20sober!%20%23Recovery%20%23MyRecoveryPal"
+                <a href="https://wa.me/?text=🎉%20{{ milestone_to_celebrate.days }}%20days%20sober!%20{{ request.scheme }}%3A%2F%2F{{ request.get_host }}{% url 'accounts:milestone_share' milestone_to_celebrate.days %}"
                    target="_blank" rel="noopener" class="celebration-share-btn whatsapp" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
@@ -3161,24 +3227,21 @@ function closeCelebration() {
     }
 }
 
-// Share milestone via native Web Share API or milestone image
+// Share milestone via native Web Share API — points at the share landing page
+// so recipients see the full badge + "create your own" funnel.
 function shareMilestone(days, button) {
-    var imageUrl = '/accounts/milestone-image/' + days + '/?format=story';
-    var shareUrl = window.location.origin + imageUrl;
+    var shareUrl = window.location.origin + '/accounts/milestone/' + days + '/';
+    var text = 'I just hit ' + days + ' days sober on MyRecoveryPal! 🎉';
 
     if (window.MRPNative && window.MRPNative.share) {
-        window.MRPNative.share(
-            'My Recovery Milestone',
-            'I just hit ' + days + ' days sober on MyRecoveryPal!',
-            shareUrl
-        );
+        window.MRPNative.share('My Recovery Milestone', text, shareUrl);
         return;
     }
 
     if (navigator.share) {
         navigator.share({
             title: 'My Recovery Milestone',
-            text: 'I just hit ' + days + ' days sober on MyRecoveryPal!',
+            text: text,
             url: shareUrl,
         }).then(function() {
             if (button) {
@@ -3194,7 +3257,19 @@ function shareMilestone(days, button) {
         return;
     }
 
-    // Fallback: open image in new tab
+    // Fallback: copy link to clipboard
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl).then(function() {
+            if (button) {
+                var icon = button.querySelector('i');
+                if (icon) { icon.className = 'fas fa-check'; }
+                setTimeout(function() {
+                    if (icon) { icon.className = 'fas fa-share-alt'; }
+                }, 2000);
+            }
+        });
+        return;
+    }
     window.open(shareUrl, '_blank');
 }
 
