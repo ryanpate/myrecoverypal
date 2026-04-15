@@ -330,13 +330,6 @@
         background: linear-gradient(135deg, var(--accent-green, #28a745), #20c997);
         color: white;
     }
-    .btn-copy {
-        background: #fff;
-        color: var(--primary-dark, #1e4d8b);
-        border: 2px solid var(--primary-dark, #1e4d8b);
-    }
-    .btn-copy:hover { background: var(--primary-dark, #1e4d8b); color: #fff; }
-
     /* Share modal */
     .share-modal-overlay {
         position: fixed;
@@ -561,7 +554,6 @@
     /* Dark mode */
     [data-theme="dark"] .style-option .style-label { background: var(--bg-card, #2a2a2a); }
     [data-theme="dark"] .style-option.selected .style-label { background: var(--primary-dark, #1e4d8b); }
-    [data-theme="dark"] .btn-copy { background: var(--bg-card, #1f1f1f); color: var(--primary-light, #2d7dd2); border-color: var(--primary-light, #2d7dd2); }
     [data-theme="dark"] .share-modal { background: var(--bg-card, #1f1f1f); }
     [data-theme="dark"] .share-modal h3 { color: #f5f5f5; }
     [data-theme="dark"] .share-opt { background: var(--bg-lighter, #2a2a2a); border-color: #3a3a3a; color: #e5e5e5; }
@@ -697,9 +689,6 @@
         </a>
         <button class="btn btn-share" onclick="openShareModal()">
             <i class="fas fa-share-nodes" aria-hidden="true"></i> Share
-        </button>
-        <button id="btn-copy" class="btn btn-copy" onclick="copyShareLink()">
-            <i class="fas fa-link" aria-hidden="true"></i> <span id="btn-copy-label">Copy Link</span>
         </button>
     </div>
 </div>
@@ -930,14 +919,6 @@ function copyFromInput(btn) {
     navigator.clipboard.writeText(input.value).then(function() {
         flashCopied(btn, 'Copy');
     }).catch(function() { prompt('Copy this link:', input.value); });
-}
-
-function copyShareLink() {
-    var shareUrl = buildShareUrl();
-    var label = document.getElementById('btn-copy-label');
-    navigator.clipboard.writeText(shareUrl).then(function() {
-        flashCopied(label, 'Copy Link');
-    }).catch(function() { prompt('Copy this link:', shareUrl); });
 }
 
 function getCsrfToken() {
