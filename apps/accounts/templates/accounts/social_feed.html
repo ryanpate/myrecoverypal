@@ -288,6 +288,64 @@
     [data-theme="dark"] .anchor-teaser-title { color: #e2e8f0; }
     [data-theme="dark"] .anchor-teaser-text { color: #94a3b8; }
 
+    /* Medallion Teaser Card */
+    .medallion-teaser-card {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        background: linear-gradient(135deg, #fdf6e3 0%, #f5e6b3 100%);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-left: 3px solid #d4af37;
+        border-radius: 16px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+    .medallion-teaser-thumb {
+        width: 64px;
+        height: 64px;
+        min-width: 64px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(30, 77, 139, 0.25);
+    }
+    .medallion-teaser-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .medallion-teaser-title {
+        font-weight: 700;
+        color: #1e4d8b;
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+    }
+    .medallion-teaser-text {
+        font-size: 0.85rem;
+        color: #64748b;
+        line-height: 1.4;
+        margin-bottom: 0.75rem;
+    }
+    .medallion-teaser-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: linear-gradient(135deg, #1e4d8b, #2d7dd2);
+        color: #fff !important;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .medallion-teaser-btn i { color: #d4af37; }
+    .medallion-teaser-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(30, 77, 139, 0.3);
+    }
+    [data-theme="dark"] .medallion-teaser-card {
+        background: linear-gradient(135deg, #2a2410 0%, #3d3418 100%);
+        border-color: rgba(212, 175, 55, 0.3);
+    }
+    [data-theme="dark"] .medallion-teaser-title { color: #ffd700; }
+    [data-theme="dark"] .medallion-teaser-text { color: #cbd5e1; }
+
     .post-content {
         padding: 0 1rem 1rem 1rem;
         font-size: 1rem;
@@ -1525,6 +1583,21 @@
                     <div class="anchor-teaser-text">Anchor AI Coach is available 24/7 — share what's on your mind, work through cravings, or just vent.</div>
                     <a href="{% url 'accounts:recovery_coach' %}" class="anchor-teaser-btn">
                         <i class="fas fa-comment-dots" aria-hidden="true"></i> Talk to Anchor
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            {% if forloop.counter == 8 %}
+            <!-- Inline Medallion Badge teaser -->
+            <div class="medallion-teaser-card">
+                <div class="medallion-teaser-thumb">
+                    <img src="{% static 'images/badges/thumbs/badge-classic.webp' %}" alt="Sobriety medallion" loading="lazy" width="64" height="64">
+                </div>
+                <div class="medallion-teaser-body">
+                    <div class="medallion-teaser-title">Celebrate every milestone</div>
+                    <div class="medallion-teaser-text">Design your own free sobriety medallion — 16 styles, your name, your time. Share it anywhere.</div>
+                    <a href="{% url 'accounts:milestone_badge_creator' %}" class="medallion-teaser-btn">
+                        <i class="fas fa-medal" aria-hidden="true"></i> Create Your Medallion
                     </a>
                 </div>
             </div>

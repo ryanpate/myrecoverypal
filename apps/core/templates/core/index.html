@@ -1283,26 +1283,30 @@
 <section class="showcase">
     <div class="showcase-inner container">
         <div class="showcase-image-wrap" style="background: linear-gradient(135deg, #1a2a44 0%, #0f1a2e 100%); padding: 2rem; display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;">
-            <img src="{% static 'images/badges/badge-classic.png' %}" alt="Classic recovery medallion" loading="lazy" width="140" height="140" style="width: 30%; height: auto; border-radius: 50%;">
-            <img src="{% static 'images/badges/badge-parchment.png' %}" alt="Parchment recovery medallion" loading="lazy" width="140" height="140" style="width: 30%; height: auto; border-radius: 50%;">
-            <img src="{% static 'images/badges/badge-celestial.png' %}" alt="Celestial recovery medallion" loading="lazy" width="140" height="140" style="width: 30%; height: auto; border-radius: 50%;">
-            <img src="{% static 'images/badges/badge-sunset.png' %}" alt="Sunset recovery medallion" loading="lazy" width="140" height="140" style="width: 30%; height: auto; border-radius: 50%;">
-            <img src="{% static 'images/badges/badge-phoenix.png' %}" alt="Phoenix recovery medallion" loading="lazy" width="140" height="140" style="width: 30%; height: auto; border-radius: 50%;">
-            <img src="{% static 'images/badges/badge-pearl.png' %}" alt="Pearl recovery medallion" loading="lazy" width="140" height="140" style="width: 30%; height: auto; border-radius: 50%;">
+            <img src="{% static 'images/badges/thumbs/badge-classic.webp' %}" alt="Classic recovery medallion" loading="lazy" width="140" height="140" style="width: 30%; height: auto; border-radius: 50%;">
+            <img src="{% static 'images/badges/thumbs/badge-parchment.webp' %}" alt="Parchment recovery medallion" loading="lazy" width="140" height="140" style="width: 30%; height: auto; border-radius: 50%;">
+            <img src="{% static 'images/badges/thumbs/badge-celestial.webp' %}" alt="Celestial recovery medallion" loading="lazy" width="140" height="140" style="width: 30%; height: auto; border-radius: 50%;">
+            <img src="{% static 'images/badges/thumbs/badge-sunset.webp' %}" alt="Sunset recovery medallion" loading="lazy" width="140" height="140" style="width: 30%; height: auto; border-radius: 50%;">
+            <img src="{% static 'images/badges/thumbs/badge-phoenix.webp' %}" alt="Phoenix recovery medallion" loading="lazy" width="140" height="140" style="width: 30%; height: auto; border-radius: 50%;">
+            <img src="{% static 'images/badges/thumbs/badge-pearl.webp' %}" alt="Pearl recovery medallion" loading="lazy" width="140" height="140" style="width: 30%; height: auto; border-radius: 50%;">
         </div>
         <div class="showcase-text">
             <span class="badge-pill">FREE TOOL</span>
             <h2>Design Your Own Recovery Medallion</h2>
-            <p>Create a personalized sobriety coin you can share anywhere — 17 hand-crafted medallion styles, from classic bronze to obsidian gold, celestial, lighthouse, phoenix and more. No account required to get started.</p>
+            <p>Create a personalized sobriety coin you can share anywhere — 16 hand-crafted medallion styles, from classic navy-and-gold to celestial, lighthouse, phoenix and more. No account required to get started.</p>
 
             <ul class="showcase-checklist">
-                <li><i class="fas fa-check-circle" aria-hidden="true"></i> 17 unique medallion designs</li>
-                <li><i class="fas fa-check-circle" aria-hidden="true"></i> Enter your time in days, months, or years</li>
+                <li><i class="fas fa-check-circle" aria-hidden="true"></i> 16 unique medallion designs</li>
+                <li><i class="fas fa-check-circle" aria-hidden="true"></i> Days, months, or Roman-numeral years</li>
                 <li><i class="fas fa-check-circle" aria-hidden="true"></i> Customize font, color &amp; outline</li>
                 <li><i class="fas fa-check-circle" aria-hidden="true"></i> Download &amp; share to Instagram, TikTok, Facebook</li>
             </ul>
 
+            {% if user.is_authenticated %}
             <a href="{% url 'accounts:milestone_badge_creator' %}" class="cta-button">Create Your Medallion</a>
+            {% else %}
+            <a href="{% url 'core:sobriety_medallion_maker' %}" class="cta-button">Create Your Medallion</a>
+            {% endif %}
         </div>
     </div>
 </section>

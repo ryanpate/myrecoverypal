@@ -184,6 +184,12 @@
         opacity: 0.95;
     }
 
+    .sobriety-header-actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
     .sobriety-share-btn {
         background: rgba(255, 255, 255, 0.2);
         border: none;
@@ -196,11 +202,23 @@
         display: flex;
         align-items: center;
         gap: 0.4rem;
+        text-decoration: none;
     }
 
     .sobriety-share-btn:hover {
         background: rgba(255, 255, 255, 0.3);
         transform: scale(1.05);
+        color: white;
+    }
+
+    .sobriety-medallion-btn {
+        background: linear-gradient(135deg, #d4af37, #f5d76e);
+        color: #1a2a44;
+    }
+
+    .sobriety-medallion-btn:hover {
+        background: linear-gradient(135deg, #f5d76e, #ffd700);
+        color: #1a2a44;
     }
 
     .sobriety-main {
@@ -702,9 +720,16 @@
                 <div class="sobriety-title">
                     <i class="fas fa-medal"></i> Sobriety Journey
                 </div>
-                <button class="sobriety-share-btn" onclick="shareSobriety({{ days_sober }})">
-                    <i class="fas fa-share-alt"></i> Share
-                </button>
+                <div class="sobriety-header-actions">
+                    {% if profile_user == request.user %}
+                    <a href="{% url 'accounts:milestone_badge_creator' %}?days={{ days_sober }}" class="sobriety-share-btn sobriety-medallion-btn" title="Create your personalized medallion">
+                        <i class="fas fa-medal"></i> Medallion
+                    </a>
+                    {% endif %}
+                    <button class="sobriety-share-btn" onclick="shareSobriety({{ days_sober }})">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
             </div>
 
             <div class="sobriety-main">
