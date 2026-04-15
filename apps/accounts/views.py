@@ -5200,16 +5200,18 @@ def log_slip_view(request):
 
 
 def milestone_image_view(request, days):
-    """Generate and return a shareable milestone badge as PNG (public for OG crawlers)."""
-    from apps.accounts.milestone_image import generate_milestone_image, FREE_BADGE_STYLES
+    """Generate and return a shareable milestone badge as PNG (public for OG crawlers).
+
+    All styles are fetchable via this endpoint regardless of auth — style gating is
+    a UI affordance on the creator page, not an anti-piracy control. If we gated
+    here, Facebook/Twitter/LinkedIn crawlers (always anonymous) would rewrite any
+    premium style to classic and recipients would see the wrong badge.
+    """
+    from apps.accounts.milestone_image import generate_milestone_image
     import re
 
     days = max(1, min(days, 36500))
     style = request.GET.get('style', 'classic')
-
-    # Gate premium styles — anonymous visitors can only use the free set.
-    if not request.user.is_authenticated and style not in FREE_BADGE_STYLES:
-        style = 'classic'
     name = request.GET.get('name', '')
     time_format = request.GET.get('time_format', 'auto')
 
