@@ -283,6 +283,12 @@
                             <a href="{% url 'accounts:milestones' %}">
                                 <i class="fas fa-medal"></i> Milestones
                             </a>
+                            <a href="{% url 'accounts:my_medallions' %}">
+                                <i class="fas fa-images"></i> My Medallions
+                            </a>
+                            <a href="{% url 'accounts:milestone_badge_creator' %}">
+                                <i class="fas fa-plus-circle"></i> Create Medallion
+                            </a>
                             <a href="{% url 'blog:post_list' %}">
                                 <i class="fas fa-newspaper"></i> Blog
                             </a>
@@ -444,6 +450,14 @@
                 <a href="{% url 'accounts:milestones' %}"
                     class="{% if request.resolver_match.url_name == 'milestones' %}active{% endif %}">
                     <i class="fas fa-medal" style="margin-right: 0.5rem;"></i> Milestones
+                </a>
+                <a href="{% url 'accounts:my_medallions' %}"
+                    class="{% if request.resolver_match.url_name == 'my_medallions' %}active{% endif %}">
+                    <i class="fas fa-images" style="margin-right: 0.5rem;"></i> My Medallions
+                </a>
+                <a href="{% url 'accounts:milestone_badge_creator' %}"
+                    class="{% if request.resolver_match.url_name == 'milestone_badge_creator' %}active{% endif %}">
+                    <i class="fas fa-plus-circle" style="margin-right: 0.5rem;"></i> Create Medallion
                 </a>
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">

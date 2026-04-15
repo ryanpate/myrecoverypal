@@ -722,6 +722,9 @@
                 </div>
                 <div class="sobriety-header-actions">
                     {% if profile_user == request.user %}
+                    <a href="{% url 'accounts:my_medallions' %}" class="sobriety-share-btn" title="Your saved medallions">
+                        <i class="fas fa-images"></i> Gallery
+                    </a>
                     <a href="{% url 'accounts:milestone_badge_creator' %}?days={{ days_sober }}" class="sobriety-share-btn sobriety-medallion-btn" title="Create your personalized medallion">
                         <i class="fas fa-medal"></i> Medallion
                     </a>

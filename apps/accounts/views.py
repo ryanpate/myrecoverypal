@@ -5356,11 +5356,110 @@ def share_milestone_to_feed(request):
         logger.error(f"share_milestone_to_feed: post creation failed: {e}\n{traceback.format_exc()}")
         return JsonResponse({'error': f'Could not post to feed: {type(e).__name__}'}, status=500)
 
+    # Also persist to the user's gallery so they can find it later.
+    _save_badge_config(
+        user=request.user, days=days, style=style, name=name,
+        time_format=time_format, text_y=text_y, font_size=font_size,
+        color=color, outline=outline,
+    )
+
     return JsonResponse({
         'success': True,
         'post_id': post.id,
         'feed_url': reverse('accounts:social_feed'),
     })
+
+
+def _save_badge_config(user, days, style, name, time_format, text_y, font_size, color, outline):
+    """Upsert a SavedBadge row for this user and config.
+
+    Deduplicates on the full param set — saving the same badge twice won't
+    create duplicate rows, just updates the timestamp so it bubbles up.
+    """
+    from apps.accounts.models import SavedBadge
+    try:
+        existing = SavedBadge.objects.filter(
+            user=user, days=days, style=style, name=name,
+            time_format=time_format, text_y=text_y, font_size=font_size,
+            color=color, outline=outline,
+        ).first()
+        if existing:
+            existing.save()  # bumps auto_now fields (none here, but keeps it warm)
+            return existing
+        return SavedBadge.objects.create(
+            user=user, days=days, style=style, name=name,
+            time_format=time_format, text_y=text_y, font_size=font_size,
+            color=color, outline=outline,
+        )
+    except Exception:
+        # Don't block the main flow on gallery persistence errors.
+        import logging
+        logging.getLogger(__name__).exception("save_badge_config failed")
+        return None
+
+
+@login_required
+@require_POST
+def save_badge(request):
+    """Persist the current badge config to the user's gallery (called on download)."""
+    import re as _re
+    from apps.accounts.milestone_image import BADGE_STYLES, TIME_FORMATS
+
+    try:
+        days = max(1, min(36500, int(request.POST.get('days', 0))))
+    except (TypeError, ValueError):
+        return JsonResponse({'error': 'Invalid days'}, status=400)
+
+    style = request.POST.get('style', 'classic')
+    if style not in BADGE_STYLES:
+        style = 'classic'
+    time_format = request.POST.get('time_format', 'auto')
+    if time_format not in TIME_FORMATS:
+        time_format = 'auto'
+    name = _re.sub(r'[^\w\s.\'-]', '', request.POST.get('name', ''))[:30]
+    color = request.POST.get('color', 'white')
+    outline = request.POST.get('outline', '1') == '1'
+    try:
+        text_y = max(0, min(100, int(request.POST.get('text_y', 50))))
+        font_size = max(24, min(160, int(request.POST.get('font_size', 110))))
+    except (TypeError, ValueError):
+        text_y, font_size = 50, 110
+
+    badge = _save_badge_config(
+        user=request.user, days=days, style=style, name=name,
+        time_format=time_format, text_y=text_y, font_size=font_size,
+        color=color, outline=outline,
+    )
+    if badge is None:
+        return JsonResponse({'error': 'Could not save badge'}, status=500)
+    return JsonResponse({'success': True, 'badge_id': badge.id})
+
+
+@login_required
+def my_medallions(request):
+    """Gallery page showing all of the current user's saved medallions."""
+    from apps.accounts.models import SavedBadge
+    from apps.accounts.milestone_image import BADGE_STYLES
+
+    badges = SavedBadge.objects.filter(user=request.user)
+    context = {
+        'badges': badges,
+        'badge_styles': BADGE_STYLES,
+    }
+    return render(request, 'accounts/my_medallions.html', context)
+
+
+@login_required
+@require_POST
+def delete_saved_badge(request, badge_id):
+    """Remove a saved badge from the user's gallery."""
+    from apps.accounts.models import SavedBadge
+    try:
+        badge = SavedBadge.objects.get(id=badge_id, user=request.user)
+    except SavedBadge.DoesNotExist:
+        return JsonResponse({'error': 'Not found'}, status=404)
+    badge.delete()
+    return JsonResponse({'success': True})
 
 
 def milestone_badge_creator(request):

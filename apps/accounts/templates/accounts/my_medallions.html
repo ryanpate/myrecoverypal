@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Medallions — MyRecoveryPal{% endblock %}
+
+{% block content %}
+<style>
+    .gallery-page { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+    .gallery-head { text-align: center; margin-bottom: 2rem; }
+    .gallery-head h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.35rem; }
+    .gallery-head p { color: var(--text-muted, #666); font-size: 0.95rem; }
+    .gallery-toolbar {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+    .gallery-create-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        color: #fff;
+        text-decoration: none;
+        padding: 0.85rem 1.75rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1rem;
+        box-shadow: 0 6px 18px rgba(30, 77, 139, 0.25);
+    }
+    .gallery-create-btn:hover { color: #fff; transform: translateY(-2px); }
+    .gallery-create-btn i { color: #d4af37; }
+
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.25rem;
+    }
+    .gallery-card {
+        background: #fff;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 18px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .gallery-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1); }
+    .gallery-card-img {
+        width: 100%;
+        aspect-ratio: 1;
+        background: #1a2a44;
+        display: block;
+    }
+    .gallery-card-body {
+        padding: 1rem 1.1rem 1.2rem;
+    }
+    .gallery-card-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text-primary, #1a1a1a);
+        margin-bottom: 0.2rem;
+    }
+    .gallery-card-meta {
+        font-size: 0.78rem;
+        color: var(--text-muted, #888);
+        margin-bottom: 0.85rem;
+    }
+    .gallery-card-actions {
+        display: flex;
+        gap: 0.4rem;
+    }
+    .gallery-card-actions a,
+    .gallery-card-actions button {
+        flex: 1;
+        padding: 0.5rem 0.25rem;
+        border-radius: 10px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        border: 1px solid var(--border-color, #e5e7eb);
+        background: #fff;
+        color: var(--text-primary, #333);
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .gallery-card-actions a:hover,
+    .gallery-card-actions button:hover { background: #f5f7fa; color: var(--text-primary, #333); }
+    .gallery-card-actions .gca-primary {
+        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        color: #fff;
+        border-color: transparent;
+    }
+    .gallery-card-actions .gca-primary:hover { color: #fff; opacity: 0.92; }
+    .gallery-card-actions .gca-delete:hover {
+        background: #fef2f2;
+        color: #dc2626;
+        border-color: #fecaca;
+    }
+
+    .gallery-empty {
+        text-align: center;
+        padding: 3.5rem 1.5rem;
+        background: var(--bg-lighter, #f8f9fa);
+        border-radius: 20px;
+        border: 2px dashed var(--border-color, #e5e7eb);
+    }
+    .gallery-empty-icon {
+        font-size: 3rem;
+        color: #d4af37;
+        margin-bottom: 1rem;
+    }
+    .gallery-empty h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .gallery-empty p { color: var(--text-muted, #666); margin-bottom: 1.5rem; font-size: 0.95rem; }
+
+    [data-theme="dark"] .gallery-card { background: var(--bg-card, #1f1f1f); }
+    [data-theme="dark"] .gallery-card-actions a,
+    [data-theme="dark"] .gallery-card-actions button { background: var(--bg-card, #2a2a2a); color: #e5e5e5; border-color: #3a3a3a; }
+    [data-theme="dark"] .gallery-empty { background: var(--bg-card, #1f1f1f); }
+</style>
+
+<div class="gallery-page">
+    <div class="gallery-head">
+        <h1><i class="fas fa-medal" style="color: #d4af37;"></i> My Medallions</h1>
+        <p>Every milestone you've celebrated, saved for later.</p>
+    </div>
+
+    <div class="gallery-toolbar">
+        <a href="{% url 'accounts:milestone_badge_creator' %}" class="gallery-create-btn">
+            <i class="fas fa-plus"></i> Create New Medallion
+        </a>
+    </div>
+
+    {% if badges %}
+    <div class="gallery-grid" id="gallery-grid">
+        {% for badge in badges %}
+        <div class="gallery-card" id="badge-card-{{ badge.id }}">
+            <img class="gallery-card-img"
+                 src="{% url 'accounts:milestone_image' badge.days %}?{{ badge.query_string }}"
+                 alt="{{ badge.days }} day medallion"
+                 loading="lazy" width="512" height="512">
+            <div class="gallery-card-body">
+                <div class="gallery-card-title">
+                    {{ badge.days }} day{{ badge.days|pluralize }} · {{ badge.style|title }}
+                </div>
+                <div class="gallery-card-meta">Saved {{ badge.created_at|timesince }} ago</div>
+                <div class="gallery-card-actions">
+                    <a class="gca-primary" href="{% url 'accounts:milestone_badge_creator' %}?days={{ badge.days }}&amp;{{ badge.query_string }}">Open</a>
+                    <a href="{% url 'accounts:milestone_image' badge.days %}?{{ badge.query_string }}&amp;download=1" download="myrecoverypal-milestone.png">Save</a>
+                    <button class="gca-delete" onclick="deleteBadge({{ badge.id }})" aria-label="Delete medallion">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="gallery-empty">
+        <div class="gallery-empty-icon"><i class="fas fa-medal"></i></div>
+        <h2>No medallions yet</h2>
+        <p>Create your first recovery medallion to save it here.</p>
+        <a href="{% url 'accounts:milestone_badge_creator' %}" class="gallery-create-btn">
+            <i class="fas fa-plus"></i> Create Your First Medallion
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function getCsrfCookie() {
+    var m = document.cookie.match(/csrftoken=([^;]+)/);
+    return m ? m[1] : '';
+}
+function deleteBadge(id) {
+    if (!confirm('Delete this saved medallion?')) return;
+    fetch('/accounts/my-medallions/' + id + '/delete/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCsrfCookie() },
+        credentials: 'same-origin',
+    }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.success) {
+            var card = document.getElementById('badge-card-' + id);
+            if (card) card.remove();
+            if (!document.querySelectorAll('.gallery-card').length) {
+                window.location.reload();
+            }
+        } else {
+            alert(d.error || 'Could not delete.');
+        }
+    }).catch(function() { alert('Could not delete.'); });
+}
+</script>
+{% endblock %}

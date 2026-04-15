@@ -204,6 +204,9 @@ urlpatterns = [
     path('milestone/<int:days>/', views.milestone_share_view, name='milestone_share'),
     path('milestone-badge/', views.milestone_badge_creator, name='milestone_badge_creator'),
     path('milestone-badge/share-to-feed/', views.share_milestone_to_feed, name='share_milestone_to_feed'),
+    path('milestone-badge/save/', views.save_badge, name='save_badge'),
+    path('my-medallions/', views.my_medallions, name='my_medallions'),
+    path('my-medallions/<int:badge_id>/delete/', views.delete_saved_badge, name='delete_saved_badge'),
 
     # Relapse / slip tracking
     path('log-slip/', views.log_slip_view, name='log_slip'),

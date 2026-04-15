@@ -330,6 +330,10 @@
         background: linear-gradient(135deg, var(--accent-green, #28a745), #20c997);
         color: white;
     }
+    .btn-gallery {
+        background: linear-gradient(135deg, #d4af37, #f5d76e);
+        color: #1a2a44;
+    }
     /* Share modal */
     .share-modal-overlay {
         position: fixed;
@@ -684,12 +688,17 @@
 
     <!-- Actions -->
     <div class="badge-actions">
-        <a id="btn-download" class="btn btn-download" href="#" download="myrecoverypal-milestone.png">
+        <a id="btn-download" class="btn btn-download" href="#" download="myrecoverypal-milestone.png" onclick="persistBadge()">
             <i class="fas fa-download" aria-hidden="true"></i> Save Badge
         </a>
         <button class="btn btn-share" onclick="openShareModal()">
             <i class="fas fa-share-nodes" aria-hidden="true"></i> Share
         </button>
+        {% if user.is_authenticated %}
+        <a class="btn btn-gallery" href="{% url 'accounts:my_medallions' %}">
+            <i class="fas fa-images" aria-hidden="true"></i> My Medallions
+        </a>
+        {% endif %}
     </div>
 </div>
 
@@ -925,6 +934,31 @@ function getCsrfToken() {
     var match = document.cookie.match(/csrftoken=([^;]+)/);
     return match ? match[1] : '';
 }
+
+{% if user.is_authenticated %}
+function persistBadge() {
+    // Auto-save current config to the user's gallery on download.
+    // Fire-and-forget — the download proceeds regardless.
+    var form = new FormData();
+    form.append('days', daysSober);
+    form.append('style', currentStyle);
+    form.append('time_format', document.getElementById('badge-time-format').value);
+    form.append('text_y', document.getElementById('badge-text-y').value);
+    form.append('font_size', document.getElementById('badge-font-size').value);
+    form.append('color', currentColor);
+    form.append('outline', document.getElementById('badge-outline').checked ? '1' : '0');
+    form.append('name', document.getElementById('badge-name').value.trim());
+    fetch('{% url "accounts:save_badge" %}', {
+        method: 'POST',
+        body: form,
+        headers: { 'X-CSRFToken': getCsrfToken() },
+        credentials: 'same-origin',
+        keepalive: true,
+    }).catch(function() {});
+}
+{% else %}
+function persistBadge() {}
+{% endif %}
 
 function postToFeed(btn) {
     var caption = document.getElementById('share-feed-caption').value.trim();

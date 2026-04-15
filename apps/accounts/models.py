@@ -1719,6 +1719,50 @@ class DeviceToken(models.Model):
         self.save(update_fields=['active', 'updated_at'])
 
 
+class SavedBadge(models.Model):
+    """User's saved milestone badge configurations.
+
+    Stores the parameters used to render a badge so the user can revisit,
+    re-download, or re-share it later. The PNG itself is regenerated on
+    demand from these params via the milestone_image endpoint (server-side
+    cache handles repeat requests).
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='saved_badges')
+    days = models.PositiveIntegerField()
+    style = models.CharField(max_length=32, default='classic')
+    name = models.CharField(max_length=30, blank=True)
+    time_format = models.CharField(max_length=16, default='auto')
+    text_y = models.PositiveSmallIntegerField(default=50)
+    font_size = models.PositiveSmallIntegerField(default=110)
+    color = models.CharField(max_length=16, default='white')
+    outline = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', '-created_at']),
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} — {self.days}d {self.style}"
+
+    def query_string(self):
+        """Return the URL query string for this badge's params."""
+        from urllib.parse import urlencode
+        params = {
+            'style': self.style,
+            'time_format': self.time_format,
+            'text_y': self.text_y,
+            'font_size': self.font_size,
+            'color': self.color,
+            'outline': '1' if self.outline else '0',
+        }
+        if self.name:
+            params['name'] = self.name
+        return urlencode(params)
+
+
 class SocialPost(models.Model):
     """User-generated social media posts for the community feed"""
     VISIBILITY_CHOICES = [
