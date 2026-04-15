@@ -511,24 +511,28 @@
                     {% csrf_token %}
                     <div class="mood-selector">
                         <label class="mood-option">
-                            <input type="radio" name="mood" value="great" style="display: none;">
-                            <i class="fas fa-smile-beam" style="color: #52b788;"></i> Great
+                            <input type="radio" name="mood" value="6" style="display: none;">
+                            <i class="fas fa-grin-stars" style="color: #52b788;"></i> Amazing
                         </label>
                         <label class="mood-option">
-                            <input type="radio" name="mood" value="good" style="display: none;">
-                            <i class="fas fa-smile" style="color: #6ab04c;"></i> Good
+                            <input type="radio" name="mood" value="5" style="display: none;">
+                            <i class="fas fa-smile-beam" style="color: #6ab04c;"></i> Great
                         </label>
                         <label class="mood-option">
-                            <input type="radio" name="mood" value="okay" style="display: none;">
+                            <input type="radio" name="mood" value="4" style="display: none;">
+                            <i class="fas fa-smile" style="color: #a3cc52;"></i> Good
+                        </label>
+                        <label class="mood-option">
+                            <input type="radio" name="mood" value="3" style="display: none;">
                             <i class="fas fa-meh" style="color: #f39c12;"></i> Okay
                         </label>
                         <label class="mood-option">
-                            <input type="radio" name="mood" value="struggling" style="display: none;">
-                            <i class="fas fa-frown" style="color: #e67e22;"></i> Struggling
+                            <input type="radio" name="mood" value="2" style="display: none;">
+                            <i class="fas fa-frown" style="color: #e67e22;"></i> Down
                         </label>
                         <label class="mood-option">
-                            <input type="radio" name="mood" value="difficult" style="display: none;">
-                            <i class="fas fa-sad-tear" style="color: #e74c3c;"></i> Difficult
+                            <input type="radio" name="mood" value="1" style="display: none;">
+                            <i class="fas fa-sad-tear" style="color: #e74c3c;"></i> Struggling
                         </label>
                     </div>
                     <textarea name="gratitude" placeholder="What are you grateful for today?" class="form-control mb-2"

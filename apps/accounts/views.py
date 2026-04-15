@@ -743,14 +743,33 @@ def daily_checkin_view(request):
         is_shared = request.POST.get('is_shared') == 'on'
         pledge_taken = request.POST.get('pledge_taken') == 'on'
 
-        if mood:
+        # Coerce numeric fields; fall back to sane defaults on bad input
+        # (e.g. stale cached templates posting string mood labels).
+        try:
+            mood_int = int(mood) if mood else None
+        except (TypeError, ValueError):
+            mood_int = None
+        try:
+            craving_int = int(craving_level)
+        except (TypeError, ValueError):
+            craving_int = 0
+        try:
+            energy_int = int(energy_level)
+        except (TypeError, ValueError):
+            energy_int = 3
+
+        if mood_int is None or mood_int < 1 or mood_int > 6:
+            messages.error(request, 'Please select how you are feeling.')
+            return redirect('accounts:daily_checkin')
+
+        if mood_int:
             # Create check-in with all the fields from your form
             checkin = DailyCheckIn.objects.create(
                 user=request.user,
                 date=today,
-                mood=int(mood),
-                craving_level=int(craving_level),
-                energy_level=int(energy_level),
+                mood=mood_int,
+                craving_level=craving_int,
+                energy_level=energy_int,
                 gratitude=gratitude,
                 challenge=challenge,
                 goal=goal,
