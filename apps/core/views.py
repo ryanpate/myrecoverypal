@@ -105,6 +105,22 @@ class SobrietyCalculatorView(TemplateView):
     template_name = 'core/sobriety_calculator.html'
 
 
+class SobrietyMedallionMakerView(TemplateView):
+    """SEO landing page for the milestone badge creator.
+
+    Targets: "sobriety medallion", "AA chip generator", "recovery badge maker".
+    Dedicated SEO content lives here; the interactive creator is at
+    /accounts/milestone-badge/.
+    """
+    template_name = 'core/sobriety_medallion_maker.html'
+
+    def get_context_data(self, **kwargs):
+        from apps.accounts.milestone_image import BADGE_STYLES
+        context = super().get_context_data(**kwargs)
+        context['badge_styles'] = BADGE_STYLES
+        return context
+
+
 class AIRecoveryCoachView(TemplateView):
     template_name = 'core/ai_recovery_coach.html'
 

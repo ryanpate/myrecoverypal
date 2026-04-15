@@ -1,0 +1,446 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Free Sobriety Medallion Maker — 16 AA-Style Recovery Badges | MyRecoveryPal{% endblock %}
+{% block meta_description %}Create your free sobriety medallion in 10 seconds. 16 AA-style recovery badges — classic, parchment, celestial and more. No signup required. Download or share.{% endblock %}
+{% block meta_keywords %}sobriety medallion, recovery medallion, AA chip generator, AA coin maker, sobriety badge, recovery badge maker, free sobriety chip, sobriety token, sober medallion, AA medallion, NA medallion{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/sobriety-medallion-maker/{% endblock %}
+
+{% block og_title %}Free Sobriety Medallion Maker — 16 AA-Style Recovery Badges{% endblock %}
+{% block og_description %}Create and share your personalized recovery medallion. 16 styles, free forever, no signup required.{% endblock %}
+{% block og_image %}https://www.myrecoverypal.com{% static 'images/badges/thumbs/badge-classic.webp' %}{% endblock %}
+{% block og_url %}https://www.myrecoverypal.com/sobriety-medallion-maker/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Free Sobriety Medallion Maker",
+  "description": "Create personalized AA-style recovery medallions to celebrate your sobriety milestones. 16 styles, free forever, no signup required.",
+  "url": "https://www.myrecoverypal.com/sobriety-medallion-maker/",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Any",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+  "featureList": [
+    "16 medallion styles",
+    "Days, months, or years format",
+    "Roman numerals for year milestones",
+    "Download as PNG",
+    "Share to social media",
+    "No signup required"
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a sobriety medallion?",
+      "acceptedAnswer": {"@type": "Answer", "text": "A sobriety medallion (also called an AA chip, recovery coin, or sober token) is a physical or digital marker that commemorates a specific amount of clean time. Medallions are traditionally handed out at AA meetings at milestones like 24 hours, 30, 60, and 90 days, then 6 months, 9 months, and every year after. Our free medallion maker lets you create a digital version of this powerful symbol to celebrate and share your recovery milestones."}
+    },
+    {
+      "@type": "Question",
+      "name": "Is this medallion maker really free?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes. All 16 medallion styles can be previewed and downloaded free forever. Three styles (Classic, Silver, Mountain) are fully unlocked for anonymous visitors. Creating a free MyRecoveryPal account unlocks the full collection of 16 styles and lets you auto-track your sobriety days."}
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to sign up to use the medallion maker?",
+      "acceptedAnswer": {"@type": "Answer", "text": "No signup is required. You can generate and download a medallion anonymously in under 10 seconds. Signing up is optional — it unlocks all 16 styles and adds day auto-tracking, but the core tool is free and accessible to everyone."}
+    },
+    {
+      "@type": "Question",
+      "name": "Why do year medallions use Roman numerals?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Roman numerals on year medallions is an AA tradition dating back decades. Physical AA medallions stamp the year count (V for 5, X for 10, XXV for 25) to match the classical feel of the coin. Our digital medallions follow the same convention — year badges display the Roman numeral only, while month and day badges show the number with the unit label."}
+    },
+    {
+      "@type": "Question",
+      "name": "Can I share my medallion on Instagram, TikTok, or Facebook?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes. After generating your medallion, tap Share to open your device's native share sheet or copy a link. The shared link opens a public celebration page with your badge and a call-to-action for friends to create their own. You can also download the PNG and upload it directly to any platform."}
+    },
+    {
+      "@type": "Question",
+      "name": "What's the difference between a sobriety medallion, sobriety chip, and sober coin?",
+      "acceptedAnswer": {"@type": "Answer", "text": "All three terms refer to the same thing — a token marking a specific amount of continuous clean time in recovery. AA typically calls them medallions or chips, NA calls them keytags, and SMART Recovery calls them anniversary tokens. Our maker produces digital versions that work as memorabilia regardless of which program you follow."}
+    },
+    {
+      "@type": "Question",
+      "name": "Can I customize my medallion with my name?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes. You can add your name or initials, choose from 16 styles, adjust text color (white, gold, silver, black, cream, bronze, or custom), toggle an outline, and pick whether to show days, months, or years. All 16 designs include a gold center circle for your custom text."}
+    },
+    {
+      "@type": "Question",
+      "name": "What formats can I download my medallion in?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Medallions download as high-resolution 1080×1080 PNG files, ideal for Instagram posts, Stories, profile pictures, and printing. The square format works perfectly on all social platforms and mobile wallpapers."}
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<style>
+    .smm { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1rem 0; }
+    .smm-hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3rem; align-items: center; margin-bottom: 4rem; }
+    .smm-eyebrow {
+        display: inline-block;
+        background: rgba(30, 77, 139, 0.08);
+        color: var(--primary-dark, #1e4d8b);
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        margin-bottom: 1rem;
+    }
+    .smm h1 {
+        font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+        font-weight: 800;
+        line-height: 1.15;
+        margin-bottom: 1rem;
+        color: var(--text-primary, #1a1a1a);
+    }
+    .smm h1 span { background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .smm-lead { font-size: 1.1rem; color: var(--text-muted, #555); line-height: 1.55; margin-bottom: 1.5rem; }
+    .smm-checks { list-style: none; padding: 0; margin: 0 0 1.75rem; }
+    .smm-checks li { padding: 0.35rem 0 0.35rem 1.75rem; position: relative; color: var(--text-primary, #333); font-size: 0.95rem; }
+    .smm-checks li::before { content: '\f058'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; left: 0; top: 0.4rem; color: var(--accent-green, #28a745); }
+    .smm-cta-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        color: #fff;
+        text-decoration: none;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1rem;
+        box-shadow: 0 8px 24px rgba(30,77,139,0.3);
+    }
+    .smm-cta-primary:hover { transform: translateY(-2px); color: #fff; }
+    .smm-hero-image {
+        position: relative;
+    }
+    .smm-hero-image img {
+        width: 100%;
+        max-width: 440px;
+        border-radius: 20px;
+        box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+        display: block;
+        margin: 0 auto;
+    }
+
+    /* Quick tool */
+    .smm-tool {
+        background: linear-gradient(135deg, #f8f9fa, #fff);
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 24px;
+        padding: 2.5rem 2rem;
+        margin-bottom: 4rem;
+        text-align: center;
+    }
+    .smm-tool h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .smm-tool p.sub { color: var(--text-muted, #666); margin-bottom: 1.5rem; }
+    .smm-tool form {
+        display: flex;
+        gap: 0.5rem;
+        max-width: 520px;
+        margin: 0 auto;
+        flex-wrap: wrap;
+    }
+    .smm-tool input, .smm-tool select {
+        padding: 0.9rem 1rem;
+        border: 1px solid var(--border-color, #d1d5db);
+        border-radius: 12px;
+        font-size: 1rem;
+        background: #fff;
+        color: var(--text-primary, #1a1a1a);
+    }
+    .smm-tool input { flex: 1; min-width: 140px; }
+    .smm-tool button {
+        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        color: #fff;
+        border: none;
+        padding: 0.9rem 1.75rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    /* Style showcase */
+    .smm-showcase { margin-bottom: 4rem; }
+    .smm-showcase h2 { text-align: center; font-size: 1.8rem; font-weight: 800; margin-bottom: 0.4rem; }
+    .smm-showcase > p { text-align: center; color: var(--text-muted, #666); margin-bottom: 2.25rem; }
+    .smm-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+    .smm-card {
+        background: #fff;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 16px;
+        overflow: hidden;
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-decoration: none;
+        display: block;
+        color: inherit;
+    }
+    .smm-card:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(0,0,0,0.12); }
+    .smm-card img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+    .smm-card .smm-label { padding: 0.75rem 0.5rem; font-weight: 600; font-size: 0.85rem; color: var(--text-primary, #333); }
+
+    /* How it works */
+    .smm-how { margin-bottom: 4rem; }
+    .smm-how h2 { text-align: center; font-size: 1.8rem; font-weight: 800; margin-bottom: 2rem; }
+    .smm-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .smm-step {
+        text-align: center;
+        padding: 1.5rem 1rem;
+    }
+    .smm-step .num {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin: 0 auto 1rem;
+    }
+    .smm-step h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .smm-step p { color: var(--text-muted, #666); font-size: 0.9rem; line-height: 1.5; }
+
+    /* Explainer */
+    .smm-explainer { background: #f8f9fa; border-radius: 24px; padding: 3rem 2rem; margin-bottom: 4rem; }
+    .smm-explainer h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 1rem; }
+    .smm-explainer p { color: var(--text-primary, #333); line-height: 1.7; margin-bottom: 1rem; font-size: 1rem; }
+
+    /* FAQ */
+    .smm-faq { margin-bottom: 4rem; }
+    .smm-faq h2 { text-align: center; font-size: 1.8rem; font-weight: 800; margin-bottom: 2rem; }
+    .smm-faq details {
+        background: #fff;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 12px;
+        padding: 1.1rem 1.25rem;
+        margin-bottom: 0.75rem;
+        cursor: pointer;
+    }
+    .smm-faq summary {
+        font-weight: 700;
+        font-size: 1rem;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--text-primary, #1a1a1a);
+    }
+    .smm-faq summary::-webkit-details-marker { display: none; }
+    .smm-faq summary::after { content: '+'; font-size: 1.5rem; font-weight: 300; color: var(--primary-dark, #1e4d8b); transition: transform 0.2s; }
+    .smm-faq details[open] summary::after { transform: rotate(45deg); }
+    .smm-faq details p { margin-top: 0.75rem; color: var(--text-muted, #555); line-height: 1.6; font-size: 0.95rem; }
+
+    /* Bottom CTA */
+    .smm-bottom-cta {
+        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        color: #fff;
+        border-radius: 24px;
+        padding: 3rem 2rem;
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    .smm-bottom-cta h2 { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .smm-bottom-cta p { opacity: 0.92; margin-bottom: 1.5rem; font-size: 1rem; }
+    .smm-bottom-cta a {
+        display: inline-block;
+        background: #fff;
+        color: var(--primary-dark, #1e4d8b);
+        text-decoration: none;
+        padding: 1rem 2.25rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.05rem;
+    }
+
+    [data-theme="dark"] .smm-tool { background: var(--bg-card, #1f1f1f); }
+    [data-theme="dark"] .smm-tool input,
+    [data-theme="dark"] .smm-tool select { background: var(--bg-card, #2a2a2a); color: #f5f5f5; }
+    [data-theme="dark"] .smm-card { background: var(--bg-card, #1f1f1f); }
+    [data-theme="dark"] .smm-explainer { background: var(--bg-card, #1f1f1f); }
+    [data-theme="dark"] .smm-faq details { background: var(--bg-card, #1f1f1f); }
+
+    @media (max-width: 800px) {
+        .smm-hero { grid-template-columns: 1fr; text-align: center; }
+        .smm-checks { text-align: left; display: inline-block; }
+        .smm-steps { grid-template-columns: 1fr; }
+        .smm-tool form { flex-direction: column; }
+        .smm-tool input, .smm-tool select, .smm-tool button { width: 100%; }
+    }
+</style>
+
+<div class="smm">
+
+    <!-- HERO -->
+    <section class="smm-hero">
+        <div>
+            <span class="smm-eyebrow">Free · No Signup</span>
+            <h1>Your <span>Sobriety Medallion</span>, Generated in 10 Seconds</h1>
+            <p class="smm-lead">
+                Create a personalized AA-style recovery medallion to celebrate every clean milestone.
+                Choose from 16 designs, add your name, download as PNG, or share straight to social.
+            </p>
+            <ul class="smm-checks">
+                <li>16 medallion styles — classic, parchment, celestial, and more</li>
+                <li>Days, months, or Roman-numeral year format</li>
+                <li>Free forever — no signup, no watermark, no catch</li>
+            </ul>
+            <a href="{% url 'accounts:milestone_badge_creator' %}" class="smm-cta-primary">
+                <i class="fas fa-medal" aria-hidden="true"></i> Create Your Medallion
+            </a>
+        </div>
+        <div class="smm-hero-image">
+            <img src="{% static 'images/badges/thumbs/badge-classic.webp' %}" alt="Example AA-style sobriety medallion" width="440" height="440" fetchpriority="high">
+        </div>
+    </section>
+
+    <!-- QUICK TOOL -->
+    <section class="smm-tool">
+        <h2>How long have you been sober?</h2>
+        <p class="sub">Enter your time and we'll take you straight to the medallion maker.</p>
+        <form method="get" action="{% url 'accounts:milestone_badge_creator' %}">
+            <input type="number" name="days" min="1" max="36500" placeholder="e.g. 90" required>
+            <button type="submit">Generate My Medallion →</button>
+        </form>
+    </section>
+
+    <!-- STYLE SHOWCASE -->
+    <section class="smm-showcase">
+        <h2>16 Medallion Styles</h2>
+        <p>Tap any style to open the full customizer.</p>
+        <div class="smm-grid">
+            {% for key, info in badge_styles.items %}
+            <a href="{% url 'accounts:milestone_badge_creator' %}?style={{ key }}" class="smm-card">
+                <img src="{% static 'images/badges/thumbs/' %}{{ info.file|slice:':-4' }}.webp" alt="{{ info.label }} sobriety medallion" loading="lazy" width="256" height="256">
+                <div class="smm-label">{{ info.label }}</div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="smm-how">
+        <h2>How It Works</h2>
+        <div class="smm-steps">
+            <div class="smm-step">
+                <div class="num">1</div>
+                <h3>Pick a Style</h3>
+                <p>Choose from 16 medallion designs, from classic AA navy-and-gold to parchment, celestial, and more.</p>
+            </div>
+            <div class="smm-step">
+                <div class="num">2</div>
+                <h3>Enter Your Time</h3>
+                <p>Days, months, or years. Year milestones render in Roman numerals, matching AA tradition.</p>
+            </div>
+            <div class="smm-step">
+                <div class="num">3</div>
+                <h3>Download or Share</h3>
+                <p>Save as a 1080×1080 PNG for Instagram, TikTok, Facebook, or your lockscreen. No watermark.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPLAINER -->
+    <section class="smm-explainer">
+        <h2>The Tradition of the Sobriety Medallion</h2>
+        <p>
+            The sobriety medallion — also called an AA chip, sober coin, or recovery token — has been a
+            cornerstone of 12-step recovery since the 1940s. Physical medallions are handed out at meetings
+            to mark milestones: 24 hours, 30 days, 60 days, 90 days, six months, nine months, and every
+            year after. They're a tangible reminder that clean time is hard-won and worth celebrating.
+        </p>
+        <p>
+            A digital medallion carries the same symbolic weight — without having to wait for Thursday's
+            meeting. Share it the moment you hit day 30. Set it as your lockscreen at 90 days. Post your
+            one-year coin on Instagram so your friends can cheer you on. Every day of recovery deserves
+            to be marked, and you don't need a program membership to do it.
+        </p>
+        <p>
+            Our medallion maker is completely free, no signup required, and works with any recovery path —
+            AA, NA, SMART Recovery, Recovery Dharma, or your own solo journey. Three styles are open to
+            everyone; creating a free MyRecoveryPal account unlocks all 16 designs and adds automatic
+            day-counting so your medallion updates itself.
+        </p>
+    </section>
+
+    <!-- FAQ -->
+    <section class="smm-faq">
+        <h2>Frequently Asked Questions</h2>
+
+        <details>
+            <summary>What is a sobriety medallion?</summary>
+            <p>A sobriety medallion (also called an AA chip, recovery coin, or sober token) is a physical or digital marker that commemorates a specific amount of clean time. Medallions are traditionally handed out at AA meetings at milestones like 24 hours, 30, 60, and 90 days, then 6 months, 9 months, and every year after.</p>
+        </details>
+
+        <details>
+            <summary>Is this medallion maker really free?</summary>
+            <p>Yes. All 16 medallion styles can be previewed and downloaded free forever. Three styles (Classic, Silver, Mountain) are fully unlocked for anonymous visitors. Creating a free MyRecoveryPal account unlocks the full collection of 16 styles and lets you auto-track your sobriety days.</p>
+        </details>
+
+        <details>
+            <summary>Do I need to sign up to use the medallion maker?</summary>
+            <p>No signup required. You can generate and download a medallion anonymously in under 10 seconds. Signing up is optional — it unlocks all 16 styles and adds day auto-tracking.</p>
+        </details>
+
+        <details>
+            <summary>Why do year medallions use Roman numerals?</summary>
+            <p>Roman numerals on year medallions is an AA tradition dating back decades. Physical AA medallions stamp the year count (V for 5, X for 10, XXV for 25) to match the classical feel of the coin. Our digital medallions follow the same convention — year badges display the Roman numeral only, while month and day badges show the number with the unit label underneath.</p>
+        </details>
+
+        <details>
+            <summary>Can I share my medallion on Instagram, TikTok, or Facebook?</summary>
+            <p>Yes. After generating your medallion, tap Share to open your device's native share sheet or copy a link. The shared link opens a public celebration page with your badge and a call-to-action for friends to create their own.</p>
+        </details>
+
+        <details>
+            <summary>What's the difference between a medallion, chip, and sober coin?</summary>
+            <p>All three terms refer to the same thing — a token marking continuous clean time in recovery. AA typically calls them medallions or chips, NA calls them keytags, and SMART Recovery calls them anniversary tokens. Our maker produces digital versions that work as memorabilia regardless of which program you follow.</p>
+        </details>
+
+        <details>
+            <summary>Can I customize my medallion with my name?</summary>
+            <p>Yes. Add your name or initials, choose from 16 styles, adjust text color (white, gold, silver, black, cream, bronze, or custom hex), toggle an outline, and pick whether to show days, months, or years.</p>
+        </details>
+
+        <details>
+            <summary>What format does my medallion download in?</summary>
+            <p>High-resolution 1080×1080 PNG — ideal for Instagram posts, Stories, profile pictures, lockscreens, and printing. The square format works perfectly on all social platforms.</p>
+        </details>
+    </section>
+
+    <!-- BOTTOM CTA -->
+    <section class="smm-bottom-cta">
+        <h2>Ready to create your medallion?</h2>
+        <p>16 styles, infinite milestones, completely free. No signup required.</p>
+        <a href="{% url 'accounts:milestone_badge_creator' %}">
+            <i class="fas fa-medal" aria-hidden="true"></i> Open the Medallion Maker
+        </a>
+    </section>
+
+</div>
+
+{% include 'core/partials/_related_tools.html' with exclude='sobriety_medallion_maker' %}
+{% endblock %}

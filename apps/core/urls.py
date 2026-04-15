@@ -30,4 +30,5 @@ urlpatterns = [
     path('mental-health-recovery-app/', views.MentalHealthRecoveryAppView.as_view(), name='mental_health_recovery_app'),
     path('ai-recovery-coach/', views.AIRecoveryCoachView.as_view(), name='ai_recovery_coach'),
     path('sobriety-calculator/', views.SobrietyCalculatorView.as_view(), name='sobriety_calculator'),
+    path('sobriety-medallion-maker/', views.SobrietyMedallionMakerView.as_view(), name='sobriety_medallion_maker'),
 ]

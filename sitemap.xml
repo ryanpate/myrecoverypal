@@ -24,6 +24,14 @@
     <priority>0.95</priority>
   </url>
 
+  <!-- HIGH PRIORITY: Sobriety Medallion Maker (Interactive Tool) -->
+  <url>
+    <loc>https://www.myrecoverypal.com/sobriety-medallion-maker/</loc>
+    <lastmod>2026-04-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
   <!-- SEO Landing Pages - Consolidated for Quality -->
   <url>
     <loc>https://www.myrecoverypal.com/alcohol-recovery-app/</loc>

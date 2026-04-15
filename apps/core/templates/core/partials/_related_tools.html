@@ -13,6 +13,13 @@
                 <p style="color: #666; font-size: 0.9rem; margin: 0;">Calculate clean time, milestones, money saved, and health benefits. No signup required.</p>
             </a>
             {% endif %}
+            {% if exclude != 'sobriety_medallion_maker' %}
+            <a href="{% url 'core:sobriety_medallion_maker' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s;">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;"><i class="fas fa-medal" aria-hidden="true"></i></div>
+                <h3 style="color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 0.5rem;">Free Sobriety Medallion Maker</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0;">Create a personalized AA-style recovery medallion. 16 styles, free forever, no signup required.</p>
+            </a>
+            {% endif %}
             {% if exclude != 'sobriety_counter_app' %}
             <a href="{% url 'core:sobriety_counter_app' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s;">
                 <div style="font-size: 1.5rem; margin-bottom: 0.5rem;"><i class="fas fa-stopwatch" aria-hidden="true"></i></div>
