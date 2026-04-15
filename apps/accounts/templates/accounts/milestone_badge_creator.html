@@ -386,12 +386,12 @@
         {% for key, info in badge_styles.items %}
         {% if is_anonymous and key not in free_styles %}
         <div class="style-option locked" data-style="{{ key }}" onclick="showSignupPrompt()">
-            <img src="{% static 'images/badges/' %}{{ info.file }}" alt="{{ info.label }}" loading="lazy" width="256" height="256">
+            <img src="{% static 'images/badges/thumbs/' %}{{ info.file|slice:':-4' }}.webp" alt="{{ info.label }}" loading="lazy" width="256" height="256">
             <div class="style-label">{{ info.label }}</div>
         </div>
         {% else %}
         <div class="style-option{% if forloop.first %} selected{% endif %}" data-style="{{ key }}" onclick="selectStyle(this)">
-            <img src="{% static 'images/badges/' %}{{ info.file }}" alt="{{ info.label }}" loading="lazy" width="256" height="256">
+            <img src="{% static 'images/badges/thumbs/' %}{{ info.file|slice:':-4' }}.webp" alt="{{ info.label }}" loading="lazy" width="256" height="256">
             <div class="style-label">{{ info.label }}</div>
         </div>
         {% endif %}

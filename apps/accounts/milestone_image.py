@@ -84,32 +84,31 @@ def _int_to_roman(num):
 
 
 def format_sobriety_time(days, fmt='auto'):
-    """Format sobriety time as a short string that fits inside the badge center circle.
+    """Format sobriety time as (primary, subtitle) for the badge center circle.
 
-    Returns a single-unit string ("90 Days", "6 Months", "V Years") so it centers
-    cleanly — compound formats wouldn't fit the gold circle without shrinking.
-    Year counts render in Roman numerals, matching AA medallion tradition.
+    Years render as a bare Roman numeral (no "Years" word), matching AA medallion
+    tradition. Months and days render as a large number with the unit label stacked
+    below it.
     """
     if fmt == 'days':
-        return f'{days:,} Day{"s" if days != 1 else ""}'
+        return (f'{days:,}', 'Day' if days == 1 else 'Days')
 
     if fmt == 'months':
         total_months = max(1, days // 30)
-        return f'{total_months} Month{"s" if total_months != 1 else ""}'
+        return (f'{total_months}', 'Month' if total_months == 1 else 'Months')
 
     if fmt == 'years':
         total_years = max(1, days // 365)
-        roman = _int_to_roman(total_years)
-        return f'{roman} Year{"s" if total_years != 1 else ""}'
+        return (_int_to_roman(total_years), '')
 
     # auto: pick the largest unit that reads naturally
     if days < 30:
-        return f'{days} Day{"s" if days != 1 else ""}'
+        return (f'{days}', 'Day' if days == 1 else 'Days')
     if days < 365:
         months = days // 30
-        return f'{months} Month{"s" if months != 1 else ""}'
+        return (f'{months}', 'Month' if months == 1 else 'Months')
     years = days // 365
-    return f'{years} Year{"s" if years != 1 else ""}'
+    return (_int_to_roman(years), '')
 
 
 def _draw_outlined_text(draw, x, y, text, font, fill, outline_width):
@@ -175,7 +174,7 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
     fill = (*rgb, 255)
 
     params = f'{days}_{style}_{time_format}_{text_y}_{font_size}_{color}_{int(outline)}_{safe_name}'
-    cache_key = f'milestone_v7_{hashlib.md5(params.encode()).hexdigest()}'
+    cache_key = f'milestone_v8_{hashlib.md5(params.encode()).hexdigest()}'
     cached = cache.get(cache_key)
     if cached:
         return cached
@@ -191,11 +190,24 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
     draw = ImageDraw.Draw(overlay)
 
     cx = target // 2
-    time_text = format_sobriety_time(days, time_format)
+    primary_text, unit_text = format_sobriety_time(days, time_format)
 
-    # Fit time text to the gold center circle width (with a little padding).
+    # Fit primary text (number or Roman numeral) to the gold center circle width.
     max_text_width = int(target * CENTER_WIDTH_RATIO) - 20
-    font_time, fitted_size = _fit_font_to_width(draw, time_text, font_size, max_text_width)
+    font_time, fitted_size = _fit_font_to_width(draw, primary_text, font_size, max_text_width)
+
+    # Unit label ("Months"/"Days") sits under the number at ~42% of the primary size.
+    unit_font = None
+    unit_w = 0
+    unit_h = 0
+    unit_gap = 0
+    if unit_text:
+        unit_target_size = max(20, int(fitted_size * 0.42))
+        unit_font, _ = _fit_font_to_width(draw, unit_text, unit_target_size, max_text_width, min_font=16)
+        ubbox = draw.textbbox((0, 0), unit_text, font=unit_font)
+        unit_w = ubbox[2] - ubbox[0]
+        unit_h = ubbox[3] - ubbox[1]
+        unit_gap = max(4, int(fitted_size * 0.08))
 
     name_max_size = max(20, fitted_size - 24)
     font_name = _load_font(name_max_size)
@@ -207,24 +219,33 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
     usable = target - 2 * margin
     pixel_y_anchor = margin + int(usable * text_y / 100)
 
-    bbox = draw.textbbox((0, 0), time_text, font=font_time)
+    bbox = draw.textbbox((0, 0), primary_text, font=font_time)
     tw = bbox[2] - bbox[0]
     th = bbox[3] - bbox[1]
-    # Vertically center the glyphs on the anchor Y
-    time_y = pixel_y_anchor - th // 2 - bbox[1]
+    # Center the (primary + optional unit) stack vertically on the anchor Y.
+    stack_h = th + (unit_gap + unit_h if unit_text else 0)
+    time_y = pixel_y_anchor - stack_h // 2 - bbox[1]
     x = cx - tw // 2
 
     outline_w = 3 if outline else 0
     if outline:
-        _draw_outlined_text(draw, x, time_y, time_text, font_time, fill, outline_w)
+        _draw_outlined_text(draw, x, time_y, primary_text, font_time, fill, outline_w)
     else:
-        draw.text((x, time_y), time_text, fill=fill, font=font_time)
+        draw.text((x, time_y), primary_text, fill=fill, font=font_time)
+
+    if unit_text:
+        unit_x = cx - unit_w // 2
+        unit_y = time_y + th + unit_gap
+        if outline:
+            _draw_outlined_text(draw, unit_x, unit_y, unit_text, unit_font, fill, max(1, outline_w - 1))
+        else:
+            draw.text((unit_x, unit_y), unit_text, fill=fill, font=unit_font)
 
     if safe_name:
         nbbox = draw.textbbox((0, 0), safe_name, font=font_name)
         ntw = nbbox[2] - nbbox[0]
         nx = cx - ntw // 2
-        ny = time_y + th + 12
+        ny = time_y + stack_h + 12
 
         if outline:
             _draw_outlined_text(draw, nx, ny, safe_name, font_name, fill, max(1, outline_w - 1))

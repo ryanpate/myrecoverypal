@@ -5244,7 +5244,8 @@ def milestone_share_view(request, days):
     from apps.accounts.milestone_image import format_sobriety_time
 
     days = max(1, min(days, 36500))
-    label = format_sobriety_time(days)
+    primary, unit = format_sobriety_time(days)
+    label = f'{primary} {unit}'.strip() if unit else f'{primary} Years'
     style = request.GET.get('style', 'classic')
     name = request.GET.get('name', '')
 
