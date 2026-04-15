@@ -1,0 +1,117 @@
+{% load static %}
+<!-- Sobriety Medallion Badge CTA -->
+<style>
+    .badge-cta {
+        margin: 2.5rem 0;
+        padding: 2rem 2rem 1.75rem;
+        background: linear-gradient(135deg, #fdf6e3 0%, #f5e6b3 100%);
+        border: 1px solid #e0c068;
+        border-left: 4px solid #d4af37;
+        border-radius: 12px;
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    .badge-cta__medallion {
+        width: 140px;
+        height: 140px;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(30, 77, 139, 0.25);
+        background: #fff;
+    }
+
+    .badge-cta__medallion img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .badge-cta__content {
+        text-align: left;
+    }
+
+    .badge-cta__heading {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #1e4d8b;
+        margin: 0 0 0.6rem;
+        line-height: 1.25;
+    }
+
+    .badge-cta__body {
+        font-size: 0.94rem;
+        line-height: 1.55;
+        color: #475569;
+        margin: 0 0 1.1rem;
+    }
+
+    .badge-cta__button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.6rem;
+        background: linear-gradient(135deg, #1e4d8b, #2d7dd2);
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-decoration: none;
+        border-radius: 50px;
+        box-shadow: 0 6px 18px rgba(30, 77, 139, 0.3);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .badge-cta__button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(30, 77, 139, 0.4);
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .badge-cta__button i { color: #d4af37; }
+
+    .badge-cta__note {
+        font-size: 0.78rem;
+        color: #94733a;
+        margin: 0.75rem 0 0;
+    }
+
+    /* Dark mode */
+    [data-theme="dark"] .badge-cta {
+        background: linear-gradient(135deg, #2a2410 0%, #3d3418 100%);
+        border-color: #8c6e32;
+        border-left-color: #d4af37;
+    }
+    [data-theme="dark"] .badge-cta__heading { color: #ffd700; }
+    [data-theme="dark"] .badge-cta__body { color: #cbd5e1; }
+    [data-theme="dark"] .badge-cta__note { color: #c9a967; }
+
+    @media (max-width: 640px) {
+        .badge-cta {
+            grid-template-columns: 1fr;
+            text-align: center;
+            padding: 1.5rem;
+        }
+        .badge-cta__medallion { width: 160px; height: 160px; margin: 0 auto; }
+        .badge-cta__content { text-align: center; }
+    }
+</style>
+
+<div class="badge-cta">
+    <div class="badge-cta__medallion">
+        <img src="{% static 'images/badges/thumbs/badge-classic.webp' %}" alt="Sobriety medallion example" loading="lazy" width="140" height="140">
+    </div>
+    <div class="badge-cta__content">
+        <h4 class="badge-cta__heading">Celebrate Every Milestone With Your Own Medallion</h4>
+        <p class="badge-cta__body">
+            Create a free, personalized AA-style sobriety medallion in 10 seconds &mdash; 16 styles, your name, your clean time. Download it, share it, make it your lockscreen.
+        </p>
+        <a href="{% url 'core:sobriety_medallion_maker' %}?utm_source=blog&amp;utm_medium=cta&amp;utm_campaign=badge_maker" class="badge-cta__button">
+            <i class="fas fa-medal"></i> Create Your Medallion &mdash; Free
+        </a>
+        <p class="badge-cta__note">No signup required &middot; 16 styles &middot; Works with any recovery program</p>
+    </div>
+</div>
