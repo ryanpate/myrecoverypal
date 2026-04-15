@@ -292,6 +292,44 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
+def backfill_blog_push(request, slug):
+    """
+    Admin-only view to re-run push notification fan-out for a blog post
+    whose enqueue failed at publish time (e.g. transient Redis blip).
+
+    Access: /blog/admin/backfill-push/<slug>/?key=<ADMIN_SECRET_KEY>
+    Runs the fan-out synchronously in the web process (no Celery required),
+    so it works even if the broker is still flaky.
+    """
+    import os
+    secret_key = request.GET.get('key', '')
+    admin_secret = os.environ.get('ADMIN_SECRET_KEY', '')
+    is_authorized = (
+        (request.user.is_authenticated and request.user.is_superuser) or
+        (admin_secret and secret_key == admin_secret)
+    )
+    if not is_authorized:
+        return HttpResponse("Unauthorized.", status=403)
+
+    post = Post.objects.filter(slug=slug).first()
+    if not post:
+        return HttpResponse(f"Post not found: {slug}", status=404)
+    if post.status != 'published':
+        return HttpResponse(f"Post {slug} is not published.", status=400)
+
+    # Run the fan-out task synchronously — bypasses Celery entirely.
+    from apps.blog.tasks import fanout_blog_push_notifications
+    try:
+        fanout_blog_push_notifications.apply(args=[post.pk])
+        return HttpResponse(
+            f"Push fan-out executed synchronously for post "
+            f"'{post.title}' (id={post.pk}). Check celery-worker / web "
+            f"logs for per-user send results."
+        )
+    except Exception as e:
+        return HttpResponse(f"Fan-out failed: {e}", status=500)
+
+
 def create_seo_posts(request):
     """
     Admin-only view to create SEO blog posts.

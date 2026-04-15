@@ -19,4 +19,6 @@ urlpatterns = [
     path('post/<slug:slug>/comment/', views.add_comment, name='add_comment'),
     # Admin-only: Create SEO blog posts
     path('admin/create-seo-posts/', views.create_seo_posts, name='create_seo_posts'),
+    # Admin-only: Backfill push notifications for a published post
+    path('admin/backfill-push/<slug:slug>/', views.backfill_blog_push, name='backfill_blog_push'),
 ]

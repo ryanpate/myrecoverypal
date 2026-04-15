@@ -64,9 +64,22 @@ def notify_users_on_blog_publish(sender, instance, created, **kwargs):
         )
 
         # bulk_create bypasses post_save, so fan out push notifications via Celery
-        # to keep the publish request fast.
+        # to keep the publish request fast. Use apply_async with kombu publish
+        # retries so a transient Redis TCP blip doesn't silently drop the fan-out.
         try:
             from apps.blog.tasks import fanout_blog_push_notifications
-            fanout_blog_push_notifications.delay(instance.pk)
+            fanout_blog_push_notifications.apply_async(
+                args=[instance.pk],
+                retry=True,
+                retry_policy={
+                    'max_retries': 3,
+                    'interval_start': 0.5,
+                    'interval_step': 1.0,
+                    'interval_max': 3.0,
+                },
+            )
         except Exception as e:
-            logger.warning(f"Failed to enqueue blog push fan-out: {e}")
+            logger.error(
+                f"Failed to enqueue blog push fan-out for post {instance.pk} "
+                f"after retries: {e}"
+            )
