@@ -5263,11 +5263,16 @@ def milestone_share_view(request, days):
     )
     share_url = request.build_absolute_uri(request.get_full_path())
 
+    # Link to badge creator with their days pre-filled so "create your own" is 1-click.
+    creator_url = reverse('accounts:milestone_badge_creator') + f'?days={days}'
+
     context = {
         'days': days,
         'label': label,
         'image_url': image_url,
         'share_url': share_url,
+        'shared_name': name,
+        'creator_url': creator_url,
     }
     return render(request, 'accounts/milestone_share.html', context)
 

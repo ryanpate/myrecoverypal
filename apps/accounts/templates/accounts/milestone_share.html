@@ -1,77 +1,278 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ label }} Sober - MyRecoveryPal Milestone</title>
+{% extends "base.html" %}
+{% load static %}
 
-    <!-- Open Graph for social sharing -->
-    <meta property="og:title" content="{{ label }} Sober - Recovery Milestone">
-    <meta property="og:description" content="Celebrating {{ label }} of recovery on MyRecoveryPal. Every day counts.">
-    <meta property="og:image" content="{{ image_url }}">
-    <meta property="og:image:width" content="1080">
-    <meta property="og:image:height" content="1080">
-    <meta property="og:url" content="{{ share_url }}">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="MyRecoveryPal">
+{% block title %}{% if shared_name %}{{ shared_name }}'s {% endif %}{{ label }} Sober — Recovery Milestone | MyRecoveryPal{% endblock %}
+{% block meta_description %}{% if shared_name %}{{ shared_name }} is celebrating {{ label }} of recovery on MyRecoveryPal. {% else %}Celebrating {{ label }} of recovery. {% endif %}Create your own free sobriety medallion in 10 seconds — no signup required.{% endblock %}
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ label }} Sober - Recovery Milestone">
-    <meta name="twitter:description" content="Celebrating {{ label }} of recovery on MyRecoveryPal. Every day counts.">
-    <meta name="twitter:image" content="{{ image_url }}">
+{% block canonical_url %}https://www.myrecoverypal.com{% url 'accounts:milestone_badge_creator' %}{% endblock %}
 
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f0f2f5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 2rem;
-        }
-        .badge-container {
-            max-width: 480px;
-            width: 100%;
-            text-align: center;
-        }
-        .badge-container img {
-            width: 100%;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-        }
-        .cta {
-            margin-top: 1.5rem;
-        }
-        .cta a {
-            display: inline-block;
-            background: linear-gradient(135deg, #1e4d8b, #2d7dd2);
-            color: white;
-            text-decoration: none;
-            padding: 0.85rem 2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: transform 0.2s;
-        }
-        .cta a:hover { transform: scale(1.05); }
-        .tagline {
-            margin-top: 1rem;
-            color: #666;
-            font-size: 0.9rem;
-        }
-    </style>
-</head>
-<body>
-    <div class="badge-container">
-        <img src="{{ image_url }}" alt="{{ label }} sober milestone badge" width="1080" height="1080">
-        <div class="cta">
-            <a href="https://www.myrecoverypal.com/">Start Your Recovery Journey</a>
+{% block og_title %}{% if shared_name %}{{ shared_name }} — {% endif %}{{ label }} Sober{% endblock %}
+{% block og_description %}{% if shared_name %}{{ shared_name }} is celebrating {{ label }} of recovery. {% endif %}Create your own free sobriety medallion on MyRecoveryPal.{% endblock %}
+{% block og_image %}{{ image_url }}{% endblock %}
+{% block og_url %}{{ share_url }}{% endblock %}
+{% block twitter_title %}{% if shared_name %}{{ shared_name }} — {% endif %}{{ label }} Sober{% endblock %}
+{% block twitter_description %}{% if shared_name %}{{ shared_name }} is celebrating {{ label }} of recovery. {% endif %}Create your own free sobriety medallion on MyRecoveryPal.{% endblock %}
+{% block twitter_image %}{{ image_url }}{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "MyRecoveryPal Milestone Badge Maker",
+  "description": "Create a free personalized sobriety medallion to celebrate your recovery milestones. 16 medallion styles, no signup required.",
+  "url": "https://www.myrecoverypal.com{% url 'accounts:milestone_badge_creator' %}",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Web",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<style>
+    .ms-page { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    .ms-hero { text-align: center; margin-bottom: 3rem; }
+    .ms-eyebrow {
+        display: inline-block;
+        background: rgba(30, 77, 139, 0.08);
+        color: var(--primary-dark, #1e4d8b);
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 1rem;
+    }
+    .ms-headline {
+        font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary, #1a1a1a);
+    }
+    .ms-headline .ms-name { color: var(--primary-dark, #1e4d8b); }
+    .ms-subline {
+        color: var(--text-muted, #666);
+        font-size: 1rem;
+        margin-bottom: 2rem;
+    }
+    .ms-badge-wrap {
+        max-width: 420px;
+        margin: 0 auto 2rem;
+    }
+    .ms-badge-wrap img {
+        width: 100%;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+        display: block;
+    }
+    .ms-primary-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        color: #fff;
+        text-decoration: none;
+        padding: 1rem 2.25rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        box-shadow: 0 8px 24px rgba(30,77,139,0.28);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .ms-primary-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(30,77,139,0.38);
+        color: #fff;
+    }
+    .ms-primary-cta i { font-size: 1.1rem; }
+    .ms-micro { margin-top: 0.75rem; font-size: 0.82rem; color: var(--text-muted, #888); }
+
+    /* Quick-entry form */
+    .ms-quick-entry {
+        background: var(--bg-lighter, #f8f9fa);
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 20px;
+        padding: 2rem 1.5rem;
+        margin: 3rem 0;
+        text-align: center;
+    }
+    .ms-quick-entry h2 {
+        font-size: 1.35rem;
+        font-weight: 800;
+        margin-bottom: 0.35rem;
+        color: var(--text-primary, #1a1a1a);
+    }
+    .ms-quick-entry p { color: var(--text-muted, #666); font-size: 0.92rem; margin-bottom: 1.25rem; }
+    .ms-entry-row {
+        display: flex;
+        gap: 0.5rem;
+        max-width: 440px;
+        margin: 0 auto;
+        flex-wrap: wrap;
+    }
+    .ms-entry-row input, .ms-entry-row select {
+        padding: 0.85rem 1rem;
+        border: 1px solid var(--border-color, #d1d5db);
+        border-radius: 12px;
+        font-size: 1rem;
+        background: #fff;
+        color: var(--text-primary, #1a1a1a);
+    }
+    .ms-entry-row input { flex: 1; min-width: 120px; }
+    .ms-entry-row button {
+        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        color: #fff;
+        border: none;
+        padding: 0.85rem 1.5rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    .ms-entry-row button:hover { transform: translateY(-1px); }
+
+    /* Value prop cards */
+    .ms-value {
+        margin: 3rem 0;
+    }
+    .ms-value h2 {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 0.35rem;
+    }
+    .ms-value .ms-sub {
+        text-align: center;
+        color: var(--text-muted, #666);
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+    }
+    .ms-value-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+    .ms-value-card {
+        background: #fff;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 16px;
+        padding: 1.5rem 1.25rem;
+        text-align: center;
+    }
+    .ms-value-card .ms-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        margin: 0 auto 0.75rem;
+    }
+    .ms-value-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .ms-value-card p { color: var(--text-muted, #666); font-size: 0.85rem; line-height: 1.45; }
+
+    /* Bottom signup CTA */
+    .ms-signup {
+        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        color: #fff;
+        border-radius: 24px;
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        margin-top: 3rem;
+    }
+    .ms-signup h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .ms-signup p { opacity: 0.92; margin-bottom: 1.5rem; font-size: 0.95rem; }
+    .ms-signup a {
+        display: inline-block;
+        background: #fff;
+        color: var(--primary-dark, #1e4d8b);
+        text-decoration: none;
+        padding: 0.9rem 2rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+    .ms-signup a:hover { transform: scale(1.04); color: var(--primary-dark, #1e4d8b); }
+
+    [data-theme="dark"] .ms-value-card { background: var(--bg-card, #1f1f1f); }
+    [data-theme="dark"] .ms-entry-row input,
+    [data-theme="dark"] .ms-entry-row select { background: var(--bg-card, #2a2a2a); color: #f5f5f5; }
+
+    @media (max-width: 620px) {
+        .ms-value-grid { grid-template-columns: 1fr; }
+        .ms-entry-row { flex-direction: column; }
+        .ms-entry-row input, .ms-entry-row select, .ms-entry-row button { width: 100%; }
+    }
+</style>
+
+<div class="ms-page">
+    <!-- Hero -->
+    <section class="ms-hero">
+        <span class="ms-eyebrow">Recovery Milestone</span>
+        <h1 class="ms-headline">
+            {% if shared_name %}<span class="ms-name">{{ shared_name }}</span> is celebrating<br>{% endif %}
+            {{ label }} of recovery
+        </h1>
+        <p class="ms-subline">Every day counts. Every milestone matters.</p>
+
+        <div class="ms-badge-wrap">
+            <img src="{{ image_url }}" alt="{{ label }} sober milestone badge" width="1080" height="1080">
         </div>
-        <p class="tagline">MyRecoveryPal - A Recovery Community Built Together</p>
-    </div>
-</body>
-</html>
+
+        <a href="{{ creator_url }}" class="ms-primary-cta" data-ga="badge_share_cta_primary">
+            <i class="fas fa-medal" aria-hidden="true"></i>
+            Create your own badge — free
+        </a>
+        <div class="ms-micro">No signup required · 16 medallion styles · 10 seconds</div>
+    </section>
+
+    <!-- Quick entry -->
+    <section class="ms-quick-entry">
+        <h2>How long have you been sober?</h2>
+        <p>Enter your time and we'll generate your personal medallion instantly.</p>
+        <form class="ms-entry-row" method="get" action="{% url 'accounts:milestone_badge_creator' %}">
+            <input type="number" name="days" min="1" max="36500" placeholder="e.g. 90" required>
+            <button type="submit">Create my badge →</button>
+        </form>
+    </section>
+
+    <!-- Value prop -->
+    <section class="ms-value">
+        <h2>More than a medallion</h2>
+        <p class="ms-sub">MyRecoveryPal is a free community built for every day of your recovery.</p>
+        <div class="ms-value-grid">
+            <div class="ms-value-card">
+                <div class="ms-icon"><i class="fas fa-medal" aria-hidden="true"></i></div>
+                <h3>Free Badge Maker</h3>
+                <p>16 medallion styles. Download, share, or print. No signup required.</p>
+            </div>
+            <div class="ms-value-card">
+                <div class="ms-icon"><i class="fas fa-robot" aria-hidden="true"></i></div>
+                <h3>Anchor AI Coach</h3>
+                <p>24/7 recovery support when cravings hit. Trained for addiction recovery.</p>
+            </div>
+            <div class="ms-value-card">
+                <div class="ms-icon"><i class="fas fa-users" aria-hidden="true"></i></div>
+                <h3>Recovery Community</h3>
+                <p>Social feed, groups, and accountability pals. No ads. Privacy-first.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Signup CTA -->
+    <section class="ms-signup">
+        <h2>Track every day of your journey</h2>
+        <p>Auto-sync your sobriety counter, save your badges, and join a supportive community — free forever.</p>
+        <a href="{% url 'accounts:register' %}?next={{ creator_url|urlencode }}" data-ga="badge_share_signup">
+            Join MyRecoveryPal Free
+        </a>
+    </section>
+</div>
+{% endblock %}
