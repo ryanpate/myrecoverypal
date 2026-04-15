@@ -5288,6 +5288,7 @@ def share_milestone_to_feed(request):
     and `visibility`. Returns JSON with the new post's id on success.
     """
     import logging
+    import re
     import traceback
     from django.core.files.uploadedfile import SimpleUploadedFile
     from apps.accounts.milestone_image import (
