@@ -331,14 +331,146 @@
         color: white;
     }
     .btn-copy {
-        background: var(--bg-lighter, #f0f2f5);
+        background: #fff;
+        color: var(--primary-dark, #1e4d8b);
+        border: 2px solid var(--primary-dark, #1e4d8b);
+    }
+    .btn-copy:hover { background: var(--primary-dark, #1e4d8b); color: #fff; }
+
+    /* Share modal */
+    .share-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: shareFadeIn 0.2s ease;
+    }
+    .share-modal-overlay.active { display: flex; }
+    @keyframes shareFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .share-modal {
+        background: #fff;
+        border-radius: 20px;
+        padding: 2rem 1.75rem 1.5rem;
+        max-width: 420px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        animation: sharePop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+    }
+    @keyframes sharePop { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .share-modal h3 {
+        font-size: 1.15rem;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+        color: var(--text-primary, #1a1a1a);
+    }
+    .share-modal p {
+        color: var(--text-muted, #666);
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+    .share-modal-close {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        background: transparent;
+        border: none;
+        font-size: 1.4rem;
+        color: #999;
+        cursor: pointer;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .share-modal-close:hover { background: #f5f5f5; }
+    .share-options {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+    .share-opt {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.85rem 0.25rem;
+        background: #f5f7fa;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
         color: var(--text-primary, #333);
-        border: 1px solid var(--border-color, #ddd);
+        text-decoration: none;
+        font-size: 0.72rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .share-opt:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.1); color: var(--text-primary, #333); }
+    .share-opt .share-opt-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.15rem;
+    }
+    .share-opt.twitter .share-opt-icon { background: #000; }
+    .share-opt.facebook .share-opt-icon { background: #1877f2; }
+    .share-opt.whatsapp .share-opt-icon { background: #25d366; }
+    .share-opt.reddit .share-opt-icon { background: #ff4500; }
+    .share-opt.email .share-opt-icon { background: #6b7280; }
+    .share-opt.native .share-opt-icon { background: linear-gradient(135deg, #1e4d8b, #2d7dd2); }
+    .share-opt.copy .share-opt-icon { background: #111827; }
+    .share-link-row {
+        display: flex;
+        gap: 0.5rem;
+        background: #f5f7fa;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 0.5rem;
+        align-items: center;
+    }
+    .share-link-row input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 0.5rem;
+        font-size: 0.82rem;
+        color: var(--text-primary, #333);
+        outline: none;
+        min-width: 0;
+    }
+    .share-link-row button {
+        background: var(--primary-dark, #1e4d8b);
+        color: #fff;
+        border: none;
+        padding: 0.55rem 1rem;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
     }
 
     /* Dark mode */
     [data-theme="dark"] .style-option .style-label { background: var(--bg-card, #2a2a2a); }
     [data-theme="dark"] .style-option.selected .style-label { background: var(--primary-dark, #1e4d8b); }
+    [data-theme="dark"] .btn-copy { background: var(--bg-card, #1f1f1f); color: var(--primary-light, #2d7dd2); border-color: var(--primary-light, #2d7dd2); }
+    [data-theme="dark"] .share-modal { background: var(--bg-card, #1f1f1f); }
+    [data-theme="dark"] .share-modal h3 { color: #f5f5f5; }
+    [data-theme="dark"] .share-opt { background: var(--bg-lighter, #2a2a2a); border-color: #3a3a3a; color: #e5e5e5; }
+    [data-theme="dark"] .share-opt:hover { color: #fff; }
+    [data-theme="dark"] .share-link-row { background: var(--bg-lighter, #2a2a2a); border-color: #3a3a3a; }
+    [data-theme="dark"] .share-link-row input { color: #e5e5e5; }
 
     @media (max-width: 520px) {
         .style-picker { grid-template-columns: repeat(2, 1fr); }
@@ -466,12 +598,55 @@
         <a id="btn-download" class="btn btn-download" href="#" download="myrecoverypal-milestone.png">
             <i class="fas fa-download" aria-hidden="true"></i> Save Badge
         </a>
-        <button class="btn btn-share" onclick="shareBadge()">
+        <button class="btn btn-share" onclick="openShareModal()">
             <i class="fas fa-share-nodes" aria-hidden="true"></i> Share
         </button>
         <button id="btn-copy" class="btn btn-copy" onclick="copyShareLink()">
-            <i class="fas fa-link" aria-hidden="true"></i> Copy Link
+            <i class="fas fa-link" aria-hidden="true"></i> <span id="btn-copy-label">Copy Link</span>
         </button>
+    </div>
+</div>
+
+<!-- Share Modal -->
+<div class="share-modal-overlay" id="share-modal" onclick="if(event.target===this)closeShareModal()">
+    <div class="share-modal">
+        <button class="share-modal-close" onclick="closeShareModal()" aria-label="Close">&times;</button>
+        <h3>Share Your Medallion</h3>
+        <p>Celebrate your recovery anywhere</p>
+        <div class="share-options" id="share-options">
+            <button class="share-opt native" onclick="nativeShare()" id="share-native" style="display:none;">
+                <span class="share-opt-icon"><i class="fas fa-share-alt" aria-hidden="true"></i></span>
+                <span>Share</span>
+            </button>
+            <a class="share-opt twitter" id="share-twitter" target="_blank" rel="noopener">
+                <span class="share-opt-icon"><i class="fab fa-x-twitter" aria-hidden="true"></i></span>
+                <span>X / Twitter</span>
+            </a>
+            <a class="share-opt facebook" id="share-facebook" target="_blank" rel="noopener">
+                <span class="share-opt-icon"><i class="fab fa-facebook-f" aria-hidden="true"></i></span>
+                <span>Facebook</span>
+            </a>
+            <a class="share-opt whatsapp" id="share-whatsapp" target="_blank" rel="noopener">
+                <span class="share-opt-icon"><i class="fab fa-whatsapp" aria-hidden="true"></i></span>
+                <span>WhatsApp</span>
+            </a>
+            <a class="share-opt reddit" id="share-reddit" target="_blank" rel="noopener">
+                <span class="share-opt-icon"><i class="fab fa-reddit-alien" aria-hidden="true"></i></span>
+                <span>Reddit</span>
+            </a>
+            <a class="share-opt email" id="share-email">
+                <span class="share-opt-icon"><i class="fas fa-envelope" aria-hidden="true"></i></span>
+                <span>Email</span>
+            </a>
+            <button class="share-opt copy" onclick="copyFromModal(this)">
+                <span class="share-opt-icon"><i class="fas fa-link" aria-hidden="true"></i></span>
+                <span id="share-copy-label">Copy Link</span>
+            </button>
+        </div>
+        <div class="share-link-row">
+            <input type="text" id="share-link-input" readonly>
+            <button onclick="copyFromInput(this)">Copy</button>
+        </div>
     </div>
 </div>
 
@@ -564,33 +739,87 @@ function updatePreview() {
     document.getElementById('btn-download').href = imgUrl + '&download=1';
 }
 
-function shareBadge() {
+function buildShareUrl() {
     var params = getParams();
-    var shareUrl = window.location.origin + '/accounts/milestone/' + daysSober + '/?' + params;
+    return window.location.origin + '/accounts/milestone/' + daysSober + '/?' + params;
+}
+
+function openShareModal() {
+    var shareUrl = buildShareUrl();
+    var text = 'Check out my recovery milestone on MyRecoveryPal! 🎉';
+    var encodedUrl = encodeURIComponent(shareUrl);
+    var encodedText = encodeURIComponent(text);
+
+    document.getElementById('share-twitter').href = 'https://twitter.com/intent/tweet?text=' + encodedText + '&url=' + encodedUrl;
+    document.getElementById('share-facebook').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodedUrl;
+    document.getElementById('share-whatsapp').href = 'https://wa.me/?text=' + encodedText + '%20' + encodedUrl;
+    document.getElementById('share-reddit').href = 'https://reddit.com/submit?url=' + encodedUrl + '&title=' + encodedText;
+    document.getElementById('share-email').href = 'mailto:?subject=' + encodeURIComponent('My Recovery Milestone') + '&body=' + encodedText + '%0A%0A' + encodedUrl;
+
+    document.getElementById('share-link-input').value = shareUrl;
+
+    // Show native share button when supported (mobile + some desktop)
+    var nativeBtn = document.getElementById('share-native');
+    if ((window.MRPNative && window.MRPNative.share) || navigator.share) {
+        nativeBtn.style.display = 'flex';
+    } else {
+        nativeBtn.style.display = 'none';
+    }
+
+    document.getElementById('share-modal').classList.add('active');
+}
+
+function closeShareModal() {
+    document.getElementById('share-modal').classList.remove('active');
+}
+
+function nativeShare() {
+    var shareUrl = buildShareUrl();
     var text = 'Check out my recovery milestone on MyRecoveryPal!';
 
     if (window.MRPNative && window.MRPNative.share) {
         window.MRPNative.share('My Recovery Milestone', text, shareUrl);
+        closeShareModal();
         return;
     }
     if (navigator.share) {
-        navigator.share({ title: 'My Recovery Milestone', text: text, url: shareUrl }).catch(function() {});
-        return;
+        navigator.share({ title: 'My Recovery Milestone', text: text, url: shareUrl })
+            .then(closeShareModal)
+            .catch(function() {});
     }
-    copyShareLink();
+}
+
+function flashCopied(el, originalText) {
+    el.textContent = 'Copied!';
+    setTimeout(function() { el.textContent = originalText; }, 2000);
+}
+
+function copyFromModal() {
+    var url = document.getElementById('share-link-input').value;
+    navigator.clipboard.writeText(url).then(function() {
+        flashCopied(document.getElementById('share-copy-label'), 'Copy Link');
+    }).catch(function() { prompt('Copy this link:', url); });
+}
+
+function copyFromInput(btn) {
+    var input = document.getElementById('share-link-input');
+    input.select();
+    navigator.clipboard.writeText(input.value).then(function() {
+        flashCopied(btn, 'Copy');
+    }).catch(function() { prompt('Copy this link:', input.value); });
 }
 
 function copyShareLink() {
-    var params = getParams();
-    var shareUrl = window.location.origin + '/accounts/milestone/' + daysSober + '/?' + params;
-    var btn = document.getElementById('btn-copy');
-
+    var shareUrl = buildShareUrl();
+    var label = document.getElementById('btn-copy-label');
     navigator.clipboard.writeText(shareUrl).then(function() {
-        btn.textContent = 'Copied!';
-        setTimeout(function() { btn.textContent = 'Copy Link'; }, 2000);
-    }).catch(function() {
-        prompt('Copy this link:', shareUrl);
-    });
+        flashCopied(label, 'Copy Link');
+    }).catch(function() { prompt('Copy this link:', shareUrl); });
 }
+
+// Close modal on Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeShareModal();
+});
 </script>
 {% endblock %}
