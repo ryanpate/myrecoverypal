@@ -203,6 +203,7 @@ urlpatterns = [
     path('milestone-image/<int:days>/', views.milestone_image_view, name='milestone_image'),
     path('milestone/<int:days>/', views.milestone_share_view, name='milestone_share'),
     path('milestone-badge/', views.milestone_badge_creator, name='milestone_badge_creator'),
+    path('milestone-badge/share-to-feed/', views.share_milestone_to_feed, name='share_milestone_to_feed'),
 
     # Relapse / slip tracking
     path('log-slip/', views.log_slip_view, name='log_slip'),
