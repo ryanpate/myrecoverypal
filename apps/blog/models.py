@@ -80,6 +80,11 @@ class Post(models.Model):
     # Engagement
     views = models.PositiveIntegerField(default=0)
 
+    # Push fan-out tracking — set when fanout_blog_push_notifications task
+    # finishes successfully. A beat job retries posts where this is NULL to
+    # survive Redis outages longer than the kombu retry window.
+    push_fanout_completed_at = models.DateTimeField(null=True, blank=True)
+
     class Meta:
         ordering = ['-published_at', '-created_at']
 

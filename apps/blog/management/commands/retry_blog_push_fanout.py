@@ -36,6 +36,18 @@ class Command(BaseCommand):
                 f"Post {post_id} is not published (status={post.status})"
             )
 
+        # Clear the completion marker so the task doesn't short-circuit on
+        # the idempotency check. This is an explicit recovery flow: the
+        # operator is declaring that pushes were not delivered for this post
+        # and should be sent now.
+        if post.push_fanout_completed_at is not None:
+            self.stdout.write(
+                f"Clearing push_fanout_completed_at "
+                f"(was {post.push_fanout_completed_at.isoformat()}) "
+                f"to force re-send."
+            )
+            Post.objects.filter(pk=post_id).update(push_fanout_completed_at=None)
+
         from apps.blog.tasks import fanout_blog_push_notifications
 
         if run_sync:

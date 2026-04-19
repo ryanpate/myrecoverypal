@@ -751,6 +751,11 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.publish_daily_thought',
         'schedule': crontab(hour=6, minute=0),  # Daily at 6 AM UTC
     },
+    # Reconcile blog push fan-outs dropped by Redis outages
+    'retry-stuck-blog-push-fanouts': {
+        'task': 'apps.blog.tasks.retry_stuck_blog_push_fanouts',
+        'schedule': crontab(minute='*/15'),  # Every 15 minutes
+    },
 }
 
 # Celery worker memory optimization (Railway cost reduction)

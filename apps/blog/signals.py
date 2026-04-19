@@ -68,9 +68,8 @@ def notify_users_on_blog_publish(sender, instance, created, **kwargs):
         # to keep the publish request fast. Defer the enqueue until after the
         # surrounding transaction commits so we never publish a task for a post
         # that could still roll back. The kombu retry policy covers brief Redis
-        # blips (Railway Redis restarts can take 15-30s); beyond that the
-        # enqueue fails and recovery is via the `retry_blog_push_fanout`
-        # management command.
+        # blips; longer outages are reconciled by the
+        # `retry_stuck_blog_push_fanouts` beat task every 15 minutes.
         post_id = instance.pk
         transaction.on_commit(lambda: _enqueue_blog_push_fanout(post_id))
 
@@ -89,8 +88,11 @@ def _enqueue_blog_push_fanout(post_id):
             },
         )
     except Exception as e:
-        logger.error(
+        # Beat reconciliation will pick this up within 15 minutes once Redis
+        # recovers, so no manual intervention is required.
+        logger.warning(
             f"Failed to enqueue blog push fan-out for post {post_id} "
-            f"after retries: {e}. Recover with: "
-            f"python manage.py retry_blog_push_fanout {post_id}"
+            f"after kombu retries: {e}. Beat will reconcile; to force "
+            f"immediate recovery: python manage.py retry_blog_push_fanout "
+            f"{post_id}"
         )
