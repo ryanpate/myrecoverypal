@@ -59,16 +59,29 @@ class Command(BaseCommand):
             return
 
         self.stdout.write(f"Enqueuing fan-out for post {post_id}...")
-        fanout_blog_push_notifications.apply_async(
-            args=[post_id],
-            retry=True,
-            retry_policy={
-                'max_retries': 5,
-                'interval_start': 1.0,
-                'interval_step': 2.0,
-                'interval_max': 5.0,
-            },
-        )
+        try:
+            fanout_blog_push_notifications.apply_async(
+                args=[post_id],
+                retry=True,
+                retry_policy={
+                    'max_retries': 5,
+                    'interval_start': 1.0,
+                    'interval_step': 2.0,
+                    'interval_max': 5.0,
+                },
+            )
+        except Exception as e:
+            # Broker (Redis) unavailable or misconfigured. Surface a helpful
+            # error instead of letting the traceback propagate to Sentry —
+            # this is an expected failure mode during recovery flows (the
+            # whole reason this command exists is to recover from exactly
+            # this kind of outage).
+            raise CommandError(
+                f"Could not enqueue task: {e}. The beat reconciliation task "
+                f"will retry this post every 15 minutes once the broker is "
+                f"back. To force immediate delivery, re-run with --sync "
+                f"(runs inline, no broker needed)."
+            )
         self.stdout.write(self.style.SUCCESS(
             f"Enqueued. Worker will process shortly. "
             f"If Redis is still down, re-run with --sync."
