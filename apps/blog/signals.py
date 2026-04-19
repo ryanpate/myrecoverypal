@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import Post
@@ -64,22 +65,32 @@ def notify_users_on_blog_publish(sender, instance, created, **kwargs):
         )
 
         # bulk_create bypasses post_save, so fan out push notifications via Celery
-        # to keep the publish request fast. Use apply_async with kombu publish
-        # retries so a transient Redis TCP blip doesn't silently drop the fan-out.
-        try:
-            from apps.blog.tasks import fanout_blog_push_notifications
-            fanout_blog_push_notifications.apply_async(
-                args=[instance.pk],
-                retry=True,
-                retry_policy={
-                    'max_retries': 3,
-                    'interval_start': 0.5,
-                    'interval_step': 1.0,
-                    'interval_max': 3.0,
-                },
-            )
-        except Exception as e:
-            logger.error(
-                f"Failed to enqueue blog push fan-out for post {instance.pk} "
-                f"after retries: {e}"
-            )
+        # to keep the publish request fast. Defer the enqueue until after the
+        # surrounding transaction commits so we never publish a task for a post
+        # that could still roll back. The kombu retry policy covers brief Redis
+        # blips (Railway Redis restarts can take 15-30s); beyond that the
+        # enqueue fails and recovery is via the `retry_blog_push_fanout`
+        # management command.
+        post_id = instance.pk
+        transaction.on_commit(lambda: _enqueue_blog_push_fanout(post_id))
+
+
+def _enqueue_blog_push_fanout(post_id):
+    try:
+        from apps.blog.tasks import fanout_blog_push_notifications
+        fanout_blog_push_notifications.apply_async(
+            args=[post_id],
+            retry=True,
+            retry_policy={
+                'max_retries': 5,
+                'interval_start': 1.0,
+                'interval_step': 2.0,
+                'interval_max': 5.0,
+            },
+        )
+    except Exception as e:
+        logger.error(
+            f"Failed to enqueue blog push fan-out for post {post_id} "
+            f"after retries: {e}. Recover with: "
+            f"python manage.py retry_blog_push_fanout {post_id}"
+        )
