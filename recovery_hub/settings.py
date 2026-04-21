@@ -756,6 +756,11 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.blog.tasks.retry_stuck_blog_push_fanouts',
         'schedule': crontab(minute='*/15'),  # Every 15 minutes
     },
+    # Daily blog digest — 7 AM UTC roundup of the last 24h of published posts
+    'send-daily-blog-digest': {
+        'task': 'apps.blog.tasks.send_daily_blog_digest',
+        'schedule': crontab(hour=7, minute=0),
+    },
 }
 
 # Celery worker memory optimization (Railway cost reduction)
