@@ -121,3 +121,14 @@ def retry_stuck_blog_push_fanouts():
                 f"retry_stuck_blog_push_fanouts: re-enqueue of post "
                 f"{post_id} failed: {e}"
             )
+
+
+def _build_subject(posts):
+    """Build the subject line for the daily blog digest.
+
+    One post → "New on MyRecoveryPal: {title}"
+    N posts  → "{N} new posts on MyRecoveryPal today"
+    """
+    if len(posts) == 1:
+        return f"New on MyRecoveryPal: {posts[0].title}"
+    return f"{len(posts)} new posts on MyRecoveryPal today"
