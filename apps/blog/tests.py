@@ -132,9 +132,14 @@ class SendDailyBlogDigestTest(TestCase):
         self._create_post(author=self.author)
         send_daily_blog_digest()
         mock_cache.set.assert_called_once()
-        # First positional arg should be today's key
-        args, _ = mock_cache.set.call_args
-        self.assertTrue(args[0].startswith('blog_digest_sent_'))
+        args, kwargs = mock_cache.set.call_args
+        # Key is the day-stamped idempotency marker (e.g. 'blog_digest_sent_2026-04-21')
+        self.assertRegex(args[0], r'^blog_digest_sent_\d{4}-\d{2}-\d{2}$')
+        # Value is True (marker only — we don't store data)
+        self.assertIs(args[1], True)
+        # TTL is 23 hours so the key naturally expires before the next day's run
+        timeout = kwargs.get('timeout') if 'timeout' in kwargs else (args[2] if len(args) > 2 else None)
+        self.assertEqual(timeout, 82800)
 
     @patch('apps.blog.tasks.cache')
     @patch('apps.accounts.email_service.send_email')
