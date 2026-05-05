@@ -370,3 +370,48 @@ class SubscriptionPlan(models.Model):
         elif self.billing_period == 'yearly':
             return self.price / 12
         return self.price
+
+
+class Promo(models.Model):
+    """
+    Promotional code that grants a Premium trial extension.
+    Used by external funnels (e.g., book QR codes) to seed signups.
+    """
+    code = models.CharField(max_length=32, unique=True, db_index=True)
+    trial_days = models.IntegerField(help_text="Days of Premium trial to grant")
+    description = models.CharField(max_length=200, blank=True)
+    active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'promos'
+        verbose_name = 'Promo Code'
+        verbose_name_plural = 'Promo Codes'
+
+    def __str__(self):
+        return f"{self.code} ({self.trial_days}d)"
+
+
+class PromoRedemption(models.Model):
+    """
+    Records that a user has redeemed a given promo. unique_together
+    enforces one redemption per (user, promo) at the database level.
+    """
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='promo_redemptions'
+    )
+    promo = models.ForeignKey(
+        Promo,
+        on_delete=models.CASCADE,
+        related_name='redemptions'
+    )
+    redeemed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'promo_redemptions'
+        unique_together = ('user', 'promo')
+
+    def __str__(self):
+        return f"{self.user.username} redeemed {self.promo.code}"
