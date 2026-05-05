@@ -5158,8 +5158,14 @@ def log_slip_view(request):
     if request.method == 'POST':
         slip_date_str = request.POST.get('slip_date', '').strip()
         notes = request.POST.get('notes', '').strip()
-        substance = request.POST.get('substance', '').strip()
-        trigger = request.POST.get('trigger', '').strip()
+        # Truncate to model max_length so a user who pastes/types past the
+        # form's HTML limit (or submits via curl) doesn't 500. Logging a slip
+        # is an emotionally vulnerable moment — never reject the submission
+        # over input length.
+        substance_max = RelapseLog._meta.get_field('substance').max_length
+        trigger_max = RelapseLog._meta.get_field('trigger').max_length
+        substance = request.POST.get('substance', '').strip()[:substance_max]
+        trigger = request.POST.get('trigger', '').strip()[:trigger_max]
 
         if not slip_date_str:
             messages.error(request, 'Please enter the date of the slip.')
