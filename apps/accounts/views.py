@@ -73,6 +73,12 @@ def register_view(request):
                     }
                 )
 
+                # Apply funnel promo if user came from /journal-bonus
+                journal_promo = request.session.pop('journal_promo', None)
+                if journal_promo:
+                    from .promo_service import apply_promo_to_user
+                    apply_promo_to_user(user, journal_promo)
+
                 messages.success(
                     request, f'Welcome to the community, {username}!')
 
@@ -151,6 +157,12 @@ def register_view(request):
                     'status': 'active',
                 }
             )
+
+            # Apply funnel promo if user came from /journal-bonus
+            journal_promo = request.session.pop('journal_promo', None)
+            if journal_promo:
+                from .promo_service import apply_promo_to_user
+                apply_promo_to_user(user, journal_promo)
 
             messages.success(request, f'Welcome to the community, {username}!')
 

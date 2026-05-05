@@ -1,7 +1,10 @@
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from apps.accounts.payment_models import Promo
+from django.utils import timezone
+from datetime import timedelta
+from apps.accounts.payment_models import Promo, Subscription, PromoRedemption
+from apps.accounts.invite_models import SystemSettings
 
 User = get_user_model()
 
@@ -84,3 +87,69 @@ class JournalBonusPostTests(TestCase):
         })
         self.assertEqual(resp.status_code, 302)
         self.assertIn('/accounts/login/', resp.url)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class JournalBonusEndToEndTests(TestCase):
+    def setUp(self):
+        Promo.objects.update_or_create(
+            code='PAL90',
+            defaults={'trial_days': 60, 'active': True},
+        )
+        # Disable invite-only mode so the standard registration form is used
+        SystemSettings.objects.update_or_create(
+            pk=1,
+            defaults={'invite_only_mode': False},
+        )
+
+    def test_full_signup_flow_grants_60_day_trial(self):
+        # Step 1: hit the funnel
+        self.client.post(reverse('core:journal_bonus'), {
+            'email': 'newuser@example.com',
+            'code': 'PAL90',
+        })
+        self.assertEqual(self.client.session.get('journal_promo'), 'PAL90')
+
+        # Step 2: complete registration via the standard form
+        register_resp = self.client.post(reverse('accounts:register'), {
+            'username': 'newuser',
+            'email': 'newuser@example.com',
+            'password1': 'StrongPass123!@',
+            'password2': 'StrongPass123!@',
+        })
+        self.assertEqual(register_resp.status_code, 302)
+
+        # Step 3: verify the new user has a 60-day Premium trial
+        user = User.objects.get(username='newuser')
+        sub = Subscription.objects.get(user=user)
+        self.assertEqual(sub.tier, 'premium')
+        self.assertEqual(sub.status, 'trialing')
+        self.assertEqual(sub.subscription_source, 'manual')
+        expected = timezone.now() + timedelta(days=60)
+        self.assertLess(abs((sub.trial_end - expected).total_seconds()), 120)
+
+        # Step 4: PromoRedemption row created
+        self.assertTrue(
+            PromoRedemption.objects.filter(user=user, promo__code='PAL90').exists()
+        )
+
+        # Step 5: session promo cleared so it doesn't fire again
+        self.assertNotIn('journal_promo', self.client.session)
+
+    def test_register_without_promo_in_session_unchanged(self):
+        # No funnel POST first — promo not in session.
+        register_resp = self.client.post(reverse('accounts:register'), {
+            'username': 'plainuser',
+            'email': 'plain@example.com',
+            'password1': 'StrongPass123!@',
+            'password2': 'StrongPass123!@',
+        })
+        self.assertEqual(register_resp.status_code, 302)
+
+        user = User.objects.get(username='plainuser')
+        sub = Subscription.objects.get(user=user)
+        # No promo applied → subscription_source stays at default ('stripe')
+        self.assertNotEqual(sub.subscription_source, 'manual')
+        self.assertFalse(
+            PromoRedemption.objects.filter(user=user).exists()
+        )
