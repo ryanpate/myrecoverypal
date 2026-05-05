@@ -331,8 +331,27 @@ class JournalBonusView(View):
 @login_required
 def journal_bonus_claim(request):
     """
-    Login-required handler that consumes the session promo and
-    applies it to the now-authenticated user. Placeholder for now.
+    Login-required handler that consumes the session promo (or ?code=
+    fallback) and applies it to the now-authenticated user. Used when
+    an existing user comes back through the journal funnel.
     """
-    # Filled in during Task 7
+    from apps.accounts.promo_service import apply_promo_to_user
+
+    code = request.session.pop('journal_promo', None) or request.GET.get('code')
+    if code:
+        applied, msg = apply_promo_to_user(request.user, code)
+        if applied:
+            messages.success(
+                request,
+                "Welcome back! 60 days of Premium has been added to your account."
+            )
+        elif msg == 'already premium':
+            messages.info(
+                request,
+                "You already have Premium — thanks for picking up the journal!"
+            )
+        elif msg == 'already redeemed':
+            messages.info(request, "You've already used this code.")
+        # 'invalid code' → silent, no toast
+
     return redirect('accounts:social_feed')

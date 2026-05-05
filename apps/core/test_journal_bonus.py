@@ -153,3 +153,62 @@ class JournalBonusEndToEndTests(TestCase):
         self.assertFalse(
             PromoRedemption.objects.filter(user=user).exists()
         )
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class JournalBonusClaimTests(TestCase):
+    def setUp(self):
+        Promo.objects.update_or_create(
+            code='PAL90',
+            defaults={'trial_days': 60, 'active': True},
+        )
+        self.user = User.objects.create_user(
+            username='returning', email='returning@example.com', password='pw'
+        )
+        # Reset their auto-created trialing sub to free state
+        sub = self.user.subscription
+        sub.tier = 'free'
+        sub.status = 'active'
+        sub.trial_end = None
+        sub.subscription_source = 'stripe'
+        sub.save()
+
+    def test_claim_requires_login(self):
+        resp = self.client.get(reverse('core:journal_bonus_claim'))
+        self.assertEqual(resp.status_code, 302)
+        self.assertIn('/accounts/login/', resp.url)
+
+    def test_claim_applies_promo_from_session(self):
+        self.client.login(username='returning', password='pw')
+        session = self.client.session
+        session['journal_promo'] = 'PAL90'
+        session.save()
+
+        resp = self.client.get(reverse('core:journal_bonus_claim'))
+        self.assertEqual(resp.status_code, 302)
+
+        sub = Subscription.objects.get(user=self.user)
+        self.assertEqual(sub.tier, 'premium')
+        self.assertEqual(sub.status, 'trialing')
+        self.assertEqual(sub.subscription_source, 'manual')
+        self.assertTrue(
+            PromoRedemption.objects.filter(user=self.user, promo__code='PAL90').exists()
+        )
+
+    def test_claim_falls_back_to_query_param(self):
+        self.client.login(username='returning', password='pw')
+        # Session is empty — claim should still work via ?code=
+        resp = self.client.get(reverse('core:journal_bonus_claim') + '?code=PAL90')
+        self.assertEqual(resp.status_code, 302)
+
+        sub = Subscription.objects.get(user=self.user)
+        self.assertEqual(sub.tier, 'premium')
+
+    def test_claim_with_no_code_redirects_to_feed(self):
+        self.client.login(username='returning', password='pw')
+        resp = self.client.get(reverse('core:journal_bonus_claim'))
+        self.assertEqual(resp.status_code, 302)
+
+        sub = Subscription.objects.get(user=self.user)
+        # No promo applied — still free
+        self.assertEqual(sub.tier, 'free')
