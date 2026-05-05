@@ -1,5 +1,11 @@
 from django.shortcuts import render, redirect
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.core.validators import EmailValidator
+from django.core.exceptions import ValidationError
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
 
 
 class IndexView(TemplateView):
@@ -264,3 +270,32 @@ def custom_403(request, exception):
 def custom_400(request, exception):
     """Custom 400 error page"""
     return render(request, '400.html', status=400)
+
+
+DEFAULT_PROMO_CODE = 'PAL90'
+
+
+class JournalBonusView(View):
+    """
+    Public landing page for the journal QR funnel.
+    GET: render the page.
+    POST: capture email, store promo + email in session, redirect to
+          register or login depending on whether email is registered.
+    """
+    template_name = 'core/journal_bonus.html'
+
+    def get(self, request):
+        code = request.GET.get('code') or DEFAULT_PROMO_CODE
+        return render(request, self.template_name, {
+            'promo_code': code,
+        })
+
+
+@login_required
+def journal_bonus_claim(request):
+    """
+    Login-required handler that consumes the session promo and
+    applies it to the now-authenticated user. Placeholder for now.
+    """
+    # Filled in during Task 7
+    return redirect('accounts:social_feed')
