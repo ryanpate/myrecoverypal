@@ -290,6 +290,43 @@ class JournalBonusView(View):
             'promo_code': code,
         })
 
+    def post(self, request):
+        from django.contrib.auth import get_user_model
+        from urllib.parse import urlencode
+        User = get_user_model()
+
+        code = (request.POST.get('code') or DEFAULT_PROMO_CODE).strip()
+        email = (request.POST.get('email') or '').strip().lower()
+
+        # Validate email
+        validator = EmailValidator()
+        try:
+            validator(email)
+        except ValidationError:
+            return render(request, self.template_name, {
+                'promo_code': code,
+                'submitted_email': email,
+                'form_error': 'Please enter a valid email address.',
+            })
+
+        # Stash promo in session for the downstream auth flow
+        request.session['journal_promo'] = code
+
+        # Branch on whether the email is already registered
+        existing = User.objects.filter(email__iexact=email).first()
+        if existing is None:
+            register_url = reverse('accounts:register')
+            qs = urlencode({'email': email})
+            return redirect(f'{register_url}?{qs}')
+
+        # Existing user — send them through login then to claim
+        claim_url = reverse('core:journal_bonus_claim')
+        login_url = reverse('accounts:login')
+        next_qs = urlencode({'code': code})
+        next_url = f'{claim_url}?{next_qs}'
+        login_qs = urlencode({'next': next_url})
+        return redirect(f'{login_url}?{login_qs}')
+
 
 @login_required
 def journal_bonus_claim(request):
