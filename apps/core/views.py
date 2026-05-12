@@ -335,6 +335,16 @@ class FaithJournalView(JournalBonusView):
     default_promo_code = 'CHRISTIAN60'
 
 
+class LovedOneView(JournalBonusView):
+    """
+    Loved One's Recovery Journal QR funnel. Same flow as JournalBonusView,
+    different default promo code and template. Audience: family/friends
+    supporting someone in recovery.
+    """
+    template_name = 'core/loved_one.html'
+    default_promo_code = 'LOVEDONE60'
+
+
 @login_required
 def journal_bonus_claim(request):
     """
