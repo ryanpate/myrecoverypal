@@ -33,4 +33,5 @@ urlpatterns = [
     path('sobriety-medallion-maker/', views.SobrietyMedallionMakerView.as_view(), name='sobriety_medallion_maker'),
     path('journal-bonus/', views.JournalBonusView.as_view(), name='journal_bonus'),
     path('journal-bonus/claim/', views.journal_bonus_claim, name='journal_bonus_claim'),
+    path('faith-journal/', views.FaithJournalView.as_view(), name='faith_journal'),
 ]

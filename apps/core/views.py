@@ -272,9 +272,6 @@ def custom_400(request, exception):
     return render(request, '400.html', status=400)
 
 
-DEFAULT_PROMO_CODE = 'PAL90'
-
-
 class JournalBonusView(View):
     """
     Public landing page for the journal QR funnel.
@@ -283,9 +280,10 @@ class JournalBonusView(View):
           register or login depending on whether email is registered.
     """
     template_name = 'core/journal_bonus.html'
+    default_promo_code = 'PAL90'
 
     def get(self, request):
-        code = request.GET.get('code') or DEFAULT_PROMO_CODE
+        code = request.GET.get('code') or self.default_promo_code
         return render(request, self.template_name, {
             'promo_code': code,
         })
@@ -295,7 +293,7 @@ class JournalBonusView(View):
         from urllib.parse import urlencode
         User = get_user_model()
 
-        code = (request.POST.get('code') or DEFAULT_PROMO_CODE).strip()
+        code = (request.POST.get('code') or self.default_promo_code).strip()
         email = (request.POST.get('email') or '').strip().lower()
 
         # Validate email
@@ -326,6 +324,15 @@ class JournalBonusView(View):
         next_url = f'{claim_url}?{next_qs}'
         login_qs = urlencode({'next': next_url})
         return redirect(f'{login_url}?{login_qs}')
+
+
+class FaithJournalView(JournalBonusView):
+    """
+    Christian Recovery Journal QR funnel. Same flow as JournalBonusView,
+    different default promo code and template.
+    """
+    template_name = 'core/faith_journal.html'
+    default_promo_code = 'CHRISTIAN60'
 
 
 @login_required

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Welcome — Your 60-day Premium Trial | MyRecoveryPal{% endblock %}
+{% block meta_description %}Thanks for picking up the Christian Recovery Journal. Start your 60-day MyRecoveryPal Premium trial — community feed, AI coach, daily check-ins.{% endblock %}
+
+{% block content %}
+<div style="max-width: 720px; margin: 2rem auto; padding: 0 1rem;">
+  <div style="background: white; border-radius: 16px; padding: 2rem 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+    <h1 style="font-size: 1.9rem; line-height: 1.2; margin: 0 0 0.75rem;">
+      Welcome — your 60-day Premium trial starts here.
+    </h1>
+    <p style="font-size: 1.05rem; color: #555; margin: 0 0 1.5rem;">
+      Thanks for picking up the Christian Recovery Journal. This is the community walking the road with you.
+    </p>
+
+    {% if form_error %}
+    <div style="background: #fef2f2; color: #b91c1c; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem;">
+      {{ form_error }}
+    </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'core:faith_journal' %}" novalidate
+          style="display: flex; flex-direction: column; gap: 0.75rem;">
+      {% csrf_token %}
+      <input type="hidden" name="code" value="{{ promo_code }}">
+      <input type="email" name="email" required
+             autocomplete="email" inputmode="email"
+             placeholder="your@email.com"
+             value="{{ submitted_email|default_if_none:'' }}"
+             style="padding: 0.85rem 1rem; font-size: 1rem; border: 1px solid #d1d5db; border-radius: 10px; width: 100%;">
+      <button type="submit"
+              style="padding: 0.95rem 1.25rem; font-size: 1.05rem; font-weight: 600; color: white; background: linear-gradient(135deg, #4db8e8 0%, #6dd5a8 100%); border: none; border-radius: 10px; cursor: pointer;">
+        Start free trial
+      </button>
+    </form>
+
+    <p style="margin: 1rem 0 0; font-size: 0.9rem; color: #6b7280; text-align: center;">
+      Already have an account?
+      <a href="{% url 'accounts:login' %}?next={% url 'core:journal_bonus_claim' %}?code={{ promo_code }}">Log in</a>
+    </p>
+
+    <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: #9ca3af; text-align: center;">
+      60-day Premium trial. No credit card required. Cancel anytime.
+    </p>
+  </div>
+
+  <div style="margin-top: 2rem; padding: 1.5rem; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+    <p style="margin: 0 0 0.5rem; font-size: 1rem; color: #1f2937;">
+      MyRecoveryPal is a private community feed, daily check-ins, and milestone tracking — built for people in recovery, whatever your path of faith.
+    </p>
+    <p style="margin: 0 0 0.5rem; font-size: 1rem; color: #1f2937;">
+      Anchor, our 24/7 AI recovery coach, is included with Premium.
+    </p>
+    <p style="margin: 0; font-size: 1rem; color: #1f2937;">
+      No ads. No selling your data. Just support that meets you where you are.
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1.5rem;">
+      <picture>
+        <source srcset="{% static 'images/demo/feed.webp' %}" type="image/webp">
+        <img src="{% static 'images/demo/feed.png' %}" alt="MyRecoveryPal social feed"
+             loading="lazy" width="600" height="450"
+             style="width: 100%; height: auto; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      </picture>
+      <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor AI Recovery Coach"
+           loading="lazy"
+           style="width: 100%; height: auto; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    </div>
+  </div>
+</div>
+{% endblock %}
