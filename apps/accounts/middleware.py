@@ -1,4 +1,5 @@
 import logging
+import time
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.db import close_old_connections, connection, connections, OperationalError, InterfaceError
@@ -13,9 +14,17 @@ class DatabaseConnectionMiddleware:
 
     Handles two failure modes:
     1. Stale connections (pre-request): validated via health check before each request
-    2. Mid-request drops (during processing): caught via process_exception, connection
-       is closed so the next request gets a fresh one
+    2. Mid-request drops (during processing): caught and retried up to MAX_RETRIES
+       times with backoff. Railway's proxy can drop multiple consecutive connections
+       during stress, so a single retry isn't enough to keep the UX seamless.
+
+    Safe with ATOMIC_REQUESTS=True: when a connection dies mid-view, the COMMIT
+    was never sent, so the transaction is implicitly rolled back at the DB level.
+    Retrying the view replays the same logic against a fresh connection.
     """
+
+    # Total attempts = 1 initial + len(BACKOFF_DELAYS) retries
+    BACKOFF_DELAYS = (0.1, 0.3, 0.7)
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -49,15 +58,25 @@ class DatabaseConnectionMiddleware:
             logger.warning("Stale database connection detected pre-request, reconnecting")
             self._close_all_connections()
 
-        try:
-            response = self.get_response(request)
-        except (OperationalError, InterfaceError) as e:
-            # Connection died mid-request — close all and retry once
-            logger.warning("Database connection lost mid-request (%s), retrying", e)
-            self._close_all_connections()
-            response = self.get_response(request)
-
-        return response
+        total_attempts = 1 + len(self.BACKOFF_DELAYS)
+        for attempt in range(total_attempts):
+            try:
+                return self.get_response(request)
+            except (OperationalError, InterfaceError) as e:
+                self._close_all_connections()
+                if attempt < len(self.BACKOFF_DELAYS):
+                    delay = self.BACKOFF_DELAYS[attempt]
+                    logger.warning(
+                        "Database connection lost mid-request (attempt %d/%d): %s. Retrying in %.2fs",
+                        attempt + 1, total_attempts, e, delay,
+                    )
+                    time.sleep(delay)
+                else:
+                    logger.error(
+                        "Database connection lost after %d attempts, giving up: %s",
+                        total_attempts, e,
+                    )
+                    raise
 
     def process_exception(self, request, exception):
         """
