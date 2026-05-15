@@ -43,6 +43,7 @@ class StaticViewSitemap(Sitemap):
             ('core:demo', 0.8),  # Demo/tour page
             ('core:about', 0.8),  # About page
             ('core:crisis', 0.8),  # Crisis resources
+            ('store:product_list', 0.7),  # Recovery Shop (journals/apparel)
 
             # Community pages
             ('core:contact', 0.7),  # Contact page
@@ -58,8 +59,6 @@ class StaticViewSitemap(Sitemap):
             ('core:privacy', 0.5),  # Privacy policy
             ('core:terms', 0.5),  # Terms of service
             ('core:cookies', 0.4),  # Cookie policy
-
-            # Store removed from sitemap — "Coming Soon" placeholder wastes crawl budget
         ]
 
     def location(self, item):

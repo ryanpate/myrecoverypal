@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Recovery Shop — Sobriety Journals & Sober Apparel | MyRecoveryPal{% endblock %}
+
+{% block meta_description %}Shop recovery journals, sobriety milestone apparel, and sober gifts. Every purchase helps keep MyRecoveryPal free for the recovery community.{% endblock %}
+
+{% block extra_css %}
+<style>
+    .shop-header {
+        background: var(--gradient-primary, linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%));
+        color: #fff;
+        padding: 3.5rem 1.5rem 3rem;
+        text-align: center;
+    }
+    .shop-header h1 {
+        font-size: 2.4rem;
+        margin: 0 0 0.75rem;
+        color: #fff;
+    }
+    .shop-header p {
+        max-width: 640px;
+        margin: 0 auto;
+        opacity: 0.95;
+        font-size: 1.05rem;
+        line-height: 1.6;
+    }
+    .shop-wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+    }
+    .shop-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        justify-content: center;
+        margin-bottom: 2.25rem;
+    }
+    .shop-filter {
+        padding: 0.5rem 1.1rem;
+        border-radius: 999px;
+        border: 1.5px solid var(--primary-dark, #1e4d8b);
+        color: var(--primary-dark, #1e4d8b);
+        background: transparent;
+        text-decoration: none;
+        font-size: 0.92rem;
+        font-weight: 600;
+        transition: all 0.15s ease;
+    }
+    .shop-filter:hover { background: rgba(30, 77, 139, 0.08); }
+    .shop-filter.active {
+        background: var(--primary-dark, #1e4d8b);
+        color: #fff;
+    }
+    .shop-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1.5rem;
+    }
+    .shop-card {
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-lighter, #fff);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 14px;
+        overflow: hidden;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .shop-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+    }
+    .shop-card-img {
+        position: relative;
+        aspect-ratio: 1 / 1;
+        background: var(--bg-light, #f4f6f9);
+    }
+    .shop-card-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .shop-card-img .placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: var(--primary-dark, #1e4d8b);
+        opacity: 0.35;
+    }
+    .shop-badge {
+        position: absolute;
+        top: 0.6rem;
+        left: 0.6rem;
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--primary-dark, #1e4d8b);
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+    }
+    .shop-card-body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding: 1rem 1.1rem 1.2rem;
+    }
+    .shop-card-body h3 {
+        font-size: 1.05rem;
+        margin: 0 0 0.35rem;
+        color: var(--primary-dark, #1e4d8b);
+    }
+    .shop-card-desc {
+        font-size: 0.88rem;
+        color: #667085;
+        line-height: 1.5;
+        margin: 0 0 1rem;
+        flex: 1;
+    }
+    .shop-card-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+    .shop-price {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--primary-dark, #1e4d8b);
+    }
+    .shop-buy {
+        background: var(--accent-green, #52b788);
+        color: #fff !important;
+        text-decoration: none;
+        padding: 0.55rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        white-space: nowrap;
+        transition: filter 0.15s ease;
+    }
+    .shop-buy:hover { filter: brightness(0.93); }
+    .shop-empty {
+        text-align: center;
+        padding: 4rem 1rem;
+        color: #667085;
+    }
+    .shop-empty i { font-size: 3rem; color: var(--primary-dark, #1e4d8b); opacity: 0.3; }
+    .shop-disclosure {
+        max-width: 720px;
+        margin: 2.5rem auto 0;
+        text-align: center;
+        font-size: 0.82rem;
+        color: #98a2b3;
+        line-height: 1.6;
+    }
+    @media (max-width: 600px) {
+        .shop-header h1 { font-size: 1.8rem; }
+        .shop-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="shop-header">
+    <h1>The Recovery Shop</h1>
+    <p>Sobriety journals, milestone apparel, and gifts that celebrate the journey. Every purchase helps keep MyRecoveryPal free for the community.</p>
+</section>
+
+<div class="shop-wrap">
+    {% if categories %}
+    <div class="shop-filters">
+        <a href="{% url 'store:product_list' %}" class="shop-filter {% if not active_category %}active{% endif %}">All</a>
+        {% for category in categories %}
+        <a href="?category={{ category.slug }}" class="shop-filter {% if active_category == category.slug %}active{% endif %}">{{ category.name }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if products %}
+    <div class="shop-grid">
+        {% for product in products %}
+        <div class="shop-card">
+            <div class="shop-card-img">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" width="400" height="400">
+                {% else %}
+                <div class="placeholder"><i class="fas fa-gift" aria-hidden="true"></i></div>
+                {% endif %}
+                <span class="shop-badge">{{ product.source_label }}</span>
+            </div>
+            <div class="shop-card-body">
+                <h3>{{ product.name }}</h3>
+                <p class="shop-card-desc">{{ product.description|truncatewords:22 }}</p>
+                <div class="shop-card-foot">
+                    <span class="shop-price">${{ product.price }}</span>
+                    <a class="shop-buy" href="{{ product.external_url }}" target="_blank" rel="noopener nofollow sponsored">
+                        {{ product.cta_label }} <i class="fas fa-arrow-up-right-from-square" aria-hidden="true" style="font-size:0.78em;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="shop-empty">
+        <i class="fas fa-box-open" aria-hidden="true"></i>
+        <h2>New products coming soon</h2>
+        <p>We're adding recovery journals and apparel. Check back shortly.</p>
+    </div>
+    {% endif %}
+
+    <p class="shop-disclosure">
+        Products are sold and shipped by Printify and Amazon. MyRecoveryPal may earn from
+        qualifying purchases, which helps keep the platform free. We are not responsible
+        for third-party orders, shipping, or returns.
+    </p>
+</div>
+
+{% if products %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "The Recovery Shop — MyRecoveryPal",
+  "description": "Sobriety journals, milestone apparel, and recovery gifts.",
+  "url": "https://www.myrecoverypal.com{% url 'store:product_list' %}",
+  "mainEntity": {
+    "@type": "ItemList",
+    "itemListElement": [
+      {% for product in products %}{
+        "@type": "ListItem",
+        "position": {{ forloop.counter }},
+        "item": {
+          "@type": "Product",
+          "name": "{{ product.name|escapejs }}",
+          "url": "{{ product.external_url|escapejs }}",
+          "offers": {
+            "@type": "Offer",
+            "price": "{{ product.price }}",
+            "priceCurrency": "USD"
+          }
+        }
+      }{% if not forloop.last %},{% endif %}{% endfor %}
+    ]
+  }
+}
+</script>
+{% endif %}
+{% endblock %}

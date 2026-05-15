@@ -15,7 +15,7 @@ Allow: /guidelines/
 Allow: /success-stories/
 Allow: /team/
 Allow: /crisis/
-Disallow: /store/
+Allow: /store/
 Allow: /resources/
 Allow: /support/
 

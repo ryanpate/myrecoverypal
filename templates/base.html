@@ -463,6 +463,10 @@
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-newspaper" style="margin-right: 0.5rem;"></i> Blog
                 </a>
+                <a href="{% url 'store:product_list' %}"
+                    class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-bag-shopping" style="margin-right: 0.5rem;"></i> Recovery Shop
+                </a>
                 <a href="{% url 'accounts:invite_friends' %}"
                     class="{% if request.resolver_match.url_name == 'invite_friends' %}active{% endif %}"
                     style="color: #52b788;">
@@ -483,6 +487,10 @@
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-newspaper" style="margin-right: 0.5rem;"></i> Blog
+                </a>
+                <a href="{% url 'store:product_list' %}"
+                    class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-bag-shopping" style="margin-right: 0.5rem;"></i> Recovery Shop
                 </a>
             </div>
             {% endif %}
@@ -647,6 +655,7 @@
                 <ul>
                     <li><a href="{% url 'accounts:community' %}">Members</a></li>
                     <li><a href="{% url 'core:ai_recovery_coach' %}">Anchor AI Coach</a></li>
+                    <li><a href="{% url 'store:product_list' %}">Recovery Shop</a></li>
                     <li><a href="{% url 'core:guidelines' %}">Guidelines</a></li>
                     <li><a href="{% url 'core:success_stories' %}">Success Stories</a></li>
                 </ul>
