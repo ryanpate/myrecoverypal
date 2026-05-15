@@ -57,7 +57,7 @@ JOURNALS = [
     },
     {
         "name": "90 Day Recovery Journal: Extended Guided Prompts for Lasting Sobriety, Healing, and Growth",
-        "price": "9.99",
+        "price": "12.99",
         "url": "https://www.amazon.com/dp/B0FR4MPHSW",
         "image": "https://m.media-amazon.com/images/I/51B-ZcQk2PL._SY522_.jpg",
         "featured": True,
