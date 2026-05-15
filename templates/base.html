@@ -209,6 +209,8 @@
                             class="{% if request.resolver_match.url_name == 'daily_checkin' %}active{% endif %}">Check-in</a></li>
                     <li><a href="{% url 'accounts:progress' %}"
                             class="{% if request.resolver_match.url_name == 'progress' %}active{% endif %}">Progress</a></li>
+                    <li><a href="{% url 'store:product_list' %}"
+                            class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">Shop</a></li>
                     <li><a href="{% url 'accounts:recovery_coach' %}"
                             class="anchor-ai-cta {% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}">
                             <i class="fas fa-robot" aria-hidden="true"></i> Try Anchor AI
@@ -216,6 +218,8 @@
                     {% else %}
                     <li><a href="{% url 'blog:post_list' %}"
                             class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">Blog</a></li>
+                    <li><a href="{% url 'store:product_list' %}"
+                            class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">Shop</a></li>
                     <li><a href="{% url 'core:ai_recovery_coach' %}"
                             class="anchor-ai-cta {% if request.resolver_match.url_name == 'ai_recovery_coach' %}active{% endif %}">
                             <i class="fas fa-robot" aria-hidden="true"></i> Try Anchor AI
