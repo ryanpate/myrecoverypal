@@ -159,9 +159,30 @@
         color: #98a2b3;
         line-height: 1.6;
     }
+    .shop-section { margin-bottom: 3rem; }
+    .shop-section:last-of-type { margin-bottom: 0; }
+    .shop-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.5rem;
+        color: var(--primary-dark, #1e4d8b);
+        margin: 0 0 1.25rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid rgba(30, 77, 139, 0.12);
+    }
+    .shop-section-title .count {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #98a2b3;
+        background: var(--bg-light, #f4f6f9);
+        padding: 0.15rem 0.6rem;
+        border-radius: 999px;
+    }
     @media (max-width: 600px) {
         .shop-header h1 { font-size: 1.8rem; }
         .shop-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+        .shop-section-title { font-size: 1.25rem; }
     }
 </style>
 {% endblock %}
@@ -182,31 +203,39 @@
     </div>
     {% endif %}
 
-    {% if products %}
-    <div class="shop-grid">
-        {% for product in products %}
-        <div class="shop-card">
-            <div class="shop-card-img">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" width="400" height="400">
-                {% else %}
-                <div class="placeholder"><i class="fas fa-gift" aria-hidden="true"></i></div>
-                {% endif %}
-                <span class="shop-badge">{{ product.source_label }}</span>
-            </div>
-            <div class="shop-card-body">
-                <h3>{{ product.name }}</h3>
-                <p class="shop-card-desc">{{ product.description|truncatewords:22 }}</p>
-                <div class="shop-card-foot">
-                    <span class="shop-price">${{ product.price }}</span>
-                    <a class="shop-buy" href="{{ product.external_url }}" target="_blank" rel="noopener nofollow sponsored">
-                        {{ product.cta_label }} <i class="fas fa-arrow-up-right-from-square" aria-hidden="true" style="font-size:0.78em;"></i>
-                    </a>
+    {% if category_groups %}
+    {% for group in category_groups %}
+    <section class="shop-section">
+        <h2 class="shop-section-title">
+            {{ group.category.name }}
+            <span class="count">{{ group.products|length }}</span>
+        </h2>
+        <div class="shop-grid">
+            {% for product in group.products %}
+            <div class="shop-card">
+                <div class="shop-card-img">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" width="400" height="400">
+                    {% else %}
+                    <div class="placeholder"><i class="fas fa-gift" aria-hidden="true"></i></div>
+                    {% endif %}
+                    <span class="shop-badge">{{ product.source_label }}</span>
+                </div>
+                <div class="shop-card-body">
+                    <h3>{{ product.name }}</h3>
+                    <p class="shop-card-desc">{{ product.description|truncatewords:22 }}</p>
+                    <div class="shop-card-foot">
+                        <span class="shop-price">${{ product.price }}</span>
+                        <a class="shop-buy" href="{{ product.external_url }}" target="_blank" rel="noopener nofollow sponsored">
+                            {{ product.cta_label }} <i class="fas fa-arrow-up-right-from-square" aria-hidden="true" style="font-size:0.78em;"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
+    </section>
+    {% endfor %}
     {% else %}
     <div class="shop-empty">
         <i class="fas fa-box-open" aria-hidden="true"></i>
