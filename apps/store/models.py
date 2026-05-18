@@ -74,6 +74,11 @@ class Product(models.Model):
     def source_label(self):
         return self.get_source_display()
 
+    @property
+    def is_book(self):
+        # Book covers are portrait — they must be shown in full, not cropped.
+        return self.source == self.SOURCE_AMAZON_KDP
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)

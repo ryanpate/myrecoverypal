@@ -257,6 +257,10 @@
         height: 100%;
         object-fit: cover;
     }
+    /* Book covers are portrait — show the whole cover, never crop. */
+    .shop-spotlight-img.is-book { background: #f0f3f8; }
+    .shop-spotlight-img.is-book img { object-fit: contain; padding: 1.5rem; }
+    [data-theme="dark"] .shop-spotlight-img.is-book { background: #1c2433; }
     .shop-spotlight-body {
         padding: 2.5rem 2.5rem 2.5rem;
         display: flex;
@@ -400,6 +404,11 @@
         transition: transform 0.4s ease;
     }
     .shop-card:hover .shop-card-img img { transform: scale(1.05); }
+    /* Book covers are portrait — show the whole cover, never crop. */
+    .shop-card-img.is-book { background: #f0f3f8; }
+    .shop-card-img.is-book img { object-fit: contain; padding: 0.9rem; }
+    .shop-card:hover .shop-card-img.is-book img { transform: scale(1.03); }
+    [data-theme="dark"] .shop-card-img.is-book { background: #1c2433; }
     .shop-card-img .placeholder {
         width: 100%;
         height: 100%;
@@ -600,7 +609,7 @@
                 {% for product in featured_products %}
                 <div class="shop-spotlight" role="group" aria-roledescription="slide"
                      aria-label="{{ forloop.counter }} of {{ featured_products|length }}">
-                    <div class="shop-spotlight-img">
+                    <div class="shop-spotlight-img{% if product.is_book %} is-book{% endif %}">
                         {% if product.image %}
                         <a href="{{ product.external_url }}" target="_blank" rel="noopener nofollow sponsored">
                             <img src="{{ product.image.url }}" alt="{{ product.name }}" {% if forloop.first %}loading="eager"{% else %}loading="lazy"{% endif %} width="600" height="600">
@@ -656,7 +665,7 @@
         <div class="shop-grid">
             {% for product in group.products %}
             <div class="shop-card">
-                <div class="shop-card-img">
+                <div class="shop-card-img{% if product.is_book %} is-book{% endif %}">
                     {% if product.image %}
                     <a href="{{ product.external_url }}" target="_blank" rel="noopener nofollow sponsored" aria-label="{{ product.name }}">
                         <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" width="400" height="400">
