@@ -45,20 +45,21 @@ class ProductListView(ListView):
             if products:
                 groups.append({'category': cat, 'products': products})
 
-        # A single hero product for the storefront spotlight (only on the
-        # unfiltered view, so the filter still shows just its category).
-        featured_product = None
+        # Featured products power the rotating storefront spotlight (only on
+        # the unfiltered view, so the filter still shows just one category).
+        featured_products = []
         if not active:
-            featured_product = (
+            featured_products = list(
                 Product.objects.filter(is_active=True, is_featured=True)
                 .select_related('category')
-                .order_by('-created_at')
-                .first()
+                .order_by('-created_at')[:6]
             )
 
         context['categories'] = categories
         context['category_groups'] = groups
         context['active_category'] = active
-        context['featured_product'] = featured_product
+        context['featured_products'] = featured_products
+        # First slide doubles as the OG/Twitter share image.
+        context['featured_product'] = featured_products[0] if featured_products else None
         context['product_count'] = Product.objects.filter(is_active=True).count()
         return context

@@ -165,18 +165,86 @@
         color: #fff;
     }
 
-    /* ---------- Featured spotlight ---------- */
+    /* ---------- Featured spotlight (rotating) ---------- */
+    .shop-spotlight-carousel {
+        position: relative;
+        margin-bottom: 3rem;
+    }
+    .shop-spotlight-viewport {
+        overflow: hidden;
+        border: 1px solid var(--shop-line);
+        border-radius: 20px;
+        box-shadow: 0 14px 40px rgba(15, 23, 42, 0.07);
+        background: var(--shop-card);
+    }
+    .shop-spotlight-track {
+        display: flex;
+        transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: transform;
+    }
     .shop-spotlight {
+        flex: 0 0 100%;
         display: grid;
         grid-template-columns: 1.05fr 1fr;
         gap: 0;
         background: var(--shop-card);
+    }
+    /* Single featured product: render as a plain card (no carousel chrome). */
+    .shop-spotlight-carousel.is-static .shop-spotlight {
         border: 1px solid var(--shop-line);
         border-radius: 20px;
         overflow: hidden;
-        margin-bottom: 3rem;
         box-shadow: 0 14px 40px rgba(15, 23, 42, 0.07);
     }
+    .shop-spotlight-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--shop-ink);
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
+        z-index: 3;
+        transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .shop-spotlight-arrow:hover { background: #fff; }
+    .shop-spotlight-arrow.prev { left: 0.85rem; }
+    .shop-spotlight-arrow.next { right: 0.85rem; }
+    [data-theme="dark"] .shop-spotlight-arrow {
+        background: rgba(28, 36, 51, 0.92);
+        color: #eaf1fb;
+    }
+    .shop-spotlight-dots {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1.1rem;
+    }
+    .shop-spotlight-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        border: none;
+        padding: 0;
+        background: var(--shop-line);
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .shop-spotlight-dot:hover { background: var(--shop-muted); }
+    .shop-spotlight-dot.active {
+        background: var(--shop-green);
+        transform: scale(1.35);
+    }
+    .shop-spotlight-carousel.is-static .shop-spotlight-arrow,
+    .shop-spotlight-carousel.is-static .shop-spotlight-dots { display: none; }
     .shop-spotlight-img {
         position: relative;
         background: #eef2f7;
@@ -523,33 +591,56 @@
     </div>
     {% endif %}
 
-    {% if featured_product %}
-    <section class="shop-spotlight" aria-label="Featured product">
-        <div class="shop-spotlight-img">
-            {% if featured_product.image %}
-            <a href="{{ featured_product.external_url }}" target="_blank" rel="noopener nofollow sponsored">
-                <img src="{{ featured_product.image.url }}" alt="{{ featured_product.name }}" loading="eager" width="600" height="600">
-            </a>
-            {% else %}
-            <div class="placeholder" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--shop-ink);opacity:.3;"><i class="fas fa-gift" aria-hidden="true"></i></div>
-            {% endif %}
-        </div>
-        <div class="shop-spotlight-body">
-            <span class="shop-tag"><i class="fas fa-star" aria-hidden="true"></i> Featured</span>
-            <h2>{{ featured_product.name }}</h2>
-            <p>{{ featured_product.description|truncatewords:34 }}</p>
-            <div class="shop-spotlight-cta">
-                <span class="shop-spotlight-price">${{ featured_product.price }}</span>
-                <a class="btn-buy" href="{{ featured_product.external_url }}" target="_blank" rel="noopener nofollow sponsored">
-                    {{ featured_product.cta_label }} <i class="fas fa-arrow-up-right-from-square" aria-hidden="true" style="font-size:0.78em;"></i>
-                </a>
-                <button type="button" class="btn-share" aria-label="Share this product"
-                        data-share-product
-                        data-name="{{ featured_product.name|escapejs }}"
-                        data-url="{{ featured_product.external_url|escapejs }}">
-                    <i class="fas fa-share-nodes" aria-hidden="true"></i>
-                </button>
+    {% if featured_products %}
+    <section class="shop-spotlight-carousel {% if featured_products|length == 1 %}is-static{% endif %}"
+             aria-roledescription="carousel" aria-label="Featured products"
+             data-rotate-ms="6000">
+        <div class="shop-spotlight-viewport">
+            <div class="shop-spotlight-track">
+                {% for product in featured_products %}
+                <div class="shop-spotlight" role="group" aria-roledescription="slide"
+                     aria-label="{{ forloop.counter }} of {{ featured_products|length }}">
+                    <div class="shop-spotlight-img">
+                        {% if product.image %}
+                        <a href="{{ product.external_url }}" target="_blank" rel="noopener nofollow sponsored">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" {% if forloop.first %}loading="eager"{% else %}loading="lazy"{% endif %} width="600" height="600">
+                        </a>
+                        {% else %}
+                        <div class="placeholder" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--shop-ink);opacity:.3;"><i class="fas fa-gift" aria-hidden="true"></i></div>
+                        {% endif %}
+                    </div>
+                    <div class="shop-spotlight-body">
+                        <span class="shop-tag"><i class="fas fa-star" aria-hidden="true"></i> Featured</span>
+                        <h2>{{ product.name }}</h2>
+                        <p>{{ product.description|truncatewords:34 }}</p>
+                        <div class="shop-spotlight-cta">
+                            <span class="shop-spotlight-price">${{ product.price }}</span>
+                            <a class="btn-buy" href="{{ product.external_url }}" target="_blank" rel="noopener nofollow sponsored">
+                                {{ product.cta_label }} <i class="fas fa-arrow-up-right-from-square" aria-hidden="true" style="font-size:0.78em;"></i>
+                            </a>
+                            <button type="button" class="btn-share" aria-label="Share this product"
+                                    data-share-product
+                                    data-name="{{ product.name|escapejs }}"
+                                    data-url="{{ product.external_url|escapejs }}">
+                                <i class="fas fa-share-nodes" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
+        </div>
+        <button type="button" class="shop-spotlight-arrow prev" aria-label="Previous featured product">
+            <i class="fas fa-chevron-left" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="shop-spotlight-arrow next" aria-label="Next featured product">
+            <i class="fas fa-chevron-right" aria-hidden="true"></i>
+        </button>
+        <div class="shop-spotlight-dots" role="tablist" aria-label="Choose featured product">
+            {% for product in featured_products %}
+            <button type="button" class="shop-spotlight-dot {% if forloop.first %}active{% endif %}"
+                    role="tab" aria-label="Featured product {{ forloop.counter }}"></button>
+            {% endfor %}
         </div>
     </section>
     {% endif %}
@@ -709,6 +800,76 @@
             );
         }
     });
+})();
+
+/* Rotating featured spotlight */
+(function () {
+    var root = document.querySelector('.shop-spotlight-carousel');
+    if (!root || root.classList.contains('is-static')) return;
+
+    var track = root.querySelector('.shop-spotlight-track');
+    var slides = root.querySelectorAll('.shop-spotlight');
+    var dots = root.querySelectorAll('.shop-spotlight-dot');
+    var prev = root.querySelector('.shop-spotlight-arrow.prev');
+    var next = root.querySelector('.shop-spotlight-arrow.next');
+    var count = slides.length;
+    if (count < 2) return;
+
+    var index = 0;
+    var timer = null;
+    var delay = parseInt(root.getAttribute('data-rotate-ms'), 10) || 6000;
+    var reduceMotion = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function go(i) {
+        index = (i + count) % count;
+        track.style.transform = 'translateX(-' + (index * 100) + '%)';
+        for (var d = 0; d < dots.length; d++) {
+            dots[d].classList.toggle('active', d === index);
+        }
+    }
+    function nextSlide() { go(index + 1); }
+
+    function start() {
+        if (reduceMotion || timer) return;
+        timer = setInterval(nextSlide, delay);
+    }
+    function stop() {
+        if (timer) { clearInterval(timer); timer = null; }
+    }
+    function restart() { stop(); start(); }
+
+    for (var i = 0; i < dots.length; i++) {
+        (function (n) {
+            dots[n].addEventListener('click', function () { go(n); restart(); });
+        })(i);
+    }
+    if (next) next.addEventListener('click', function () { nextSlide(); restart(); });
+    if (prev) prev.addEventListener('click', function () { go(index - 1); restart(); });
+
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+    root.addEventListener('focusin', stop);
+    root.addEventListener('focusout', start);
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) { stop(); } else { start(); }
+    });
+
+    // Touch swipe (mobile)
+    var x0 = null;
+    track.addEventListener('touchstart', function (e) {
+        x0 = e.touches[0].clientX; stop();
+    }, { passive: true });
+    track.addEventListener('touchend', function (e) {
+        if (x0 === null) return;
+        var dx = e.changedTouches[0].clientX - x0;
+        if (Math.abs(dx) > 40) { dx < 0 ? nextSlide() : go(index - 1); }
+        x0 = null;
+        start();
+    });
+
+    go(0);
+    start();
 })();
 </script>
 {% endblock %}
