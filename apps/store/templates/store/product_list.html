@@ -1,86 +1,337 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Recovery Shop — Sobriety Journals & Sober Apparel | MyRecoveryPal{% endblock %}
+{% block title %}The Recovery Shop — Sober Apparel, Journals & Gifts | MyRecoveryPal{% endblock %}
 
-{% block meta_description %}Shop recovery journals, sobriety milestone apparel, and sober gifts. Every purchase helps keep MyRecoveryPal free for the recovery community.{% endblock %}
+{% block meta_description %}Recovery apparel, sobriety journals, and meaningful gifts. Wear the message and support the mission — every purchase keeps MyRecoveryPal free for the recovery community.{% endblock %}
+
+{% block og_title %}The Recovery Shop — Wear the Message, Fund the Mission{% endblock %}
+{% block og_description %}Sober apparel, milestone journals, and gifts that celebrate the journey. Every order helps keep MyRecoveryPal free for people in recovery.{% endblock %}
+{% block og_type %}website{% endblock %}
+{% block og_url %}https://www.myrecoverypal.com{% url 'store:product_list' %}{% endblock %}
+{% block og_image %}{% if featured_product.image %}{{ featured_product.image.url }}{% else %}https://www.myrecoverypal.com/static/images/og-image.png{% endif %}{% endblock %}
+{% block twitter_image %}{% if featured_product.image %}{{ featured_product.image.url }}{% else %}https://www.myrecoverypal.com/static/images/og-image.png{% endif %}{% endblock %}
+{% block twitter_title %}The Recovery Shop — MyRecoveryPal{% endblock %}
+{% block twitter_description %}Sober apparel, journals, and gifts. Every purchase keeps MyRecoveryPal free.{% endblock %}
 
 {% block extra_css %}
 <style>
-    .shop-header {
-        background: var(--gradient-primary, linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%));
+    :root {
+        --shop-ink: #1e4d8b;
+        --shop-green: #52b788;
+        --shop-gold: #e3a008;
+        --shop-line: rgba(15, 23, 42, 0.08);
+        --shop-muted: #667085;
+        --shop-card: #ffffff;
+        --shop-bg: #f6f8fb;
+    }
+    [data-theme="dark"] {
+        --shop-line: rgba(255, 255, 255, 0.12);
+        --shop-muted: #9aa5b8;
+        --shop-card: #1c2433;
+        --shop-bg: #121822;
+    }
+
+    .shop-page { background: var(--shop-bg); }
+
+    /* ---------- Hero ---------- */
+    .shop-hero {
+        position: relative;
+        background:
+            radial-gradient(120% 120% at 80% 0%, rgba(82,183,136,0.55) 0%, rgba(82,183,136,0) 55%),
+            linear-gradient(135deg, #15396b 0%, #1e4d8b 45%, #2f7fb5 100%);
         color: #fff;
-        padding: 3.5rem 1.5rem 3rem;
+        padding: 4rem 1.5rem 3.25rem;
+        overflow: hidden;
+    }
+    .shop-hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
+        background-size: 22px 22px;
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    .shop-hero-inner {
+        position: relative;
+        max-width: 760px;
+        margin: 0 auto;
         text-align: center;
     }
-    .shop-header h1 {
-        font-size: 2.4rem;
-        margin: 0 0 0.75rem;
+    .shop-eyebrow {
+        display: inline-block;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #cfeede;
+        margin-bottom: 0.9rem;
+    }
+    .shop-hero h1 {
+        font-size: clamp(2rem, 5vw, 3.1rem);
+        line-height: 1.1;
+        margin: 0 0 0.9rem;
         color: #fff;
+        font-weight: 800;
+        letter-spacing: -0.02em;
     }
-    .shop-header p {
-        max-width: 640px;
-        margin: 0 auto;
-        opacity: 0.95;
-        font-size: 1.05rem;
+    .shop-hero h1 .accent { color: #8ee3b8; }
+    .shop-hero p {
+        max-width: 560px;
+        margin: 0 auto 1.6rem;
+        font-size: 1.06rem;
         line-height: 1.6;
+        opacity: 0.94;
     }
+    .shop-trust {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem 1.4rem;
+        margin-top: 0.4rem;
+    }
+    .shop-trust span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-size: 0.86rem;
+        font-weight: 600;
+        color: #e7f3ff;
+    }
+    .shop-trust i { color: #8ee3b8; }
+    .shop-share-hero {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1.6rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 999px;
+        border: 1.5px solid rgba(255,255,255,0.5);
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .shop-share-hero:hover { background: rgba(255,255,255,0.18); transform: translateY(-1px); }
+
+    /* ---------- Layout ---------- */
     .shop-wrap {
-        max-width: 1180px;
+        max-width: 1200px;
         margin: 0 auto;
-        padding: 2rem 1.5rem 4rem;
+        padding: 0 1.5rem 4rem;
+    }
+
+    /* ---------- Sticky filter bar ---------- */
+    .shop-filterbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: var(--shop-bg);
+        margin: 0 -1.5rem 2.25rem;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--shop-line);
     }
     .shop-filters {
         display: flex;
-        flex-wrap: wrap;
-        gap: 0.6rem;
-        justify-content: center;
-        margin-bottom: 2.25rem;
+        gap: 0.55rem;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        max-width: 1200px;
+        margin: 0 auto;
     }
+    .shop-filters::-webkit-scrollbar { display: none; }
     .shop-filter {
-        padding: 0.5rem 1.1rem;
+        flex: 0 0 auto;
+        padding: 0.5rem 1.15rem;
         border-radius: 999px;
-        border: 1.5px solid var(--primary-dark, #1e4d8b);
-        color: var(--primary-dark, #1e4d8b);
-        background: transparent;
+        border: 1.5px solid var(--shop-line);
+        color: var(--shop-ink);
+        background: var(--shop-card);
         text-decoration: none;
-        font-size: 0.92rem;
+        font-size: 0.9rem;
         font-weight: 600;
+        white-space: nowrap;
         transition: all 0.15s ease;
     }
-    .shop-filter:hover { background: rgba(30, 77, 139, 0.08); }
+    [data-theme="dark"] .shop-filter { color: #cdd7e6; }
+    .shop-filter:hover { border-color: var(--shop-ink); }
     .shop-filter.active {
-        background: var(--primary-dark, #1e4d8b);
+        background: var(--shop-ink);
+        border-color: var(--shop-ink);
         color: #fff;
     }
-    .shop-grid {
+
+    /* ---------- Featured spotlight ---------- */
+    .shop-spotlight {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 0;
+        background: var(--shop-card);
+        border: 1px solid var(--shop-line);
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 3rem;
+        box-shadow: 0 14px 40px rgba(15, 23, 42, 0.07);
     }
-    .shop-card {
+    .shop-spotlight-img {
+        position: relative;
+        background: #eef2f7;
+        min-height: 340px;
+    }
+    .shop-spotlight-img img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .shop-spotlight-body {
+        padding: 2.5rem 2.5rem 2.5rem;
         display: flex;
         flex-direction: column;
-        background: var(--bg-lighter, #fff);
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        border-radius: 14px;
+        justify-content: center;
+    }
+    .shop-tag {
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(227, 160, 8, 0.14);
+        color: var(--shop-gold);
+        font-size: 0.74rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 0.32rem 0.7rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+    }
+    .shop-spotlight-body h2 {
+        font-size: clamp(1.4rem, 2.6vw, 1.95rem);
+        line-height: 1.2;
+        margin: 0 0 0.75rem;
+        color: var(--shop-ink);
+        font-weight: 800;
+    }
+    [data-theme="dark"] .shop-spotlight-body h2 { color: #eaf1fb; }
+    .shop-spotlight-body p {
+        color: var(--shop-muted);
+        font-size: 0.98rem;
+        line-height: 1.6;
+        margin: 0 0 1.6rem;
+    }
+    .shop-spotlight-cta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .shop-spotlight-price {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--shop-ink);
+    }
+    [data-theme="dark"] .shop-spotlight-price { color: #eaf1fb; }
+
+    /* ---------- Buttons ---------- */
+    .btn-buy {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--shop-green);
+        color: #fff !important;
+        text-decoration: none;
+        padding: 0.7rem 1.4rem;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        white-space: nowrap;
+        box-shadow: 0 6px 16px rgba(82, 183, 136, 0.32);
+        transition: transform 0.15s ease, filter 0.15s ease;
+    }
+    .btn-buy:hover { filter: brightness(0.95); transform: translateY(-1px); }
+    .btn-buy.small { padding: 0.55rem 1rem; font-size: 0.88rem; box-shadow: none; }
+
+    .btn-share {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        border: 1.5px solid var(--shop-line);
+        background: transparent;
+        color: var(--shop-muted);
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    .btn-share:hover { border-color: var(--shop-ink); color: var(--shop-ink); }
+
+    /* ---------- Section ---------- */
+    .shop-section { margin-bottom: 3.25rem; }
+    .shop-section:last-of-type { margin-bottom: 0; }
+    .shop-section-head {
+        display: flex;
+        align-items: baseline;
+        gap: 0.85rem;
+        margin: 0 0 1.5rem;
+    }
+    .shop-section-head h2 {
+        font-size: 1.55rem;
+        color: var(--shop-ink);
+        margin: 0;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+    }
+    [data-theme="dark"] .shop-section-head h2 { color: #eaf1fb; }
+    .shop-section-head .count {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--shop-muted);
+    }
+    .shop-section-head .rule {
+        flex: 1;
+        height: 1px;
+        background: var(--shop-line);
+    }
+
+    /* ---------- Product grid ---------- */
+    .shop-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+        gap: 1.6rem;
+    }
+    .shop-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        background: var(--shop-card);
+        border: 1px solid var(--shop-line);
+        border-radius: 16px;
         overflow: hidden;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
     .shop-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+        transform: translateY(-4px);
+        box-shadow: 0 18px 38px rgba(15, 23, 42, 0.13);
     }
     .shop-card-img {
         position: relative;
         aspect-ratio: 1 / 1;
-        background: var(--bg-light, #f4f6f9);
+        background: #eef2f7;
+        overflow: hidden;
     }
     .shop-card-img img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.4s ease;
     }
+    .shop-card:hover .shop-card-img img { transform: scale(1.05); }
     .shop-card-img .placeholder {
         width: 100%;
         height: 100%;
@@ -88,146 +339,258 @@
         align-items: center;
         justify-content: center;
         font-size: 2.5rem;
-        color: var(--primary-dark, #1e4d8b);
-        opacity: 0.35;
+        color: var(--shop-ink);
+        opacity: 0.3;
     }
-    .shop-badge {
+    .shop-card-img a { display: block; width: 100%; height: 100%; }
+    .shop-pill {
         position: absolute;
-        top: 0.6rem;
-        left: 0.6rem;
-        background: rgba(255, 255, 255, 0.95);
-        color: var(--primary-dark, #1e4d8b);
-        font-size: 0.72rem;
-        font-weight: 700;
+        top: 0.7rem;
+        left: 0.7rem;
+        background: rgba(255, 255, 255, 0.94);
+        color: var(--shop-ink);
+        font-size: 0.68rem;
+        font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
-        padding: 0.25rem 0.6rem;
+        letter-spacing: 0.05em;
+        padding: 0.28rem 0.6rem;
+        border-radius: 999px;
+        backdrop-filter: blur(4px);
+    }
+    .shop-feat {
+        position: absolute;
+        top: 0.7rem;
+        right: 0.7rem;
+        background: var(--shop-gold);
+        color: #fff;
+        font-size: 0.66rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.28rem 0.55rem;
         border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
     }
     .shop-card-body {
         display: flex;
         flex-direction: column;
         flex: 1;
-        padding: 1rem 1.1rem 1.2rem;
+        padding: 1.1rem 1.15rem 1.2rem;
     }
     .shop-card-body h3 {
-        font-size: 1.05rem;
-        margin: 0 0 0.35rem;
-        color: var(--primary-dark, #1e4d8b);
+        font-size: 1.02rem;
+        line-height: 1.35;
+        margin: 0 0 0.4rem;
+        color: var(--shop-ink);
+        font-weight: 700;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
+    [data-theme="dark"] .shop-card-body h3 { color: #eaf1fb; }
     .shop-card-desc {
-        font-size: 0.88rem;
-        color: #667085;
+        font-size: 0.87rem;
+        color: var(--shop-muted);
         line-height: 1.5;
-        margin: 0 0 1rem;
+        margin: 0 0 1.1rem;
         flex: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
     .shop-card-foot {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 0.75rem;
+        gap: 0.6rem;
     }
     .shop-price {
-        font-size: 1.15rem;
-        font-weight: 700;
-        color: var(--primary-dark, #1e4d8b);
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--shop-ink);
+        margin-right: auto;
     }
-    .shop-buy {
-        background: var(--accent-green, #52b788);
-        color: #fff !important;
-        text-decoration: none;
-        padding: 0.55rem 1rem;
-        border-radius: 8px;
+    [data-theme="dark"] .shop-price { color: #eaf1fb; }
+
+    /* ---------- Mission band ---------- */
+    .shop-mission {
+        margin: 3.5rem 0 0;
+        background: linear-gradient(135deg, rgba(30,77,139,0.07), rgba(82,183,136,0.1));
+        border: 1px solid var(--shop-line);
+        border-radius: 18px;
+        padding: 2.25rem 2rem;
+        text-align: center;
+    }
+    .shop-mission i {
+        font-size: 1.8rem;
+        color: var(--shop-green);
+        margin-bottom: 0.6rem;
+    }
+    .shop-mission h3 {
+        font-size: 1.35rem;
+        color: var(--shop-ink);
+        margin: 0 0 0.5rem;
+        font-weight: 800;
+    }
+    [data-theme="dark"] .shop-mission h3 { color: #eaf1fb; }
+    .shop-mission p {
+        max-width: 560px;
+        margin: 0 auto 1.2rem;
+        color: var(--shop-muted);
+        font-size: 0.96rem;
+        line-height: 1.6;
+    }
+    .shop-mission-share {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.3rem;
+        border-radius: 999px;
+        background: var(--shop-ink);
+        color: #fff;
         font-size: 0.9rem;
-        font-weight: 600;
-        white-space: nowrap;
-        transition: filter 0.15s ease;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.15s ease, filter 0.15s ease;
     }
-    .shop-buy:hover { filter: brightness(0.93); }
+    .shop-mission-share:hover { transform: translateY(-1px); filter: brightness(1.08); }
+
     .shop-empty {
         text-align: center;
         padding: 4rem 1rem;
-        color: #667085;
+        color: var(--shop-muted);
     }
-    .shop-empty i { font-size: 3rem; color: var(--primary-dark, #1e4d8b); opacity: 0.3; }
+    .shop-empty i { font-size: 3rem; color: var(--shop-ink); opacity: 0.3; }
     .shop-disclosure {
         max-width: 720px;
         margin: 2.5rem auto 0;
         text-align: center;
-        font-size: 0.82rem;
-        color: #98a2b3;
+        font-size: 0.8rem;
+        color: var(--shop-muted);
         line-height: 1.6;
     }
-    .shop-section { margin-bottom: 3rem; }
-    .shop-section:last-of-type { margin-bottom: 0; }
-    .shop-section-title {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 1.5rem;
-        color: var(--primary-dark, #1e4d8b);
-        margin: 0 0 1.25rem;
-        padding-bottom: 0.6rem;
-        border-bottom: 2px solid rgba(30, 77, 139, 0.12);
+
+    @media (max-width: 760px) {
+        .shop-hero { padding: 3rem 1.25rem 2.5rem; }
+        .shop-spotlight { grid-template-columns: 1fr; }
+        .shop-spotlight-img { min-height: 260px; aspect-ratio: 4 / 3; }
+        .shop-spotlight-body { padding: 1.75rem 1.5rem; }
     }
-    .shop-section-title .count {
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #98a2b3;
-        background: var(--bg-light, #f4f6f9);
-        padding: 0.15rem 0.6rem;
-        border-radius: 999px;
-    }
-    @media (max-width: 600px) {
-        .shop-header h1 { font-size: 1.8rem; }
-        .shop-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
-        .shop-section-title { font-size: 1.25rem; }
+    @media (max-width: 560px) {
+        .shop-grid { grid-template-columns: repeat(2, 1fr); gap: 0.9rem; }
+        .shop-card-body { padding: 0.85rem 0.85rem 1rem; }
+        .shop-card-body h3 { font-size: 0.92rem; }
+        .shop-card-desc { display: none; }
+        .shop-price { font-size: 1.05rem; }
+        .btn-buy.small { padding: 0.5rem 0.7rem; font-size: 0.8rem; }
+        .btn-share { width: 34px; height: 34px; }
+        .shop-section-head h2 { font-size: 1.3rem; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="shop-header">
-    <h1>The Recovery Shop</h1>
-    <p>Sobriety journals, milestone apparel, and gifts that celebrate the journey. Every purchase helps keep MyRecoveryPal free for the community.</p>
+<div class="shop-page">
+<section class="shop-hero">
+    <div class="shop-hero-inner">
+        <span class="shop-eyebrow">The Recovery Shop</span>
+        <h1>Wear the message.<br><span class="accent">Fund the mission.</span></h1>
+        <p>Sober apparel, milestone journals, and gifts that celebrate the journey — and help keep MyRecoveryPal free for everyone who needs it.</p>
+        <div class="shop-trust">
+            <span><i class="fas fa-truck" aria-hidden="true"></i> Ships worldwide</span>
+            <span><i class="fas fa-lock" aria-hidden="true"></i> Secure checkout</span>
+            <span><i class="fas fa-heart" aria-hidden="true"></i> Supports a free community</span>
+        </div>
+        <button type="button" class="shop-share-hero" data-share-shop>
+            <i class="fas fa-share-nodes" aria-hidden="true"></i> Share the shop
+        </button>
+    </div>
 </section>
 
 <div class="shop-wrap">
     {% if categories %}
-    <div class="shop-filters">
-        <a href="{% url 'store:product_list' %}" class="shop-filter {% if not active_category %}active{% endif %}">All</a>
-        {% for category in categories %}
-        <a href="?category={{ category.slug }}" class="shop-filter {% if active_category == category.slug %}active{% endif %}">{{ category.name }}</a>
-        {% endfor %}
+    <div class="shop-filterbar">
+        <div class="shop-filters">
+            <a href="{% url 'store:product_list' %}" class="shop-filter {% if not active_category %}active{% endif %}">All Products</a>
+            {% for category in categories %}
+            <a href="?category={{ category.slug }}" class="shop-filter {% if active_category == category.slug %}active{% endif %}">{{ category.name }}</a>
+            {% endfor %}
+        </div>
     </div>
+    {% endif %}
+
+    {% if featured_product %}
+    <section class="shop-spotlight" aria-label="Featured product">
+        <div class="shop-spotlight-img">
+            {% if featured_product.image %}
+            <a href="{{ featured_product.external_url }}" target="_blank" rel="noopener nofollow sponsored">
+                <img src="{{ featured_product.image.url }}" alt="{{ featured_product.name }}" loading="eager" width="600" height="600">
+            </a>
+            {% else %}
+            <div class="placeholder" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--shop-ink);opacity:.3;"><i class="fas fa-gift" aria-hidden="true"></i></div>
+            {% endif %}
+        </div>
+        <div class="shop-spotlight-body">
+            <span class="shop-tag"><i class="fas fa-star" aria-hidden="true"></i> Featured</span>
+            <h2>{{ featured_product.name }}</h2>
+            <p>{{ featured_product.description|truncatewords:34 }}</p>
+            <div class="shop-spotlight-cta">
+                <span class="shop-spotlight-price">${{ featured_product.price }}</span>
+                <a class="btn-buy" href="{{ featured_product.external_url }}" target="_blank" rel="noopener nofollow sponsored">
+                    {{ featured_product.cta_label }} <i class="fas fa-arrow-up-right-from-square" aria-hidden="true" style="font-size:0.78em;"></i>
+                </a>
+                <button type="button" class="btn-share" aria-label="Share this product"
+                        data-share-product
+                        data-name="{{ featured_product.name|escapejs }}"
+                        data-url="{{ featured_product.external_url|escapejs }}">
+                    <i class="fas fa-share-nodes" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </section>
     {% endif %}
 
     {% if category_groups %}
     {% for group in category_groups %}
     <section class="shop-section">
-        <h2 class="shop-section-title">
-            {{ group.category.name }}
-            <span class="count">{{ group.products|length }}</span>
-        </h2>
+        <div class="shop-section-head">
+            <h2>{{ group.category.name }}</h2>
+            <span class="count">{{ group.products|length }} item{{ group.products|length|pluralize }}</span>
+            <span class="rule" aria-hidden="true"></span>
+        </div>
         <div class="shop-grid">
             {% for product in group.products %}
             <div class="shop-card">
                 <div class="shop-card-img">
                     {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" width="400" height="400">
+                    <a href="{{ product.external_url }}" target="_blank" rel="noopener nofollow sponsored" aria-label="{{ product.name }}">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" width="400" height="400">
+                    </a>
                     {% else %}
                     <div class="placeholder"><i class="fas fa-gift" aria-hidden="true"></i></div>
                     {% endif %}
-                    <span class="shop-badge">{{ product.source_label }}</span>
+                    <span class="shop-pill">{{ product.source_label }}</span>
+                    {% if product.is_featured %}
+                    <span class="shop-feat"><i class="fas fa-star" aria-hidden="true"></i> Featured</span>
+                    {% endif %}
                 </div>
                 <div class="shop-card-body">
                     <h3>{{ product.name }}</h3>
-                    <p class="shop-card-desc">{{ product.description|truncatewords:22 }}</p>
+                    <p class="shop-card-desc">{{ product.description|truncatewords:20 }}</p>
                     <div class="shop-card-foot">
                         <span class="shop-price">${{ product.price }}</span>
-                        <a class="shop-buy" href="{{ product.external_url }}" target="_blank" rel="noopener nofollow sponsored">
-                            {{ product.cta_label }} <i class="fas fa-arrow-up-right-from-square" aria-hidden="true" style="font-size:0.78em;"></i>
+                        <button type="button" class="btn-share" aria-label="Share {{ product.name }}"
+                                data-share-product
+                                data-name="{{ product.name|escapejs }}"
+                                data-url="{{ product.external_url|escapejs }}">
+                            <i class="fas fa-share-nodes" aria-hidden="true"></i>
+                        </button>
+                        <a class="btn-buy small" href="{{ product.external_url }}" target="_blank" rel="noopener nofollow sponsored">
+                            {{ product.cta_label }}
                         </a>
                     </div>
                 </div>
@@ -244,11 +607,23 @@
     </div>
     {% endif %}
 
+    {% if category_groups %}
+    <section class="shop-mission">
+        <i class="fas fa-hand-holding-heart" aria-hidden="true"></i>
+        <h3>Every purchase keeps MyRecoveryPal free</h3>
+        <p>We don't charge for the community, the AI coach trial, or the recovery tools. The shop is how we keep the lights on — buying something, or just sharing it, genuinely helps someone else stay sober.</p>
+        <button type="button" class="shop-mission-share" data-share-shop>
+            <i class="fas fa-share-nodes" aria-hidden="true"></i> Share the Recovery Shop
+        </button>
+    </section>
+    {% endif %}
+
     <p class="shop-disclosure">
         Products are sold and shipped by Printify and Amazon. MyRecoveryPal may earn from
         qualifying purchases, which helps keep the platform free. We are not responsible
         for third-party orders, shipping, or returns.
     </p>
+</div>
 </div>
 
 {% if products %}
@@ -268,11 +643,14 @@
         "item": {
           "@type": "Product",
           "name": "{{ product.name|escapejs }}",
+          {% if product.image %}"image": "{{ product.image.url|escapejs }}",{% endif %}
+          "description": "{{ product.description|truncatewords:30|escapejs }}",
           "url": "{{ product.external_url|escapejs }}",
           "offers": {
             "@type": "Offer",
             "price": "{{ product.price }}",
-            "priceCurrency": "USD"
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock"
           }
         }
       }{% if not forloop.last %},{% endif %}{% endfor %}
@@ -281,4 +659,56 @@
 }
 </script>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    var SHOP_URL = window.location.origin + "{% url 'store:product_list' %}";
+
+    function toast(msg, type) {
+        if (typeof window.showToast === 'function') {
+            window.showToast(msg, type || 'success');
+        }
+    }
+
+    function doShare(title, text, url) {
+        if (navigator.share) {
+            navigator.share({ title: title, text: text, url: url }).catch(function () {});
+            return;
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function () {
+                toast('Link copied — paste it anywhere to share', 'success');
+            }).catch(function () {
+                window.prompt('Copy this link to share:', url);
+            });
+            return;
+        }
+        window.prompt('Copy this link to share:', url);
+    }
+
+    document.addEventListener('click', function (e) {
+        var shopBtn = e.target.closest('[data-share-shop]');
+        if (shopBtn) {
+            e.preventDefault();
+            doShare(
+                'The Recovery Shop — MyRecoveryPal',
+                'Sober apparel, journals, and gifts that support a free recovery community.',
+                SHOP_URL
+            );
+            return;
+        }
+        var prodBtn = e.target.closest('[data-share-product]');
+        if (prodBtn) {
+            e.preventDefault();
+            doShare(
+                prodBtn.getAttribute('data-name'),
+                'Found this in the MyRecoveryPal Recovery Shop:',
+                prodBtn.getAttribute('data-url')
+            );
+        }
+    });
+})();
+</script>
 {% endblock %}

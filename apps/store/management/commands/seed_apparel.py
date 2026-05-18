@@ -17,11 +17,15 @@ from django.utils.text import slugify
 
 from apps.store.models import Category, Product
 
+# category: "apparel" (default) or "accessories". Order within the shop is
+# controlled by `featured` first, then newest. Slugs are derived from `name`
+# (first 50 chars) — never rename an existing product or it creates a duplicate.
 APPAREL = [
     {
         "name": "Hold Fast Steady Anchor T-Shirt | Recovery & Sobriety Tee | Gildan Softstyle Unisex",
         "price": "28.00",
         "url": "https://myrecoverypal.printify.me/product/28661678",
+        "category": "apparel",
         "image": (
             "https://images-api.printify.com/mockup/6a07cc24153d7a24ba029ab2/"
             "38192/97993/hold-fast-steady-anchor-t-shirt-recovery-sobriety-tee-"
@@ -36,7 +40,105 @@ APPAREL = [
             "MyRecoveryPal, a free recovery community."
         ),
     },
+    {
+        "name": "I Love a Sober Person T-Shirt — Recovery Pride Tee",
+        "price": "28.99",
+        "url": "https://myrecoverypal.printify.me/product/28720170",
+        "category": "apparel",
+        "image": (
+            "https://images-api.printify.com/mockup/6a0b1ee54f2a062db108ccd5/"
+            "38191/97992/i-a-sober-person-t-shirt-recovery-pride-tee-for-"
+            "sobriety-support.jpg?s=2048"
+        ),
+        "featured": True,
+        "description": (
+            "For the people who love someone in recovery — and aren't quiet about "
+            "it. A bold heart statement that turns sober support into something you "
+            "can wear with pride. Soft unisex cotton tee. A meaningful gift for a "
+            "partner, parent, sponsor, or friend cheering someone on."
+        ),
+    },
+    {
+        "name": "Recovery Team T-Shirt — The Roster Chalkboard Design",
+        "price": "28.99",
+        "url": "https://myrecoverypal.printify.me/product/28721070",
+        "category": "apparel",
+        "image": (
+            "https://images-api.printify.com/mockup/6a0b2c9df927a982860ddd0a/"
+            "38192/97992/recovery-team-t-shirt-the-roster-chalkboard-design.jpg?s=2048"
+        ),
+        "featured": False,
+        "description": (
+            "Nobody gets sober alone. A team-roster chalkboard design celebrating "
+            "the sponsors, therapists, friends, and fellow travelers who show up. "
+            "Premium unisex tee — perfect for group anniversaries, meetings, and "
+            "recovery community events."
+        ),
+    },
+    {
+        "name": "Tab Open: 24 Hours — Supportive Caregiver T-Shirt",
+        "price": "28.99",
+        "url": "https://myrecoverypal.printify.me/product/28721652",
+        "category": "apparel",
+        "image": (
+            "https://images-api.printify.com/mockup/6a0b3308f927a982860ddfff/"
+            "94871/97993/t-shirt-tab-open-24-hours-supportive-caregiver-tee.jpg?s=2048"
+        ),
+        "featured": False,
+        "description": (
+            "For the ones who keep the tab open — always available, day or night. "
+            "A quietly powerful tee for caregivers, sponsors, and the people who "
+            "answer the 2 a.m. call. Soft, durable unisex cotton."
+        ),
+    },
+    {
+        "name": "My Higher Power Is Caffeine — Funny Recovery T-Shirt",
+        "price": "16.46",
+        "url": "https://myrecoverypal.printify.me/product/28719732",
+        "category": "apparel",
+        "image": (
+            "https://images-api.printify.com/mockup/6a0b185aadbae2f3b1056790/"
+            "63303/97992/my-higher-power-is-caffeine-funny-recovery-sobriety-"
+            "t-shirt-retro-coffee-lover-tee.jpg?s=2048"
+        ),
+        "featured": False,
+        "description": (
+            "Recovery has room for humor. A retro coffee-lover design for anyone "
+            "who traded one ritual for a much better one. Lighthearted, "
+            "conversation-starting, and the easiest gift on the list for the sober "
+            "caffeine devotee in your life."
+        ),
+    },
+    {
+        "name": "Steady Anchor Phone Case — Recovery & Sobriety Gift",
+        "price": "30.00",
+        "url": "https://myrecoverypal.printify.me/product/28729269",
+        "category": "accessories",
+        "image": (
+            "https://images-api.printify.com/mockup/6a0b831d4b7d21db750ab545/"
+            "103590/100651/steady-anchor-phone-case-recovery-sobriety-gift-"
+            "vintage-tattoo-style-iphone-android-case.jpg?s=2048"
+        ),
+        "featured": True,
+        "description": (
+            "Carry the reminder everywhere. A vintage tattoo-style anchor — the "
+            "symbol of holding steady — on a durable iPhone or Android case. The "
+            "small daily nudge that recovery is something you choose, one day at "
+            "a time."
+        ),
+    },
 ]
+
+CATEGORY_DEFS = {
+    "apparel": {
+        "name": "Apparel",
+        "description": "Recovery and sobriety apparel — wear the message.",
+    },
+    "accessories": {
+        "name": "Accessories",
+        "description": "Everyday recovery accessories and meaningful gifts.",
+    },
+}
 
 
 class Command(BaseCommand):
@@ -58,16 +160,15 @@ class Command(BaseCommand):
             return None
 
     def handle(self, *args, **options):
-        category, _ = Category.objects.get_or_create(
-            slug="apparel",
-            defaults={
-                "name": "Apparel",
-                "description": "Recovery and sobriety apparel — wear the message.",
-            },
-        )
+        categories = {}
+        for cat_slug, cat_def in CATEGORY_DEFS.items():
+            categories[cat_slug], _ = Category.objects.get_or_create(
+                slug=cat_slug, defaults=cat_def
+            )
 
         for item in APPAREL:
             slug = slugify(item["name"])[:50]
+            category = categories[item.get("category", "apparel")]
             product, created = Product.objects.update_or_create(
                 slug=slug,
                 defaults={
