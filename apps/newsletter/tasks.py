@@ -1,4 +1,5 @@
 from celery import shared_task
+from django.db import OperationalError
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.utils import timezone
@@ -10,7 +11,13 @@ import time
 
 logger = logging.getLogger(__name__)
 
-@shared_task
+@shared_task(
+    autoretry_for=(OperationalError,),
+    retry_backoff=True,
+    retry_backoff_max=300,
+    retry_jitter=True,
+    max_retries=5,
+)
 def send_newsletter_task(newsletter_id):
     """Send newsletter to all active subscribers"""
     try:
@@ -91,7 +98,13 @@ def send_newsletter_task(newsletter_id):
         logger.error(f"Newsletter {newsletter_id} not found")
         return "Newsletter not found"
 
-@shared_task
+@shared_task(
+    autoretry_for=(OperationalError,),
+    retry_backoff=True,
+    retry_backoff_max=300,
+    retry_jitter=True,
+    max_retries=5,
+)
 def send_scheduled_newsletters():
     """Check and send scheduled newsletters"""
     now = timezone.now()

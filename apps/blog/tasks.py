@@ -3,6 +3,7 @@ from datetime import timedelta
 from celery import shared_task
 from django.conf import settings
 from django.core.cache import cache
+from django.db import OperationalError
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.html import strip_tags
@@ -74,7 +75,13 @@ def fanout_blog_push_notifications(self, post_id):
     )
 
 
-@shared_task
+@shared_task(
+    autoretry_for=(OperationalError,),
+    retry_backoff=True,
+    retry_backoff_max=300,
+    retry_jitter=True,
+    max_retries=5,
+)
 def retry_stuck_blog_push_fanouts():
     """Reconcile dropped blog push fan-outs.
 
@@ -140,7 +147,13 @@ def _build_subject(posts):
     return f"{len(posts)} new posts on MyRecoveryPal today"
 
 
-@shared_task
+@shared_task(
+    autoretry_for=(OperationalError,),
+    retry_backoff=True,
+    retry_backoff_max=300,
+    retry_jitter=True,
+    max_retries=5,
+)
 def send_daily_blog_digest():
     """Send a single email per opted-in user summarizing the last 24h of blog posts.
 

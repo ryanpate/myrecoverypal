@@ -1,4 +1,5 @@
 from celery import shared_task
+from django.db import OperationalError
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.utils import timezone
@@ -391,7 +392,14 @@ def send_weekly_digests(self):
 # Meeting Reminders
 # ========================================
 
-@shared_task(bind=True, max_retries=3)
+@shared_task(
+    bind=True,
+    autoretry_for=(OperationalError,),
+    retry_backoff=True,
+    retry_backoff_max=300,
+    retry_jitter=True,
+    max_retries=5,
+)
 def send_meeting_reminders(self):
     """
     Send reminders for bookmarked meetings starting in ~30 minutes.
