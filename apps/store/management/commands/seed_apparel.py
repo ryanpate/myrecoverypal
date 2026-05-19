@@ -127,6 +127,41 @@ APPAREL = [
             "a time."
         ),
     },
+    {
+        "name": "One Day. Then Another. — Recovery & Sobriety T-Shirt",
+        "price": "28.00",
+        "url": "https://myrecoverypal.printify.me/product/28732414",
+        "category": "apparel",
+        "image": (
+            "https://images-api.printify.com/mockup/6a0bad13e859ea852a0bdd1b/"
+            "38193/97992/one-day-then-another-then-another-recovery-sobriety-"
+            "t-shirt-minimalist-sober-gift-tee.jpg?s=2048"
+        ),
+        "featured": True,
+        "description": (
+            "The whole program in three words. A clean, minimalist statement — "
+            "cream type on forest green — for anyone living recovery one day at "
+            "a time. Soft unisex cotton tee that says everything without saying "
+            "much at all."
+        ),
+    },
+    {
+        "name": "One Day. Then Another. Phone Case — Minimalist Recovery Gift",
+        "price": "30.00",
+        "url": "https://myrecoverypal.printify.me/product/28732508",
+        "category": "accessories",
+        "image": (
+            "https://images-api.printify.com/mockup/6a0baeee56c75ac490101114/"
+            "102547/99511/one-day-then-another-phone-case-minimalist-recovery-"
+            "sobriety-gift-iphone-android-case.jpg?s=2048"
+        ),
+        "featured": False,
+        "description": (
+            "A quiet daily reminder in your hand. Minimalist cream lettering on "
+            "muted blue with a small rising-sun accent, on a durable iPhone or "
+            "Android case. One day, then another — that's how it's done."
+        ),
+    },
 ]
 
 CATEGORY_DEFS = {
