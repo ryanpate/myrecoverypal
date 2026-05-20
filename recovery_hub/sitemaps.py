@@ -8,6 +8,7 @@ from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 from django.conf import settings
 from apps.blog.models import Post  # Assuming you have a Post model
+from apps.store.models import Category as StoreCategory
 # from resources.models import Resource  # Uncomment if you have resources
 # from apps.journal.models import JournalEntry  # Don't include private entries
 
@@ -116,6 +117,27 @@ class BlogPostSitemap(Sitemap):
         return super().get_urls(page=page, site=site, protocol='https')
 
 
+class StoreCategorySitemap(Sitemap):
+    """Sitemap for Recovery Shop category filter pages (?category=slug)."""
+    protocol = 'https'
+    changefreq = 'weekly'
+    priority = 0.65  # Just under the main /store/ page (0.7).
+
+    def items(self):
+        return list(
+            StoreCategory.objects.filter(products__is_active=True).distinct()
+        )
+
+    def location(self, obj):
+        return f"{reverse('store:product_list')}?category={obj.slug}"
+
+    def get_urls(self, page=1, site=None, protocol=None):
+        from django.contrib.sites.models import Site
+        if site is None:
+            site = Site(domain=settings.SITE_DOMAIN, name=settings.SITE_DOMAIN)
+        return super().get_urls(page=page, site=site, protocol='https')
+
+
 # Uncomment if you have resources and want them in sitemap
 # class ResourceSitemap(Sitemap):
 #     """Sitemap for resources"""
@@ -137,5 +159,6 @@ class BlogPostSitemap(Sitemap):
 sitemaps = {
     'static': StaticViewSitemap,
     'blog': BlogPostSitemap,
+    'store_categories': StoreCategorySitemap,
     # 'resources': ResourceSitemap,  # Uncomment if needed
 }
