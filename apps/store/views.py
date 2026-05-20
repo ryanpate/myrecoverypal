@@ -3,7 +3,7 @@ from django.views.generic import ListView
 from .models import Product, Category
 
 # Preferred section order; categories not listed fall back to alphabetical.
-CATEGORY_ORDER = ['journals', 'apparel']
+CATEGORY_ORDER = ['journals', 'apparel', 'accessories', 'stickers']
 
 
 class ProductListView(ListView):
