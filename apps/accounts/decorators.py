@@ -40,10 +40,10 @@ def premium_required(view_func):
     return wrapper
 
 
-def pro_required(view_func):
+def court_required(view_func):
     """
-    Decorator that requires Pro subscription
-    Redirects to upgrade page if user doesn't have pro access
+    Decorator that requires Court Compliance subscription.
+    Redirects to upgrade page if user doesn't have court access.
     """
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
@@ -51,19 +51,17 @@ def pro_required(view_func):
             messages.warning(request, 'Please log in to access this feature.')
             return redirect('accounts:login')
 
-        # Check if user has subscription
         if not hasattr(request.user, 'subscription'):
             messages.warning(
                 request,
-                'This feature requires a Professional subscription. Upgrade now!'
+                'Court Compliance reporting requires the Court Compliance subscription.'
             )
             return redirect('accounts:pricing')
 
-        # Check if subscription is pro
-        if not request.user.subscription.is_pro():
+        if not request.user.subscription.is_court():
             messages.warning(
                 request,
-                'This feature requires a Professional subscription. Upgrade now!'
+                'Court Compliance reporting requires the Court Compliance subscription.'
             )
             return redirect('accounts:pricing')
 

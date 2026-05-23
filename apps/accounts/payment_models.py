@@ -17,7 +17,7 @@ class Subscription(models.Model):
     TIER_CHOICES = [
         ('free', 'Free'),
         ('premium', 'Premium'),
-        ('pro', 'Professional'),
+        ('court', 'Court Compliance'),
     ]
 
     BILLING_PERIOD_CHOICES = [
@@ -102,12 +102,12 @@ class Subscription(models.Model):
         return self.status in ['active', 'trialing']
 
     def is_premium(self):
-        """Check if user has Premium tier or higher"""
-        return self.tier in ['premium', 'pro'] and self.is_active()
+        """Check if user has Premium tier or higher (court inherits all premium features)."""
+        return self.tier in ['premium', 'court'] and self.is_active()
 
-    def is_pro(self):
-        """Check if user has Pro tier"""
-        return self.tier == 'pro' and self.is_active()
+    def is_court(self):
+        """Check if user has Court Compliance tier."""
+        return self.tier == 'court' and self.is_active()
 
     def is_trialing(self):
         """Check if user is in trial period"""
@@ -121,16 +121,16 @@ class Subscription(models.Model):
         return None
 
     def can_upgrade(self):
-        """Check if user can upgrade their subscription"""
+        """Check if user can upgrade their subscription."""
         if self.tier == 'free':
             return True
         if self.tier == 'premium' and self.is_active():
-            return True  # Can upgrade to Pro
+            return True  # Can upgrade to Court Compliance
         return False
 
     def can_downgrade(self):
-        """Check if user can downgrade their subscription"""
-        return self.tier in ['premium', 'pro'] and self.is_active()
+        """Check if user can downgrade their subscription."""
+        return self.tier in ['premium', 'court'] and self.is_active()
 
 
 class Transaction(models.Model):
