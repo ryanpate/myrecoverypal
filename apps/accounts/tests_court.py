@@ -159,3 +159,84 @@ class CourtReportTest(TestCase):
             attendance_count=0,
         )
         self.assertEqual(report.short_hash, 'abc123de')
+
+
+from io import BytesIO
+import hashlib
+
+from apps.accounts import court_service
+
+
+class CourtServiceTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='pdf_user', email='pdf@example.com', password='pw',
+            first_name='Pat'
+        )
+        self.profile = CourtReportProfile.objects.create(
+            user=self.user,
+            legal_name='Pat Doe',
+            case_number='2026-CR-0007',
+            court_name='Travis County Court 4',
+            probation_officer_name='Officer Smith',
+            probation_officer_email='smith@travisco.gov',
+            required_meetings_per_week=3,
+        )
+        # Three attendances in May 2026
+        for day in [3, 10, 17]:
+            MeetingAttendance.objects.create(
+                user=self.user,
+                meeting_name=f'May {day} Group',
+                meeting_date=timezone.make_aware(datetime(2026, 5, day, 19, 0)),
+                meeting_address=f'{day} Recovery Way',
+                program='aa',
+                meeting_type='open',
+                verification_method='self',
+            )
+
+    def test_render_pdf_returns_bytes_and_hash(self):
+        pdf_bytes, sha256 = court_service.render_court_report_pdf(
+            user=self.user,
+            period_start=date(2026, 5, 1),
+            period_end=date(2026, 5, 31),
+        )
+        self.assertIsInstance(pdf_bytes, bytes)
+        self.assertGreater(len(pdf_bytes), 1000)  # real PDFs are >1KB
+        self.assertEqual(len(sha256), 64)
+        self.assertEqual(sha256, hashlib.sha256(pdf_bytes).hexdigest())
+
+    def test_render_pdf_starts_with_pdf_magic_bytes(self):
+        pdf_bytes, _ = court_service.render_court_report_pdf(
+            user=self.user,
+            period_start=date(2026, 5, 1),
+            period_end=date(2026, 5, 31),
+        )
+        self.assertTrue(pdf_bytes.startswith(b'%PDF-'))
+
+    def test_generate_creates_court_report_row(self):
+        report = court_service.generate_court_report(
+            user=self.user,
+            period_start=date(2026, 5, 1),
+            period_end=date(2026, 5, 31),
+        )
+        self.assertEqual(report.attendance_count, 3)
+        self.assertEqual(report.legal_name_snapshot, 'Pat Doe')
+        self.assertEqual(report.case_number_snapshot, '2026-CR-0007')
+        self.assertEqual(len(report.pdf_hash), 64)
+        self.assertTrue(report.pdf.name.endswith('.pdf'))
+
+    def test_attendance_outside_period_excluded(self):
+        # Add an April attendance — should NOT count toward May report
+        MeetingAttendance.objects.create(
+            user=self.user,
+            meeting_name='April outlier',
+            meeting_date=timezone.make_aware(datetime(2026, 4, 25, 19, 0)),
+            program='aa',
+            meeting_type='open',
+        )
+        report = court_service.generate_court_report(
+            user=self.user,
+            period_start=date(2026, 5, 1),
+            period_end=date(2026, 5, 31),
+        )
+        self.assertEqual(report.attendance_count, 3)
