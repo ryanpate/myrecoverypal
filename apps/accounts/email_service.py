@@ -24,7 +24,8 @@ def send_email(
     recipient_email: str,
     from_email: str = None,
     max_retries: int = 3,
-    use_smtp_fallback: bool = True
+    use_smtp_fallback: bool = True,
+    attachments: list = None,
 ) -> tuple:
     """
     Send an email using Resend HTTP API with optional SMTP fallback.
@@ -37,6 +38,8 @@ def send_email(
         from_email: Sender email (defaults to DEFAULT_FROM_EMAIL)
         max_retries: Number of retry attempts for transient errors
         use_smtp_fallback: Whether to fall back to SMTP if API fails
+        attachments: Optional list of (filename, bytes_content, content_type) tuples
+                     to attach. Only supported via the Resend HTTP API, not SMTP fallback.
 
     Returns:
         Tuple of (success: bool, error_message: str or None)
@@ -60,20 +63,31 @@ def send_email(
     # Try Resend HTTP API
     for attempt in range(max_retries):
         try:
+            json_body = {
+                'from': from_email,
+                'to': [recipient_email],
+                'subject': subject,
+                'html': html_message,
+                'text': plain_message,
+            }
+            if attachments:
+                import base64
+                json_body['attachments'] = [
+                    {
+                        'filename': name,
+                        'content': base64.b64encode(content).decode('ascii'),
+                        'content_type': content_type,
+                    }
+                    for (name, content, content_type) in attachments
+                ]
             response = requests.post(
                 'https://api.resend.com/emails',
                 headers={
                     'Authorization': f'Bearer {resend_api_key}',
                     'Content-Type': 'application/json'
                 },
-                json={
-                    'from': from_email,
-                    'to': [recipient_email],
-                    'subject': subject,
-                    'html': html_message,
-                    'text': plain_message
-                },
-                timeout=15
+                json=json_body,
+                timeout=30,
             )
 
             if response.status_code in [200, 201]:

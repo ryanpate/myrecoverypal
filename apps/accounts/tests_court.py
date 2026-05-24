@@ -441,3 +441,59 @@ class CourtReportGenerationTest(TestCase):
         self.assertEqual(CourtReport.objects.filter(user=self.user).count(), 1)
         report = CourtReport.objects.get(user=self.user)
         self.assertEqual(len(report.pdf_hash), 64)
+
+
+from unittest.mock import patch
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CourtReportEmailTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='mailer', email='m@example.com', password='pw'
+        )
+        self.user.subscription.tier = 'court'
+        self.user.subscription.status = 'active'
+        self.user.subscription.save()
+        CourtReportProfile.objects.create(
+            user=self.user, legal_name='Mailer',
+            case_number='M-1',
+            probation_officer_email='po@court.gov',
+        )
+        MeetingAttendance.objects.create(
+            user=self.user, meeting_name='M',
+            meeting_date=timezone.now(), program='aa', meeting_type='open',
+        )
+        self.report = court_service.generate_court_report(
+            user=self.user,
+            period_start=timezone.now().date().replace(day=1),
+            period_end=timezone.now().date(),
+        )
+        self.client.login(username='mailer', password='pw')
+
+    @patch('apps.accounts.court_views.send_email')
+    def test_email_report_to_probation_officer(self, mock_send):
+        mock_send.return_value = (True, None)
+        resp = self.client.post(
+            reverse('accounts:court_report_email', args=[self.report.id]),
+            {'recipient': 'po@court.gov'},
+        )
+        self.assertEqual(resp.status_code, 302)
+        mock_send.assert_called_once()
+        kwargs = mock_send.call_args.kwargs
+        self.assertEqual(kwargs['recipient_email'], 'po@court.gov')
+        # Audit log updated
+        self.report.refresh_from_db()
+        self.assertIn('po@court.gov', self.report.emailed_to)
+        self.assertIsNotNone(self.report.emailed_at)
+
+    @patch('apps.accounts.court_views.send_email')
+    def test_email_failure_does_not_update_audit(self, mock_send):
+        mock_send.return_value = (False, 'SMTP timeout')
+        self.client.post(
+            reverse('accounts:court_report_email', args=[self.report.id]),
+            {'recipient': 'po@court.gov'},
+        )
+        self.report.refresh_from_db()
+        self.assertEqual(self.report.emailed_to, '')
+        self.assertIsNone(self.report.emailed_at)

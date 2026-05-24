@@ -9,6 +9,7 @@ from apps.accounts.court_views import (
     court_dashboard, court_profile,
     court_attendance_list, court_attendance_create, court_attendance_edit, court_attendance_delete,
     court_report_list, court_report_generate, court_report_download,
+    court_report_email,
 )
 
 app_name = 'accounts'
@@ -226,5 +227,6 @@ urlpatterns = [
     path('court/reports/', court_report_list, name='court_report_list'),
     path('court/reports/generate/', court_report_generate, name='court_report_generate'),
     path('court/reports/<int:report_id>/download/', court_report_download, name='court_report_download'),
+    path('court/reports/<int:report_id>/email/', court_report_email, name='court_report_email'),
 
 ]
