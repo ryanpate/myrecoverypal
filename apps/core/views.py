@@ -131,6 +131,10 @@ class AIRecoveryCoachView(TemplateView):
     template_name = 'core/ai_recovery_coach.html'
 
 
+class CourtOrderedMeetingTrackerView(TemplateView):
+    template_name = 'core/court_ordered_meeting_tracker.html'
+
+
 # Sitemap View - serves static sitemap.xml
 def sitemap_view(request):
     """

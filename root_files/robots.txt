@@ -18,6 +18,8 @@ Allow: /crisis/
 Allow: /store/
 Allow: /resources/
 Allow: /support/
+Allow: /court-ordered-meeting-tracker/
+Allow: /verify/court/
 
 # Allow public account pages (login, signup, free tools)
 Allow: /accounts/login/
@@ -39,6 +41,7 @@ Disallow: /accounts/social-feed/
 Disallow: /accounts/progress/
 Disallow: /accounts/recovery-coach/
 Disallow: /accounts/subscription/
+Disallow: /accounts/court/
 Disallow: /journal/
 Disallow: /admin/
 Disallow: /api/
