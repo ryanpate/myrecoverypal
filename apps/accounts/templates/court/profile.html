@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Court Profile — MyRecoveryPal{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:700px; margin:2rem auto; padding:0 1rem;">
+    <h1>Court Profile</h1>
+    <p style="color:#666;">These details appear on every court report you generate. You only need to enter them once.</p>
+
+    <form method="post" style="background:white; padding:1.5rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.05);">
+        {% csrf_token %}
+        {% for field in form %}
+            <div style="margin-bottom:1rem;">
+                <label style="display:block; font-weight:600; margin-bottom:.25rem;">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small style="color:#888;">{{ field.help_text }}</small>{% endif %}
+                {% if field.errors %}<div style="color:#dc3545; font-size:.9rem;">{{ field.errors }}</div>{% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary" style="margin-top:.5rem;">Save Profile</button>
+        <a href="{% url 'accounts:court_dashboard' %}" style="margin-left:.75rem;">Cancel</a>
+    </form>
+</div>
+<style>
+    form input[type="text"], form input[type="email"], form input[type="date"], form input[type="number"], form select {
+        width:100%; padding:.6rem; border:1px solid #ccc; border-radius:6px; font-size:1rem;
+    }
+</style>
+{% endblock %}

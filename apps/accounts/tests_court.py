@@ -324,3 +324,120 @@ class CourtFormsTest(TestCase):
             'meeting_online': False,
         })
         self.assertTrue(form.is_valid(), form.errors)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CourtViewsGatingTest(TestCase):
+    """All authenticated court views must require the `court` subscription."""
+
+    def setUp(self):
+        self.free_user = User.objects.create_user(
+            username='free', email='free@example.com', password='pw'
+        )
+        # User signal auto-creates Subscription; mutate it.
+        self.free_user.subscription.tier = 'free'
+        self.free_user.subscription.status = 'active'
+        self.free_user.subscription.save()
+
+        self.court_user = User.objects.create_user(
+            username='court', email='court@example.com', password='pw'
+        )
+        self.court_user.subscription.tier = 'court'
+        self.court_user.subscription.status = 'active'
+        self.court_user.subscription.save()
+
+    def _urls(self):
+        return [
+            reverse('accounts:court_dashboard'),
+            reverse('accounts:court_profile'),
+            reverse('accounts:court_attendance_list'),
+            reverse('accounts:court_attendance_create'),
+            reverse('accounts:court_report_list'),
+        ]
+
+    def test_anonymous_redirects_to_login(self):
+        for url in self._urls():
+            resp = self.client.get(url)
+            self.assertEqual(resp.status_code, 302, f'{url} did not redirect')
+            self.assertIn('/login', resp.url)
+
+    def test_free_user_redirected_to_pricing(self):
+        self.client.login(username='free', password='pw')
+        for url in self._urls():
+            resp = self.client.get(url)
+            self.assertEqual(resp.status_code, 302, f'{url} did not redirect')
+            self.assertIn('pricing', resp.url)
+
+    def test_court_user_can_load_dashboard(self):
+        self.client.login(username='court', password='pw')
+        resp = self.client.get(reverse('accounts:court_dashboard'))
+        self.assertEqual(resp.status_code, 200)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CourtAttendanceCrudTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='crud', email='crud@example.com', password='pw'
+        )
+        self.user.subscription.tier = 'court'
+        self.user.subscription.status = 'active'
+        self.user.subscription.save()
+        self.client.login(username='crud', password='pw')
+
+    def test_create_attendance_via_post(self):
+        resp = self.client.post(reverse('accounts:court_attendance_create'), {
+            'meeting_name': 'Wednesday Speaker',
+            'meeting_date': '2026-05-22T19:30',
+            'meeting_address': '1 Main St',
+            'program': 'aa',
+            'meeting_type': 'speaker',
+            'verification_method': 'self',
+            'meeting_online': False,
+        })
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(MeetingAttendance.objects.filter(user=self.user).count(), 1)
+
+    def test_attendance_list_shows_only_own_attendances(self):
+        other = User.objects.create_user(username='other', email='o@x.com', password='pw')
+        MeetingAttendance.objects.create(
+            user=other, meeting_name='Their meeting',
+            meeting_date=timezone.now(), program='aa', meeting_type='open',
+        )
+        MeetingAttendance.objects.create(
+            user=self.user, meeting_name='My meeting',
+            meeting_date=timezone.now(), program='aa', meeting_type='open',
+        )
+        resp = self.client.get(reverse('accounts:court_attendance_list'))
+        self.assertContains(resp, 'My meeting')
+        self.assertNotContains(resp, 'Their meeting')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CourtReportGenerationTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='gen', email='gen@example.com', password='pw'
+        )
+        self.user.subscription.tier = 'court'
+        self.user.subscription.status = 'active'
+        self.user.subscription.save()
+        CourtReportProfile.objects.create(
+            user=self.user, legal_name='Gen User', case_number='G-1',
+        )
+        MeetingAttendance.objects.create(
+            user=self.user, meeting_name='M', meeting_date=timezone.now(),
+            program='aa', meeting_type='open',
+        )
+        self.client.login(username='gen', password='pw')
+
+    def test_generate_report_post_creates_pdf(self):
+        today = timezone.now().date()
+        resp = self.client.post(reverse('accounts:court_report_generate'), {
+            'period_start': today.replace(day=1).isoformat(),
+            'period_end': today.isoformat(),
+        })
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(CourtReport.objects.filter(user=self.user).count(), 1)
+        report = CourtReport.objects.get(user=self.user)
+        self.assertEqual(len(report.pdf_hash), 64)
