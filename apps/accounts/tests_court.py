@@ -497,3 +497,90 @@ class CourtReportEmailTest(TestCase):
         self.report.refresh_from_db()
         self.assertEqual(self.report.emailed_to, '')
         self.assertIsNone(self.report.emailed_at)
+
+
+# ---------------------------------------------------------------------------
+# Webhook integration — Stripe checkout for the court tier should map to
+# `tier='court'` via the seeded SubscriptionPlan rows.
+# ---------------------------------------------------------------------------
+
+from unittest.mock import patch, MagicMock
+
+from apps.accounts.payment_models import SubscriptionPlan
+from apps.accounts.payment_views import handle_checkout_session_completed
+
+
+COURT_MONTHLY_PRICE_ID = 'price_1TaZME6oOlORkbTyZKsevLhS'
+
+
+class CourtCheckoutWebhookTest(TestCase):
+    """End-to-end: simulate Stripe webhook for a court-tier checkout and
+    verify the user's Subscription gets tier='court' set."""
+
+    def setUp(self):
+        # Seeded by migration 0036 in real DB; ensure present for this test DB
+        SubscriptionPlan.objects.update_or_create(
+            tier='court', billing_period='monthly',
+            defaults={
+                'name': 'Court Compliance — Monthly',
+                'price': Decimal('19.99'),
+                'currency': 'USD',
+                'stripe_price_id': COURT_MONTHLY_PRICE_ID,
+                'is_active': True,
+                'sort_order': 30,
+            },
+        )
+        self.user = User.objects.create_user(
+            username='checkout_court', email='cc@example.com', password='pw'
+        )
+        self.user.subscription.stripe_customer_id = 'cus_court_test_001'
+        self.user.subscription.tier = 'free'
+        self.user.subscription.save()
+
+    def _stripe_subscription_obj(self, *, with_metadata_tier):
+        """Build a fake stripe.Subscription matching what the webhook expects."""
+        now_ts = int(timezone.now().timestamp())
+        metadata = {'tier': 'court'} if with_metadata_tier else {}
+        obj = MagicMock()
+        obj.id = 'sub_court_test_001'
+        obj.status = 'active'
+        obj.current_period_start = now_ts
+        obj.current_period_end = now_ts + 30 * 86400
+        obj.get = lambda key, default=None: {
+            'metadata': metadata,
+            'status': 'active',
+        }.get(key, default)
+        obj.__getitem__ = lambda self_, key: {
+            'items': {'data': [{'price': {'id': COURT_MONTHLY_PRICE_ID}}]},
+            'metadata': metadata,
+        }[key]
+        return obj
+
+    @patch('apps.accounts.payment_views.stripe.Subscription.retrieve')
+    def test_webhook_sets_court_tier_from_metadata(self, mock_retrieve):
+        """The fast path — checkout metadata explicitly says tier='court'."""
+        mock_retrieve.return_value = self._stripe_subscription_obj(with_metadata_tier=True)
+
+        handle_checkout_session_completed({
+            'customer': 'cus_court_test_001',
+            'subscription': 'sub_court_test_001',
+        })
+
+        self.user.subscription.refresh_from_db()
+        self.assertEqual(self.user.subscription.tier, 'court')
+        self.assertEqual(self.user.subscription.stripe_subscription_id, 'sub_court_test_001')
+        self.assertEqual(self.user.subscription.subscription_source, 'stripe')
+
+    @patch('apps.accounts.payment_views.stripe.Subscription.retrieve')
+    def test_webhook_sets_court_tier_via_price_lookup_when_metadata_missing(self, mock_retrieve):
+        """The safety net — if metadata is missing, the SubscriptionPlan
+        row keyed by stripe_price_id must produce the correct tier."""
+        mock_retrieve.return_value = self._stripe_subscription_obj(with_metadata_tier=False)
+
+        handle_checkout_session_completed({
+            'customer': 'cus_court_test_001',
+            'subscription': 'sub_court_test_001',
+        })
+
+        self.user.subscription.refresh_from_db()
+        self.assertEqual(self.user.subscription.tier, 'court')

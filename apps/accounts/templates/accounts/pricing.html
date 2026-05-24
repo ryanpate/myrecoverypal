@@ -283,9 +283,19 @@
                         <a class="btn btn-light btn-block" href="{% url 'accounts:court_dashboard' %}">
                             <i class="fas fa-gavel"></i> Open Court Dashboard
                         </a>
+                    {% elif not user.is_authenticated %}
+                        <a class="btn btn-light btn-block" href="{% url 'accounts:register' %}?next={% url 'accounts:pricing' %}">
+                            Sign Up to Start
+                        </a>
+                    {% elif court_monthly_plan %}
+                        <button class="btn btn-light btn-block subscribe-btn stripe-only"
+                                data-plan-id="{{ court_monthly_plan.id }}"
+                                data-plan-name="{{ court_monthly_plan.name }}">
+                            Start Court Compliance
+                        </button>
                     {% else %}
                         <a class="btn btn-light btn-block" href="mailto:support@myrecoverypal.com?subject=Court%20Compliance%20Tier%20Signup">
-                            Start Court Compliance
+                            Contact Support
                         </a>
                     {% endif %}
                 </div>

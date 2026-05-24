@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST
 from django.urls import reverse
 from django.utils import timezone
+from datetime import datetime, timezone as dt_timezone
 from decimal import Decimal
 import logging
 
@@ -40,9 +41,14 @@ def pricing(request):
     if hasattr(request.user, 'subscription'):
         user_subscription = request.user.subscription
 
+    # Court Compliance card is hardcoded (different layout from the Premium loop),
+    # so it needs its own plan reference for the checkout button to send the right plan_id.
+    court_monthly_plan = plans.filter(tier='court', billing_period='monthly').first()
+
     context = {
         'plans': plans,
         'user_subscription': user_subscription,
+        'court_monthly_plan': court_monthly_plan,
         'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
     }
     return render(request, 'accounts/pricing.html', context)
@@ -172,11 +178,11 @@ def payment_success(request):
             subscription.status = stripe_subscription.status
             subscription.stripe_subscription_id = stripe_subscription.id
             subscription.stripe_price_id = price_id
-            subscription.current_period_start = timezone.datetime.fromtimestamp(
-                stripe_subscription.current_period_start, tz=timezone.utc
+            subscription.current_period_start = datetime.fromtimestamp(
+                stripe_subscription.current_period_start, tz=dt_timezone.utc
             )
-            subscription.current_period_end = timezone.datetime.fromtimestamp(
-                stripe_subscription.current_period_end, tz=timezone.utc
+            subscription.current_period_end = datetime.fromtimestamp(
+                stripe_subscription.current_period_end, tz=dt_timezone.utc
             )
             subscription.save()
 
@@ -296,11 +302,11 @@ def handle_checkout_session_completed(session):
                 except SubscriptionPlan.DoesNotExist:
                     subscription.tier = 'premium'
 
-            subscription.current_period_start = timezone.datetime.fromtimestamp(
-                stripe_subscription.current_period_start, tz=timezone.utc
+            subscription.current_period_start = datetime.fromtimestamp(
+                stripe_subscription.current_period_start, tz=dt_timezone.utc
             )
-            subscription.current_period_end = timezone.datetime.fromtimestamp(
-                stripe_subscription.current_period_end, tz=timezone.utc
+            subscription.current_period_end = datetime.fromtimestamp(
+                stripe_subscription.current_period_end, tz=dt_timezone.utc
             )
             subscription.save()
 
@@ -407,11 +413,11 @@ def handle_subscription_updated(stripe_subscription):
 
         # Update subscription details
         subscription.status = stripe_subscription.get('status')
-        subscription.current_period_start = timezone.datetime.fromtimestamp(
-            stripe_subscription.get('current_period_start'), tz=timezone.utc
+        subscription.current_period_start = datetime.fromtimestamp(
+            stripe_subscription.get('current_period_start'), tz=dt_timezone.utc
         )
-        subscription.current_period_end = timezone.datetime.fromtimestamp(
-            stripe_subscription.get('current_period_end'), tz=timezone.utc
+        subscription.current_period_end = datetime.fromtimestamp(
+            stripe_subscription.get('current_period_end'), tz=dt_timezone.utc
         )
 
         # Check if subscription was canceled
