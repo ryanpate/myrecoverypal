@@ -3,7 +3,7 @@
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -240,3 +240,43 @@ class CourtServiceTest(TestCase):
             period_end=date(2026, 5, 31),
         )
         self.assertEqual(report.attendance_count, 3)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class VerifyEndpointTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='ver_user', email='ver@example.com', password='pw'
+        )
+        CourtReportProfile.objects.create(
+            user=self.user, legal_name='Verify User', case_number='V-1',
+        )
+        MeetingAttendance.objects.create(
+            user=self.user, meeting_name='M', meeting_date=timezone.now(),
+            program='aa', meeting_type='open',
+        )
+        self.report = court_service.generate_court_report(
+            user=self.user,
+            period_start=timezone.now().date().replace(day=1),
+            period_end=timezone.now().date(),
+        )
+
+    def test_verify_with_full_hash_returns_200(self):
+        resp = self.client.get(f'/verify/court/{self.report.pdf_hash}/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Verified')
+
+    def test_verify_with_short_hash_returns_200(self):
+        resp = self.client.get(f'/verify/court/{self.report.pdf_hash[:8]}/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Verified')
+
+    def test_verify_with_unknown_hash_returns_404(self):
+        resp = self.client.get('/verify/court/deadbeefdeadbeef/')
+        self.assertEqual(resp.status_code, 404)
+
+    def test_verify_response_does_not_leak_legal_name(self):
+        """Public endpoint should NOT reveal personal information."""
+        resp = self.client.get(f'/verify/court/{self.report.pdf_hash}/')
+        self.assertNotContains(resp, 'Verify User')
+        self.assertNotContains(resp, 'V-1')
