@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Court Reports — MyRecoveryPal{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:900px; margin:2rem auto; padding:0 1rem;">
+    <h1>Court Reports</h1>
+
+    <div style="background:white; padding:1.5rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.05); margin-bottom:1.5rem;">
+        <h2 style="margin:0 0 .75rem; font-size:1.1rem;">Generate a new report</h2>
+        <form method="post" action="{% url 'accounts:court_report_generate' %}" style="display:flex; gap:.75rem; flex-wrap:wrap; align-items:end;">
+            {% csrf_token %}
+            <div>
+                <label style="display:block; font-size:.85rem; color:#555;">Period start</label>
+                <input type="date" name="period_start" required style="padding:.5rem; border:1px solid #ccc; border-radius:6px;">
+            </div>
+            <div>
+                <label style="display:block; font-size:.85rem; color:#555;">Period end</label>
+                <input type="date" name="period_end" required style="padding:.5rem; border:1px solid #ccc; border-radius:6px;">
+            </div>
+            <button type="submit" class="btn btn-primary">Generate Report</button>
+        </form>
+    </div>
+
+    {% if reports %}
+    <table style="width:100%; background:white; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.05); border-collapse:collapse; overflow:hidden;">
+        <thead><tr style="background:#f4f8fc;">
+            <th style="text-align:left; padding:.75rem 1rem;">Period</th>
+            <th style="text-align:left; padding:.75rem 1rem;">Meetings</th>
+            <th style="text-align:left; padding:.75rem 1rem;">Generated</th>
+            <th style="text-align:left; padding:.75rem 1rem;">Fingerprint</th>
+            <th></th>
+        </tr></thead>
+        <tbody>
+        {% for r in reports %}
+        <tr style="border-top:1px solid #eee;">
+            <td style="padding:.75rem 1rem;">{{ r.period_start|date:"M j, Y" }} – {{ r.period_end|date:"M j, Y" }}</td>
+            <td style="padding:.75rem 1rem;">{{ r.attendance_count }}</td>
+            <td style="padding:.75rem 1rem;">{{ r.generated_at|date:"M j, Y g:i A" }}</td>
+            <td style="padding:.75rem 1rem; font-family:monospace; font-size:.85rem;">{{ r.short_hash }}</td>
+            <td style="padding:.75rem 1rem; text-align:right;">
+                <a href="{% url 'accounts:court_report_download' r.id %}">Download</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p style="color:#888; background:white; padding:2rem; text-align:center; border-radius:12px;">No reports generated yet. Use the form above to create your first report.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -5,6 +5,12 @@ from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect
 from . import views
 from . import payment_views
+from apps.accounts.court_views import (
+    court_dashboard, court_profile,
+    court_attendance_list, court_attendance_create, court_attendance_edit, court_attendance_delete,
+    court_report_list, court_report_generate, court_report_download,
+    court_report_email,
+)
 
 app_name = 'accounts'
 
@@ -210,5 +216,17 @@ urlpatterns = [
 
     # Relapse / slip tracking
     path('log-slip/', views.log_slip_view, name='log_slip'),
+
+    # Court Compliance
+    path('court/', court_dashboard, name='court_dashboard'),
+    path('court/profile/', court_profile, name='court_profile'),
+    path('court/attendance/', court_attendance_list, name='court_attendance_list'),
+    path('court/attendance/new/', court_attendance_create, name='court_attendance_create'),
+    path('court/attendance/<int:attendance_id>/edit/', court_attendance_edit, name='court_attendance_edit'),
+    path('court/attendance/<int:attendance_id>/delete/', court_attendance_delete, name='court_attendance_delete'),
+    path('court/reports/', court_report_list, name='court_report_list'),
+    path('court/reports/generate/', court_report_generate, name='court_report_generate'),
+    path('court/reports/<int:report_id>/download/', court_report_download, name='court_report_download'),
+    path('court/reports/<int:report_id>/email/', court_report_email, name='court_report_email'),
 
 ]

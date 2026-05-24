@@ -255,6 +255,52 @@
             </div>
             {% endif %}
         {% endfor %}
+
+        <!-- Court Compliance Tier -->
+        <div class="col-lg-5 col-md-6 mb-4">
+            <div class="card h-100 shadow-sm" style="border: 2px solid #1e4d8b;">
+                <div class="card-header text-center text-white" style="background: linear-gradient(135deg, #1e4d8b, #0f2d56) !important;">
+                    <span class="badge mb-2" style="background:#f5a623; color:#0f2d56; font-weight:700;">FOR COURT-ORDERED USERS</span>
+                    <h3 class="my-3" style="color: white !important;">Court Compliance</h3>
+                    <h2 class="display-4" style="color: white !important;">$19.99</h2>
+                    <p style="color: white !important;">per month</p>
+                    <small style="color: rgba(255,255,255,0.85);">Annual: $179/yr (save 25%)</small>
+                </div>
+                <div class="card-body text-dark bg-white">
+                    <p class="mb-2" style="font-weight: 600; color: #1e4d8b;"><i class="fas fa-check-double text-success"></i> Everything in Premium, plus:</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Log AA, NA, SMART &amp; secular meeting attendance</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Court-acceptable PDF reports with tamper-evident fingerprint</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Email reports directly to your probation officer</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Public verification URL &mdash; courts can confirm document integrity</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Compliance dashboard with weekly progress</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited reports + attendance logs</li>
+                    </ul>
+                    <p class="small text-muted mt-3 mb-0">Designed for DUI/DWI defendants, drug court participants, and anyone with court-ordered meeting attendance requirements. Supports both 12-step and secular recovery programs.</p>
+                </div>
+                <div class="card-footer text-center" style="background: linear-gradient(135deg, #1e4d8b, #0f2d56);">
+                    {% if user.is_authenticated and user_subscription.is_court %}
+                        <a class="btn btn-light btn-block" href="{% url 'accounts:court_dashboard' %}">
+                            <i class="fas fa-gavel"></i> Open Court Dashboard
+                        </a>
+                    {% elif not user.is_authenticated %}
+                        <a class="btn btn-light btn-block" href="{% url 'accounts:register' %}?next={% url 'accounts:pricing' %}">
+                            Sign Up to Start
+                        </a>
+                    {% elif court_monthly_plan %}
+                        <button class="btn btn-light btn-block subscribe-btn stripe-only"
+                                data-plan-id="{{ court_monthly_plan.id }}"
+                                data-plan-name="{{ court_monthly_plan.name }}">
+                            Start Court Compliance
+                        </button>
+                    {% else %}
+                        <a class="btn btn-light btn-block" href="mailto:support@myrecoverypal.com?subject=Court%20Compliance%20Tier%20Signup">
+                            Contact Support
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Try the AI Coach Section -->

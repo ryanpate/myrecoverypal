@@ -47,7 +47,7 @@
                             </div>
                         </div>
 
-                        {% if subscription.is_premium or subscription.is_pro %}
+                        {% if subscription.is_premium or subscription.is_court %}
                             <hr>
                             <!-- Stripe management (hidden on iOS) -->
                             <div class="btn-group-vertical btn-group-sm w-100 stripe-only" role="group">
@@ -172,13 +172,15 @@
                             <li class="mb-2"><i class="fas fa-check text-success"></i> 90-day analytics & charts</li>
                             <li class="mb-2"><i class="fas fa-check text-success"></i> Premium badge</li>
                         </ul>
-                    {% elif subscription and subscription.is_pro %}
+                    {% elif subscription and subscription.is_court %}
                         <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> All Premium features</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Sponsor up to 10</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited challenges</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Professional badge</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Group analytics</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Everything in Premium</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Court-acceptable PDF attendance reports</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Tamper-evident SHA-256 fingerprint on every report</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Email reports directly to your probation officer</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Public verification URL for court use</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Compliance dashboard with weekly progress tracking</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited meeting logs and reports</li>
                         </ul>
                     {% else %}
                         <ul class="list-unstyled">

@@ -760,6 +760,51 @@ User taps Subscribe → capacitor-iap.js → RevenueCat SDK → Apple StoreKit 2
 - [x] Premium feature gates (AI Coach message limits, progressive upgrade hints)
 - [x] 14-day free trial on signup
 
+### Court Compliance Tier ($19.99/mo) — Added 2026-05-23
+
+Fourth subscription tier targeting court-ordered AA/NA/SMART attendees (DUI, drug court, family court). Court-ordered users have legally-mandated proof-of-attendance obligations — high willingness-to-pay, distinct from recovery-community Premium audience.
+
+**Service files:**
+- `apps/accounts/court_models.py` — `CourtReportProfile`, `MeetingAttendance`, `CourtReport`
+- `apps/accounts/court_service.py` — WeasyPrint PDF rendering with two-pass SHA-256 hash embedding
+- `apps/accounts/court_views.py` — dashboard, attendance CRUD, report generation, email-to-PO, public verify
+- `apps/accounts/court_forms.py` — profile + attendance forms
+- `apps/accounts/decorators.py::court_required` — tier-gating decorator
+
+**Routes:**
+- `/accounts/court/` — Court Compliance dashboard (court-tier only)
+- `/accounts/court/profile/` — Setup court profile (case number, PO email, required meetings/week)
+- `/accounts/court/attendance/` — Log of attended meetings
+- `/accounts/court/reports/` — Generate and download PDF reports
+- `/accounts/court/reports/<id>/email/` — Email PDF to probation officer
+- `/verify/court/<hash>/` — Public hash verification (no auth)
+- `/court-ordered-meeting-tracker/` — Public SEO landing page
+
+**Key design notes:**
+- The unused `pro` tier in `Subscription.TIER_CHOICES` was renamed to `court` (migration 0034). Helper methods are `is_court()` and decorator is `@court_required`.
+- PDF rendering uses two-pass approach: render placeholder hash → compute real hash → re-render with real hash embedded. Guarantees the printed hash inside the PDF matches `sha256(pdf_bytes)`.
+- Public verify endpoint at `/verify/court/<hash>/` intentionally does NOT show legal name or case number — only confirms a report with that fingerprint exists. Privacy by default.
+- Court tier is a superset of Premium: `is_premium()` returns True for court-tier users.
+- Program-neutral coverage (AA, NA, CA, MA, GA, SMART, Refuge, LifeRing, secular) — important because courts cannot constitutionally require 12-step-only attendance.
+- WeasyPrint on macOS requires `DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib` (Pango libs from Homebrew). Linux/Railway has the libs in the default path.
+- `send_email()` in `email_service.py` now supports an `attachments` kwarg (list of `(filename, bytes, content_type)` tuples). Resend HTTP only; SMTP fallback ignores attachments.
+
+**Phase 2 deferred:**
+- GPS verification at meeting location
+- Sponsor/chair digital signature flow (email-confirmed)
+- QR code check-in at meetings
+- Photo upload of paper attendance cards
+- Calendar heatmap of attendance history
+- Auto-recurring monthly email to probation officer
+
+**Plan:** `docs/plans/2026-05-23-court-compliance.md`
+
+**Stripe wiring TODO** (deferred from this code release):
+- Create Product "MyRecoveryPal Court Compliance" in Stripe with $19.99/mo + $179/yr prices
+- Seed `SubscriptionPlan` rows for tier='court' (monthly + yearly)
+- Update pricing page CTA — currently uses `mailto:` placeholder since `accounts:checkout` URL doesn't exist
+- Update Stripe webhook handler to map court-tier price IDs to `tier='court'`
+
 #### 4. Recovery Merchandise Store
 - [ ] Milestone tokens/coins (physical)
 - [ ] Recovery affirmation cards

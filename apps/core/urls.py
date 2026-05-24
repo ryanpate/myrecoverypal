@@ -29,6 +29,7 @@ urlpatterns = [
     path('gambling-addiction-app/', views.GamblingAddictionAppView.as_view(), name='gambling_addiction_app'),
     path('mental-health-recovery-app/', views.MentalHealthRecoveryAppView.as_view(), name='mental_health_recovery_app'),
     path('ai-recovery-coach/', views.AIRecoveryCoachView.as_view(), name='ai_recovery_coach'),
+    path('court-ordered-meeting-tracker/', views.CourtOrderedMeetingTrackerView.as_view(), name='court_ordered_meeting_tracker'),
     path('sobriety-calculator/', views.SobrietyCalculatorView.as_view(), name='sobriety_calculator'),
     path('sobriety-medallion-maker/', views.SobrietyMedallionMakerView.as_view(), name='sobriety_medallion_maker'),
     path('journal-bonus/', views.JournalBonusView.as_view(), name='journal_bonus'),

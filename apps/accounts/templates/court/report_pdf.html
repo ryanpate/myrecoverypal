@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Court Compliance Report — {{ legal_name|default:user.username }}</title>
+<style>
+@page {
+    size: letter;
+    margin: 0.6in 0.5in;
+    @bottom-center {
+        content: "Page " counter(page) " of " counter(pages) "  ·  Verify at myrecoverypal.com/verify/court/{{ pdf_hash_short }}";
+        font-size: 8pt;
+        color: #555;
+    }
+}
+body { font-family: 'Helvetica', sans-serif; font-size: 10pt; color: #222; }
+h1 { font-size: 18pt; margin: 0 0 0.1in; color: #1e4d8b; }
+h2 { font-size: 12pt; margin: 0.25in 0 0.1in; color: #1e4d8b; border-bottom: 1px solid #ccc; padding-bottom: 2pt; }
+.subtitle { color: #555; margin-bottom: 0.2in; }
+.header-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6pt 18pt;
+    font-size: 9.5pt;
+    margin-bottom: 0.15in;
+}
+.header-grid .label { font-weight: bold; color: #555; }
+.summary-box {
+    background: #f4f8fc;
+    border: 1px solid #c8d8ea;
+    padding: 10pt 12pt;
+    border-radius: 4pt;
+    margin: 0.15in 0;
+}
+.summary-box .stat { display: inline-block; margin-right: 24pt; }
+.summary-box .stat-num { font-size: 16pt; font-weight: bold; color: #1e4d8b; }
+.summary-box .stat-label { font-size: 8.5pt; color: #555; text-transform: uppercase; }
+table { width: 100%; border-collapse: collapse; margin-top: 0.1in; }
+th { background: #1e4d8b; color: white; text-align: left; padding: 5pt 6pt; font-size: 9pt; }
+td { padding: 4pt 6pt; border-bottom: 1px solid #e0e0e0; font-size: 9pt; vertical-align: top; }
+tr:nth-child(even) td { background: #fafafa; }
+.attestation {
+    margin-top: 0.25in;
+    padding: 10pt 12pt;
+    border: 1px solid #888;
+    border-radius: 4pt;
+    font-size: 9pt;
+    line-height: 1.4;
+}
+.attestation .sig-line {
+    margin-top: 18pt;
+    border-top: 1px solid #222;
+    width: 3in;
+    padding-top: 3pt;
+    font-size: 8.5pt;
+}
+.hash-footer {
+    margin-top: 0.2in;
+    padding: 8pt 10pt;
+    background: #f0f0f0;
+    border-left: 3px solid #1e4d8b;
+    font-size: 8pt;
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+}
+.verify-note { font-size: 8pt; color: #555; margin-top: 4pt; font-family: 'Helvetica', sans-serif; }
+.program-pill {
+    display: inline-block;
+    background: #e3eef9;
+    color: #1e4d8b;
+    padding: 1pt 6pt;
+    border-radius: 8pt;
+    font-size: 8pt;
+    font-weight: 600;
+}
+.online-pill { background: #fef3c7; color: #92400e; }
+</style>
+</head>
+<body>
+
+<h1>Recovery Meeting Attendance Report</h1>
+<div class="subtitle">Period: {{ period_start|date:"F j, Y" }} – {{ period_end|date:"F j, Y" }} · Generated {{ generated_at|date:"F j, Y g:i A" }}</div>
+
+<h2>Defendant / Participant</h2>
+<div class="header-grid">
+    <div><span class="label">Legal Name:</span> {{ legal_name|default:"—" }}</div>
+    <div><span class="label">Case Number:</span> {{ case_number|default:"—" }}</div>
+    <div><span class="label">Court:</span> {{ court_name|default:"—" }}</div>
+    <div><span class="label">Jurisdiction:</span> {{ jurisdiction|default:"—" }}</div>
+    <div><span class="label">Judge:</span> {{ judge_name|default:"—" }}</div>
+    <div><span class="label">Probation Officer:</span> {{ probation_officer_name|default:"—" }}</div>
+</div>
+
+<h2>Summary</h2>
+<div class="summary-box">
+    <div class="stat">
+        <div class="stat-num">{{ attendance_count }}</div>
+        <div class="stat-label">Meetings Attended</div>
+    </div>
+    <div class="stat">
+        <div class="stat-num">{{ weeks_in_period }}</div>
+        <div class="stat-label">Weeks in Period</div>
+    </div>
+    <div class="stat">
+        <div class="stat-num">{{ weekly_average }}</div>
+        <div class="stat-label">Avg per Week</div>
+    </div>
+    {% if required_per_week %}
+    <div class="stat">
+        <div class="stat-num">{{ required_per_week }}</div>
+        <div class="stat-label">Required per Week</div>
+    </div>
+    {% endif %}
+</div>
+
+<h2>Attendance Log</h2>
+{% if attendances %}
+<table>
+    <thead>
+    <tr>
+        <th style="width:14%">Date</th>
+        <th style="width:9%">Time</th>
+        <th style="width:18%">Meeting</th>
+        <th style="width:11%">Program</th>
+        <th style="width:11%">Type</th>
+        <th style="width:25%">Location</th>
+        <th style="width:12%">Verified</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for a in attendances %}
+    <tr>
+        <td>{{ a.meeting_date|date:"Y-m-d" }}</td>
+        <td>{{ a.meeting_date|date:"g:i A" }}</td>
+        <td>{{ a.meeting_name }}</td>
+        <td><span class="program-pill">{{ a.get_program_display }}</span></td>
+        <td>{{ a.get_meeting_type_display }}</td>
+        <td>
+            {% if a.meeting_online %}
+                <span class="program-pill online-pill">Online</span> {{ a.meeting_platform }}
+            {% else %}
+                {{ a.meeting_address|default:"—" }}
+            {% endif %}
+        </td>
+        <td>{{ a.get_verification_method_display }}{% if a.chair_signature_name %}<br><small>{{ a.chair_signature_name }}</small>{% endif %}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p><em>No meetings logged for this period.</em></p>
+{% endif %}
+
+<div class="attestation">
+    <strong>Attestation.</strong> I, {{ legal_name|default:user.username }}, declare under penalty of perjury under the laws of the applicable jurisdiction that the attendance information above is true and correct to the best of my knowledge. This report was generated by software (MyRecoveryPal Court Compliance, myrecoverypal.com) based on records I created. Self-reported entries are marked as such above and have not been independently verified by a meeting chair or third party.
+    <div class="sig-line">Signature of participant</div>
+    <div class="sig-line">Date</div>
+</div>
+
+<div class="hash-footer">
+    Report fingerprint (SHA-256): {{ pdf_hash }}
+</div>
+<div class="verify-note">
+    This fingerprint is computed from the entire PDF. Any edit to the document will produce a different fingerprint. Verify this report is unaltered at:
+    <strong>myrecoverypal.com/verify/court/{{ pdf_hash_short }}</strong>
+</div>
+
+</body>
+</html>

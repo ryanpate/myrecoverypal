@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Meeting Log — Court Compliance{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:900px; margin:2rem auto; padding:0 1rem;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h1 style="margin:0;">Meeting Log</h1>
+        <a href="{% url 'accounts:court_attendance_create' %}" class="btn btn-success">+ Log Meeting</a>
+    </div>
+    {% if attendances %}
+    <table style="width:100%; background:white; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.05); border-collapse:collapse; overflow:hidden;">
+        <thead><tr style="background:#f4f8fc;">
+            <th style="text-align:left; padding:.75rem 1rem;">Date</th>
+            <th style="text-align:left; padding:.75rem 1rem;">Meeting</th>
+            <th style="text-align:left; padding:.75rem 1rem;">Program</th>
+            <th style="text-align:left; padding:.75rem 1rem;">Type</th>
+            <th style="text-align:left; padding:.75rem 1rem;">Verified</th>
+            <th></th>
+        </tr></thead>
+        <tbody>
+        {% for a in attendances %}
+        <tr style="border-top:1px solid #eee;">
+            <td style="padding:.75rem 1rem;">{{ a.meeting_date|date:"M j, Y g:i A" }}</td>
+            <td style="padding:.75rem 1rem;"><strong>{{ a.meeting_name }}</strong>{% if a.meeting_online %} <span style="background:#fef3c7; color:#92400e; padding:1px 6px; border-radius:8px; font-size:.75rem;">Online</span>{% endif %}</td>
+            <td style="padding:.75rem 1rem;">{{ a.get_program_display }}</td>
+            <td style="padding:.75rem 1rem;">{{ a.get_meeting_type_display }}</td>
+            <td style="padding:.75rem 1rem;">{{ a.get_verification_method_display }}</td>
+            <td style="padding:.75rem 1rem; text-align:right;">
+                <a href="{% url 'accounts:court_attendance_edit' a.id %}">Edit</a>
+                <form method="post" action="{% url 'accounts:court_attendance_delete' a.id %}" style="display:inline; margin-left:.5rem;" onsubmit="return confirm('Delete this meeting record?')">
+                    {% csrf_token %}<button type="submit" style="background:none; border:none; color:#dc3545; cursor:pointer;">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p style="color:#888; background:white; padding:2rem; text-align:center; border-radius:12px;">No meetings logged yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

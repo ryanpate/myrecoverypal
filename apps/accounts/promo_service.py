@@ -41,7 +41,7 @@ def apply_promo_to_user(user, code):
 
     # Don't override an active paid subscription.
     if (
-        sub.tier in ('premium', 'pro')
+        sub.tier in ('premium', 'court')
         and sub.status == 'active'
         and sub.subscription_source in ('stripe', 'apple')
     ):

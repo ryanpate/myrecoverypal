@@ -1927,3 +1927,9 @@ class CoachMessage(models.Model):
 
     def __str__(self):
         return f"{self.role}: {self.content[:50]}..."
+
+
+# Re-export court compliance models so Django discovers them at app load
+from apps.accounts.court_models import (  # noqa: E402, F401
+    CourtReportProfile, MeetingAttendance, CourtReport,
+)

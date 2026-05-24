@@ -11,7 +11,7 @@ def subscription_context(request):
     context = {
         'user_subscription': None,
         'is_premium_user': False,
-        'is_pro_user': False,
+        'is_court_user': False,
         'is_free_user': True,
     }
 
@@ -21,7 +21,7 @@ def subscription_context(request):
             context.update({
                 'user_subscription': subscription,
                 'is_premium_user': subscription.is_premium(),
-                'is_pro_user': subscription.is_pro(),
+                'is_court_user': subscription.is_court(),
                 'is_free_user': subscription.tier == 'free',
             })
     except Exception:
