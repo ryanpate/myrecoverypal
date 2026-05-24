@@ -300,6 +300,11 @@
                             <a href="{% url 'accounts:subscription_management' %}" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)); border-left: 3px solid #f5a623; font-weight: 600;">
                                 <i class="fas fa-crown" style="color: #f5a623;"></i> Subscription
                             </a>
+                            {% if user.subscription.is_court %}
+                            <a href="{% url 'accounts:court_dashboard' %}" style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
+                                <i class="fas fa-gavel" style="color: #1e4d8b;"></i> Court Compliance
+                            </a>
+                            {% endif %}
                             <a href="{% url 'accounts:invite_friends' %}" style="color: #52b788;">
                                 <i class="fas fa-user-plus"></i> Invite Friends
                             </a>
@@ -422,6 +427,13 @@
                     style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)); border-left: 3px solid #f5a623; font-weight: 600;">
                     <i class="fas fa-crown" style="margin-right: 0.5rem; color: #f5a623;"></i> Subscription
                 </a>
+                {% if user.subscription.is_court %}
+                <a href="{% url 'accounts:court_dashboard' %}"
+                    class="{% if request.resolver_match.url_name == 'court_dashboard' %}active{% endif %}"
+                    style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
+                    <i class="fas fa-gavel" style="margin-right: 0.5rem; color: #1e4d8b;"></i> Court Compliance
+                </a>
+                {% endif %}
             </div>
 
             {% if user.is_authenticated %}
