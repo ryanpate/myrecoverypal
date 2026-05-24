@@ -280,3 +280,47 @@ class VerifyEndpointTest(TestCase):
         resp = self.client.get(f'/verify/court/{self.report.pdf_hash}/')
         self.assertNotContains(resp, 'Verify User')
         self.assertNotContains(resp, 'V-1')
+
+
+from apps.accounts.court_forms import (
+    CourtReportProfileForm, MeetingAttendanceForm,
+)
+
+
+class CourtFormsTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='form_u', email='f@example.com', password='pw'
+        )
+
+    def test_profile_form_accepts_minimal_input(self):
+        form = CourtReportProfileForm(data={
+            'legal_name': 'Real Name',
+            'required_meetings_per_week': 3,
+        })
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_profile_form_rejects_zero_required_meetings(self):
+        form = CourtReportProfileForm(data={
+            'legal_name': 'Real Name',
+            'required_meetings_per_week': 0,
+        })
+        self.assertFalse(form.is_valid())
+
+    def test_attendance_form_requires_meeting_name_and_date(self):
+        form = MeetingAttendanceForm(data={})
+        self.assertFalse(form.is_valid())
+        self.assertIn('meeting_name', form.errors)
+        self.assertIn('meeting_date', form.errors)
+
+    def test_attendance_form_accepts_valid_input(self):
+        form = MeetingAttendanceForm(data={
+            'meeting_name': 'Tuesday Big Book',
+            'meeting_date': '2026-05-20T19:00',
+            'program': 'aa',
+            'meeting_type': 'open',
+            'verification_method': 'self',
+            'meeting_address': '1 Main St',
+            'meeting_online': False,
+        })
+        self.assertTrue(form.is_valid(), form.errors)
