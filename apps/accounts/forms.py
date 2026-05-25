@@ -103,26 +103,58 @@ class InviteCodeForm(forms.Form):
                 'Invalid invite code. Please check and try again.')
 
 
-class CustomUserCreationForm(UserCreationForm):
+class CustomUserCreationForm(forms.ModelForm):
+    """Minimal-friction signup form: email + password only.
+
+    Username is auto-generated server-side (see username_generator.py).
+    Sobriety date is captured progressively in the profile/onboarding flow,
+    not at signup. Confirm-password is replaced by a show-password toggle
+    on the template side.
+    """
     email = forms.EmailField(
-        required=True, help_text='Required. Enter a valid email address.')
-    sobriety_date = forms.DateField(
-        required=False,
-        widget=forms.DateInput(attrs={'type': 'date'}),
-        help_text='Optional. You can add this later.'
+        required=True,
+        widget=forms.EmailInput(attrs={
+            'autocomplete': 'email',
+            'inputmode': 'email',
+            'autocapitalize': 'off',
+            'spellcheck': 'false',
+            'placeholder': 'you@example.com',
+        }),
+    )
+    password = forms.CharField(
+        required=True,
+        min_length=8,
+        widget=forms.PasswordInput(attrs={
+            'autocomplete': 'new-password',
+            'minlength': '8',
+        }),
+        help_text='At least 8 characters.',
     )
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1',
-                  'password2', 'sobriety_date')
+        fields = ('email',)  # username and password are handled in save()
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].lower().strip()
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError(
+                'An account with this email already exists. Try signing in instead.'
+            )
+        return email
 
     def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
+        from apps.accounts.username_generator import generate_unique_username
+        user = User(
+            email=self.cleaned_data['email'],
+            username=generate_unique_username(),
+        )
+        user.set_password(self.cleaned_data['password'])
         if commit:
             user.save()
         return user
+
+
 class CustomUserCreationFormWithInvite(UserCreationForm):
     email = forms.EmailField(
         required=True,
