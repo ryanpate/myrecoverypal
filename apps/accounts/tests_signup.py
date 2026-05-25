@@ -8,6 +8,10 @@ from django.urls import reverse
 
 User = get_user_model()
 
+# Test fixture, not a real password. Marked to silence GitGuardian's secret scanner.
+TEST_PW = 'a' * 12  # noqa: ggignore
+TEST_PW_SHORT = 'a' * 7  # noqa: ggignore  # below the 8-char min_length
+
 
 class UsernameGeneratorTest(TestCase):
     """generate_unique_username() returns a friendly anonymous identifier."""
@@ -59,7 +63,7 @@ class SignupFormTest(TestCase):
 
     def test_email_required(self):
         from apps.accounts.forms import CustomUserCreationForm
-        form = CustomUserCreationForm(data={'password': 'abcdefgh'})
+        form = CustomUserCreationForm(data={'password': TEST_PW})
         self.assertFalse(form.is_valid())
         self.assertIn('email', form.errors)
 
@@ -67,13 +71,13 @@ class SignupFormTest(TestCase):
         from apps.accounts.forms import CustomUserCreationForm
         # 7 chars — should fail
         form = CustomUserCreationForm(data={
-            'email': 'a@b.com', 'password': '1234567'
+            'email': 'a@b.com', 'password': TEST_PW_SHORT
         })
         self.assertFalse(form.is_valid())
         self.assertIn('password', form.errors)
         # 8 chars — should pass
         form = CustomUserCreationForm(data={
-            'email': 'a@b.com', 'password': '12345678'
+            'email': 'a@b.com', 'password': TEST_PW
         })
         self.assertTrue(form.is_valid(), form.errors)
 
@@ -83,7 +87,7 @@ class SignupFormTest(TestCase):
         )
         from apps.accounts.forms import CustomUserCreationForm
         form = CustomUserCreationForm(data={
-            'email': 'taken@example.com', 'password': '12345678'
+            'email': 'taken@example.com', 'password': TEST_PW
         })
         self.assertFalse(form.is_valid())
         self.assertIn('email', form.errors)
@@ -97,7 +101,7 @@ class SignupFormTest(TestCase):
     def test_email_is_lowercased_on_save(self):
         from apps.accounts.forms import CustomUserCreationForm
         form = CustomUserCreationForm(data={
-            'email': 'Mixed.Case@EXAMPLE.com', 'password': '12345678'
+            'email': 'Mixed.Case@EXAMPLE.com', 'password': TEST_PW
         })
         self.assertTrue(form.is_valid(), form.errors)
         user = form.save()
@@ -108,7 +112,7 @@ class SignupFormTest(TestCase):
         from apps.accounts.forms import CustomUserCreationForm
         from apps.accounts.username_generator import WORDLIST
         form = CustomUserCreationForm(data={
-            'email': 'new@example.com', 'password': '12345678'
+            'email': 'new@example.com', 'password': TEST_PW
         })
         self.assertTrue(form.is_valid(), form.errors)
         user = form.save()
@@ -120,12 +124,12 @@ class SignupFormTest(TestCase):
     def test_save_hashes_password(self):
         from apps.accounts.forms import CustomUserCreationForm
         form = CustomUserCreationForm(data={
-            'email': 'hash@example.com', 'password': '12345678'
+            'email': 'hash@example.com', 'password': TEST_PW
         })
         self.assertTrue(form.is_valid(), form.errors)
         user = form.save()
-        self.assertNotEqual(user.password, '12345678')  # hashed
-        self.assertTrue(user.check_password('12345678'))
+        self.assertNotEqual(user.password, TEST_PW)  # hashed
+        self.assertTrue(user.check_password(TEST_PW))
 
 
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
@@ -160,7 +164,7 @@ class RegisterViewTest(TestCase):
     def test_post_creates_user_and_logs_in(self):
         resp = self.client.post(reverse('accounts:register'), {
             'email': 'new@example.com',
-            'password': 'mysecurepw123',
+            'password': TEST_PW,
         })
         # Should redirect (302) somewhere authenticated, not stay on the form
         self.assertEqual(resp.status_code, 302)
@@ -176,7 +180,7 @@ class RegisterViewTest(TestCase):
         from apps.accounts.payment_models import Subscription
         self.client.post(reverse('accounts:register'), {
             'email': 'sub@example.com',
-            'password': 'mysecurepw123',
+            'password': TEST_PW,
         })
         user = User.objects.get(email='sub@example.com')
         self.assertTrue(Subscription.objects.filter(user=user).exists())
@@ -184,7 +188,7 @@ class RegisterViewTest(TestCase):
     def test_post_invalid_email_returns_form_with_errors(self):
         resp = self.client.post(reverse('accounts:register'), {
             'email': 'not-an-email',
-            'password': 'mysecurepw123',
+            'password': TEST_PW,
         })
         # Form re-renders (200, not 302), no user created
         self.assertEqual(resp.status_code, 200)
@@ -193,7 +197,7 @@ class RegisterViewTest(TestCase):
     def test_post_short_password_returns_form_with_errors(self):
         resp = self.client.post(reverse('accounts:register'), {
             'email': 'short@example.com',
-            'password': '1234567',  # 7 chars
+            'password': TEST_PW_SHORT,  # 7 chars
         })
         self.assertEqual(resp.status_code, 200)
         self.assertFalse(User.objects.filter(email='short@example.com').exists())
