@@ -73,3 +73,17 @@ firebase-credentials.json
 google-services.json
 GoogleService-Info.plist
 android/keystore.properties
+# Claude Code session artifacts
+.claude/
+.playwright-mcp/
+.superpowers/
+
+# Untracked working artifacts (cleanup 2026-05-24 — files remain on disk, just hidden from git status)
+screenshots/
+screenshot.jpg
+MyRecoveryPal Conversion Audit
+AppIcons/
+AnchorAICoach.png
+faith-journal-mobile.png
+faith-journal-qr.png
+loved-one-qr.png
