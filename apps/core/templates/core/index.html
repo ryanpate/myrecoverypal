@@ -992,6 +992,104 @@
     }
 
     /* ================================================
+       HERO SOBRIETY COUNTER CARD (replaces old feed screenshot)
+    ================================================ */
+    .hero-counter-card {
+        background: linear-gradient(180deg, #0f2d56 0%, #1a2a44 100%);
+        border-radius: 14px;
+        padding: 0;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+        max-width: 380px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .hero-counter-card__top {
+        background: linear-gradient(135deg, #1e4d8b 0%, #0f2d56 100%);
+        padding: 1.75rem 1.5rem;
+        text-align: center;
+        color: white;
+    }
+
+    .hero-counter-card__label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        opacity: 0.7;
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-counter-card__days {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: #52b788;
+        line-height: 1;
+        letter-spacing: -1px;
+    }
+
+    .hero-counter-card__elapsed {
+        font-size: 0.85rem;
+        opacity: 0.85;
+        margin-top: 0.5rem;
+    }
+
+    .hero-counter-card__bottom {
+        padding: 1rem 1.5rem 1.25rem;
+        color: white;
+    }
+
+    .hero-counter-card__milestone-label {
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        opacity: 0.6;
+        margin-bottom: 0.35rem;
+    }
+
+    .hero-counter-card__milestone-name {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin-bottom: 0.6rem;
+    }
+
+    .hero-counter-card__progress-track {
+        background: rgba(255, 255, 255, 0.1);
+        height: 6px;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .hero-counter-card__progress-fill {
+        background: linear-gradient(90deg, #52b788 0%, #74d2a5 100%);
+        height: 100%;
+        width: 78%;
+        border-radius: 3px;
+    }
+
+    .hero-counter-card__remaining {
+        font-size: 0.8rem;
+        opacity: 0.7;
+        margin-top: 0.5rem;
+    }
+
+    /* Override existing .hero-right { display: none } at mobile so the card shows */
+    @media (max-width: 768px) {
+        .hero-right {
+            display: block !important;
+            margin-top: 1.5rem;
+        }
+        .hero-counter-card {
+            max-width: 320px;
+        }
+        .hero-counter-card__days {
+            font-size: 3rem;
+        }
+    }
+
+    /* ================================================
        MOBILE RESPONSIVE
     ================================================ */
     @media (max-width: 768px) {
@@ -1123,41 +1221,49 @@
 </section>
 
 <!-- ================================================
-     SECTION 1: HERO
+     SECTION 1: HERO  (tool-first, calculator-led)
 ================================================ -->
 <section class="hero" id="home">
     <div class="hero-left">
-        <h1>Recovery Is Better Together</h1>
-        <p>Join a growing social community built by and for people in recovery. Share your journey, celebrate milestones, and get 24/7 AI-powered support — all in one place.</p>
-
-        <div class="hero-trust-badges">
-            <span class="hero-trust-badge"><i class="fas fa-check-circle" aria-hidden="true"></i> Free to Join</span>
-            <span class="hero-trust-badge"><i class="fas fa-lock" aria-hidden="true"></i> Private &amp; Secure</span>
-            <span class="hero-trust-badge"><i class="fas fa-robot" aria-hidden="true"></i> AI Coach Included</span>
-            <span class="hero-trust-badge"><i class="fab fa-apple" aria-hidden="true"></i> Available on iOS</span>
-        </div>
-
         {% if user.is_authenticated %}
-        <div class="hero-cta-group">
-            <a href="{% url 'accounts:social_feed' %}" class="cta-button cta-button-pulse">Go to MyRecoveryCircle</a>
-        </div>
-        {% else %}
-        <div class="hero-cta-group">
-            <a href="{% url 'accounts:register' %}" class="cta-button cta-button-pulse">Join Free Today</a>
-            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                <a href="https://apps.apple.com/us/app/myrecoverypal/id6760084657" class="hero-secondary-link"><i class="fab fa-apple" aria-hidden="true"></i> Download iOS App</a>
-                <a href="{% url 'core:demo' %}" class="hero-secondary-link">See how it works <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            <h1>Welcome back, {{ user.first_name|default:user.username }}.</h1>
+            <p>Your community, your check-in, your coach — all where you left them.</p>
+
+            <div class="hero-cta-group">
+                <a href="{% url 'accounts:social_feed' %}" class="cta-button cta-button-pulse">Go to MyRecoveryCircle</a>
             </div>
-        </div>
+        {% else %}
+            <h1>How many days sober are you?</h1>
+            <p>Find out free. Track every day. Get an AI coach in your corner whenever you need one.</p>
+
+            <div class="hero-trust-badges">
+                <span class="hero-trust-badge"><i class="fas fa-check-circle" aria-hidden="true"></i> Free forever</span>
+                <span class="hero-trust-badge"><i class="fab fa-apple" aria-hidden="true"></i> Available on iOS</span>
+                <span class="hero-trust-badge"><i class="fas fa-lock" aria-hidden="true"></i> Private &amp; secure</span>
+            </div>
+
+            <div class="hero-cta-group">
+                <a href="{% url 'core:sobriety_calculator' %}" class="cta-button cta-button-pulse">Count My Days &rarr;</a>
+                <a href="{% url 'accounts:login' %}" class="hero-secondary-link">Already have an account? Sign in</a>
+            </div>
         {% endif %}
     </div>
 
     <div class="hero-right">
-        <div class="hero-screenshot-wrap">
-            <picture>
-                <source srcset="{% static 'images/demo/feed.webp' %}" type="image/webp">
-                <img src="{% static 'images/demo/feed.png' %}" alt="MyRecoveryCircle social feed screenshot" class="hero-screenshot" loading="eager" fetchpriority="high" width="600" height="450">
-            </picture>
+        <div class="hero-counter-card" role="img" aria-label="Example sobriety counter showing 3,003 days sober with progress toward 9-year milestone">
+            <div class="hero-counter-card__top">
+                <div class="hero-counter-card__label">Days Sober</div>
+                <div class="hero-counter-card__days">3,003</div>
+                <div class="hero-counter-card__elapsed">8 years, 2 months</div>
+            </div>
+            <div class="hero-counter-card__bottom">
+                <div class="hero-counter-card__milestone-label">Next Milestone</div>
+                <div class="hero-counter-card__milestone-name">9 Years</div>
+                <div class="hero-counter-card__progress-track">
+                    <div class="hero-counter-card__progress-fill"></div>
+                </div>
+                <div class="hero-counter-card__remaining">284 days to go</div>
+            </div>
         </div>
     </div>
 </section>
