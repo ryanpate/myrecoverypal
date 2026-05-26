@@ -215,6 +215,17 @@
                             class="anchor-ai-cta {% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}">
                             <i class="fas fa-robot" aria-hidden="true"></i> Try Anchor AI
                         </a></li>
+                    {% if user.subscription.is_court %}
+                    <li><a href="{% url 'accounts:court_dashboard' %}"
+                            class="court-cta {% if request.resolver_match.url_name == 'court_dashboard' %}active{% endif %}">
+                            <i class="fas fa-gavel" aria-hidden="true"></i> Court Compliance
+                        </a></li>
+                    {% else %}
+                    <li><a href="{% url 'core:court_ordered_meeting_tracker' %}"
+                            class="court-cta {% if request.resolver_match.url_name == 'court_ordered_meeting_tracker' %}active{% endif %}">
+                            <i class="fas fa-gavel" aria-hidden="true"></i> Court Compliance
+                        </a></li>
+                    {% endif %}
                     {% else %}
                     <li><a href="{% url 'blog:post_list' %}"
                             class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">Blog</a></li>
@@ -223,6 +234,10 @@
                     <li><a href="{% url 'core:ai_recovery_coach' %}"
                             class="anchor-ai-cta {% if request.resolver_match.url_name == 'ai_recovery_coach' %}active{% endif %}">
                             <i class="fas fa-robot" aria-hidden="true"></i> Try Anchor AI
+                        </a></li>
+                    <li><a href="{% url 'core:court_ordered_meeting_tracker' %}"
+                            class="court-cta {% if request.resolver_match.url_name == 'court_ordered_meeting_tracker' %}active{% endif %}">
+                            <i class="fas fa-gavel" aria-hidden="true"></i> Court Compliance
                         </a></li>
                     {% endif %}
                 </ul>
@@ -260,66 +275,68 @@
 
                         <!-- User Dropdown Menu -->
                         <div class="user-dropdown" id="userDropdown">
-                            <a href="{% url 'accounts:profile' username=user.username %}">
-                                <i class="fas fa-user"></i> Profile
-                            </a>
-                            <a href="{% url 'accounts:social_feed' %}">
-                                <i class="fas fa-circle-nodes"></i> MyRecoveryCircle
-                            </a>
-                            <a href="{% url 'journal:entry_list' %}">
-                                <i class="fas fa-book"></i> Journal
-                            </a>
-                            <a href="{% url 'accounts:groups_list' %}">
-                                <i class="fas fa-users-rectangle"></i> Groups
-                            </a>
-                            <a href="{% url 'accounts:community' %}">
-                                <i class="fas fa-people-group"></i> Community
-                            </a>
-                            <a href="{% url 'accounts:challenges_home' %}">
-                                <i class="fas fa-trophy"></i> Challenges
-                                {% if user_active_challenges_count > 0 %}
-                                <span class="message-count-badge">{{ user_active_challenges_count }}</span>
+                            <div class="user-dropdown-section">
+                                <div class="user-dropdown-section-label">My Recovery</div>
+                                <a href="{% url 'accounts:profile' username=user.username %}">
+                                    <i class="fas fa-user"></i> Profile
+                                </a>
+                                <a href="{% url 'journal:entry_list' %}">
+                                    <i class="fas fa-book"></i> Journal
+                                </a>
+                                <a href="{% url 'accounts:milestones' %}">
+                                    <i class="fas fa-medal"></i> Milestones
+                                </a>
+                                <a href="{% url 'accounts:my_medallions' %}">
+                                    <i class="fas fa-images"></i> Medallions
+                                </a>
+                                <a href="{% url 'accounts:messages' %}">
+                                    <i class="fas fa-envelope"></i> Messages
+                                </a>
+                            </div>
+
+                            <div class="user-dropdown-section">
+                                <div class="user-dropdown-section-label">Community</div>
+                                <a href="{% url 'accounts:community' %}">
+                                    <i class="fas fa-people-group"></i> Community
+                                </a>
+                                <a href="{% url 'accounts:challenges_home' %}">
+                                    <i class="fas fa-trophy"></i> Challenges
+                                    {% if user_active_challenges_count > 0 %}
+                                    <span class="message-count-badge">{{ user_active_challenges_count }}</span>
+                                    {% endif %}
+                                </a>
+                                <a href="{% url 'blog:post_list' %}">
+                                    <i class="fas fa-newspaper"></i> Blog
+                                </a>
+                            </div>
+
+                            <div class="user-dropdown-section">
+                                <div class="user-dropdown-section-label">Account</div>
+                                <a href="{% url 'accounts:subscription_management' %}" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)); border-left: 3px solid #f5a623; font-weight: 600;">
+                                    <i class="fas fa-crown" style="color: #f5a623;"></i> Subscription
+                                </a>
+                                {% if user.subscription.is_court %}
+                                <a href="{% url 'accounts:court_dashboard' %}" style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
+                                    <i class="fas fa-gavel" style="color: #1e4d8b;"></i> Court Compliance
+                                </a>
+                                {% else %}
+                                <a href="{% url 'core:court_ordered_meeting_tracker' %}" style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
+                                    <i class="fas fa-gavel" style="color: #1e4d8b;"></i> Court Compliance
+                                </a>
                                 {% endif %}
-                            </a>
-                            <a href="{% url 'accounts:messages' %}">
-                                <i class="fas fa-envelope"></i> Messages
-                            </a>
-                            <a href="{% url 'accounts:milestones' %}">
-                                <i class="fas fa-medal"></i> Milestones
-                            </a>
-                            <a href="{% url 'accounts:my_medallions' %}">
-                                <i class="fas fa-images"></i> My Medallions
-                            </a>
-                            <a href="{% url 'accounts:milestone_badge_creator' %}">
-                                <i class="fas fa-plus-circle"></i> Create Medallion
-                            </a>
-                            <a href="{% url 'blog:post_list' %}">
-                                <i class="fas fa-newspaper"></i> Blog
-                            </a>
-                            <hr>
-                            <a href="{% url 'accounts:subscription_management' %}" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)); border-left: 3px solid #f5a623; font-weight: 600;">
-                                <i class="fas fa-crown" style="color: #f5a623;"></i> Subscription
-                            </a>
-                            {% if user.subscription.is_court %}
-                            <a href="{% url 'accounts:court_dashboard' %}" style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
-                                <i class="fas fa-gavel" style="color: #1e4d8b;"></i> Court Compliance
-                            </a>
-                            {% endif %}
-                            <a href="{% url 'accounts:invite_friends' %}" style="color: #52b788;">
-                                <i class="fas fa-user-plus"></i> Invite Friends
-                            </a>
-                            <a href="{% url 'accounts:edit_profile' %}">
-                                <i class="fas fa-gear"></i> Settings
-                            </a>
-                            <a href="{% url 'core:install_guide' %}" id="navInstallLink">
-                                <i class="fas fa-download"></i> Install App
-                            </a>
-                            <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
-                                {% csrf_token %}
-                                <button type="submit" class="logout-btn">
-                                    <i class="fas fa-right-from-bracket"></i> Logout
-                                </button>
-                            </form>
+                                <a href="{% url 'accounts:invite_friends' %}" style="color: #52b788;">
+                                    <i class="fas fa-user-plus"></i> Invite Friends
+                                </a>
+                                <a href="{% url 'accounts:edit_profile' %}">
+                                    <i class="fas fa-gear"></i> Settings
+                                </a>
+                                <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="logout-btn">
+                                        <i class="fas fa-right-from-bracket"></i> Logout
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
 
@@ -403,6 +420,47 @@
         </div>
 
         <nav class="mobile-menu-nav">
+            {% if user.is_authenticated %}
+            <div class="mobile-menu-section">
+                <div class="mobile-menu-label">My Recovery</div>
+                <a href="{% url 'accounts:profile' username=user.username %}"
+                    class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                    <i class="fas fa-user" style="margin-right: 0.5rem;"></i> Profile
+                </a>
+                <a href="{% url 'journal:entry_list' %}"
+                    class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-book" style="margin-right: 0.5rem;"></i> Journal
+                </a>
+                <a href="{% url 'accounts:milestones' %}"
+                    class="{% if request.resolver_match.url_name == 'milestones' %}active{% endif %}">
+                    <i class="fas fa-medal" style="margin-right: 0.5rem;"></i> Milestones
+                </a>
+                <a href="{% url 'accounts:my_medallions' %}"
+                    class="{% if request.resolver_match.url_name == 'my_medallions' or request.resolver_match.url_name == 'milestone_badge_creator' %}active{% endif %}">
+                    <i class="fas fa-images" style="margin-right: 0.5rem;"></i> Medallions
+                </a>
+                <a href="{% url 'accounts:messages' %}"
+                    class="{% if request.resolver_match.url_name == 'messages' %}active{% endif %}">
+                    <i class="fas fa-envelope" style="margin-right: 0.5rem;"></i> Messages
+                </a>
+            </div>
+
+            <div class="mobile-menu-section">
+                <div class="mobile-menu-label">Community</div>
+                <a href="{% url 'accounts:community' %}"
+                    class="{% if request.resolver_match.url_name == 'community' or request.resolver_match.url_name == 'groups_list' %}active{% endif %}">
+                    <i class="fas fa-people-group" style="margin-right: 0.5rem;"></i> Community
+                </a>
+                <a href="{% url 'accounts:challenges_home' %}"
+                    class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-trophy" style="margin-right: 0.5rem;"></i> Challenges
+                </a>
+                <a href="{% url 'blog:post_list' %}"
+                    class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-newspaper" style="margin-right: 0.5rem;"></i> Blog
+                </a>
+            </div>
+
             <div class="mobile-menu-section">
                 <div class="mobile-menu-label">Quick Actions</div>
                 <a href="{% url 'accounts:social_feed' %}"
@@ -422,6 +480,14 @@
                     style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15)); border-left: 3px solid #667eea; font-weight: 600;">
                     <i class="fas fa-robot" style="margin-right: 0.5rem;"></i> Anchor AI Coach
                 </a>
+                <a href="{% url 'store:product_list' %}"
+                    class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-bag-shopping" style="margin-right: 0.5rem;"></i> Recovery Shop
+                </a>
+            </div>
+
+            <div class="mobile-menu-section">
+                <div class="mobile-menu-label">Account</div>
                 <a href="{% url 'accounts:subscription_management' %}"
                     class="{% if request.resolver_match.url_name == 'subscription_management' %}active{% endif %}"
                     style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)); border-left: 3px solid #f5a623; font-weight: 600;">
@@ -433,56 +499,13 @@
                     style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
                     <i class="fas fa-gavel" style="margin-right: 0.5rem; color: #1e4d8b;"></i> Court Compliance
                 </a>
+                {% else %}
+                <a href="{% url 'core:court_ordered_meeting_tracker' %}"
+                    class="{% if request.resolver_match.url_name == 'court_ordered_meeting_tracker' %}active{% endif %}"
+                    style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
+                    <i class="fas fa-gavel" style="margin-right: 0.5rem; color: #1e4d8b;"></i> Court Compliance
+                </a>
                 {% endif %}
-            </div>
-
-            {% if user.is_authenticated %}
-            <div class="mobile-menu-section">
-                <div class="mobile-menu-label">More</div>
-                <a href="{% url 'accounts:profile' username=user.username %}"
-                    class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
-                    <i class="fas fa-user" style="margin-right: 0.5rem;"></i> Profile
-                </a>
-                <a href="{% url 'journal:entry_list' %}"
-                    class="{% if 'journal' in request.resolver_match.namespace %}active{% endif %}">
-                    <i class="fas fa-book" style="margin-right: 0.5rem;"></i> Journal
-                </a>
-                <a href="{% url 'accounts:groups_list' %}"
-                    class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">
-                    <i class="fas fa-users-rectangle" style="margin-right: 0.5rem;"></i> Groups
-                </a>
-                <a href="{% url 'accounts:community' %}"
-                    class="{% if request.resolver_match.url_name == 'community' %}active{% endif %}">
-                    <i class="fas fa-people-group" style="margin-right: 0.5rem;"></i> Community
-                </a>
-                <a href="{% url 'accounts:challenges_home' %}"
-                    class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">
-                    <i class="fas fa-trophy" style="margin-right: 0.5rem;"></i> Challenges
-                </a>
-                <a href="{% url 'accounts:messages' %}"
-                    class="{% if request.resolver_match.url_name == 'messages' %}active{% endif %}">
-                    <i class="fas fa-envelope" style="margin-right: 0.5rem;"></i> Messages
-                </a>
-                <a href="{% url 'accounts:milestones' %}"
-                    class="{% if request.resolver_match.url_name == 'milestones' %}active{% endif %}">
-                    <i class="fas fa-medal" style="margin-right: 0.5rem;"></i> Milestones
-                </a>
-                <a href="{% url 'accounts:my_medallions' %}"
-                    class="{% if request.resolver_match.url_name == 'my_medallions' %}active{% endif %}">
-                    <i class="fas fa-images" style="margin-right: 0.5rem;"></i> My Medallions
-                </a>
-                <a href="{% url 'accounts:milestone_badge_creator' %}"
-                    class="{% if request.resolver_match.url_name == 'milestone_badge_creator' %}active{% endif %}">
-                    <i class="fas fa-plus-circle" style="margin-right: 0.5rem;"></i> Create Medallion
-                </a>
-                <a href="{% url 'blog:post_list' %}"
-                    class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
-                    <i class="fas fa-newspaper" style="margin-right: 0.5rem;"></i> Blog
-                </a>
-                <a href="{% url 'store:product_list' %}"
-                    class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
-                    <i class="fas fa-bag-shopping" style="margin-right: 0.5rem;"></i> Recovery Shop
-                </a>
                 <a href="{% url 'accounts:invite_friends' %}"
                     class="{% if request.resolver_match.url_name == 'invite_friends' %}active{% endif %}"
                     style="color: #52b788;">

@@ -71,3 +71,101 @@ class CommunityTabNavTest(TestCase):
         active_idx = content.find('community-tab-nav__link--active')
         nearby = content[active_idx:active_idx + 400]
         self.assertIn('Members', nearby)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class TopNavCourtComplianceTest(TestCase):
+    """Court Compliance pill is visible in the top nav for all authenticated users."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='nav_user', email='nav@example.com', password='pw'
+        )
+        self.client.login(username='nav_user', password='pw')
+
+    def test_court_compliance_pill_in_top_nav(self):
+        resp = self.client.get(reverse('accounts:social_feed'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'court-cta')
+        self.assertContains(resp, 'Court Compliance')
+        self.assertContains(resp, 'fa-gavel')
+
+    def test_court_pill_links_to_public_landing_for_non_court_user(self):
+        resp = self.client.get(reverse('accounts:social_feed'))
+        self.assertContains(resp, '/court-ordered-meeting-tracker/')
+
+    def test_court_pill_links_to_dashboard_for_court_user(self):
+        self.user.subscription.tier = 'court'
+        self.user.subscription.status = 'active'
+        self.user.subscription.save()
+        resp = self.client.get(reverse('accounts:social_feed'))
+        content = resp.content.decode('utf-8')
+        cta_idx = content.find('court-cta')
+        nearby = content[max(0, cta_idx - 200):cta_idx + 400]
+        self.assertIn('/accounts/court/', nearby)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class DropdownReorgTest(TestCase):
+    """Desktop user dropdown has 3 labeled sections and no duplicate/removed items."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='drop_user', email='drop@example.com', password='pw'
+        )
+        self.client.login(username='drop_user', password='pw')
+
+    def test_dropdown_has_three_section_labels(self):
+        resp = self.client.get(reverse('accounts:social_feed'))
+        content = resp.content.decode('utf-8')
+        self.assertIn('user-dropdown-section-label', content)
+        self.assertIn('My Recovery', content)
+        self.assertIn('Community', content)
+        self.assertIn('Account', content)
+
+    def test_dropdown_does_not_contain_myrecoverycircle(self):
+        resp = self.client.get(reverse('accounts:social_feed'))
+        self.assertNotContains(resp, 'MyRecoveryCircle')
+
+    def test_dropdown_does_not_contain_install_app_link(self):
+        resp = self.client.get(reverse('accounts:social_feed'))
+        self.assertNotContains(resp, '>Install App<')
+
+    def test_dropdown_does_not_contain_separate_create_medallion(self):
+        resp = self.client.get(reverse('accounts:social_feed'))
+        content = resp.content.decode('utf-8')
+        dropdown_start = content.find('user-dropdown')
+        # Find the matching end of the user-dropdown container (rough heuristic)
+        dropdown_end = content.find('notification-dropdown', dropdown_start)
+        if dropdown_end == -1:
+            dropdown_end = dropdown_start + 5000
+        dropdown_html = content[dropdown_start:dropdown_end]
+        self.assertNotIn('Create Medallion', dropdown_html)
+
+    def test_dropdown_contains_court_compliance_for_all_users(self):
+        resp = self.client.get(reverse('accounts:social_feed'))
+        content = resp.content.decode('utf-8')
+        # Court Compliance appears in top nav AND in dropdown (at least 2 occurrences)
+        self.assertGreaterEqual(content.count('Court Compliance'), 2)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class MobileSlideOutReorgTest(TestCase):
+    """Mobile slide-out menu uses the same labeled sections as the desktop dropdown."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='mob_user', email='mob@example.com', password='pw'
+        )
+        self.client.login(username='mob_user', password='pw')
+
+    def test_mobile_menu_has_my_recovery_section(self):
+        resp = self.client.get(reverse('accounts:social_feed'))
+        content = resp.content.decode('utf-8')
+        self.assertIn('mobile-menu-label', content)
+        self.assertIn('My Recovery', content)
+
+    def test_mobile_menu_no_install_app_no_myrecoverycircle(self):
+        resp = self.client.get(reverse('accounts:social_feed'))
+        self.assertNotContains(resp, 'MyRecoveryCircle')
+        self.assertNotContains(resp, '>Install App<')
