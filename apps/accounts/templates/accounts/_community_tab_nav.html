@@ -1,0 +1,45 @@
+{% load static %}
+<nav class="community-tab-nav" aria-label="Community">
+  <a href="{% url 'accounts:community' %}"
+     class="community-tab-nav__link{% if request.resolver_match.url_name == 'community' %} community-tab-nav__link--active{% endif %}">
+    <i class="fas fa-people-group" aria-hidden="true"></i>
+    Members
+  </a>
+  <a href="{% url 'accounts:groups_list' %}"
+     class="community-tab-nav__link{% if request.resolver_match.url_name == 'groups_list' %} community-tab-nav__link--active{% endif %}">
+    <i class="fas fa-users-rectangle" aria-hidden="true"></i>
+    Groups
+  </a>
+</nav>
+<style>
+.community-tab-nav {
+    display: inline-flex;
+    gap: 0.4rem;
+    background: #f0f3f8;
+    padding: 0.3rem;
+    border-radius: 999px;
+    margin: 0 auto 1.5rem;
+}
+.community-tab-nav__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.15s, color 0.15s;
+}
+.community-tab-nav__link:hover { color: #1e4d8b; }
+.community-tab-nav__link--active {
+    background: white;
+    color: #1e4d8b;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+@media (max-width: 600px) {
+    .community-tab-nav { width: 100%; justify-content: center; }
+    .community-tab-nav__link { flex: 1; justify-content: center; }
+}
+</style>

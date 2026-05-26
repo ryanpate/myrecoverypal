@@ -38,3 +38,36 @@ class MedallionsTabNavTest(TestCase):
         active_idx = content.find('medallions-tab-nav__link--active')
         nearby = content[active_idx:active_idx + 400]
         self.assertIn('My Medallions', nearby)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CommunityTabNavTest(TestCase):
+    """Both community and groups pages render the same tab navigation."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='comm_user', email='comm@example.com', password='pw'
+        )
+        self.client.login(username='comm_user', password='pw')
+
+    def test_community_page_has_tab_nav(self):
+        resp = self.client.get(reverse('accounts:community'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'community-tab-nav')
+        self.assertContains(resp, 'Members')
+        self.assertContains(resp, 'Groups')
+
+    def test_groups_page_has_tab_nav(self):
+        resp = self.client.get(reverse('accounts:groups_list'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'community-tab-nav')
+        self.assertContains(resp, 'Members')
+        self.assertContains(resp, 'Groups')
+
+    def test_community_tab_active_on_community_page(self):
+        resp = self.client.get(reverse('accounts:community'))
+        self.assertContains(resp, 'community-tab-nav__link--active')
+        content = resp.content.decode('utf-8')
+        active_idx = content.find('community-tab-nav__link--active')
+        nearby = content[active_idx:active_idx + 400]
+        self.assertIn('Members', nearby)
