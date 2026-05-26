@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Unsubscribed — MyRecoveryPal{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 4rem auto; padding: 0 1rem; text-align: center;">
+    <div style="background: white; padding: 2.5rem 2rem; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">✓</div>
+        <h1 style="margin: 0 0 0.75rem; color: var(--primary-dark, #1e4d8b);">You're unsubscribed.</h1>
+        <p style="color: #555; line-height: 1.6;">
+            You'll no longer receive shop emails or milestone celebration
+            notifications. Other emails (like check-in reminders and
+            account notifications) are unaffected.
+        </p>
+        <p style="color: #555; line-height: 1.6; margin-top: 1.25rem;">
+            Changed your mind? You can re-enable shop emails any time from
+            your <a href="{% url 'accounts:edit_profile' %}" style="color: #1e4d8b; font-weight: 600;">profile settings</a>.
+        </p>
+    </div>
+</div>
+{% endblock %}
