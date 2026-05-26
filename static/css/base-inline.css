@@ -1431,6 +1431,52 @@ a.btn-primary:hover {
     50% { box-shadow: 0 0 0 8px rgba(102, 126, 234, 0); }
 }
 
+/* ================================================
+   COURT COMPLIANCE NAV PILL (top nav + mobile slide-out)
+================================================ */
+.court-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: linear-gradient(135deg, #1e4d8b 0%, #0f2d56 100%);
+    color: white !important;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 1px 4px rgba(15, 45, 86, 0.25);
+}
+.court-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 45, 86, 0.35);
+    color: white !important;
+}
+.court-cta.active {
+    box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.6), 0 1px 4px rgba(15, 45, 86, 0.25);
+}
+.court-cta i { color: #f5a623; }
+
+/* ================================================
+   USER DROPDOWN SECTION HEADERS
+================================================ */
+.user-dropdown-section {
+    padding: 0.5rem 0;
+}
+.user-dropdown-section + .user-dropdown-section {
+    border-top: 1px solid #eef1f5;
+    margin-top: 0.25rem;
+}
+.user-dropdown-section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #888;
+    padding: 0.35rem 1rem 0.25rem;
+}
+
 /* Anchor AI accent in mobile bottom nav */
 .mobile-bottom-nav a.anchor-bottom-tab {
     color: #667eea;
