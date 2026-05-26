@@ -761,6 +761,15 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.blog.tasks.send_daily_blog_digest',
         'schedule': crontab(hour=7, minute=0),
     },
+    # Shop emails (Audit Priority #3)
+    'send-weekly-shop-digest': {
+        'task': 'apps.store.tasks.weekly_shop_digest_task',
+        'schedule': crontab(hour=10, minute=0, day_of_week=5),  # Friday 10am UTC
+    },
+    'send-milestone-celebrations': {
+        'task': 'apps.store.tasks.daily_milestone_celebration_task',
+        'schedule': crontab(hour=9, minute=0),  # Daily 9am UTC
+    },
 }
 
 # Celery worker memory optimization (Railway cost reduction)

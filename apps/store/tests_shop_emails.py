@@ -297,3 +297,73 @@ class MilestoneCelebrationSendTest(TestCase):
         self.assertFalse(
             MilestoneEmailSent.objects.filter(user=self.user, milestone_days=30).exists()
         )
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class WeeklyDigestTaskTest(TestCase):
+    """The weekly_shop_digest_task wraps the service and is idempotent on retry."""
+
+    def setUp(self):
+        from apps.store.models import Category, Product
+        cat = Category.objects.create(name='X', slug='x')
+        Product.objects.create(
+            name='F', category=cat, description='x',
+            price=Decimal('10.00'), external_url='https://example.com/f',
+            is_active=True, is_featured=True,
+        )
+        User.objects.create_user(username='wt1', email='wt1@example.com', password='pw')
+
+    @patch('apps.store.tasks.send_weekly_shop_digest')
+    def test_task_calls_service(self, mock_send):
+        mock_send.return_value = 1
+        from apps.store.tasks import weekly_shop_digest_task
+        weekly_shop_digest_task()
+        mock_send.assert_called_once()
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class MilestoneCelebrationTaskTest(TestCase):
+    """The daily milestone task finds eligible users and sends to each."""
+
+    def setUp(self):
+        from apps.store.models import Category, Product
+        cat = Category.objects.create(name='Stickers', slug='stickers')
+        Product.objects.create(
+            name='S', category=cat, description='x',
+            price=Decimal('5.00'), external_url='https://example.com/s',
+            is_active=True, is_featured=True,
+        )
+
+    @patch('apps.store.tasks.send_milestone_celebration_email')
+    def test_task_sends_to_users_at_milestones(self, mock_send):
+        mock_send.return_value = True
+        # User at 30 days
+        u = User.objects.create_user(username='mu', email='mu@example.com', password='pw')
+        u.sobriety_date = date.today() - timedelta(days=30)
+        u.save()
+        from apps.store.tasks import daily_milestone_celebration_task
+        daily_milestone_celebration_task()
+        mock_send.assert_called_once_with(u, 30)
+
+    @patch('apps.store.tasks.send_milestone_celebration_email')
+    def test_task_no_op_when_no_users_at_milestone(self, mock_send):
+        mock_send.return_value = True
+        # User at 45 days — not a milestone
+        u = User.objects.create_user(username='mu2', email='mu2@example.com', password='pw')
+        u.sobriety_date = date.today() - timedelta(days=45)
+        u.save()
+        from apps.store.tasks import daily_milestone_celebration_task
+        daily_milestone_celebration_task()
+        mock_send.assert_not_called()
+
+    @patch('apps.store.tasks.send_milestone_celebration_email')
+    def test_task_idempotent_when_already_sent(self, mock_send):
+        from apps.store.models import MilestoneEmailSent
+        mock_send.return_value = True
+        u = User.objects.create_user(username='mu3', email='mu3@example.com', password='pw')
+        u.sobriety_date = date.today() - timedelta(days=30)
+        u.save()
+        MilestoneEmailSent.objects.create(user=u, milestone_days=30)
+        from apps.store.tasks import daily_milestone_celebration_task
+        daily_milestone_celebration_task()
+        mock_send.assert_not_called()
