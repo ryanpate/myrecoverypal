@@ -86,6 +86,10 @@ class User(AbstractUser):
     # Email settings
     email_notifications = models.BooleanField(default=True)
     newsletter_subscriber = models.BooleanField(default=True)
+    marketing_emails_enabled = models.BooleanField(
+        default=True,
+        help_text='Receive weekly shop and milestone celebration emails.',
+    )
 
     # Engagement email tracking
     welcome_email_1_sent = models.DateTimeField(null=True, blank=True,

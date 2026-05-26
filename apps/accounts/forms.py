@@ -216,7 +216,8 @@ class UserProfileForm(forms.ModelForm):
             'first_name', 'last_name', 'email', 'bio', 'location',
             'sobriety_date', 'recovery_goals', 'avatar',
             'is_profile_public', 'show_sobriety_date', 'allow_messages',
-            'email_notifications', 'newsletter_subscriber', 'is_sponsor'
+            'email_notifications', 'newsletter_subscriber',
+            'marketing_emails_enabled', 'is_sponsor'
         ]
         widgets = {
             'sobriety_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
@@ -234,6 +235,7 @@ class UserProfileForm(forms.ModelForm):
             'allow_messages': 'Allow other members to send you private messages',
             'email_notifications': 'Receive email notifications for messages and milestones',
             'newsletter_subscriber': 'Receive our weekly recovery newsletter',
+            'marketing_emails_enabled': 'Receive the Friday "New in the Shop" digest and celebration emails when you hit a sobriety milestone',
         }
 
 
