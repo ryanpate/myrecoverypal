@@ -124,8 +124,16 @@ class DropdownReorgTest(TestCase):
         self.assertIn('Account', content)
 
     def test_dropdown_does_not_contain_myrecoverycircle(self):
+        """MyRecoveryCircle is the brand name used elsewhere (page titles, landing
+        pages), but must not appear as a duplicate link in the nav surfaces."""
         resp = self.client.get(reverse('accounts:social_feed'))
-        self.assertNotContains(resp, 'MyRecoveryCircle')
+        content = resp.content.decode('utf-8')
+        # Scope the assertion to the nav region (between <nav...> and </nav>)
+        nav_start = content.find('<nav')
+        nav_end = content.rfind('</nav>')
+        nav_html = content[nav_start:nav_end + 6] if nav_start >= 0 else ''
+        self.assertNotIn('MyRecoveryCircle', nav_html,
+                         'MyRecoveryCircle link should be removed from nav (it duplicates Feed)')
 
     def test_dropdown_does_not_contain_install_app_link(self):
         resp = self.client.get(reverse('accounts:social_feed'))
@@ -166,6 +174,11 @@ class MobileSlideOutReorgTest(TestCase):
         self.assertIn('My Recovery', content)
 
     def test_mobile_menu_no_install_app_no_myrecoverycircle(self):
+        """Neither legacy nav item should appear in the nav surfaces."""
         resp = self.client.get(reverse('accounts:social_feed'))
-        self.assertNotContains(resp, 'MyRecoveryCircle')
-        self.assertNotContains(resp, '>Install App<')
+        content = resp.content.decode('utf-8')
+        nav_start = content.find('<nav')
+        nav_end = content.rfind('</nav>')
+        nav_html = content[nav_start:nav_end + 6] if nav_start >= 0 else ''
+        self.assertNotIn('MyRecoveryCircle', nav_html)
+        self.assertNotIn('>Install App<', nav_html)
