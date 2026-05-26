@@ -46,16 +46,16 @@ Disallow: /journal/
 Disallow: /admin/
 Disallow: /api/
 
-# Block query-parameter variants that create duplicate content
+# Block query-parameter variants for login/register (saves crawl budget)
 Disallow: /accounts/login/?
 Disallow: /accounts/register/?
-Disallow: /blog/?page=
-Disallow: /blog/?filter=
 
-# Block thin listing pages (tags/categories generate 100+ near-duplicate URLs)
-Disallow: /blog/tag/
-Disallow: /blog/category/
-Disallow: /support/services/?
+# Note: /blog/tag/, /blog/category/, /blog/?page=, /blog/?filter=, and
+# /support/services/?* are intentionally NOT in robots.txt. They are
+# noindexed via the SEONoIndexMiddleware X-Robots-Tag header + meta tag
+# in the rendered HTML. Disallowing them would prevent Google from
+# crawling and seeing the noindex directive (Crawled-but-not-indexed
+# trap). See docs/plans/2026-05-26-noindex-thin-pages-design.md.
 
 # Disallow system pages
 Disallow: /media/private/

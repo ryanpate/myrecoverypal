@@ -99,3 +99,68 @@ class BlogListingNoIndexTest(TestCase):
     def test_blog_tag_page_also_has_noindex_header(self):
         resp = self.client.get(reverse('blog:tag_posts', kwargs={'slug': 'hope'}))
         self.assertIn('noindex', resp.get('X-Robots-Tag', ''))
+
+
+def _response_body(response):
+    """Read body from either an HttpResponse or a streaming response
+    (WhiteNoise serves /robots.txt as a FileResponse, which has no
+    .content attribute — use streaming_content instead)."""
+    if getattr(response, 'streaming', False):
+        return b''.join(response.streaming_content).decode('utf-8')
+    return response.content.decode('utf-8')
+
+
+@override_settings(**_TEST_STORAGE)
+class RobotsTxtTest(TestCase):
+    """robots.txt no longer Disallows blog tag/category pages
+    (the middleware noindex handles them via X-Robots-Tag)."""
+
+    def setUp(self):
+        self.resp = self.client.get('/robots.txt')
+        self.body = _response_body(self.resp)
+
+    def test_robots_txt_serves_text_plain(self):
+        self.assertEqual(self.resp.status_code, 200)
+        self.assertIn('text/plain', self.resp.get('Content-Type', ''))
+
+    def test_no_disallow_for_blog_tag(self):
+        body = self.body
+        for line in body.splitlines():
+            stripped = line.strip()
+            if stripped.startswith('Disallow:'):
+                target = stripped[len('Disallow:'):].strip()
+                self.assertNotEqual(target, '/blog/tag/',
+                                    'robots.txt still Disallows /blog/tag/')
+
+    def test_no_disallow_for_blog_category(self):
+        body = self.body
+        for line in body.splitlines():
+            stripped = line.strip()
+            if stripped.startswith('Disallow:'):
+                target = stripped[len('Disallow:'):].strip()
+                self.assertNotEqual(target, '/blog/category/',
+                                    'robots.txt still Disallows /blog/category/')
+
+    def test_no_disallow_for_blog_pagination_or_filter(self):
+        body = self.body
+        self.assertNotIn('Disallow: /blog/?page=', body)
+        self.assertNotIn('Disallow: /blog/?filter=', body)
+
+    def test_no_disallow_for_support_services_filters(self):
+        body = self.body
+        self.assertNotIn('Disallow: /support/services/?', body)
+
+    # Regression checks — these Disallows must REMAIN
+    def test_still_disallows_admin(self):
+        body = self.body
+        self.assertIn('Disallow: /admin/', body)
+
+    def test_still_disallows_authed_pages(self):
+        body = self.body
+        self.assertIn('Disallow: /accounts/dashboard/', body)
+        self.assertIn('Disallow: /accounts/court/', body)
+        self.assertIn('Disallow: /journal/', body)
+
+    def test_sitemap_is_present(self):
+        body = self.body
+        self.assertIn('Sitemap: https://www.myrecoverypal.com/sitemap.xml', body)
