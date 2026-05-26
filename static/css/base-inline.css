@@ -1355,10 +1355,11 @@ a.btn-primary:hover {
 .nav-links {
     display: flex;
     list-style: none;
-    gap: 2rem;
+    gap: 1.25rem;
     margin: 0;
     padding: 0;
     align-items: center;
+    flex-wrap: nowrap;
 }
 
 .nav-links a {
@@ -1367,6 +1368,7 @@ a.btn-primary:hover {
     font-weight: 500;
     position: relative;
     transition: color 0.3s ease;
+    white-space: nowrap;
 }
 
 .nav-links a::after {
@@ -1400,12 +1402,13 @@ a.btn-primary:hover {
 .nav-links a.anchor-ai-cta {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: #fff !important;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.85rem;
     border-radius: 25px;
     font-weight: 600;
+    font-size: 0.9rem;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
     transition: all 0.3s ease;
     text-decoration: none;
     position: relative;
@@ -1437,11 +1440,11 @@ a.btn-primary:hover {
 .court-cta {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
     background: linear-gradient(135deg, #1e4d8b 0%, #0f2d56 100%);
     color: white !important;
-    padding: 0.45rem 1rem;
-    border-radius: 999px;
+    padding: 0.4rem 0.85rem;
+    border-radius: 25px;
     font-weight: 600;
     font-size: 0.9rem;
     text-decoration: none;
