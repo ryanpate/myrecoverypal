@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
@@ -83,3 +84,25 @@ class Product(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+
+class MilestoneEmailSent(models.Model):
+    """Tracks which milestone celebration emails have been sent to each user.
+    Prevents double-sends if the Celery task is retried."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='milestone_emails_sent',
+    )
+    milestone_days = models.IntegerField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user', 'milestone_days']
+        indexes = [models.Index(fields=['user', 'milestone_days'])]
+        verbose_name = 'Milestone Email Sent'
+        verbose_name_plural = 'Milestone Emails Sent'
+
+    def __str__(self):
+        return f'{self.user.username} - {self.milestone_days}d ({self.sent_at:%Y-%m-%d})'
