@@ -1,5 +1,7 @@
 html{% extends 'blog/post_list.html' %}
 
+{% block meta_robots %}noindex, follow{% endblock %}
+
 {% block title %}{{ category.name }} - Journey to Recovery{% endblock %}
 
 {% block content %}

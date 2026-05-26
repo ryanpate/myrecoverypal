@@ -50,7 +50,7 @@
     <meta name="description" content="{% block meta_description %}{{ seo_description|default:'Join MyRecoveryPal, a supportive community for addiction recovery. Track your sobriety, connect with sponsors, join support groups, and access recovery resources 24/7.' }}{% endblock %}">
     <meta name="keywords" content="{% block meta_keywords %}{{ seo_keywords|default:'recovery support, addiction recovery, sobriety tracker, recovery community, support groups, sponsor, recovery journey, mental health, substance abuse recovery, 12 step program, recovery resources' }}{% endblock %}">
     <meta name="author" content="MyRecoveryPal">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="robots" content="{% block meta_robots %}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{% endblock %}">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="{% block canonical_url %}{{ seo_url|default:'https://www.myrecoverypal.com' }}{% endblock %}">

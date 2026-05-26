@@ -510,6 +510,21 @@ celery -A recovery_hub worker -l info -B     # Worker + Beat
 - **Sitemap:** `/sitemap.xml` with 25+ URLs
 - **Robots.txt:** Properly configured for crawling
 
+### SEO — Bulk-removing already-crawled thin pages (one-time manual step)
+
+For the 170+ URLs in "Crawled, not indexed" that we've now properly noindexed (PR #136, May 2026), the natural deindex flow takes 4-8 weeks. To accelerate:
+
+1. Open Google Search Console → property → **Indexing** → **Removals**
+2. Click **New request** → **Remove all URLs with this prefix**
+3. Submit each of:
+   - `https://www.myrecoverypal.com/blog/tag/`
+   - `https://www.myrecoverypal.com/blog/category/`
+4. Each prefix submission removes URLs for 6 months. By that point, the natural deindex (driven by our `noindex` meta + header) is complete and the URLs stay out of the index.
+
+This is a one-time manual step. The code-level work (noindex meta tag on thin pages + robots.txt no longer blocking the crawl) ships automatically with every deploy from now on.
+
+If `/blog/tag/` and `/blog/category/` reappear in "Crawled, not indexed" later, that's expected — Google will keep recrawling them periodically. The noindex directive should win every time. Don't re-submit removal requests unless they actually get indexed.
+
 ### SEO Landing Pages - ✅ ALL COMPLETE
 Keyword-targeted landing pages:
 
