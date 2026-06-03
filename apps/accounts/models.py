@@ -1937,3 +1937,6 @@ class CoachMessage(models.Model):
 from apps.accounts.court_models import (  # noqa: E402, F401
     CourtReportProfile, MeetingAttendance, CourtReport,
 )
+
+# Re-export cold-outreach suppression model so Django discovers it at app load
+from apps.accounts.outreach_models import ColdOutreachSuppression  # noqa: E402, F401

@@ -1,0 +1,44 @@
+Subject: Verifiable meeting-attendance reports for court-ordered clients
+
+Hi {{FIRST_NAME}},
+
+I'm Ryan, founder of MyRecoveryPal. I'll keep this short, because I think it
+solves a problem you deal with constantly.
+
+The handwritten meeting-attendance cards court-ordered clients turn in are easy
+to forge and hard to verify. There's rarely a fast way to confirm a signature
+is real.
+
+We built a tool that fixes that. Clients log their meetings and generate a PDF
+attendance report with a tamper-evident verification code. You can confirm any
+report's authenticity at a public verification link -- in seconds, no account
+needed.
+
+Why it holds up:
+  - Every report carries a unique, verifiable fingerprint
+  - Confirm authenticity at a public link -- privacy-protected, no case details
+    exposed
+  - Reports can be emailed to your office directly
+  - Program-neutral: AA, NA, CA, SMART, Refuge, LifeRing & secular --
+    constitutionally compliant
+
+There's nothing for your office to set up or pay for. Clients use the app on
+their own; you simply receive cleaner, verifiable documentation. If it helps
+even a fraction of your caseload, it saves you time chasing down signatures.
+
+See a sample report: https://www.myrecoverypal.com/court-ordered-meeting-tracker/
+
+Could I send you a sample report and the verification link to try? Or a quick
+10-minute call -- whatever's easier.
+
+Thank you for the work you do.
+
+Ryan Pate
+Founder, MyRecoveryPal
+ryan@myrecoverypal.com
+
+--
+You received this email as part of outreach to court and recovery-support
+professionals. MyRecoveryPal, 1350 Wyndmoor Dr, Rochester, IL 62563.
+Prefer not to hear from us? Unsubscribe here:
+https://www.myrecoverypal.com/email/cold-outreach-unsubscribe/?email={{RECIPIENT_EMAIL}}
