@@ -1,0 +1,42 @@
+Subject: Less paperwork verifying your residents' meeting attendance
+
+Hi {{FIRST_NAME}},
+
+I'm Ryan, founder of MyRecoveryPal. I'll keep this short.
+
+If any of your residents are working through a court-ordered AA, NA, or SMART
+requirement -- DUI, drug court, family court -- you already know the paperwork
+it creates for your staff: signing attendance cards, vouching for hours, and
+fielding calls from probation officers.
+
+We built a tool that takes that off your plate. Residents log their own meetings
+and generate a court-ready PDF report they can email, print, or hand to their PO
+-- or to your house records. Each report carries a tamper-evident verification
+code, so no more signed cards getting questioned.
+
+What residents get:
+  - Log every meeting -- date, program, location, hours
+  - One-tap, verifiable PDF for courts, POs, or your records
+  - Program-neutral: AA, NA, CA, SMART, Refuge, LifeRing & secular
+  - A clean attendance history your team can reference any time
+
+It's free for your house -- nothing to set up or pay for. Residents who need the
+court-compliance features subscribe individually. Your benefit is simply fewer
+paperwork headaches and residents who arrive at check-ins already documented.
+
+See how it works: https://www.myrecoverypal.com/court-ordered-meeting-tracker/
+
+Would a 10-minute call be worth it? I'm also happy to set up a few free accounts
+so your team can try it with current residents first.
+
+Either way, thank you for the work you do.
+
+Ryan Pate
+Founder, MyRecoveryPal
+ryan@myrecoverypal.com
+
+--
+You received this email as part of outreach to recovery-support facilities.
+MyRecoveryPal, 1350 Wyndmoor Dr, Rochester, IL 62563.
+Prefer not to hear from us? Unsubscribe here:
+https://www.myrecoverypal.com/email/cold-outreach-unsubscribe/?email={{RECIPIENT_EMAIL}}

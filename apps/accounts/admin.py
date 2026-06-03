@@ -566,3 +566,14 @@ class ABTestConversionAdmin(admin.ModelAdmin):
     def get_variant(self, obj):
         return obj.assignment.variant.name
     get_variant.short_description = 'Variant'
+
+
+from .outreach_models import ColdOutreachSuppression
+
+
+@admin.register(ColdOutreachSuppression)
+class ColdOutreachSuppressionAdmin(admin.ModelAdmin):
+    list_display = ['email', 'source', 'unsubscribed_at']
+    list_filter = ['source', 'unsubscribed_at']
+    search_fields = ['email']
+    readonly_fields = ['unsubscribed_at']

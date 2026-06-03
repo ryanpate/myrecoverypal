@@ -1,0 +1,43 @@
+Subject: Court-ready meeting tracking for clients after discharge
+
+Hi {{FIRST_NAME}},
+
+I'm Ryan, founder of MyRecoveryPal. I'll be brief.
+
+Many clients leave treatment with a court-ordered AA, NA, or SMART requirement
+still ahead of them -- and your clinical staff often becomes the fallback for
+attendance letters and verification calls long after discharge.
+
+We built a tool that supports that continuity of care. Clients log their own
+meetings and generate a court-ready PDF report they can email, print, or hand to
+a probation officer or counselor. Each report carries a tamper-evident
+verification code -- legitimate documentation, without the calls coming back to
+your team.
+
+A discharge-ready tool for clients:
+  - Tracks every meeting -- date, program, location, hours
+  - Generates a verifiable PDF for courts, POs, or aftercare records
+  - Program-neutral: AA, NA, CA, SMART, Refuge, LifeRing & secular
+  - Pairs with our recovery community & AI support coach for ongoing engagement
+
+It's free for your center -- nothing to set up or pay for. Clients who need the
+court-compliance features subscribe individually. Your benefit is a smoother
+handoff at discharge and fewer attendance-verification requests landing on
+clinical staff.
+
+See how it works: https://www.myrecoverypal.com/court-ordered-meeting-tracker/
+
+Open to a 10-minute call? I can also set up free accounts so your discharge
+planners can try it with a few clients first.
+
+Either way, thank you for the work you do.
+
+Ryan Pate
+Founder, MyRecoveryPal
+ryan@myrecoverypal.com
+
+--
+You received this email as part of outreach to recovery-support facilities.
+MyRecoveryPal, 1350 Wyndmoor Dr, Rochester, IL 62563.
+Prefer not to hear from us? Unsubscribe here:
+https://www.myrecoverypal.com/email/cold-outreach-unsubscribe/?email={{RECIPIENT_EMAIL}}

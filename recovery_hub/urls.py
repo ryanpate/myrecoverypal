@@ -8,7 +8,7 @@ from django.contrib.sitemaps.views import sitemap
 from django.views.generic import RedirectView
 from apps.core.views import robots_txt_view, ads_txt_view
 from apps.accounts.court_views import verify_court_report
-from apps.accounts.email_views import unsubscribe_marketing
+from apps.accounts.email_views import unsubscribe_marketing, cold_outreach_unsubscribe
 from recovery_hub.sitemaps import sitemaps
 from apps.accounts.admin_dashboard import engagement_dashboard, ab_test_results
 
@@ -48,6 +48,7 @@ urlpatterns = [
     path('robots.txt', robots_txt_view, name='robots'),
     path('verify/court/<str:hash_value>/', verify_court_report, name='verify_court_report'),
     path('email/unsubscribe/<str:token>/', unsubscribe_marketing, name='unsubscribe_marketing'),
+    path('email/cold-outreach-unsubscribe/', cold_outreach_unsubscribe, name='cold_outreach_unsubscribe'),
     path('ads.txt', ads_txt_view, name='ads'),
     # Add allauth URLs if using django-allauth
     path('accounts/', include('allauth.urls')),
