@@ -128,3 +128,71 @@ verification link as the hook (no sales pitch). Lower priority than facilities.
 
 > **Before any send:** check the opt-out list (admin → Cold-outreach opt-outs)
 > and keep batches to 20–30/day from ryan@myrecoverypal.com.
+
+---
+
+## Email-chase results (verified June 2026)
+
+I checked each top facility's real contact page for a published inbox:
+
+| Facility | Public email? | Direct contact |
+|----------|---------------|----------------|
+| **Centerstone – Alton** | ✅ **YES** | `helpnow@centerstone.org`, `Customer.care@centerstone.org` · (877) 467-3123 |
+| Gateway Foundation | ❌ none | form + 877-505-4673 |
+| Heritage (Decatur) | ❌ none | form + 217.362.6262 |
+| Chestnut Health | ❌ none | 888-924-3786 |
+| Memorial Behavioral Health | ❌ none found | 217-525-1064 / 217-788-4065 |
+| Rosecrance | ❌ none | 866-330-8729 · format is `[finitial][last]@rosecrance.org` |
+| Wells Center (Jacksonville) | ❌ none found | 217-243-1871 · 1300 Lincoln Ave (site blocks crawlers) |
+
+**Conclusion:** Centerstone is the *only* treatment center that publishes a usable
+inbox. For everyone else, cold *email* is a dead end at the org level — you'd be
+emailing a form. The realistic plays are a phone call to get the named
+DUI/court-services contact, or pivoting to the avenues below where decision-makers
+actually have reachable inboxes.
+
+---
+
+## Other avenues worth pursuing (often better than facility cold-email)
+
+### A. Highest-intent — people literally under a court order
+1. **DUI service providers (IL SUPR-licensed DUI evaluation + Driver Risk
+   Education).** Their entire clientele is court/Secretary-of-State-mandated —
+   a perfect match. Find them via the IL Secretary of State remedial-provider
+   list (ilsos.gov → drivers → remedial education) and the IDHS DUI page
+   (dhs.state.il.us, item 68381). Helpline for referral sources: 1-833-234-6343 /
+   helplineil.org.
+2. **DUI & criminal-defense attorneys (Sangamon + surrounding counties).** ⭐ This
+   is where cold email *actually works* — law firms publish staff emails on their
+   sites. Their clients all need proof of compliance, and lawyers love tools that
+   keep clients compliant and out of violation. Pitch as a referral aid. Easy to
+   find via Google / Avvo / county bar directories.
+3. **Public defender offices** (county) — court-involved clients, public contacts.
+4. **Problem-solving courts / probation** (already listed) — public-sector,
+   general inboxes; keep it factual, lead with the verification link, no hard sell.
+
+### B. Reach people in recovery directly (B2C, self-selecting)
+5. **Reddit** — r/stopdrinking, r/dui, r/probation, r/leaves. Value-first posts
+   only; link only if asked (aligns with the 30-day marketing plan).
+6. **Facebook groups** — sobriety / DUI-support / recovery groups.
+7. **AA / NA / SMART central offices** — e.g., Springfield-area AA intergroup has a
+   public office email/phone. You can't spam members, but you can inform the
+   office about a program-neutral attendance tool.
+
+### C. Scale + credibility (reach many providers at once)
+8. **Illinois Association for Behavioral Health (IABH)** — the providers' trade
+   association. A sponsorship, newsletter mention, or conference table reaches
+   every treatment org at once — far better ROI than one-by-one cold email.
+9. **Recovery-home / sober-living certification bodies** (NARR-affiliated IL
+   recovery housing org) — published lists of certified homes with contacts.
+10. **Recovery app directories & roundups** — also doubles as SEO/backlinks.
+
+### D. Local community / PR
+11. **Hospital social workers & discharge planners** (Springfield Memorial, HSHS
+    St. John's) — they refer to treatment and need aftercare documentation.
+12. **County health departments / 708 mental-health boards.**
+13. **Local press** (State Journal-Register) — founder story angle.
+
+> **Best next move:** email **Centerstone–Alton** today, then spend an hour
+> emailing **DUI-defense attorneys** (real inboxes, perfect-intent clients) and
+> look into an **IABH** listing to hit all the treatment centers at once.
