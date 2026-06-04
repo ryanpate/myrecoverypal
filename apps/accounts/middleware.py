@@ -14,9 +14,17 @@ class DatabaseConnectionMiddleware:
 
     Handles two failure modes:
     1. Stale connections (pre-request): validated via health check before each request
-    2. Mid-request drops (during processing): caught and retried up to MAX_RETRIES
-       times with backoff. Railway's proxy can drop multiple consecutive connections
-       during stress, so a single retry isn't enough to keep the UX seamless.
+    2. Mid-request drops (during processing): retried up to MAX_RETRIES times with
+       backoff. Railway's proxy can drop multiple consecutive connections during
+       stress, so a single retry isn't enough to keep the UX seamless.
+
+    Mid-request retry can't rely on catching the exception in __call__: Django wraps
+    every middleware's get_response in convert_exception_to_response, so a view or
+    template that raises OperationalError/InterfaceError (e.g. a lazy
+    `user.subscription` query during template render) is turned into a 500 *response*
+    before it ever propagates back to this middleware. Instead, process_exception —
+    which Django invokes *before* that conversion — records the drop on the request,
+    and __call__ checks that flag after get_response returns to decide whether to retry.
 
     Safe with ATOMIC_REQUESTS=True: when a connection dies mid-view, the COMMIT
     was never sent, so the transaction is implicitly rolled back at the DB level.
@@ -60,31 +68,52 @@ class DatabaseConnectionMiddleware:
 
         total_attempts = 1 + len(self.BACKOFF_DELAYS)
         for attempt in range(total_attempts):
+            # Reset the per-attempt drop flag; process_exception sets it if the
+            # downstream view/template hits a dead connection.
+            request._db_connection_dropped = None
+            response = None
             try:
-                return self.get_response(request)
+                response = self.get_response(request)
             except (OperationalError, InterfaceError) as e:
+                # Defensive: some response paths (streaming, etc.) can still let the
+                # error propagate as an exception rather than going through
+                # process_exception. Treat it the same way.
                 self._close_all_connections()
-                if attempt < len(self.BACKOFF_DELAYS):
-                    delay = self.BACKOFF_DELAYS[attempt]
-                    logger.warning(
-                        "Database connection lost mid-request (attempt %d/%d): %s. Retrying in %.2fs",
-                        attempt + 1, total_attempts, e, delay,
-                    )
-                    time.sleep(delay)
-                else:
-                    logger.error(
-                        "Database connection lost after %d attempts, giving up: %s",
-                        total_attempts, e,
-                    )
-                    raise
+                dropped = e
+            else:
+                # Normal path: Django already converted any view/template DB error
+                # into the response and called process_exception (below), which
+                # records the drop on the request.
+                dropped = getattr(request, '_db_connection_dropped', None)
+                if dropped is None:
+                    return response
+
+            if attempt < len(self.BACKOFF_DELAYS):
+                delay = self.BACKOFF_DELAYS[attempt]
+                logger.warning(
+                    "Database connection lost mid-request (attempt %d/%d): %s. Retrying in %.2fs",
+                    attempt + 1, total_attempts, dropped, delay,
+                )
+                time.sleep(delay)
+            else:
+                logger.error(
+                    "Database connection lost after %d attempts, giving up: %s",
+                    total_attempts, dropped,
+                )
+                if response is not None:
+                    # The 500 response Django already built for this request.
+                    return response
+                raise dropped
 
     def process_exception(self, request, exception):
         """
-        If a database connection dies mid-request, close all connections
-        so the next request starts fresh.
+        If a database connection dies mid-request, record it on the request so
+        __call__ can retry, and close all connections so the retry (and the next
+        request) starts fresh.
         """
         if isinstance(exception, (OperationalError, InterfaceError)):
             logger.warning("Database connection error during request: %s", exception)
+            request._db_connection_dropped = exception
             self._close_all_connections()
         return None
 
