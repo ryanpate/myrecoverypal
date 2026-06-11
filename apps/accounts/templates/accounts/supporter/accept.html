@@ -1,12 +1,46 @@
 {% extends 'base.html' %}
+{% block title %}Accept Invitation | MyRecoveryPal{% endblock %}
+
 {% block content %}
-<div class="container" style="max-width:640px;margin:2rem auto;">
-  <h1>Support {{ link.member }}’s recovery</h1>
-  <p>{{ link.member }} invited you to follow their recovery progress on MyRecoveryPal.</p>
-  <p>You’ll see what they’ve chosen to share, and you can cheer them on. They control
-  what’s visible and can pause or stop sharing at any time.</p>
-  <form method="post">{% csrf_token %}
-    <button type="submit" class="btn btn-primary">Accept invitation</button>
-  </form>
+<style>
+  .acc-page { max-width: 560px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  .acc-card { background: var(--card-bg,#fff); border: 1px solid var(--border-color,#e8ecf1);
+    border-radius: 22px; padding: 2.5rem 2rem; text-align: center;
+    box-shadow: 0 10px 30px rgba(16,32,64,.08); }
+  .acc-ring { width: 78px; height: 78px; margin: 0 auto 1.25rem; border-radius: 50%;
+    background: var(--gradient-primary, linear-gradient(135deg,#1e4d8b,#52b788));
+    display: flex; align-items: center; justify-content: center; color: #fff; font-size: 2rem;
+    box-shadow: 0 8px 22px rgba(30,77,139,.28); }
+  .acc-card h1 { margin: 0 0 .6rem; font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em;
+    color: var(--text-color,#1f2a44); }
+  .acc-card p { margin: 0 auto 1rem; max-width: 26rem; color: var(--text-muted,#6b7689); line-height: 1.6; }
+  .acc-points { list-style: none; padding: 0; margin: 1.4rem auto; max-width: 22rem; text-align: left; }
+  .acc-points li { display: flex; gap: .6rem; align-items: flex-start; margin-bottom: .65rem;
+    color: var(--text-color,#33415c); font-size: .95rem; }
+  .acc-points i { color: var(--accent-green,#52b788); margin-top: .2rem; }
+  .acc-btn { display: inline-block; width: 100%; box-sizing: border-box; border: none; cursor: pointer;
+    border-radius: 999px; padding: .95rem; font-size: 1.05rem; font-weight: 700; color: #fff;
+    background: var(--gradient-primary, linear-gradient(135deg,#1e4d8b,#52b788));
+    box-shadow: 0 8px 20px rgba(30,77,139,.25); transition: transform .15s ease; }
+  .acc-btn:hover { transform: translateY(-2px); }
+  [data-theme="dark"] .acc-card { background: #243041; border-color: #344256; }
+  [data-theme="dark"] .acc-card h1, [data-theme="dark"] .acc-points li { color: #e8eef7; }
+</style>
+
+<div class="acc-page">
+  <div class="acc-card">
+    <div class="acc-ring">🤝</div>
+    <h1>{{ link.member }} invited you to their Support Circle</h1>
+    <p>You'll be able to follow their recovery progress and cheer them on. They choose
+       what you see and can change it anytime.</p>
+    <ul class="acc-points">
+      <li><i class="fas fa-medal"></i> See their milestones and progress</li>
+      <li><i class="fas fa-heart"></i> Send one-tap encouragement</li>
+      <li><i class="fas fa-bell"></i> Optionally get a heads-up if they go quiet</li>
+    </ul>
+    <form method="post">{% csrf_token %}
+      <button type="submit" class="acc-btn">Accept invitation</button>
+    </form>
+  </div>
 </div>
 {% endblock %}

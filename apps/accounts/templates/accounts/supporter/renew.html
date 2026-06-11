@@ -1,9 +1,50 @@
 {% extends 'base.html' %}
+{% block title %}Become a Supporter | MyRecoveryPal{% endblock %}
+
 {% block content %}
-<div class="container" style="max-width:640px;margin:2rem auto;">
-  <h1>Follow a loved one’s recovery</h1>
-  <p>The Supporter plan ($7.99/mo) lets you see their progress, cheer them on, and
-  get notified if they go quiet — all with their consent.</p>
-  <a class="btn btn-primary" href="{% url 'accounts:pricing' %}">See plans</a>
+<style>
+  .rnw-page { max-width: 560px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  .rnw-card { background: var(--card-bg,#fff); border: 1px solid var(--border-color,#e8ecf1);
+    border-radius: 22px; overflow: hidden; box-shadow: 0 10px 30px rgba(16,32,64,.08); }
+  .rnw-top { background: var(--gradient-primary, linear-gradient(135deg,#1e4d8b 0%,#4db8e8 60%,#52b788 100%));
+    color: #fff; padding: 2.25rem 2rem 1.75rem; text-align: center; position: relative; }
+  .rnw-top h1 { margin: .5rem 0 .4rem; font-size: 1.55rem; font-weight: 800; letter-spacing: -.02em; color:#fff; }
+  .rnw-top p { margin: 0 auto; max-width: 24rem; color: rgba(255,255,255,.92); line-height: 1.55; }
+  .rnw-price { font-size: 2.4rem; font-weight: 800; margin-top: 1rem; }
+  .rnw-price small { font-size: 1rem; font-weight: 600; opacity: .85; }
+  .rnw-body { padding: 1.75rem 2rem 2rem; }
+  .rnw-points { list-style: none; padding: 0; margin: 0 0 1.5rem; }
+  .rnw-points li { display: flex; gap: .7rem; align-items: flex-start; margin-bottom: .8rem;
+    color: var(--text-color,#33415c); font-size: .97rem; line-height: 1.45; }
+  .rnw-points i { color: var(--accent-green,#52b788); margin-top: .2rem; }
+  .rnw-btn { display: block; text-align: center; text-decoration: none; border-radius: 999px; padding: .95rem;
+    font-size: 1.05rem; font-weight: 700; color: #fff !important;
+    background: var(--gradient-primary, linear-gradient(135deg,#1e4d8b,#52b788));
+    box-shadow: 0 8px 20px rgba(30,77,139,.25); transition: transform .15s ease; }
+  .rnw-btn:hover { transform: translateY(-2px); }
+  .rnw-note { text-align: center; font-size: .82rem; color: var(--text-muted,#8a94a6); margin: .9rem 0 0; }
+  [data-theme="dark"] .rnw-card { background: #243041; border-color: #344256; }
+  [data-theme="dark"] .rnw-points li { color: #d7deea; }
+</style>
+
+<div class="rnw-page">
+  <div class="rnw-card">
+    <div class="rnw-top">
+      <div style="font-size:2rem;">🤝</div>
+      <h1>Follow a loved one's recovery</h1>
+      <p>Be part of their journey — with their consent, and always under their control.</p>
+      <div class="rnw-price">$7.99<small>/month</small></div>
+    </div>
+    <div class="rnw-body">
+      <ul class="rnw-points">
+        <li><i class="fas fa-chart-line"></i> See their progress dashboard — days, milestones, and momentum</li>
+        <li><i class="fas fa-heart"></i> Send one-tap encouragement that lands as a notification</li>
+        <li><i class="fas fa-bell"></i> Get a gentle alert if they go quiet (when they choose to share it)</li>
+        <li><i class="fas fa-lock"></i> Never see their journal or anything they keep private</li>
+      </ul>
+      <a class="rnw-btn" href="{% url 'accounts:pricing' %}">Become a Supporter</a>
+      <p class="rnw-note">Cancel anytime. Your loved one shares for free.</p>
+    </div>
+  </div>
 </div>
 {% endblock %}

@@ -1,5 +1,97 @@
 {% extends 'base.html' %}
+{% block title %}Invite a Supporter | MyRecoveryPal{% endblock %}
+
 {% block content %}
-<h1>Invite a supporter</h1>
-<form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Send invite</button></form>
+<style>
+  .inv-page { max-width: 640px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+  .inv-back { display: inline-flex; align-items: center; gap: .4rem; color: var(--text-muted,#6b7689);
+    text-decoration: none; font-size: .9rem; margin-bottom: 1rem; }
+  .inv-back:hover { color: var(--primary-dark,#1e4d8b); }
+  .inv-card { background: var(--card-bg,#fff); border: 1px solid var(--border-color,#e8ecf1);
+    border-radius: 20px; padding: 2rem; box-shadow: 0 6px 20px rgba(16,32,64,.06); }
+  .inv-card h1 { margin: 0 0 .35rem; font-size: 1.55rem; font-weight: 800; letter-spacing: -.02em;
+    color: var(--text-color,#1f2a44); }
+  .inv-card .sub { margin: 0 0 1.6rem; color: var(--text-muted,#6b7689); line-height: 1.55; }
+  .inv-label { display: block; font-weight: 700; font-size: .82rem; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--text-muted,#7a869a); margin: 0 0 .55rem; }
+  .inv-input { width: 100%; box-sizing: border-box; border: 1px solid var(--border-color,#d4dbe6);
+    border-radius: 12px; padding: .85rem 1rem; font-size: 1rem; background: var(--bg-light,#f8f9fa);
+    color: var(--text-color,#1f2a44); transition: border-color .15s ease, box-shadow .15s ease; }
+  .inv-input:focus { outline: none; border-color: var(--primary-light,#4db8e8);
+    box-shadow: 0 0 0 3px rgba(77,184,232,.18); }
+  .inv-errors { color: #b23b3b; font-size: .88rem; margin: .4rem 0 0; }
+
+  .inv-presets { display: grid; gap: .7rem; margin-top: 1.6rem; }
+  .inv-preset { position: relative; display: flex; gap: .9rem; align-items: flex-start;
+    border: 1.5px solid var(--border-color,#e3e8ef); border-radius: 14px; padding: 1rem 1.1rem; cursor: pointer;
+    transition: border-color .15s ease, background .15s ease; }
+  .inv-preset:hover { border-color: var(--primary-light,#4db8e8); }
+  .inv-preset input { position: absolute; opacity: 0; pointer-events: none; }
+  .inv-preset .emoji { font-size: 1.4rem; line-height: 1.2; }
+  .inv-preset .tt { font-weight: 700; color: var(--text-color,#1f2a44); }
+  .inv-preset .dd { font-size: .88rem; color: var(--text-muted,#6b7689); margin-top: .15rem; line-height: 1.45; display:block; }
+  .inv-preset .tick { margin-left: auto; width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid var(--border-color,#cfd8e3); flex: none; display: flex; align-items: center;
+    justify-content: center; color: #fff; font-size: .7rem; transition: all .15s ease; }
+  .inv-preset input:checked ~ .tick { background: var(--accent-green,#52b788); border-color: var(--accent-green,#52b788); }
+  .inv-preset:has(input:checked) { border-color: var(--accent-green,#52b788); background: rgba(82,183,136,.06); }
+
+  .inv-submit { width: 100%; margin-top: 1.8rem; border: none; border-radius: 999px; padding: .95rem;
+    font-size: 1.05rem; font-weight: 700; color: #fff; cursor: pointer;
+    background: var(--gradient-primary, linear-gradient(135deg,#1e4d8b,#52b788));
+    box-shadow: 0 8px 20px rgba(30,77,139,.25); transition: transform .15s ease; }
+  .inv-submit:hover { transform: translateY(-2px); }
+  .inv-note { text-align: center; font-size: .82rem; color: var(--text-muted,#8a94a6); margin: .9rem 0 0; }
+
+  [data-theme="dark"] .inv-card { background: #243041; border-color: #344256; }
+  [data-theme="dark"] .inv-card h1, [data-theme="dark"] .inv-preset .tt { color: #e8eef7; }
+  [data-theme="dark"] .inv-input { background: #1b2533; color: #e8eef7; border-color: #3a4a60; }
+  [data-theme="dark"] .inv-preset { border-color: #344256; }
+</style>
+
+<div class="inv-page">
+  <a href="{% url 'accounts:supporter_manage' %}" class="inv-back"><i class="fas fa-arrow-left"></i> Back to My Support Circle</a>
+
+  <div class="inv-card">
+    <h1>Invite a supporter</h1>
+    <p class="sub">We'll send them an invite. They'll only see what you choose below — and you can
+       change it or remove them anytime.</p>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <label class="inv-label" for="id_invite_email">Their email</label>
+      <input class="inv-input" type="email" name="invite_email" id="id_invite_email"
+             placeholder="name@example.com" required
+             value="{{ form.invite_email.value|default:'' }}">
+      {% if form.invite_email.errors %}<p class="inv-errors">{{ form.invite_email.errors|striptags }}</p>{% endif %}
+
+      <div class="inv-label" style="margin-top:1.6rem;">What they'll see</div>
+      <div class="inv-presets">
+        <label class="inv-preset">
+          <input type="radio" name="preset" value="cheerleader">
+          <span class="emoji">🎉</span>
+          <span><span class="tt">Cheerleader</span><span class="dd">Your day count, milestones, and a way to cheer you on. Pure good news.</span></span>
+          <span class="tick"><i class="fas fa-check"></i></span>
+        </label>
+        <label class="inv-preset">
+          <input type="radio" name="preset" value="standard" checked>
+          <span class="emoji">💙</span>
+          <span><span class="tt">Standard</span><span class="dd">Everything in Cheerleader, plus your check-in consistency and mood trend.</span></span>
+          <span class="tick"><i class="fas fa-check"></i></span>
+        </label>
+        <label class="inv-preset">
+          <input type="radio" name="preset" value="close">
+          <span class="emoji">🤝</span>
+          <span><span class="tt">Close support</span><span class="dd">Everything in Standard, plus a gentle alert if you go quiet and your “I need support” pings.</span></span>
+          <span class="tick"><i class="fas fa-check"></i></span>
+        </label>
+      </div>
+      {% if form.preset.errors %}<p class="inv-errors">{{ form.preset.errors|striptags }}</p>{% endif %}
+
+      <button type="submit" class="inv-submit"><i class="fas fa-paper-plane"></i> Send invite</button>
+      <p class="inv-note">🔒 Your journal is never shared. Sharing is free for you.</p>
+    </form>
+  </div>
+</div>
 {% endblock %}

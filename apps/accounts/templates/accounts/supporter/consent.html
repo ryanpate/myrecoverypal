@@ -1,14 +1,78 @@
 {% extends 'base.html' %}
+{% block title %}Review Support Request | MyRecoveryPal{% endblock %}
+
 {% block content %}
-<h1>{{ link.supporter }} wants to support your recovery</h1>
-<p>Choose what they can see. You can change or pause this any time.</p>
-<form method="post">{% csrf_token %}
-  <select name="preset">
-    <option value="cheerleader">Cheerleader — milestones &amp; streak only</option>
-    <option value="standard" selected>Standard — + check-in consistency &amp; mood trend</option>
-    <option value="close">Close support — + inactivity alerts &amp; my "I need support" pings</option>
-  </select>
-  <button type="submit" name="decision" value="accept">Accept</button>
-  <button type="submit" name="decision" value="decline">Decline</button>
-</form>
+<style>
+  .cns-page { max-width: 600px; margin: 0 auto; padding: 1.75rem 1.25rem 4rem; }
+  .cns-card { background: var(--card-bg,#fff); border: 1px solid var(--border-color,#e8ecf1);
+    border-radius: 20px; padding: 2rem; box-shadow: 0 6px 20px rgba(16,32,64,.06); }
+  .cns-card h1 { margin: 0 0 .35rem; font-size: 1.45rem; font-weight: 800; letter-spacing: -.02em;
+    color: var(--text-color,#1f2a44); }
+  .cns-card .sub { margin: 0 0 1.5rem; color: var(--text-muted,#6b7689); line-height: 1.55; }
+  .cns-label { display: block; font-weight: 700; font-size: .82rem; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--text-muted,#7a869a); margin: 0 0 .55rem; }
+  .cns-presets { display: grid; gap: .7rem; }
+  .cns-preset { position: relative; display: flex; gap: .9rem; align-items: flex-start;
+    border: 1.5px solid var(--border-color,#e3e8ef); border-radius: 14px; padding: 1rem 1.1rem; cursor: pointer;
+    transition: border-color .15s ease, background .15s ease; }
+  .cns-preset:hover { border-color: var(--primary-light,#4db8e8); }
+  .cns-preset input { position: absolute; opacity: 0; pointer-events: none; }
+  .cns-preset .emoji { font-size: 1.4rem; }
+  .cns-preset .tt { font-weight: 700; color: var(--text-color,#1f2a44); }
+  .cns-preset .dd { font-size: .88rem; color: var(--text-muted,#6b7689); margin-top: .15rem; line-height: 1.45; display:block; }
+  .cns-preset .tick { margin-left: auto; width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid var(--border-color,#cfd8e3); flex: none; display: flex; align-items: center;
+    justify-content: center; color: #fff; font-size: .7rem; transition: all .15s ease; }
+  .cns-preset input:checked ~ .tick { background: var(--accent-green,#52b788); border-color: var(--accent-green,#52b788); }
+  .cns-preset:has(input:checked) { border-color: var(--accent-green,#52b788); background: rgba(82,183,136,.06); }
+  .cns-actions { display: flex; gap: .8rem; margin-top: 1.8rem; }
+  .cns-accept { flex: 1; border: none; cursor: pointer; border-radius: 999px; padding: .9rem;
+    font-size: 1rem; font-weight: 700; color: #fff; background: var(--gradient-primary, linear-gradient(135deg,#1e4d8b,#52b788));
+    box-shadow: 0 8px 18px rgba(30,77,139,.22); transition: transform .15s ease; }
+  .cns-accept:hover { transform: translateY(-2px); }
+  .cns-decline { border: 1px solid var(--border-color,#d6dde7); background: transparent; cursor: pointer;
+    border-radius: 999px; padding: .9rem 1.4rem; font-size: 1rem; font-weight: 600; color: var(--text-muted,#6b7689); }
+  .cns-note { font-size: .82rem; color: var(--text-muted,#8a94a6); margin: 1rem 0 0; }
+  [data-theme="dark"] .cns-card { background: #243041; border-color: #344256; }
+  [data-theme="dark"] .cns-card h1, [data-theme="dark"] .cns-preset .tt { color: #e8eef7; }
+  [data-theme="dark"] .cns-preset { border-color: #344256; }
+</style>
+
+<div class="cns-page">
+  <div class="cns-card">
+    <h1>{{ link.supporter }} wants to support your recovery</h1>
+    <p class="sub">Choose what they'll be able to see. You can change this or stop sharing at any time.</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="cns-label">What they'll see</div>
+      <div class="cns-presets">
+        <label class="cns-preset">
+          <input type="radio" name="preset" value="cheerleader">
+          <span class="emoji">🎉</span>
+          <span><span class="tt">Cheerleader</span><span class="dd">Your day count and milestones only. Pure good news.</span></span>
+          <span class="tick"><i class="fas fa-check"></i></span>
+        </label>
+        <label class="cns-preset">
+          <input type="radio" name="preset" value="standard" checked>
+          <span class="emoji">💙</span>
+          <span><span class="tt">Standard</span><span class="dd">Plus your check-in consistency and mood trend.</span></span>
+          <span class="tick"><i class="fas fa-check"></i></span>
+        </label>
+        <label class="cns-preset">
+          <input type="radio" name="preset" value="close">
+          <span class="emoji">🤝</span>
+          <span><span class="tt">Close support</span><span class="dd">Plus a gentle alert if you go quiet and your “I need support” pings.</span></span>
+          <span class="tick"><i class="fas fa-check"></i></span>
+        </label>
+      </div>
+
+      <div class="cns-actions">
+        <button type="submit" name="decision" value="accept" class="cns-accept">Accept</button>
+        <button type="submit" name="decision" value="decline" class="cns-decline">Decline</button>
+      </div>
+      <p class="cns-note">🔒 Your journal and anything private are never shared.</p>
+    </form>
+  </div>
+</div>
 {% endblock %}

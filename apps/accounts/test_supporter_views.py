@@ -222,3 +222,41 @@ class RequestSupportViewTests(TestCase):
                                 {'next': 'https://evil.example.com/'})
         self.assertEqual(resp.status_code, 302)
         self.assertNotIn('evil.example.com', resp['Location'])
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class SupporterPageRenderTests(TestCase):
+    """GET-render the redesigned supporter templates to catch template errors."""
+
+    def setUp(self):
+        self.member = User.objects.create_user(username='pm', email='pm@x.com', password='pw')
+        self.client.login(username='pm', password='pw')
+
+    def test_manage_empty_renders(self):
+        resp = self.client.get(reverse('accounts:supporter_manage'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'My Support Circle')
+
+    def test_manage_with_supporter_renders(self):
+        sup = User.objects.create_user(username='pmsup', email='pmsup@x.com', password='pw')
+        SupporterLink.objects.create(member=self.member, supporter=sup,
+            initiated_by='member', status='active', preset='close')
+        resp = self.client.get(reverse('accounts:supporter_manage'))
+        self.assertEqual(resp.status_code, 200)
+
+    def test_invite_page_renders(self):
+        resp = self.client.get(reverse('accounts:supporter_invite'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Send invite')
+
+    def test_consent_page_renders(self):
+        sup = User.objects.create_user(username='pmsup2', email='pmsup2@x.com', password='pw')
+        link = SupporterLink.objects.create(member=self.member, supporter=sup,
+            initiated_by='supporter', status='pending')
+        resp = self.client.get(reverse('accounts:supporter_consent', args=[link.id]))
+        self.assertEqual(resp.status_code, 200)
+
+    def test_renew_page_renders(self):
+        resp = self.client.get(reverse('accounts:supporter_renew'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Become a Supporter')

@@ -1,26 +1,167 @@
 {% extends 'base.html' %}
+{% block title %}My Support Circle | MyRecoveryPal{% endblock %}
+
 {% block content %}
-<h1>People supporting me</h1>
-<a href="{% url 'accounts:supporter_invite' %}">Invite a supporter</a>
-<ul>
-{% for link in links %}
-  <li>
-    {{ link.supporter|default:link.invite_email }} — {{ link.get_preset_display }} ({{ link.get_status_display }})
-    <form method="post" action="{% url 'accounts:supporter_set_preset' link.id %}" style="display:inline">
-      {% csrf_token %}
-      <select name="preset">
-        <option value="cheerleader" {% if link.preset == 'cheerleader' %}selected{% endif %}>Cheerleader</option>
-        <option value="standard" {% if link.preset == 'standard' %}selected{% endif %}>Standard</option>
-        <option value="close" {% if link.preset == 'close' %}selected{% endif %}>Close support</option>
-      </select>
-      <button type="submit">Update</button>
-    </form>
-    <form method="post" action="{% url 'accounts:supporter_revoke' link.id %}" style="display:inline">
-      {% csrf_token %}<button type="submit">Revoke</button>
-    </form>
-  </li>
-{% empty %}
-  <li>No supporters yet.</li>
-{% endfor %}
-</ul>
+<style>
+  .sc-page { max-width: 920px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+  .sc-hero {
+    position: relative; overflow: hidden;
+    background: var(--gradient-primary, linear-gradient(135deg,#1e4d8b 0%,#4db8e8 60%,#52b788 100%));
+    border-radius: 20px; padding: 2.25rem 2rem; color: #fff;
+    box-shadow: 0 12px 30px rgba(30,77,139,.22);
+  }
+  .sc-hero::after {
+    content: ""; position: absolute; right: -60px; top: -60px; width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(255,255,255,.18), transparent 70%); border-radius: 50%;
+  }
+  .sc-hero h1 { margin: 0 0 .5rem; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; color:#fff; }
+  .sc-hero p { margin: 0; max-width: 30rem; font-size: 1.02rem; line-height: 1.55; color: rgba(255,255,255,.92); }
+  .sc-hero .sc-cta {
+    display: inline-flex; align-items: center; gap: .5rem; margin-top: 1.4rem;
+    background: #fff; color: var(--primary-dark,#1e4d8b) !important; font-weight: 700;
+    padding: .8rem 1.5rem; border-radius: 999px; text-decoration: none;
+    box-shadow: 0 6px 16px rgba(0,0,0,.16); transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .sc-hero .sc-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,.22); }
+
+  .sc-section-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em;
+    font-weight: 700; color: var(--text-muted,#7a869a); margin: 2.25rem 0 .9rem; }
+
+  /* Supporter cards */
+  .sc-card {
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    background: var(--card-bg,#fff); border: 1px solid var(--border-color,#e8ecf1);
+    border-radius: 16px; padding: 1.1rem 1.25rem; margin-bottom: .85rem;
+    box-shadow: 0 2px 8px rgba(16,32,64,.05);
+  }
+  .sc-avatar {
+    width: 46px; height: 46px; flex: none; border-radius: 50%;
+    background: var(--gradient-primary, linear-gradient(135deg,#1e4d8b,#52b788));
+    color: #fff; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+  }
+  .sc-card .who { flex: 1 1 180px; min-width: 0; }
+  .sc-card .who strong { display: block; font-size: 1.02rem; color: var(--text-color,#1f2a44);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sc-badge { display: inline-block; font-size: .72rem; font-weight: 700; padding: .15rem .55rem;
+    border-radius: 999px; margin-top: .25rem; }
+  .sc-badge.active { background: #e7f6ee; color: #1c7a47; }
+  .sc-badge.pending { background: #fff4e0; color: #95610d; }
+  .sc-card form { margin: 0; }
+  .sc-select {
+    border: 1px solid var(--border-color,#d4dbe6); border-radius: 10px; padding: .5rem .7rem;
+    font-size: .9rem; background: var(--bg-light,#f8f9fa); color: var(--text-color,#1f2a44); cursor: pointer;
+  }
+  .sc-btn { border: none; border-radius: 10px; padding: .55rem .9rem; font-size: .85rem; font-weight: 600;
+    cursor: pointer; transition: filter .15s ease; }
+  .sc-btn:hover { filter: brightness(1.05); }
+  .sc-btn.primary { background: var(--accent-green,#52b788); color: #fff; }
+  .sc-btn.ghost { background: transparent; color: #b23b3b; border: 1px solid #ecc7c7; }
+
+  /* Empty state */
+  .sc-empty { text-align: center; background: var(--card-bg,#fff); border: 1px dashed var(--border-color,#d8e0ea);
+    border-radius: 18px; padding: 2.75rem 1.5rem; }
+  .sc-empty .ico { font-size: 2.4rem; }
+  .sc-empty h3 { margin: .75rem 0 .35rem; color: var(--text-color,#1f2a44); font-size: 1.25rem; }
+  .sc-empty p { margin: 0 auto 1.25rem; max-width: 26rem; color: var(--text-muted,#6b7689); line-height: 1.55; }
+  .sc-empty .sc-cta2 { display: inline-flex; align-items: center; gap: .5rem;
+    background: var(--gradient-primary, linear-gradient(135deg,#1e4d8b,#52b788)); color: #fff !important;
+    font-weight: 700; padding: .8rem 1.6rem; border-radius: 999px; text-decoration: none;
+    box-shadow: 0 8px 20px rgba(30,77,139,.25); transition: transform .15s ease; }
+  .sc-empty .sc-cta2:hover { transform: translateY(-2px); }
+
+  /* Levels explainer */
+  .sc-levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: .9rem; }
+  .sc-level { background: var(--card-bg,#fff); border: 1px solid var(--border-color,#e8ecf1);
+    border-radius: 14px; padding: 1.1rem; }
+  .sc-level .tier { font-weight: 700; color: var(--primary-dark,#1e4d8b); display: flex; align-items: center; gap: .4rem; }
+  .sc-level p { margin: .5rem 0 0; font-size: .88rem; color: var(--text-muted,#6b7689); line-height: 1.5; }
+  .sc-privacy { margin-top: 1.5rem; display: flex; gap: .6rem; align-items: flex-start;
+    background: #f0f7f3; border-left: 4px solid var(--accent-green,#52b788);
+    border-radius: 0 12px 12px 0; padding: .9rem 1.1rem; font-size: .9rem; color: #2f5d49; line-height: 1.5; }
+
+  [data-theme="dark"] .sc-card, [data-theme="dark"] .sc-level, [data-theme="dark"] .sc-empty { background: #243041; border-color: #344256; }
+  [data-theme="dark"] .sc-card .who strong, [data-theme="dark"] .sc-empty h3, [data-theme="dark"] .sc-level .tier { color: #e8eef7; }
+  [data-theme="dark"] .sc-select { background: #1b2533; color: #e8eef7; border-color: #3a4a60; }
+  [data-theme="dark"] .sc-privacy { background: rgba(82,183,136,.12); color: #b7e4cd; }
+  [data-theme="dark"] .sc-section-label { color: #93a1b5; }
+
+  @media (max-width: 600px) {
+    .sc-levels { grid-template-columns: 1fr; }
+    .sc-hero { padding: 1.75rem 1.4rem; }
+    .sc-hero h1 { font-size: 1.55rem; }
+    .sc-card .who { flex-basis: 100%; }
+  }
+</style>
+
+<div class="sc-page">
+  <section class="sc-hero">
+    <h1>My Support Circle</h1>
+    <p>Invite the people who are rooting for you. They can follow your progress and cheer
+       you on — and you decide exactly what each person sees.</p>
+    <a href="{% url 'accounts:supporter_invite' %}" class="sc-cta">
+      <i class="fas fa-user-plus"></i> Invite a supporter
+    </a>
+  </section>
+
+  <div class="sc-section-label">Your supporters</div>
+  {% if links %}
+    {% for link in links %}
+    <div class="sc-card">
+      <div class="sc-avatar">{{ link.supporter.username|default:link.invite_email|make_list|first|upper }}</div>
+      <div class="who">
+        <strong>{{ link.supporter|default:link.invite_email }}</strong>
+        <span class="sc-badge {% if link.status == 'active' %}active{% else %}pending{% endif %}">
+          {{ link.get_status_display }}
+        </span>
+      </div>
+      <form method="post" action="{% url 'accounts:supporter_set_preset' link.id %}">
+        {% csrf_token %}
+        <select name="preset" class="sc-select" onchange="this.form.submit()" aria-label="What this supporter sees">
+          <option value="cheerleader" {% if link.preset == 'cheerleader' %}selected{% endif %}>🎉 Cheerleader</option>
+          <option value="standard" {% if link.preset == 'standard' %}selected{% endif %}>💙 Standard</option>
+          <option value="close" {% if link.preset == 'close' %}selected{% endif %}>🤝 Close support</option>
+        </select>
+        <noscript><button type="submit" class="sc-btn primary">Update</button></noscript>
+      </form>
+      <form method="post" action="{% url 'accounts:supporter_revoke' link.id %}"
+            onsubmit="return confirm('Remove this supporter? They will lose access immediately.');">
+        {% csrf_token %}
+        <button type="submit" class="sc-btn ghost"><i class="fas fa-xmark"></i> Remove</button>
+      </form>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="sc-empty">
+      <div class="ico">🤝</div>
+      <h3>No one's in your circle yet</h3>
+      <p>Recovery is easier when someone's in your corner. Invite a parent, partner,
+         sponsor, or friend — it only takes a minute, and you stay in control.</p>
+      <a href="{% url 'accounts:supporter_invite' %}" class="sc-cta2">
+        <i class="fas fa-user-plus"></i> Invite your first supporter
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="sc-section-label">What each level shares</div>
+  <div class="sc-levels">
+    <div class="sc-level">
+      <div class="tier">🎉 Cheerleader</div>
+      <p>Your day count and milestones, plus the ability to send encouragement. Pure good news.</p>
+    </div>
+    <div class="sc-level">
+      <div class="tier">💙 Standard</div>
+      <p>Everything in Cheerleader, plus your check-in consistency and mood trend.</p>
+    </div>
+    <div class="sc-level">
+      <div class="tier">🤝 Close support</div>
+      <p>Everything in Standard, plus a gentle alert if you go quiet, and your “I need support” pings.</p>
+    </div>
+  </div>
+
+  <div class="sc-privacy">
+    <i class="fas fa-lock" style="margin-top:.15rem;"></i>
+    <span><strong>You're always in control.</strong> Your journal and anything you write privately are never
+    shared — and you can change a level or remove a supporter at any time.</span>
+  </div>
+</div>
 {% endblock %}
