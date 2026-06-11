@@ -1339,17 +1339,47 @@ def _render_connections_list(request, profile_owner, members_qs, *, is_followers
     profile owner as ``user`` — that would shadow request.user in base.html
     and render the nav/follow buttons as the wrong person.
     """
-    from django.db.models import Case, When, Value, BooleanField
+    from django.db.models import (
+        Case, When, Value, BooleanField, OuterRef, Subquery, IntegerField)
+    from django.db.models.functions import Coalesce
 
     following_ids = list(
         request.user.get_following().values_list('id', flat=True))
+
+    # Per-member follower/following counts via subqueries, so the page renders
+    # in a constant number of queries instead of 2 per member (the User
+    # .followers_count/.following_count properties each fire their own COUNT).
+    # We annotate under distinct names because those properties have no setter,
+    # so an annotation reusing their names would fail to bind to the instance.
+    follows = UserConnection.objects.filter(connection_type='follow')
+    n_followers_sq = follows.filter(following=OuterRef('pk')).order_by().values(
+        'following').annotate(c=Count('*')).values('c')
+    n_following_sq = follows.filter(follower=OuterRef('pk')).order_by().values(
+        'follower').annotate(c=Count('*')).values('c')
+
     members_qs = members_qs.annotate(
         is_followed=Case(
             When(id__in=following_ids, then=Value(True)),
             default=Value(False),
             output_field=BooleanField(),
-        )
+        ),
+        n_followers=Coalesce(
+            Subquery(n_followers_sq, output_field=IntegerField()), 0),
+        n_following=Coalesce(
+            Subquery(n_following_sq, output_field=IntegerField()), 0),
     )
+
+    search = (request.GET.get('search') or '').strip()
+    if search:
+        members_qs = members_qs.filter(
+            Q(username__icontains=search) |
+            Q(first_name__icontains=search) |
+            Q(last_name__icontains=search) |
+            Q(bio__icontains=search)
+        )
+
+    # Stable ordering so pagination is deterministic (recently active first).
+    members_qs = members_qs.order_by('-last_seen', 'id')
 
     paginator = Paginator(members_qs, 20)
     page_obj = paginator.get_page(request.GET.get('page'))
