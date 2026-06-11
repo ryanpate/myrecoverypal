@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 from apps.accounts.supporter_models import SupporterLink, PRESET_CHOICES
 from apps.accounts.supporter_forms import SupporterInviteForm, PresetForm
@@ -141,3 +142,20 @@ def supporter_consent(request, link_id):
             link.decline()
         return redirect('accounts:supporter_manage')
     return render(request, 'accounts/supporter/consent.html', {'link': link})
+
+
+@login_required
+@require_POST
+def request_support(request):
+    supporter_service.record_support_request(request.user)
+    messages.success(
+        request,
+        "Your close supporters have been notified. You're not alone. "
+        "If you're in crisis, call or text 988.",
+    )
+    nxt = request.POST.get('next')
+    if nxt and url_has_allowed_host_and_scheme(
+        nxt, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+    ):
+        return redirect(nxt)
+    return redirect('accounts:social_feed')

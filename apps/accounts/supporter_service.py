@@ -82,6 +82,32 @@ ENCOURAGEMENT_MESSAGES = {
 }
 
 
+def record_support_request(member):
+    """Member taps 'I need support' -> notify only their Close supporters.
+
+    Returns the number of supporters notified. Content never auto-fires;
+    this is an explicit, member-initiated ping.
+    """
+    from apps.accounts.views import create_notification
+    links = member.supporter_links.filter(
+        status='active', preset='close'
+    ).select_related('supporter')
+    name = member.get_full_name() or member.username
+    notified = 0
+    for link in links:
+        if not link.supporter:
+            continue
+        create_notification(
+            recipient=link.supporter,
+            sender=member,
+            notification_type='member_support_request',
+            title='Support requested',
+            message=f"{name} asked for support.",
+        )
+        notified += 1
+    return notified
+
+
 def send_encouragement(link, key):
     """Send a canned supportive notification from supporter -> member."""
     if key not in ENCOURAGEMENT_MESSAGES or not link.is_live() or not link.supporter:

@@ -112,3 +112,23 @@ class NotificationTypeTests(TestCase):
         for k in ['supporter_request', 'supporter_consented', 'supporter_encouragement',
                   'member_support_request', 'member_inactive']:
             self.assertIn(k, keys)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class SupportRequestTests(TestCase):
+    def setUp(self):
+        self.member = User.objects.create_user(username='rm', email='rm@x.com', password='pw')
+        self.close_sup = User.objects.create_user(username='rs', email='rs@x.com', password='pw')
+        self.cheer_sup = User.objects.create_user(username='rc', email='rc@x.com', password='pw')
+        SupporterLink.objects.create(member=self.member, supporter=self.close_sup,
+            initiated_by='member', status='active', preset='close')
+        SupporterLink.objects.create(member=self.member, supporter=self.cheer_sup,
+            initiated_by='member', status='active', preset='cheerleader')
+
+    def test_only_close_supporters_notified(self):
+        count = supporter_service.record_support_request(self.member)
+        self.assertEqual(count, 1)
+        self.assertTrue(Notification.objects.filter(
+            recipient=self.close_sup, notification_type='member_support_request').exists())
+        self.assertFalse(Notification.objects.filter(
+            recipient=self.cheer_sup, notification_type='member_support_request').exists())

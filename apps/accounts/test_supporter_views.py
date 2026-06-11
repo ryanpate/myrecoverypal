@@ -193,3 +193,20 @@ class InviteAcceptTests(TestCase):
         self.assertEqual(resp.status_code, 302)  # handled gracefully, no IntegrityError 500
         self.assertEqual(SupporterLink.objects.filter(
             member=self.member, supporter=sup, status='active').count(), 1)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class RequestSupportViewTests(TestCase):
+    def setUp(self):
+        self.member = User.objects.create_user(username='rsm', email='rsm@x.com', password='pw')
+        self.client.login(username='rsm', password='pw')
+
+    def test_request_support_redirects(self):
+        resp = self.client.post(reverse('accounts:supporter_request_support'))
+        self.assertEqual(resp.status_code, 302)
+
+    def test_request_support_ignores_external_next(self):
+        resp = self.client.post(reverse('accounts:supporter_request_support'),
+                                {'next': 'https://evil.example.com/'})
+        self.assertEqual(resp.status_code, 302)
+        self.assertNotIn('evil.example.com', resp['Location'])

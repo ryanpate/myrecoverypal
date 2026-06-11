@@ -240,4 +240,5 @@ urlpatterns = [
     path('supporter/accept/<str:token>/', supporter_views.supporter_accept, name='supporter_accept'),
     path('supporter/<int:link_id>/consent/', supporter_views.supporter_consent, name='supporter_consent'),
     path('supporter/<int:link_id>/', supporter_views.supporter_dashboard, name='supporter_dashboard'),
+    path('supporter/request-support/', supporter_views.request_support, name='supporter_request_support'),
 ]
