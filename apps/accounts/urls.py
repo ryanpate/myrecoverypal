@@ -11,6 +11,7 @@ from apps.accounts.court_views import (
     court_report_list, court_report_generate, court_report_download,
     court_report_email,
 )
+from apps.accounts import supporter_views
 
 app_name = 'accounts'
 
@@ -229,4 +230,6 @@ urlpatterns = [
     path('court/reports/<int:report_id>/download/', court_report_download, name='court_report_download'),
     path('court/reports/<int:report_id>/email/', court_report_email, name='court_report_email'),
 
+    # Supporter
+    path('supporter/renew/', supporter_views.supporter_renew, name='supporter_renew'),
 ]
