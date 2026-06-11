@@ -1612,6 +1612,11 @@ class Notification(models.Model):
         ('pal_nudge', 'Recovery Pal Nudge'),
         ('new_blog_post', 'New Blog Post'),
         ('checkin_reminder', 'Check-in Reminder'),
+        ('supporter_request', 'Supporter Request'),
+        ('supporter_consented', 'Supporter Connected'),
+        ('supporter_encouragement', 'Encouragement from Supporter'),
+        ('member_support_request', 'Member Asked for Support'),
+        ('member_inactive', 'Member Inactivity Alert'),
     )
 
     recipient = models.ForeignKey(
@@ -1623,7 +1628,7 @@ class Notification(models.Model):
     )
 
     notification_type = models.CharField(
-        max_length=20, choices=NOTIFICATION_TYPES)
+        max_length=30, choices=NOTIFICATION_TYPES)
     title = models.CharField(max_length=200)
     message = models.TextField()
     link = models.CharField(max_length=500, blank=True)
@@ -1940,3 +1945,6 @@ from apps.accounts.court_models import (  # noqa: E402, F401
 
 # Re-export cold-outreach suppression model so Django discovers it at app load
 from apps.accounts.outreach_models import ColdOutreachSuppression  # noqa: E402, F401
+
+# Re-export supporter dashboard model so Django discovers it at app load
+from apps.accounts.supporter_models import SupporterLink  # noqa: E402, F401

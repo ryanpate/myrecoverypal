@@ -70,6 +70,24 @@ def court_required(view_func):
     return wrapper
 
 
+def supporter_required(view_func):
+    """Requires an active Supporter subscription. Lapsed/absent -> renew page."""
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.warning(request, 'Please log in to access this feature.')
+            return redirect('accounts:login')
+        sub = getattr(request.user, 'subscription', None)
+        if sub is None or not sub.is_supporter():
+            messages.warning(
+                request,
+                'Viewing a loved one’s progress requires an active Supporter subscription.'
+            )
+            return redirect('accounts:supporter_renew')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
 def check_feature_limit(feature_name, limit_attr):
     """
     Decorator factory for checking feature usage limits

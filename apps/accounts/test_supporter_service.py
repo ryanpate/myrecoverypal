@@ -1,0 +1,134 @@
+from datetime import timedelta
+from django.test import TestCase, override_settings
+from django.utils import timezone
+from django.contrib.auth import get_user_model
+from apps.accounts.supporter_models import SupporterLink
+from apps.accounts.models import DailyCheckIn, Notification
+from apps.accounts import supporter_service
+
+User = get_user_model()
+
+# energy_level is private check-in data not surfaced at any preset — excluded by design.
+FORBIDDEN_KEYS = {'craving', 'craving_level', 'gratitude', 'challenge', 'goal',
+                  'journal', 'notes', 'energy_level', 'energy'}
+
+
+def _flatten_keys(obj, acc):
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            acc.add(k)
+            _flatten_keys(v, acc)
+    elif isinstance(obj, (list, tuple)):
+        for v in obj:
+            _flatten_keys(v, acc)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class DashboardDataTests(TestCase):
+    def setUp(self):
+        self.member = User.objects.create_user(username='mm', email='mm@x.com', password='pw')
+        self.member.sobriety_date = timezone.now().date() - timedelta(days=95)
+        self.member.save()
+        self.supporter = User.objects.create_user(username='ss', email='ss@x.com', password='pw')
+        for i in range(7):
+            if i == 3:
+                continue
+            DailyCheckIn.objects.create(
+                user=self.member, date=timezone.now().date() - timedelta(days=i),
+                mood=4, craving_level=3, energy_level=3, gratitude='private text',
+            )
+        self.link = SupporterLink.objects.create(
+            member=self.member, supporter=self.supporter, initiated_by='member', status='active',
+        )
+
+    def test_cheerleader_has_only_positive_signal(self):
+        self.link.preset = 'cheerleader'
+        data = supporter_service.get_dashboard_data(self.link)
+        self.assertEqual(data['days_sober'], 95)
+        self.assertIn('next_milestone', data)
+        self.assertNotIn('checkin_consistency', data)
+        self.assertNotIn('mood_trend', data)
+
+    def test_standard_adds_consistency_and_mood(self):
+        self.link.preset = 'standard'
+        data = supporter_service.get_dashboard_data(self.link)
+        self.assertEqual(data['checkin_consistency']['count'], 6)
+        self.assertEqual(data['checkin_consistency']['window'], 7)
+        self.assertTrue(all(isinstance(m, int) for m in data['mood_trend']))
+
+    def test_close_adds_inactivity_status(self):
+        self.link.preset = 'close'
+        data = supporter_service.get_dashboard_data(self.link)
+        self.assertIn('inactivity', data)
+
+    def test_no_preset_ever_leaks_craving_or_freetext(self):
+        for preset in ('cheerleader', 'standard', 'close'):
+            self.link.preset = preset
+            data = supporter_service.get_dashboard_data(self.link)
+            keys = set()
+            _flatten_keys(data, keys)
+            leaked = keys & FORBIDDEN_KEYS
+            self.assertFalse(leaked, f"preset {preset} leaked {leaked}")
+
+    def test_mood_trend_is_scalar_mood_values_only(self):
+        # Value/shape guard: a craving scalar leaked as a tuple element would
+        # bypass the key-name check above. mood_trend must be plain ints 1-6.
+        self.link.preset = 'close'
+        data = supporter_service.get_dashboard_data(self.link)
+        for item in data['mood_trend']:
+            self.assertIsInstance(item, int)
+            self.assertIn(item, range(1, 7))
+
+    def test_inactive_link_shares_nothing(self):
+        # The read gate itself must refuse a non-active link.
+        self.link.preset = 'standard'
+        self.link.revoke()
+        with self.assertRaises(ValueError):
+            supporter_service.get_dashboard_data(self.link)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class EncouragementTests(TestCase):
+    def setUp(self):
+        self.member = User.objects.create_user(username='em', email='em@x.com', password='pw')
+        self.sup = User.objects.create_user(username='es', email='es@x.com', password='pw')
+        self.link = SupporterLink.objects.create(member=self.member, supporter=self.sup,
+            initiated_by='member', status='active', preset='cheerleader')
+
+    def test_encouragement_creates_notification(self):
+        ok = supporter_service.send_encouragement(self.link, 'proud')
+        self.assertTrue(ok)
+        n = Notification.objects.filter(recipient=self.member, notification_type='supporter_encouragement').first()
+        self.assertIsNotNone(n)
+
+    def test_invalid_key_rejected(self):
+        self.assertFalse(supporter_service.send_encouragement(self.link, 'nonsense'))
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class NotificationTypeTests(TestCase):
+    def test_supporter_notification_types_exist(self):
+        keys = dict(Notification.NOTIFICATION_TYPES)
+        for k in ['supporter_request', 'supporter_consented', 'supporter_encouragement',
+                  'member_support_request', 'member_inactive']:
+            self.assertIn(k, keys)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class SupportRequestTests(TestCase):
+    def setUp(self):
+        self.member = User.objects.create_user(username='rm', email='rm@x.com', password='pw')
+        self.close_sup = User.objects.create_user(username='rs', email='rs@x.com', password='pw')
+        self.cheer_sup = User.objects.create_user(username='rc', email='rc@x.com', password='pw')
+        SupporterLink.objects.create(member=self.member, supporter=self.close_sup,
+            initiated_by='member', status='active', preset='close')
+        SupporterLink.objects.create(member=self.member, supporter=self.cheer_sup,
+            initiated_by='member', status='active', preset='cheerleader')
+
+    def test_only_close_supporters_notified(self):
+        count = supporter_service.record_support_request(self.member)
+        self.assertEqual(count, 1)
+        self.assertTrue(Notification.objects.filter(
+            recipient=self.close_sup, notification_type='member_support_request').exists())
+        self.assertFalse(Notification.objects.filter(
+            recipient=self.cheer_sup, notification_type='member_support_request').exists())

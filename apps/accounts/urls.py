@@ -11,6 +11,7 @@ from apps.accounts.court_views import (
     court_report_list, court_report_generate, court_report_download,
     court_report_email,
 )
+from apps.accounts import supporter_views
 
 app_name = 'accounts'
 
@@ -229,4 +230,15 @@ urlpatterns = [
     path('court/reports/<int:report_id>/download/', court_report_download, name='court_report_download'),
     path('court/reports/<int:report_id>/email/', court_report_email, name='court_report_email'),
 
+    # Supporter
+    path('supporter/renew/', supporter_views.supporter_renew, name='supporter_renew'),
+    path('supporter/manage/', supporter_views.manage_links, name='supporter_manage'),
+    path('supporter/invite/', supporter_views.supporter_invite, name='supporter_invite'),
+    path('supporter/<int:link_id>/preset/', supporter_views.supporter_set_preset, name='supporter_set_preset'),
+    path('supporter/<int:link_id>/revoke/', supporter_views.supporter_revoke, name='supporter_revoke'),
+    path('supporter/<int:link_id>/encourage/', supporter_views.supporter_encourage, name='supporter_encourage'),
+    path('supporter/accept/<str:token>/', supporter_views.supporter_accept, name='supporter_accept'),
+    path('supporter/<int:link_id>/consent/', supporter_views.supporter_consent, name='supporter_consent'),
+    path('supporter/<int:link_id>/', supporter_views.supporter_dashboard, name='supporter_dashboard'),
+    path('supporter/request-support/', supporter_views.request_support, name='supporter_request_support'),
 ]

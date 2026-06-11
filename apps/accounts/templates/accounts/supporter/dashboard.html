@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ dashboard.member_name }} — {{ link.get_preset_display }}</h1>
+
+<section><h2>{{ dashboard.days_sober }} days sober</h2>
+  <p>{{ dashboard.next_milestone.days_to }} days to the {{ dashboard.next_milestone.target }}-day milestone</p>
+</section>
+
+{% if dashboard.checkin_consistency %}
+<section><h3>Check-ins</h3>
+  <p>{{ dashboard.checkin_consistency.count }} of last {{ dashboard.checkin_consistency.window }} days</p>
+</section>
+{% endif %}
+
+{% if dashboard.mood_trend %}
+<section><h3>Mood trend</h3><p>{{ dashboard.mood_trend }}</p></section>
+{% endif %}
+
+{% if dashboard.inactivity %}
+<section><h3>Status</h3>
+  {% if dashboard.inactivity.over_threshold %}
+    <p>⚠️ No check-in for {{ dashboard.inactivity.days_since_checkin }} days.</p>
+  {% else %}
+    <p>Checked in recently.</p>
+  {% endif %}
+</section>
+{% endif %}
+
+<form method="post" action="{% url 'accounts:supporter_encourage' link.id %}">
+  {% csrf_token %}
+  <button name="key" value="proud">💪 Proud of you</button>
+  <button name="key" value="thinking">❤️ Thinking of you</button>
+  <button name="key" value="here">🤝 Here if you need me</button>
+</form>
+
+{% include 'accounts/supporter/_crisis_resources.html' %}
+<p>🔒 Journal entries are never shared. You only see what {{ dashboard.member_name }} chose to share.</p>
+{% endblock %}
