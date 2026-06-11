@@ -194,6 +194,18 @@ class InviteAcceptTests(TestCase):
         self.assertEqual(SupporterLink.objects.filter(
             member=self.member, supporter=sup, status='active').count(), 1)
 
+    def test_accept_after_revoke_does_not_500(self):
+        # Re-invite after a revoke: the (member, supporter) pair already has a
+        # revoked row; accepting a fresh invite must not hit the unique constraint.
+        sup = User.objects.create_user(username='rex', email='rex@x.com', password='pw')
+        SupporterLink.objects.create(member=self.member, supporter=sup,
+            initiated_by='member', status='revoked', preset='standard')
+        SupporterLink.objects.create(member=self.member, initiated_by='member',
+            preset='standard', invite_email='rex@x.com', invite_token='tokREV', status='pending')
+        self.client.login(username='rex', password='pw')
+        resp = self.client.post(reverse('accounts:supporter_accept', args=['tokREV']))
+        self.assertEqual(resp.status_code, 302)  # no IntegrityError 500
+
 
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class RequestSupportViewTests(TestCase):

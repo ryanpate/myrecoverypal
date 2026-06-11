@@ -955,4 +955,3 @@ def send_supporter_inactivity_alerts(self):
 
     logger.info(f"Supporter inactivity alerts: {sent} sent")
     return sent
-    return {'status': 'no_quotes'}

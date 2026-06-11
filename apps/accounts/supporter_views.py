@@ -108,12 +108,13 @@ def supporter_accept(request, token):
     """
     link = get_object_or_404(SupporterLink, invite_token=token, status='pending')
     if request.method == 'POST':
-        # Guard the (member, supporter) unique constraint: if this user already
-        # actively supports this member, don't try to create a duplicate.
+        # Guard the (member, supporter) unique constraint, which spans ALL
+        # statuses: if any link already exists for this pair (active, paused,
+        # revoked, or declined), binding here would raise IntegrityError.
         if SupporterLink.objects.filter(
-            member=link.member, supporter=request.user, status='active'
+            member=link.member, supporter=request.user
         ).exists():
-            messages.info(request, 'You are already supporting this person.')
+            messages.info(request, 'You already have a connection with this person.')
             return redirect('accounts:social_feed')
         link.supporter = request.user
         link.status = 'active'   # member already set preset = consent on invite
@@ -147,12 +148,19 @@ def supporter_consent(request, link_id):
 @login_required
 @require_POST
 def request_support(request):
-    supporter_service.record_support_request(request.user)
-    messages.success(
-        request,
-        "Your close supporters have been notified. You're not alone. "
-        "If you're in crisis, call or text 988.",
-    )
+    notified = supporter_service.record_support_request(request.user)
+    if notified:
+        messages.success(
+            request,
+            "Your close supporters have been notified. You're not alone. "
+            "If you're in crisis, call or text 988.",
+        )
+    else:
+        messages.info(
+            request,
+            "You don't have a close supporter set up yet. You're not alone — "
+            "if you're in crisis, call or text 988, or reach out in the community.",
+        )
     nxt = request.POST.get('next')
     if nxt and url_has_allowed_host_and_scheme(
         nxt, allowed_hosts={request.get_host()}, require_https=request.is_secure()
