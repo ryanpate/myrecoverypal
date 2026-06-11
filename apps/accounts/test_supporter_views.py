@@ -64,6 +64,15 @@ class MemberSharingTests(TestCase):
         self.assertEqual(link.initiated_by, 'member')
         self.assertTrue(link.invite_token)
 
+    def test_duplicate_pending_invite_is_not_created(self):
+        data = {'invite_email': 'dup@example.com', 'preset': 'standard'}
+        self.client.post(reverse('accounts:supporter_invite'), data)
+        self.client.post(reverse('accounts:supporter_invite'), data)
+        count = SupporterLink.objects.filter(
+            member=self.member, invite_email='dup@example.com', status='pending'
+        ).count()
+        self.assertEqual(count, 1)
+
     def test_member_can_change_preset(self):
         link = SupporterLink.objects.create(member=self.member,
             supporter=User.objects.create_user(username='x', email='x@x.com', password='pw'),

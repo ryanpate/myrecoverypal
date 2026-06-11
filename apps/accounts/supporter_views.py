@@ -27,15 +27,22 @@ def supporter_invite(request):
     if request.method == 'POST':
         form = SupporterInviteForm(request.POST)
         if form.is_valid():
+            email = form.cleaned_data['invite_email']
+            existing = SupporterLink.objects.filter(
+                member=request.user, invite_email=email, status='pending'
+            ).exists()
+            if existing:
+                messages.info(request, 'You already have a pending invite to that email.')
+                return redirect('accounts:supporter_manage')
             SupporterLink.objects.create(
                 member=request.user,
                 initiated_by='member',
                 preset=form.cleaned_data['preset'],
-                invite_email=form.cleaned_data['invite_email'],
+                invite_email=email,
                 invite_token=secrets.token_urlsafe(32),
                 status='pending',
             )
-            messages.success(request, 'Invitation sent.')
+            messages.success(request, 'Invite link created.')
             return redirect('accounts:supporter_manage')
     else:
         form = SupporterInviteForm()
@@ -50,6 +57,8 @@ def supporter_set_preset(request, link_id):
     if form.is_valid():
         link.set_preset(form.cleaned_data['preset'])
         messages.success(request, 'Sharing level updated.')
+    else:
+        messages.error(request, 'That sharing level is not valid.')
     return redirect('accounts:supporter_manage')
 
 

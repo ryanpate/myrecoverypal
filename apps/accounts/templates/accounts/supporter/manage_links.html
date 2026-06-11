@@ -9,9 +9,9 @@
     <form method="post" action="{% url 'accounts:supporter_set_preset' link.id %}" style="display:inline">
       {% csrf_token %}
       <select name="preset">
-        <option value="cheerleader">Cheerleader</option>
-        <option value="standard">Standard</option>
-        <option value="close">Close support</option>
+        <option value="cheerleader" {% if link.preset == 'cheerleader' %}selected{% endif %}>Cheerleader</option>
+        <option value="standard" {% if link.preset == 'standard' %}selected{% endif %}>Standard</option>
+        <option value="close" {% if link.preset == 'close' %}selected{% endif %}>Close support</option>
       </select>
       <button type="submit">Update</button>
     </form>

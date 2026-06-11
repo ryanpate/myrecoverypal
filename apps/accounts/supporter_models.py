@@ -37,7 +37,7 @@ class SupporterLink(models.Model):
         help_text='Person in recovery whose progress is shared.',
     )
     supporter = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='supporting_links',
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name='supporting_links',
         null=True, blank=True,
         help_text='Viewer; null until an email invitee accepts. Needs active supporter sub to view.',
     )
