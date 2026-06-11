@@ -9,7 +9,7 @@ revoke at any time. See docs/superpowers/specs/2026-06-11-family-supporter-dashb
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils import timezone
+from django.utils import timezone  # noqa: F401  (used by consent()/revoke() in Task 3)
 
 PRESET_CHOICES = [
     ('cheerleader', 'Cheerleader'),
@@ -57,6 +57,8 @@ class SupporterLink(models.Model):
 
     class Meta:
         db_table = 'supporter_links'
+        verbose_name = 'Supporter Link'
+        verbose_name_plural = 'Supporter Links'
         constraints = [
             models.UniqueConstraint(fields=['member', 'supporter'], name='unique_member_supporter'),
         ]
