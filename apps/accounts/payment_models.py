@@ -18,6 +18,7 @@ class Subscription(models.Model):
         ('free', 'Free'),
         ('premium', 'Premium'),
         ('court', 'Court Compliance'),
+        ('supporter', 'Supporter'),
     ]
 
     BILLING_PERIOD_CHOICES = [
@@ -108,6 +109,13 @@ class Subscription(models.Model):
     def is_court(self):
         """Check if user has Court Compliance tier."""
         return self.tier == 'court' and self.is_active()
+
+    def is_supporter(self):
+        """Check if user holds an active Supporter seat.
+
+        Supporter is a distinct paid role, NOT a superset of Premium.
+        """
+        return self.tier == 'supporter' and self.is_active()
 
     def is_trialing(self):
         """Check if user is in trial period"""
