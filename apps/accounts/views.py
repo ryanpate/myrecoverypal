@@ -1342,7 +1342,9 @@ def followers_list(request, username):
     page_obj = paginator.get_page(page_number)
 
     context = {
-        'user': user,
+        # Don't put `user` (the profile owner) here — it would shadow
+        # request.user in base.html/connections_list.html, rendering the nav
+        # and follow buttons as the wrong person.
         'followers': page_obj,
         'page_obj': page_obj,  # Added for pagination in template
         'is_followers_page': True,
@@ -1362,7 +1364,9 @@ def following_list(request, username):
     page_obj = paginator.get_page(page_number)
 
     context = {
-        'user': user,
+        # Don't put `user` (the profile owner) here — it would shadow
+        # request.user in base.html/connections_list.html, rendering the nav
+        # and follow buttons as the wrong person.
         'following': page_obj,
         'page_obj': page_obj,  # Added for pagination in template
         'is_following_page': True,
