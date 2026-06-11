@@ -73,3 +73,27 @@ def get_dashboard_data(link):
     if link.preset == 'close':
         data['inactivity'] = _inactivity_status(member, link)
     return data
+
+
+ENCOURAGEMENT_MESSAGES = {
+    'proud': 'is proud of you 💪',
+    'thinking': 'is thinking of you ❤️',
+    'here': 'is here if you need them 🤝',
+}
+
+
+def send_encouragement(link, key):
+    """Send a canned supportive notification from supporter -> member."""
+    if key not in ENCOURAGEMENT_MESSAGES or not link.is_live() or not link.supporter:
+        return False
+    from apps.accounts.views import create_notification
+    sender = link.supporter
+    name = sender.get_full_name() or sender.username
+    create_notification(
+        recipient=link.member,
+        sender=sender,
+        notification_type='supporter_encouragement',
+        title='Encouragement',
+        message=f"{name} {ENCOURAGEMENT_MESSAGES[key]}",
+    )
+    return True

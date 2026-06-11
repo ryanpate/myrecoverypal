@@ -99,3 +99,35 @@ class MemberSharingTests(TestCase):
             initiated_by='member', status='active', preset='standard')
         resp = self.client.post(reverse('accounts:supporter_revoke', args=[link.id]))
         self.assertEqual(resp.status_code, 404)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class DashboardViewTests(TestCase):
+    def setUp(self):
+        self.member = User.objects.create_user(username='dm', email='dm@x.com', password='pw')
+        self.sup = User.objects.create_user(username='dsup', email='dsup@x.com', password='pw')
+        s = self.sup.subscription
+        s.tier = 'supporter'; s.status = 'active'; s.save()
+        self.link = SupporterLink.objects.create(member=self.member, supporter=self.sup,
+            initiated_by='member', status='active', preset='standard')
+
+    def test_supporter_sees_dashboard(self):
+        self.client.login(username='dsup', password='pw')
+        resp = self.client.get(reverse('accounts:supporter_dashboard', args=[self.link.id]))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('dashboard', resp.context)
+
+    def test_non_owner_supporter_gets_404(self):
+        intruder = User.objects.create_user(username='int', email='int@x.com', password='pw')
+        s = intruder.subscription
+        s.tier = 'supporter'; s.status = 'active'; s.save()
+        self.client.login(username='int', password='pw')
+        resp = self.client.get(reverse('accounts:supporter_dashboard', args=[self.link.id]))
+        self.assertEqual(resp.status_code, 404)
+
+    def test_unsubscribed_supporter_redirected(self):
+        s = self.sup.subscription
+        s.status = 'canceled'; s.save()
+        self.client.login(username='dsup', password='pw')
+        resp = self.client.get(reverse('accounts:supporter_dashboard', args=[self.link.id]))
+        self.assertEqual(resp.status_code, 302)

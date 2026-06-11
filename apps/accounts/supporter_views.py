@@ -6,6 +6,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from apps.accounts.supporter_models import SupporterLink
 from apps.accounts.supporter_forms import SupporterInviteForm, PresetForm
+from apps.accounts.decorators import supporter_required
+from apps.accounts import supporter_service
 
 
 @login_required
@@ -69,3 +71,24 @@ def supporter_revoke(request, link_id):
     link.revoke()
     messages.success(request, 'Access revoked.')
     return redirect('accounts:supporter_manage')
+
+
+@login_required
+@supporter_required
+def supporter_dashboard(request, link_id):
+    link = get_object_or_404(
+        SupporterLink, id=link_id, supporter=request.user, status='active'
+    )
+    dashboard = supporter_service.get_dashboard_data(link)
+    return render(request, 'accounts/supporter/dashboard.html',
+                  {'link': link, 'dashboard': dashboard})
+
+
+@login_required
+@supporter_required
+@require_POST
+def supporter_encourage(request, link_id):
+    link = get_object_or_404(SupporterLink, id=link_id, supporter=request.user, status='active')
+    if supporter_service.send_encouragement(link, request.POST.get('key', '')):
+        messages.success(request, 'Sent. 💛')
+    return redirect('accounts:supporter_dashboard', link_id=link.id)

@@ -88,6 +88,24 @@ class DashboardDataTests(TestCase):
 
 
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class EncouragementTests(TestCase):
+    def setUp(self):
+        self.member = User.objects.create_user(username='em', email='em@x.com', password='pw')
+        self.sup = User.objects.create_user(username='es', email='es@x.com', password='pw')
+        self.link = SupporterLink.objects.create(member=self.member, supporter=self.sup,
+            initiated_by='member', status='active', preset='cheerleader')
+
+    def test_encouragement_creates_notification(self):
+        ok = supporter_service.send_encouragement(self.link, 'proud')
+        self.assertTrue(ok)
+        n = Notification.objects.filter(recipient=self.member, notification_type='supporter_encouragement').first()
+        self.assertIsNotNone(n)
+
+    def test_invalid_key_rejected(self):
+        self.assertFalse(supporter_service.send_encouragement(self.link, 'nonsense'))
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class NotificationTypeTests(TestCase):
     def test_supporter_notification_types_exist(self):
         keys = dict(Notification.NOTIFICATION_TYPES)
