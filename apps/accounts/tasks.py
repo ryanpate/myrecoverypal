@@ -893,4 +893,66 @@ def publish_daily_thought(self):
         return {'status': 'recycled'}
 
     logger.warning(f"No quotes available to recycle for {today}")
+
+
+# ========================================
+# Supporter Inactivity Alerts
+# ========================================
+
+@shared_task(bind=True, max_retries=3)
+def send_supporter_inactivity_alerts(self):
+    """Notify Close supporters when their member hasn't checked in for N days.
+
+    Behavioral (inactivity-only) — never triggered by check-in content.
+    Idempotent per gap via last_inactivity_alert_sent (cooldown = threshold days).
+    Returns the number of alerts sent. Runs daily at 6 PM UTC.
+    """
+    from .models import DailyCheckIn, Notification  # noqa
+    from .supporter_models import SupporterLink
+    from .views import create_notification
+
+    now = timezone.now()
+    today = now.date()
+    sent = 0
+
+    links = SupporterLink.objects.filter(
+        status='active', preset='close'
+    ).select_related('member', 'supporter')
+    for link in links:
+        if not link.supporter:
+            continue
+        last = DailyCheckIn.objects.filter(user=link.member).order_by('-date').first()
+        days_since = (today - last.date).days if last else link.inactivity_threshold_days + 1
+        if days_since < link.inactivity_threshold_days:
+            continue
+        # Cooldown: don't re-alert within the threshold window.
+        if link.last_inactivity_alert_sent and (now - link.last_inactivity_alert_sent).days < link.inactivity_threshold_days:
+            continue
+
+        name = link.member.get_full_name() or link.member.username
+        create_notification(
+            recipient=link.supporter, sender=link.member,
+            notification_type='member_inactive', title='Check-in alert',
+            message=f"{name} hasn't checked in for {days_since} days.",
+        )
+        try:
+            send_email(
+                subject=f"{name} hasn't checked in recently",
+                plain_message=(f"{name} hasn't logged a check-in for {days_since} days. "
+                               f"A kind message can help. If you're worried about their safety, "
+                               f"call or text 988."),
+                html_message=(f"<p>{name} hasn't logged a check-in for {days_since} days. "
+                              f"A kind message can help.</p><p>If you're worried about their "
+                              f"safety, call or text <strong>988</strong>.</p>"),
+                recipient_email=link.supporter.email,
+            )
+        except Exception as exc:
+            logger.warning(f"Supporter inactivity email failed: {exc}")
+
+        link.last_inactivity_alert_sent = now
+        link.save(update_fields=['last_inactivity_alert_sent', 'updated_at'])
+        sent += 1
+
+    logger.info(f"Supporter inactivity alerts: {sent} sent")
+    return sent
     return {'status': 'no_quotes'}

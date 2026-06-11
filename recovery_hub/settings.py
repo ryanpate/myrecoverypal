@@ -770,6 +770,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.store.tasks.daily_milestone_celebration_task',
         'schedule': crontab(hour=9, minute=0),  # Daily 9am UTC
     },
+    'send-supporter-inactivity-alerts': {
+        'task': 'apps.accounts.tasks.send_supporter_inactivity_alerts',
+        'schedule': crontab(hour=18, minute=0),  # Daily at 6 PM UTC (after the 5 PM check-in reminder)
+    },
 }
 
 # Celery worker memory optimization (Railway cost reduction)
