@@ -91,6 +91,10 @@ class User(AbstractUser):
         help_text='Receive weekly shop and milestone celebration emails.',
     )
 
+    # One-off announcement tracking
+    support_circle_email_sent_at = models.DateTimeField(null=True, blank=True,
+        help_text="Support Circle announcement email sent timestamp")
+
     # Engagement email tracking
     welcome_email_1_sent = models.DateTimeField(null=True, blank=True,
         help_text="Welcome email Day 1 sent timestamp")
