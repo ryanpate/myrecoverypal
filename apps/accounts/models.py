@@ -1940,3 +1940,6 @@ from apps.accounts.court_models import (  # noqa: E402, F401
 
 # Re-export cold-outreach suppression model so Django discovers it at app load
 from apps.accounts.outreach_models import ColdOutreachSuppression  # noqa: E402, F401
+
+# Re-export supporter dashboard model so Django discovers it at app load
+from apps.accounts.supporter_models import SupporterLink  # noqa: E402, F401
