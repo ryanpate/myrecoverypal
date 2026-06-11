@@ -135,6 +135,12 @@ class CourtOrderedMeetingTrackerView(TemplateView):
     template_name = 'core/court_ordered_meeting_tracker.html'
 
 
+class SupportLovedOneView(TemplateView):
+    """SEO landing page for the Supporter feature — family/friends following a
+    loved one's recovery with consent. Funnels to the Supporter tier."""
+    template_name = 'core/support_a_loved_one.html'
+
+
 # Sitemap View - serves static sitemap.xml
 def sitemap_view(request):
     """

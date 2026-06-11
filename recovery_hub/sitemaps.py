@@ -32,6 +32,7 @@ class StaticViewSitemap(Sitemap):
             ('accounts:milestone_badge_creator', 0.95),  # Free interactive medallion creator
             ('core:sobriety_counter_app', 0.9),  # "sobriety counter app" keyword
             ('core:sober_grid_alternative', 0.9),  # "sober grid alternative" keyword
+            ('core:support_a_loved_one', 0.9),  # "support a loved one in recovery" — Supporter tier landing
             ('core:alcohol_recovery_app', 0.85),  # "alcohol recovery app" keyword
             ('core:drug_addiction_recovery_app', 0.85),  # "drug addiction app" keyword
             ('core:free_aa_app', 0.85),  # "free AA app" keyword
