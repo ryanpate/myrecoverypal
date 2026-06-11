@@ -38,7 +38,8 @@ class SupporterLink(models.Model):
     )
     supporter = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='supporting_links',
-        help_text='Viewer; needs an active supporter subscription to see data.',
+        null=True, blank=True,
+        help_text='Viewer; null until an email invitee accepts. Needs active supporter sub to view.',
     )
     preset = models.CharField(max_length=12, choices=PRESET_CHOICES, default='standard')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')

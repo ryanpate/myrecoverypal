@@ -232,4 +232,8 @@ urlpatterns = [
 
     # Supporter
     path('supporter/renew/', supporter_views.supporter_renew, name='supporter_renew'),
+    path('supporter/manage/', supporter_views.manage_links, name='supporter_manage'),
+    path('supporter/invite/', supporter_views.supporter_invite, name='supporter_invite'),
+    path('supporter/<int:link_id>/preset/', supporter_views.supporter_set_preset, name='supporter_set_preset'),
+    path('supporter/<int:link_id>/revoke/', supporter_views.supporter_revoke, name='supporter_revoke'),
 ]

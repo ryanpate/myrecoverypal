@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>People supporting me</h1>
+<a href="{% url 'accounts:supporter_invite' %}">Invite a supporter</a>
+<ul>
+{% for link in links %}
+  <li>
+    {{ link.supporter|default:link.invite_email }} — {{ link.get_preset_display }} ({{ link.get_status_display }})
+    <form method="post" action="{% url 'accounts:supporter_set_preset' link.id %}" style="display:inline">
+      {% csrf_token %}
+      <select name="preset">
+        <option value="cheerleader">Cheerleader</option>
+        <option value="standard">Standard</option>
+        <option value="close">Close support</option>
+      </select>
+      <button type="submit">Update</button>
+    </form>
+    <form method="post" action="{% url 'accounts:supporter_revoke' link.id %}" style="display:inline">
+      {% csrf_token %}<button type="submit">Revoke</button>
+    </form>
+  </li>
+{% empty %}
+  <li>No supporters yet.</li>
+{% endfor %}
+</ul>
+{% endblock %}
