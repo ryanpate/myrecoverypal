@@ -1,7 +1,7 @@
 from celery import shared_task
 from django.db import OperationalError
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
+from django.utils.html import strip_tags, escape
 from django.utils import timezone
 from django.conf import settings
 from datetime import timedelta
@@ -941,7 +941,7 @@ def send_supporter_inactivity_alerts(self):
                 plain_message=(f"{name} hasn't logged a check-in for {days_since} days. "
                                f"A kind message can help. If you're worried about their safety, "
                                f"call or text 988."),
-                html_message=(f"<p>{name} hasn't logged a check-in for {days_since} days. "
+                html_message=(f"<p>{escape(name)} hasn't logged a check-in for {days_since} days. "
                               f"A kind message can help.</p><p>If you're worried about their "
                               f"safety, call or text <strong>988</strong>.</p>"),
                 recipient_email=link.supporter.email,
