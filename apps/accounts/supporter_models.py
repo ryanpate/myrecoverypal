@@ -78,9 +78,24 @@ class SupporterLink(models.Model):
         """True when this link is actively sharing data."""
         return self.status == 'active'
 
+    @staticmethod
+    def _validate_preset(preset):
+        valid = {c[0] for c in PRESET_CHOICES}
+        if preset not in valid:
+            raise ValidationError(f"Unknown preset: {preset!r}")
+
     def consent(self, preset=None):
-        """Member grants consent (and optionally sets/changes the preset)."""
-        if preset:
+        """Member grants consent (and optionally sets/changes the preset).
+
+        Refuses to re-activate a terminal link: a revoked/declined link must
+        be re-established as a new SupporterLink, never silently re-consented.
+        """
+        if self.status in ('revoked', 'declined'):
+            raise ValidationError(
+                "A revoked or declined link cannot be re-consented; create a new SupporterLink."
+            )
+        if preset is not None:
+            self._validate_preset(preset)
             self.preset = preset
         self.status = 'active'
         if not self.consented_at:
@@ -96,6 +111,9 @@ class SupporterLink(models.Model):
         self.save(update_fields=['status', 'updated_at'])
 
     def resume(self):
+        """Resume a paused link. Only a paused link may resume — never un-revoke."""
+        if self.status != 'paused':
+            raise ValidationError("Only paused links can be resumed.")
         self.status = 'active'
         self.save(update_fields=['status', 'updated_at'])
 
@@ -106,5 +124,6 @@ class SupporterLink(models.Model):
 
     def set_preset(self, preset):
         """Member changes the sharing level on an existing link."""
+        self._validate_preset(preset)
         self.preset = preset
         self.save(update_fields=['preset', 'updated_at'])
