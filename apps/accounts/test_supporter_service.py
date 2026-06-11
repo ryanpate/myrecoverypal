@@ -8,7 +8,9 @@ from apps.accounts import supporter_service
 
 User = get_user_model()
 
-FORBIDDEN_KEYS = {'craving', 'craving_level', 'gratitude', 'challenge', 'goal', 'journal', 'notes'}
+# energy_level is private check-in data not surfaced at any preset — excluded by design.
+FORBIDDEN_KEYS = {'craving', 'craving_level', 'gratitude', 'challenge', 'goal',
+                  'journal', 'notes', 'energy_level', 'energy'}
 
 
 def _flatten_keys(obj, acc):
@@ -67,3 +69,19 @@ class DashboardDataTests(TestCase):
             _flatten_keys(data, keys)
             leaked = keys & FORBIDDEN_KEYS
             self.assertFalse(leaked, f"preset {preset} leaked {leaked}")
+
+    def test_mood_trend_is_scalar_mood_values_only(self):
+        # Value/shape guard: a craving scalar leaked as a tuple element would
+        # bypass the key-name check above. mood_trend must be plain ints 1-6.
+        self.link.preset = 'close'
+        data = supporter_service.get_dashboard_data(self.link)
+        for item in data['mood_trend']:
+            self.assertIsInstance(item, int)
+            self.assertIn(item, range(1, 7))
+
+    def test_inactive_link_shares_nothing(self):
+        # The read gate itself must refuse a non-active link.
+        self.link.preset = 'standard'
+        self.link.revoke()
+        with self.assertRaises(ValueError):
+            supporter_service.get_dashboard_data(self.link)

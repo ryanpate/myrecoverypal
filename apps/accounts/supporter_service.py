@@ -47,7 +47,16 @@ def _inactivity_status(member, link):
 
 
 def get_dashboard_data(link):
-    """Build the supporter-visible payload for a link, gated by preset."""
+    """Build the supporter-visible payload for a link, gated by preset.
+
+    This is the single read gate. It enforces consent status itself so no
+    caller can render data for a paused/revoked/pending link by forgetting
+    to check.
+    """
+    if not link.is_live():
+        raise ValueError(
+            f"SupporterLink {link.pk} is not active (status={link.status!r}); no data is shared."
+        )
     member = link.member
     days_sober = member.get_days_sober()
     data = {
