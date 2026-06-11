@@ -35,7 +35,10 @@ def unsubscribe_marketing(request, token):
     user.marketing_emails_enabled = False
     user.save(update_fields=['marketing_emails_enabled'])
 
-    return render(request, 'accounts/email_unsubscribed.html', {'user': user})
+    # Note: don't pass {'user': user} — that would shadow request.user in
+    # base.html and make the anonymous visitor render the authenticated nav,
+    # which evaluates user.subscription.is_court and triggers a DB query.
+    return render(request, 'accounts/email_unsubscribed.html')
 
 
 @csrf_protect
