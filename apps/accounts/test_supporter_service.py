@@ -3,7 +3,7 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from apps.accounts.supporter_models import SupporterLink
-from apps.accounts.models import DailyCheckIn
+from apps.accounts.models import DailyCheckIn, Notification
 from apps.accounts import supporter_service
 
 User = get_user_model()
@@ -85,3 +85,12 @@ class DashboardDataTests(TestCase):
         self.link.revoke()
         with self.assertRaises(ValueError):
             supporter_service.get_dashboard_data(self.link)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class NotificationTypeTests(TestCase):
+    def test_supporter_notification_types_exist(self):
+        keys = dict(Notification.NOTIFICATION_TYPES)
+        for k in ['supporter_request', 'supporter_consented', 'supporter_encouragement',
+                  'member_support_request', 'member_inactive']:
+            self.assertIn(k, keys)
