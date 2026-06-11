@@ -1330,49 +1330,69 @@ def suggested_users(request):
     return render(request, 'accounts/suggested_users.html', context)
 
 
-# UPDATED FUNCTIONS WITH FIX FOR FOLLOWERS/FOLLOWING PAGES
-@login_required
-def followers_list(request, username):
-    """List of user's followers"""
-    user = get_object_or_404(User, username=username)
-    followers = user.get_followers().select_related('profile')
+def _render_connections_list(request, profile_owner, members_qs, *, is_followers):
+    """Shared rendering for the followers / following pages.
 
-    paginator = Paginator(followers, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    connections_list.html expects the same context shape as CommunityView:
+    a paginated, ``is_followed``-annotated ``members`` list plus the viewer's
+    community counts for the header. Note we deliberately do NOT pass the
+    profile owner as ``user`` — that would shadow request.user in base.html
+    and render the nav/follow buttons as the wrong person.
+    """
+    from django.db.models import Case, When, Value, BooleanField
+
+    following_ids = list(
+        request.user.get_following().values_list('id', flat=True))
+    members_qs = members_qs.annotate(
+        is_followed=Case(
+            When(id__in=following_ids, then=Value(True)),
+            default=Value(False),
+            output_field=BooleanField(),
+        )
+    )
+
+    paginator = Paginator(members_qs, 20)
+    page_obj = paginator.get_page(request.GET.get('page'))
+
+    public_users = User.objects.filter(
+        is_profile_public=True, is_active=True
+    ).exclude(id=request.user.id)
 
     context = {
-        # Don't put `user` (the profile owner) here — it would shadow
-        # request.user in base.html/connections_list.html, rendering the nav
-        # and follow buttons as the wrong person.
-        'followers': page_obj,
-        'page_obj': page_obj,  # Added for pagination in template
-        'is_followers_page': True,
-        'is_following_page': False,  # Explicitly set to False
+        'profile_owner': profile_owner,
+        'members': page_obj,
+        'page_obj': page_obj,
+        'is_paginated': page_obj.has_other_pages(),
+        'is_followers_page': is_followers,
+        'is_following_page': not is_followers,
+        'total_members': public_users.count(),
+        'sponsors_count': public_users.filter(is_sponsor=True).count(),
+        'followers_count': request.user.followers_count,
+        'following_count': request.user.following_count,
     }
     return render(request, 'accounts/connections_list.html', context)
+
+
+@login_required
+def followers_list(request, username):
+    """List of a user's followers"""
+    profile_owner = get_object_or_404(User, username=username)
+    return _render_connections_list(
+        request, profile_owner,
+        profile_owner.get_followers().select_related('profile'),
+        is_followers=True,
+    )
 
 
 @login_required
 def following_list(request, username):
     """List of users this user is following"""
-    user = get_object_or_404(User, username=username)
-    following = user.get_following().select_related('profile')
-
-    paginator = Paginator(following, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        # Don't put `user` (the profile owner) here — it would shadow
-        # request.user in base.html/connections_list.html, rendering the nav
-        # and follow buttons as the wrong person.
-        'following': page_obj,
-        'page_obj': page_obj,  # Added for pagination in template
-        'is_following_page': True,
-        'is_followers_page': False,  # Explicitly set to False
-    }
-    return render(request, 'accounts/connections_list.html', context)
+    profile_owner = get_object_or_404(User, username=username)
+    return _render_connections_list(
+        request, profile_owner,
+        profile_owner.get_following().select_related('profile'),
+        is_followers=False,
+    )
 
 
 @login_required

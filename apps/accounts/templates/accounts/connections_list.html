@@ -292,8 +292,16 @@
 {% block content %}
 <div class="page-header community-header">
     <div class="container">
+        {% if is_followers_page %}
+        <h1>@{{ profile_owner.username }}'s Followers</h1>
+        <p class="lead">People following {{ profile_owner.get_full_name|default:profile_owner.username }}</p>
+        {% elif is_following_page %}
+        <h1>@{{ profile_owner.username }} is Following</h1>
+        <p class="lead">People {{ profile_owner.get_full_name|default:profile_owner.username }} follows</p>
+        {% else %}
         <h1>Recovery Community</h1>
         <p class="lead">Connect with others on their recovery journey</p>
+        {% endif %}
 
         <!-- Action buttons in header -->
         <div class="header-action-buttons">
