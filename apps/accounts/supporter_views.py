@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_POST
-from apps.accounts.supporter_models import SupporterLink
+from apps.accounts.supporter_models import SupporterLink, PRESET_CHOICES
 from apps.accounts.supporter_forms import SupporterInviteForm, PresetForm
 from apps.accounts.decorators import supporter_required
 from apps.accounts import supporter_service
@@ -96,17 +96,32 @@ def supporter_encourage(request, link_id):
 
 
 @login_required
-@require_POST
 def supporter_accept(request, token):
-    """A supporter (Path A) accepts an email invite, binding their account."""
+    """A supporter (Path A) accepts an email invite, binding their account.
+
+    GET renders a confirm page (the email link is a GET); POST binds.
+    Bearer-token model: possession of the 256-bit token is the credential and
+    it is delivered only to the invited email. We do NOT hard-match
+    request.user.email to invite_email — accepted tradeoff for MVP; revisit
+    before scaling the data-richer 'close' preset.
+    """
     link = get_object_or_404(SupporterLink, invite_token=token, status='pending')
-    link.supporter = request.user
-    link.status = 'active'   # member already set preset = consent on invite
-    if not link.consented_at:
-        link.consented_at = timezone.now()
-    link.save(update_fields=['supporter', 'status', 'consented_at', 'updated_at'])
-    messages.success(request, 'You are now connected.')
-    return redirect('accounts:supporter_dashboard', link_id=link.id)
+    if request.method == 'POST':
+        # Guard the (member, supporter) unique constraint: if this user already
+        # actively supports this member, don't try to create a duplicate.
+        if SupporterLink.objects.filter(
+            member=link.member, supporter=request.user, status='active'
+        ).exists():
+            messages.info(request, 'You are already supporting this person.')
+            return redirect('accounts:social_feed')
+        link.supporter = request.user
+        link.status = 'active'   # member already set preset = consent on invite
+        if not link.consented_at:
+            link.consented_at = timezone.now()
+        link.save(update_fields=['supporter', 'status', 'consented_at', 'updated_at'])
+        messages.success(request, 'You are now connected.')
+        return redirect('accounts:supporter_dashboard', link_id=link.id)
+    return render(request, 'accounts/supporter/accept.html', {'link': link})
 
 
 @login_required
@@ -115,7 +130,12 @@ def supporter_consent(request, link_id):
     link = get_object_or_404(SupporterLink, id=link_id, member=request.user, status='pending')
     if request.method == 'POST':
         if request.POST.get('decision') == 'accept':
-            link.consent(preset=request.POST.get('preset', 'standard'))
+            # Clamp to a valid preset so a crafted POST can't reach the model's
+            # ValidationError path (which would 500).
+            preset = request.POST.get('preset', 'standard')
+            if preset not in {c[0] for c in PRESET_CHOICES}:
+                preset = 'standard'
+            link.consent(preset=preset)
             messages.success(request, 'Connected. You control what they see and can pause anytime.')
         else:
             link.decline()

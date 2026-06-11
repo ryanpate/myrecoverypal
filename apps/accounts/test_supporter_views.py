@@ -168,5 +168,28 @@ class InviteAcceptTests(TestCase):
         self.client.login(username='mb', password='pw')
         resp = self.client.post(reverse('accounts:supporter_consent', args=[link.id]),
                                 {'decision': 'decline'})
+        self.assertEqual(resp.status_code, 302)
         link.refresh_from_db()
         self.assertEqual(link.status, 'declined')
+
+    def test_accept_get_renders_confirm_page(self):
+        SupporterLink.objects.create(member=self.member, initiated_by='member',
+            preset='standard', invite_email='aunt@x.com', invite_token='tokGET', status='pending')
+        aunt = User.objects.create_user(username='aunt', email='aunt@x.com', password='pw')
+        self.client.login(username='aunt', password='pw')
+        resp = self.client.get(reverse('accounts:supporter_accept', args=['tokGET']))
+        self.assertEqual(resp.status_code, 200)  # email link is a GET, must not 405
+
+    def test_accept_when_already_supporting_does_not_500(self):
+        sup = User.objects.create_user(username='sis', email='sis@x.com', password='pw')
+        # existing active link to the same member
+        SupporterLink.objects.create(member=self.member, supporter=sup,
+            initiated_by='member', status='active', preset='standard')
+        # a second pending invite the same user tries to accept
+        SupporterLink.objects.create(member=self.member, initiated_by='member',
+            preset='standard', invite_email='sis@x.com', invite_token='tokDUP', status='pending')
+        self.client.login(username='sis', password='pw')
+        resp = self.client.post(reverse('accounts:supporter_accept', args=['tokDUP']))
+        self.assertEqual(resp.status_code, 302)  # handled gracefully, no IntegrityError 500
+        self.assertEqual(SupporterLink.objects.filter(
+            member=self.member, supporter=sup, status='active').count(), 1)
