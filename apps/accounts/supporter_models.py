@@ -9,7 +9,7 @@ revoke at any time. See docs/superpowers/specs/2026-06-11-family-supporter-dashb
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils import timezone  # noqa: F401  (used by consent()/revoke() in Task 3)
+from django.utils import timezone
 
 PRESET_CHOICES = [
     ('cheerleader', 'Cheerleader'),
@@ -73,3 +73,38 @@ class SupporterLink(models.Model):
     def clean(self):
         if self.member_id and self.member_id == self.supporter_id:
             raise ValidationError("A user cannot be their own supporter.")
+
+    def is_live(self):
+        """True when this link is actively sharing data."""
+        return self.status == 'active'
+
+    def consent(self, preset=None):
+        """Member grants consent (and optionally sets/changes the preset)."""
+        if preset:
+            self.preset = preset
+        self.status = 'active'
+        if not self.consented_at:
+            self.consented_at = timezone.now()
+        self.save(update_fields=['preset', 'status', 'consented_at', 'updated_at'])
+
+    def decline(self):
+        self.status = 'declined'
+        self.save(update_fields=['status', 'updated_at'])
+
+    def pause(self):
+        self.status = 'paused'
+        self.save(update_fields=['status', 'updated_at'])
+
+    def resume(self):
+        self.status = 'active'
+        self.save(update_fields=['status', 'updated_at'])
+
+    def revoke(self):
+        self.status = 'revoked'
+        self.revoked_at = timezone.now()
+        self.save(update_fields=['status', 'revoked_at', 'updated_at'])
+
+    def set_preset(self, preset):
+        """Member changes the sharing level on an existing link."""
+        self.preset = preset
+        self.save(update_fields=['preset', 'updated_at'])

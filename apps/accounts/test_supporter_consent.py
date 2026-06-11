@@ -30,3 +30,42 @@ class SupporterLinkModelTests(TestCase):
         with self.assertRaises(IntegrityError):
             with transaction.atomic():
                 SupporterLink.objects.create(member=self.member, supporter=self.supporter, initiated_by='supporter')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class SupporterLinkTransitionTests(TestCase):
+    def setUp(self):
+        self.member = User.objects.create_user(username='m2', email='m2@x.com', password='pw')
+        self.supporter = User.objects.create_user(username='s2', email='s2@x.com', password='pw')
+        self.link = SupporterLink.objects.create(
+            member=self.member, supporter=self.supporter, initiated_by='supporter', status='pending'
+        )
+
+    def test_member_consent_activates_and_sets_preset(self):
+        self.link.consent(preset='close')
+        self.link.refresh_from_db()
+        self.assertEqual(self.link.status, 'active')
+        self.assertEqual(self.link.preset, 'close')
+        self.assertIsNotNone(self.link.consented_at)
+
+    def test_decline_is_terminal(self):
+        self.link.decline()
+        self.link.refresh_from_db()
+        self.assertEqual(self.link.status, 'declined')
+
+    def test_pause_and_resume(self):
+        self.link.consent(preset='standard')
+        self.link.pause()
+        self.assertEqual(self.link.status, 'paused')
+        self.assertFalse(self.link.is_live())
+        self.link.resume()
+        self.assertEqual(self.link.status, 'active')
+        self.assertTrue(self.link.is_live())
+
+    def test_revoke_is_terminal_and_timestamped(self):
+        self.link.consent(preset='standard')
+        self.link.revoke()
+        self.link.refresh_from_db()
+        self.assertEqual(self.link.status, 'revoked')
+        self.assertIsNotNone(self.link.revoked_at)
+        self.assertFalse(self.link.is_live())
