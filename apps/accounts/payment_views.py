@@ -44,11 +44,13 @@ def pricing(request):
     # Court Compliance card is hardcoded (different layout from the Premium loop),
     # so it needs its own plan reference for the checkout button to send the right plan_id.
     court_monthly_plan = plans.filter(tier='court', billing_period='monthly').first()
+    supporter_monthly_plan = plans.filter(tier='supporter', billing_period='monthly').first()
 
     context = {
         'plans': plans,
         'user_subscription': user_subscription,
         'court_monthly_plan': court_monthly_plan,
+        'supporter_monthly_plan': supporter_monthly_plan,
         'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
     }
     return render(request, 'accounts/pricing.html', context)
