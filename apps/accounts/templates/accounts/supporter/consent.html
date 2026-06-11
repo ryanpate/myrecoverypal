@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ link.supporter }} wants to support your recovery</h1>
+<p>Choose what they can see. You can change or pause this any time.</p>
+<form method="post">{% csrf_token %}
+  <select name="preset">
+    <option value="cheerleader">Cheerleader — milestones &amp; streak only</option>
+    <option value="standard" selected>Standard — + check-in consistency &amp; mood trend</option>
+    <option value="close">Close support — + inactivity alerts &amp; my "I need support" pings</option>
+  </select>
+  <button type="submit" name="decision" value="accept">Accept</button>
+  <button type="submit" name="decision" value="decline">Decline</button>
+</form>
+{% endblock %}

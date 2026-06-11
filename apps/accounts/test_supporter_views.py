@@ -131,3 +131,42 @@ class DashboardViewTests(TestCase):
         self.client.login(username='dsup', password='pw')
         resp = self.client.get(reverse('accounts:supporter_dashboard', args=[self.link.id]))
         self.assertEqual(resp.status_code, 302)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class InviteAcceptTests(TestCase):
+    def setUp(self):
+        self.member = User.objects.create_user(username='mb', email='mb@x.com', password='pw')
+
+    def test_supporter_accepts_email_invite_binds_account(self):
+        link = SupporterLink.objects.create(member=self.member, initiated_by='member',
+            preset='standard', invite_email='mom@x.com', invite_token='tok123', status='pending')
+        mom = User.objects.create_user(username='mom', email='mom@x.com', password='pw')
+        self.client.login(username='mom', password='pw')
+        resp = self.client.post(reverse('accounts:supporter_accept', args=['tok123']))
+        self.assertEqual(resp.status_code, 302)
+        link.refresh_from_db()
+        self.assertEqual(link.supporter, mom)
+        self.assertEqual(link.status, 'active')
+
+    def test_member_consents_to_supporter_initiated_link(self):
+        sup = User.objects.create_user(username='dad', email='dad@x.com', password='pw')
+        link = SupporterLink.objects.create(member=self.member, supporter=sup,
+            initiated_by='supporter', status='pending')
+        self.client.login(username='mb', password='pw')
+        resp = self.client.post(reverse('accounts:supporter_consent', args=[link.id]),
+                                {'preset': 'close', 'decision': 'accept'})
+        self.assertEqual(resp.status_code, 302)
+        link.refresh_from_db()
+        self.assertEqual(link.status, 'active')
+        self.assertEqual(link.preset, 'close')
+
+    def test_member_declines_silently(self):
+        sup = User.objects.create_user(username='dad2', email='dad2@x.com', password='pw')
+        link = SupporterLink.objects.create(member=self.member, supporter=sup,
+            initiated_by='supporter', status='pending')
+        self.client.login(username='mb', password='pw')
+        resp = self.client.post(reverse('accounts:supporter_consent', args=[link.id]),
+                                {'decision': 'decline'})
+        link.refresh_from_db()
+        self.assertEqual(link.status, 'declined')

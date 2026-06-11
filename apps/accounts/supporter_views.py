@@ -3,6 +3,7 @@ import secrets
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 from apps.accounts.supporter_models import SupporterLink
 from apps.accounts.supporter_forms import SupporterInviteForm, PresetForm
@@ -92,3 +93,31 @@ def supporter_encourage(request, link_id):
     if supporter_service.send_encouragement(link, request.POST.get('key', '')):
         messages.success(request, 'Sent. 💛')
     return redirect('accounts:supporter_dashboard', link_id=link.id)
+
+
+@login_required
+@require_POST
+def supporter_accept(request, token):
+    """A supporter (Path A) accepts an email invite, binding their account."""
+    link = get_object_or_404(SupporterLink, invite_token=token, status='pending')
+    link.supporter = request.user
+    link.status = 'active'   # member already set preset = consent on invite
+    if not link.consented_at:
+        link.consented_at = timezone.now()
+    link.save(update_fields=['supporter', 'status', 'consented_at', 'updated_at'])
+    messages.success(request, 'You are now connected.')
+    return redirect('accounts:supporter_dashboard', link_id=link.id)
+
+
+@login_required
+def supporter_consent(request, link_id):
+    """Member (Path B) reviews a supporter-initiated request and accepts/declines."""
+    link = get_object_or_404(SupporterLink, id=link_id, member=request.user, status='pending')
+    if request.method == 'POST':
+        if request.POST.get('decision') == 'accept':
+            link.consent(preset=request.POST.get('preset', 'standard'))
+            messages.success(request, 'Connected. You control what they see and can pause anytime.')
+        else:
+            link.decline()
+        return redirect('accounts:supporter_manage')
+    return render(request, 'accounts/supporter/consent.html', {'link': link})

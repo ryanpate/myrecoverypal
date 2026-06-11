@@ -237,5 +237,7 @@ urlpatterns = [
     path('supporter/<int:link_id>/preset/', supporter_views.supporter_set_preset, name='supporter_set_preset'),
     path('supporter/<int:link_id>/revoke/', supporter_views.supporter_revoke, name='supporter_revoke'),
     path('supporter/<int:link_id>/encourage/', supporter_views.supporter_encourage, name='supporter_encourage'),
+    path('supporter/accept/<str:token>/', supporter_views.supporter_accept, name='supporter_accept'),
+    path('supporter/<int:link_id>/consent/', supporter_views.supporter_consent, name='supporter_consent'),
     path('supporter/<int:link_id>/', supporter_views.supporter_dashboard, name='supporter_dashboard'),
 ]
