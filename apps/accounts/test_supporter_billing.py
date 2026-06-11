@@ -1,6 +1,6 @@
 from django.test import TestCase, override_settings
 from django.contrib.auth import get_user_model
-from apps.accounts.payment_models import Subscription
+from apps.accounts.payment_models import Subscription, SubscriptionPlan
 
 User = get_user_model()
 
@@ -29,3 +29,11 @@ class SupporterTierTests(TestCase):
         sub.status = 'canceled'
         sub.save()
         self.assertFalse(sub.is_supporter())
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class SupporterPlanTests(TestCase):
+    def test_monthly_supporter_plan_seeded(self):
+        plan = SubscriptionPlan.objects.filter(tier='supporter', billing_period='monthly').first()
+        self.assertIsNotNone(plan)
+        self.assertEqual(str(plan.price), '7.99')

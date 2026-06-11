@@ -291,7 +291,7 @@ def handle_checkout_session_completed(session):
             # Set tier from subscription metadata or price ID
             metadata = stripe_subscription.get('metadata', {})
             tier = metadata.get('tier', '')
-            if tier in ['premium', 'court']:
+            if tier in ['premium', 'court', 'supporter']:
                 subscription.tier = tier
             else:
                 # Fallback: look up from SubscriptionPlan
