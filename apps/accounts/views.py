@@ -4862,7 +4862,7 @@ def edit_challenge_checkin(request, challenge_id, checkin_id):
 def recovery_coach(request):
     """Main recovery coach chat interface."""
     from apps.accounts.models import RecoveryCoachSession, CoachMessage
-    from apps.accounts.coach_service import can_send_message, get_message_count_today, get_total_free_messages
+    from apps.accounts.coach_service import can_send_message, get_message_count_today
 
     is_premium = hasattr(request.user, 'subscription') and request.user.subscription.is_premium()
 
@@ -4874,14 +4874,17 @@ def recovery_coach(request):
     messages_list = session.messages.order_by('created_at')
     allowed, reason = can_send_message(request.user)
 
+    message_limit = 20 if is_premium else 3
+    messages_used = get_message_count_today(request.user)
     context = {
         'session': session,
         'chat_messages': messages_list,
         'can_send': allowed,
         'limit_reason': reason,
         'is_premium': is_premium,
-        'messages_used': get_message_count_today(request.user) if is_premium else get_total_free_messages(request.user),
-        'message_limit': 20 if is_premium else 10,
+        'messages_used': messages_used,
+        'message_limit': message_limit,
+        'messages_remaining': max(0, message_limit - messages_used),
         'sessions': RecoveryCoachSession.objects.filter(user=request.user).order_by('-updated_at')[:10],
     }
     return render(request, 'accounts/recovery_coach.html', context)
@@ -4892,7 +4895,7 @@ def recovery_coach(request):
 def coach_send_message(request):
     """AJAX endpoint: send a message to the coach and get a response."""
     from apps.accounts.models import RecoveryCoachSession, CoachMessage
-    from apps.accounts.coach_service import can_send_message, send_coach_message, get_message_count_today, get_total_free_messages
+    from apps.accounts.coach_service import can_send_message, send_coach_message, get_message_count_today
 
     user_message = request.POST.get('message', '').strip()
     session_id = request.POST.get('session_id')
@@ -4903,16 +4906,16 @@ def coach_send_message(request):
     if len(user_message) > 2000:
         return JsonResponse({'error': 'Message is too long. Please keep it under 2000 characters.'}, status=400)
 
-    # Check rate limits
-    allowed, reason = can_send_message(request.user)
-    if not allowed:
-        return JsonResponse({'error': reason, 'upgrade_required': reason == 'upgrade_required'}, status=429)
-
-    # Get session
+    # Get session first so crisis (checkin_support) sessions are exempt
     try:
         session = RecoveryCoachSession.objects.get(id=session_id, user=request.user)
     except RecoveryCoachSession.DoesNotExist:
         return JsonResponse({'error': 'Session not found.'}, status=404)
+
+    # Check rate limits (session-aware)
+    allowed, reason = can_send_message(request.user, session)
+    if not allowed:
+        return JsonResponse({'error': reason, 'upgrade_required': reason == 'upgrade_required'}, status=429)
 
     # Save user message
     CoachMessage.objects.create(session=session, role='user', content=user_message)
@@ -4933,11 +4936,12 @@ def coach_send_message(request):
     session.save(update_fields=['updated_at'])
 
     is_premium = hasattr(request.user, 'subscription') and request.user.subscription.is_premium()
+    message_limit = 20 if is_premium else 3
 
     return JsonResponse({
         'response': response_text,
-        'messages_used': get_message_count_today(request.user) if is_premium else get_total_free_messages(request.user),
-        'message_limit': 20 if is_premium else 10,
+        'messages_used': get_message_count_today(request.user),
+        'message_limit': message_limit,
     })
 
 

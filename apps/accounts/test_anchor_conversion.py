@@ -207,3 +207,30 @@ class CheckinConfirmationTest(TestCase):
         resp = self.client.get(reverse('accounts:checkin_confirmation') + '?checkin=abc')
         self.assertEqual(resp.status_code, 200)
         self.assertNotContains(resp, 'talk it through with Anchor')
+
+
+@override_settings(SECURE_SSL_REDIRECT=False, PREPEND_WWW=False, ALLOWED_HOSTS=['*'])
+class SendEndpointTest(TestCase):
+    @patch('apps.accounts.coach_service.send_coach_message', return_value=('reply', None))
+    def test_free_user_blocked_after_3_routine(self, _mock):
+        from django.urls import reverse
+        user = make_free_user('se1')
+        add_user_messages(user, 3)  # already at routine cap today
+        session = RecoveryCoachSession.objects.create(user=user, trigger='manual', title='t')
+        self.client.force_login(user)
+        resp = self.client.post(reverse('accounts:coach_send_message'),
+                                {'message': 'hi', 'session_id': session.id})
+        self.assertEqual(resp.status_code, 429)
+        self.assertTrue(resp.json().get('upgrade_required'))
+
+    @patch('apps.accounts.coach_service.send_coach_message', return_value=('reply', None))
+    def test_free_user_can_send_in_crisis_session_past_cap(self, _mock):
+        from django.urls import reverse
+        user = make_free_user('se2')
+        add_user_messages(user, 3)  # routine cap reached
+        crisis = RecoveryCoachSession.objects.create(
+            user=user, trigger='checkin_support', title='c')
+        self.client.force_login(user)
+        resp = self.client.post(reverse('accounts:coach_send_message'),
+                                {'message': 'help', 'session_id': crisis.id})
+        self.assertEqual(resp.status_code, 200)

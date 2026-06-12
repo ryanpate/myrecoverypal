@@ -125,16 +125,6 @@ def get_message_count_today(user):
     ).exclude(session__trigger='checkin_support').count()
 
 
-def get_total_free_messages(user):
-    """Count total coach messages a user has ever sent (for free tier limit)."""
-    from apps.accounts.models import CoachMessage
-
-    return CoachMessage.objects.filter(
-        session__user=user,
-        role='user',
-    ).count()
-
-
 def can_send_message(user, session=None):
     """Check if user can send a coach message. Returns (allowed, reason).
 

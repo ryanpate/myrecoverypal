@@ -1268,7 +1268,7 @@
                 </div>
                 <div class="msg-counter {% if messages_used >= message_limit %}counter-empty{% elif message_limit > 0 and messages_used >= message_limit|add:"-2" %}counter-low{% endif %}" id="messagesCounter">
                     <i class="fas fa-message"></i>
-                    <span class="counter-short">{{ messages_used }}/{{ message_limit }}</span>
+                    <span class="counter-short">{{ messages_remaining }} left today</span>
                 </div>
             </div>
 
@@ -1344,7 +1344,7 @@
                 <div class="upgrade-card-icon">
                     <i class="fas fa-lock"></i>
                 </div>
-                <div class="upgrade-card-title">You've used all 10 free messages</div>
+                <div class="upgrade-card-title">You've used all 3 free messages today</div>
                 <div class="upgrade-card-text">
                     Upgrade to Premium for 20 messages per day with Anchor, plus unlimited groups, advanced analytics, and more.
                 </div>
@@ -1377,7 +1377,7 @@
             <div class="input-meta">
                 <span class="char-count" id="charCounter">0 / 2000</span>
                 <span class="msg-remaining" id="remainingLabel">
-                    {{ messages_used }}/{{ message_limit }} messages used {% if is_premium %}today{% endif %}
+                    {{ messages_remaining }} messages left today
                 </span>
             </div>
         </div>
@@ -1490,12 +1490,10 @@ function acceptDisclaimer() {
 
     // Update messages remaining display
     function updateMessagesDisplay() {
+        var remaining = Math.max(0, messageLimit - messagesUsed);
         if (messagesCounter) {
-            var counterText = messagesCounter.querySelector('.counter-text');
             var counterShort = messagesCounter.querySelector('.counter-short');
-            var label = isPremium ? 'today' : 'messages';
-            if (counterText) counterText.textContent = messagesUsed + '/' + messageLimit + ' ' + label;
-            if (counterShort) counterShort.textContent = messagesUsed + '/' + messageLimit;
+            if (counterShort) counterShort.textContent = remaining + ' left today';
 
             messagesCounter.classList.remove('counter-low', 'counter-empty');
             if (messagesUsed >= messageLimit) {
@@ -1506,8 +1504,7 @@ function acceptDisclaimer() {
         }
 
         if (remainingLabel) {
-            var label = isPremium ? ' messages used today' : ' messages used';
-            remainingLabel.textContent = messagesUsed + '/' + messageLimit + label;
+            remainingLabel.textContent = remaining + ' messages left today';
         }
     }
 
@@ -1630,12 +1627,11 @@ function acceptDisclaimer() {
             isSending = false;
             updateSendBtn();
 
-            // Progressive upgrade hints for free users (triggers at 7/10 and 9/10)
+            // Progressive upgrade hints for free users (triggers at 2/3 and 3/3)
             if (!isPremium) {
-                if (messagesUsed === 7 && messageLimit === 10) {
-                    showToast('3 free messages remaining. Loving Anchor? Try Premium for 20 messages/day.', 6000);
-                } else if (messagesUsed === 9 && messageLimit === 10) {
-                    showToast('Last free message! Upgrade to Premium for 20 messages/day.', 8000);
+                var remaining = Math.max(0, messageLimit - messagesUsed);
+                if (remaining === 1) {
+                    showToast('1 free message left today. Upgrade to Premium for 20 messages/day.', 8000);
                 }
             }
 
