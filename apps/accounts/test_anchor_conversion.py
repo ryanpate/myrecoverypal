@@ -234,3 +234,25 @@ class SendEndpointTest(TestCase):
         resp = self.client.post(reverse('accounts:coach_send_message'),
                                 {'message': 'help', 'session_id': crisis.id})
         self.assertEqual(resp.status_code, 200)
+
+    def test_recovery_coach_not_gated_in_crisis_session_at_cap(self):
+        from django.urls import reverse
+        user = make_free_user('se3')
+        add_user_messages(user, 3)  # at routine cap today
+        RecoveryCoachSession.objects.filter(user=user, is_active=True).update(is_active=False)
+        RecoveryCoachSession.objects.create(
+            user=user, trigger='checkin_support', is_active=True, title='c')
+        self.client.force_login(user)
+        resp = self.client.get(reverse('accounts:recovery_coach'))
+        self.assertTrue(resp.context['can_send'])
+
+    def test_recovery_coach_gated_in_manual_session_at_cap(self):
+        from django.urls import reverse
+        user = make_free_user('se4')
+        add_user_messages(user, 3)  # at routine cap today
+        RecoveryCoachSession.objects.filter(user=user, is_active=True).update(is_active=False)
+        RecoveryCoachSession.objects.create(
+            user=user, trigger='manual', is_active=True, title='m')
+        self.client.force_login(user)
+        resp = self.client.get(reverse('accounts:recovery_coach'))
+        self.assertFalse(resp.context['can_send'])

@@ -4872,7 +4872,7 @@ def recovery_coach(request):
         session = RecoveryCoachSession.objects.create(user=request.user, title="New Conversation")
 
     messages_list = session.messages.order_by('created_at')
-    allowed, reason = can_send_message(request.user)
+    allowed, reason = can_send_message(request.user, session)
 
     message_limit = 20 if is_premium else 3
     messages_used = get_message_count_today(request.user)
