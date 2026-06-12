@@ -830,7 +830,8 @@ def daily_checkin_view(request):
                     '<a href="/accounts/progress/" style="color: #667eea; text-decoration: underline;">See your mood trends over time</a> with Premium analytics.',
                     extra_tags='safe'
                 )
-            return redirect('accounts:dashboard')
+            return redirect(
+                f"{reverse('accounts:checkin_confirmation')}?checkin={checkin.id}")
 
     context = {
         'existing_checkin': existing_checkin,
@@ -978,6 +979,20 @@ def get_checkin_status(request):
         return JsonResponse({
             'checked_in': False
         })
+
+
+@login_required
+def checkin_confirmation(request):
+    """Brief post-check-in screen; offers Anchor when the check-in needs support."""
+    checkin = None
+    checkin_id = request.GET.get('checkin')
+    if checkin_id:
+        try:
+            checkin = DailyCheckIn.objects.filter(
+                id=int(checkin_id), user=request.user).first()
+        except (ValueError, TypeError):
+            checkin = None
+    return render(request, 'accounts/checkin_confirmation.html', {'checkin': checkin})
 
 
 @login_required
@@ -4847,7 +4862,7 @@ def edit_challenge_checkin(request, challenge_id, checkin_id):
 def recovery_coach(request):
     """Main recovery coach chat interface."""
     from apps.accounts.models import RecoveryCoachSession, CoachMessage
-    from apps.accounts.coach_service import can_send_message, get_message_count_today, get_total_free_messages
+    from apps.accounts.coach_service import can_send_message, get_message_count_today
 
     is_premium = hasattr(request.user, 'subscription') and request.user.subscription.is_premium()
 
@@ -4857,16 +4872,19 @@ def recovery_coach(request):
         session = RecoveryCoachSession.objects.create(user=request.user, title="New Conversation")
 
     messages_list = session.messages.order_by('created_at')
-    allowed, reason = can_send_message(request.user)
+    allowed, reason = can_send_message(request.user, session)
 
+    message_limit = 20 if is_premium else 3
+    messages_used = get_message_count_today(request.user)
     context = {
         'session': session,
         'chat_messages': messages_list,
         'can_send': allowed,
         'limit_reason': reason,
         'is_premium': is_premium,
-        'messages_used': get_message_count_today(request.user) if is_premium else get_total_free_messages(request.user),
-        'message_limit': 20 if is_premium else 10,
+        'messages_used': messages_used,
+        'message_limit': message_limit,
+        'messages_remaining': max(0, message_limit - messages_used),
         'sessions': RecoveryCoachSession.objects.filter(user=request.user).order_by('-updated_at')[:10],
     }
     return render(request, 'accounts/recovery_coach.html', context)
@@ -4877,7 +4895,7 @@ def recovery_coach(request):
 def coach_send_message(request):
     """AJAX endpoint: send a message to the coach and get a response."""
     from apps.accounts.models import RecoveryCoachSession, CoachMessage
-    from apps.accounts.coach_service import can_send_message, send_coach_message, get_message_count_today, get_total_free_messages
+    from apps.accounts.coach_service import can_send_message, send_coach_message, get_message_count_today
 
     user_message = request.POST.get('message', '').strip()
     session_id = request.POST.get('session_id')
@@ -4888,16 +4906,16 @@ def coach_send_message(request):
     if len(user_message) > 2000:
         return JsonResponse({'error': 'Message is too long. Please keep it under 2000 characters.'}, status=400)
 
-    # Check rate limits
-    allowed, reason = can_send_message(request.user)
-    if not allowed:
-        return JsonResponse({'error': reason, 'upgrade_required': reason == 'upgrade_required'}, status=429)
-
-    # Get session
+    # Get session first so crisis (checkin_support) sessions are exempt
     try:
         session = RecoveryCoachSession.objects.get(id=session_id, user=request.user)
     except RecoveryCoachSession.DoesNotExist:
         return JsonResponse({'error': 'Session not found.'}, status=404)
+
+    # Check rate limits (session-aware)
+    allowed, reason = can_send_message(request.user, session)
+    if not allowed:
+        return JsonResponse({'error': reason, 'upgrade_required': reason == 'upgrade_required'}, status=429)
 
     # Save user message
     CoachMessage.objects.create(session=session, role='user', content=user_message)
@@ -4918,11 +4936,12 @@ def coach_send_message(request):
     session.save(update_fields=['updated_at'])
 
     is_premium = hasattr(request.user, 'subscription') and request.user.subscription.is_premium()
+    message_limit = 20 if is_premium else 3
 
     return JsonResponse({
         'response': response_text,
-        'messages_used': get_message_count_today(request.user) if is_premium else get_total_free_messages(request.user),
-        'message_limit': 20 if is_premium else 10,
+        'messages_used': get_message_count_today(request.user),
+        'message_limit': message_limit,
     })
 
 
@@ -4937,6 +4956,36 @@ def coach_new_session(request):
 
     # Create new session
     session = RecoveryCoachSession.objects.create(user=request.user, title="New Conversation")
+
+    return redirect('accounts:recovery_coach')
+
+
+@login_required
+def coach_start_from_checkin(request, checkin_id):
+    """Open (or reuse) a crisis-support coach session for a check-in."""
+    from apps.accounts.models import RecoveryCoachSession, CoachMessage
+    from apps.accounts.coach_service import generate_checkin_opener
+
+    checkin = get_object_or_404(DailyCheckIn, id=checkin_id, user=request.user)
+
+    session = RecoveryCoachSession.objects.filter(
+        user=request.user, trigger='checkin_support', triggering_checkin=checkin,
+    ).first()
+
+    if session is None:
+        RecoveryCoachSession.objects.filter(
+            user=request.user, is_active=True).update(is_active=False)
+        session = RecoveryCoachSession.objects.create(
+            user=request.user, trigger='checkin_support',
+            triggering_checkin=checkin, is_active=True, title='Check-in support',
+        )
+        opener = generate_checkin_opener(request.user, checkin)
+        CoachMessage.objects.create(session=session, role='assistant', content=opener)
+    else:
+        RecoveryCoachSession.objects.filter(
+            user=request.user, is_active=True).exclude(id=session.id).update(is_active=False)
+        session.is_active = True
+        session.save(update_fields=['is_active'])
 
     return redirect('accounts:recovery_coach')
 

@@ -114,7 +114,7 @@ def build_user_context(user):
 
 
 def get_message_count_today(user):
-    """Count how many coach messages the user has sent today."""
+    """Count routine (non-exempt) coach messages the user has sent today."""
     from apps.accounts.models import CoachMessage
 
     today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -122,33 +122,27 @@ def get_message_count_today(user):
         session__user=user,
         role='user',
         created_at__gte=today_start,
-    ).count()
+    ).exclude(session__trigger='checkin_support').count()
 
 
-def get_total_free_messages(user):
-    """Count total coach messages a user has ever sent (for free tier limit)."""
-    from apps.accounts.models import CoachMessage
+def can_send_message(user, session=None):
+    """Check if user can send a coach message. Returns (allowed, reason).
 
-    return CoachMessage.objects.filter(
-        session__user=user,
-        role='user',
-    ).count()
+    Crisis-triggered (checkin_support) sessions are never limited.
+    Free users get 3 routine messages/day; premium gets 20/day.
+    """
+    if session is not None and session.trigger == 'checkin_support':
+        return True, None
 
-
-def can_send_message(user):
-    """Check if user can send a coach message. Returns (allowed, reason)."""
     is_premium = hasattr(user, 'subscription') and user.subscription.is_premium()
-
+    today_count = get_message_count_today(user)
     if is_premium:
-        today_count = get_message_count_today(user)
         if today_count >= 20:
             return False, "You've reached your daily limit of 20 messages. Your limit resets at midnight."
         return True, None
-    else:
-        total = get_total_free_messages(user)
-        if total >= 10:
-            return False, "upgrade_required"
-        return True, None
+    if today_count >= 3:
+        return False, "upgrade_required"
+    return True, None
 
 
 def get_conversation_history(session, limit=10):
@@ -201,3 +195,40 @@ def send_coach_message(user, session, user_message):
     except Exception as e:
         logger.error(f"Unexpected error in coach service: {e}")
         return None, "Something went wrong. Please try again."
+
+
+def generate_checkin_opener(user, checkin):
+    """Anchor's proactive opening message for a check-in-triggered session.
+
+    Returns assistant text; falls back to a static warm message on any error.
+    """
+    import anthropic
+
+    fallback = ("I saw your check-in — sounds like today's been heavy. "
+                "I'm here. What's going on right now?")
+    api_key = settings.ANTHROPIC_API_KEY
+    if not api_key:
+        return fallback
+    try:
+        user_context = build_user_context(user)
+        system_prompt = RECOVERY_COACH_SYSTEM_PROMPT.format(user_context=user_context)
+        challenge = (checkin.challenge or '').strip()
+        seed = (
+            f"The user just logged a daily check-in: mood "
+            f"'{checkin.get_mood_display()}', craving level "
+            f"'{checkin.get_craving_level_display()}'."
+            + (f" They wrote their challenge today is: \"{challenge}\"." if challenge else "")
+            + " Open the conversation: gently acknowledge how they're doing right "
+              "now and invite them to talk. 2-3 sentences, warm, no lists."
+        )
+        client = anthropic.Anthropic(api_key=api_key)
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=300,
+            system=system_prompt,
+            messages=[{"role": "user", "content": seed}],
+        )
+        return response.content[0].text
+    except Exception as e:
+        logger.error(f"generate_checkin_opener failed: {e}")
+        return fallback

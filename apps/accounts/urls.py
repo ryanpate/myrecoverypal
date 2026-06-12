@@ -72,6 +72,7 @@ urlpatterns = [
     path('daily-checkin/', views.daily_checkin_view, name='daily_checkin'),
     path('quick-checkin/', views.quick_checkin, name='quick_checkin'),
     path('checkin-status/', views.get_checkin_status, name='checkin_status'),
+    path('checkin/done/', views.checkin_confirmation, name='checkin_confirmation'),
     path('progress/', views.progress_view, name='progress'),
     path('like-activity/<int:activity_id>/', views.like_activity, name='like_activity'),
     path('comment-on-activity/<int:activity_id>/', views.comment_on_activity, name='comment_on_activity'),
@@ -202,6 +203,8 @@ urlpatterns = [
     path('recovery-coach/send/', views.coach_send_message, name='coach_send_message'),
     path('recovery-coach/new/', views.coach_new_session, name='coach_new_session'),
     path('recovery-coach/session/<int:session_id>/', views.coach_load_session, name='coach_load_session'),
+    path('recovery-coach/from-checkin/<int:checkin_id>/',
+         views.coach_start_from_checkin, name='coach_start_from_checkin'),
 
     # Sponsor invite
     path('invite/sponsor/', views.create_sponsor_invite, name='create_sponsor_invite'),
