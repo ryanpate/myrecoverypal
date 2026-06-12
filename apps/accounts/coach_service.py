@@ -114,7 +114,7 @@ def build_user_context(user):
 
 
 def get_message_count_today(user):
-    """Count how many coach messages the user has sent today."""
+    """Count routine (non-exempt) coach messages the user has sent today."""
     from apps.accounts.models import CoachMessage
 
     today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -122,7 +122,7 @@ def get_message_count_today(user):
         session__user=user,
         role='user',
         created_at__gte=today_start,
-    ).count()
+    ).exclude(session__trigger='checkin_support').count()
 
 
 def get_total_free_messages(user):
@@ -135,20 +135,24 @@ def get_total_free_messages(user):
     ).count()
 
 
-def can_send_message(user):
-    """Check if user can send a coach message. Returns (allowed, reason)."""
-    is_premium = hasattr(user, 'subscription') and user.subscription.is_premium()
+def can_send_message(user, session=None):
+    """Check if user can send a coach message. Returns (allowed, reason).
 
+    Crisis-triggered (checkin_support) sessions are never limited.
+    Free users get 3 routine messages/day; premium gets 20/day.
+    """
+    if session is not None and session.trigger == 'checkin_support':
+        return True, None
+
+    is_premium = hasattr(user, 'subscription') and user.subscription.is_premium()
+    today_count = get_message_count_today(user)
     if is_premium:
-        today_count = get_message_count_today(user)
         if today_count >= 20:
             return False, "You've reached your daily limit of 20 messages. Your limit resets at midnight."
         return True, None
-    else:
-        total = get_total_free_messages(user)
-        if total >= 10:
-            return False, "upgrade_required"
-        return True, None
+    if today_count >= 3:
+        return False, "upgrade_required"
+    return True, None
 
 
 def get_conversation_history(session, limit=10):
