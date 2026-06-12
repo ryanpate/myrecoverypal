@@ -135,3 +135,40 @@ class OpenerTest(TestCase):
         checkin = make_checkin(user, mood=2, craving=0)
         text = generate_checkin_opener(user, checkin)
         self.assertIn("I'm here", text)
+
+
+@override_settings(SECURE_SSL_REDIRECT=False, PREPEND_WWW=False, ALLOWED_HOSTS=['*'])
+class StartFromCheckinTest(TestCase):
+    def setUp(self):
+        self.user = make_free_user('sfc')
+        self.checkin = make_checkin(self.user, mood=1, craving=4)
+
+    @patch('apps.accounts.coach_service.generate_checkin_opener', return_value='Opener text.')
+    def test_creates_exempt_session_with_opener(self, _mock):
+        from django.urls import reverse
+        self.client.force_login(self.user)
+        resp = self.client.get(reverse('accounts:coach_start_from_checkin', args=[self.checkin.id]))
+        self.assertEqual(resp.status_code, 302)  # redirects to coach
+        session = RecoveryCoachSession.objects.get(user=self.user, trigger='checkin_support')
+        self.assertEqual(session.triggering_checkin_id, self.checkin.id)
+        opener = session.messages.get(role='assistant')
+        self.assertEqual(opener.content, 'Opener text.')
+
+    @patch('apps.accounts.coach_service.generate_checkin_opener', return_value='Opener text.')
+    def test_retap_reuses_session(self, _mock):
+        from django.urls import reverse
+        self.client.force_login(self.user)
+        url = reverse('accounts:coach_start_from_checkin', args=[self.checkin.id])
+        self.client.get(url)
+        self.client.get(url)  # second tap
+        self.assertEqual(
+            RecoveryCoachSession.objects.filter(
+                user=self.user, trigger='checkin_support').count(), 1)
+        self.assertEqual(_mock.call_count, 1)  # opener generated only once
+
+    def test_other_users_checkin_404(self):
+        from django.urls import reverse
+        other = make_free_user('other')
+        self.client.force_login(other)
+        resp = self.client.get(reverse('accounts:coach_start_from_checkin', args=[self.checkin.id]))
+        self.assertEqual(resp.status_code, 404)

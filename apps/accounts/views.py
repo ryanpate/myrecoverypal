@@ -4942,6 +4942,36 @@ def coach_new_session(request):
 
 
 @login_required
+def coach_start_from_checkin(request, checkin_id):
+    """Open (or reuse) a crisis-support coach session for a check-in."""
+    from apps.accounts.models import RecoveryCoachSession, CoachMessage
+    from apps.accounts.coach_service import generate_checkin_opener
+
+    checkin = get_object_or_404(DailyCheckIn, id=checkin_id, user=request.user)
+
+    session = RecoveryCoachSession.objects.filter(
+        user=request.user, trigger='checkin_support', triggering_checkin=checkin,
+    ).first()
+
+    if session is None:
+        RecoveryCoachSession.objects.filter(
+            user=request.user, is_active=True).update(is_active=False)
+        session = RecoveryCoachSession.objects.create(
+            user=request.user, trigger='checkin_support',
+            triggering_checkin=checkin, is_active=True, title='Check-in support',
+        )
+        opener = generate_checkin_opener(request.user, checkin)
+        CoachMessage.objects.create(session=session, role='assistant', content=opener)
+    else:
+        RecoveryCoachSession.objects.filter(
+            user=request.user, is_active=True).exclude(id=session.id).update(is_active=False)
+        session.is_active = True
+        session.save(update_fields=['is_active'])
+
+    return redirect('accounts:recovery_coach')
+
+
+@login_required
 def coach_load_session(request, session_id):
     """Load a previous coach conversation session."""
     from apps.accounts.models import RecoveryCoachSession
