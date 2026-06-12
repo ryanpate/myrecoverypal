@@ -32,6 +32,7 @@ class Subscription(models.Model):
         ('canceled', 'Canceled'),
         ('unpaid', 'Unpaid'),
         ('trialing', 'Trialing'),
+        ('expired', 'Expired'),
         ('incomplete', 'Incomplete'),
     ]
 
@@ -99,8 +100,10 @@ class Subscription(models.Model):
         return f"{self.user.username} - {self.get_tier_display()} ({self.status})"
 
     def is_active(self):
-        """Check if subscription is active"""
-        return self.status in ['active', 'trialing']
+        """Active = paid-active, or a trial whose window hasn't passed."""
+        if self.status == 'trialing':
+            return bool(self.trial_end and self.trial_end > timezone.now())
+        return self.status == 'active'
 
     def is_premium(self):
         """Check if user has Premium tier or higher (court inherits all premium features)."""
