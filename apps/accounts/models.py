@@ -678,6 +678,10 @@ class DailyCheckIn(models.Model):
         mood_dict = dict(self.MOOD_CHOICES)
         return mood_dict.get(self.mood, '😐 Okay')
 
+    def needs_support(self):
+        """True when this check-in indicates a struggling/high-craving moment."""
+        return self.mood <= 2 or self.craving_level >= 3
+
 
 class DailyRecoveryThought(models.Model):
     """Daily recovery quotes displayed at the top of the social feed."""
@@ -1915,6 +1919,15 @@ class RecoveryCoachSession(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
+    TRIGGER_CHOICES = [
+        ('manual', 'Manual'),
+        ('checkin_support', 'Check-in support'),
+    ]
+    trigger = models.CharField(
+        max_length=20, choices=TRIGGER_CHOICES, default='manual')
+    triggering_checkin = models.ForeignKey(
+        'DailyCheckIn', null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='coach_sessions')
 
     class Meta:
         ordering = ['-updated_at']
