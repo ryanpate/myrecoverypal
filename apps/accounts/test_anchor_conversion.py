@@ -325,3 +325,37 @@ class CoachWelcomeContextTest(TestCase):
         self.assertIn('coach_first_name', resp.context)
         self.assertIn('coach_days_sober', resp.context)
         self.assertIn('coach_streak', resp.context)
+
+
+@override_settings(SECURE_SSL_REDIRECT=False, PREPEND_WWW=False, ALLOWED_HOSTS=['*'])
+class CoachWelcomeRenderTest(TestCase):
+    def test_days_sober_shown_for_user_with_sobriety_date(self):
+        from datetime import timedelta
+        from django.urls import reverse
+        user = make_free_user('cw1')
+        user.sobriety_date = timezone.now().date() - timedelta(days=47)
+        user.save()
+        self.client.force_login(user)
+        resp = self.client.get(reverse('accounts:recovery_coach'))
+        self.assertContains(resp, '47 days sober')
+
+    def test_streak_shown_when_present(self):
+        from datetime import timedelta
+        from django.urls import reverse
+        from apps.accounts.models import DailyCheckIn
+        user = make_free_user('cw2')
+        DailyCheckIn.objects.create(user=user, mood=4, craving_level=0, energy_level=3,
+                                    date=timezone.now().date())
+        DailyCheckIn.objects.create(user=user, mood=4, craving_level=0, energy_level=3,
+                                    date=timezone.now().date() - timedelta(days=1))
+        self.client.force_login(user)
+        resp = self.client.get(reverse('accounts:recovery_coach'))
+        self.assertContains(resp, 'check-in streak')
+
+    def test_new_user_gets_generic_greeting(self):
+        from django.urls import reverse
+        user = make_free_user('cw3')  # no sobriety date, no check-ins
+        self.client.force_login(user)
+        resp = self.client.get(reverse('accounts:recovery_coach'))
+        self.assertContains(resp, 'AI recovery companion')
+        self.assertNotContains(resp, 'days sober')
