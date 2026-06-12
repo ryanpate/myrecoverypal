@@ -52,7 +52,7 @@ xcodebuild -workspace ios/App/App.xcworkspace -scheme App \
 Signup → Social Feed (MyRecoveryCircle) → Follow Users → Join Groups → Participate in Challenges
 ```
 
-Users land on the **Social Feed**, not a dashboard or resource page.
+Users land on the **progress home** (`accounts:progress`) after login — the daily check-in + streak + sobriety counter live here. The Social Feed is one tap away in the nav.
 
 ---
 
