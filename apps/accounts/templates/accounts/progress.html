@@ -596,6 +596,8 @@
         text-decoration: none;
     }
 
+    .btn-checkin-prompt:disabled { opacity: 0.45; cursor: not-allowed; }
+
     [data-theme="dark"] .checkin-prompt-bar {
         background: linear-gradient(135deg, #1e293b 0%, #1e3a5f 100%);
         border-color: #334155;
@@ -608,6 +610,18 @@
     [data-theme="dark"] .checkin-prompt-bar .prompt-sub {
         color: #94a3b8;
     }
+
+    .inline-checkin { width: 100%; }
+    .inline-mood-row { display: flex; gap: 6px; justify-content: space-between; margin: 10px 0; }
+    .inline-mood-btn { flex: 1; font-size: 1.6rem; line-height: 1; padding: 8px 0; border: 2px solid transparent; border-radius: 10px; background: rgba(0,0,0,0.04); cursor: pointer; transition: all .15s; }
+    .inline-mood-btn:hover { background: rgba(30,77,139,0.08); }
+    .inline-mood-btn.selected { border-color: #1e4d8b; background: rgba(30,77,139,0.12); }
+    .inline-craving-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+    .inline-craving-label { font-size: .85rem; color: #777; margin-right: 4px; }
+    .inline-craving-btn { font-size: .8rem; padding: 5px 10px; border: 1px solid #ddd; border-radius: 14px; background: #fff; cursor: pointer; }
+    .inline-craving-btn.selected { border-color: #1e4d8b; background: rgba(30,77,139,0.12); color: #1e4d8b; font-weight: 600; }
+    .inline-checkin-actions { display: flex; align-items: center; gap: 14px; }
+    .checkin-add-details { font-size: .85rem; color: #1e4d8b; text-decoration: none; }
 
     .share-toggle input[type="checkbox"] {
         display: none;
@@ -1253,16 +1267,31 @@
     <!-- ===== Inline Check-in Prompt ===== -->
     <!-- Compact prompt bar when not yet checked in; JS toggles visibility -->
     <div class="checkin-prompt-bar" id="checkinFormCard" style="display:none;">
-        <div class="prompt-left">
-            <div class="prompt-icon"><i class="fas fa-sun" aria-hidden="true"></i></div>
-            <div>
-                <div class="prompt-text">How are you feeling today?</div>
-                <div class="prompt-sub">Check in to update your progress</div>
+        <div class="inline-checkin">
+            <div class="prompt-text">How are you feeling today?</div>
+            <div class="inline-mood-row" id="inlineMoodRow">
+                <button type="button" class="inline-mood-btn" data-mood="1" aria-label="Struggling">😰</button>
+                <button type="button" class="inline-mood-btn" data-mood="2" aria-label="Down">😔</button>
+                <button type="button" class="inline-mood-btn" data-mood="3" aria-label="Okay">😐</button>
+                <button type="button" class="inline-mood-btn" data-mood="4" aria-label="Good">😊</button>
+                <button type="button" class="inline-mood-btn" data-mood="5" aria-label="Great">😄</button>
+                <button type="button" class="inline-mood-btn" data-mood="6" aria-label="Amazing">🌟</button>
+            </div>
+            <div class="inline-craving-row" id="inlineCravingRow">
+                <span class="inline-craving-label">Craving?</span>
+                <button type="button" class="inline-craving-btn selected" data-craving="0">None</button>
+                <button type="button" class="inline-craving-btn" data-craving="1">Mild</button>
+                <button type="button" class="inline-craving-btn" data-craving="2">Moderate</button>
+                <button type="button" class="inline-craving-btn" data-craving="3">Strong</button>
+                <button type="button" class="inline-craving-btn" data-craving="4">Intense</button>
+            </div>
+            <div class="inline-checkin-actions">
+                <button type="button" class="btn-checkin-prompt" id="inlineCheckinSubmit" disabled>
+                    <i class="fas fa-circle-check" aria-hidden="true"></i> Check In
+                </button>
+                <a href="{% url 'accounts:daily_checkin' %}" class="checkin-add-details">Add more details →</a>
             </div>
         </div>
-        <a href="{% url 'accounts:daily_checkin' %}" class="btn-checkin-prompt">
-            <i class="fas fa-circle-check" aria-hidden="true"></i> Check In
-        </a>
     </div>
 
     <!-- Checked-in Today Bar -->
@@ -1273,17 +1302,22 @@
             <div class="done-check"><i class="fas fa-check" aria-hidden="true"></i></div>
             <div>
                 <div class="done-text">Checked in today</div>
-                <div class="done-mood">Feeling {% if todays_checkin %}{{ todays_checkin.get_mood_display }}{% endif %}</div>
+                <div class="done-mood" id="doneMoodText">Feeling {% if todays_checkin %}{{ todays_checkin.get_mood_display }}{% endif %}</div>
             </div>
         </div>
         <div class="done-actions">
-            {% if current_streak > 1 %}
-            <span class="streak-badge">🔥 {{ current_streak }}-day streak</span>
-            {% endif %}
+            <span class="streak-badge" id="doneStreakBadge" style="{% if current_streak <= 1 %}display:none;{% endif %}">🔥 <span id="doneStreakCount">{{ current_streak }}</span>-day streak</span>
             <button class="share-btn-small" data-share="checkin" data-text="I just checked in on MyRecoveryPal! {% if current_streak > 1 %}🔥 {{ current_streak }}-day streak! {% endif %}#recovery #MyRecoveryPal" aria-label="Share check-in">
                 <i class="fas fa-share-nodes" aria-hidden="true"></i>
             </button>
         </div>
+    </div>
+
+    <div id="homeAnchorPrompt" style="display:none; border:1px solid #1e4d8b; background:#f4f8fc; border-radius:12px; padding:14px; margin:0 0 14px; text-align:center;">
+        <div style="color:#1e4d8b; font-weight:600; margin-bottom:6px;">Today sounds heavy.</div>
+        <a id="homeAnchorLink" href="#" style="background:#1e4d8b; color:#fff; padding:9px 18px; border-radius:8px; text-decoration:none; font-weight:600; display:inline-block;">
+            Talk it through with Anchor
+        </a>
     </div>
 
     <div class="progress-container">
@@ -1969,6 +2003,78 @@
         // No check-in today in user's timezone — show form
         formCard.style.display = '';
     }
+})();
+</script>
+
+<script>
+(function() {
+    var formCard = document.getElementById('checkinFormCard');
+    var submitBtn = document.getElementById('inlineCheckinSubmit');
+    if (!formCard || !submitBtn) return;
+
+    var moodBtns = formCard.querySelectorAll('.inline-mood-btn');
+    var cravingBtns = formCard.querySelectorAll('.inline-craving-btn');
+    var selectedMood = null;
+    var selectedCraving = '0';
+
+    moodBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            moodBtns.forEach(function(b) { b.classList.remove('selected'); });
+            btn.classList.add('selected');
+            selectedMood = btn.getAttribute('data-mood');
+            submitBtn.disabled = false;
+        });
+    });
+    cravingBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            cravingBtns.forEach(function(b) { b.classList.remove('selected'); });
+            btn.classList.add('selected');
+            selectedCraving = btn.getAttribute('data-craving');
+        });
+    });
+
+    submitBtn.addEventListener('click', function() {
+        if (!selectedMood) return;
+        submitBtn.disabled = true;
+        var fd = new FormData();
+        fd.append('mood', selectedMood);
+        fd.append('craving_level', selectedCraving);
+        fetch('{% url "accounts:quick_checkin" %}', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            body: fd
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.success || data.already_checked_in) {
+                formCard.style.display = 'none';
+                var doneBar = document.getElementById('checkinDoneBar');
+                var moodText = document.getElementById('doneMoodText');
+                if (data.mood_display && moodText) {
+                    moodText.textContent = 'Feeling ' + data.mood_display;
+                }
+                if (typeof data.current_streak !== 'undefined') {
+                    var count = document.getElementById('doneStreakCount');
+                    var badge = document.getElementById('doneStreakBadge');
+                    if (count) { count.textContent = data.current_streak; }
+                    if (badge) { badge.style.display = (data.current_streak > 1) ? '' : 'none'; }
+                }
+                if (doneBar) { doneBar.style.display = ''; }
+                if (data.needs_support && data.coach_url) {
+                    var link = document.getElementById('homeAnchorLink');
+                    var prompt = document.getElementById('homeAnchorPrompt');
+                    if (link && prompt) {
+                        link.href = data.coach_url;
+                        prompt.style.display = 'block';
+                    }
+                }
+            } else {
+                submitBtn.disabled = false;
+                alert(data.error || 'Could not check in. Please try again.');
+            }
+        }).catch(function() {
+            submitBtn.disabled = false;
+            alert('Could not check in. Please try again.');
+        });
+    });
 })();
 </script>
 

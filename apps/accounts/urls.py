@@ -2,7 +2,7 @@
 
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from django.shortcuts import redirect
+from django.views.generic import RedirectView
 from . import views
 from . import payment_views
 from apps.accounts.court_views import (
@@ -45,7 +45,7 @@ urlpatterns = [
          name='password_reset_complete'),
 
     # User dashboard and profile
-    path('', lambda request: redirect('accounts:progress'), name='hybrid_landing'),
+    path('', RedirectView.as_view(pattern_name='accounts:progress'), name='hybrid_landing'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('profile/<str:username>/', views.ProfileView.as_view(), name='profile'),
     path('edit-profile/', views.edit_profile_view, name='edit_profile'),
