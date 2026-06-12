@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Checked in — MyRecoveryPal{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 3rem auto; padding: 0 1rem; text-align: center;">
+    <div style="font-size: 3rem;">✓</div>
+    <h1 style="color: var(--primary-dark, #1e4d8b);">You're checked in.</h1>
+    <p style="color: #555;">Nice work showing up for yourself today.</p>
+
+    {% if checkin and checkin.needs_support %}
+    <div style="border:1px solid #1e4d8b; background:#f4f8fc; border-radius:12px; padding:20px; margin:1.5rem 0; text-align:center;">
+        <p style="margin:0 0 8px; color:#1e4d8b; font-weight:600;">Today sounds heavy.</p>
+        <p style="margin:0 0 16px; color:#555; font-size:14px;">
+            Want to talk it through with Anchor? It's here whenever you need it.
+        </p>
+        <a href="{% url 'accounts:coach_start_from_checkin' checkin.id %}"
+           style="background:#1e4d8b; color:#fff; padding:11px 24px; border-radius:8px; text-decoration:none; font-weight:600;">
+            Talk it through with Anchor
+        </a>
+    </div>
+    {% endif %}
+
+    <p style="margin-top: 1.5rem;">
+        <a href="{% url 'accounts:dashboard' %}" style="color:#1e4d8b;">Continue to your feed →</a>
+    </p>
+</div>
+{% endblock %}

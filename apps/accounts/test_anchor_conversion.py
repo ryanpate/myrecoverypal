@@ -172,3 +172,38 @@ class StartFromCheckinTest(TestCase):
         self.client.force_login(other)
         resp = self.client.get(reverse('accounts:coach_start_from_checkin', args=[self.checkin.id]))
         self.assertEqual(resp.status_code, 404)
+
+
+@override_settings(SECURE_SSL_REDIRECT=False, PREPEND_WWW=False, ALLOWED_HOSTS=['*'])
+class CheckinConfirmationTest(TestCase):
+    def setUp(self):
+        self.user = make_free_user('cc')
+
+    def test_card_shown_when_needs_support(self):
+        from django.urls import reverse
+        checkin = make_checkin(self.user, mood=1, craving=4)
+        self.client.force_login(self.user)
+        resp = self.client.get(reverse('accounts:checkin_confirmation') + f'?checkin={checkin.id}')
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'talk it through with Anchor')
+
+    def test_card_hidden_when_calm(self):
+        from django.urls import reverse
+        checkin = make_checkin(self.user, mood=5, craving=0)
+        self.client.force_login(self.user)
+        resp = self.client.get(reverse('accounts:checkin_confirmation') + f'?checkin={checkin.id}')
+        self.assertNotContains(resp, 'talk it through with Anchor')
+
+    def test_other_users_checkin_not_used(self):
+        from django.urls import reverse
+        other_checkin = make_checkin(make_free_user('cc2'), mood=1, craving=4)
+        self.client.force_login(self.user)
+        resp = self.client.get(reverse('accounts:checkin_confirmation') + f'?checkin={other_checkin.id}')
+        self.assertNotContains(resp, 'talk it through with Anchor')
+
+    def test_malformed_checkin_param_does_not_500(self):
+        from django.urls import reverse
+        self.client.force_login(self.user)
+        resp = self.client.get(reverse('accounts:checkin_confirmation') + '?checkin=abc')
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotContains(resp, 'talk it through with Anchor')

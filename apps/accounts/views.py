@@ -830,7 +830,8 @@ def daily_checkin_view(request):
                     '<a href="/accounts/progress/" style="color: #667eea; text-decoration: underline;">See your mood trends over time</a> with Premium analytics.',
                     extra_tags='safe'
                 )
-            return redirect('accounts:dashboard')
+            return redirect(
+                f"{reverse('accounts:checkin_confirmation')}?checkin={checkin.id}")
 
     context = {
         'existing_checkin': existing_checkin,
@@ -978,6 +979,20 @@ def get_checkin_status(request):
         return JsonResponse({
             'checked_in': False
         })
+
+
+@login_required
+def checkin_confirmation(request):
+    """Brief post-check-in screen; offers Anchor when the check-in needs support."""
+    checkin = None
+    checkin_id = request.GET.get('checkin')
+    if checkin_id:
+        try:
+            checkin = DailyCheckIn.objects.filter(
+                id=int(checkin_id), user=request.user).first()
+        except (ValueError, TypeError):
+            checkin = None
+    return render(request, 'accounts/checkin_confirmation.html', {'checkin': checkin})
 
 
 @login_required
