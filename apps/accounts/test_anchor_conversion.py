@@ -312,3 +312,16 @@ class ProgressHomeWidgetTest(TestCase):
         self.client.force_login(user)
         resp = self.client.get(reverse('accounts:progress'))
         self.assertContains(resp, 'data-has-checkin="true"')
+
+
+@override_settings(SECURE_SSL_REDIRECT=False, PREPEND_WWW=False, ALLOWED_HOSTS=['*'])
+class CoachWelcomeContextTest(TestCase):
+    def test_context_has_greeting_values(self):
+        from django.urls import reverse
+        user = make_free_user('cw0')
+        self.client.force_login(user)
+        resp = self.client.get(reverse('accounts:recovery_coach'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('coach_first_name', resp.context)
+        self.assertIn('coach_days_sober', resp.context)
+        self.assertIn('coach_streak', resp.context)

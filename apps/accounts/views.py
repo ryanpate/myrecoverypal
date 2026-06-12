@@ -4752,6 +4752,9 @@ def recovery_coach(request):
         'message_limit': message_limit,
         'messages_remaining': max(0, message_limit - messages_used),
         'sessions': RecoveryCoachSession.objects.filter(user=request.user).order_by('-updated_at')[:10],
+        'coach_first_name': request.user.first_name or request.user.username,
+        'coach_days_sober': request.user.get_days_sober(),
+        'coach_streak': request.user.get_checkin_streak(),
     }
     return render(request, 'accounts/recovery_coach.html', context)
 
