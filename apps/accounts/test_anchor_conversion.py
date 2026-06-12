@@ -256,3 +256,30 @@ class SendEndpointTest(TestCase):
         self.client.force_login(user)
         resp = self.client.get(reverse('accounts:recovery_coach'))
         self.assertFalse(resp.context['can_send'])
+
+
+@override_settings(SECURE_SSL_REDIRECT=False, PREPEND_WWW=False, ALLOWED_HOSTS=['*'])
+class QuickCheckinCardTest(TestCase):
+    def _post(self, user, mood, craving):
+        from django.urls import reverse
+        self.client.force_login(user)
+        return self.client.post(reverse('accounts:quick_checkin'),
+                                {'mood': mood, 'craving_level': craving})
+
+    def test_hard_checkin_returns_needs_support_and_coach_url(self):
+        from django.urls import reverse
+        user = make_free_user('qc1')
+        resp = self._post(user, 1, 4)
+        data = resp.json()
+        self.assertTrue(data['success'])
+        self.assertTrue(data['needs_support'])
+        checkin = DailyCheckIn.objects.get(user=user)
+        self.assertEqual(
+            data['coach_url'],
+            reverse('accounts:coach_start_from_checkin', args=[checkin.id]))
+
+    def test_calm_checkin_needs_support_false(self):
+        user = make_free_user('qc2')
+        resp = self._post(user, 5, 0)
+        data = resp.json()
+        self.assertFalse(data['needs_support'])
