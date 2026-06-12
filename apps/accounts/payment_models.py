@@ -100,8 +100,17 @@ class Subscription(models.Model):
         return f"{self.user.username} - {self.get_tier_display()} ({self.status})"
 
     def is_active(self):
-        """Active = paid-active, or a trial whose window hasn't passed."""
+        """Active = paid-active, or a trial that's still valid.
+
+        A Stripe-managed trial (status='trialing' with a real
+        stripe_subscription_id) stays active until Stripe's webhook moves the
+        status off 'trialing' — so we never lock out a paying customer on a
+        delayed webhook. A signup trial (no Stripe sub) is valid only while its
+        trial_end is in the future.
+        """
         if self.status == 'trialing':
+            if self.stripe_subscription_id:
+                return True
             return bool(self.trial_end and self.trial_end > timezone.now())
         return self.status == 'active'
 

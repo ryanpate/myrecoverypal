@@ -45,6 +45,23 @@ class IsActiveGateTest(TestCase):
         self.assertTrue(sub.is_active())
         self.assertTrue(sub.is_premium())
 
+    def test_stripe_managed_trial_stays_active_even_if_local_trial_end_passed(self):
+        user = make_user('stripetrial')
+        sub = user.subscription
+        sub.trial_end = timezone.now() - timedelta(days=1)
+        sub.stripe_subscription_id = 'sub_live_abc'
+        sub.save()
+        self.assertTrue(sub.is_active())
+        self.assertTrue(sub.is_premium())
+
+    def test_signup_trial_with_no_stripe_sub_expires(self):
+        user = make_user('signuptrial')
+        sub = user.subscription
+        sub.trial_end = timezone.now() - timedelta(days=1)
+        sub.stripe_subscription_id = ''
+        sub.save()
+        self.assertFalse(sub.is_active())
+
 
 class ResetTrialsMigrationTest(TestCase):
     def _run_reset(self):
