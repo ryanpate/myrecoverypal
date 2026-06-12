@@ -290,3 +290,25 @@ class QuickCheckinCardTest(TestCase):
         data = resp.json()
         self.assertIn('current_streak', data)
         self.assertEqual(data['current_streak'], 1)
+
+
+@override_settings(SECURE_SSL_REDIRECT=False, PREPEND_WWW=False, ALLOWED_HOSTS=['*'])
+class ProgressHomeWidgetTest(TestCase):
+    def test_inline_mood_widget_present(self):
+        from django.urls import reverse
+        user = make_free_user('ph1')
+        self.client.force_login(user)
+        resp = self.client.get(reverse('accounts:progress'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'data-mood="1"')
+        self.assertContains(resp, 'id="inlineCheckinSubmit"')
+        self.assertContains(resp, 'id="doneStreakBadge"')
+        self.assertContains(resp, 'id="homeAnchorPrompt"')
+
+    def test_done_bar_marked_checked_in_when_checked_in(self):
+        from django.urls import reverse
+        user = make_free_user('ph2')
+        make_checkin(user, mood=4, craving=0)  # today
+        self.client.force_login(user)
+        resp = self.client.get(reverse('accounts:progress'))
+        self.assertContains(resp, 'data-has-checkin="true"')
