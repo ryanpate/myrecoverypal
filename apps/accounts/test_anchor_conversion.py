@@ -283,3 +283,10 @@ class QuickCheckinCardTest(TestCase):
         resp = self._post(user, 5, 0)
         data = resp.json()
         self.assertFalse(data['needs_support'])
+
+    def test_response_includes_current_streak(self):
+        user = make_free_user('qc3')
+        resp = self._post(user, 4, 0)
+        data = resp.json()
+        self.assertIn('current_streak', data)
+        self.assertEqual(data['current_streak'], 1)

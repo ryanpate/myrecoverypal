@@ -959,6 +959,7 @@ def quick_checkin(request):
         'shared_to_feed': share_to_feed,
         'needs_support': checkin.needs_support(),
         'coach_url': reverse('accounts:coach_start_from_checkin', args=[checkin.id]),
+        'current_streak': request.user.get_checkin_streak(),
     })
 
 
