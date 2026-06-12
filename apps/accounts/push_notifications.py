@@ -43,6 +43,19 @@ def _get_firebase_app():
         return _firebase_app
 
     firebase_creds_path = getattr(settings, 'FIREBASE_CREDENTIALS_PATH', None)
+    # On Railway there's no easy way to ship a JSON file, so materialize it from
+    # the FIREBASE_CREDENTIALS_JSON env var (mirrors the APNs key handling).
+    if firebase_creds_path and not os.path.exists(firebase_creds_path):
+        creds_json = os.environ.get('FIREBASE_CREDENTIALS_JSON')
+        if creds_json:
+            try:
+                os.makedirs(os.path.dirname(firebase_creds_path) or '.', exist_ok=True)
+                with open(firebase_creds_path, 'w') as f:
+                    f.write(creds_json)
+                os.chmod(firebase_creds_path, 0o600)
+                logger.info(f"Firebase credentials materialized at {firebase_creds_path}")
+            except Exception as e:
+                logger.error(f"Failed to materialize Firebase credentials: {e}")
     if not firebase_creds_path or not os.path.exists(firebase_creds_path):
         logger.debug("Firebase credentials not configured - push notifications disabled")
         return None
