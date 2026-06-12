@@ -169,9 +169,13 @@ python manage.py test_email recipient@example.com --resend-api
 
 AI-powered conversational coach for recovery support, powered by Claude Haiku via the Anthropic API.
 
-**Rate Limits:**
-- Free users: 3 trial messages (lifetime)
+**Rate Limits:** (see `apps/accounts/coach_service.py::can_send_message`)
+- Free users: 3 routine messages per day (resets daily)
 - Premium users: 20 messages per day
+- **Crisis-triggered sessions are exempt** — a coach session opened from a
+  struggling/high-craving check-in (`trigger='checkin_support'`) is never
+  limited and its messages don't count toward the daily total, so a user is
+  never paywalled mid-struggle.
 
 **System Prompt Includes User Context:**
 - Sobriety date and days sober
