@@ -1656,10 +1656,7 @@ function acceptDisclaimer() {
             var errorMsg = (err && err.error) ? err.error : 'Something went wrong. Please try again.';
 
             if (err && err.upgrade_required) {
-                showToast('Message limit reached. Upgrade to Premium for more.', 5000);
-                setTimeout(function() {
-                    window.location.reload();
-                }, 2000);
+                showAnchorUpgradePrompt();
             } else {
                 showToast(errorMsg);
             }
@@ -1668,6 +1665,20 @@ function acceptDisclaimer() {
             updateSendBtn();
             scrollToBottom();
         });
+    }
+
+    function showAnchorUpgradePrompt() {
+        if (document.querySelector('.anchor-upgrade-prompt')) return; // already shown
+        var thread = document.getElementById('chatMessages') || document.body;
+        var card = document.createElement('div');
+        card.className = 'anchor-upgrade-prompt';
+        card.innerHTML = '<div style="border:1px solid #1e4d8b; background:#f4f8fc; border-radius:12px; padding:18px; margin:16px 0; text-align:center;">' +
+            '<p style="margin:0 0 10px; color:#1e4d8b; font-weight:600;">You\'ve used your free messages with Anchor.</p>' +
+            '<p style="margin:0 0 14px; color:#555; font-size:14px;">Upgrade to Premium to keep talking — 20 messages a day, plus unlimited groups and analytics.</p>' +
+            '<a href="/accounts/pricing/" style="background:#1e4d8b; color:#fff; padding:10px 22px; border-radius:8px; text-decoration:none; font-weight:600;">Upgrade to keep talking</a>' +
+            '</div>';
+        thread.appendChild(card);
+        thread.scrollTop = thread.scrollHeight;
     }
 
     // Event listeners

@@ -777,6 +777,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_supporter_inactivity_alerts',
         'schedule': crontab(hour=18, minute=0),  # Daily at 6 PM UTC (after the 5 PM check-in reminder)
     },
+    'expire-ended-trials': {
+        'task': 'apps.accounts.tasks.expire_ended_trials',
+        'schedule': crontab(hour=9, minute=0),  # Daily at 9 AM, before the 10 AM email tasks
+    },
 }
 
 # Celery worker memory optimization (Railway cost reduction)
