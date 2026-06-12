@@ -211,10 +211,13 @@ if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
-            # Reuse connections for 10 minutes to reduce connection churn on Railway's proxy.
-            # CONN_HEALTH_CHECKS (below) validates each reused connection before use,
-            # so stale connections are caught and replaced automatically.
-            conn_max_age=600,
+            # conn_max_age=0: open a fresh connection per request, close it at the end.
+            # Persistent connections (conn_max_age=600) + CONN_HEALTH_CHECKS still threw
+            # "connection already closed" on Railway's Postgres proxy — the per-request
+            # health check doesn't reliably guard ATOMIC_REQUESTS' BEGIN, so requests kept
+            # inheriting dead connections (Sentry PYTHON-DJANGO-26/3R/44, mostly crawler
+            # hits → 500s on blog posts). Connection churn is negligible at this traffic.
+            conn_max_age=0,
         )
     }
     # Merge PostgreSQL options (don't overwrite existing options from dj-database-url)
