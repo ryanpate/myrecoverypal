@@ -2006,6 +2006,78 @@
 })();
 </script>
 
+<script>
+(function() {
+    var formCard = document.getElementById('checkinFormCard');
+    var submitBtn = document.getElementById('inlineCheckinSubmit');
+    if (!formCard || !submitBtn) return;
+
+    var moodBtns = formCard.querySelectorAll('.inline-mood-btn');
+    var cravingBtns = formCard.querySelectorAll('.inline-craving-btn');
+    var selectedMood = null;
+    var selectedCraving = '0';
+
+    moodBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            moodBtns.forEach(function(b) { b.classList.remove('selected'); });
+            btn.classList.add('selected');
+            selectedMood = btn.getAttribute('data-mood');
+            submitBtn.disabled = false;
+        });
+    });
+    cravingBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            cravingBtns.forEach(function(b) { b.classList.remove('selected'); });
+            btn.classList.add('selected');
+            selectedCraving = btn.getAttribute('data-craving');
+        });
+    });
+
+    submitBtn.addEventListener('click', function() {
+        if (!selectedMood) return;
+        submitBtn.disabled = true;
+        var fd = new FormData();
+        fd.append('mood', selectedMood);
+        fd.append('craving_level', selectedCraving);
+        fetch('{% url "accounts:quick_checkin" %}', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            body: fd
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.success || data.already_checked_in) {
+                formCard.style.display = 'none';
+                var doneBar = document.getElementById('checkinDoneBar');
+                var moodText = document.getElementById('doneMoodText');
+                if (data.mood_display && moodText) {
+                    moodText.textContent = 'Feeling ' + data.mood_display;
+                }
+                if (typeof data.current_streak !== 'undefined') {
+                    var count = document.getElementById('doneStreakCount');
+                    var badge = document.getElementById('doneStreakBadge');
+                    if (count) { count.textContent = data.current_streak; }
+                    if (badge) { badge.style.display = (data.current_streak > 1) ? '' : 'none'; }
+                }
+                if (doneBar) { doneBar.style.display = ''; }
+                if (data.needs_support && data.coach_url) {
+                    var link = document.getElementById('homeAnchorLink');
+                    var prompt = document.getElementById('homeAnchorPrompt');
+                    if (link && prompt) {
+                        link.href = data.coach_url;
+                        prompt.style.display = 'block';
+                    }
+                }
+            } else {
+                submitBtn.disabled = false;
+                alert(data.error || 'Could not check in. Please try again.');
+            }
+        }).catch(function() {
+            submitBtn.disabled = false;
+            alert('Could not check in. Please try again.');
+        });
+    });
+})();
+</script>
+
 <!-- ===== Tab Switching ===== -->
 <script>
 (function() {
