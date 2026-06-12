@@ -1301,10 +1301,16 @@
                     <div class="welcome-icon-circle">
                         <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor AI Coach">
                     </div>
-                    <div class="welcome-heading">Hi, I'm Anchor</div>
+                    <div class="welcome-heading">Hi {{ coach_first_name }}, I'm Anchor</div>
                     <div class="welcome-desc">
+                        {% if coach_days_sober %}
+                        I can see you're <strong>{{ coach_days_sober }} day{{ coach_days_sober|pluralize }} sober</strong>{% if coach_streak > 1 %} with a <strong>{{ coach_streak }}-day check-in streak</strong>{% endif %}. I'm here whenever you need to talk through cravings, celebrate a win, or just process your day.
+                        {% elif coach_streak > 1 %}
+                        That's a <strong>{{ coach_streak }}-day check-in streak</strong> you're building. I'm here whenever you need to talk through cravings, celebrate a win, or just process your day.
+                        {% else %}
                         I'm your AI recovery companion. I'm here to listen, support, and encourage you on your journey.
                         Whether you need to talk through cravings, celebrate a milestone, or just process your day &mdash; I'm here for you.
+                        {% endif %}
                     </div>
                     <div class="welcome-chips">
                         <div class="welcome-chip" data-suggestion="I'm having a tough day and could use some support.">
