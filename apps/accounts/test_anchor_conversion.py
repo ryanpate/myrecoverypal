@@ -99,3 +99,39 @@ class GatingTest(TestCase):
         self.assertTrue(can_send_message(user)[0])
         add_user_messages(user, 1)  # 20
         self.assertFalse(can_send_message(user)[0])
+
+
+from apps.accounts.coach_service import generate_checkin_opener
+
+
+class OpenerTest(TestCase):
+    @override_settings(ANTHROPIC_API_KEY='test-key')
+    def test_uses_api_text_when_available(self):
+        user = make_free_user('o1')
+        checkin = make_checkin(user, mood=1, craving=4, challenge='work stress')
+
+        class FakeBlock:
+            text = 'Hey, I can see today is really hard.'
+
+        class FakeResp:
+            content = [FakeBlock()]
+
+        with patch('anthropic.Anthropic') as MockClient:
+            MockClient.return_value.messages.create.return_value = FakeResp()
+            text = generate_checkin_opener(user, checkin)
+        self.assertEqual(text, 'Hey, I can see today is really hard.')
+
+    @override_settings(ANTHROPIC_API_KEY='test-key')
+    def test_falls_back_on_api_error(self):
+        user = make_free_user('o2')
+        checkin = make_checkin(user, mood=1, craving=4)
+        with patch('anthropic.Anthropic', side_effect=Exception('boom')):
+            text = generate_checkin_opener(user, checkin)
+        self.assertIn("I'm here", text)
+
+    @override_settings(ANTHROPIC_API_KEY='')
+    def test_falls_back_with_no_api_key(self):
+        user = make_free_user('o3')
+        checkin = make_checkin(user, mood=2, craving=0)
+        text = generate_checkin_opener(user, checkin)
+        self.assertIn("I'm here", text)

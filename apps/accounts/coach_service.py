@@ -205,3 +205,40 @@ def send_coach_message(user, session, user_message):
     except Exception as e:
         logger.error(f"Unexpected error in coach service: {e}")
         return None, "Something went wrong. Please try again."
+
+
+def generate_checkin_opener(user, checkin):
+    """Anchor's proactive opening message for a check-in-triggered session.
+
+    Returns assistant text; falls back to a static warm message on any error.
+    """
+    import anthropic
+
+    fallback = ("I saw your check-in — sounds like today's been heavy. "
+                "I'm here. What's going on right now?")
+    api_key = settings.ANTHROPIC_API_KEY
+    if not api_key:
+        return fallback
+    try:
+        user_context = build_user_context(user)
+        system_prompt = RECOVERY_COACH_SYSTEM_PROMPT.format(user_context=user_context)
+        challenge = (checkin.challenge or '').strip()
+        seed = (
+            f"The user just logged a daily check-in: mood "
+            f"'{checkin.get_mood_display()}', craving level "
+            f"'{checkin.get_craving_level_display()}'."
+            + (f" They wrote their challenge today is: \"{challenge}\"." if challenge else "")
+            + " Open the conversation: gently acknowledge how they're doing right "
+              "now and invite them to talk. 2-3 sentences, warm, no lists."
+        )
+        client = anthropic.Anthropic(api_key=api_key)
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=300,
+            system=system_prompt,
+            messages=[{"role": "user", "content": seed}],
+        )
+        return response.content[0].text
+    except Exception as e:
+        logger.error(f"generate_checkin_opener failed: {e}")
+        return fallback
