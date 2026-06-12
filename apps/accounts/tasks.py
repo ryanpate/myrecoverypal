@@ -863,6 +863,94 @@ def send_trial_ending_notifications(self):
     return {'sent': sent_count}
 
 @shared_task(bind=True, max_retries=3)
+def expire_ended_trials(self):
+    """Downgrade trials whose 14-day window has passed to free, and email the user.
+
+    Runs daily. Real payers are status='active' (never matched); the stripe
+    guard is belt-and-suspenders against a trialing row that somehow has a
+    live Stripe subscription.
+    """
+    from django.db.models import Q
+    from .models import Notification
+    from .payment_models import Subscription
+
+    site_url = getattr(settings, 'SITE_URL', 'https://www.myrecoverypal.com')
+    now = timezone.now()
+
+    ended = Subscription.objects.filter(
+        status='trialing',
+        trial_end__lt=now,
+    ).filter(
+        Q(stripe_subscription_id__isnull=True) | Q(stripe_subscription_id='')
+    ).select_related('user')
+
+    downgraded_count = 0
+    for sub in ended:
+        user = sub.user
+        sub.tier = 'free'
+        sub.status = 'expired'
+        sub.save(update_fields=['tier', 'status'])
+
+        try:
+            Notification.objects.create(
+                recipient=user,
+                sender=user,
+                notification_type='milestone',
+                title='Your Premium Trial Ended',
+                message='Upgrade to keep Anchor, unlimited groups, and analytics.',
+                link='/accounts/pricing/',
+            )
+        except Exception as e:
+            logger.error(f"Error creating trial-ended notification for {user.email}: {e}")
+
+        try:
+            name = user.first_name or user.username
+            subject = f"Your Premium trial has ended, {name}"
+            plain_message = (
+                f"Hi {name},\n\n"
+                f"Your 14-day Premium trial on MyRecoveryPal has ended, so your "
+                f"account is now on the free plan.\n\n"
+                f"Upgrade to Premium ($4.99/month) to get back:\n"
+                f"- AI Recovery Coach Anchor (20 messages/day)\n"
+                f"- Unlimited recovery groups\n"
+                f"- 90-day progress analytics\n"
+                f"- Journal export\n\n"
+                f"Upgrade here: {site_url}/accounts/pricing/\n\n"
+                f"Your recovery journey matters. We're here for you.\n"
+                f"- The MyRecoveryPal Team"
+            )
+            html_message = f"""
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #1e4d8b, #4db8e8); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+                    <h1 style="color: white; margin: 0; font-size: 24px;">Your Premium Trial Has Ended</h1>
+                </div>
+                <div style="padding: 30px; background: white;">
+                    <p style="color: #333; font-size: 16px;">Hi {name},</p>
+                    <p style="color: #555; font-size: 15px; line-height: 1.6;">Your 14-day Premium trial has ended and your account is now on the free plan. Upgrade any time to get back:</p>
+                    <ul style="color: #555; font-size: 15px; line-height: 1.8;">
+                        <li><strong>AI Recovery Coach Anchor</strong> — 20 messages/day</li>
+                        <li><strong>Unlimited recovery groups</strong></li>
+                        <li><strong>90-day progress analytics</strong></li>
+                        <li><strong>Journal export</strong></li>
+                    </ul>
+                    <p style="text-align: center; margin: 28px 0;">
+                        <a href="{site_url}/accounts/pricing/" style="background: #1e4d8b; color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600;">Upgrade to Premium</a>
+                    </p>
+                </div>
+            </div>
+            """
+            send_email(subject=subject, plain_message=plain_message,
+                       html_message=html_message, recipient_email=user.email)
+        except Exception as e:
+            logger.error(f"Error sending trial-ended email to {user.email}: {e}")
+
+        downgraded_count += 1
+
+    logger.info(f"expire_ended_trials: downgraded {downgraded_count} subscriptions")
+    return downgraded_count
+
+
+@shared_task(bind=True, max_retries=3)
 def publish_daily_thought(self):
     """
     Ensure today has a DailyRecoveryThought.

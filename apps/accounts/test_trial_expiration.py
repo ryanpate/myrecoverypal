@@ -79,3 +79,67 @@ class ResetTrialsMigrationTest(TestCase):
         sub.refresh_from_db()
         self.assertIsNone(sub.trial_end)
         self.assertEqual(sub.status, 'active')
+
+
+from unittest.mock import patch
+
+
+class ExpireEndedTrialsTaskTest(TestCase):
+    def setUp(self):
+        self.patcher = patch('apps.accounts.tasks.send_email',
+                             return_value=(True, 'mock'))
+        self.mock_send = self.patcher.start()
+        self.addCleanup(self.patcher.stop)
+
+    def _run(self):
+        from apps.accounts.tasks import expire_ended_trials
+        expire_ended_trials.apply()
+
+    def test_downgrades_ended_trial_to_free_and_emails(self):
+        user = make_user('ended')
+        sub = user.subscription
+        sub.trial_end = timezone.now() - timedelta(hours=1)
+        sub.save()
+
+        self._run()
+
+        sub.refresh_from_db()
+        self.assertEqual(sub.tier, 'free')
+        self.assertEqual(sub.status, 'expired')
+        self.assertEqual(self.mock_send.call_count, 1)
+
+    def test_skips_trial_still_in_window(self):
+        user = make_user('current')
+        sub = user.subscription
+        sub.trial_end = timezone.now() + timedelta(days=3)
+        sub.save()
+
+        self._run()
+
+        sub.refresh_from_db()
+        self.assertEqual(sub.status, 'trialing')
+        self.assertEqual(self.mock_send.call_count, 0)
+
+    def test_skips_paid_active(self):
+        user = make_user('active')
+        sub = user.subscription
+        sub.status = 'active'
+        sub.trial_end = None
+        sub.save()
+
+        self._run()
+
+        sub.refresh_from_db()
+        self.assertEqual(sub.status, 'active')
+
+    def test_skips_trialing_with_real_stripe_sub(self):
+        user = make_user('realstripe')
+        sub = user.subscription
+        sub.trial_end = timezone.now() - timedelta(hours=1)
+        sub.stripe_subscription_id = 'sub_real123'
+        sub.save()
+
+        self._run()
+
+        sub.refresh_from_db()
+        self.assertEqual(sub.status, 'trialing')  # untouched
