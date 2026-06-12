@@ -957,6 +957,8 @@ def quick_checkin(request):
         'mood_display': checkin.get_mood_display(),
         'message': 'Check-in complete! 🌟',
         'shared_to_feed': share_to_feed,
+        'needs_support': checkin.needs_support(),
+        'coach_url': reverse('accounts:coach_start_from_checkin', args=[checkin.id]),
     })
 
 
