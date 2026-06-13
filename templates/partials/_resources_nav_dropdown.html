@@ -1,6 +1,5 @@
 {% load static %}
-{# Resources dropdown for the desktop primary nav (.nav-links). On mobile the
-   .nav-links overlay renders the submenu inline (see base-inline.css). #}
+{% comment %}Resources dropdown for the desktop primary nav (.nav-links). On mobile the .nav-links overlay renders the submenu inline (see base-inline.css).{% endcomment %}
 <li class="nav-dropdown">
     <a href="{% url 'resources:list' %}"
         class="nav-dropdown-toggle {% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
