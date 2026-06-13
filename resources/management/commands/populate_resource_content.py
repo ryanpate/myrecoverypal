@@ -11,7 +11,41 @@ same resources by slug, so it is safe to run on production after deploy.
 """
 from django.core.management.base import BaseCommand
 
-from resources.models import Resource
+from resources.models import Resource, ResourceCategory, ResourceType
+
+
+# Structural fields for each tools resource. Production was never seeded and two
+# of these (relapse-prevention-plan, trigger-identification-worksheet) have no
+# seed command anywhere, so this command must be able to CREATE them, not just
+# update content. slug -> structural defaults.
+RESOURCE_META = {
+    'relapse-prevention-plan': {
+        'title': 'Relapse Prevention Plan Template',
+        'resource_type': 'pdf',
+        'description': 'Create a personalized plan to help you stay on track and handle high-risk situations.',
+        'interaction_type': 'static',
+    },
+    'daily-recovery-checklist': {
+        'title': 'Daily Recovery Checklist',
+        'resource_type': 'pdf',
+        'description': 'A comprehensive daily checklist to help you establish healthy habits and maintain your recovery momentum.',
+        'interaction_type': 'static',
+    },
+    'coping-skills-for-cravings': {
+        'title': 'Coping Skills for Cravings',
+        'resource_type': 'checklist',
+        'description': 'Evidence-based strategies to help you manage cravings in the moment. Available as both an interactive checklist and downloadable PDF.',
+        'interaction_type': 'hybrid',
+        'is_interactive': True,
+        'interactive_component': 'CopingSkillsChecklist',
+    },
+    'trigger-identification-worksheet': {
+        'title': 'Trigger Identification Worksheet',
+        'resource_type': 'pdf',
+        'description': 'Identify and document your personal triggers to better prepare for challenging situations.',
+        'interaction_type': 'static',
+    },
+}
 
 
 # slug -> {meta_description, content (HTML)}
@@ -248,23 +282,44 @@ class Command(BaseCommand):
     help = 'Populate on-page content and meta descriptions for core recovery resources'
 
     def handle(self, *args, **options):
-        updated = 0
-        missing = []
+        # Ensure the Recovery Tools category exists (prod may be unseeded).
+        tools_cat, _ = ResourceCategory.objects.get_or_create(
+            slug='tools',
+            defaults={
+                'name': 'Recovery Tools',
+                'icon': '🛠️',
+                'description': 'Practical worksheets, trackers, and exercises for daily recovery work',
+                'order': 3,
+            },
+        )
+        # Ensure the resource types these resources use exist.
+        types = {
+            'pdf': ResourceType.objects.get_or_create(
+                slug='pdf', defaults={'name': 'PDF Document', 'color': '#EF4444', 'icon': '📄'})[0],
+            'checklist': ResourceType.objects.get_or_create(
+                slug='checklist', defaults={'name': 'Interactive Checklist', 'color': '#8B5CF6', 'icon': '✅'})[0],
+        }
+
+        created = updated = 0
         for slug, data in RESOURCE_CONTENT.items():
-            try:
-                resource = Resource.objects.get(slug=slug)
-            except Resource.DoesNotExist:
-                missing.append(slug)
-                continue
+            meta = RESOURCE_META[slug]
+            defaults = {
+                'title': meta['title'],
+                'category': tools_cat,
+                'resource_type': types[meta['resource_type']],
+                'description': meta['description'],
+                'interaction_type': meta.get('interaction_type', 'static'),
+                'is_interactive': meta.get('is_interactive', False),
+                'interactive_component': meta.get('interactive_component', ''),
+                'access_level': 'free',
+                'is_active': True,
+                'content': data['content'].strip(),
+                'meta_description': data['meta_description'],
+            }
+            obj, was_created = Resource.objects.update_or_create(slug=slug, defaults=defaults)
+            created += was_created
+            updated += not was_created
+            tag = 'Created' if was_created else 'Updated'
+            self.stdout.write(self.style.SUCCESS(f'  {tag}: {obj.title}'))
 
-            resource.content = data['content'].strip()
-            resource.meta_description = data['meta_description']
-            resource.save(update_fields=['content', 'meta_description'])
-            updated += 1
-            self.stdout.write(self.style.SUCCESS(f'  Updated: {resource.title}'))
-
-        self.stdout.write(self.style.SUCCESS(f'\nUpdated {updated} resource(s).'))
-        if missing:
-            self.stdout.write(self.style.WARNING(
-                f'Not found (skipped): {", ".join(missing)}'
-            ))
+        self.stdout.write(self.style.SUCCESS(f'\nDone. {created} created, {updated} updated.'))
