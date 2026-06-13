@@ -455,6 +455,30 @@
             </div>
         </div>
     {% endif %}
+
+    <!-- Related Blog Articles -->
+    {% if related_blog_posts %}
+        <div class="related-resources">
+            <h2>From the Blog</h2>
+            <div class="related-grid">
+                {% for post in related_blog_posts %}
+                    <div class="resource-card">
+                        <div class="resource-card-header">
+                            <a href="{{ post.get_absolute_url }}" class="resource-card-title">
+                                {{ post.title }}
+                            </a>
+                        </div>
+                        <p class="resource-card-description">
+                            {{ post.excerpt|default:post.content|striptags|truncatewords:20 }}
+                        </p>
+                        <a href="{{ post.get_absolute_url }}" class="view-resource-btn">
+                            Read Article →
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
 </div>
 
 {% include 'core/partials/_related_tools.html' %}

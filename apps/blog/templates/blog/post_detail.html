@@ -742,6 +742,21 @@
         </div>
     </div>
     {% endif %}
+
+    {% if related_resources %}
+    <div class="related-posts">
+        <h3>Helpful Resources</h3>
+        <div class="related-posts-grid">
+            {% for resource in related_resources %}
+            <a href="{{ resource.get_absolute_url }}" class="related-post-card">
+                <h4>{{ resource.title }}</h4>
+                <p>{{ resource.description|striptags|truncatewords:20 }}</p>
+                <small>{{ resource.category.name }}</small>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <script>

@@ -115,6 +115,10 @@ class PostDetailView(DetailView):
             category=post.category
         ).exclude(pk=post.pk)[:3]
 
+        # Topically related resources (cross-link blog -> resources)
+        from resources.related_content import related_resources_for_post
+        context['related_resources'] = related_resources_for_post(post, limit=3)
+
         # Comment form
         context['comment_form'] = CommentForm()
 

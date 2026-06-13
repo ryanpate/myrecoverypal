@@ -158,6 +158,10 @@ class ResourceDetailView(DetailView):
             is_active=True
         ).exclude(pk=resource.pk)[:4]
 
+        # Topically related blog posts (cross-link resources -> blog)
+        from resources.related_content import related_blog_posts
+        context['related_blog_posts'] = related_blog_posts(resource, limit=3)
+
         return context
 
 
