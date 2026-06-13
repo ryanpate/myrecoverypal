@@ -229,6 +229,8 @@
                     {% else %}
                     <li><a href="{% url 'blog:post_list' %}"
                             class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">Blog</a></li>
+                    <li><a href="{% url 'resources:list' %}"
+                            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">Resources</a></li>
                     <li><a href="{% url 'store:product_list' %}"
                             class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">Shop</a></li>
                     <li><a href="{% url 'core:ai_recovery_coach' %}"
@@ -310,6 +312,9 @@
                                 </a>
                                 <a href="{% url 'blog:post_list' %}">
                                     <i class="fas fa-newspaper"></i> Blog
+                                </a>
+                                <a href="{% url 'resources:list' %}">
+                                    <i class="fas fa-book-open"></i> Resources
                                 </a>
                             </div>
 
@@ -467,6 +472,10 @@
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-newspaper" style="margin-right: 0.5rem;"></i> Blog
                 </a>
+                <a href="{% url 'resources:list' %}"
+                    class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Resources
+                </a>
             </div>
 
             <div class="mobile-menu-section">
@@ -534,6 +543,10 @@
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-newspaper" style="margin-right: 0.5rem;"></i> Blog
+                </a>
+                <a href="{% url 'resources:list' %}"
+                    class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Resources
                 </a>
                 <a href="{% url 'store:product_list' %}"
                     class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
@@ -703,6 +716,7 @@
                     <li><a href="{% url 'accounts:community' %}">Members</a></li>
                     <li><a href="{% url 'core:ai_recovery_coach' %}">Anchor AI Coach</a></li>
                     <li><a href="{% url 'core:support_a_loved_one' %}">Support a Loved One</a></li>
+                    <li><a href="{% url 'resources:list' %}">Recovery Resources</a></li>
                     <li><a href="{% url 'store:product_list' %}">Recovery Shop</a></li>
                     <li><a href="{% url 'core:guidelines' %}">Guidelines</a></li>
                     <li><a href="{% url 'core:success_stories' %}">Success Stories</a></li>
