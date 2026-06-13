@@ -726,26 +726,38 @@
     <!-- Footer -->
     <footer>
         <div class="footer-content">
+            <div class="footer-brand">
+                <a href="{% url 'core:index' %}" class="footer-brand-top">
+                    <img src="{% static 'images/logo-white.svg' %}" alt="" class="footer-logo">
+                    <span class="footer-wordmark">MyRecoveryPal</span>
+                </a>
+                <p class="footer-tagline">Your recovery support community. Heal together, grow together.</p>
+            </div>
             <div class="footer-section">
-                <h3>About</h3>
+                <h3>Product</h3>
                 <ul>
-                    <li><a href="{% url 'core:about' %}">Our Mission</a></li>
-                    <li><a href="{% url 'core:team' %}">Team</a></li>
-                    <li><a href="{% url 'core:contact' %}">Contact</a></li>
-                    <li class="stripe-only"><a href="https://ko-fi.com/myrecoverypal" target="_blank" rel="noopener">Support Us (Ko-fi)</a></li>
-                    <li class="stripe-only"><a href="https://buymeacoffee.com/myrecoverypal" target="_blank" rel="noopener">Buy Me a Coffee</a></li>
+                    <li><a href="{% url 'core:ai_recovery_coach' %}">Anchor AI Coach</a></li>
+                    <li><a href="{% url 'core:court_ordered_meeting_tracker' %}">Court Tracking</a></li>
+                    <li><a href="{% url 'resources:list' %}">Recovery Resources</a></li>
+                    <li><a href="{% url 'store:product_list' %}">Recovery Shop</a></li>
                 </ul>
             </div>
             <div class="footer-section">
                 <h3>Community</h3>
                 <ul>
                     <li><a href="{% url 'accounts:community' %}">Members</a></li>
-                    <li><a href="{% url 'core:ai_recovery_coach' %}">Anchor AI Coach</a></li>
                     <li><a href="{% url 'core:support_a_loved_one' %}">Support a Loved One</a></li>
-                    <li><a href="{% url 'resources:list' %}">Recovery Resources</a></li>
-                    <li><a href="{% url 'store:product_list' %}">Recovery Shop</a></li>
-                    <li><a href="{% url 'core:guidelines' %}">Guidelines</a></li>
                     <li><a href="{% url 'core:success_stories' %}">Success Stories</a></li>
+                    <li><a href="{% url 'core:guidelines' %}">Guidelines</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="{% url 'core:about' %}">Our Mission</a></li>
+                    <li><a href="{% url 'core:team' %}">Team</a></li>
+                    <li><a href="{% url 'blog:post_list' %}">Blog</a></li>
+                    <li><a href="{% url 'core:contact' %}">Contact</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -770,7 +782,13 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 MyRecoveryPal. All rights reserved. | Recovery is possible.</p>
+            <p>&copy; 2026 MyRecoveryPal. All rights reserved. · Recovery is possible.</p>
+            <div class="footer-social">
+                <a href="https://www.instagram.com/myrecoverypal" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                <a href="https://www.tiktok.com/@myrecoverypal" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
+                <a href="https://twitter.com/myrecoverypal" target="_blank" rel="noopener" aria-label="X"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
+                <a href="https://www.facebook.com/myrecoverypal" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook" aria-hidden="true"></i></a>
+            </div>
         </div>
     </footer>
 
