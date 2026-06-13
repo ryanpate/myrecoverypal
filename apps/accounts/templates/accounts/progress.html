@@ -62,13 +62,34 @@
 
     /* Milestone Progress Card */
     .milestone-card {
-        background: linear-gradient(135deg, #52b788 0%, #40916c 100%);
+        background: linear-gradient(135deg, #45a675 0%, #52b788 55%, #4db8e8 140%);
         border-radius: 20px;
-        padding: 1.5rem;
+        padding: 2.25rem;
         margin-bottom: 2rem;
         color: white;
-        box-shadow: 0 10px 40px rgba(82, 183, 136, 0.2);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
         position: relative;
+        overflow: hidden;
+    }
+
+    .milestone-card::after {
+        content: '';
+        position: absolute;
+        top: -90px;
+        right: -60px;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.10);
+        pointer-events: none;
+    }
+
+    .milestone-eyebrow {
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.85);
     }
 
     /* Milestone celebration state */
@@ -98,13 +119,16 @@
     }
 
     .milestone-days {
-        font-size: 2.5rem;
-        font-weight: 700;
+        font-size: 4rem;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        margin: 0.35rem 0 0.15rem;
     }
 
     .milestone-label {
-        font-size: 0.9rem;
-        opacity: 0.9;
+        font-size: 1rem;
+        opacity: 0.92;
     }
 
     .milestone-next {
@@ -122,10 +146,11 @@
     }
 
     .milestone-progress-bar {
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 10px;
-        height: 12px;
+        background: rgba(255, 255, 255, 0.25);
+        border-radius: 50px;
+        height: 10px;
         overflow: hidden;
+        margin-top: 1.4rem;
     }
 
     .milestone-progress-fill {
@@ -1380,8 +1405,9 @@
             {% endif %}
             <div class="milestone-header">
                 <div>
+                    <div class="milestone-eyebrow">Days Sober</div>
                     <div class="milestone-days">{{ days_sober }}</div>
-                    <div class="milestone-label">Days Sober{% if years_sober %} ({{ years_sober }} year{{ years_sober|pluralize }} {% if months_sober %}{{ months_sober }} mo{% endif %}){% endif %}</div>
+                    <div class="milestone-label">{% if years_sober %}{{ years_sober }} year{{ years_sober|pluralize }}{% if months_sober %}, {{ months_sober }} month{{ months_sober|pluralize }}{% endif %} strong{% else %}One day at a time{% endif %}</div>
                     {% if user.recovery_start_date and user.recovery_start_date != user.sobriety_date %}
                     <p style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-top: 0.35rem; margin-bottom: 0;">
                         <i class="fas fa-calendar-alt" aria-hidden="true"></i> In recovery since {{ user.recovery_start_date|date:"N j, Y" }}
