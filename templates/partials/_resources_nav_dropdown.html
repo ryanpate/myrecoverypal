@@ -1,0 +1,16 @@
+{% load static %}
+{# Resources dropdown for the desktop primary nav (.nav-links). On mobile the
+   .nav-links overlay renders the submenu inline (see base-inline.css). #}
+<li class="nav-dropdown">
+    <a href="{% url 'resources:list' %}"
+        class="nav-dropdown-toggle {% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+        Resources <i class="fas fa-chevron-down nav-dropdown-caret" aria-hidden="true"></i>
+    </a>
+    <ul class="nav-dropdown-menu">
+        <li><a href="{% url 'resources:list' %}"><i class="fas fa-book-open" aria-hidden="true"></i> Recovery Resources</a></li>
+        <li><a href="{% url 'resources:educational_resources' %}"><i class="fas fa-graduation-cap" aria-hidden="true"></i> Educational Resources</a></li>
+        <li><a href="{% url 'support_services:meeting_list' %}"><i class="fas fa-location-dot" aria-hidden="true"></i> Meeting Finder</a></li>
+        <li><a href="{% url 'blog:post_list' %}"><i class="fas fa-newspaper" aria-hidden="true"></i> Blog</a></li>
+        <li><a href="{% url 'core:crisis' %}"><i class="fas fa-heart" aria-hidden="true"></i> Crisis Help</a></li>
+    </ul>
+</li>

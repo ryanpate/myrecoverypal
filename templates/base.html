@@ -209,8 +209,7 @@
                             class="{% if request.resolver_match.url_name == 'daily_checkin' %}active{% endif %}">Check-in</a></li>
                     <li><a href="{% url 'accounts:progress' %}"
                             class="{% if request.resolver_match.url_name == 'progress' %}active{% endif %}">Progress</a></li>
-                    <li><a href="{% url 'resources:list' %}"
-                            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">Resources</a></li>
+                    {% include 'partials/_resources_nav_dropdown.html' %}
                     <li><a href="{% url 'store:product_list' %}"
                             class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">Shop</a></li>
                     <li><a href="{% url 'accounts:recovery_coach' %}"
@@ -229,10 +228,7 @@
                         </a></li>
                     {% endif %}
                     {% else %}
-                    <li><a href="{% url 'blog:post_list' %}"
-                            class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">Blog</a></li>
-                    <li><a href="{% url 'resources:list' %}"
-                            class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">Resources</a></li>
+                    {% include 'partials/_resources_nav_dropdown.html' %}
                     <li><a href="{% url 'store:product_list' %}"
                             class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">Shop</a></li>
                     <li><a href="{% url 'core:ai_recovery_coach' %}"
@@ -470,13 +466,27 @@
                     class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-trophy" style="margin-right: 0.5rem;"></i> Challenges
                 </a>
+            </div>
+
+            <div class="mobile-menu-section">
+                <div class="mobile-menu-label">Resources</div>
+                <a href="{% url 'resources:list' %}"
+                    class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Recovery Resources
+                </a>
+                <a href="{% url 'resources:educational_resources' %}">
+                    <i class="fas fa-graduation-cap" style="margin-right: 0.5rem;"></i> Educational Resources
+                </a>
+                <a href="{% url 'support_services:meeting_list' %}">
+                    <i class="fas fa-location-dot" style="margin-right: 0.5rem;"></i> Meeting Finder
+                </a>
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-newspaper" style="margin-right: 0.5rem;"></i> Blog
                 </a>
-                <a href="{% url 'resources:list' %}"
-                    class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
-                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Resources
+                <a href="{% url 'core:crisis' %}"
+                    class="{% if request.resolver_match.url_name == 'crisis' %}active{% endif %}">
+                    <i class="fas fa-heart" style="margin-right: 0.5rem;"></i> Crisis Help
                 </a>
             </div>
 
@@ -542,17 +552,31 @@
                     class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
                     <i class="fas fa-home" style="margin-right: 0.5rem;"></i> Home
                 </a>
+                <a href="{% url 'store:product_list' %}"
+                    class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-bag-shopping" style="margin-right: 0.5rem;"></i> Recovery Shop
+                </a>
+            </div>
+
+            <div class="mobile-menu-section">
+                <div class="mobile-menu-label">Resources</div>
+                <a href="{% url 'resources:list' %}"
+                    class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Recovery Resources
+                </a>
+                <a href="{% url 'resources:educational_resources' %}">
+                    <i class="fas fa-graduation-cap" style="margin-right: 0.5rem;"></i> Educational Resources
+                </a>
+                <a href="{% url 'support_services:meeting_list' %}">
+                    <i class="fas fa-location-dot" style="margin-right: 0.5rem;"></i> Meeting Finder
+                </a>
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-newspaper" style="margin-right: 0.5rem;"></i> Blog
                 </a>
-                <a href="{% url 'resources:list' %}"
-                    class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
-                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Resources
-                </a>
-                <a href="{% url 'store:product_list' %}"
-                    class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
-                    <i class="fas fa-bag-shopping" style="margin-right: 0.5rem;"></i> Recovery Shop
+                <a href="{% url 'core:crisis' %}"
+                    class="{% if request.resolver_match.url_name == 'crisis' %}active{% endif %}">
+                    <i class="fas fa-heart" style="margin-right: 0.5rem;"></i> Crisis Help
                 </a>
             </div>
             {% endif %}

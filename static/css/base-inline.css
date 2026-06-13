@@ -1398,6 +1398,78 @@ a.btn-primary:hover {
     width: 100%;
 }
 
+/* Resources dropdown in primary nav */
+.nav-dropdown {
+    position: relative;
+}
+
+.nav-dropdown > .nav-dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+}
+
+.nav-dropdown-caret {
+    font-size: 0.7em;
+    transition: transform 0.2s ease;
+}
+
+.nav-dropdown:hover .nav-dropdown-caret,
+.nav-dropdown:focus-within .nav-dropdown-caret {
+    transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin: 0;
+    padding: 0.5rem 0;
+    min-width: 230px;
+    list-style: none;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+    z-index: 1001;
+}
+
+.nav-dropdown:hover .nav-dropdown-menu,
+.nav-dropdown:focus-within .nav-dropdown-menu {
+    display: block;
+}
+
+.nav-dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.6rem 1.1rem;
+    color: var(--text-dark);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.nav-dropdown-menu a::after {
+    display: none;
+}
+
+.nav-dropdown-menu a:hover {
+    background: rgba(82, 183, 136, 0.12);
+    color: var(--primary-dark);
+}
+
+.nav-dropdown-menu a i {
+    width: 18px;
+    text-align: center;
+    color: var(--accent-green);
+}
+
+[data-theme="dark"] .nav-dropdown-menu {
+    background: #1e2a33;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+}
+
 /* Anchor AI CTA Button in Nav */
 .nav-links a.anchor-ai-cta {
     background: linear-gradient(135deg, #667eea, #764ba2);
@@ -2271,6 +2343,25 @@ footer {
 
     .nav-links a:hover {
         background: var(--bg-light);
+    }
+
+    /* Resources dropdown renders inline (expanded) in the mobile overlay */
+    .nav-dropdown {
+        width: 100%;
+    }
+
+    .nav-dropdown-menu {
+        display: block;
+        position: static;
+        min-width: 0;
+        padding: 0 0 0 1rem;
+        background: transparent;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .nav-dropdown-caret {
+        display: none;
     }
 
     /* Show mobile menu button */
