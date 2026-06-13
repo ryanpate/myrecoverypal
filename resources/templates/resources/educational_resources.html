@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Educational Resources - {{ site_name }}{% endblock %}
+{% block title %}Educational Recovery Resources: Websites, Books, Podcasts & Hotlines{% endblock %}
+{% block meta_description %}Curated addiction recovery education: trusted websites, books, podcasts, apps, and support hotlines. Free, expert-vetted resources for every stage of recovery.{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com{% url 'resources:educational_resources' %}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
@@ -568,4 +570,6 @@
         </div>
     </div>
 </section>
+
+{% include 'core/partials/_related_tools.html' %}
 {% endblock %}

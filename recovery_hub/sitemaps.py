@@ -27,6 +27,10 @@ class StaticViewSitemap(Sitemap):
             # Blog listing
             ('blog:post_list', 0.9),
 
+            # Resources hub pages (individual resources covered by ResourceSitemap)
+            ('resources:list', 0.7),
+            ('resources:educational_resources', 0.6),
+
             # HIGH PRIORITY: SEO Landing Pages (high-value keywords)
             ('core:sobriety_calculator', 0.95),  # Interactive tool - highest engagement
             ('accounts:milestone_badge_creator', 0.95),  # Free interactive medallion creator

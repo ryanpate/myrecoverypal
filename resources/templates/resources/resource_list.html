@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Recovery Resources - MyRecoveryPal{% endblock %}
+{% block title %}Free Recovery Resources, Tools & Worksheets - MyRecoveryPal{% endblock %}
+{% block meta_description %}Free addiction recovery resources: coping-skills checklists, daily recovery worksheets, crisis lines, and educational guides. No signup required.{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com{% url 'resources:list' %}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
@@ -156,6 +158,8 @@
     </div>
     {% endif %}
 </div>
+
+{% include 'core/partials/_related_tools.html' %}
 
 <!-- Add smooth scroll behavior -->
 <style>
