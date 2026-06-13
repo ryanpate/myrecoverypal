@@ -2,6 +2,10 @@
 {% load static %}
 
 {% block title %}{{ resource.title }} - Recovery Resources{% endblock %}
+{% block meta_description %}{{ resource.meta_description|default:resource.description|striptags|truncatewords:30 }}{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com{{ resource.get_absolute_url }}{% endblock %}
+{% block og_title %}{{ resource.title }} - Recovery Resources{% endblock %}
+{% block og_description %}{{ resource.meta_description|default:resource.description|striptags|truncatewords:30 }}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
@@ -452,6 +456,8 @@
         </div>
     {% endif %}
 </div>
+
+{% include 'core/partials/_related_tools.html' %}
 {% endblock %}
 
 {% block extra_js %}

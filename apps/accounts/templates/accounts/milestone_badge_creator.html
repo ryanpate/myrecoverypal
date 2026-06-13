@@ -863,24 +863,25 @@ function updatePreview() {
     document.getElementById('btn-download').href = imgUrl + '&download=1';
 }
 
-function buildShareUrl() {
+function buildShareUrl(source, medium) {
     var params = getParams();
-    return window.location.origin + '/accounts/milestone/' + daysSober + '/?' + params;
+    var url = window.location.origin + '/accounts/milestone/' + daysSober + '/?' + params;
+    url += '&utm_source=' + (source || 'share') + '&utm_medium=' + (medium || 'social') + '&utm_campaign=medallion_share';
+    return url;
 }
 
 function openShareModal() {
-    var shareUrl = buildShareUrl();
     var text = 'Check out my recovery milestone on MyRecoveryPal! 🎉';
-    var encodedUrl = encodeURIComponent(shareUrl);
     var encodedText = encodeURIComponent(text);
+    var enc = function(source, medium) { return encodeURIComponent(buildShareUrl(source, medium)); };
 
-    document.getElementById('share-twitter').href = 'https://twitter.com/intent/tweet?text=' + encodedText + '&url=' + encodedUrl;
-    document.getElementById('share-facebook').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodedUrl;
-    document.getElementById('share-whatsapp').href = 'https://wa.me/?text=' + encodedText + '%20' + encodedUrl;
-    document.getElementById('share-reddit').href = 'https://reddit.com/submit?url=' + encodedUrl + '&title=' + encodedText;
-    document.getElementById('share-email').href = 'mailto:?subject=' + encodeURIComponent('My Recovery Milestone') + '&body=' + encodedText + '%0A%0A' + encodedUrl;
+    document.getElementById('share-twitter').href = 'https://twitter.com/intent/tweet?text=' + encodedText + '&url=' + enc('twitter');
+    document.getElementById('share-facebook').href = 'https://www.facebook.com/sharer/sharer.php?u=' + enc('facebook');
+    document.getElementById('share-whatsapp').href = 'https://wa.me/?text=' + encodedText + '%20' + enc('whatsapp');
+    document.getElementById('share-reddit').href = 'https://reddit.com/submit?url=' + enc('reddit') + '&title=' + encodedText;
+    document.getElementById('share-email').href = 'mailto:?subject=' + encodeURIComponent('My Recovery Milestone') + '&body=' + encodedText + '%0A%0A' + enc('email', 'email');
 
-    document.getElementById('share-link-input').value = shareUrl;
+    document.getElementById('share-link-input').value = buildShareUrl('copy', 'referral');
 
     // Show native share button when supported (mobile + some desktop)
     var nativeBtn = document.getElementById('share-native');
@@ -898,7 +899,7 @@ function closeShareModal() {
 }
 
 function nativeShare() {
-    var shareUrl = buildShareUrl();
+    var shareUrl = buildShareUrl('native');
     var text = 'Check out my recovery milestone on MyRecoveryPal!';
 
     if (window.MRPNative && window.MRPNative.share) {

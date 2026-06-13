@@ -37,6 +37,10 @@ FREE_BADGE_STYLES = {'classic', 'silver', 'mountain'}
 # All "My Recovery Pal" medallion templates share the same center-circle layout.
 CENTER_WIDTH_RATIO = 0.34
 
+# Brand watermark burned into every generated image so each share/download/OG
+# preview carries attribution back to the site ("every share is an ad").
+WATERMARK_TEXT = 'myrecoverypal.com'
+
 TIME_FORMATS = {
     'days': 'Days',
     'months': 'Months',
@@ -173,7 +177,7 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
     fill = (*rgb, 255)
 
     params = f'{days}_{style}_{time_format}_{text_y}_{font_size}_{color}_{int(outline)}_{safe_name}'
-    cache_key = f'milestone_v8_{hashlib.md5(params.encode()).hexdigest()}'
+    cache_key = f'milestone_v9_{hashlib.md5(params.encode()).hexdigest()}'
     cached = cache.get(cache_key)
     if cached:
         return cached
@@ -250,6 +254,15 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
             _draw_outlined_text(draw, nx, ny, safe_name, font_name, fill, max(1, outline_w - 1))
         else:
             draw.text((nx, ny), safe_name, fill=fill, font=font_name)
+
+    # Brand watermark: centered near the bottom edge, semi-transparent white with a
+    # dark outline so it stays legible on both light and dark badge templates.
+    wm_font = _load_font(30)
+    wbbox = draw.textbbox((0, 0), WATERMARK_TEXT, font=wm_font)
+    ww = wbbox[2] - wbbox[0]
+    wm_x = cx - ww // 2
+    wm_y = target - 58
+    _draw_outlined_text(draw, wm_x, wm_y, WATERMARK_TEXT, wm_font, (255, 255, 255, 210), 2)
 
     result = Image.alpha_composite(badge, overlay)
     final = result.convert('RGB')

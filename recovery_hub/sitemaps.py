@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.conf import settings
 from apps.blog.models import Post  # Assuming you have a Post model
 from apps.store.models import Category as StoreCategory
-# from resources.models import Resource  # Uncomment if you have resources
+from resources.models import Resource
 # from apps.journal.models import JournalEntry  # Don't include private entries
 
 
@@ -143,21 +143,20 @@ class StoreCategorySitemap(Sitemap):
         return super().get_urls(page=page, site=site, protocol='https')
 
 
-# Uncomment if you have resources and want them in sitemap
-# class ResourceSitemap(Sitemap):
-#     """Sitemap for resources"""
-#     changefreq = "monthly"
-#     priority = 0.6
-#
-#     def items(self):
-#         # Return only public resources
-#         return Resource.objects.filter(is_public=True)
-#
-#     def lastmod(self, obj):
-#         return obj.updated_at
-#
-#     def location(self, obj):
-#         return obj.get_absolute_url()
+class ResourceSitemap(Sitemap):
+    """Sitemap for resources"""
+    protocol = 'https'
+    changefreq = "monthly"
+    priority = 0.6
+
+    def items(self):
+        return Resource.objects.filter(is_active=True)
+
+    def lastmod(self, obj):
+        return obj.updated_at
+
+    def location(self, obj):
+        return obj.get_absolute_url()
 
 
 # Dictionary of all sitemaps
@@ -165,5 +164,5 @@ sitemaps = {
     'static': StaticViewSitemap,
     'blog': BlogPostSitemap,
     'store_categories': StoreCategorySitemap,
-    # 'resources': ResourceSitemap,  # Uncomment if needed
+    'resources': ResourceSitemap,
 }

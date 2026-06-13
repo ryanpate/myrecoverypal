@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block title %}{{ category.name }} - Recovery Resources{% endblock %}
+{% block meta_description %}Free {{ category.name|lower }} for addiction recovery. {{ category.description|default:''|striptags|truncatewords:20 }}{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com{% url 'resources:category' category.slug %}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
@@ -471,6 +473,8 @@
         </a>
     </div>
 </div>
+
+{% include 'core/partials/_related_tools.html' %}
 {% endblock %}
 
 {% block extra_js %}
