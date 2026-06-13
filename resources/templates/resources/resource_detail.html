@@ -7,6 +7,71 @@
 {% block og_title %}{{ resource.title }} - Recovery Resources{% endblock %}
 {% block og_description %}{{ resource.meta_description|default:resource.description|striptags|truncatewords:30 }}{% endblock %}
 
+{% block structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://www.myrecoverypal.com/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Resources",
+            "item": "https://www.myrecoverypal.com/resources/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{ resource.category.name|escapejs }}",
+            "item": "https://www.myrecoverypal.com{{ resource.category.get_absolute_url }}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 4,
+            "name": "{{ resource.title|escapejs }}",
+            "item": "https://www.myrecoverypal.com{{ resource.get_absolute_url }}"
+        }
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "{{ resource.title|escapejs }}",
+    "description": "{{ resource.meta_description|default:resource.description|striptags|truncatewords:30|escapejs }}",
+    "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-image.png' %}",
+    "author": {
+        "@type": "Organization",
+        "name": "MyRecoveryPal",
+        "url": "https://www.myrecoverypal.com/"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "MyRecoveryPal",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.svg' %}"
+        }
+    },
+    "datePublished": "{{ resource.created_at|date:'c' }}",
+    "dateModified": "{{ resource.updated_at|date:'c' }}",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.myrecoverypal.com{{ resource.get_absolute_url }}"
+    },
+    "articleSection": "{{ resource.category.name|escapejs }}"{% if resource.content %},
+    "wordCount": {{ resource.content|striptags|wordcount }}{% endif %}
+}
+</script>
+{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
 <style>
