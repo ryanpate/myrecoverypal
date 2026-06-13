@@ -617,11 +617,21 @@
     .inline-mood-btn:hover { background: rgba(30,77,139,0.08); }
     .inline-mood-btn.selected { border-color: #1e4d8b; background: rgba(30,77,139,0.12); }
     .inline-craving-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
-    .inline-craving-label { font-size: .85rem; color: #777; margin-right: 4px; }
-    .inline-craving-btn { font-size: .8rem; padding: 5px 10px; border: 1px solid #ddd; border-radius: 14px; background: #fff; cursor: pointer; }
+    .inline-craving-label { flex-basis: 100%; font-size: .85rem; color: #777; margin: 0 0 2px; }
+    .inline-craving-btn { flex: 1 1 0; min-width: 58px; text-align: center; font-size: .8rem; padding: 7px 8px; border: 1px solid #ddd; border-radius: 14px; background: #fff; color: #333; cursor: pointer; transition: all .15s; }
     .inline-craving-btn.selected { border-color: #1e4d8b; background: rgba(30,77,139,0.12); color: #1e4d8b; font-weight: 600; }
     .inline-checkin-actions { display: flex; align-items: center; gap: 14px; }
     .checkin-add-details { font-size: .85rem; color: #1e4d8b; text-decoration: none; }
+
+    /* Dark mode — inline check-in (mood tiles + craving pills) */
+    [data-theme="dark"] .inline-mood-btn { background: rgba(255,255,255,0.05); }
+    [data-theme="dark"] .inline-mood-btn:hover { background: rgba(110,168,224,0.16); }
+    [data-theme="dark"] .inline-mood-btn.selected { border-color: #6ea8e0; background: rgba(110,168,224,0.20); }
+    [data-theme="dark"] .inline-craving-label { color: #9fb3c8; }
+    [data-theme="dark"] .inline-craving-btn { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.16); color: #cdd9e5; }
+    [data-theme="dark"] .inline-craving-btn:hover { background: rgba(255,255,255,0.10); }
+    [data-theme="dark"] .inline-craving-btn.selected { border-color: #6ea8e0; background: rgba(110,168,224,0.22); color: #cfe4fb; }
+    [data-theme="dark"] .checkin-add-details { color: #6ea8e0; }
 
     .share-toggle input[type="checkbox"] {
         display: none;
