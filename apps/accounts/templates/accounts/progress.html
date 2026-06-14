@@ -522,39 +522,44 @@
     }
 
     /* ===== Landing Tab Bar ===== */
+    /* Segmented pill toggle — My Progress / My Feed */
     .landing-tabs {
         display: flex;
-        max-width: 1000px;
+        gap: 4px;
+        width: max-content;
+        max-width: calc(100% - 2rem);
         margin: 1.5rem auto 0;
-        padding: 0 1rem;
-        border-bottom: 2px solid #e5e7eb;
+        padding: 5px;
+        background: var(--surface-sunken, #f3f4f6);
+        border-radius: 50px;
     }
 
     .landing-tab {
-        flex: 1;
-        display: flex;
+        flex: 0 0 auto;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 0.5rem;
-        padding: 0.85rem 1rem;
-        background: none;
+        padding: 0.55rem 1.5rem;
+        background: transparent;
         border: none;
-        border-bottom: 3px solid transparent;
-        margin-bottom: -2px;
+        border-radius: 50px;
         font-size: 0.95rem;
         font-weight: 600;
-        color: #888;
+        color: var(--text-muted, #6b7280);
         cursor: pointer;
         transition: all 0.2s;
+        white-space: nowrap;
     }
 
     .landing-tab:hover {
-        color: #555;
+        color: var(--text-dark, #2c3e50);
     }
 
     .landing-tab.active {
+        background: #fff;
         color: #1e4d8b;
-        border-bottom-color: #1e4d8b;
+        box-shadow: 0 1px 4px rgba(15, 45, 86, 0.18);
     }
 
     .landing-tab i {
@@ -562,20 +567,21 @@
     }
 
     [data-theme="dark"] .landing-tabs {
-        border-bottom-color: #404040;
+        background: #374151;
     }
 
     [data-theme="dark"] .landing-tab {
-        color: #888;
+        color: #9ca3af;
     }
 
     [data-theme="dark"] .landing-tab:hover {
-        color: #bbb;
+        color: #e4e4e7;
     }
 
     [data-theme="dark"] .landing-tab.active {
+        background: #1f2937;
         color: #6cb4ee;
-        border-bottom-color: #6cb4ee;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
     }
 
     /* ===== Inline Check-in Prompt ===== */
