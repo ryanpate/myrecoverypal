@@ -41,7 +41,8 @@
     <!-- Search Bar -->
     <div class="search-section">
         <form method="get" action="{% url 'resources:list' %}">
-            <input type="text" name="q" value="{{ query }}" placeholder="Search resources..." class="search-input">
+            <i class="fas fa-magnifying-glass search-icon" aria-hidden="true"></i>
+            <input type="text" name="q" value="{{ query }}" placeholder="Search tools, articles, hotlines…" class="search-input">
             <button type="submit" class="search-button">Search</button>
         </form>
     </div>
