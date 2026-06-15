@@ -1205,6 +1205,14 @@ def progress_view(request):
     relapse_logs = RelapseLog.objects.filter(user=request.user)[:20]
     context['relapse_logs'] = relapse_logs
 
+    # Premium upsell card — only for free/expired users (not premium, court, or
+    # supporter). This is the highest-frequency surface, so it's the best place
+    # to create upgrade moments for users who never hit the AI Coach limit.
+    sub = getattr(request.user, 'subscription', None)
+    is_premium = bool(sub and sub.is_premium())
+    context['is_premium'] = is_premium
+    context['show_premium_cta'] = not is_premium and not (sub and sub.is_supporter())
+
     return render(request, 'accounts/progress.html', context)
 
 
