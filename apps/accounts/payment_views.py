@@ -58,11 +58,11 @@ def pricing(request):
     return render(request, 'accounts/pricing.html', context)
 
 
-def _build_checkout_session(request, plan):
+def _build_checkout_session(request, plan, coupon=None):
     """Create a Stripe Checkout session for `plan`, reusing/creating the user's
-    Stripe customer. Shared by the POST endpoint (pricing page) and the GET
-    one-click 'Keep Premium' link from trial-ending emails. Returns the Stripe
-    session object; raises on Stripe errors (caller handles).
+    Stripe customer. Shared by the POST endpoint (pricing page), the one-click
+    'Keep Premium' link, and the win-back link (which passes a coupon). Returns
+    the Stripe session object; raises on Stripe errors (caller handles).
     """
     subscription = getattr(request.user, 'subscription', None)
     stripe_customer_id = subscription.stripe_customer_id if subscription else None
@@ -99,7 +99,7 @@ def _build_checkout_session(request, plan):
         if subscription.trial_end > min_trial_end:
             subscription_data['trial_end'] = int(subscription.trial_end.timestamp())
 
-    return stripe.checkout.Session.create(
+    session_kwargs = dict(
         customer=stripe_customer_id,
         payment_method_types=['card'],
         line_items=[{'price': plan.stripe_price_id, 'quantity': 1}],
@@ -111,6 +111,34 @@ def _build_checkout_session(request, plan):
         metadata={'user_id': request.user.id, 'plan_id': plan.id},
         subscription_data=subscription_data,
     )
+    if coupon:
+        session_kwargs['discounts'] = [{'coupon': coupon}]
+    return stripe.checkout.Session.create(**session_kwargs)
+
+
+# Stripe coupon for win-back offers: 50% off for the first 3 months. Stable id
+# so it's created once and reused. percent_off + repeating gives churned users
+# a real low-cost taste back, which converts better than a one-time discount.
+WINBACK_COUPON_ID = 'winback50_3mo'
+
+
+def _get_winback_coupon():
+    """Get-or-create the 50%-off-for-3-months win-back coupon. Returns the
+    coupon id, or None on Stripe error (caller falls back to full price)."""
+    try:
+        return stripe.Coupon.retrieve(WINBACK_COUPON_ID).id
+    except stripe.error.InvalidRequestError:
+        try:
+            return stripe.Coupon.create(
+                id=WINBACK_COUPON_ID, percent_off=50, duration='repeating',
+                duration_in_months=3, name='Welcome back — 50% off 3 months',
+            ).id
+        except Exception as e:
+            logger.error(f'winback coupon create failed: {e}')
+            return None
+    except Exception as e:
+        logger.error(f'winback coupon retrieve failed: {e}')
+        return None
 
 
 @login_required
@@ -156,6 +184,29 @@ def keep_premium(request):
     except Exception as e:
         logger.error(f'keep_premium checkout error for user {request.user.id}: {e}')
         messages.warning(request, "Let's get you set up — choose your plan below.")
+        return redirect('accounts:pricing')
+
+
+@login_required
+def winback(request):
+    """One-click win-back link from the 50%-off re-engagement email.
+
+    Same as keep_premium but applies the win-back coupon (50% off 3 months).
+    Defaults to yearly; ?period=monthly to override. Falls back to pricing on
+    any failure so the user is never dead-ended.
+    """
+    period = 'monthly' if request.GET.get('period') == 'monthly' else 'yearly'
+    plan = (SubscriptionPlan.objects.filter(tier='premium', billing_period=period, is_active=True).first()
+            or SubscriptionPlan.objects.filter(tier='premium', is_active=True).order_by('-price').first())
+    if not plan:
+        return redirect('accounts:pricing')
+    try:
+        coupon = _get_winback_coupon()
+        checkout_session = _build_checkout_session(request, plan, coupon=coupon)
+        return redirect(checkout_session.url)
+    except Exception as e:
+        logger.error(f'winback checkout error for user {request.user.id}: {e}')
+        messages.warning(request, "Welcome back — choose your plan to claim your discount.")
         return redirect('accounts:pricing')
 
 
