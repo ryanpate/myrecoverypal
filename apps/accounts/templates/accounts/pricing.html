@@ -242,7 +242,7 @@
                             <button class="btn btn-light btn-block subscribe-btn stripe-only"
                                     data-plan-id="{{ plan.id }}"
                                     data-plan-name="{{ plan.name }}">
-                                Start 14-Day Free Trial
+                                Get Premium
                             </button>
                             <!-- IAP button (shown only on iOS native app via CSS) -->
                             <button class="btn btn-light btn-block iap-only iap-subscribe-btn"
@@ -465,7 +465,7 @@
                 if (data.error) {
                     alert('Error: ' + data.error);
                     this.disabled = false;
-                    this.innerHTML = 'Start 14-Day Free Trial';
+                    this.innerHTML = 'Get Premium';
                     return;
                 }
 
@@ -476,7 +476,7 @@
                 console.error('Error:', error);
                 alert('An error occurred. Please try again.');
                 this.disabled = false;
-                this.innerHTML = 'Start 14-Day Free Trial';
+                this.innerHTML = 'Get Premium';
             }
         });
     });

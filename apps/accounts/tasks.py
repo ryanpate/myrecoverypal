@@ -789,12 +789,12 @@ def send_trial_ending_notifications(self):
         if Notification.objects.filter(
             recipient=user,
             notification_type='milestone',
-            link='/accounts/pricing/',
+            link='/accounts/keep-premium/',
             message__contains='trial ends tomorrow',
         ).exists():
             continue
 
-        # Create in-app notification
+        # Create in-app notification — one-click conversion link
         try:
             Notification.objects.create(
                 recipient=user,
@@ -802,7 +802,7 @@ def send_trial_ending_notifications(self):
                 notification_type='milestone',
                 title='Trial Ending Soon',
                 message='Your Premium trial ends tomorrow. Keep unlimited AI Coach, groups, and analytics.',
-                link='/accounts/pricing/',
+                link='/accounts/keep-premium/',
             )
         except Exception as e:
             logger.error(f"Error creating trial-ending notification for {user.email}: {e}")
@@ -819,7 +819,7 @@ def send_trial_ending_notifications(self):
                 f"- 90-day progress analytics\n"
                 f"- Journal export\n\n"
                 f"Continue for just $4.99/month:\n"
-                f"{site_url}/accounts/pricing/\n\n"
+                f"{site_url}/accounts/keep-premium/\n\n"
                 f"Your recovery journey matters. We're here for you.\n"
                 f"- The MyRecoveryPal Team"
             )
@@ -839,7 +839,7 @@ def send_trial_ending_notifications(self):
                         <li><strong>Journal export</strong></li>
                     </ul>
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="{site_url}/accounts/pricing/" style="display: inline-block; background: linear-gradient(135deg, #52b788, #40916c); color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px;">Keep Premium — $4.99/month</a>
+                        <a href="{site_url}/accounts/keep-premium/" style="display: inline-block; background: linear-gradient(135deg, #52b788, #40916c); color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px;">Keep Premium — $4.99/month</a>
                     </div>
                     <p style="color: #888; font-size: 13px; text-align: center;">Cancel anytime. No questions asked.</p>
                 </div>
