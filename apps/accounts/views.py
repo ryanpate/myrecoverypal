@@ -1213,6 +1213,16 @@ def progress_view(request):
     context['is_premium'] = is_premium
     context['show_premium_cta'] = not is_premium and not (sub and sub.is_supporter())
 
+    # Supporter invite card — promotes the $7.99 Supporter tier (a loved one pays
+    # to follow this user's recovery). Shown when we're NOT showing the Premium
+    # upsell and the user hasn't invited anyone yet, so each user sees at most one
+    # card. iOS-safe: the in-app user only *invites*; the supporter pays on web.
+    from apps.accounts.supporter_models import SupporterLink
+    has_supporter_link = SupporterLink.objects.filter(
+        member=request.user, status__in=['pending', 'active', 'paused']
+    ).exists()
+    context['show_supporter_cta'] = (not context['show_premium_cta']) and not has_supporter_link
+
     return render(request, 'accounts/progress.html', context)
 
 
