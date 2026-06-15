@@ -818,7 +818,7 @@ def send_trial_ending_notifications(self):
                 f"- Unlimited recovery groups\n"
                 f"- 90-day progress analytics\n"
                 f"- Journal export\n\n"
-                f"Continue for just $4.99/month:\n"
+                f"Continue for just $9.99/month:\n"
                 f"{site_url}/accounts/keep-premium/\n\n"
                 f"Your recovery journey matters. We're here for you.\n"
                 f"- The MyRecoveryPal Team"
@@ -839,7 +839,7 @@ def send_trial_ending_notifications(self):
                         <li><strong>Journal export</strong></li>
                     </ul>
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="{site_url}/accounts/keep-premium/" style="display: inline-block; background: linear-gradient(135deg, #52b788, #40916c); color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px;">Keep Premium — $4.99/month</a>
+                        <a href="{site_url}/accounts/keep-premium/" style="display: inline-block; background: linear-gradient(135deg, #52b788, #40916c); color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px;">Keep Premium — $9.99/month</a>
                     </div>
                     <p style="color: #888; font-size: 13px; text-align: center;">Cancel anytime. No questions asked.</p>
                 </div>
@@ -910,7 +910,7 @@ def expire_ended_trials(self):
                 f"Hi {name},\n\n"
                 f"Your 14-day Premium trial on MyRecoveryPal has ended, so your "
                 f"account is now on the free plan.\n\n"
-                f"Upgrade to Premium ($4.99/month) to get back:\n"
+                f"Upgrade to Premium ($9.99/month) to get back:\n"
                 f"- AI Recovery Coach Anchor (20 messages/day)\n"
                 f"- Unlimited recovery groups\n"
                 f"- 90-day progress analytics\n"
