@@ -789,12 +789,12 @@ def send_trial_ending_notifications(self):
         if Notification.objects.filter(
             recipient=user,
             notification_type='milestone',
-            link='/accounts/pricing/',
+            link='/accounts/keep-premium/',
             message__contains='trial ends tomorrow',
         ).exists():
             continue
 
-        # Create in-app notification
+        # Create in-app notification — one-click conversion link
         try:
             Notification.objects.create(
                 recipient=user,
@@ -802,7 +802,7 @@ def send_trial_ending_notifications(self):
                 notification_type='milestone',
                 title='Trial Ending Soon',
                 message='Your Premium trial ends tomorrow. Keep unlimited AI Coach, groups, and analytics.',
-                link='/accounts/pricing/',
+                link='/accounts/keep-premium/',
             )
         except Exception as e:
             logger.error(f"Error creating trial-ending notification for {user.email}: {e}")
@@ -818,8 +818,8 @@ def send_trial_ending_notifications(self):
                 f"- Unlimited recovery groups\n"
                 f"- 90-day progress analytics\n"
                 f"- Journal export\n\n"
-                f"Continue for just $4.99/month:\n"
-                f"{site_url}/accounts/pricing/\n\n"
+                f"Continue for just $9.99/month:\n"
+                f"{site_url}/accounts/keep-premium/\n\n"
                 f"Your recovery journey matters. We're here for you.\n"
                 f"- The MyRecoveryPal Team"
             )
@@ -839,7 +839,7 @@ def send_trial_ending_notifications(self):
                         <li><strong>Journal export</strong></li>
                     </ul>
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="{site_url}/accounts/pricing/" style="display: inline-block; background: linear-gradient(135deg, #52b788, #40916c); color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px;">Keep Premium — $4.99/month</a>
+                        <a href="{site_url}/accounts/keep-premium/" style="display: inline-block; background: linear-gradient(135deg, #52b788, #40916c); color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px;">Keep Premium — $9.99/month</a>
                     </div>
                     <p style="color: #888; font-size: 13px; text-align: center;">Cancel anytime. No questions asked.</p>
                 </div>
@@ -910,7 +910,7 @@ def expire_ended_trials(self):
                 f"Hi {name},\n\n"
                 f"Your 14-day Premium trial on MyRecoveryPal has ended, so your "
                 f"account is now on the free plan.\n\n"
-                f"Upgrade to Premium ($4.99/month) to get back:\n"
+                f"Upgrade to Premium ($9.99/month) to get back:\n"
                 f"- AI Recovery Coach Anchor (20 messages/day)\n"
                 f"- Unlimited recovery groups\n"
                 f"- 90-day progress analytics\n"
@@ -948,6 +948,84 @@ def expire_ended_trials(self):
 
     logger.info(f"expire_ended_trials: downgraded {downgraded_count} subscriptions")
     return downgraded_count
+
+
+@shared_task(bind=True, max_retries=3)
+def send_winback_offers(self):
+    """Email a 50%-off win-back offer to users whose Premium trial lapsed.
+
+    Targets subscriptions that expired 24h–30d ago and haven't been offered yet
+    (winback_sent_at is null). The 24h floor gives a beat after the trial-ended
+    email; the 30d ceiling avoids blasting long-dormant users on first run.
+    Cancelled users are the cheapest revenue pool — a fast 50%-off offer
+    recovers 10–15% of them. Runs daily.
+    """
+    from .payment_models import Subscription
+
+    site_url = getattr(settings, 'SITE_URL', 'https://www.myrecoverypal.com')
+    now = timezone.now()
+
+    targets = Subscription.objects.filter(
+        status='expired',
+        winback_sent_at__isnull=True,
+        trial_end__lt=now - timedelta(hours=24),
+        trial_end__gte=now - timedelta(days=30),
+    ).select_related('user')
+
+    sent_count = 0
+    for sub in targets:
+        user = sub.user
+        if not getattr(user, 'email', None) or not getattr(user, 'email_notifications', True):
+            continue
+        try:
+            name = user.first_name or user.username
+            subject = f"Welcome back to Premium — 50% off, {name}"
+            link = f"{site_url}/accounts/winback/"
+            plain_message = (
+                f"Hi {name},\n\n"
+                f"We'd love to have you back on Premium. Here's 50% off your "
+                f"first 3 months:\n"
+                f"- AI Recovery Coach Anchor (20 messages/day)\n"
+                f"- Unlimited recovery groups\n"
+                f"- 90-day progress analytics\n"
+                f"- Journal export\n\n"
+                f"Claim your 50% off: {link}\n\n"
+                f"Your recovery journey matters. We're here for you.\n"
+                f"- The MyRecoveryPal Team"
+            )
+            html_message = f"""
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #2d6a4f, #52b788); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+                    <h1 style="color: white; margin: 0; font-size: 24px;">Welcome Back — 50% Off</h1>
+                </div>
+                <div style="padding: 30px; background: white;">
+                    <p style="color: #333; font-size: 16px;">Hi {name},</p>
+                    <p style="color: #555; font-size: 15px; line-height: 1.6;">We'd love to have you back. Here's <strong>50% off your first 3 months</strong> of Premium:</p>
+                    <ul style="color: #555; font-size: 15px; line-height: 1.8;">
+                        <li><strong>AI Recovery Coach Anchor</strong> — 20 messages/day</li>
+                        <li><strong>Unlimited recovery groups</strong></li>
+                        <li><strong>90-day progress analytics</strong></li>
+                        <li><strong>Journal export</strong></li>
+                    </ul>
+                    <p style="text-align: center; margin: 28px 0;">
+                        <a href="{link}" style="background: #2d6a4f; color: white; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: 700;">Claim 50% Off</a>
+                    </p>
+                    <p style="color: #888; font-size: 13px; text-align: center;">Cancel anytime. No questions asked.</p>
+                </div>
+            </div>
+            """
+            success = send_email(subject=subject, plain_message=plain_message,
+                                 html_message=html_message, recipient_email=user.email)
+            if success:
+                sub.winback_sent_at = now
+                sub.save(update_fields=['winback_sent_at'])
+                sent_count += 1
+                logger.info(f"Sent win-back offer to {user.email}")
+        except Exception as e:
+            logger.error(f"Error sending win-back offer to {user.email}: {e}")
+
+    logger.info(f"send_winback_offers: sent={sent_count}")
+    return {'sent': sent_count}
 
 
 @shared_task(bind=True, max_retries=3)

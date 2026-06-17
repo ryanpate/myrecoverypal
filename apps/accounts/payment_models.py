@@ -81,6 +81,9 @@ class Subscription(models.Model):
     trial_end = models.DateTimeField(null=True, blank=True)
     canceled_at = models.DateTimeField(null=True, blank=True)
 
+    # Win-back: timestamp the 50%-off re-engagement offer was emailed (once).
+    winback_sent_at = models.DateTimeField(null=True, blank=True)
+
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

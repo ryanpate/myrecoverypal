@@ -1,0 +1,80 @@
+{# Value-framed, dismissible Premium upsell. Show by passing show_premium_cta=True
+   from the view (only for free/expired users). Links to the pricing page, which
+   renders the correct web (Stripe) vs iOS (IAP) purchase button per platform.
+   Dismiss hides it for 7 days via localStorage so it never nags. #}
+{% if show_premium_cta %}
+<div class="premium-upsell-card" id="premiumUpsellCard" style="display:none;" role="complementary" aria-label="Premium upgrade">
+    <button class="premium-upsell-dismiss" id="premiumUpsellDismiss" type="button" aria-label="Dismiss">&times;</button>
+    <div class="premium-upsell-body">
+        <div class="premium-upsell-icon" aria-hidden="true">⚓</div>
+        <div>
+            <div class="premium-upsell-title">Go deeper in your recovery</div>
+            <div class="premium-upsell-text">Unlock 90-day mood &amp; craving trends, unlimited Anchor coaching, and journal export.</div>
+        </div>
+    </div>
+    <a href="{% url 'accounts:pricing' %}" class="premium-upsell-btn">See Premium</a>
+</div>
+<style>
+    .premium-upsell-card {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        background: linear-gradient(135deg, #2d6a4f, #52b788);
+        color: #fff;
+        border-radius: 16px;
+        padding: 1.1rem 1.25rem;
+        margin: 0 0 1.25rem;
+        box-shadow: 0 6px 18px rgba(45,106,79,0.25);
+    }
+    .premium-upsell-body { display: flex; align-items: center; gap: 0.9rem; flex: 1 1 240px; }
+    .premium-upsell-icon { font-size: 1.9rem; line-height: 1; }
+    .premium-upsell-title { font-weight: 700; font-size: 1.05rem; }
+    .premium-upsell-text { font-size: 0.9rem; opacity: 0.92; line-height: 1.4; }
+    .premium-upsell-btn {
+        background: #fff;
+        color: #2d6a4f;
+        font-weight: 700;
+        padding: 0.6rem 1.3rem;
+        border-radius: 50px;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: transform 0.15s ease;
+    }
+    .premium-upsell-btn:hover { transform: translateY(-1px); color: #1b4332; }
+    .premium-upsell-dismiss {
+        position: absolute;
+        top: 6px;
+        right: 10px;
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.8);
+        font-size: 1.4rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 2px 6px;
+    }
+    .premium-upsell-dismiss:hover { color: #fff; }
+</style>
+<script>
+(function(){
+    var card = document.getElementById('premiumUpsellCard');
+    if (!card) return;
+    var KEY = 'mrp_premium_cta_dismissed_until';
+    try {
+        var until = parseInt(localStorage.getItem(KEY) || '0', 10);
+        if (Date.now() < until) return;  // stay hidden during the 7-day window
+    } catch (e) { /* localStorage unavailable — just show it */ }
+    card.style.display = '';
+    var dismiss = document.getElementById('premiumUpsellDismiss');
+    if (dismiss) {
+        dismiss.addEventListener('click', function(){
+            try { localStorage.setItem(KEY, String(Date.now() + 7*24*60*60*1000)); } catch (e) {}
+            card.style.display = 'none';
+        });
+    }
+})();
+</script>
+{% endif %}

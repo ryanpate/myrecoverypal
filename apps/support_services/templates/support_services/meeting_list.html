@@ -182,6 +182,8 @@
         </ol>
     </nav>
 
+    {% include 'support_services/_court_compliance_nudge.html' %}
+
     <!-- Search and Filters -->
     <div class="meeting-filters">
         <form method="get" action="{% url 'support_services:meeting_list' %}" id="filterForm">
@@ -487,8 +489,11 @@
                 <div class="no-results">
                     <i class="fas fa-search fa-3x text-muted mb-3"></i>
                     <h3>No meetings found</h3>
-                    <p>Try adjusting your search filters or browse all meetings.</p>
-                    <a href="{% url 'support_services:meeting_list' %}" class="btn btn-primary">
+                    <p>Try adjusting your search filters, or search the worldwide network of AA, NA, Al-Anon, SMART and more.</p>
+                    <a href="{% url 'support_services:meeting_finder' %}" class="btn btn-info">
+                        <i class="fas fa-globe"></i> Worldwide Meeting Search
+                    </a>
+                    <a href="{% url 'support_services:meeting_list' %}" class="btn btn-outline-primary ms-2">
                         View All Meetings
                     </a>
                     <a href="{% url 'support_services:submit_meeting' %}" class="btn btn-outline-primary ms-2">

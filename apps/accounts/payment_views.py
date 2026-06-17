@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST
 from django.urls import reverse
 from django.utils import timezone
-from datetime import datetime, timezone as dt_timezone
+from datetime import datetime, timedelta, timezone as dt_timezone
 from decimal import Decimal
 import logging
 
@@ -58,6 +58,89 @@ def pricing(request):
     return render(request, 'accounts/pricing.html', context)
 
 
+def _build_checkout_session(request, plan, coupon=None):
+    """Create a Stripe Checkout session for `plan`, reusing/creating the user's
+    Stripe customer. Shared by the POST endpoint (pricing page), the one-click
+    'Keep Premium' link, and the win-back link (which passes a coupon). Returns
+    the Stripe session object; raises on Stripe errors (caller handles).
+    """
+    subscription = getattr(request.user, 'subscription', None)
+    stripe_customer_id = subscription.stripe_customer_id if subscription else None
+
+    if not stripe_customer_id:
+        customer = stripe.Customer.create(
+            email=request.user.email,
+            metadata={'user_id': request.user.id, 'username': request.user.username},
+        )
+        stripe_customer_id = customer.id
+        if not subscription:
+            subscription = Subscription.objects.create(
+                user=request.user, stripe_customer_id=stripe_customer_id
+            )
+        else:
+            subscription.stripe_customer_id = stripe_customer_id
+            subscription.save()
+
+    sub_metadata = {
+        'user_id': str(request.user.id),
+        'plan_id': str(plan.id),
+        'tier': plan.tier,
+    }
+    subscription_data = {'metadata': sub_metadata}
+    # Never grant a SECOND free trial. Every user already gets a 14-day app
+    # trial at signup, so re-offering "start a 14-day free trial / $0 today"
+    # at checkout just confuses them into abandoning (observed: 0/13 completed).
+    # Instead, align Stripe's trial_end to whatever the user has LEFT on their
+    # existing trial, so they're billed exactly when the free period they were
+    # promised ends. If that's gone (or <48h out, Stripe's minimum), they
+    # subscribe and are billed now.
+    if subscription and not subscription.stripe_subscription_id and subscription.trial_end:
+        min_trial_end = timezone.now() + timedelta(hours=48)
+        if subscription.trial_end > min_trial_end:
+            subscription_data['trial_end'] = int(subscription.trial_end.timestamp())
+
+    session_kwargs = dict(
+        customer=stripe_customer_id,
+        payment_method_types=['card'],
+        line_items=[{'price': plan.stripe_price_id, 'quantity': 1}],
+        mode='subscription',
+        success_url=request.build_absolute_uri(
+            reverse('accounts:payment_success')
+        ) + '?session_id={CHECKOUT_SESSION_ID}',
+        cancel_url=request.build_absolute_uri(reverse('accounts:payment_canceled')),
+        metadata={'user_id': request.user.id, 'plan_id': plan.id},
+        subscription_data=subscription_data,
+    )
+    if coupon:
+        session_kwargs['discounts'] = [{'coupon': coupon}]
+    return stripe.checkout.Session.create(**session_kwargs)
+
+
+# Stripe coupon for win-back offers: 50% off for the first 3 months. Stable id
+# so it's created once and reused. percent_off + repeating gives churned users
+# a real low-cost taste back, which converts better than a one-time discount.
+WINBACK_COUPON_ID = 'winback50_3mo'
+
+
+def _get_winback_coupon():
+    """Get-or-create the 50%-off-for-3-months win-back coupon. Returns the
+    coupon id, or None on Stripe error (caller falls back to full price)."""
+    try:
+        return stripe.Coupon.retrieve(WINBACK_COUPON_ID).id
+    except stripe.error.InvalidRequestError:
+        try:
+            return stripe.Coupon.create(
+                id=WINBACK_COUPON_ID, percent_off=50, duration='repeating',
+                duration_in_months=3, name='Welcome back — 50% off 3 months',
+            ).id
+        except Exception as e:
+            logger.error(f'winback coupon create failed: {e}')
+            return None
+    except Exception as e:
+        logger.error(f'winback coupon retrieve failed: {e}')
+        return None
+
+
 @login_required
 @require_POST
 def create_checkout_session(request):
@@ -67,79 +150,7 @@ def create_checkout_session(request):
     try:
         plan_id = request.POST.get('plan_id')
         plan = get_object_or_404(SubscriptionPlan, id=plan_id, is_active=True)
-
-        # Get or create Stripe customer
-        subscription = None
-        if hasattr(request.user, 'subscription'):
-            subscription = request.user.subscription
-            stripe_customer_id = subscription.stripe_customer_id
-        else:
-            stripe_customer_id = None
-
-        if not stripe_customer_id:
-            # Create new Stripe customer
-            customer = stripe.Customer.create(
-                email=request.user.email,
-                metadata={
-                    'user_id': request.user.id,
-                    'username': request.user.username,
-                }
-            )
-            stripe_customer_id = customer.id
-
-            # Create or update subscription record
-            if not subscription:
-                subscription = Subscription.objects.create(
-                    user=request.user,
-                    stripe_customer_id=stripe_customer_id
-                )
-            else:
-                subscription.stripe_customer_id = stripe_customer_id
-                subscription.save()
-
-        # Check if user is still in their initial trial (no prior Stripe subscription)
-        trial_kwargs = {}
-        if subscription and not subscription.stripe_subscription_id:
-            # First-time subscriber — give 14-day free trial on Stripe side
-            trial_kwargs['subscription_data'] = {
-                'trial_period_days': 14,
-                'metadata': {
-                    'user_id': str(request.user.id),
-                    'plan_id': str(plan.id),
-                    'tier': plan.tier,
-                },
-            }
-        else:
-            trial_kwargs['subscription_data'] = {
-                'metadata': {
-                    'user_id': str(request.user.id),
-                    'plan_id': str(plan.id),
-                    'tier': plan.tier,
-                },
-            }
-
-        # Create Checkout Session
-        checkout_session = stripe.checkout.Session.create(
-            customer=stripe_customer_id,
-            payment_method_types=['card'],
-            line_items=[{
-                'price': plan.stripe_price_id,
-                'quantity': 1,
-            }],
-            mode='subscription',
-            success_url=request.build_absolute_uri(
-                reverse('accounts:payment_success')
-            ) + '?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=request.build_absolute_uri(
-                reverse('accounts:payment_canceled')
-            ),
-            metadata={
-                'user_id': request.user.id,
-                'plan_id': plan.id,
-            },
-            **trial_kwargs,
-        )
-
+        checkout_session = _build_checkout_session(request, plan)
         return JsonResponse({
             'sessionId': checkout_session.id,
             'url': checkout_session.url
@@ -150,6 +161,53 @@ def create_checkout_session(request):
         return JsonResponse({
             'error': str(e)
         }, status=400)
+
+
+@login_required
+def keep_premium(request):
+    """One-click conversion link for trial-ending emails/notifications.
+
+    GET so it works straight from an email button. Picks the Premium plan
+    (yearly by default — the plan we want to push; ?period=monthly to override)
+    and 302-redirects to Stripe Checkout. On any failure, falls back to the
+    pricing page so the user is never dead-ended.
+    """
+    period = 'monthly' if request.GET.get('period') == 'monthly' else 'yearly'
+    plan = (SubscriptionPlan.objects.filter(tier='premium', billing_period=period, is_active=True).first()
+            or SubscriptionPlan.objects.filter(tier='premium', is_active=True).order_by('-price').first())
+    if not plan:
+        messages.info(request, "Choose a plan to keep Premium.")
+        return redirect('accounts:pricing')
+    try:
+        checkout_session = _build_checkout_session(request, plan)
+        return redirect(checkout_session.url)
+    except Exception as e:
+        logger.error(f'keep_premium checkout error for user {request.user.id}: {e}')
+        messages.warning(request, "Let's get you set up — choose your plan below.")
+        return redirect('accounts:pricing')
+
+
+@login_required
+def winback(request):
+    """One-click win-back link from the 50%-off re-engagement email.
+
+    Same as keep_premium but applies the win-back coupon (50% off 3 months).
+    Defaults to yearly; ?period=monthly to override. Falls back to pricing on
+    any failure so the user is never dead-ended.
+    """
+    period = 'monthly' if request.GET.get('period') == 'monthly' else 'yearly'
+    plan = (SubscriptionPlan.objects.filter(tier='premium', billing_period=period, is_active=True).first()
+            or SubscriptionPlan.objects.filter(tier='premium', is_active=True).order_by('-price').first())
+    if not plan:
+        return redirect('accounts:pricing')
+    try:
+        coupon = _get_winback_coupon()
+        checkout_session = _build_checkout_session(request, plan, coupon=coupon)
+        return redirect(checkout_session.url)
+    except Exception as e:
+        logger.error(f'winback checkout error for user {request.user.id}: {e}')
+        messages.warning(request, "Welcome back — choose your plan to claim your discount.")
+        return redirect('accounts:pricing')
 
 
 @login_required

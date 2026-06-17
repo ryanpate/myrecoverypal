@@ -1,0 +1,80 @@
+{# Promotes the Supporter tier: invite a loved one to follow your recovery.
+   Show by passing show_supporter_cta=True from the view. The in-app user only
+   invites here (iOS-safe — no purchase); the supporter pays on web when they
+   accept. Dismiss hides it for 14 days via localStorage. #}
+{% if show_supporter_cta %}
+<div class="supporter-invite-card" id="supporterInviteCard" style="display:none;" role="complementary" aria-label="Invite a supporter">
+    <button class="supporter-invite-dismiss" id="supporterInviteDismiss" type="button" aria-label="Dismiss">&times;</button>
+    <div class="supporter-invite-body">
+        <div class="supporter-invite-icon" aria-hidden="true"><i class="fas fa-hand-holding-heart"></i></div>
+        <div>
+            <div class="supporter-invite-title">Bring someone into your corner</div>
+            <div class="supporter-invite-text">Invite a loved one to follow your recovery and cheer you on — you choose exactly what they see.</div>
+        </div>
+    </div>
+    <a href="{% url 'accounts:supporter_invite' %}" class="supporter-invite-btn">Invite a Supporter</a>
+</div>
+<style>
+    .supporter-invite-card {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        background: linear-gradient(135deg, #1e4d8b, #4db8e8);
+        color: #fff;
+        border-radius: 16px;
+        padding: 1.1rem 1.25rem;
+        margin: 0 0 1.25rem;
+        box-shadow: 0 6px 18px rgba(30,77,139,0.25);
+    }
+    .supporter-invite-body { display: flex; align-items: center; gap: 0.9rem; flex: 1 1 240px; }
+    .supporter-invite-icon { font-size: 1.6rem; line-height: 1; }
+    .supporter-invite-title { font-weight: 700; font-size: 1.05rem; }
+    .supporter-invite-text { font-size: 0.9rem; opacity: 0.92; line-height: 1.4; }
+    .supporter-invite-btn {
+        background: #fff;
+        color: #1e4d8b;
+        font-weight: 700;
+        padding: 0.6rem 1.3rem;
+        border-radius: 50px;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: transform 0.15s ease;
+    }
+    .supporter-invite-btn:hover { transform: translateY(-1px); color: #0f2d56; }
+    .supporter-invite-dismiss {
+        position: absolute;
+        top: 6px;
+        right: 10px;
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.8);
+        font-size: 1.4rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 2px 6px;
+    }
+    .supporter-invite-dismiss:hover { color: #fff; }
+</style>
+<script>
+(function(){
+    var card = document.getElementById('supporterInviteCard');
+    if (!card) return;
+    var KEY = 'mrp_supporter_cta_dismissed_until';
+    try {
+        var until = parseInt(localStorage.getItem(KEY) || '0', 10);
+        if (Date.now() < until) return;  // stay hidden during the 14-day window
+    } catch (e) { /* localStorage unavailable — just show it */ }
+    card.style.display = '';
+    var dismiss = document.getElementById('supporterInviteDismiss');
+    if (dismiss) {
+        dismiss.addEventListener('click', function(){
+            try { localStorage.setItem(KEY, String(Date.now() + 14*24*60*60*1000)); } catch (e) {}
+            card.style.display = 'none';
+        });
+    }
+})();
+</script>
+{% endif %}

@@ -1,0 +1,69 @@
+{# Contextual Court Compliance nudge for the meeting finder — the highest-intent
+   spot for court-ordered users. Shown only to authenticated non-court users, and
+   only on web (stripe-only hides it in the iOS app, where Court is web-only).
+   Links to the public Court landing page. Dismissible for 30 days (most
+   meeting-finder users aren't court-ordered, so it shouldn't nag). #}
+{% if user.is_authenticated and not is_court_user %}
+<div class="court-nudge stripe-only" id="courtNudge" style="display:none;" role="complementary" aria-label="Court Compliance">
+    <span class="court-nudge-icon" aria-hidden="true"><i class="fas fa-gavel"></i></span>
+    <span class="court-nudge-text"><strong>Court-ordered to attend meetings?</strong> Get hash-verified, court-ready proof of attendance you can send straight to your PO.</span>
+    <a href="{% url 'core:court_ordered_meeting_tracker' %}" class="court-nudge-btn">Learn more</a>
+    <button class="court-nudge-dismiss" id="courtNudgeDismiss" type="button" aria-label="Dismiss">&times;</button>
+</div>
+<style>
+    .court-nudge {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        background: linear-gradient(135deg, #1e4d8b, #2d6a9f);
+        color: #fff;
+        border-radius: 12px;
+        padding: 0.85rem 2.25rem 0.85rem 1rem;
+        margin: 0 0 1.5rem;
+    }
+    .court-nudge-icon { font-size: 1.2rem; }
+    .court-nudge-text { flex: 1 1 240px; font-size: 0.9rem; line-height: 1.4; }
+    .court-nudge-btn {
+        background: #fff;
+        color: #1e4d8b;
+        font-weight: 700;
+        padding: 0.45rem 1.1rem;
+        border-radius: 50px;
+        text-decoration: none;
+        white-space: nowrap;
+        font-size: 0.88rem;
+    }
+    .court-nudge-btn:hover { color: #0f2d56; }
+    .court-nudge-dismiss {
+        position: absolute;
+        top: 4px;
+        right: 9px;
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.8);
+        font-size: 1.3rem;
+        line-height: 1;
+        cursor: pointer;
+    }
+    .court-nudge-dismiss:hover { color: #fff; }
+</style>
+<script>
+(function(){
+    var el = document.getElementById('courtNudge');
+    if (!el) return;
+    var KEY = 'mrp_court_nudge_dismissed_until';
+    try {
+        var until = parseInt(localStorage.getItem(KEY) || '0', 10);
+        if (Date.now() < until) return;
+    } catch (e) {}
+    el.style.display = '';
+    var d = document.getElementById('courtNudgeDismiss');
+    if (d) d.addEventListener('click', function(){
+        try { localStorage.setItem(KEY, String(Date.now() + 30*24*60*60*1000)); } catch (e) {}
+        el.style.display = 'none';
+    });
+})();
+</script>
+{% endif %}
