@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ meeting.name }} - Recovery Meeting - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .meeting-detail-card {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .meeting-detail-name {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #1F2937;
+        margin-bottom: 8px;
+    }
+
+    .meeting-detail-time {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #7C3AED;
+        margin-bottom: 16px;
+    }
+
+    .attendance-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .attendance-badge.in_person { background: #DCFCE7; color: #166534; }
+    .attendance-badge.online { background: #DBEAFE; color: #1E40AF; }
+    .attendance-badge.hybrid { background: #FEF3C7; color: #92400E; }
+
+    .meeting-detail-section {
+        margin-top: 20px;
+    }
+
+    .meeting-detail-section h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        margin-bottom: 10px;
+    }
+
+    .meeting-detail-location {
+        color: #4B5563;
+        line-height: 1.6;
+    }
+
+    .meeting-types {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .meeting-type-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        background: #EDE9FE;
+        color: #7C3AED;
+        border-radius: 15px;
+        font-size: 0.85rem;
+    }
+
+    .nearby-meeting {
+        display: block;
+        padding: 12px 0;
+        border-bottom: 1px solid #F3F4F6;
+        color: #1F2937;
+        text-decoration: none;
+    }
+
+    .nearby-meeting:last-child { border-bottom: none; }
+    .nearby-meeting:hover { color: #7C3AED; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="mb-3">
+        <a href="{% url 'support_services:meeting_list' %}" class="text-decoration-none">
+            &larr; Back to meetings
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="meeting-detail-card">
+                <h1 class="meeting-detail-name">{{ meeting.name }}</h1>
+                <div class="meeting-detail-time">
+                    {% if meeting.day is not None %}{{ meeting.get_day_display }}{% endif %}
+                    {% if meeting.time %}
+                        {{ meeting.time|time:"g:i A" }}{% if meeting.end_time %} &ndash; {{ meeting.end_time|time:"g:i A" }}{% endif %}
+                    {% endif %}
+                </div>
+                <span class="attendance-badge {{ meeting.attendance_option }}">
+                    {{ meeting.get_attendance_option_display }}
+                </span>
+
+                {% if meeting.attendance_option != 'in_person' and meeting.conference_url %}
+                <div class="meeting-detail-section">
+                    <h3>Join Online</h3>
+                    <a href="{{ meeting.conference_url }}" target="_blank" rel="noopener" class="btn btn-primary">
+                        Join Video Meeting
+                    </a>
+                    {% if meeting.conference_url_notes %}
+                        <p class="text-muted mt-2 mb-0">{{ meeting.conference_url_notes }}</p>
+                    {% endif %}
+                    {% if meeting.conference_phone %}
+                        <p class="mt-2 mb-0"><strong>Phone:</strong> {{ meeting.conference_phone }}
+                        {% if meeting.conference_phone_notes %}<br><small class="text-muted">{{ meeting.conference_phone_notes }}</small>{% endif %}
+                        </p>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {% if meeting.attendance_option != 'online' %}
+                {% if meeting.location or meeting.formatted_address or meeting.address or meeting.city %}
+                <div class="meeting-detail-section">
+                    <h3>Location</h3>
+                    <div class="meeting-detail-location">
+                        {% if meeting.location %}<strong>{{ meeting.location }}</strong><br>{% endif %}
+                        {% if meeting.formatted_address %}
+                            {{ meeting.formatted_address }}
+                        {% else %}
+                            {% if meeting.address %}{{ meeting.address }}<br>{% endif %}
+                            {% if meeting.city %}{{ meeting.city }}{% if meeting.state %}, {{ meeting.state }}{% endif %} {{ meeting.postal_code }}{% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {% if meeting.group %}
+                <div class="meeting-detail-section">
+                    <h3>Group</h3>
+                    <p class="mb-1">{{ meeting.group }}</p>
+                    {% if meeting.group_notes %}<p class="text-muted mb-0">{{ meeting.group_notes }}</p>{% endif %}
+                </div>
+                {% endif %}
+
+                {% if meeting.types %}
+                <div class="meeting-detail-section">
+                    <h3>Meeting Types</h3>
+                    <div class="meeting-types">
+                        {% for type_code in meeting.types %}
+                            <span class="meeting-type-badge">{{ type_code }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if meeting.notes %}
+                <div class="meeting-detail-section">
+                    <h3>Notes</h3>
+                    <p class="mb-0">{{ meeting.notes|linebreaksbr }}</p>
+                </div>
+                {% endif %}
+
+                {% if meeting.website or meeting.email or meeting.phone %}
+                <div class="meeting-detail-section">
+                    <h3>Contact</h3>
+                    {% if meeting.website %}<p class="mb-1"><a href="{{ meeting.website }}" target="_blank" rel="noopener">{{ meeting.website }}</a></p>{% endif %}
+                    {% if meeting.email %}<p class="mb-1"><a href="mailto:{{ meeting.email }}">{{ meeting.email }}</a></p>{% endif %}
+                    {% if meeting.phone %}<p class="mb-0">{{ meeting.phone }}</p>{% endif %}
+                </div>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                <div class="meeting-detail-section">
+                    <a href="{% url 'support_services:bookmark_toggle' 'meeting' meeting.id %}" class="btn btn-outline-primary">
+                        {% if is_bookmarked %}Remove Bookmark{% else %}Bookmark this Meeting{% endif %}
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            {% if nearby_meetings %}
+            <div class="meeting-detail-card">
+                <h3 style="font-size: 1.1rem; font-weight: 600; color: #1F2937; margin-bottom: 12px;">
+                    Nearby Meetings
+                </h3>
+                {% for nearby in nearby_meetings %}
+                <a href="{% url 'support_services:meeting_detail' nearby.slug %}" class="nearby-meeting">
+                    <strong>{{ nearby.name }}</strong><br>
+                    <small class="text-muted">
+                        {% if nearby.day is not None %}{{ nearby.get_day_display }}{% endif %}
+                        {% if nearby.time %}{{ nearby.time|time:"g:i A" }}{% endif %}
+                    </small>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
