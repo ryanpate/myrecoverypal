@@ -145,6 +145,16 @@ class EnrollmentConsentTest(TestCase):
         self.assertFalse(FacilityMembership.objects.filter(
             facility=self.facility, user=self.user, status='active').exists())
 
+    def test_paused_facility_rejects_enrollment(self):
+        self.facility.status = 'paused'
+        self.facility.save()
+        self.client.force_login(self.user)
+        self.client.post(
+            reverse('accounts:facility_join', args=[self.invite.code]),
+            {'consent': 'on'})
+        self.assertFalse(FacilityMembership.objects.filter(
+            facility=self.facility, user=self.user, status='active').exists())
+
     def test_member_can_revoke(self):
         self.client.force_login(self.user)
         m = FacilityMembership.objects.create(

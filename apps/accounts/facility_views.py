@@ -15,6 +15,10 @@ def facility_join(request, code):
     invite = get_object_or_404(FacilityInvite, code=code)
     facility = invite.facility
 
+    if facility.status != 'active':
+        messages.error(request, 'This facility is not currently accepting new members.')
+        return redirect('accounts:progress')
+
     membership = FacilityMembership.objects.filter(
         facility=facility, user=request.user).first()
     if membership and membership.status == 'active':

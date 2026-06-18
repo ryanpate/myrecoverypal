@@ -33,8 +33,6 @@ class Command(BaseCommand):
                 username = f'{base}{i}'
                 i += 1
             user = User.objects.create_user(username=username, email=email)
-            user.set_unusable_password()
-            user.save()
             self.stdout.write(self.style.WARNING(
                 f'Created staff user {username} ({email}) — send a password reset.'))
 

@@ -1127,10 +1127,6 @@ def send_supporter_inactivity_alerts(self):
 # Facility At-Risk Digest (B2B Aftercare)
 # ========================================
 
-from django.template.loader import render_to_string as _render_to_string
-from django.utils import timezone as _tz
-
-
 @shared_task
 def send_facility_risk_digest():
     """Weekly: email facility staff the members newly at-risk since last digest."""
@@ -1145,7 +1141,7 @@ def send_facility_risk_digest():
             if level == fs.RISK_AT_RISK:
                 if m.risk_notified_at is None:
                     newly_at_risk.append(m)
-                    m.risk_notified_at = _tz.now()
+                    m.risk_notified_at = timezone.now()
                     m.save(update_fields=['risk_notified_at'])
             else:
                 if m.risk_notified_at is not None:
@@ -1156,7 +1152,7 @@ def send_facility_risk_digest():
             continue
 
         names = [m.user.username for m in newly_at_risk]
-        html = _render_to_string('emails/facility_risk_digest.html', {
+        html = render_to_string('emails/facility_risk_digest.html', {
             'facility': facility, 'members': newly_at_risk,
         })
         plain = (f'{len(names)} alumni need attention at {facility.name}: '
