@@ -24,8 +24,43 @@ if SENTRY_DSN:
     from sentry_sdk.integrations.redis import RedisIntegration
     from sentry_sdk.integrations.celery import CeleryIntegration
 
+    def _drop_recovered_db_drops(event, hint):
+        """
+        Drop transient Railway Postgres connection-drop errors that
+        DatabaseConnectionMiddleware already recovers from via retry.
+
+        Django fires got_request_exception (which Sentry hooks) on the FIRST
+        failed attempt, before the exception returns to the retry middleware —
+        so a request that recovers on retry still emits a Sentry event. These
+        are noise: 0 users impacted, almost always crawler traffic.
+
+        Scoped to the connection-drop signatures only, so genuine query/integrity
+        errors still report. A sustained DB outage (retries exhausted) still
+        surfaces via the middleware's logger.error() in Railway logs and via the
+        flood of other errors it would cause.
+        """
+        exc_info = hint.get('exc_info')
+        if exc_info:
+            from django.db.utils import OperationalError, InterfaceError
+            exc_value = exc_info[1]
+            if isinstance(exc_value, (OperationalError, InterfaceError)):
+                msg = str(exc_value).lower()
+                transient_signatures = (
+                    'cursor already closed',
+                    'connection already closed',
+                    'server closed the connection',
+                    'terminating connection',
+                    'connection not open',
+                    'ssl connection has been closed',
+                    'consuming input failed',
+                )
+                if any(sig in msg for sig in transient_signatures):
+                    return None  # drop the event
+        return event
+
     sentry_sdk.init(
         dsn=SENTRY_DSN,
+        before_send=_drop_recovered_db_drops,
         integrations=[
             DjangoIntegration(),
             RedisIntegration(),
