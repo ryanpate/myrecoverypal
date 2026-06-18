@@ -1,6 +1,7 @@
 """Tests for the treatment-center aftercare (Facility) feature."""
 from datetime import timedelta
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.utils import timezone
 
@@ -250,3 +251,13 @@ class DigestTest(TestCase):
         send_facility_risk_digest()
         self.m.refresh_from_db()
         self.assertIsNone(self.m.risk_notified_at)
+
+
+class CreateFacilityCommandTest(TestCase):
+    def test_creates_facility_and_staff(self):
+        call_command('create_facility', name='Hope Center',
+                     staff_email='dir@hope.org')
+        facility = Facility.objects.get(slug='hope-center')
+        staff_user = User.objects.get(email='dir@hope.org')
+        self.assertTrue(FacilityStaff.objects.filter(
+            facility=facility, user=staff_user).exists())
