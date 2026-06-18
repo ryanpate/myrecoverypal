@@ -824,6 +824,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.support_services.tasks.refresh_online_meetings_task',
         'schedule': crontab(hour=4, minute=0, day_of_month=1),  # Monthly, 1st at 4 AM UTC
     },
+    'send_facility_risk_digest': {
+        'task': 'apps.accounts.tasks.send_facility_risk_digest',
+        'schedule': crontab(hour=9, minute=0, day_of_week=1),  # Mondays 9 AM
+    },
 }
 
 # Celery worker memory optimization (Railway cost reduction)

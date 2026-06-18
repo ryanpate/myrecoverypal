@@ -577,3 +577,16 @@ class ColdOutreachSuppressionAdmin(admin.ModelAdmin):
     list_filter = ['source', 'unsubscribed_at']
     search_fields = ['email']
     readonly_fields = ['unsubscribed_at']
+
+
+# ===========================================
+# Facility (Treatment Center Aftercare) Admin
+# ===========================================
+from .facility_models import (
+    Facility, FacilityStaff, FacilityMembership, FacilityInvite,
+)
+
+admin.site.register(Facility)
+admin.site.register(FacilityStaff)
+admin.site.register(FacilityMembership)
+admin.site.register(FacilityInvite)

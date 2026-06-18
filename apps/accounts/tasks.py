@@ -1121,3 +1121,48 @@ def send_supporter_inactivity_alerts(self):
 
     logger.info(f"Supporter inactivity alerts: {sent} sent")
     return sent
+
+
+# ========================================
+# Facility At-Risk Digest (B2B Aftercare)
+# ========================================
+
+@shared_task
+def send_facility_risk_digest():
+    """Weekly: email facility staff the members newly at-risk since last digest."""
+    from apps.accounts.facility_models import Facility, FacilityStaff
+    from apps.accounts import facility_service as fs
+
+    emails_sent = 0
+    for facility in Facility.objects.filter(status='active'):
+        newly_at_risk = []
+        for m in fs.visible_memberships(facility):
+            level = fs.compute_member_risk(m)['risk_level']
+            if level == fs.RISK_AT_RISK:
+                if m.risk_notified_at is None:
+                    newly_at_risk.append(m)
+                    m.risk_notified_at = timezone.now()
+                    m.save(update_fields=['risk_notified_at'])
+            else:
+                if m.risk_notified_at is not None:
+                    m.risk_notified_at = None
+                    m.save(update_fields=['risk_notified_at'])
+
+        if not newly_at_risk:
+            continue
+
+        names = [m.user.username for m in newly_at_risk]
+        html = render_to_string('emails/facility_risk_digest.html', {
+            'facility': facility, 'members': newly_at_risk,
+        })
+        plain = (f'{len(names)} alumni need attention at {facility.name}: '
+                 + ', '.join(names))
+        for staff in FacilityStaff.objects.filter(facility=facility).select_related('user'):
+            if not staff.user.email:
+                continue
+            send_email(
+                subject=f'{len(names)} alumni need attention — {facility.name}',
+                plain_message=plain, html_message=html,
+                recipient_email=staff.user.email)
+            emails_sent += 1
+    return emails_sent

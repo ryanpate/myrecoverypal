@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width:600px;margin:2rem auto;">
+  <h1>Connect with {{ facility }}</h1>
+  <p>{{ facility }} would like to support your recovery after discharge.</p>
+  <p>If you consent, your care team will be able to see your
+     <strong>check-in engagement and risk signals</strong> (such as whether
+     you've been checking in, your sobriety streak, and craving/mood trends)
+     so they can reach out if you're struggling.</p>
+  <p><strong>Your journal is never shared.</strong> The exact words you write in
+     check-ins are never shared. You can stop sharing at any time.</p>
+  <form method="post">
+    {% csrf_token %}
+    <label>
+      <input type="checkbox" name="consent">
+      I consent to share my engagement and risk signals with {{ facility }}.
+    </label>
+    <button type="submit" class="btn btn-primary">Connect</button>
+  </form>
+</div>
+{% endblock %}
