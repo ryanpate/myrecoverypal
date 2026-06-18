@@ -204,3 +204,49 @@ class StaffDashboardTest(TestCase):
         resp = self.client.post(reverse('accounts:facility_generate_invite'))
         self.assertEqual(resp.status_code, 302)
         self.assertTrue(FacilityInvite.objects.filter(facility=self.facility).exists())
+
+
+from unittest.mock import patch
+from apps.accounts.tasks import send_facility_risk_digest
+
+
+class DigestTest(TestCase):
+    def setUp(self):
+        self.facility = Facility.objects.create(name='Hope', slug='hope')
+        self.staff_user = User.objects.create_user(
+            username='staff', email='staff@example.com', password='pw')
+        FacilityStaff.objects.create(facility=self.facility, user=self.staff_user)
+        self.alum = User.objects.create_user(
+            username='alum', email='alum@example.com', password='pw')
+        # active + consented, no check-ins => at-risk (disengaged)
+        self.m = FacilityMembership.objects.create(
+            facility=self.facility, user=self.alum,
+            status='active', consent_granted_at=timezone.now())
+
+    @patch('apps.accounts.tasks.send_email', return_value=(True, None))
+    def test_digest_emails_staff_about_newly_at_risk(self, mock_send):
+        sent = send_facility_risk_digest()
+        self.assertEqual(sent, 1)
+        mock_send.assert_called_once()
+        self.m.refresh_from_db()
+        self.assertIsNotNone(self.m.risk_notified_at)
+
+    @patch('apps.accounts.tasks.send_email', return_value=(True, None))
+    def test_digest_does_not_repeat_already_notified(self, mock_send):
+        self.m.risk_notified_at = timezone.now()
+        self.m.save()
+        sent = send_facility_risk_digest()
+        self.assertEqual(sent, 0)
+        mock_send.assert_not_called()
+
+    @patch('apps.accounts.tasks.send_email', return_value=(True, None))
+    def test_recovered_member_clears_notified_flag(self, mock_send):
+        from apps.accounts.models import DailyCheckIn
+        self.m.risk_notified_at = timezone.now()
+        self.m.save()
+        DailyCheckIn.objects.create(
+            user=self.alum, date=timezone.now().date(),
+            mood=5, craving_level=0, energy_level=4)  # now ok
+        send_facility_risk_digest()
+        self.m.refresh_from_db()
+        self.assertIsNone(self.m.risk_notified_at)

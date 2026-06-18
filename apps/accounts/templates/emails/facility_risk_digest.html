@@ -1,0 +1,10 @@
+<div style="font-family:sans-serif;max-width:600px;">
+  <h2>{{ members|length }} alumni need attention</h2>
+  <p>The following {{ facility }} alumni have shown at-risk signals this week:</p>
+  <ul>
+    {% for m in members %}<li>{{ m.user.username }}</li>{% endfor %}
+  </ul>
+  <p>Log in to your aftercare dashboard to review and reach out.</p>
+  <p style="color:#888;font-size:12px;">Engagement signals only — journal and
+     check-in notes are never shared.</p>
+</div>
