@@ -13,9 +13,11 @@ of its alumni and **spot at-risk clients early** so staff can reach out before a
 relapse. The facility is the paying customer ($200–500/mo in the revenue plan);
 its alumni use the existing consumer app for free.
 
-This is the first of three independent B2B products (the others —
-court/probation bulk, and EAP/employer — are **out of scope**, each its own
-future spec → plan → build cycle).
+This is the first of several independent B2B products (the others —
+**recovery-house / sober-living resident management** (beds, drug-test logs,
+chores/rules, rent — a distinct resident-management subsystem, NOT the same as
+aftercare monitoring), court/probation bulk, and EAP/employer — are **out of
+scope**, each its own future spec → plan → build cycle).
 
 ### MVP job-to-be-done
 Spot at-risk alumni early (relapse prevention). Other facility jobs (prove
@@ -226,6 +228,8 @@ New file: `apps/accounts/facility_views.py`. New decorator in
 - Raw check-in note text or journal exposure (never, not just MVP).
 - Precomputed risk snapshots (compute-on-read; revisit if cohorts grow).
 - Comping Premium to clients.
+- Recovery-house / sober-living **resident management** (beds, drug-test logs,
+  chores/rules, rent) — a separate B2B module with its own spec/plan.
 - Court/probation bulk and EAP B2B products (separate future specs).
 
 ---
