@@ -59,3 +59,71 @@ def facility_leave(request, membership_id):
     membership.save(update_fields=['status', 'left_at'])
     messages.success(request, 'You have stopped sharing with your facility.')
     return redirect('accounts:progress')
+
+
+# --- Staff views ---
+
+from apps.accounts.decorators import facility_staff_required
+from apps.accounts import facility_service as fs
+
+RISK_ORDER = {fs.RISK_AT_RISK: 0, fs.RISK_WATCH: 1, fs.RISK_OK: 2}
+
+
+@facility_staff_required
+def facility_dashboard(request):
+    facility = request.facility
+    rows = []
+    for m in fs.visible_memberships(facility):
+        risk = fs.compute_member_risk(m)
+        rows.append({'membership': m, 'risk': risk})
+    rows.sort(key=lambda r: RISK_ORDER[r['risk']['risk_level']])
+    return render(request, 'accounts/facility/dashboard.html', {
+        'facility': facility,
+        'summary': fs.cohort_summary(facility),
+        'rows': rows,
+    })
+
+
+@facility_staff_required
+def facility_roster(request):
+    facility = request.facility
+    members = facility.memberships.select_related('user').order_by('-created_at')
+    invites = facility.invites.order_by('-created_at')
+    return render(request, 'accounts/facility/roster.html', {
+        'facility': facility, 'members': members, 'invites': invites,
+    })
+
+
+@facility_staff_required
+def facility_member_detail(request, membership_id):
+    # tenant isolation + consent gate enforced in the queryset
+    membership = get_object_or_404(
+        FacilityMembership, id=membership_id, facility=request.facility,
+        status='active', consent_granted_at__isnull=False)
+    return render(request, 'accounts/facility/member_detail.html', {
+        'facility': request.facility,
+        'membership': membership,
+        'risk': fs.compute_member_risk(membership),
+    })
+
+
+@facility_staff_required
+@require_POST
+def facility_generate_invite(request):
+    FacilityInvite.objects.create(
+        facility=request.facility, code=FacilityInvite.generate_code(),
+        created_by=request.user)
+    messages.success(request, 'New invite link created.')
+    return redirect('accounts:facility_roster')
+
+
+@facility_staff_required
+@require_POST
+def facility_revoke_member(request, membership_id):
+    membership = get_object_or_404(
+        FacilityMembership, id=membership_id, facility=request.facility)
+    membership.status = 'revoked'
+    membership.left_at = timezone.now()
+    membership.save(update_fields=['status', 'left_at'])
+    messages.success(request, 'Member removed from your cohort.')
+    return redirect('accounts:facility_roster')

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h1>{{ membership.user.username }}</h1>
+  <p>Risk: <strong>{{ risk.risk_level }}</strong></p>
+  <ul>
+    <li>Flags: {{ risk.flags|join:", "|default:"none" }}</li>
+    <li>Last check-in: {{ risk.last_checkin_date|default:"never" }}</li>
+    <li>Check-in streak: {{ risk.checkin_streak }}</li>
+    <li>Days sober: {{ risk.days_sober }}</li>
+    <li>Craving trend: {{ risk.craving_trend|default:"n/a" }}</li>
+    <li>Mood trend: {{ risk.mood_trend|default:"n/a" }}</li>
+  </ul>
+  <p><em>Journal entries and check-in notes are never shown.</em></p>
+</div>
+{% endblock %}

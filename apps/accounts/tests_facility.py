@@ -153,3 +153,54 @@ class EnrollmentConsentTest(TestCase):
         m.refresh_from_db()
         self.assertEqual(m.status, 'revoked')
         self.assertFalse(m.is_visible_to_staff)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class StaffDashboardTest(TestCase):
+    def setUp(self):
+        self.facility = Facility.objects.create(name='Hope', slug='hope')
+        self.other = Facility.objects.create(name='Rival', slug='rival')
+        self.staff_user = User.objects.create_user(
+            username='staff', email='staff@example.com', password='pw')
+        FacilityStaff.objects.create(facility=self.facility, user=self.staff_user)
+        self.alum = User.objects.create_user(
+            username='alum', email='alum@example.com', password='pw')
+        self.m = FacilityMembership.objects.create(
+            facility=self.facility, user=self.alum,
+            status='active', consent_granted_at=timezone.now())
+
+    def test_non_staff_blocked(self):
+        self.client.force_login(self.alum)
+        resp = self.client.get(reverse('accounts:facility_dashboard'))
+        self.assertEqual(resp.status_code, 302)
+
+    def test_staff_sees_dashboard(self):
+        self.client.force_login(self.staff_user)
+        resp = self.client.get(reverse('accounts:facility_dashboard'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'alum')
+
+    def test_tenant_isolation_on_member_detail(self):
+        # a membership in the rival facility must 404 for this staff
+        rival_member = FacilityMembership.objects.create(
+            facility=self.other, user=self.alum,
+            status='active', consent_granted_at=timezone.now())
+        self.client.force_login(self.staff_user)
+        resp = self.client.get(
+            reverse('accounts:facility_member', args=[rival_member.id]))
+        self.assertEqual(resp.status_code, 404)
+
+    def test_member_detail_hidden_without_consent(self):
+        self.m.consent_granted_at = None
+        self.m.status = 'invited'
+        self.m.save()
+        self.client.force_login(self.staff_user)
+        resp = self.client.get(
+            reverse('accounts:facility_member', args=[self.m.id]))
+        self.assertEqual(resp.status_code, 404)
+
+    def test_generate_invite(self):
+        self.client.force_login(self.staff_user)
+        resp = self.client.post(reverse('accounts:facility_generate_invite'))
+        self.assertEqual(resp.status_code, 302)
+        self.assertTrue(FacilityInvite.objects.filter(facility=self.facility).exists())

@@ -70,6 +70,29 @@ def court_required(view_func):
     return wrapper
 
 
+def facility_staff_required(view_func):
+    """Requires the user to be staff of an active facility.
+    Attaches request.facility_staff and request.facility."""
+    from apps.accounts.facility_models import FacilityStaff
+
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.warning(request, 'Please log in to access this feature.')
+            return redirect('accounts:login')
+        staff = (FacilityStaff.objects
+                 .select_related('facility')
+                 .filter(user=request.user, facility__status='active')
+                 .first())
+        if not staff:
+            messages.warning(request, 'You do not have a facility dashboard.')
+            return redirect('accounts:progress')
+        request.facility_staff = staff
+        request.facility = staff.facility
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
 def supporter_required(view_func):
     """Requires an active Supporter subscription. Lapsed/absent -> renew page."""
     @wraps(view_func)

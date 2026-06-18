@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h1>{{ facility }} — Roster</h1>
+  <form method="post" action="{% url 'accounts:facility_generate_invite' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Create invite link</button>
+  </form>
+  <h2>Invite links</h2>
+  <ul>
+  {% for inv in invites %}
+    <li>{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:facility_join' inv.code %}
+        — uses: {{ inv.uses }}</li>
+  {% empty %}<li>No invite links yet.</li>{% endfor %}
+  </ul>
+  <h2>Members</h2>
+  <table>
+    <thead><tr><th>Member</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+    {% for m in members %}
+      <tr>
+        <td>{{ m.user.username }}</td>
+        <td>{{ m.status }}</td>
+        <td>
+          {% if m.status == 'active' %}
+          <form method="post" action="{% url 'accounts:facility_revoke_member' m.id %}">
+            {% csrf_token %}<button type="submit">Remove</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}<tr><td colspan="3">No members yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
