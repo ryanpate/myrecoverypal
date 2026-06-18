@@ -12,6 +12,7 @@ from apps.accounts.court_views import (
     court_report_email,
 )
 from apps.accounts import supporter_views
+from .facility_views import facility_join, facility_leave
 
 app_name = 'accounts'
 
@@ -246,4 +247,8 @@ urlpatterns = [
     path('supporter/<int:link_id>/consent/', supporter_views.supporter_consent, name='supporter_consent'),
     path('supporter/<int:link_id>/', supporter_views.supporter_dashboard, name='supporter_dashboard'),
     path('supporter/request-support/', supporter_views.request_support, name='supporter_request_support'),
+
+    # Facility enrollment (client-facing)
+    path('facility/join/<str:code>/', facility_join, name='facility_join'),
+    path('facility/leave/<int:membership_id>/', facility_leave, name='facility_leave'),
 ]

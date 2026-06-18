@@ -1,7 +1,7 @@
 """Tests for the treatment-center aftercare (Facility) feature."""
 from datetime import timedelta
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from apps.accounts.facility_models import (
@@ -95,3 +95,61 @@ class RiskComputationTest(TestCase):
         summary = fs.cohort_summary(self.facility)
         self.assertEqual(summary['total'], 1)
         self.assertEqual(summary['at_risk'], 1)  # self.user has no check-ins
+
+
+from django.urls import reverse
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class EnrollmentConsentTest(TestCase):
+    def setUp(self):
+        self.facility = Facility.objects.create(name='Hope', slug='hope')
+        self.invite = FacilityInvite.objects.create(
+            facility=self.facility, code=FacilityInvite.generate_code())
+        self.user = User.objects.create_user(
+            username='alum', email='alum@example.com', password='pw')
+
+    def test_join_requires_login(self):
+        resp = self.client.get(
+            reverse('accounts:facility_join', args=[self.invite.code]))
+        self.assertEqual(resp.status_code, 302)
+        self.assertIn('/login', resp.url)
+
+    def test_consent_activates_membership(self):
+        self.client.force_login(self.user)
+        resp = self.client.post(
+            reverse('accounts:facility_join', args=[self.invite.code]),
+            {'consent': 'on'})
+        self.assertEqual(resp.status_code, 302)
+        m = FacilityMembership.objects.get(facility=self.facility, user=self.user)
+        self.assertEqual(m.status, 'active')
+        self.assertIsNotNone(m.consent_granted_at)
+        self.invite.refresh_from_db()
+        self.assertEqual(self.invite.uses, 1)
+
+    def test_join_without_consent_does_not_activate(self):
+        self.client.force_login(self.user)
+        self.client.post(
+            reverse('accounts:facility_join', args=[self.invite.code]), {})
+        self.assertFalse(FacilityMembership.objects.filter(
+            facility=self.facility, user=self.user, status='active').exists())
+
+    def test_expired_invite_rejected(self):
+        self.invite.expires_at = timezone.now() - timedelta(days=1)
+        self.invite.save()
+        self.client.force_login(self.user)
+        self.client.post(
+            reverse('accounts:facility_join', args=[self.invite.code]),
+            {'consent': 'on'})
+        self.assertFalse(FacilityMembership.objects.filter(
+            facility=self.facility, user=self.user, status='active').exists())
+
+    def test_member_can_revoke(self):
+        self.client.force_login(self.user)
+        m = FacilityMembership.objects.create(
+            facility=self.facility, user=self.user,
+            status='active', consent_granted_at=timezone.now())
+        self.client.post(reverse('accounts:facility_leave', args=[m.id]))
+        m.refresh_from_db()
+        self.assertEqual(m.status, 'revoked')
+        self.assertFalse(m.is_visible_to_staff)
