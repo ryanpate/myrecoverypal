@@ -599,6 +599,10 @@ DEFAULT_FROM_EMAIL = os.environ.get(
 )  # ✅ From env
 SERVER_EMAIL = os.environ.get('SERVER_EMAIL', DEFAULT_FROM_EMAIL)  # ✅ From env
 
+# Where new self-serve facility-signup notifications are sent.
+FACILITY_SIGNUP_NOTIFY_EMAIL = os.environ.get(
+    'FACILITY_SIGNUP_NOTIFY_EMAIL', DEFAULT_FROM_EMAIL)
+
 # Email timeout settings
 EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '30'))
 

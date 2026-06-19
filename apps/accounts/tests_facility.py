@@ -353,3 +353,36 @@ class FacilitySignupFormTest(TestCase):
             'facility_name': 'X', 'email': 'a@b.com', 'password': 'short'})
         self.assertFalse(form.is_valid())
         self.assertIn('password', form.errors)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class FacilitySignupViewTest(TestCase):
+    @patch('apps.accounts.facility_signup_views.send_email', return_value=(True, None))
+    def test_signup_creates_pending_facility_and_sends_two_emails(self, mock_send):
+        resp = self.client.post(reverse('accounts:facility_signup'), {
+            'facility_name': 'New Hope', 'contact_name': 'Dana',
+            'email': 'dana@newhope.org', 'password': 'sekret123'})
+        self.assertEqual(resp.status_code, 200)
+        facility = Facility.objects.get(name='New Hope')
+        self.assertEqual(facility.status, 'pending')
+        self.assertTrue(facility.activation_token)
+        user = User.objects.get(email='dana@newhope.org')
+        self.assertTrue(FacilityStaff.objects.filter(
+            facility=facility, user=user, role='admin').exists())
+        self.assertEqual(mock_send.call_count, 2)  # verify + operator notify
+
+    @patch('apps.accounts.facility_signup_views.send_email', return_value=(True, None))
+    def test_duplicate_email_creates_nothing(self, mock_send):
+        User.objects.create_user(
+            username='x', email='dup@example.com', password='pw')
+        resp = self.client.post(reverse('accounts:facility_signup'), {
+            'facility_name': 'Dup', 'email': 'dup@example.com',
+            'password': 'sekret123'})
+        self.assertEqual(resp.status_code, 200)  # form re-rendered with error
+        self.assertFalse(Facility.objects.filter(name='Dup').exists())
+        mock_send.assert_not_called()
+
+    def test_get_renders_form(self):
+        resp = self.client.get(reverse('accounts:facility_signup'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'facility_name')
