@@ -386,3 +386,44 @@ class FacilitySignupViewTest(TestCase):
         resp = self.client.get(reverse('accounts:facility_signup'))
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, 'facility_name')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class FacilityVerifyEmailTest(TestCase):
+    def setUp(self):
+        self.facility = Facility.objects.create(
+            name='Verify Me', slug='verify-me',
+            status='pending', activation_token='tok123')
+        self.user = User.objects.create_user(
+            username='v', email='v@example.com', password='pw')
+        FacilityStaff.objects.create(
+            facility=self.facility, user=self.user, role='admin')
+
+    def test_valid_token_activates_and_logs_in(self):
+        resp = self.client.get(
+            reverse('accounts:facility_verify_email', args=['tok123']))
+        self.assertRedirects(
+            resp, reverse('accounts:facility_dashboard'),
+            fetch_redirect_response=False)
+        self.facility.refresh_from_db()
+        self.assertEqual(self.facility.status, 'active')
+        self.assertIsNotNone(self.facility.email_verified_at)
+        self.assertEqual(self.facility.activation_token, '')
+        # auto-logged-in: the now-active dashboard returns 200
+        dash = self.client.get(reverse('accounts:facility_dashboard'))
+        self.assertEqual(dash.status_code, 200)
+
+    def test_invalid_token_no_state_change(self):
+        resp = self.client.get(
+            reverse('accounts:facility_verify_email', args=['nope']))
+        self.assertEqual(resp.status_code, 200)  # verify_invalid page
+        self.facility.refresh_from_db()
+        self.assertEqual(self.facility.status, 'pending')
+
+    def test_reused_token_is_invalid(self):
+        self.client.get(reverse('accounts:facility_verify_email', args=['tok123']))
+        # token now cleared; a second hit with the same token finds nothing
+        self.client.logout()
+        resp = self.client.get(
+            reverse('accounts:facility_verify_email', args=['tok123']))
+        self.assertEqual(resp.status_code, 200)  # verify_invalid page

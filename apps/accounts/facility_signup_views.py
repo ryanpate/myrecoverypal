@@ -2,11 +2,13 @@
 import secrets
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
+from django.contrib import messages
+from django.contrib.auth import get_user_model, login
 from django.db import transaction
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.text import slugify
 
 from apps.accounts.email_service import send_email
@@ -80,5 +82,23 @@ def facility_signup(request):
 
 
 def facility_verify_email(request, token):
-    # Implemented in Task 4.
-    return render(request, 'accounts/facility/verify_invalid.html')
+    facility = (Facility.objects
+                .filter(activation_token=token)
+                .exclude(activation_token='')
+                .first())
+    if not facility:
+        return render(request, 'accounts/facility/verify_invalid.html')
+
+    facility.status = 'active'
+    facility.email_verified_at = timezone.now()
+    facility.activation_token = ''
+    facility.save(update_fields=['status', 'email_verified_at', 'activation_token'])
+
+    staff = (FacilityStaff.objects
+             .filter(facility=facility, role='admin')
+             .select_related('user').first())
+    if staff:
+        login(request, staff.user,
+              backend='django.contrib.auth.backends.ModelBackend')
+    messages.success(request, f'{facility.name} is verified and active.')
+    return redirect('accounts:facility_dashboard')
