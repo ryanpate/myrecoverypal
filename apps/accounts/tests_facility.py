@@ -191,6 +191,23 @@ class StaffDashboardTest(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, 'alum')
 
+    def test_roster_hides_revoked_and_left_members(self):
+        revoked = User.objects.create_user(
+            username='goneuser', email='gone@example.com', password='pw')
+        FacilityMembership.objects.create(
+            facility=self.facility, user=revoked,
+            status='revoked', consent_granted_at=timezone.now())
+        left = User.objects.create_user(
+            username='leftuser', email='left@example.com', password='pw')
+        FacilityMembership.objects.create(
+            facility=self.facility, user=left, status='left')
+        self.client.force_login(self.staff_user)
+        resp = self.client.get(reverse('accounts:facility_roster'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'alum')         # active member shown
+        self.assertNotContains(resp, 'goneuser')  # revoked member hidden
+        self.assertNotContains(resp, 'leftuser')  # left member hidden
+
     def test_tenant_isolation_on_member_detail(self):
         # a membership in the rival facility must 404 for this staff
         rival_member = FacilityMembership.objects.create(

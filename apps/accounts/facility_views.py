@@ -91,7 +91,10 @@ def facility_dashboard(request):
 @facility_staff_required
 def facility_roster(request):
     facility = request.facility
-    members = facility.memberships.select_related('user').order_by('-created_at')
+    # Hide revoked/left members — a member who stopped sharing should not
+    # remain a named row on the staff roster (honours the "stop sharing" promise).
+    members = facility.memberships.exclude(
+        status__in=['revoked', 'left']).select_related('user').order_by('-created_at')
     invites = facility.invites.order_by('-created_at')
     return render(request, 'accounts/facility/roster.html', {
         'facility': facility, 'members': members, 'invites': invites,
