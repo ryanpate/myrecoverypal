@@ -288,3 +288,41 @@ class CreateFacilityCommandTest(TestCase):
         staff_user = User.objects.get(email='dir@hope.org')
         self.assertTrue(FacilityStaff.objects.filter(
             facility=facility, user=staff_user).exists())
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class PendingFacilityGatingTest(TestCase):
+    def setUp(self):
+        self.facility = Facility.objects.create(
+            name='Pend', slug='pend', status='pending')
+        self.staff_user = User.objects.create_user(
+            username='ps', email='ps@example.com', password='pw')
+        FacilityStaff.objects.create(facility=self.facility, user=self.staff_user)
+
+    def test_pending_is_valid_status(self):
+        self.assertIn('pending', [c[0] for c in Facility.STATUS_CHOICES])
+
+    def test_pending_facility_has_token_fields(self):
+        self.facility.activation_token = 'abc'
+        self.facility.email_verified_at = timezone.now()
+        self.facility.save()
+        self.facility.refresh_from_db()
+        self.assertEqual(self.facility.activation_token, 'abc')
+        self.assertIsNotNone(self.facility.email_verified_at)
+
+    def test_pending_facility_dashboard_blocked(self):
+        self.client.force_login(self.staff_user)
+        resp = self.client.get(reverse('accounts:facility_dashboard'))
+        self.assertEqual(resp.status_code, 302)  # decorator: facility not active
+
+    def test_pending_facility_invite_rejected(self):
+        invite = FacilityInvite.objects.create(
+            facility=self.facility, code=FacilityInvite.generate_code())
+        member = User.objects.create_user(
+            username='m', email='m@example.com', password='pw')
+        self.client.force_login(member)
+        self.client.post(
+            reverse('accounts:facility_join', args=[invite.code]),
+            {'consent': 'on'})
+        self.assertFalse(FacilityMembership.objects.filter(
+            facility=self.facility, user=member, status='active').exists())

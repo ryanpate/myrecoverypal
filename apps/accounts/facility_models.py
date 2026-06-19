@@ -11,7 +11,7 @@ from django.utils import timezone
 
 
 class Facility(models.Model):
-    STATUS_CHOICES = [('active', 'Active'), ('paused', 'Paused')]
+    STATUS_CHOICES = [('pending', 'Pending'), ('active', 'Active'), ('paused', 'Paused')]
 
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=220, unique=True)
@@ -21,6 +21,12 @@ class Facility(models.Model):
         help_text='Record-keeping only; billing is handled offline.')
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    # Self-serve signup: random token for the email-verification link, cleared
+    # once used. Default status stays 'active' so create_facility/admin are
+    # unaffected; only self-serve signups set status='pending'.
+    activation_token = models.CharField(
+        max_length=64, blank=True, default='', db_index=True)
+    email_verified_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = 'facilities'
