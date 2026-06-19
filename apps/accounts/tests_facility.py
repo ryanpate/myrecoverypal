@@ -234,6 +234,9 @@ class StaffDashboardTest(TestCase):
         self.assertTrue(FacilityInvite.objects.filter(facility=self.facility).exists())
 
 
+from apps.accounts.facility_forms import FacilitySignupForm
+
+
 from unittest.mock import patch
 from apps.accounts.tasks import send_facility_risk_digest
 
@@ -326,3 +329,27 @@ class PendingFacilityGatingTest(TestCase):
             {'consent': 'on'})
         self.assertFalse(FacilityMembership.objects.filter(
             facility=self.facility, user=member, status='active').exists())
+
+
+class FacilitySignupFormTest(TestCase):
+    def test_valid_form(self):
+        form = FacilitySignupForm(data={
+            'facility_name': 'New Hope', 'contact_name': 'Dana',
+            'email': 'Dana@NewHope.org', 'password': 'sekret123'})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data['email'], 'dana@newhope.org')  # lowercased
+
+    def test_duplicate_email_invalid(self):
+        User.objects.create_user(
+            username='x', email='dup@example.com', password='pw')
+        form = FacilitySignupForm(data={
+            'facility_name': 'Dup', 'email': 'dup@example.com',
+            'password': 'sekret123'})
+        self.assertFalse(form.is_valid())
+        self.assertIn('email', form.errors)
+
+    def test_short_password_invalid(self):
+        form = FacilitySignupForm(data={
+            'facility_name': 'X', 'email': 'a@b.com', 'password': 'short'})
+        self.assertFalse(form.is_valid())
+        self.assertIn('password', form.errors)
