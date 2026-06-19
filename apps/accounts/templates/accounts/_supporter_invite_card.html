@@ -1,7 +1,9 @@
-{# Promotes the Supporter tier: invite a loved one to follow your recovery.
-   Show by passing show_supporter_cta=True from the view. The in-app user only
-   invites here (iOS-safe — no purchase); the supporter pays on web when they
-   accept. Dismiss hides it for 14 days via localStorage. #}
+{% comment %}
+Promotes the Supporter tier: invite a loved one to follow your recovery.
+Show by passing show_supporter_cta=True from the view. The in-app user only
+invites here (iOS-safe — no purchase); the supporter pays on web when they
+accept. Dismiss hides it for 14 days via localStorage.
+{% endcomment %}
 {% if show_supporter_cta %}
 <div class="supporter-invite-card" id="supporterInviteCard" style="display:none;" role="complementary" aria-label="Invite a supporter">
     <button class="supporter-invite-dismiss" id="supporterInviteDismiss" type="button" aria-label="Dismiss">&times;</button>

@@ -1,7 +1,9 @@
-{# Value-framed, dismissible Premium upsell. Show by passing show_premium_cta=True
-   from the view (only for free/expired users). Links to the pricing page, which
-   renders the correct web (Stripe) vs iOS (IAP) purchase button per platform.
-   Dismiss hides it for 7 days via localStorage so it never nags. #}
+{% comment %}
+Value-framed, dismissible Premium upsell. Show by passing show_premium_cta=True
+from the view (only for free/expired users). Links to the pricing page, which
+renders the correct web (Stripe) vs iOS (IAP) purchase button per platform.
+Dismiss hides it for 7 days via localStorage so it never nags.
+{% endcomment %}
 {% if show_premium_cta %}
 <div class="premium-upsell-card" id="premiumUpsellCard" style="display:none;" role="complementary" aria-label="Premium upgrade">
     <button class="premium-upsell-dismiss" id="premiumUpsellDismiss" type="button" aria-label="Dismiss">&times;</button>
