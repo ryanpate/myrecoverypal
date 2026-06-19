@@ -16,6 +16,7 @@ from .facility_views import (
     facility_join, facility_leave, facility_dashboard, facility_roster,
     facility_member_detail, facility_generate_invite, facility_revoke_member,
 )
+from .facility_signup_views import facility_signup, facility_verify_email
 
 app_name = 'accounts'
 
@@ -250,6 +251,10 @@ urlpatterns = [
     path('supporter/<int:link_id>/consent/', supporter_views.supporter_consent, name='supporter_consent'),
     path('supporter/<int:link_id>/', supporter_views.supporter_dashboard, name='supporter_dashboard'),
     path('supporter/request-support/', supporter_views.request_support, name='supporter_request_support'),
+
+    # Facility self-serve signup
+    path('facility/signup/', facility_signup, name='facility_signup'),
+    path('facility/verify/<str:token>/', facility_verify_email, name='facility_verify_email'),
 
     # Facility enrollment (client-facing)
     path('facility/join/<str:code>/', facility_join, name='facility_join'),

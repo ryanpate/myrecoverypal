@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width:560px;margin:2rem auto;">
+  <h1>Create your facility's aftercare account</h1>
+  <p>Monitor your alumni's recovery engagement and spot at-risk clients early.
+     Free while in beta — we'll reach out about billing.</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Create account</button>
+  </form>
+</div>
+{% endblock %}

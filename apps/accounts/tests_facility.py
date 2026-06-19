@@ -234,6 +234,9 @@ class StaffDashboardTest(TestCase):
         self.assertTrue(FacilityInvite.objects.filter(facility=self.facility).exists())
 
 
+from apps.accounts.facility_forms import FacilitySignupForm
+
+
 from unittest.mock import patch
 from apps.accounts.tasks import send_facility_risk_digest
 
@@ -288,3 +291,139 @@ class CreateFacilityCommandTest(TestCase):
         staff_user = User.objects.get(email='dir@hope.org')
         self.assertTrue(FacilityStaff.objects.filter(
             facility=facility, user=staff_user).exists())
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class PendingFacilityGatingTest(TestCase):
+    def setUp(self):
+        self.facility = Facility.objects.create(
+            name='Pend', slug='pend', status='pending')
+        self.staff_user = User.objects.create_user(
+            username='ps', email='ps@example.com', password='pw')
+        FacilityStaff.objects.create(facility=self.facility, user=self.staff_user)
+
+    def test_pending_is_valid_status(self):
+        self.assertIn('pending', [c[0] for c in Facility.STATUS_CHOICES])
+
+    def test_pending_facility_has_token_fields(self):
+        self.facility.activation_token = 'abc'
+        self.facility.email_verified_at = timezone.now()
+        self.facility.save()
+        self.facility.refresh_from_db()
+        self.assertEqual(self.facility.activation_token, 'abc')
+        self.assertIsNotNone(self.facility.email_verified_at)
+
+    def test_pending_facility_dashboard_blocked(self):
+        self.client.force_login(self.staff_user)
+        resp = self.client.get(reverse('accounts:facility_dashboard'))
+        self.assertEqual(resp.status_code, 302)  # decorator: facility not active
+
+    def test_pending_facility_invite_rejected(self):
+        invite = FacilityInvite.objects.create(
+            facility=self.facility, code=FacilityInvite.generate_code())
+        member = User.objects.create_user(
+            username='m', email='m@example.com', password='pw')
+        self.client.force_login(member)
+        self.client.post(
+            reverse('accounts:facility_join', args=[invite.code]),
+            {'consent': 'on'})
+        self.assertFalse(FacilityMembership.objects.filter(
+            facility=self.facility, user=member, status='active').exists())
+
+
+class FacilitySignupFormTest(TestCase):
+    def test_valid_form(self):
+        form = FacilitySignupForm(data={
+            'facility_name': 'New Hope', 'contact_name': 'Dana',
+            'email': 'Dana@NewHope.org', 'password': 'sekret123'})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data['email'], 'dana@newhope.org')  # lowercased
+
+    def test_duplicate_email_invalid(self):
+        User.objects.create_user(
+            username='x', email='dup@example.com', password='pw')
+        form = FacilitySignupForm(data={
+            'facility_name': 'Dup', 'email': 'dup@example.com',
+            'password': 'sekret123'})
+        self.assertFalse(form.is_valid())
+        self.assertIn('email', form.errors)
+
+    def test_short_password_invalid(self):
+        form = FacilitySignupForm(data={
+            'facility_name': 'X', 'email': 'a@b.com', 'password': 'short'})
+        self.assertFalse(form.is_valid())
+        self.assertIn('password', form.errors)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class FacilitySignupViewTest(TestCase):
+    @patch('apps.accounts.facility_signup_views.send_email', return_value=(True, None))
+    def test_signup_creates_pending_facility_and_sends_two_emails(self, mock_send):
+        resp = self.client.post(reverse('accounts:facility_signup'), {
+            'facility_name': 'New Hope', 'contact_name': 'Dana',
+            'email': 'dana@newhope.org', 'password': 'sekret123'})
+        self.assertEqual(resp.status_code, 200)
+        facility = Facility.objects.get(name='New Hope')
+        self.assertEqual(facility.status, 'pending')
+        self.assertTrue(facility.activation_token)
+        user = User.objects.get(email='dana@newhope.org')
+        self.assertTrue(FacilityStaff.objects.filter(
+            facility=facility, user=user, role='admin').exists())
+        self.assertEqual(mock_send.call_count, 2)  # verify + operator notify
+
+    @patch('apps.accounts.facility_signup_views.send_email', return_value=(True, None))
+    def test_duplicate_email_creates_nothing(self, mock_send):
+        User.objects.create_user(
+            username='x', email='dup@example.com', password='pw')
+        resp = self.client.post(reverse('accounts:facility_signup'), {
+            'facility_name': 'Dup', 'email': 'dup@example.com',
+            'password': 'sekret123'})
+        self.assertEqual(resp.status_code, 200)  # form re-rendered with error
+        self.assertFalse(Facility.objects.filter(name='Dup').exists())
+        mock_send.assert_not_called()
+
+    def test_get_renders_form(self):
+        resp = self.client.get(reverse('accounts:facility_signup'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'facility_name')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class FacilityVerifyEmailTest(TestCase):
+    def setUp(self):
+        self.facility = Facility.objects.create(
+            name='Verify Me', slug='verify-me',
+            status='pending', activation_token='tok123')
+        self.user = User.objects.create_user(
+            username='v', email='v@example.com', password='pw')
+        FacilityStaff.objects.create(
+            facility=self.facility, user=self.user, role='admin')
+
+    def test_valid_token_activates_and_logs_in(self):
+        resp = self.client.get(
+            reverse('accounts:facility_verify_email', args=['tok123']))
+        self.assertRedirects(
+            resp, reverse('accounts:facility_dashboard'),
+            fetch_redirect_response=False)
+        self.facility.refresh_from_db()
+        self.assertEqual(self.facility.status, 'active')
+        self.assertIsNotNone(self.facility.email_verified_at)
+        self.assertEqual(self.facility.activation_token, '')
+        # auto-logged-in: the now-active dashboard returns 200
+        dash = self.client.get(reverse('accounts:facility_dashboard'))
+        self.assertEqual(dash.status_code, 200)
+
+    def test_invalid_token_no_state_change(self):
+        resp = self.client.get(
+            reverse('accounts:facility_verify_email', args=['nope']))
+        self.assertEqual(resp.status_code, 200)  # verify_invalid page
+        self.facility.refresh_from_db()
+        self.assertEqual(self.facility.status, 'pending')
+
+    def test_reused_token_is_invalid(self):
+        self.client.get(reverse('accounts:facility_verify_email', args=['tok123']))
+        # token now cleared; a second hit with the same token finds nothing
+        self.client.logout()
+        resp = self.client.get(
+            reverse('accounts:facility_verify_email', args=['tok123']))
+        self.assertEqual(resp.status_code, 200)  # verify_invalid page
