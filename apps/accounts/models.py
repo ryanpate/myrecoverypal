@@ -1797,6 +1797,16 @@ class SocialPost(models.Model):
     )
     visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='public')
 
+    # Post type — 'milestone' posts get the celebratory feed treatment
+    POST_TYPE_CHOICES = [
+        ('standard', 'Standard'),
+        ('milestone', 'Milestone'),
+    ]
+    post_type = models.CharField(max_length=12, choices=POST_TYPE_CHOICES, default='standard')
+    milestone_days = models.PositiveIntegerField(
+        null=True, blank=True,
+        help_text="Days sober celebrated by a milestone post")
+
     # Engagement
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
 

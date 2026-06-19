@@ -1,26 +1,103 @@
 {% extends 'base.html' %}
 {% block title %}Checked in — MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ckdone-page { max-width: 720px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+    .ckdone-card {
+        background: var(--surface-card);
+        border: 1px solid var(--border-divider);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow);
+        padding: var(--space-7);
+        text-align: center;
+    }
+    .ckdone-card .emoji { font-size: 2.6rem; line-height: 1; }
+    .ckdone-card h1 {
+        margin: 0.8rem 0 0.4rem;
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        color: var(--text-strong);
+    }
+    .ckdone-card .lede { margin: 0 auto 0.4rem; max-width: 380px; color: var(--text-muted); line-height: 1.55; }
+    .ckdone-streak {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(245, 166, 35, 0.14);
+        color: var(--gold-deep);
+        border-radius: var(--radius-pill);
+        padding: 0.4rem 0.85rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-top: 0.4rem;
+    }
+    .ckdone-actions { display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; margin-top: 1.6rem; }
+    .ckdone-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-radius: var(--radius-pill);
+        padding: 0.7rem 1.4rem;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: all var(--transition);
+    }
+    .ckdone-btn.primary { background: var(--color-accent); color: #fff; }
+    .ckdone-btn.primary:hover { transform: var(--lift-hover); box-shadow: var(--shadow-accent); }
+    .ckdone-btn.outline { background: var(--surface-card); color: var(--color-primary); border: 1.5px solid var(--color-primary); }
+    .ckdone-btn.outline:hover { transform: var(--lift-hover); }
+
+    .ckdone-support {
+        border: 1px solid var(--color-primary);
+        background: rgba(30, 77, 139, 0.06);
+        border-radius: var(--radius-md);
+        padding: 1.25rem;
+        margin: 1.5rem auto 0;
+        max-width: 420px;
+    }
+    .ckdone-support p { margin: 0 0 0.5rem; color: var(--text-body); }
+    .ckdone-support .heavy { color: var(--color-primary); font-weight: 700; }
+    .ckdone-support a {
+        display: inline-block;
+        margin-top: 0.5rem;
+        background: var(--color-primary);
+        color: #fff;
+        padding: 0.65rem 1.4rem;
+        border-radius: var(--radius-sm);
+        text-decoration: none;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container" style="max-width: 600px; margin: 3rem auto; padding: 0 1rem; text-align: center;">
-    <div style="font-size: 3rem;">✓</div>
-    <h1 style="color: var(--primary-dark, #1e4d8b);">You're checked in.</h1>
-    <p style="color: #555;">Nice work showing up for yourself today.</p>
-
-    {% if checkin and checkin.needs_support %}
-    <div style="border:1px solid #1e4d8b; background:#f4f8fc; border-radius:12px; padding:20px; margin:1.5rem 0; text-align:center;">
-        <p style="margin:0 0 8px; color:#1e4d8b; font-weight:600;">Today sounds heavy.</p>
-        <p style="margin:0 0 16px; color:#555; font-size:14px;">
-            Want to talk it through with Anchor? It's here whenever you need it.
+<div class="ckdone-page">
+    <div class="ckdone-card">
+        <div class="emoji">🎉</div>
+        <h1>Check-in complete</h1>
+        <p class="lede">
+            Nice work showing up for yourself today.
+            {% if checkin.is_shared %}Your circle will see it in the feed.{% else %}It's saved to your private journal.{% endif %}
         </p>
-        <a href="{% url 'accounts:coach_start_from_checkin' checkin.id %}"
-           style="background:#1e4d8b; color:#fff; padding:11px 24px; border-radius:8px; text-decoration:none; font-weight:600;">
-            Talk it through with Anchor
-        </a>
-    </div>
-    {% endif %}
+        <div>
+            <span class="ckdone-streak"><i class="fas fa-fire" aria-hidden="true"></i> {{ request.user.get_checkin_streak|default:0 }}-day streak</span>
+        </div>
 
-    <p style="margin-top: 1.5rem;">
-        <a href="{% url 'accounts:dashboard' %}" style="color:#1e4d8b;">Continue to your feed →</a>
-    </p>
+        {% if checkin and checkin.needs_support %}
+        <div class="ckdone-support">
+            <p class="heavy">Today sounds heavy.</p>
+            <p style="font-size:0.9rem;color:var(--text-muted);">Want to talk it through with Anchor? It's here whenever you need it.</p>
+            <a href="{% url 'accounts:coach_start_from_checkin' checkin.id %}">Talk it through with Anchor</a>
+        </div>
+        {% endif %}
+
+        <div class="ckdone-actions">
+            <a href="{% url 'accounts:progress' %}" class="ckdone-btn primary"><i class="fas fa-chart-line" aria-hidden="true"></i> See my progress</a>
+            <a href="{% url 'accounts:social_feed' %}" class="ckdone-btn outline"><i class="fas fa-house" aria-hidden="true"></i> Back to feed</a>
+        </div>
+    </div>
 </div>
 {% endblock %}

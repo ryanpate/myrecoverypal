@@ -5,592 +5,378 @@
 
 {% block extra_css %}
 <style>
-    .checkin-container {
-        max-width: 600px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-    }
-
-    .checkin-card {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-
-    .checkin-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 2rem;
-        text-align: center;
-    }
-
-    .checkin-header h1 {
-        color: white;
-        margin: 0 0 0.5rem;
-        font-size: 1.75rem;
-    }
-
-    .checkin-header p {
-        margin: 0;
-        opacity: 0.9;
-    }
-
-    .checkin-date {
-        display: inline-block;
-        background: rgba(255, 255, 255, 0.2);
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        margin-top: 1rem;
-        font-size: 0.9rem;
-    }
-
-    .checkin-body {
-        padding: 2rem;
-    }
-
-    .form-section {
-        margin-bottom: 2rem;
-    }
-
-    .section-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 1rem;
+    .ck-page {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 1.75rem 1.25rem 4rem;
         display: flex;
-        align-items: center;
-        gap: 0.5rem;
+        flex-direction: column;
+        gap: 1.25rem;
     }
 
-    .section-title i {
-        color: #667eea;
-    }
-
-    /* Mood Selection */
-    .mood-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+    .ck-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        flex-wrap: wrap;
         gap: 0.75rem;
     }
 
-    @media (max-width: 480px) {
-        .mood-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
+    .ck-header h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        color: var(--text-strong);
     }
 
-    .mood-option {
+    .ck-header p {
+        margin: 0.3rem 0 0;
+        color: var(--text-muted);
+        font-size: 0.98rem;
+    }
+
+    .ck-streak {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(245, 166, 35, 0.14);
+        color: var(--gold-deep);
+        border-radius: var(--radius-pill);
+        padding: 0.4rem 0.85rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .ck-card {
+        background: var(--surface-card);
+        border: 1px solid var(--border-divider);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow);
+        padding: var(--space-6);
+    }
+
+    .ck-card.submit-bar { padding: var(--space-5); }
+
+    /* ---- Pledge ---- */
+    .pledge-card { text-align: center; }
+
+    .pledge-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(82, 183, 136, 0.12);
+        transition: all var(--transition);
+    }
+
+    .pledge-icon i { font-size: 1.55rem; color: var(--color-accent); }
+
+    .pledge-card.taken .pledge-icon { background: var(--color-accent); }
+    .pledge-card.taken .pledge-icon i { color: #fff; }
+
+    .pledge-card h2 {
+        margin: 1rem 0 0.4rem;
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        color: var(--text-strong);
+    }
+
+    .pledge-card p {
+        margin: 0 auto;
+        max-width: 420px;
+        color: var(--text-muted);
+        line-height: 1.55;
+        font-size: 0.98rem;
+    }
+
+    .pledge-action {
+        margin-top: 1.35rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .ck-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border: none;
+        cursor: pointer;
+        font-family: var(--font-sans);
+        font-weight: 700;
+        border-radius: var(--radius-pill);
+        background: var(--color-accent);
+        color: #fff;
+        transition: all var(--transition);
+        padding: 0.8rem 1.6rem;
+        font-size: 1rem;
+    }
+
+    .ck-btn:hover {
+        transform: var(--lift-hover);
+        box-shadow: var(--shadow-accent);
+    }
+
+    .ck-btn.full { width: 100%; }
+
+    .ck-btn.outline {
+        background: var(--surface-card);
+        color: var(--color-primary);
+        border: 1.5px solid var(--color-primary);
+    }
+    .ck-btn.outline:hover { box-shadow: var(--shadow-hover); }
+
+    .pledge-streak-text {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-accent-hover);
+        font-weight: 700;
+        font-size: 0.95rem;
+    }
+    .pledge-streak-text i { color: var(--gold-accent); }
+
+    /* ---- Card headings ---- */
+    .ck-card h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        color: var(--text-strong);
+    }
+
+    /* ---- Mood grid ---- */
+    .mood-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.6rem;
+        margin: 1.1rem 0 0;
+    }
+
+    .mood-cell {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 1rem;
-        border: 2px solid #e8e8e8;
-        border-radius: 12px;
+        gap: 0.4rem;
         cursor: pointer;
-        transition: all 0.2s ease;
-        background: #fafafa;
+        padding: 0.85rem 0.3rem;
+        border-radius: var(--radius-md);
+        border: 2px solid transparent;
+        background: var(--surface-sunken);
+        transition: all var(--transition-fast);
     }
-
-    .mood-option:hover {
-        border-color: #667eea;
-        background: white;
+    .mood-cell input { display: none; }
+    .mood-cell .emoji { font-size: 1.9rem; line-height: 1; filter: grayscale(0.2); }
+    .mood-cell .label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); }
+    .mood-cell.selected {
+        border-color: var(--color-accent);
+        background: rgba(82, 183, 136, 0.10);
         transform: translateY(-2px);
     }
+    .mood-cell.selected .emoji { filter: none; }
+    .mood-cell.selected .label { color: var(--color-accent-hover); }
 
-    .mood-option.selected {
-        border-color: #667eea;
-        background: linear-gradient(135deg, #f0f4ff 0%, #f5f0ff 100%);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    /* ---- Cravings ---- */
+    .craving-block { margin-top: 1.5rem; }
+    .craving-label {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--text-body);
+        margin-bottom: 0.6rem;
+    }
+    .craving-pills { display: flex; gap: 0.55rem; flex-wrap: wrap; }
+    .craving-pill {
+        border: 1.5px solid var(--border-input);
+        background: var(--surface-card);
+        color: var(--text-body);
+        border-radius: var(--radius-pill);
+        padding: 0.5rem 1.15rem;
+        cursor: pointer;
+        font-family: var(--font-sans);
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all var(--transition-fast);
+    }
+    .craving-pill.selected {
+        border-color: var(--color-secondary);
+        background: rgba(77, 184, 232, 0.10);
+        color: var(--text-link-hover);
     }
 
-    .mood-option input {
-        display: none;
-    }
-
-    .mood-emoji {
-        font-size: 2rem;
+    /* ---- Reflect ---- */
+    .reflect-field { margin-top: 1.1rem; }
+    .reflect-field label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--text-body);
         margin-bottom: 0.5rem;
     }
-
-    .mood-label {
-        font-size: 0.85rem;
-        color: #666;
-        font-weight: 500;
-    }
-
-    .mood-option.selected .mood-label {
-        color: #667eea;
-    }
-
-    /* Gratitude Section - Featured */
-    .gratitude-section {
-        background: linear-gradient(135deg, #fff5f5 0%, #fff0f5 100%);
-        border: 2px solid #ffccd5;
-        border-radius: 16px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .gratitude-section .section-title {
-        color: #c9184a;
-    }
-
-    .gratitude-section .section-title i {
-        color: #ff6b6b;
-    }
-
-    .gratitude-prompt {
-        font-size: 0.95rem;
-        color: #666;
-        margin-bottom: 1rem;
-        line-height: 1.5;
-    }
-
-    .gratitude-examples {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .gratitude-tag {
-        background: white;
-        border: 1px solid #ffccd5;
-        padding: 0.35rem 0.75rem;
-        border-radius: 15px;
-        font-size: 0.8rem;
-        color: #666;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .gratitude-tag:hover {
-        background: #c9184a;
-        color: white;
-        border-color: #c9184a;
-    }
-
-    /* Form Controls */
-    .form-control {
+    .reflect-field label .seedling { color: var(--color-accent); margin-right: 0.45rem; }
+    .reflect-field label .opt { font-weight: 500; color: var(--text-faint); }
+    .ck-input, .ck-textarea {
         width: 100%;
-        padding: 0.875rem 1rem;
-        border: 2px solid #e8e8e8;
-        border-radius: 10px;
-        font-size: 1rem;
-        transition: all 0.2s;
-        font-family: inherit;
-    }
-
-    .form-control:focus {
+        border: 1.5px solid var(--border-input);
+        border-radius: var(--radius-md);
+        padding: 0.8rem 1rem;
+        font-family: var(--font-sans);
+        font-size: 0.98rem;
+        color: var(--text-body);
         outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        background: var(--surface-input);
     }
+    .ck-input:focus, .ck-textarea:focus { border-color: var(--color-accent); }
+    .ck-textarea { resize: vertical; line-height: 1.55; }
 
-    textarea.form-control {
-        min-height: 100px;
-        resize: vertical;
-    }
-
-    .char-count {
-        text-align: right;
-        font-size: 0.8rem;
-        color: #999;
-        margin-top: 0.25rem;
-    }
-
-    /* Slider Controls */
-    .slider-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .slider-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-
-    .slider-label {
-        font-weight: 500;
-        color: #333;
-    }
-
-    .slider-value {
-        background: #667eea;
-        color: white;
-        padding: 0.25rem 0.75rem;
-        border-radius: 15px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
-
-    .slider-input {
-        width: 100%;
-        height: 8px;
-        border-radius: 4px;
-        background: #e8e8e8;
-        outline: none;
-        -webkit-appearance: none;
-    }
-
-    .slider-input::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: #667eea;
-        cursor: pointer;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-    }
-
-    .slider-labels {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.75rem;
-        color: #999;
-        margin-top: 0.25rem;
-    }
-
-    /* Share Toggle */
-    .share-toggle {
+    /* ---- Submit bar ---- */
+    .share-row {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        padding: 1rem;
-        background: #f8f9fa;
-        border-radius: 10px;
-        margin-bottom: 1.5rem;
-    }
-
-    .toggle-switch {
-        position: relative;
-        width: 50px;
-        height: 26px;
-        flex-shrink: 0;
-    }
-
-    .toggle-switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    .toggle-slider {
-        position: absolute;
+        gap: 0.7rem;
         cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: #ccc;
-        border-radius: 26px;
-        transition: 0.3s;
+        margin-bottom: 1.1rem;
+    }
+    .share-row input[type="checkbox"] {
+        width: 18px; height: 18px; accent-color: var(--color-accent); cursor: pointer;
+    }
+    .share-row span { font-size: 0.95rem; color: var(--text-body); font-weight: 600; }
+    .share-row .globe { color: var(--color-secondary); margin-left: auto; }
+
+    /* ---- Already checked in ---- */
+    .ck-done { text-align: center; padding: var(--space-7); }
+    .ck-done .emoji { font-size: 2.6rem; line-height: 1; }
+    .ck-done h2 {
+        margin: 0.8rem 0 0.4rem; font-size: 1.5rem; font-weight: 800;
+        letter-spacing: -0.01em; color: var(--text-strong);
+    }
+    .ck-done p { margin: 0 auto 0.4rem; max-width: 380px; color: var(--text-muted); line-height: 1.55; }
+    .ck-done-actions {
+        display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; margin-top: 1.6rem;
     }
 
-    .toggle-slider:before {
-        position: absolute;
-        content: "";
-        height: 20px;
-        width: 20px;
-        left: 3px;
-        bottom: 3px;
-        background: white;
-        border-radius: 50%;
-        transition: 0.3s;
-    }
-
-    .toggle-switch input:checked + .toggle-slider {
-        background: #52b788;
-    }
-
-    .toggle-switch input:checked + .toggle-slider:before {
-        transform: translateX(24px);
-    }
-
-    .toggle-text h4 {
-        margin: 0 0 0.25rem;
-        font-size: 0.95rem;
-        color: #333;
-    }
-
-    .toggle-text p {
-        margin: 0;
-        font-size: 0.85rem;
-        color: #666;
-    }
-
-    /* Submit Button */
-    .submit-btn {
-        width: 100%;
-        padding: 1rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-
-    .submit-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
-    }
-
-    .submit-btn:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    /* Already Checked In State */
-    .already-checked-in {
-        text-align: center;
-        padding: 2rem;
-    }
-
-    .checked-emoji {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-    }
-
-    .checked-message {
-        font-size: 1.25rem;
-        color: #333;
-        margin-bottom: 0.5rem;
-    }
-
-    .checked-details {
-        color: #666;
-        margin-bottom: 1.5rem;
-    }
-
-    .checked-actions {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .btn-outline {
-        padding: 0.75rem 1.5rem;
-        border: 2px solid #667eea;
-        background: white;
-        color: #667eea;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.2s;
-    }
-
-    .btn-outline:hover {
-        background: #667eea;
-        color: white;
+    /* Mobile */
+    @media (max-width: 760px) {
+        .ck-page { padding: 1.1rem 0.9rem 2.5rem; }
+        .ck-header h1 { font-size: 1.7rem; }
+        .ck-card { padding: var(--space-5); }
+        .mood-grid { grid-template-columns: repeat(3, 1fr); }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="checkin-container">
-    <div class="checkin-card">
-        <div class="checkin-header">
-            <h1><i class="fas fa-sun"></i> Daily Check-in</h1>
-            <p>Take a moment to reflect on how you're doing</p>
-            <div class="checkin-date">
-                <i class="fas fa-calendar"></i> {{ today|date:"l, F j, Y" }}
-            </div>
+<div class="ck-page">
+    <div class="ck-header">
+        <div>
+            <h1>Daily check-in</h1>
+            <p>Take a moment to reflect on how you're doing · {{ today|date:"l, F j, Y" }}</p>
         </div>
+        <span class="ck-streak"><i class="fas fa-fire" aria-hidden="true"></i> {{ checkin_streak|default:0 }}-day streak</span>
+    </div>
 
-        <div class="checkin-body">
-            {% if existing_checkin %}
-            <!-- Already Checked In -->
-            <div class="already-checked-in">
-                <div class="checked-emoji">{{ existing_checkin.get_mood_display }}</div>
-                <div class="checked-message">You've already checked in today!</div>
-                <div class="checked-details">
-                    {% if existing_checkin.gratitude %}
-                    <p><strong>Grateful for:</strong> {{ existing_checkin.gratitude }}</p>
-                    {% endif %}
-                    <p>Energy: {{ existing_checkin.energy_level }}/5 | Cravings: {{ existing_checkin.get_craving_level_display }}</p>
-                </div>
-                <div class="checked-actions">
-                    <a href="{% url 'accounts:social_feed' %}" class="btn-outline">
-                        <i class="fas fa-home"></i> Go to Feed
-                    </a>
-                    <a href="{% url 'journal:dashboard' %}" class="btn-outline">
-                        <i class="fas fa-book"></i> Write in Journal
-                    </a>
-                </div>
-            </div>
-            {% else %}
-            <!-- Check-in Form -->
-            <form method="post" id="checkin-form">
-                {% csrf_token %}
-                <input type="hidden" name="local_date" id="localDateInput">
-
-                <!-- Daily Pledge Step -->
-                <div class="pledge-card" style="background: linear-gradient(135deg, #52b788, #40916c); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; color: white; text-align: center;">
-                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;"><i class="fas fa-hand-holding-heart" aria-hidden="true"></i></div>
-                    <h3 style="color: white; font-size: 1.4rem; margin-bottom: 0.75rem;">I pledge to stay sober today</h3>
-                    <p style="opacity: 0.9; margin-bottom: 1.25rem; font-size: 0.95rem;">One day at a time. Take your daily pledge to start your check-in.</p>
-                    <label style="display: inline-flex; align-items: center; gap: 0.75rem; cursor: pointer; background: rgba(255,255,255,0.2); padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; font-size: 1.1rem;">
-                        <input type="checkbox" name="pledge_taken" id="pledgeCheckbox" style="width: 20px; height: 20px; accent-color: white;" checked>
-                        Take My Pledge
-                    </label>
-                </div>
-
-                <!-- Mood Selection -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fas fa-smile"></i> How are you feeling?
-                    </div>
-                    <div class="mood-grid">
-                        <label class="mood-option">
-                            <input type="radio" name="mood" value="1" required>
-                            <span class="mood-emoji">😰</span>
-                            <span class="mood-label">Struggling</span>
-                        </label>
-                        <label class="mood-option">
-                            <input type="radio" name="mood" value="2">
-                            <span class="mood-emoji">😔</span>
-                            <span class="mood-label">Down</span>
-                        </label>
-                        <label class="mood-option">
-                            <input type="radio" name="mood" value="3">
-                            <span class="mood-emoji">😐</span>
-                            <span class="mood-label">Okay</span>
-                        </label>
-                        <label class="mood-option">
-                            <input type="radio" name="mood" value="4">
-                            <span class="mood-emoji">😊</span>
-                            <span class="mood-label">Good</span>
-                        </label>
-                        <label class="mood-option">
-                            <input type="radio" name="mood" value="5">
-                            <span class="mood-emoji">😄</span>
-                            <span class="mood-label">Great</span>
-                        </label>
-                        <label class="mood-option">
-                            <input type="radio" name="mood" value="6">
-                            <span class="mood-emoji">🌟</span>
-                            <span class="mood-label">Amazing</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Gratitude Section - Featured -->
-                <div class="gratitude-section">
-                    <div class="section-title">
-                        <i class="fas fa-heart"></i> Daily Gratitude
-                    </div>
-                    <p class="gratitude-prompt">
-                        Research shows that practicing gratitude can reduce cravings and improve mood.
-                        What's something you're grateful for today?
-                    </p>
-                    <div class="gratitude-examples">
-                        <span class="gratitude-tag" onclick="addGratitude('My sobriety')">My sobriety</span>
-                        <span class="gratitude-tag" onclick="addGratitude('My family')">My family</span>
-                        <span class="gratitude-tag" onclick="addGratitude('A good night\'s sleep')">Good sleep</span>
-                        <span class="gratitude-tag" onclick="addGratitude('This community')">This community</span>
-                        <span class="gratitude-tag" onclick="addGratitude('A new day')">A new day</span>
-                    </div>
-                    <textarea
-                        name="gratitude"
-                        id="gratitude-input"
-                        class="form-control"
-                        placeholder="Today I'm grateful for..."
-                        maxlength="500"
-                    ></textarea>
-                    <div class="char-count"><span id="gratitude-count">0</span>/500</div>
-                </div>
-
-                <!-- Energy & Craving Sliders -->
-                <div class="form-section">
-                    <div class="slider-group">
-                        <div class="slider-header">
-                            <span class="slider-label"><i class="fas fa-bolt"></i> Energy Level</span>
-                            <span class="slider-value" id="energy-value">3</span>
-                        </div>
-                        <input type="range" name="energy_level" class="slider-input" min="1" max="5" value="3" id="energy-slider">
-                        <div class="slider-labels">
-                            <span>Very Low</span>
-                            <span>High</span>
-                        </div>
-                    </div>
-
-                    <div class="slider-group">
-                        <div class="slider-header">
-                            <span class="slider-label"><i class="fas fa-fire-alt"></i> Craving Level</span>
-                            <span class="slider-value" id="craving-value">None</span>
-                        </div>
-                        <input type="range" name="craving_level" class="slider-input" min="0" max="4" value="0" id="craving-slider">
-                        <div class="slider-labels">
-                            <span>None</span>
-                            <span>Intense</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Challenge & Goal (Optional) -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fas fa-mountain"></i> Today's Challenge (Optional)
-                    </div>
-                    <textarea
-                        name="challenge"
-                        class="form-control"
-                        placeholder="What's your biggest challenge today?"
-                        maxlength="300"
-                        rows="2"
-                    ></textarea>
-                </div>
-
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fas fa-bullseye"></i> Today's Goal (Optional)
-                    </div>
-                    <textarea
-                        name="goal"
-                        class="form-control"
-                        placeholder="What's one thing you want to accomplish today?"
-                        maxlength="300"
-                        rows="2"
-                    ></textarea>
-                </div>
-
-                <!-- Share Toggle -->
-                <div class="share-toggle">
-                    <label class="toggle-switch">
-                        <input type="checkbox" name="is_shared" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <div class="toggle-text">
-                        <h4>Share with community</h4>
-                        <p>Others can see your check-in and offer support</p>
-                    </div>
-                </div>
-
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-check-circle"></i> Complete Check-in
-                </button>
-            </form>
-            {% endif %}
+    {% if existing_checkin %}
+    <!-- Already checked in -->
+    <div class="ck-card ck-done">
+        <div class="emoji">🎉</div>
+        <h2>You've already checked in today</h2>
+        <p>
+            Nice work showing up for yourself today.
+            {% if existing_checkin.is_shared %}Your circle can see it in the feed.{% else %}It's saved to your private journal.{% endif %}
+        </p>
+        {% if existing_checkin.gratitude %}
+        <p style="font-style: italic;">Grateful for: {{ existing_checkin.gratitude }}</p>
+        {% endif %}
+        <div style="display:inline-flex;margin-top:0.4rem;">
+            <span class="ck-streak"><i class="fas fa-fire" aria-hidden="true"></i> {{ checkin_streak|default:0 }}-day streak</span>
+        </div>
+        <div class="ck-done-actions">
+            <a href="{% url 'accounts:progress' %}" class="ck-btn"><i class="fas fa-chart-line" aria-hidden="true"></i> See my progress</a>
+            <a href="{% url 'accounts:social_feed' %}" class="ck-btn outline"><i class="fas fa-house" aria-hidden="true"></i> Back to feed</a>
         </div>
     </div>
+    {% else %}
+    <form method="post" id="checkin-form">
+        {% csrf_token %}
+        <input type="hidden" name="local_date" id="localDateInput">
+        <input type="hidden" name="pledge_taken" id="pledgeInput" value="">
+        <input type="hidden" name="craving_level" id="cravingInput" value="0">
+
+        <!-- Pledge -->
+        <div class="ck-card pledge-card" id="pledgeCard" style="margin-bottom:1.25rem;">
+            <div class="pledge-icon">
+                <i class="fas fa-hand-holding-heart" id="pledgeIcon" aria-hidden="true"></i>
+            </div>
+            <h2 id="pledgeHeading">I pledge to stay sober today</h2>
+            <p id="pledgeBody">One day at a time. Take your daily pledge to start your check-in.</p>
+            <div class="pledge-action" id="pledgeAction">
+                <button type="button" class="ck-btn" id="pledgeBtn"><i class="fas fa-check" aria-hidden="true"></i> Take my pledge</button>
+            </div>
+        </div>
+
+        <!-- Feeling -->
+        <div class="ck-card" style="margin-bottom:1.25rem;">
+            <h3>How are you feeling?</h3>
+            {% with sel=request.GET.mood|default:"4" %}
+            <div class="mood-grid">
+                <label class="mood-cell{% if sel == '1' %} selected{% endif %}"><input type="radio" name="mood" value="1"{% if sel == '1' %} checked{% endif %}><span class="emoji">😣</span><span class="label">Struggling</span></label>
+                <label class="mood-cell{% if sel == '2' %} selected{% endif %}"><input type="radio" name="mood" value="2"{% if sel == '2' %} checked{% endif %}><span class="emoji">😔</span><span class="label">Down</span></label>
+                <label class="mood-cell{% if sel == '3' %} selected{% endif %}"><input type="radio" name="mood" value="3"{% if sel == '3' %} checked{% endif %}><span class="emoji">😐</span><span class="label">Okay</span></label>
+                <label class="mood-cell{% if sel == '4' %} selected{% endif %}"><input type="radio" name="mood" value="4"{% if sel == '4' %} checked{% endif %}><span class="emoji">🙂</span><span class="label">Good</span></label>
+                <label class="mood-cell{% if sel == '5' %} selected{% endif %}"><input type="radio" name="mood" value="5"{% if sel == '5' %} checked{% endif %}><span class="emoji">😄</span><span class="label">Great</span></label>
+                <label class="mood-cell{% if sel == '6' %} selected{% endif %}"><input type="radio" name="mood" value="6"{% if sel == '6' %} checked{% endif %}><span class="emoji">🌟</span><span class="label">Amazing</span></label>
+            </div>
+            {% endwith %}
+            <div class="craving-block">
+                <div class="craving-label">Any cravings today?</div>
+                <div class="craving-pills" id="cravingPills">
+                    <button type="button" class="craving-pill selected" data-value="0">None</button>
+                    <button type="button" class="craving-pill" data-value="1">Mild</button>
+                    <button type="button" class="craving-pill" data-value="2">Moderate</button>
+                    <button type="button" class="craving-pill" data-value="3">Strong</button>
+                    <button type="button" class="craving-pill" data-value="4">Intense</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reflect -->
+        <div class="ck-card" style="margin-bottom:1.25rem;">
+            <h3>Take a moment to reflect</h3>
+            <div class="reflect-field">
+                <label for="gratitude-input"><i class="fas fa-seedling seedling" aria-hidden="true"></i>One thing you're grateful for</label>
+                <input type="text" class="ck-input" name="gratitude" id="gratitude-input" maxlength="500"
+                       placeholder="A good night's sleep, a call with my sponsor…">
+            </div>
+            <div class="reflect-field">
+                <label for="note-input">Anything else on your mind? <span class="opt">(optional)</span></label>
+                <textarea class="ck-textarea" name="goal" id="note-input" rows="3" maxlength="300"
+                          placeholder="Write it out — just for you, unless you choose to share."></textarea>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="ck-card submit-bar">
+            <label class="share-row">
+                <input type="checkbox" name="is_shared" id="shareInput" checked>
+                <span>Share this check-in with my circle</span>
+                <i class="fas fa-earth-americas globe" aria-hidden="true"></i>
+            </label>
+            <button type="submit" class="ck-btn full"><i class="fas fa-circle-check" aria-hidden="true"></i> Complete check-in</button>
+        </div>
+    </form>
+    {% endif %}
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Set local date for timezone-correct check-in
+    // Timezone-correct local date
     var ld = document.getElementById('localDateInput');
     if (ld) {
         var now = new Date();
@@ -599,53 +385,41 @@ document.addEventListener('DOMContentLoaded', function() {
             String(now.getDate()).padStart(2, '0');
     }
 
+    // Pledge toggle (one-way)
+    var pledgeBtn = document.getElementById('pledgeBtn');
+    var streakCount = {{ checkin_streak|default:0 }} + 1;
+    if (pledgeBtn) {
+        pledgeBtn.addEventListener('click', function() {
+            document.getElementById('pledgeInput').value = 'on';
+            document.getElementById('pledgeCard').classList.add('taken');
+            document.getElementById('pledgeIcon').className = 'fas fa-circle-check';
+            document.getElementById('pledgeHeading').textContent = 'Pledge taken for today';
+            document.getElementById('pledgeBody').textContent =
+                "That's " + streakCount + " days in a row. One day at a time — you've got this.";
+            document.getElementById('pledgeAction').innerHTML =
+                '<span class="pledge-streak-text"><i class="fas fa-fire" aria-hidden="true"></i> ' +
+                streakCount + '-day pledge streak</span>';
+        });
+    }
+
     // Mood selection
-    document.querySelectorAll('.mood-option').forEach(option => {
-        option.addEventListener('click', function() {
-            document.querySelectorAll('.mood-option').forEach(o => o.classList.remove('selected'));
+    document.querySelectorAll('.mood-cell').forEach(function(cell) {
+        cell.addEventListener('click', function() {
+            document.querySelectorAll('.mood-cell').forEach(function(c) { c.classList.remove('selected'); });
             this.classList.add('selected');
+            var input = this.querySelector('input');
+            if (input) input.checked = true;
         });
     });
 
-    // Gratitude character count
-    const gratitudeInput = document.getElementById('gratitude-input');
-    const gratitudeCount = document.getElementById('gratitude-count');
-    if (gratitudeInput) {
-        gratitudeInput.addEventListener('input', function() {
-            gratitudeCount.textContent = this.value.length;
+    // Craving pills
+    document.querySelectorAll('.craving-pill').forEach(function(pill) {
+        pill.addEventListener('click', function() {
+            document.querySelectorAll('.craving-pill').forEach(function(p) { p.classList.remove('selected'); });
+            this.classList.add('selected');
+            document.getElementById('cravingInput').value = this.dataset.value;
         });
-    }
-
-    // Energy slider
-    const energySlider = document.getElementById('energy-slider');
-    const energyValue = document.getElementById('energy-value');
-    if (energySlider) {
-        energySlider.addEventListener('input', function() {
-            energyValue.textContent = this.value;
-        });
-    }
-
-    // Craving slider
-    const cravingSlider = document.getElementById('craving-slider');
-    const cravingValue = document.getElementById('craving-value');
-    const cravingLabels = ['None', 'Mild', 'Moderate', 'Strong', 'Intense'];
-    if (cravingSlider) {
-        cravingSlider.addEventListener('input', function() {
-            cravingValue.textContent = cravingLabels[this.value];
-        });
-    }
+    });
 });
-
-// Add gratitude suggestion
-function addGratitude(text) {
-    const input = document.getElementById('gratitude-input');
-    if (input.value) {
-        input.value += ', ' + text.toLowerCase();
-    } else {
-        input.value = text;
-    }
-    input.focus();
-    document.getElementById('gratitude-count').textContent = input.value.length;
-}
 </script>
 {% endblock %}

@@ -65,6 +65,112 @@
 }
 
 /* =============================================
+   App-refresh design tokens (Check-in & Feed redesign)
+   Card-based "app-refresh" visual language. Additive — new token
+   names that map onto the existing brand palette above.
+   ============================================= */
+:root {
+    /* ---- Semantic brand aliases ---- */
+    --color-primary: #1e4d8b;
+    --color-primary-strong: #0f2d56;
+    --color-secondary: #4db8e8;
+    --color-accent: #52b788;
+    --color-accent-hover: #45a675;
+
+    /* ---- Text ---- */
+    --text-strong: #2c3e50;
+    --text-body: #2c3e50;
+    --text-faint: #9ca3af;
+    --text-link: #4db8e8;
+    --text-link-hover: #1e4d8b;
+    --text-on-brand: #ffffff;
+
+    /* ---- Surfaces ---- */
+    --surface-page: #f8f9fa;
+    --surface-card: #ffffff;
+    --surface-sunken: #f3f4f6;
+    --surface-input: #ffffff;
+    --surface-nav: rgba(255, 255, 255, 0.98);
+
+    /* ---- Borders ---- */
+    --border-input: #d1d5db;
+    --border-divider: #eef1f5;
+
+    /* ---- Gold (streaks, premium star, milestones) ---- */
+    --gold-accent: #f5a623;
+    --gold-soft: #f0c040;
+    --gold-deep: #d4a017;
+
+    /* ---- Feature gradients ---- */
+    --gradient-court: linear-gradient(135deg, #1e4d8b 0%, #0f2d56 100%);
+    --gradient-premium: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --premium-from: #667eea;
+    --premium-to: #764ba2;
+
+    /* ---- Status ---- */
+    --danger: #ef4444;
+
+    /* ---- Spacing scale ---- */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4rem;
+
+    /* ---- Radius ---- */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 15px;
+    --radius-xl: 20px;
+    --radius-pill: 50px;
+    --radius-chip: 25px;
+    --radius-badge: 20px;
+
+    /* ---- Shadows ---- */
+    --shadow-sm: 0 1px 4px rgba(15, 45, 86, 0.25);
+    --shadow-dropdown: 0 4px 20px rgba(0, 0, 0, 0.15);
+    --shadow-accent: 0 5px 15px rgba(82, 183, 136, 0.3);
+
+    /* ---- Motion ---- */
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: 0.15s ease;
+    --transition: 0.3s ease;
+    --lift-hover: translateY(-2px);
+    --lift-card: translateY(-5px);
+
+    /* ---- Layout ---- */
+    --nav-height: 70px;
+    --blur-nav: blur(10px);
+
+    /* ---- Typography ---- */
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --tracking-label-wide: 0.12em;
+}
+
+[data-theme="dark"] {
+    --text-strong: #e4e4e7;
+    --text-body: #e4e4e7;
+    --text-faint: #6b7280;
+    --text-link: #4db8e8;
+    --text-link-hover: #6bc5ed;
+
+    --surface-page: #111827;
+    --surface-card: #1f2937;
+    --surface-sunken: #374151;
+    --surface-input: #374151;
+    --surface-nav: #111827;
+
+    --border-input: #4b5563;
+    --border-divider: #374151;
+
+    --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.4);
+    --shadow-dropdown: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* =============================================
    Dark Mode Theme
    ============================================= */
 [data-theme="dark"] {

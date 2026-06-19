@@ -796,11 +796,15 @@ def daily_checkin_view(request):
                 post_content = f"Checked in feeling {mood_display}"
                 if gratitude:
                     post_content += f"\n\nGrateful for: {gratitude}"
+                # Flag as a milestone post when today lands on a sobriety milestone
+                milestone = request.user.get_milestone_to_celebrate()
                 SocialPost.objects.create(
                     author=request.user,
                     content=post_content,
                     visibility='public',
-                    linked_checkin=checkin
+                    linked_checkin=checkin,
+                    post_type='milestone' if milestone else 'standard',
+                    milestone_days=milestone['days'] if milestone else None,
                 )
             else:
                 # Private check-in: create ActivityFeed entry so it shows in user's own activity
@@ -836,6 +840,7 @@ def daily_checkin_view(request):
     context = {
         'existing_checkin': existing_checkin,
         'today': today,
+        'checkin_streak': request.user.get_checkin_streak(),
     }
     return render(request, 'accounts/daily_checkin.html', context)
 
@@ -4018,6 +4023,16 @@ def social_feed_view(request):
         else:
             following_ids = set()
 
+        # Mood tag styling for posts linked to a check-in (feed mood pill)
+        mood_tags = {
+            1: {'emoji': '😣', 'label': 'Struggling', 'kind': 'okay'},
+            2: {'emoji': '😔', 'label': 'Down', 'kind': 'okay'},
+            3: {'emoji': '😐', 'label': 'Okay', 'kind': 'okay'},
+            4: {'emoji': '🙂', 'label': 'Good', 'kind': 'good'},
+            5: {'emoji': '😄', 'label': 'Great', 'kind': 'good'},
+            6: {'emoji': '🌟', 'label': 'Amazing', 'kind': 'amazing'},
+        }
+
         for post in posts:
             if post.is_visible_to(user if user.is_authenticated else None):
                 # Single pass over prefetched reactions (cache list once)
@@ -4027,6 +4042,17 @@ def social_feed_view(request):
                     user.is_authenticated
                     and any(r.user_id == user.id for r in reactions_list)
                 )
+                # Per-type counts + this user's reaction type (Support/Strength)
+                counts = {}
+                post.user_reaction = None
+                for r in reactions_list:
+                    counts[r.reaction_type] = counts.get(r.reaction_type, 0) + 1
+                    if user.is_authenticated and r.user_id == user.id:
+                        post.user_reaction = r.reaction_type
+                post.reaction_counts = counts
+                # Mood pill from a linked check-in
+                if post.linked_checkin_id and post.linked_checkin:
+                    post.mood_tag = mood_tags.get(post.linked_checkin.mood)
                 visible_posts.append(post)
                 # Track posts from followed users
                 if user.is_authenticated and post.author_id in following_ids:
@@ -4068,6 +4094,31 @@ def social_feed_view(request):
             context['todays_checkin'] = todays_checkin
             context['checkin_streak'] = user.get_checkin_streak()
             context['is_premium'] = hasattr(user, 'subscription') and user.subscription.is_premium()
+
+            # Supporter presence row ("X of Y supporters are online now")
+            try:
+                from datetime import timedelta
+                online_cutoff = timezone.now() - timedelta(minutes=5)
+                supporter_links = list(
+                    user.supporter_links.filter(status='active')
+                    .exclude(supporter__isnull=True)
+                    .select_related('supporter')
+                )
+                supporters = [link.supporter for link in supporter_links]
+                context['supporter_total'] = len(supporters)
+                context['supporter_online'] = sum(
+                    1 for s in supporters if s.last_seen and s.last_seen >= online_cutoff
+                )
+                # A few sample supporters for the overlapping avatars (online first)
+                context['supporter_samples'] = sorted(
+                    supporters,
+                    key=lambda s: s.last_seen or timezone.datetime.min.replace(tzinfo=timezone.utc),
+                    reverse=True,
+                )[:4]
+            except Exception:
+                context['supporter_total'] = 0
+                context['supporter_online'] = 0
+                context['supporter_samples'] = []
             profile_completion = user.get_profile_completion()
             context['profile_completion'] = profile_completion
             context['show_profile_banner'] = not profile_completion['is_complete'] and not user.has_completed_onboarding
