@@ -548,9 +548,9 @@ def get_generic_pdf_html(resource):
 </html>'''
 
 @login_required
-def bookmark_resource(request, pk):
+def bookmark_resource(request, slug):
     """Toggle bookmark for a resource"""
-    resource = get_object_or_404(Resource, pk=pk, is_active=True)
+    resource = get_object_or_404(Resource, slug=slug, is_active=True)
 
     bookmark, created = ResourceBookmark.objects.get_or_create(
         user=request.user,
