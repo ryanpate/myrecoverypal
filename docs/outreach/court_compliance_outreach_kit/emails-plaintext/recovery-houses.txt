@@ -1,0 +1,21 @@
+SUBJECT: quick question, {{company}}
+AUDIENCE: Recovery Houses & Sober Living
+MERGE FIELDS: {{first_name}}, {{company}}
+---
+
+Hi {{first_name}},
+
+I'll keep this short. I'm Ryan, founder of MyRecoveryPal.
+
+Residents with court-ordered meetings can now prove attendance
+themselves — without the paperwork landing on your staff.
+
+- Logs any program (AA, NA, SMART, Refuge & secular)
+- Generates a tamper-evident, court-verifiable PDF — no signup to confirm
+- Free for your house; residents cover their own report
+
+Worth forwarding to a resident who needs it? Happy to send a sample PDF.
+
+Ryan
+Founder, MyRecoveryPal
+myrecoverypal.com/court-compliance

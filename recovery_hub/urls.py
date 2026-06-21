@@ -29,6 +29,8 @@ urlpatterns = [
     path('ai-coach/', RedirectView.as_view(pattern_name='accounts:recovery_coach', permanent=True)),
     path('pricing/', RedirectView.as_view(pattern_name='accounts:pricing', permanent=True)),
     path('home/', RedirectView.as_view(url='/', permanent=True)),
+    # Short URL used in court-compliance outreach emails
+    path('court-compliance/', RedirectView.as_view(pattern_name='core:court_ordered_meeting_tracker', permanent=True)),
 
     # Custom admin dashboards (must be before admin.site.urls)
     path('admin/dashboard/ab-tests/', ab_test_results, name='admin_ab_test_results'),

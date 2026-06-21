@@ -1,0 +1,21 @@
+SUBJECT: proof of attendance for {{company}}'s clients
+AUDIENCE: Defense & DUI Lawyers
+MERGE FIELDS: {{first_name}}, {{company}}
+---
+
+Hi {{first_name}},
+
+I'll keep this short. I'm Ryan, founder of MyRecoveryPal.
+
+When a client has court-ordered meetings, proving it usually becomes
+your problem. We turn it into one verifiable PDF.
+
+- Clients log any program (AA, NA, SMART, LifeRing & secular)
+- Tamper-evident, publicly verifiable PDF the court can trust
+- Free for your firm — no more chasing sign-in sheets
+
+Want me to send a sample report you can show a client?
+
+Ryan
+Founder, MyRecoveryPal
+myrecoverypal.com/court-compliance

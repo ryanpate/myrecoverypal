@@ -1,0 +1,21 @@
+SUBJECT: after discharge, the court still wants proof
+AUDIENCE: Rehab & Treatment Centers
+MERGE FIELDS: {{first_name}}, {{company}}
+---
+
+Hi {{first_name}},
+
+I'll keep this short. I'm Ryan, founder of MyRecoveryPal.
+
+After discharge, a lot of clients still owe the court proof of meetings —
+with no easy way to show it.
+
+- Logs any program (AA, NA, SMART & secular)
+- Tamper-evident, verifiable PDF a court accepts
+- Free for your center — no staff time tracking attendance
+
+Could be worth handing to clients on their way out. Want a sample?
+
+Ryan
+Founder, MyRecoveryPal
+myrecoverypal.com/court-compliance

@@ -1,0 +1,21 @@
+SUBJECT: when the sign-in sheet gets lost
+AUDIENCE: DUI & Drug-Court Services
+MERGE FIELDS: {{first_name}}, {{company}}
+---
+
+Hi {{first_name}},
+
+I'll keep this short. I'm Ryan, founder of MyRecoveryPal.
+
+For DUI and drug-court clients, proof of attendance is everything —
+and paper sign-in sheets get lost.
+
+- Logs every program (AA, NA, SMART, LifeRing & secular)
+- Verifiable, court-ready PDF the court confirms with no signup
+- Free for your service — clients cover their own report
+
+Happy to send a sample PDF if it's useful.
+
+Ryan
+Founder, MyRecoveryPal
+myrecoverypal.com/court-compliance
