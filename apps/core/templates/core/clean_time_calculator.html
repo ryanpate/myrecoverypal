@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Sobriety Calculator: Days Sober, Money Saved & Milestones (Free){% endblock %}
-{% block meta_description %}Enter your sobriety date and instantly see days, weeks & months sober — plus milestones reached, money saved, and health benefits. Free, no signup.{% endblock %}
-{% block meta_keywords %}sobriety calculator, how long have i been sober, sober calculator, clean time calculator, sobriety date calculator, days sober calculator, sobriety clock, sober time calculator{% endblock %}
+{% block title %}Clean Time Calculator: Days Clean, Key Tags & Milestones (Free){% endblock %}
+{% block meta_description %}Enter your clean date and instantly see days, weeks & months clean — plus NA key tag milestones, money saved, and recovery benefits. Free, no signup.{% endblock %}
+{% block meta_keywords %}clean time calculator, clean date calculator, NA clean time calculator, how long have i been clean, days clean calculator, narcotics anonymous clean time, clean time counter, NA key tags{% endblock %}
 
-{% block canonical_url %}https://www.myrecoverypal.com/sobriety-calculator/{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com/clean-time-calculator/{% endblock %}
 
 {% block structured_data %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "Free Sobriety Calculator",
-  "description": "Calculate how long you've been sober with our free sobriety calculator. Shows days, weeks, months, years plus milestones reached and health benefits.",
-  "url": "https://www.myrecoverypal.com/sobriety-calculator/",
+  "name": "Free Clean Time Calculator",
+  "description": "Calculate how long you've been clean with our free clean time calculator. Shows days, weeks, months, and years clean plus NA key tag milestones and recovery benefits.",
+  "url": "https://www.myrecoverypal.com/clean-time-calculator/",
   "applicationCategory": "HealthApplication",
   "operatingSystem": "Any",
   "offers": {
@@ -23,11 +23,11 @@
     "priceCurrency": "USD"
   },
   "featureList": [
-    "Calculate days sober",
-    "Track weeks and months",
-    "Milestone celebrations",
+    "Calculate days clean",
+    "Track weeks and months clean",
+    "NA key tag milestones",
     "Money saved calculator",
-    "Health benefits timeline"
+    "Recovery benefits timeline"
   ]
 }
 </script>
@@ -38,74 +38,50 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "How do I calculate my sobriety date?",
+      "name": "What is clean time?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Enter the last day you drank alcohol or used drugs into the calculator above. The tool automatically calculates your total sober time in days, weeks, months, and years."
+        "text": "Clean time is the continuous length of time you've gone without using drugs or alcohol. In Narcotics Anonymous (NA), it's counted from your clean date — the day after you last used. Members celebrate clean time milestones with key tags and chips at meetings."
       }
     },
     {
       "@type": "Question",
-      "name": "What counts as a sobriety date?",
+      "name": "How do I calculate my clean date?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Your sobriety date is typically the day after your last drink or drug use. For example, if you had your last drink on January 1st, your sobriety date would be January 2nd. In AA and NA, this is when you start counting continuous clean time."
+        "text": "Enter the first full day you were clean into the calculator above. The tool instantly calculates your total clean time in days, weeks, months, and years, and shows which NA key tag milestones you've reached."
       }
     },
     {
       "@type": "Question",
-      "name": "How much money can I save by not drinking?",
+      "name": "What are the NA key tag colors and milestones?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "A casual drinker ($5-10/day) saves $1,825-$3,650 per year. A regular drinker ($15-25/day) saves $5,475-$9,125 per year. A heavy drinker ($30-50/day) saves $10,950-$18,250 per year. When you factor in reduced medical bills and avoided DUI costs, the real savings can be 2-3 times higher."
+        "text": "Narcotics Anonymous key tags mark clean time milestones: white (welcome / desire to stop), orange (30 days), green (60 days), red (90 days), blue (6 months), yellow (9 months), glow-in-the-dark / moonstone (1 year), gray (18 months), and black (multiple years). Each is presented at an NA meeting."
       }
     },
     {
       "@type": "Question",
-      "name": "What health benefits happen when you stop drinking?",
+      "name": "Do I reset my clean time after a relapse?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Within 24 hours, blood sugar normalizes. After 1 week, sleep improves. At 1 month, liver fat reduces by 15%. After 3 months, mental clarity improves and skin looks healthier. At 6 months, cardiovascular health significantly improves. At 1 year, risk of heart disease reduced by 50%. After 5 years, risk of stroke returns to near-normal levels."
+        "text": "In NA tradition, clean time is counted as continuous time, so most members reset their clean date after a relapse and begin counting again. That said, a relapse never erases the recovery skills you built or the healing your body did. What matters most is coming back and starting again."
       }
     },
     {
       "@type": "Question",
-      "name": "How many days sober am I?",
+      "name": "Does this clean time calculator work for any program?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Enter your quit date in the free sobriety calculator above. It instantly shows your total days sober with a breakdown in weeks, months, years, and hours. It also shows which recovery milestones you've reached and upcoming milestones."
+        "text": "Yes. While 'clean time' is the language used in Narcotics Anonymous, this calculator works for any recovery program — NA, AA, Cocaine Anonymous, SMART Recovery, or recovery on your own. Enter the date you stopped using and it counts your clean time the same way."
       }
     },
     {
       "@type": "Question",
-      "name": "Does sobriety get easier over time?",
+      "name": "What's the difference between clean time and sober time?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes, for most people. The first 30 days are typically the most challenging. After 90 days, cravings become less frequent and intense. By one year, most people have developed new routines and coping mechanisms. However, recovery is not linear — ongoing support and community matter."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Can I use this calculator for NA clean time?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes. This calculator works for any type of sobriety or clean time, whether you're in AA, NA, SMART Recovery, or any other program. Simply enter the date you stopped using your substance of choice."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Is this an AA sobriety calculator?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes. It works as an AA sobriety calculator, similar to the AA Grapevine clean time calculator. Enter your sobriety date to see your continuous clean time the way it's counted in AA and NA, along with milestone anniversaries. It's free and works for any recovery program."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Can I use this as a sober date or clean date calculator?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes. Enter your sober date (the day you stopped) and it instantly calculates your clean time. Whether you call it a sober date calculator, clean date calculator, or sobriety date calculator, it counts the exact days, weeks, months, and years since your quit date."
+        "text": "They measure the same thing — continuous time in recovery. 'Clean time' is the term used in Narcotics Anonymous for time off all drugs, while 'sober time' or 'sobriety' is more common in Alcoholics Anonymous for time off alcohol. Both count the days, weeks, months, and years since your quit date."
       }
     }
   ]
@@ -346,7 +322,7 @@
         font-size: 0.95rem;
     }
 
-    /* Health Benefits Timeline */
+    /* Recovery Benefits Timeline */
     .health-benefits {
         margin-bottom: 2.5rem;
     }
@@ -545,42 +521,6 @@
         margin: 0;
     }
 
-    /* Related Links */
-    .related-section {
-        padding: 3rem 2rem;
-        background: white;
-    }
-    .related-section h3 {
-        text-align: center;
-        color: var(--primary-dark);
-        margin-bottom: 1.5rem;
-    }
-    .related-grid {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        flex-wrap: wrap;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-    .related-grid a {
-        background: var(--bg-light);
-        padding: 0.75rem 1.25rem;
-        border-radius: 8px;
-        text-decoration: none;
-        color: var(--primary-dark);
-        font-weight: 500;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .related-grid a:hover {
-        background: var(--primary-dark);
-        color: white;
-        transform: translateY(-2px);
-    }
-
     /* Final CTA */
     .final-cta {
         padding: 5rem 2rem;
@@ -639,8 +579,8 @@
 <!-- Page Header -->
 <section class="calculator-header">
     <div class="container">
-        <h1>Free Sobriety Calculator</h1>
-        <p>Calculate how long you've been sober instantly. See milestones, money saved, and health benefits.</p>
+        <h1>Free Clean Time Calculator</h1>
+        <p>Calculate how long you've been clean instantly. See your NA key tag milestones, money saved, and recovery benefits.</p>
     </div>
 </section>
 
@@ -650,10 +590,10 @@
         <div class="calculator-card">
             <!-- Input Section -->
             <div class="calc-input-section">
-                <h2>Enter Your Sobriety Date</h2>
+                <h2>Enter Your Clean Date</h2>
                 <div class="date-input-wrapper">
-                    <label for="sobriety-date">I quit on:</label>
-                    <input type="date" id="sobriety-date" max="" aria-label="Select your sobriety start date" />
+                    <label for="sobriety-date">My clean date:</label>
+                    <input type="date" id="sobriety-date" max="" aria-label="Select your clean date" />
                 </div>
             </div>
 
@@ -662,16 +602,16 @@
                 <!-- Placeholder State (hidden once demo loads) -->
                 <div id="placeholder-state" class="placeholder-state" style="display: none;">
                     <div class="icon"><i class="fas fa-calendar-alt"></i></div>
-                    <p>Select your sobriety date above to see your progress</p>
+                    <p>Select your clean date above to see your progress</p>
                 </div>
 
                 <!-- Results (visible by default with demo data for SEO) -->
                 <div id="results-display">
-                    <p id="demo-banner" style="text-align:center;background:#fff3cd;padding:0.75rem;border-radius:8px;margin-bottom:1.5rem;color:#856404;font-weight:500;"><i class="fas fa-info-circle"></i> Showing example for 90 days sober. Enter your date above to see your results.</p>
+                    <p id="demo-banner" style="text-align:center;background:#fff3cd;padding:0.75rem;border-radius:8px;margin-bottom:1.5rem;color:#856404;font-weight:500;"><i class="fas fa-info-circle"></i> Showing example for 90 days clean. Enter your clean date above to see your results.</p>
                     <!-- Main Counter -->
                     <div class="main-counter">
                         <div class="days-display" id="total-days">0</div>
-                        <div class="days-label">Days Sober</div>
+                        <div class="days-label">Days Clean</div>
                     </div>
 
                     <!-- Time Breakdown -->
@@ -696,7 +636,7 @@
 
                     <!-- Milestones -->
                     <div class="milestones-container">
-                        <h3><i class="fas fa-medal"></i> Milestones</h3>
+                        <h3><i class="fas fa-key"></i> NA Key Tag Milestones</h3>
                         <div class="milestone-track" id="milestones-track"></div>
                     </div>
 
@@ -705,18 +645,18 @@
                         <h3><i class="fas fa-piggy-bank"></i> Money Saved</h3>
                         <div class="money-input-row">
                             <label for="daily-spend">I used to spend about $</label>
-                            <input type="number" id="daily-spend" value="15" min="0" step="1" aria-label="Daily spending amount" />
+                            <input type="number" id="daily-spend" value="20" min="0" step="1" aria-label="Daily spending amount" />
                             <label>per day</label>
                         </div>
                         <div class="money-saved-display">
                             <div class="amount" id="money-saved">$0</div>
-                            <div class="label">Total Saved Since Quitting</div>
+                            <div class="label">Total Saved Since Getting Clean</div>
                         </div>
                     </div>
 
-                    <!-- Health Benefits -->
+                    <!-- Recovery Benefits -->
                     <div class="health-benefits">
-                        <h3><i class="fas fa-heart"></i> Health Benefits Unlocked</h3>
+                        <h3><i class="fas fa-heart"></i> Recovery Benefits Unlocked</h3>
                         <div class="benefits-timeline" id="benefits-timeline"></div>
                     </div>
                 </div>
@@ -724,9 +664,9 @@
 
             <!-- CTA Section -->
             <div class="calc-cta">
-                <h3>Save Your Progress</h3>
-                <p>Create a free account to track milestones, get reminders, and connect with others in recovery.</p>
-                <a href="{% url 'accounts:register' %}" class="cta-button">Save My Sobriety Date</a>
+                <h3>Save Your Clean Date</h3>
+                <p>Create a free account to track your clean time, get milestone reminders, and connect with others in recovery.</p>
+                <a href="{% url 'accounts:register' %}" class="cta-button">Save My Clean Date</a>
                 <div class="benefits-list">
                     <span><i class="fas fa-check"></i> Free to Join</span>
                     <span><i class="fas fa-check"></i> Milestone Alerts</span>
@@ -741,14 +681,16 @@
 <noscript>
 <section class="content-section">
     <div class="container">
-        <h2>Sobriety Calculator Results</h2>
-        <p>Enable JavaScript to use the interactive calculator above. Here are common sobriety milestones and what they mean:</p>
+        <h2>Clean Time Milestones</h2>
+        <p>Enable JavaScript to use the interactive calculator above. Here are the NA clean time milestones and what they mean:</p>
         <ul>
-            <li><strong>30 days sober</strong> = 4 weeks, 720 hours. Liver fat reduces up to 15%, sleep quality significantly improved.</li>
-            <li><strong>90 days sober</strong> = 12 weeks, 2,160 hours. The traditional AA chip milestone. Mental clarity improves, skin looks healthier.</li>
-            <li><strong>6 months sober</strong> = 26 weeks, 4,380 hours. Cardiovascular health significantly improves. Average savings: $2,700 (at $15/day).</li>
-            <li><strong>1 year sober</strong> = 52 weeks, 8,760 hours. Risk of heart disease and stroke reduced. Average savings: $5,475.</li>
-            <li><strong>5 years sober</strong> = 1,825 days. Risk of certain cancers returns to near-normal levels. Average savings: $27,375.</li>
+            <li><strong>30 days clean</strong> = 4 weeks, 720 hours. The orange NA key tag. Sleep and appetite begin to regulate.</li>
+            <li><strong>60 days clean</strong> = roughly 2 months. The green key tag. Energy returns and brain fog starts to lift.</li>
+            <li><strong>90 days clean</strong> = 12 weeks, 2,160 hours. The red key tag and a major recovery benchmark. Cravings become less frequent.</li>
+            <li><strong>6 months clean</strong> = 26 weeks. The blue key tag. Emotional regulation and routines feel more natural.</li>
+            <li><strong>9 months clean</strong> = the yellow key tag.</li>
+            <li><strong>1 year clean</strong> = 365 days. The glow-in-the-dark (moonstone) key tag — your recovery anniversary.</li>
+            <li><strong>18 months clean</strong> = the gray key tag. <strong>Multiple years</strong> = the black key tag.</li>
         </ul>
     </div>
 </section>
@@ -757,73 +699,51 @@
 <!-- Content Section — expanded for search depth -->
 <section class="content-section">
     <div class="container">
-        <h2>How to Use This Sobriety Calculator</h2>
-        <p>Our free sobriety calculator helps you track exactly how long you've been sober. Simply enter the date you stopped drinking or using drugs, and the calculator instantly shows your clean time in days, weeks, months, and years, along with milestones you've reached, money you've saved, and health benefits you've unlocked.</p>
-        <p>No signup or account is needed. Your date stays in your browser and is never sent to our servers. If you want to save your sobriety date and get milestone reminders, you can create a free MyRecoveryPal account.</p>
+        <h2>How to Use This Clean Time Calculator</h2>
+        <p>Our free clean time calculator helps you track exactly how long you've been clean. Enter your clean date — the first full day you were clean — and the calculator instantly shows your clean time in days, weeks, months, and years, along with the NA key tag milestones you've reached, money you've saved, and recovery benefits you've unlocked.</p>
+        <p>No signup or account is needed. Your clean date stays in your browser and is never sent to our servers. If you want to save it and get milestone reminders, you can create a free MyRecoveryPal account.</p>
 
-        <h3>What Is a Sobriety Date?</h3>
-        <p>Your sobriety date (also called your clean date or sober date) is the day you stopped using alcohol or drugs. For most people, this is the day after their last drink or use. For example, if you had your last drink on December 31st, your sobriety date would be January 1st.</p>
-        <p>In AA and NA, your sobriety date is when you start counting continuous clean time. Some programs count from the last time you used any mood-altering substance, while others focus on a specific substance. The important thing is choosing a date that's meaningful to your recovery.</p>
+        <h3>What Is Clean Time?</h3>
+        <p>Clean time is the continuous length of time you've gone without using drugs or alcohol. In Narcotics Anonymous (NA), it's counted from your clean date, which is usually the day after you last used. "Clean time" is the term used in NA the same way "sobriety" is used in AA — both describe continuous time in recovery.</p>
+        <p>Your clean date is a personal and meaningful marker. Some people count from the last time they used any mood-altering substance; what matters most is choosing a date that's honest and meaningful to your recovery.</p>
 
-        <h3>Why Tracking Sobriety Time Matters</h3>
-        <p>Research from the National Institute on Alcohol Abuse and Alcoholism (NIAAA) shows that tracking progress increases motivation and long-term success rates in recovery. A 2020 study in the Journal of Substance Abuse Treatment found that people who actively tracked their sobriety were 40% more likely to maintain abstinence at one year.</p>
+        <h3>NA Key Tags and Clean Time Milestones</h3>
+        <p>In Narcotics Anonymous, clean time milestones are celebrated with colored key tags presented at meetings. The calculator above tracks these milestones for you:</p>
         <ul>
-            <li><strong>Builds momentum:</strong> Each day adds to your streak, creating a psychological investment that makes you less likely to break it. The longer the streak, the stronger the motivation.</li>
-            <li><strong>Celebrates progress:</strong> Milestones give you concrete achievements to celebrate. In early recovery, even 24 hours is a victory worth recognizing.</li>
-            <li><strong>Provides perspective:</strong> On tough days when cravings hit, seeing how far you've come helps you push through. Knowing you've survived 90 days of challenges proves you can handle one more.</li>
-            <li><strong>Creates accountability:</strong> Having a number to protect motivates you to stay sober. Many people report that their sobriety counter becomes a source of pride they refuse to reset.</li>
-            <li><strong>Tracks health improvements:</strong> Connecting your sober time to real health benefits (better sleep, clearer skin, lower blood pressure) reinforces the rewards of staying sober.</li>
+            <li><strong>White key tag:</strong> Welcome — the desire to stop using and your first day clean.</li>
+            <li><strong>Orange key tag (30 days):</strong> Your first month. New habits are starting to form.</li>
+            <li><strong>Green key tag (60 days):</strong> Two months clean. Energy returns and brain fog begins to lift.</li>
+            <li><strong>Red key tag (90 days):</strong> Three months — a major recovery benchmark. Research shows reaching 90 days significantly improves long-term outcomes.</li>
+            <li><strong>Blue key tag (6 months):</strong> Half a year clean. Emotional regulation improves and routines feel more natural.</li>
+            <li><strong>Yellow key tag (9 months):</strong> Nine months of continuous recovery.</li>
+            <li><strong>Glow-in-the-dark / moonstone key tag (1 year):</strong> Your recovery anniversary — a life-changing accomplishment.</li>
+            <li><strong>Gray key tag (18 months)</strong> and <strong>black key tag (multiple years):</strong> Long-term recovery, well established.</li>
         </ul>
 
-        <h3>Sobriety Milestones Worth Celebrating</h3>
-        <p>Recovery programs like AA and NA mark milestones with coins or chips, but every milestone is worth celebrating regardless of your recovery approach:</p>
+        <h3>Why Tracking Clean Time Matters</h3>
+        <p>Tracking your clean time builds momentum and motivation. Research from the National Institute on Drug Abuse (NIDA) shows that recovery outcomes improve significantly the longer a person stays in continuous recovery, with relapse risk dropping sharply after the first year.</p>
         <ul>
-            <li><strong>24 Hours:</strong> The first day is often the hardest. You made it through.</li>
-            <li><strong>1 Week (7 days):</strong> Physical withdrawal symptoms often start to subside. Sleep begins improving.</li>
-            <li><strong>2 Weeks (14 days):</strong> Stomach lining heals, digestion improves. Energy levels start to rise.</li>
-            <li><strong>30 Days (1 month):</strong> A major milestone in any recovery program. Liver fat can reduce by up to 15%. Many people notice improved mood and mental clarity.</li>
-            <li><strong>60 Days (2 months):</strong> New habits are becoming established. Brain chemistry begins to normalize. Understanding how dopamine recovers after addiction can help you push through this stage—read our guide on <a href="/blog/post/dopamine-detox-addiction-recovery/">dopamine detox and addiction recovery</a> for the science behind what your brain is going through.</li>
-            <li><strong>90 Days (3 months):</strong> The traditional AA chip milestone and a common benchmark in treatment programs. Research shows that reaching 90 days significantly increases the chance of long-term recovery.</li>
-            <li><strong>6 Months (180 days):</strong> Cardiovascular health significantly improves. Many people describe this as when recovery starts feeling "normal."</li>
-            <li><strong>1 Year (365 days):</strong> Your soberversary. A life-changing accomplishment. Risk of heart disease and stroke significantly reduced. This is the milestone that proves lasting change is possible.</li>
-            <li><strong>2 Years:</strong> Risk of developing alcohol-related cancers begins to decrease.</li>
-            <li><strong>5 Years:</strong> Long-term recovery is well established. Risk of relapse drops significantly compared to the first year.</li>
+            <li><strong>Builds momentum:</strong> Each day adds to your count, creating a psychological investment that makes you less likely to break it.</li>
+            <li><strong>Celebrates progress:</strong> Key tags and milestones give you concrete achievements to celebrate. Even 24 hours clean is a real victory.</li>
+            <li><strong>Provides perspective:</strong> On hard days when cravings hit, seeing how far you've come helps you push through.</li>
+            <li><strong>Creates accountability:</strong> Having a number to protect motivates you to stay clean one more day.</li>
         </ul>
 
-        <h3>Detailed Health Benefits Timeline: What Happens to Your Body When You Quit Drinking</h3>
-        <p>Your body begins healing remarkably quickly once you stop drinking. Here's a detailed breakdown based on medical research:</p>
+        <h3>What Happens to Your Brain and Body When You Get Clean</h3>
+        <p>Recovery from drug use heals your brain and body in stages. Here's a general timeline of what many people experience:</p>
         <ul>
-            <li><strong>After 1 hour:</strong> Your body begins metabolizing the last alcohol consumed. Liver begins processing remaining toxins.</li>
-            <li><strong>After 12 hours:</strong> Blood sugar levels start to normalize. Your body starts the detoxification process.</li>
-            <li><strong>After 24 hours:</strong> Blood alcohol level reaches zero. Risk of seizures peaks for heavy drinkers (seek medical supervision if needed).</li>
-            <li><strong>After 3 days:</strong> Alcohol is completely out of your bloodstream. Acute withdrawal symptoms typically begin to subside.</li>
-            <li><strong>After 1 week:</strong> Sleep quality begins to improve. Better hydration leads to clearer skin. Appetite starts to regulate.</li>
-            <li><strong>After 2 weeks:</strong> Stomach lining heals, reducing acid reflux and digestive issues. Energy levels improve noticeably.</li>
-            <li><strong>After 1 month:</strong> Liver fat reduces by up to 15%. Blood pressure begins to drop. Facial redness and puffiness diminish.</li>
-            <li><strong>After 3 months:</strong> Skin appearance improves significantly. Mental clarity and cognitive function increase. Immune system strengthens.</li>
-            <li><strong>After 6 months:</strong> Cardiovascular health significantly improves. Liver inflammation reduces. Weight often stabilizes.</li>
-            <li><strong>After 1 year:</strong> Risk of heart disease reduced by 50%. Liver function significantly improved. Risk of mouth, throat, and esophageal cancer begins to decline.</li>
-            <li><strong>After 5 years:</strong> Risk of stroke returns to near-normal levels. Risk of certain cancers (mouth, throat, esophagus, liver) significantly reduced.</li>
-            <li><strong>After 10 years:</strong> Risk of lung cancer drops by about half. Risk of developing diabetes is significantly reduced.</li>
+            <li><strong>First 24-72 hours:</strong> Acute withdrawal begins as your body clears the substance. This stage can be intense — medical support is recommended for opioids, benzodiazepines, and alcohol.</li>
+            <li><strong>After 1 week:</strong> Sleep and appetite start to regulate. Acute physical withdrawal usually begins to ease.</li>
+            <li><strong>After 2 weeks:</strong> Energy levels improve and brain fog begins to lift.</li>
+            <li><strong>After 30 days:</strong> Dopamine receptors begin to recover, so mood and motivation start to stabilize. Read our guide on <a href="/blog/post/dopamine-detox-addiction-recovery/">dopamine and addiction recovery</a> for the science behind this stage.</li>
+            <li><strong>After 90 days:</strong> Significant cognitive recovery. Cravings become less frequent and less intense for most people.</li>
+            <li><strong>After 6 months:</strong> Emotional regulation improves and healthy routines start to feel normal.</li>
+            <li><strong>After 1 year:</strong> The brain's reward system has substantially healed and relapse risk drops significantly.</li>
         </ul>
+        <p>Everyone's recovery is different, and this timeline is a general guide, not medical advice. Always work with a healthcare professional, especially during withdrawal.</p>
 
-        <h3>How Much Money Do You Save by Not Drinking?</h3>
-        <p>The financial impact of quitting drinking adds up quickly. Use the money calculator above to see your personal savings, or see these averages based on typical spending:</p>
-        <ul>
-            <li><strong>Casual drinker ($5-10/day):</strong> Save $1,825-$3,650 per year</li>
-            <li><strong>Regular drinker ($15-25/day):</strong> Save $5,475-$9,125 per year</li>
-            <li><strong>Heavy drinker ($30-50/day):</strong> Save $10,950-$18,250 per year</li>
-        </ul>
-        <p>These estimates only count direct alcohol purchases. When you factor in reduced medical bills, fewer late-night food orders, lower insurance premiums, and avoided DUI costs, the real savings can be 2-3 times higher.</p>
-
-        <h3>Comparing Sobriety Calculator Apps</h3>
-        <p>There are several ways to track your sobriety time. Here's how our free calculator compares:</p>
-        <ul>
-            <li><strong>MyRecoveryPal Calculator (this page):</strong> Free, no signup required. Includes milestones, money saved, health timeline. Creates a free account to save progress and join the recovery community.</li>
-            <li><strong>I Am Sober app:</strong> Popular mobile app with daily pledges and community features. Free tier with ads, premium for $4.99/month.</li>
-            <li><strong>Nomo app:</strong> Free unlimited sobriety clocks. Good for tracking multiple substances.</li>
-            <li><strong>Simple online calculators:</strong> Basic day counters without health benefits or community features.</li>
-        </ul>
+        <h3>How Much Money Do You Save by Getting Clean?</h3>
+        <p>The cost of active addiction adds up fast. Use the money calculator above to see your personal savings based on what you used to spend per day. Beyond the direct cost of substances, getting clean often saves money on legal fees, medical bills, and lost income — the real total is usually far higher than the substance cost alone.</p>
     </div>
 </section>
 
@@ -832,61 +752,45 @@
     <h2>Frequently Asked Questions</h2>
     <div class="faq-container">
         <div class="faq-item">
-            <h3>How do I calculate my sobriety date?</h3>
-            <p>Enter the last day you drank alcohol or used drugs into the calculator above. The tool automatically calculates your total sober time in days, weeks, months, and years.</p>
+            <h3>What is clean time?</h3>
+            <p>Clean time is the continuous length of time you've gone without using drugs or alcohol. In Narcotics Anonymous, it's counted from your clean date — the day after you last used. Members celebrate clean time milestones with key tags and chips at meetings.</p>
         </div>
         <div class="faq-item">
-            <h3>What counts as a sobriety date?</h3>
-            <p>Your sobriety date is typically the day after your last drink or drug use. For example, if you had your last drink on January 1st, your sobriety date would be January 2nd.</p>
+            <h3>How do I calculate my clean date?</h3>
+            <p>Enter the first full day you were clean into the calculator above. It instantly calculates your total clean time in days, weeks, months, and years, and shows which NA key tag milestones you've reached and which are coming up next.</p>
         </div>
         <div class="faq-item">
-            <h3>How much money can I save by not drinking?</h3>
-            <p>The average person who drinks regularly spends $50-150 per week on alcohol. Over a year, that's $2,600-$7,800 saved. Enter your personal spending to see your exact savings.</p>
+            <h3>What are the NA key tag colors and milestones?</h3>
+            <p>The NA key tags are: white (welcome / desire to stop), orange (30 days), green (60 days), red (90 days), blue (6 months), yellow (9 months), glow-in-the-dark / moonstone (1 year), gray (18 months), and black (multiple years). Each is presented at a meeting to celebrate that milestone.</p>
         </div>
         <div class="faq-item">
-            <h3>What if I relapse? Do I reset my sobriety counter?</h3>
-            <p>Many people choose to reset their sobriety date after a relapse, starting a fresh count. However, some prefer to track both their original quit date and current streak. There's no single "right" answer. What matters most is that you keep trying. A relapse doesn't erase the days of healing your body already experienced or the coping skills you learned.</p>
+            <h3>Do I reset my clean time after a relapse?</h3>
+            <p>In NA tradition, clean time is counted as continuous time, so most members reset their clean date after a relapse and begin counting again. That said, a relapse never erases the recovery skills you built or the healing your body did. What matters most is coming back and starting again — many people with long-term recovery relapsed first.</p>
         </div>
         <div class="faq-item">
-            <h3>Is this sobriety calculator free?</h3>
-            <p>Yes, this sobriety calculator is 100% free with no signup required. Your date stays in your browser and is never stored on our servers. If you want to save your sobriety date and receive milestone reminder notifications, you can create a free MyRecoveryPal account.</p>
+            <h3>What's the difference between clean time and sober time?</h3>
+            <p>They measure the same thing — continuous time in recovery. "Clean time" is the term used in Narcotics Anonymous for time off all drugs, while "sober time" or "sobriety" is more common in Alcoholics Anonymous for time off alcohol. If you prefer the AA framing, use our <a href="{% url 'core:sobriety_calculator' %}">sobriety calculator</a> instead — it does the same calculation.</p>
         </div>
         <div class="faq-item">
-            <h3>How many days sober am I?</h3>
-            <p>Enter your quit date in the calculator above and it will instantly show your total days sober, along with a breakdown in weeks, months, years, and hours. It also shows which recovery milestones you've reached and which ones are coming up next.</p>
+            <h3>Does this clean time calculator work for any program?</h3>
+            <p>Yes. While "clean time" is NA language, this calculator works for any recovery program — NA, AA, Cocaine Anonymous, SMART Recovery, or recovery on your own. Enter the date you stopped using and it counts your clean time the same way, regardless of what you're recovering from.</p>
         </div>
         <div class="faq-item">
-            <h3>Does sobriety get easier over time?</h3>
-            <p>Yes, for most people. The first 30 days are typically the most challenging due to physical withdrawal and habit disruption. After 90 days, many people report that cravings become less frequent and intense. By one year, most people have developed new routines and coping mechanisms. However, recovery is not linear — there may be difficult periods even years into sobriety, which is why ongoing support and community matter.</p>
+            <h3>Is this clean time calculator free?</h3>
+            <p>Yes, it's 100% free with no signup required. Your clean date stays in your browser and is never stored on our servers. If you want to save it and receive milestone reminder notifications, you can create a free MyRecoveryPal account.</p>
         </div>
         <div class="faq-item">
-            <h3>What's the difference between a sobriety calculator and a sobriety counter app?</h3>
-            <p>A sobriety calculator (like this page) lets you enter a date and instantly see your clean time. A sobriety counter app runs on your phone and tracks your sobriety in real time, often with daily notifications and community features. MyRecoveryPal offers both: this free calculator for quick lookups, and a full <a href="{% url 'core:sobriety_counter_app' %}">sobriety counter app</a> with milestone tracking, daily check-ins, and a recovery community.</p>
-        </div>
-        <div class="faq-item">
-            <h3>Can I use this calculator for NA (Narcotics Anonymous) clean time?</h3>
-            <p>Absolutely. This calculator works for any type of sobriety or clean time, whether you're in AA, NA, SMART Recovery, or any other program. Simply enter the date you stopped using your substance of choice. The milestones, health benefits, and money saved features work regardless of what you're recovering from. If you'd prefer the NA framing, use our <a href="{% url 'core:clean_time_calculator' %}">clean time calculator</a> — it tracks NA key tag milestones from your clean date.</p>
-        </div>
-        <div class="faq-item">
-            <h3>How do I calculate how long I've been sober in years and months?</h3>
-            <p>Enter your sobriety date in the calculator above. It automatically breaks down your clean time into years, months, weeks, and total hours. For example, if you quit 500 days ago, the calculator shows 1 year, 16 months, 71 weeks, and 12,000 hours.</p>
-        </div>
-        <div class="faq-item">
-            <h3>Is this an AA sobriety calculator?</h3>
-            <p>Yes — it works as an AA sobriety calculator, similar to the AA Grapevine clean time calculator. Enter your sobriety date and it shows your continuous clean time the way it's counted in AA and NA meetings, along with the milestone anniversaries members celebrate. It's free, requires no signup, and works for any recovery program.</p>
-        </div>
-        <div class="faq-item">
-            <h3>Can I use this as a sober date or clean date calculator?</h3>
-            <p>Absolutely. Enter your sober date — the day you stopped — and it instantly calculates your clean time. Whether you call it a sober date calculator, clean date calculator, or sobriety date calculator, it does the same thing: counts the exact days, weeks, months, and years since your quit date.</p>
+            <h3>How many days clean am I?</h3>
+            <p>Enter your clean date in the calculator above and it will instantly show your total days clean, along with a breakdown in weeks, months, years, and hours, plus the NA key tag milestones you've reached.</p>
         </div>
     </div>
 </section>
 
-{% include 'core/partials/_related_tools.html' with exclude='sobriety_calculator' %}
+{% include 'core/partials/_related_tools.html' with exclude='clean_time_calculator' %}
 
 <!-- Final CTA -->
 <section class="final-cta">
-    <h2>Every Day Sober Matters</h2>
+    <h2>Every Day Clean Matters</h2>
     <p>Join a growing community tracking their recovery journey</p>
     <a href="{% url 'accounts:register' %}" class="cta-button">Start Your Journey Free</a>
     <p class="subtext">No credit card required</p>
@@ -907,26 +811,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const milestones = [
         { days: 1, label: '1 Day' },
-        { days: 7, label: '1 Week' },
-        { days: 14, label: '2 Weeks' },
-        { days: 30, label: '1 Month' },
-        { days: 60, label: '2 Months' },
-        { days: 90, label: '90 Days' },
-        { days: 180, label: '6 Months' },
-        { days: 365, label: '1 Year' },
-        { days: 730, label: '2 Years' },
+        { days: 30, label: '30 Days (Orange)' },
+        { days: 60, label: '60 Days (Green)' },
+        { days: 90, label: '90 Days (Red)' },
+        { days: 180, label: '6 Months (Blue)' },
+        { days: 270, label: '9 Months (Yellow)' },
+        { days: 365, label: '1 Year (Moonstone)' },
+        { days: 547, label: '18 Months (Gray)' },
+        { days: 730, label: '2 Years (Black)' },
         { days: 1825, label: '5 Years' }
     ];
 
     const healthBenefits = [
-        { days: 1, benefit: '24 Hours', description: 'Blood sugar levels begin to normalize' },
-        { days: 3, benefit: '3 Days', description: 'Alcohol completely leaves your bloodstream' },
-        { days: 7, benefit: '1 Week', description: 'Sleep quality improves, better hydration' },
-        { days: 14, benefit: '2 Weeks', description: 'Stomach lining heals, digestion improves' },
-        { days: 30, benefit: '1 Month', description: 'Liver fat reduces up to 15%, blood pressure drops' },
-        { days: 90, benefit: '3 Months', description: 'Mental clarity improves, skin looks healthier' },
-        { days: 180, benefit: '6 Months', description: 'Cardiovascular health significantly improves' },
-        { days: 365, benefit: '1 Year', description: 'Risk of heart disease and stroke reduced' }
+        { days: 1, benefit: '24 Hours', description: 'Acute withdrawal begins as your body clears the substance' },
+        { days: 3, benefit: '3 Days', description: 'Most substances clear your system; acute withdrawal often eases' },
+        { days: 7, benefit: '1 Week', description: 'Sleep and appetite begin to regulate' },
+        { days: 14, benefit: '2 Weeks', description: 'Energy returns and brain fog starts to lift' },
+        { days: 30, benefit: '30 Days', description: 'Dopamine receptors begin to recover; mood stabilizes' },
+        { days: 90, benefit: '90 Days', description: 'Significant cognitive recovery; cravings less frequent' },
+        { days: 180, benefit: '6 Months', description: 'Emotional regulation improves; routines feel natural' },
+        { days: 365, benefit: '1 Year', description: 'Brain reward system substantially healed; relapse risk drops' }
     ];
 
     function calculateSobriety(sobrietyDate) {

@@ -111,6 +111,18 @@ class SobrietyCalculatorView(TemplateView):
     template_name = 'core/sobriety_calculator.html'
 
 
+class CleanTimeCalculatorView(TemplateView):
+    """SEO landing page targeting NA / drug-recovery "clean time calculator"
+    queries. The head term "sobriety calculator" is locked up by high-authority
+    AA/treatment sites; "clean time calculator" is owned only by low-authority
+    regional NA chapter pages, so this is a realistic top-3 opportunity.
+
+    Shares the calculator widget with the sobriety calculator but is framed in
+    NA language (clean date, key tags, drug recovery) with a substance-neutral
+    recovery timeline — distinct enough to avoid duplicate-content overlap."""
+    template_name = 'core/clean_time_calculator.html'
+
+
 class SobrietyMedallionMakerView(TemplateView):
     """SEO landing page for the milestone badge creator.
 

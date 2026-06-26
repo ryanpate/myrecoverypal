@@ -33,6 +33,7 @@ class StaticViewSitemap(Sitemap):
 
             # HIGH PRIORITY: SEO Landing Pages (high-value keywords)
             ('core:sobriety_calculator', 0.95),  # Interactive tool - highest engagement
+            ('core:clean_time_calculator', 0.95),  # "clean time calculator" — NA/drug-recovery tool, weak SERP competition
             ('accounts:milestone_badge_creator', 0.95),  # Free interactive medallion creator
             ('core:sobriety_counter_app', 0.9),  # "sobriety counter app" keyword
             ('core:sober_grid_alternative', 0.9),  # "sober grid alternative" keyword
