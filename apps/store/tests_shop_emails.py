@@ -148,6 +148,28 @@ class FeaturedProductSelectionTest(TestCase):
         result = list(select_featured_products(limit=3))
         self.assertEqual(len(result), 3)
 
+    def test_offset_rotates_window_for_weekly_variety(self):
+        from apps.store.email_service import select_featured_products
+        for i in range(9):
+            self._product(f'P{i}')
+        week_a = set(p.pk for p in select_featured_products(limit=3, offset=1))
+        week_b = set(p.pk for p in select_featured_products(limit=3, offset=2))
+        week_c = set(p.pk for p in select_featured_products(limit=3, offset=3))
+        # Consecutive weeks show different products...
+        self.assertNotEqual(week_a, week_b)
+        self.assertNotEqual(week_b, week_c)
+        # ...and over a full cycle the whole catalog is covered.
+        self.assertEqual(week_a | week_b | week_c, set(p.pk for p in __import__(
+            'apps.store.models', fromlist=['Product']).Product.objects.all()))
+
+    def test_offset_is_deterministic_within_a_week(self):
+        from apps.store.email_service import select_featured_products
+        for i in range(9):
+            self._product(f'P{i}')
+        first = [p.pk for p in select_featured_products(limit=3, offset=5)]
+        second = [p.pk for p in select_featured_products(limit=3, offset=5)]
+        self.assertEqual(first, second)
+
 
 class MilestoneEligibilityTest(TestCase):
     """find_users_hitting_milestone_today() returns the right user set."""

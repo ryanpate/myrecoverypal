@@ -37,22 +37,22 @@ MILESTONE_PRODUCT_CATEGORIES = {
 }
 
 
-def select_featured_products(limit: int = 3) -> List[Product]:
-    """Top featured products, falling back to newest active if not enough."""
-    featured = list(
-        Product.objects.filter(is_active=True, is_featured=True).order_by('-updated_at')[:limit]
+def select_featured_products(limit: int = 3, offset: int = 0) -> List[Product]:
+    """Active products, featured first then newest.
+
+    `offset` rotates a window into the full catalog so callers (the weekly
+    digest) can show a different slice each week instead of repeating the
+    same products. offset=0 returns the top `limit` (featured first)."""
+    products = list(
+        Product.objects.filter(is_active=True)
+        .order_by('-is_featured', '-updated_at', '-created_at')
     )
-    if len(featured) >= limit:
-        return featured
-    # Fallback: top up with newest non-featured active products
-    remaining = limit - len(featured)
-    fallback = list(
-        Product.objects
-        .filter(is_active=True, is_featured=False)
-        .exclude(pk__in=[p.pk for p in featured])
-        .order_by('-created_at')[:remaining]
-    )
-    return featured + fallback
+    if not products:
+        return []
+    if offset and len(products) > limit:
+        start = (offset * limit) % len(products)
+        products = products[start:] + products[:start]
+    return products[:limit]
 
 
 def select_milestone_product(milestone_days: int) -> Optional[Product]:
@@ -154,7 +154,10 @@ def _milestone_message(milestone_days: int) -> Tuple[str, str]:
 
 def send_weekly_shop_digest() -> int:
     """Send the Friday weekly shop digest. Returns count of emails sent."""
-    products = select_featured_products(limit=3)
+    # Rotate the featured slice by ISO week so each Friday's digest shows a
+    # different set of products instead of repeating the same three.
+    week = date.today().isocalendar()[1]
+    products = select_featured_products(limit=3, offset=week)
     if not products:
         logger.info('Weekly shop digest skipped — no active products to feature')
         return 0
