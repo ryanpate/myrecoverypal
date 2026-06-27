@@ -41,6 +41,26 @@ APPAREL = [
         ),
     },
     {
+        "name": "Normalize Sobriety T-Shirt — Recovery Awareness Tee",
+        "price": "22.99",
+        "url": "https://myrecoverypal.printify.me/product/29579359",
+        "category": "apparel",
+        "image": (
+            "https://images-api.printify.com/mockup/6a3f198ed97be4f10b104510/"
+            "38192/97992/normalize-sobriety-t-shirt-recovery-awareness-tee.jpg"
+            "?camera_label=front&revision=1782520283230&s=2048"
+        ),
+        "featured": True,
+        "description": (
+            "A soft, breathable tee that quietly carries a powerful message — a "
+            "bold two-tone print with understated grey text above a striking red "
+            "block. 100% ring-spun cotton (153 g/m²), tubular knit with no side "
+            "seams, a ribbed crew neckline, and shoulder tape for stability. "
+            "Perfect for meetings, casual outings, or community events. Every "
+            "purchase supports MyRecoveryPal, a free recovery community."
+        ),
+    },
+    {
         "name": "I Love a Sober Person T-Shirt — Recovery Pride Tee",
         "price": "28.99",
         "url": "https://myrecoverypal.printify.me/product/28720170",
