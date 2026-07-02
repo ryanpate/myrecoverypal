@@ -702,6 +702,9 @@ if REDIS_URL:
             'OPTIONS': {
                 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
                 'CONNECTION_POOL_KWARGS': {'max_connections': 50},
+                # Degrade to a cache miss (return None) on transient Redis
+                # failures like "Connection reset by peer" instead of 500ing.
+                'IGNORE_EXCEPTIONS': True,
             }
         }
     }
@@ -713,8 +716,12 @@ if REDIS_URL:
         'KEY_PREFIX': 'pwa',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'IGNORE_EXCEPTIONS': True,
         }
     }
+
+    # Still log the swallowed connection errors so Sentry/logs stay informed.
+    DJANGO_REDIS_LOG_IGNORED_EXCEPTIONS = True
 else:
     # Fallback to local memory cache if Redis not available
     CACHES = {
