@@ -106,3 +106,22 @@ class FullCheckinPledgeUpsertTests(TestCase):
             'pledge_taken': 'on',
         })
         self.assertTrue(DailyPledge.objects.filter(user=self.user).exists())
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class ProgressPledgeContextTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='c', password='x')
+        self.client.force_login(self.user)
+
+    def test_context_has_pledge_keys(self):
+        resp = self.client.get(reverse('accounts:progress'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('pledge_streak', resp.context)
+        self.assertEqual(resp.context['pledged_today'], False)
+
+    def test_pledged_today_true_after_pledge(self):
+        self.client.post(reverse('accounts:pledge_today'))
+        resp = self.client.get(reverse('accounts:progress'))
+        self.assertTrue(resp.context['pledged_today'])
+        self.assertEqual(resp.context['pledge_streak'], 1)

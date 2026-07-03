@@ -1213,6 +1213,8 @@ def progress_view(request):
         'is_milestone_day': is_milestone_day,
         'years_sober': 0,
         'months_sober': 0,
+        'pledge_streak': request.user.get_pledge_streak(),
+        'pledged_today': DailyPledge.objects.filter(user=request.user, date=timezone.now().date()).exists(),
     }
 
     # Compute years/months for display
