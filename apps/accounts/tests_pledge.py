@@ -51,3 +51,10 @@ class PledgeStreakTests(TestCase):
         with self.assertRaises(IntegrityError):
             with transaction.atomic():
                 DailyPledge.objects.create(user=self.user, date=d)
+
+
+class PledgeFieldDefaultTests(TestCase):
+    def test_fields_default_blank(self):
+        u = User.objects.create_user(username='a', password='x')
+        self.assertEqual(u.pledge_reason, '')
+        self.assertFalse(u.pledge_photo)

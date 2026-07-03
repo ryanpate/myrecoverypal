@@ -67,6 +67,12 @@ class User(AbstractUser):
     )
     recovery_goals = models.TextField(
         blank=True, help_text="Your personal recovery goals")
+    pledge_reason = models.CharField(
+        max_length=120, blank=True,
+        help_text="A short reason you're staying sober, e.g. 'my daughter'. Shown on your daily pledge.")
+    pledge_photo = models.ImageField(
+        upload_to='pledge_photos/', blank=True, null=True,
+        help_text="Optional photo shown on your daily pledge card.")
     is_sponsor = models.BooleanField(
         default=False, help_text="Are you available as a sponsor?")
     bio = models.TextField(blank=True, help_text="Tell us about yourself")
