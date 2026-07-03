@@ -43,3 +43,11 @@ class PledgeStreakTests(TestCase):
         obj, created = DailyPledge.objects.get_or_create(user=self.user, date=d)
         self.assertFalse(created)
         self.assertEqual(DailyPledge.objects.filter(user=self.user, date=d).count(), 1)
+
+    def test_duplicate_pledge_same_day_raises(self):
+        from django.db import IntegrityError, transaction
+        d = timezone.now().date()
+        DailyPledge.objects.create(user=self.user, date=d)
+        with self.assertRaises(IntegrityError):
+            with transaction.atomic():
+                DailyPledge.objects.create(user=self.user, date=d)
