@@ -215,6 +215,7 @@ class UserProfileForm(forms.ModelForm):
         fields = [
             'first_name', 'last_name', 'email', 'bio', 'location',
             'sobriety_date', 'recovery_goals', 'avatar',
+            'pledge_reason', 'pledge_photo',
             'is_profile_public', 'show_sobriety_date', 'allow_messages',
             'email_notifications', 'newsletter_subscriber',
             'marketing_emails_enabled', 'is_sponsor'
@@ -229,6 +230,7 @@ class UserProfileForm(forms.ModelForm):
             'location': 'City, State or Country',
             'sobriety_date': 'The date you began your recovery journey',
             'recovery_goals': 'What are you working towards in your recovery?',
+            'pledge_reason': "Shown on your daily pledge, e.g. 'my daughter'.",
             'is_sponsor': 'Check this if you\'re available to sponsor others',
             'is_profile_public': 'Allow other members to view your profile',
             'show_sobriety_date': 'Display your sobriety date on your public profile',

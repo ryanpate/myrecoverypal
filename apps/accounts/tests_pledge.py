@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from apps.accounts.models import DailyPledge
+from apps.accounts.forms import UserProfileForm
 
 User = get_user_model()
 
@@ -166,3 +167,9 @@ class OnboardingPledgeCaptureTests(TestCase):
         self.assertTrue(self.user.has_completed_onboarding)
         self.assertRedirects(resp, reverse('accounts:progress'),
                              fetch_redirect_response=False)
+
+
+class UserProfileFormPledgeTests(TestCase):
+    def test_form_includes_pledge_fields(self):
+        self.assertIn('pledge_reason', UserProfileForm.Meta.fields)
+        self.assertIn('pledge_photo', UserProfileForm.Meta.fields)
