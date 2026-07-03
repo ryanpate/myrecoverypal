@@ -201,6 +201,26 @@ class User(AbstractUser):
 
         return streak
 
+    def get_pledge_streak(self):
+        """Consecutive days with a pledge (pledge_taken=True) ending today or yesterday."""
+        from datetime import timedelta
+        today = timezone.now().date()
+        pledge_dates = set(
+            self.daily_checkins.filter(pledge_taken=True).values_list('date', flat=True)
+        )
+        if not pledge_dates:
+            return 0
+        if today in pledge_dates:
+            streak, current_date = 1, today - timedelta(days=1)
+        elif (today - timedelta(days=1)) in pledge_dates:
+            streak, current_date = 1, today - timedelta(days=2)
+        else:
+            return 0
+        while current_date in pledge_dates:
+            streak += 1
+            current_date -= timedelta(days=1)
+        return streak
+
     def get_milestone_to_celebrate(self):
         """Check if user just hit a sobriety milestone today"""
         days = self.get_days_sober()
