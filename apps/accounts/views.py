@@ -279,11 +279,16 @@ def onboarding_view(request):
             return redirect(reverse('accounts:onboarding') + '?step=3')
 
         elif step == 3:
+            pledge_reason = request.POST.get('pledge_reason', '').strip()
+            if pledge_reason:
+                user.pledge_reason = pledge_reason[:120]
+            if request.FILES.get('pledge_photo'):
+                user.pledge_photo = request.FILES['pledge_photo']
             user.has_completed_onboarding = True
-            user.save(update_fields=['has_completed_onboarding'])
+            user.save()
             ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding')
             messages.success(request, "Welcome to MyRecoveryPal!")
-            return redirect('accounts:social_feed')
+            return redirect('accounts:progress')
 
     context = {
         'step': step,

@@ -150,3 +150,19 @@ class PledgeCardRenderTests(TestCase):
         match = re.search(r'<div class="pledge-done" id="pledgeDone"[^>]*>', content)
         self.assertIsNotNone(match, "pledgeDone div not found")
         self.assertNotIn('hidden', match.group(0))
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class OnboardingPledgeCaptureTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='o', password='x')
+        self.client.force_login(self.user)
+
+    def test_step3_saves_pledge_reason_and_completes(self):
+        url = reverse('accounts:onboarding') + '?step=3'
+        resp = self.client.post(url, {'pledge_reason': 'my daughter'})
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.pledge_reason, 'my daughter')
+        self.assertTrue(self.user.has_completed_onboarding)
+        self.assertRedirects(resp, reverse('accounts:progress'),
+                             fetch_redirect_response=False)
