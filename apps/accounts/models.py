@@ -202,11 +202,11 @@ class User(AbstractUser):
         return streak
 
     def get_pledge_streak(self):
-        """Consecutive days with a pledge (pledge_taken=True) ending today or yesterday."""
+        """Consecutive days with a DailyPledge ending today or yesterday."""
         from datetime import timedelta
         today = timezone.now().date()
         pledge_dates = set(
-            self.daily_checkins.filter(pledge_taken=True).values_list('date', flat=True)
+            self.daily_pledges.values_list('date', flat=True)
         )
         if not pledge_dates:
             return 0
@@ -701,6 +701,22 @@ class DailyCheckIn(models.Model):
     def needs_support(self):
         """True when this check-in indicates a struggling/high-craving moment."""
         return self.mood <= 2 or self.craving_level >= 3
+
+
+class DailyPledge(models.Model):
+    """A single daily sobriety pledge. One row per user per day. Kept separate
+    from DailyCheckIn so a one-tap pledge never touches mood/craving analytics."""
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='daily_pledges')
+    date = models.DateField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user', 'date']
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.user.username} pledged {self.date}"
 
 
 class DailyRecoveryThought(models.Model):
