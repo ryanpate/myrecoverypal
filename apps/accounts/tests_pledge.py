@@ -1,5 +1,7 @@
+import json
 from datetime import timedelta
-from django.test import TestCase
+from django.test import TestCase, override_settings
+from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from apps.accounts.models import DailyPledge
@@ -58,3 +60,49 @@ class PledgeFieldDefaultTests(TestCase):
         u = User.objects.create_user(username='a', password='x')
         self.assertEqual(u.pledge_reason, '')
         self.assertFalse(u.pledge_photo)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class PledgeTodayEndpointTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='p', password='x')
+        self.client.force_login(self.user)
+        self.url = reverse('accounts:pledge_today')
+
+    def test_first_pledge_creates_row_and_returns_streak(self):
+        resp = self.client.post(self.url)
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.content)
+        self.assertTrue(data['pledged'])
+        self.assertEqual(data['streak'], 1)
+        self.assertTrue(DailyPledge.objects.filter(
+            user=self.user, date=timezone.now().date()).exists())
+
+    def test_pledge_is_idempotent_same_day(self):
+        self.client.post(self.url)
+        self.client.post(self.url)
+        self.assertEqual(DailyPledge.objects.filter(user=self.user).count(), 1)
+
+    def test_pledge_does_not_create_a_checkin(self):
+        from apps.accounts.models import DailyCheckIn
+        self.client.post(self.url)
+        self.assertFalse(DailyCheckIn.objects.filter(user=self.user).exists())
+
+    def test_requires_login(self):
+        self.client.logout()
+        resp = self.client.post(self.url)
+        self.assertIn(resp.status_code, (302, 401, 403))
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class FullCheckinPledgeUpsertTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='f', password='x')
+        self.client.force_login(self.user)
+
+    def test_checkin_with_pledge_records_dailypledge(self):
+        self.client.post(reverse('accounts:daily_checkin'), {
+            'mood': '4', 'energy_level': '3', 'craving_level': '0',
+            'pledge_taken': 'on',
+        })
+        self.assertTrue(DailyPledge.objects.filter(user=self.user).exists())

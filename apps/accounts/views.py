@@ -14,7 +14,7 @@ from django.db.models import Q, Count, Prefetch, Avg
 from django.utils import timezone
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
-from .models import GroupPost, User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, ActivityComment, UserConnection, SponsorRelationship, RecoveryPal, RecoveryGroup, GroupMembership, SocialPost, SocialPostComment, PostReaction
+from .models import GroupPost, User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, DailyPledge, ActivityComment, UserConnection, SponsorRelationship, RecoveryPal, RecoveryGroup, GroupMembership, SocialPost, SocialPostComment, PostReaction
 from .forms import CustomUserCreationForm, UserProfileForm, MilestoneForm, SupportMessageForm, SponsorRequestForm, RecoveryPalForm, RecoveryGroupForm, GroupPostForm, GroupMembershipForm
 from .signals import create_profile_update_activity
 from django.core.paginator import Paginator
@@ -790,6 +790,9 @@ def daily_checkin_view(request):
                 pledge_time=timezone.now() if pledge_taken else None,
             )
 
+            if checkin.pledge_taken:
+                DailyPledge.objects.get_or_create(user=request.user, date=checkin.date)
+
             if is_shared:
                 # Create a SocialPost so it appears on the feed
                 mood_display = checkin.get_mood_display_with_emoji()
@@ -843,6 +846,19 @@ def daily_checkin_view(request):
         'checkin_streak': request.user.get_checkin_streak(),
     }
     return render(request, 'accounts/daily_checkin.html', context)
+
+
+@login_required
+@require_POST
+def pledge_today(request):
+    """One-tap daily pledge. Records a DailyPledge for today (idempotent).
+    Deliberately does NOT touch DailyCheckIn / mood analytics."""
+    DailyPledge.objects.get_or_create(user=request.user, date=timezone.now().date())
+    return JsonResponse({
+        'success': True,
+        'pledged': True,
+        'streak': request.user.get_pledge_streak(),
+    })
 
 
 @login_required
