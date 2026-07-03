@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import timedelta
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -125,3 +126,27 @@ class ProgressPledgeContextTests(TestCase):
         resp = self.client.get(reverse('accounts:progress'))
         self.assertTrue(resp.context['pledged_today'])
         self.assertEqual(resp.context['pledge_streak'], 1)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class PledgeCardRenderTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='render', password='x')
+        self.client.force_login(self.user)
+
+    def test_pledge_card_renders_with_unfulfilled_state(self):
+        resp = self.client.get(reverse('accounts:progress'))
+        self.assertEqual(resp.status_code, 200)
+        content = resp.content.decode()
+        self.assertIn('I pledge to stay sober today', content)
+        self.assertIn('id="pledgeTodayBtn"', content)
+
+    def test_pledge_card_renders_fulfilled_state_after_pledging(self):
+        self.client.post(reverse('accounts:pledge_today'))
+        resp = self.client.get(reverse('accounts:progress'))
+        content = resp.content.decode()
+        self.assertIn('id="pledgeDone"', content)
+        # The fulfilled marker must be visible (not carry the `hidden` attribute).
+        match = re.search(r'<div class="pledge-done" id="pledgeDone"[^>]*>', content)
+        self.assertIsNotNone(match, "pledgeDone div not found")
+        self.assertNotIn('hidden', match.group(0))
