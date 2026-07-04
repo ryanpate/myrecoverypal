@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from apps.accounts.models import DailyPledge
 from apps.accounts.forms import UserProfileForm
+from django.utils import timezone as djtz
 
 User = get_user_model()
 
@@ -295,3 +296,11 @@ class CheckinLocalDateConsistencyTests(TestCase):
             row = DailyCheckIn.objects.get(user=self.user)
             self.assertEqual(str(row.date), '2026-07-04')   # local day
             self.assertEqual(self.user.get_checkin_streak(), 1)  # streak counts it
+
+
+class DailyPledgeNotePhotoTests(TestCase):
+    def test_defaults_blank(self):
+        u = User.objects.create_user(username='np', password='x')
+        p = DailyPledge.objects.create(user=u, date=djtz.localdate())
+        self.assertEqual(p.note, '')
+        self.assertFalse(p.photo)

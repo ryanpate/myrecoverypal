@@ -719,6 +719,12 @@ class DailyPledge(models.Model):
         User, on_delete=models.CASCADE, related_name='daily_pledges')
     date = models.DateField(default=timezone.localdate)
     created_at = models.DateTimeField(auto_now_add=True)
+    note = models.CharField(
+        max_length=280, blank=True, default='',
+        help_text="Optional reflection attached to today's pledge.")
+    photo = models.ImageField(
+        upload_to='pledge_photos/', blank=True, null=True,
+        help_text="Optional photo attached to today's pledge.")
 
     class Meta:
         unique_together = ['user', 'date']
