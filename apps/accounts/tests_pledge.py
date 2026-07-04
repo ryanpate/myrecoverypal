@@ -276,3 +276,22 @@ class SetTimezoneEndpointTests(TestCase):
             self.assertFalse(json.loads(r.content)['success'])
         self.user.refresh_from_db()
         self.assertEqual(self.user.timezone, '')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CheckinLocalDateConsistencyTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='cld', password='x')
+        self.user.timezone = 'America/Chicago'
+        self.user.save()
+        self.client.force_login(self.user)
+
+    def test_quick_checkin_evening_counts_toward_local_streak(self):
+        from apps.accounts.models import DailyCheckIn
+        # 2026-07-05 02:00 UTC == 2026-07-04 21:00 Chicago
+        fixed = datetime.datetime(2026, 7, 5, 2, 0, tzinfo=datetime.timezone.utc)
+        with patch('django.utils.timezone.now', return_value=fixed):
+            self.client.post(reverse('accounts:quick_checkin'), {'mood': '4'})
+            row = DailyCheckIn.objects.get(user=self.user)
+            self.assertEqual(str(row.date), '2026-07-04')   # local day
+            self.assertEqual(self.user.get_checkin_streak(), 1)  # streak counts it

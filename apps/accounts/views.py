@@ -662,7 +662,7 @@ def dashboard_view(request):
     user_groups = user.get_joined_groups()[:3]
 
     # Check if user has done daily check-in today
-    today = timezone.now().date()
+    today = timezone.localdate()
     today_checkin = DailyCheckIn.objects.filter(
         user=user,
         date=today
@@ -902,9 +902,9 @@ def quick_checkin(request):
         try:
             today = datetime.strptime(client_date, '%Y-%m-%d').date()
         except ValueError:
-            today = timezone.now().date()
+            today = timezone.localdate()
     else:
-        today = timezone.now().date()
+        today = timezone.localdate()
 
     # Check if already checked in today
     existing_checkin = DailyCheckIn.objects.filter(
@@ -1018,7 +1018,7 @@ def quick_checkin(request):
 @login_required
 def get_checkin_status(request):
     """AJAX endpoint to get today's check-in status"""
-    today = timezone.now().date()
+    today = timezone.localdate()
     checkin = DailyCheckIn.objects.filter(
         user=request.user,
         date=today
@@ -4138,7 +4138,7 @@ def social_feed_view(request):
         # For authenticated users, check if feed is empty/sparse and add suggestions
         if user.is_authenticated:
             # Today's check-in for the widget
-            today = timezone.now().date()
+            today = timezone.localdate()
             todays_checkin = DailyCheckIn.objects.filter(user=user, date=today).first()
             context['todays_checkin'] = todays_checkin
             context['checkin_streak'] = user.get_checkin_streak()
