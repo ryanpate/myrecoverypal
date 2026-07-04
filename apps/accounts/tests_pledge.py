@@ -247,3 +247,11 @@ class SetTimezoneEndpointTests(TestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.timezone, '')
         self.assertEqual(json.loads(r.content)['success'], False)
+
+    def test_non_object_json_body_does_not_500(self):
+        for body in ['null', '42', '[1,2]', '"x"', 'true', 'not json at all']:
+            r = self.client.post(self.url, data=body, content_type='application/json')
+            self.assertEqual(r.status_code, 200)
+            self.assertFalse(json.loads(r.content)['success'])
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.timezone, '')

@@ -24,6 +24,7 @@ from django.conf import settings
 import cloudinary.uploader
 from django.core.serializers import serialize
 import json
+import functools
 from django.views.decorators.csrf import csrf_exempt
 from .invite_models import WaitlistRequest, InviteCode, SystemSettings
 from .forms import WaitlistRequestForm, CustomUserCreationFormWithInvite
@@ -866,16 +867,24 @@ def pledge_today(request):
     })
 
 
+@functools.lru_cache(maxsize=1)
+def _available_timezones():
+    """Cache zoneinfo.available_timezones() to avoid re-scanning on every call."""
+    import zoneinfo
+    return zoneinfo.available_timezones()
+
+
 @login_required
 @require_POST
 def set_timezone(request):
     """Store the browser-detected IANA timezone on the user, once validated."""
-    import zoneinfo
     try:
-        tz = (json.loads(request.body or '{}').get('timezone') or '').strip()
+        data = json.loads(request.body or '{}')
+        tz = (data.get('timezone') if isinstance(data, dict) else '') or ''
+        tz = tz.strip()
     except (ValueError, TypeError):
         tz = ''
-    if tz and tz in zoneinfo.available_timezones():
+    if tz and tz in _available_timezones():
         if request.user.timezone != tz:
             request.user.timezone = tz
             request.user.save(update_fields=['timezone'])
