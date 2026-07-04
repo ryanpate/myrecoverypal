@@ -1983,6 +1983,13 @@
             headers: {'X-CSRFToken': '{{ csrf_token }}'},
         }).then(r => r.json()).then(data => {
             if (!data.success) { btn.disabled = false; return; }
+            // GA4 engagement event — lets pledge activity show in retention/cohort reports.
+            if (typeof gtag === 'function') {
+                gtag('event', 'daily_pledge', {
+                    streak_days: data.streak,
+                    method: 'card_tap'
+                });
+            }
             const streakEl = document.getElementById('pledgeStreakCount');
             const streakP = document.querySelector('.pledge-streak');
             if (streakEl) streakEl.textContent = data.streak;
