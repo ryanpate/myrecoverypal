@@ -1270,6 +1270,16 @@ def progress_view(request):
         date__lte=today,
     ).order_by('-date').first()
 
+    # Today's pledge (note/photo), fetched once and reused for pledged_today
+    # instead of a second .exists() query.
+    todays_pledge = DailyPledge.objects.filter(
+        user=request.user, date=timezone.localdate()).first()
+    pledge_share_text = (
+        f"Day {days_sober} — I pledged to stay sober today. One day at a time. 💪"
+        if days_sober else
+        "I pledged to stay sober today. One day at a time. 💪"
+    )
+
     context = {
         'days': days,
         'today': today,
@@ -1297,7 +1307,10 @@ def progress_view(request):
         'years_sober': 0,
         'months_sober': 0,
         'pledge_streak': request.user.get_pledge_streak(),
-        'pledged_today': DailyPledge.objects.filter(user=request.user, date=timezone.localdate()).exists(),
+        'pledged_today': todays_pledge is not None,
+        'pledge_note': todays_pledge.note if todays_pledge else '',
+        'pledge_photo_url': todays_pledge.photo.url if todays_pledge and todays_pledge.photo else '',
+        'pledge_share_text': pledge_share_text,
     }
 
     # Compute years/months for display

@@ -155,6 +155,13 @@ class PledgeCardRenderTests(TestCase):
         self.assertIsNotNone(match, "pledgeDone div not found")
         self.assertNotIn('hidden', match.group(0))
 
+    def test_card_has_share_and_note_affordances(self):
+        self.client.post(reverse('accounts:pledge_today'))
+        html = self.client.get(reverse('accounts:progress')).content.decode()
+        self.assertIn(reverse('accounts:share_pledge_to_feed'), html)
+        self.assertIn('data-share-url="https://www.myrecoverypal.com"', html)
+        self.assertIn('Add a note', html)
+
 
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class OnboardingPledgeCaptureTests(TestCase):
