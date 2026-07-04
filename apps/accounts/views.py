@@ -901,6 +901,24 @@ def update_pledge(request):
     })
 
 
+@login_required
+@require_POST
+def share_pledge_to_feed(request):
+    """Post today's pledge to the social feed (creating the pledge if missing)."""
+    pledge, _ = DailyPledge.objects.get_or_create(
+        user=request.user, date=timezone.localdate())
+    days = request.user.get_days_sober()
+    header = (f"Day {days} — I pledged to stay sober today."
+              if days else "I pledged to stay sober today.")
+    content = header + (f"\n\n{pledge.note}" if pledge.note else "")
+    post = SocialPost.objects.create(
+        author=request.user, content=content, visibility='public')
+    if pledge.photo:
+        post.image = pledge.photo
+        post.save(update_fields=['image'])
+    return JsonResponse({'success': True, 'post_id': post.id})
+
+
 @functools.lru_cache(maxsize=1)
 def _available_timezones():
     """Cache zoneinfo.available_timezones() to avoid re-scanning on every call."""

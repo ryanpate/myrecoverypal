@@ -7,7 +7,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-from apps.accounts.models import DailyPledge
+from apps.accounts.models import DailyPledge, SocialPost
 from apps.accounts.forms import UserProfileForm
 from django.utils import timezone as djtz
 
@@ -334,3 +334,39 @@ class UpdatePledgeTests(TestCase):
     def test_requires_login(self):
         self.client.logout()
         self.assertIn(self.client.post(self.url).status_code, (302, 401, 403))
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class SharePledgeToFeedTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='sh', password='x')
+        self.client.force_login(self.user)
+
+    def test_share_creates_public_post(self):
+        self.client.post(reverse('accounts:pledge_today'))
+        self.client.post(reverse('accounts:update_pledge'), {'note': 'one day at a time'})
+        r = self.client.post(reverse('accounts:share_pledge_to_feed'))
+        self.assertEqual(r.status_code, 200)
+        post = SocialPost.objects.filter(author=self.user).latest('created_at')
+        self.assertEqual(post.visibility, 'public')
+        self.assertIn('pledged to stay sober today', post.content)
+        self.assertIn('one day at a time', post.content)
+
+    def test_requires_login(self):
+        self.client.logout()
+        resp = self.client.post(reverse('accounts:share_pledge_to_feed'))
+        self.assertIn(resp.status_code, (302, 401, 403))
+
+    def test_requires_post(self):
+        resp = self.client.get(reverse('accounts:share_pledge_to_feed'))
+        self.assertEqual(resp.status_code, 405)
+
+    def test_creates_pledge_if_missing(self):
+        r = self.client.post(reverse('accounts:share_pledge_to_feed'))
+        self.assertEqual(r.status_code, 200)
+        self.assertTrue(DailyPledge.objects.filter(user=self.user, date=djtz.localdate()).exists())
+
+    def test_no_note_omits_blank_second_line(self):
+        self.client.post(reverse('accounts:share_pledge_to_feed'))
+        post = SocialPost.objects.filter(author=self.user).latest('created_at')
+        self.assertNotIn('\n\n', post.content)

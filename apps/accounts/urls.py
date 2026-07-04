@@ -78,6 +78,7 @@ urlpatterns = [
     path('quick-checkin/', views.quick_checkin, name='quick_checkin'),
     path('pledge-today/', views.pledge_today, name='pledge_today'),
     path('pledge/update/', views.update_pledge, name='update_pledge'),
+    path('pledge/share-feed/', views.share_pledge_to_feed, name='share_pledge_to_feed'),
     path('set-timezone/', views.set_timezone, name='set_timezone'),
     path('checkin-status/', views.get_checkin_status, name='checkin_status'),
     path('checkin/done/', views.checkin_confirmation, name='checkin_confirmation'),
