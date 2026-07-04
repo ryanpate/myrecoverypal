@@ -178,7 +178,7 @@ class User(AbstractUser):
     def get_checkin_streak(self):
         """Calculate consecutive days of check-ins ending today or yesterday"""
         from datetime import timedelta
-        today = timezone.now().date()
+        today = timezone.localdate()
 
         # Get all check-in dates for this user, ordered by date descending
         checkin_dates = set(
@@ -213,7 +213,7 @@ class User(AbstractUser):
     def get_pledge_streak(self):
         """Consecutive days with a DailyPledge ending today or yesterday."""
         from datetime import timedelta
-        today = timezone.now().date()
+        today = timezone.localdate()
         pledge_dates = set(
             self.daily_pledges.values_list('date', flat=True)
         )
@@ -661,7 +661,7 @@ class DailyCheckIn(models.Model):
 
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='daily_checkins')
-    date = models.DateField(default=timezone.now)
+    date = models.DateField(default=timezone.localdate)
 
     # Check-in data
     mood = models.IntegerField(choices=MOOD_CHOICES)
@@ -717,7 +717,7 @@ class DailyPledge(models.Model):
     from DailyCheckIn so a one-tap pledge never touches mood/craving analytics."""
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='daily_pledges')
-    date = models.DateField(default=timezone.now)
+    date = models.DateField(default=timezone.localdate)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

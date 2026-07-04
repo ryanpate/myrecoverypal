@@ -1,6 +1,8 @@
+import datetime
 import json
 import re
 from datetime import timedelta
+from unittest.mock import patch
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -225,6 +227,25 @@ class UserTimezoneMiddlewareTests(TestCase):
                 second = self._apply(blank_user)  # must be UTC -> 2026-01-01, NOT 2025-12-31
         self.assertEqual(str(first), '2025-12-31')
         self.assertEqual(str(second), '2026-01-01')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class PledgeLocalDateTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='loc', password='x')
+        self.user.timezone = 'America/Chicago'
+        self.user.save()
+        self.client.force_login(self.user)
+
+    def test_pledged_today_uses_local_date(self):
+        # 2026-07-05 02:00 UTC == 2026-07-04 21:00 in Chicago
+        utc_now = datetime.datetime(2026, 7, 5, 2, 0, tzinfo=datetime.timezone.utc)
+        with patch('django.utils.timezone.now', return_value=utc_now):
+            self.client.post(reverse('accounts:pledge_today'))
+            row = DailyPledge.objects.get(user=self.user)
+            self.assertEqual(str(row.date), '2026-07-04')  # local day, not 07-05
+            resp = self.client.get(reverse('accounts:progress'))
+            self.assertTrue(resp.context['pledged_today'])
 
 
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)

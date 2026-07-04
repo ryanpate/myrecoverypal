@@ -736,9 +736,9 @@ def daily_checkin_view(request):
         try:
             today = datetime.strptime(client_date, '%Y-%m-%d').date()
         except ValueError:
-            today = timezone.now().date()
+            today = timezone.localdate()
     else:
-        today = timezone.now().date()
+        today = timezone.localdate()
 
     # Check if user already checked in today
     existing_checkin = DailyCheckIn.objects.filter(
@@ -859,7 +859,7 @@ def daily_checkin_view(request):
 def pledge_today(request):
     """One-tap daily pledge. Records a DailyPledge for today (idempotent).
     Deliberately does NOT touch DailyCheckIn / mood analytics."""
-    DailyPledge.objects.get_or_create(user=request.user, date=timezone.now().date())
+    DailyPledge.objects.get_or_create(user=request.user, date=timezone.localdate())
     return JsonResponse({
         'success': True,
         'pledged': True,
@@ -1061,7 +1061,7 @@ def progress_view(request):
     except (ValueError, TypeError):
         days = 30
 
-    today = timezone.now().date()
+    today = timezone.localdate()
     start_date = today - timedelta(days=days)
 
     # Get check-ins for the period
@@ -1245,7 +1245,7 @@ def progress_view(request):
         'years_sober': 0,
         'months_sober': 0,
         'pledge_streak': request.user.get_pledge_streak(),
-        'pledged_today': DailyPledge.objects.filter(user=request.user, date=timezone.now().date()).exists(),
+        'pledged_today': DailyPledge.objects.filter(user=request.user, date=timezone.localdate()).exists(),
     }
 
     # Compute years/months for display
