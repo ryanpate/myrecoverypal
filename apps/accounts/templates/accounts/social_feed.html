@@ -1358,6 +1358,17 @@
        ===================================================================== */
     .social-feed-container { max-width: 1000px; }
 
+    /* Top widget cards (composer, check-in nudge, support, daily thought) span
+       the full 1000px; the post stream is a centered ~700px reading column so
+       posts stay compact and legible. */
+    #postsContainer .post-card,
+    #postsContainer .skeleton-post-card,
+    #postsContainer .inline-suggestion-card {
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
     .create-post-box,
     .post-card {
         border: 1px solid var(--border-divider);
