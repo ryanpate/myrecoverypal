@@ -208,3 +208,20 @@ class UserTimezoneMiddlewareTests(TestCase):
         u = User.objects.create_user(username='tzu2', password='x')
         d = self._apply(u)  # no crash, uses default
         self.assertIsNotNone(d)
+
+    def test_no_timezone_leak_across_requests(self):
+        import datetime
+        from unittest.mock import patch
+
+        tz_user = User.objects.create_user(username='leakA', email='leakA@example.com', password='x')
+        tz_user.timezone = 'America/Chicago'
+        tz_user.save()
+        blank_user = User.objects.create_user(username='leakB', email='leakB@example.com', password='x')
+        # 2026-01-01 05:30 UTC == 2025-12-31 in Chicago, but 2026-01-01 in UTC
+        fixed = datetime.datetime(2026, 1, 1, 5, 30, tzinfo=datetime.timezone.utc)
+        with override_settings(USE_TZ=True):
+            with patch('django.utils.timezone.now', return_value=fixed):
+                first = self._apply(tz_user)    # Chicago -> 2025-12-31
+                second = self._apply(blank_user)  # must be UTC -> 2026-01-01, NOT 2025-12-31
+        self.assertEqual(str(first), '2025-12-31')
+        self.assertEqual(str(second), '2026-01-01')
