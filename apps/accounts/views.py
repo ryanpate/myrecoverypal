@@ -846,10 +846,27 @@ def daily_checkin_view(request):
             return redirect(
                 f"{reverse('accounts:checkin_confirmation')}?checkin={checkin.id}")
 
+    # Today's pledge (note/photo), fetched once and reused for pledged_today
+    # instead of a second .exists() query. Always keyed off timezone.localdate()
+    # (not the client-supplied `today`) so it matches pledge_today/progress.
+    todays_pledge = DailyPledge.objects.filter(
+        user=request.user, date=timezone.localdate()).first()
+    days_sober = request.user.get_days_sober()
+    pledge_share_text = (
+        f"Day {days_sober} — I pledged to stay sober today. One day at a time. 💪"
+        if days_sober else
+        "I pledged to stay sober today. One day at a time. 💪"
+    )
+
     context = {
         'existing_checkin': existing_checkin,
         'today': today,
         'checkin_streak': request.user.get_checkin_streak(),
+        'pledged_today': todays_pledge is not None,
+        'pledge_streak': request.user.get_pledge_streak(),
+        'pledge_note': todays_pledge.note if todays_pledge else '',
+        'pledge_photo_url': todays_pledge.photo.url if todays_pledge and todays_pledge.photo else '',
+        'pledge_share_text': pledge_share_text,
     }
     return render(request, 'accounts/daily_checkin.html', context)
 

@@ -164,6 +164,43 @@ class PledgeCardRenderTests(TestCase):
 
 
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CheckinPledgeSyncTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='cs', password='x')
+        self.client.force_login(self.user)
+
+    def test_checkin_context_reflects_pledged_today(self):
+        self.client.post(reverse('accounts:pledge_today'))  # pledge via the card path
+        resp = self.client.get(reverse('accounts:daily_checkin'))
+        self.assertTrue(resp.context['pledged_today'])
+        self.assertEqual(resp.context['pledge_streak'], 1)
+
+    def test_checkin_page_renders_fulfilled_state_after_pledging(self):
+        self.client.post(reverse('accounts:pledge_today'))
+        resp = self.client.get(reverse('accounts:daily_checkin'))
+        self.assertEqual(resp.status_code, 200)
+        content = resp.content.decode()
+        self.assertIn('pledge-card taken', content)
+        self.assertIn('1-day pledge streak', content)
+        self.assertNotIn('Take my pledge', content)
+
+    def test_checkin_page_renders_unfulfilled_state_by_default(self):
+        resp = self.client.get(reverse('accounts:daily_checkin'))
+        self.assertEqual(resp.status_code, 200)
+        content = resp.content.decode()
+        self.assertIn('Take my pledge', content)
+        self.assertNotIn('pledge-card taken', content)
+
+    def test_checkin_pledge_card_has_share_and_note_affordances(self):
+        resp = self.client.get(reverse('accounts:daily_checkin'))
+        content = resp.content.decode()
+        self.assertIn(reverse('accounts:share_pledge_to_feed'), content)
+        self.assertIn(reverse('accounts:update_pledge'), content)
+        self.assertIn('data-share-url="https://www.myrecoverypal.com"', content)
+        self.assertIn('Add a note', content)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class OnboardingPledgeCaptureTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='o', password='x')
