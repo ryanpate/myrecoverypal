@@ -225,3 +225,25 @@ class UserTimezoneMiddlewareTests(TestCase):
                 second = self._apply(blank_user)  # must be UTC -> 2026-01-01, NOT 2025-12-31
         self.assertEqual(str(first), '2025-12-31')
         self.assertEqual(str(second), '2026-01-01')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class SetTimezoneEndpointTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='z', password='x')
+        self.client.force_login(self.user)
+        self.url = reverse('accounts:set_timezone')
+
+    def test_stores_valid_timezone(self):
+        r = self.client.post(self.url, data=json.dumps({'timezone': 'America/Chicago'}),
+                             content_type='application/json')
+        self.assertEqual(r.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.timezone, 'America/Chicago')
+
+    def test_rejects_invalid_timezone(self):
+        r = self.client.post(self.url, data=json.dumps({'timezone': 'Mars/Phobos'}),
+                             content_type='application/json')
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.timezone, '')
+        self.assertEqual(json.loads(r.content)['success'], False)

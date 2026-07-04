@@ -868,6 +868,23 @@ def pledge_today(request):
 
 @login_required
 @require_POST
+def set_timezone(request):
+    """Store the browser-detected IANA timezone on the user, once validated."""
+    import zoneinfo
+    try:
+        tz = (json.loads(request.body or '{}').get('timezone') or '').strip()
+    except (ValueError, TypeError):
+        tz = ''
+    if tz and tz in zoneinfo.available_timezones():
+        if request.user.timezone != tz:
+            request.user.timezone = tz
+            request.user.save(update_fields=['timezone'])
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False}, status=200)
+
+
+@login_required
+@require_POST
 def quick_checkin(request):
     """AJAX endpoint for one-tap check-in from the feed"""
     # Use client's local date if provided, fall back to UTC
