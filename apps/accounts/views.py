@@ -24,6 +24,7 @@ from django.conf import settings
 import cloudinary.uploader
 from django.core.serializers import serialize
 import json
+import functools
 from django.views.decorators.csrf import csrf_exempt
 from .invite_models import WaitlistRequest, InviteCode, SystemSettings
 from .forms import WaitlistRequestForm, CustomUserCreationFormWithInvite
@@ -661,7 +662,7 @@ def dashboard_view(request):
     user_groups = user.get_joined_groups()[:3]
 
     # Check if user has done daily check-in today
-    today = timezone.now().date()
+    today = timezone.localdate()
     today_checkin = DailyCheckIn.objects.filter(
         user=user,
         date=today
@@ -735,9 +736,9 @@ def daily_checkin_view(request):
         try:
             today = datetime.strptime(client_date, '%Y-%m-%d').date()
         except ValueError:
-            today = timezone.now().date()
+            today = timezone.localdate()
     else:
-        today = timezone.now().date()
+        today = timezone.localdate()
 
     # Check if user already checked in today
     existing_checkin = DailyCheckIn.objects.filter(
@@ -796,7 +797,7 @@ def daily_checkin_view(request):
             )
 
             if checkin.pledge_taken:
-                DailyPledge.objects.get_or_create(user=request.user, date=checkin.date)
+                DailyPledge.objects.get_or_create(user=request.user, date=timezone.localdate())
 
             if is_shared:
                 # Create a SocialPost so it appears on the feed
@@ -845,10 +846,27 @@ def daily_checkin_view(request):
             return redirect(
                 f"{reverse('accounts:checkin_confirmation')}?checkin={checkin.id}")
 
+    # Today's pledge (note/photo), fetched once and reused for pledged_today
+    # instead of a second .exists() query. Always keyed off timezone.localdate()
+    # (not the client-supplied `today`) so it matches pledge_today/progress.
+    todays_pledge = DailyPledge.objects.filter(
+        user=request.user, date=timezone.localdate()).first()
+    days_sober = request.user.get_days_sober()
+    pledge_share_text = (
+        f"Day {days_sober} — I pledged to stay sober today. One day at a time. 💪"
+        if days_sober else
+        "I pledged to stay sober today. One day at a time. 💪"
+    )
+
     context = {
         'existing_checkin': existing_checkin,
         'today': today,
         'checkin_streak': request.user.get_checkin_streak(),
+        'pledged_today': todays_pledge is not None,
+        'pledge_streak': request.user.get_pledge_streak(),
+        'pledge_note': todays_pledge.note if todays_pledge else '',
+        'pledge_photo_url': todays_pledge.photo.url if todays_pledge and todays_pledge.photo else '',
+        'pledge_share_text': pledge_share_text,
     }
     return render(request, 'accounts/daily_checkin.html', context)
 
@@ -858,12 +876,89 @@ def daily_checkin_view(request):
 def pledge_today(request):
     """One-tap daily pledge. Records a DailyPledge for today (idempotent).
     Deliberately does NOT touch DailyCheckIn / mood analytics."""
-    DailyPledge.objects.get_or_create(user=request.user, date=timezone.now().date())
+    DailyPledge.objects.get_or_create(user=request.user, date=timezone.localdate())
     return JsonResponse({
         'success': True,
         'pledged': True,
         'streak': request.user.get_pledge_streak(),
     })
+
+
+@login_required
+@require_POST
+def update_pledge(request):
+    """Add/edit a note and/or photo on today's pledge (even after completion).
+    Updating implies pledging, so this creates today's DailyPledge if missing."""
+    from .image_utils import validate_image, compress_image, is_cloudinary_enabled
+
+    pledge, _ = DailyPledge.objects.get_or_create(
+        user=request.user, date=timezone.localdate())
+
+    if 'note' in request.POST:
+        pledge.note = (request.POST.get('note') or '').strip()[:280]
+
+    if request.POST.get('remove_photo') == 'on':
+        pledge.photo = None
+
+    photo = request.FILES.get('photo')
+    if photo:
+        is_valid, error = validate_image(photo)
+        if not is_valid:
+            return JsonResponse({'success': False, 'error': error}, status=400)
+        if not is_cloudinary_enabled():
+            photo = compress_image(photo, max_dimension=1920)
+        pledge.photo = photo
+
+    pledge.save()
+    return JsonResponse({
+        'success': True,
+        'note': pledge.note,
+        'photo_url': pledge.photo.url if pledge.photo else '',
+        'streak': request.user.get_pledge_streak(),
+    })
+
+
+@login_required
+@require_POST
+def share_pledge_to_feed(request):
+    """Post today's pledge to the social feed (creating the pledge if missing)."""
+    pledge, _ = DailyPledge.objects.get_or_create(
+        user=request.user, date=timezone.localdate())
+    days = request.user.get_days_sober()
+    header = (f"Day {days} — I pledged to stay sober today."
+              if days else "I pledged to stay sober today.")
+    content = header + (f"\n\n{pledge.note}" if pledge.note else "")
+    post = SocialPost.objects.create(
+        author=request.user, content=content, visibility='public')
+    if pledge.photo:
+        post.image = pledge.photo
+        post.save(update_fields=['image'])
+    return JsonResponse({'success': True, 'post_id': post.id})
+
+
+@functools.lru_cache(maxsize=1)
+def _available_timezones():
+    """Cache zoneinfo.available_timezones() to avoid re-scanning on every call."""
+    import zoneinfo
+    return zoneinfo.available_timezones()
+
+
+@login_required
+@require_POST
+def set_timezone(request):
+    """Store the browser-detected IANA timezone on the user, once validated."""
+    try:
+        data = json.loads(request.body or '{}')
+        tz = (data.get('timezone') if isinstance(data, dict) else '') or ''
+        tz = tz.strip()
+    except (ValueError, TypeError):
+        tz = ''
+    if tz and tz in _available_timezones():
+        if request.user.timezone != tz:
+            request.user.timezone = tz
+            request.user.save(update_fields=['timezone'])
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False}, status=200)
 
 
 @login_required
@@ -876,9 +971,9 @@ def quick_checkin(request):
         try:
             today = datetime.strptime(client_date, '%Y-%m-%d').date()
         except ValueError:
-            today = timezone.now().date()
+            today = timezone.localdate()
     else:
-        today = timezone.now().date()
+        today = timezone.localdate()
 
     # Check if already checked in today
     existing_checkin = DailyCheckIn.objects.filter(
@@ -992,7 +1087,7 @@ def quick_checkin(request):
 @login_required
 def get_checkin_status(request):
     """AJAX endpoint to get today's check-in status"""
-    today = timezone.now().date()
+    today = timezone.localdate()
     checkin = DailyCheckIn.objects.filter(
         user=request.user,
         date=today
@@ -1035,7 +1130,7 @@ def progress_view(request):
     except (ValueError, TypeError):
         days = 30
 
-    today = timezone.now().date()
+    today = timezone.localdate()
     start_date = today - timedelta(days=days)
 
     # Get check-ins for the period
@@ -1192,6 +1287,16 @@ def progress_view(request):
         date__lte=today,
     ).order_by('-date').first()
 
+    # Today's pledge (note/photo), fetched once and reused for pledged_today
+    # instead of a second .exists() query.
+    todays_pledge = DailyPledge.objects.filter(
+        user=request.user, date=timezone.localdate()).first()
+    pledge_share_text = (
+        f"Day {days_sober} — I pledged to stay sober today. One day at a time. 💪"
+        if days_sober else
+        "I pledged to stay sober today. One day at a time. 💪"
+    )
+
     context = {
         'days': days,
         'today': today,
@@ -1219,7 +1324,10 @@ def progress_view(request):
         'years_sober': 0,
         'months_sober': 0,
         'pledge_streak': request.user.get_pledge_streak(),
-        'pledged_today': DailyPledge.objects.filter(user=request.user, date=timezone.now().date()).exists(),
+        'pledged_today': todays_pledge is not None,
+        'pledge_note': todays_pledge.note if todays_pledge else '',
+        'pledge_photo_url': todays_pledge.photo.url if todays_pledge and todays_pledge.photo else '',
+        'pledge_share_text': pledge_share_text,
     }
 
     # Compute years/months for display
@@ -4112,7 +4220,7 @@ def social_feed_view(request):
         # For authenticated users, check if feed is empty/sparse and add suggestions
         if user.is_authenticated:
             # Today's check-in for the widget
-            today = timezone.now().date()
+            today = timezone.localdate()
             todays_checkin = DailyCheckIn.objects.filter(user=user, date=today).first()
             context['todays_checkin'] = todays_checkin
             context['checkin_streak'] = user.get_checkin_streak()

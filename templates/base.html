@@ -1264,6 +1264,25 @@
     <!-- Capacitor Widget Bridge (native app only) -->
     <script src="{% static 'js/capacitor-widget.js' %}"></script>
 
+    {% if user.is_authenticated %}
+    <!-- Browser Timezone Detection -->
+    <script>
+    (function () {
+      try {
+        var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (!tz) return;
+        if (localStorage.getItem('mrp_tz') === tz) return;  // already synced this tz
+        fetch("{% url 'accounts:set_timezone' %}", {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
+          body: JSON.stringify({timezone: tz})
+        }).then(r => r.json()).then(d => { if (d.success) localStorage.setItem('mrp_tz', tz); })
+          .catch(function(){});
+      } catch (e) {}
+    })();
+    </script>
+    {% endif %}
+
     <!-- Additional Scripts -->
     {% block extra_js %}{% endblock %}
 

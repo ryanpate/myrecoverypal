@@ -191,6 +191,29 @@ class SEONoIndexMiddleware:
         return response
 
 
+class UserTimezoneMiddleware:
+    """Activate the authenticated user's stored IANA timezone so
+    timezone.localdate() reflects their real local day (streaks/pledges)."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        tz = getattr(getattr(request, 'user', None), 'timezone', '') or ''
+        activated = False
+        if tz:
+            try:
+                timezone.activate(tz)
+                activated = True
+            except Exception:
+                timezone.deactivate()
+        try:
+            return self.get_response(request)
+        finally:
+            if activated:
+                timezone.deactivate()
+
+
 class UpdateLastActivityMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response

@@ -1,12 +1,15 @@
+import datetime
 import json
 import re
 from datetime import timedelta
+from unittest.mock import patch
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-from apps.accounts.models import DailyPledge
+from apps.accounts.models import DailyPledge, SocialPost
 from apps.accounts.forms import UserProfileForm
+from django.utils import timezone as djtz
 
 User = get_user_model()
 
@@ -152,6 +155,50 @@ class PledgeCardRenderTests(TestCase):
         self.assertIsNotNone(match, "pledgeDone div not found")
         self.assertNotIn('hidden', match.group(0))
 
+    def test_card_has_share_and_note_affordances(self):
+        self.client.post(reverse('accounts:pledge_today'))
+        html = self.client.get(reverse('accounts:progress')).content.decode()
+        self.assertIn(reverse('accounts:share_pledge_to_feed'), html)
+        self.assertIn('data-share-url="https://www.myrecoverypal.com"', html)
+        self.assertIn('Add a note', html)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CheckinPledgeSyncTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='cs', password='x')
+        self.client.force_login(self.user)
+
+    def test_checkin_context_reflects_pledged_today(self):
+        self.client.post(reverse('accounts:pledge_today'))  # pledge via the card path
+        resp = self.client.get(reverse('accounts:daily_checkin'))
+        self.assertTrue(resp.context['pledged_today'])
+        self.assertEqual(resp.context['pledge_streak'], 1)
+
+    def test_checkin_page_renders_fulfilled_state_after_pledging(self):
+        self.client.post(reverse('accounts:pledge_today'))
+        resp = self.client.get(reverse('accounts:daily_checkin'))
+        self.assertEqual(resp.status_code, 200)
+        content = resp.content.decode()
+        self.assertIn('pledge-card taken', content)
+        self.assertIn('1-day pledge streak', content)
+        self.assertNotIn('Take my pledge', content)
+
+    def test_checkin_page_renders_unfulfilled_state_by_default(self):
+        resp = self.client.get(reverse('accounts:daily_checkin'))
+        self.assertEqual(resp.status_code, 200)
+        content = resp.content.decode()
+        self.assertIn('Take my pledge', content)
+        self.assertNotIn('pledge-card taken', content)
+
+    def test_checkin_pledge_card_has_share_and_note_affordances(self):
+        resp = self.client.get(reverse('accounts:daily_checkin'))
+        content = resp.content.decode()
+        self.assertIn(reverse('accounts:share_pledge_to_feed'), content)
+        self.assertIn(reverse('accounts:update_pledge'), content)
+        self.assertIn('data-share-url="https://www.myrecoverypal.com"', content)
+        self.assertIn('Add a note', content)
+
 
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class OnboardingPledgeCaptureTests(TestCase):
@@ -173,3 +220,225 @@ class UserProfileFormPledgeTests(TestCase):
     def test_form_includes_pledge_fields(self):
         self.assertIn('pledge_reason', UserProfileForm.Meta.fields)
         self.assertIn('pledge_photo', UserProfileForm.Meta.fields)
+
+
+class UserTimezoneMiddlewareTests(TestCase):
+    def _apply(self, user):
+        from django.test import RequestFactory
+        from apps.accounts.middleware import UserTimezoneMiddleware
+        rf = RequestFactory()
+        req = rf.get('/')
+        req.user = user
+        seen = {}
+
+        def get_response(r):
+            seen['date'] = timezone.localdate()
+            return 'ok'
+
+        UserTimezoneMiddleware(get_response)(req)
+        return seen['date']
+
+    def test_activates_user_timezone(self):
+        import datetime
+        from unittest.mock import patch
+
+        u = User.objects.create_user(username='tzu', password='x')
+        u.timezone = 'America/Chicago'
+        u.save()
+        # 2026-01-01 05:30 UTC is still 2025-12-31 in Chicago (UTC-6)
+        fixed = datetime.datetime(2026, 1, 1, 5, 30, tzinfo=datetime.timezone.utc)
+        with override_settings(USE_TZ=True):
+            with patch('django.utils.timezone.now', return_value=fixed):
+                self.assertEqual(str(self._apply(u)), '2025-12-31')
+
+    def test_blank_timezone_falls_back_to_utc(self):
+        u = User.objects.create_user(username='tzu2', password='x')
+        d = self._apply(u)  # no crash, uses default
+        self.assertIsNotNone(d)
+
+    def test_no_timezone_leak_across_requests(self):
+        import datetime
+        from unittest.mock import patch
+
+        tz_user = User.objects.create_user(username='leakA', email='leakA@example.com', password='x')
+        tz_user.timezone = 'America/Chicago'
+        tz_user.save()
+        blank_user = User.objects.create_user(username='leakB', email='leakB@example.com', password='x')
+        # 2026-01-01 05:30 UTC == 2025-12-31 in Chicago, but 2026-01-01 in UTC
+        fixed = datetime.datetime(2026, 1, 1, 5, 30, tzinfo=datetime.timezone.utc)
+        with override_settings(USE_TZ=True):
+            with patch('django.utils.timezone.now', return_value=fixed):
+                first = self._apply(tz_user)    # Chicago -> 2025-12-31
+                second = self._apply(blank_user)  # must be UTC -> 2026-01-01, NOT 2025-12-31
+        self.assertEqual(str(first), '2025-12-31')
+        self.assertEqual(str(second), '2026-01-01')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class PledgeLocalDateTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='loc', password='x')
+        self.user.timezone = 'America/Chicago'
+        self.user.save()
+        self.client.force_login(self.user)
+
+    def test_pledged_today_uses_local_date(self):
+        # 2026-07-05 02:00 UTC == 2026-07-04 21:00 in Chicago
+        utc_now = datetime.datetime(2026, 7, 5, 2, 0, tzinfo=datetime.timezone.utc)
+        with patch('django.utils.timezone.now', return_value=utc_now):
+            self.client.post(reverse('accounts:pledge_today'))
+            row = DailyPledge.objects.get(user=self.user)
+            self.assertEqual(str(row.date), '2026-07-04')  # local day, not 07-05
+            resp = self.client.get(reverse('accounts:progress'))
+            self.assertTrue(resp.context['pledged_today'])
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class SetTimezoneEndpointTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='z', password='x')
+        self.client.force_login(self.user)
+        self.url = reverse('accounts:set_timezone')
+
+    def test_stores_valid_timezone(self):
+        r = self.client.post(self.url, data=json.dumps({'timezone': 'America/Chicago'}),
+                             content_type='application/json')
+        self.assertEqual(r.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.timezone, 'America/Chicago')
+
+    def test_rejects_invalid_timezone(self):
+        r = self.client.post(self.url, data=json.dumps({'timezone': 'Mars/Phobos'}),
+                             content_type='application/json')
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.timezone, '')
+        self.assertEqual(json.loads(r.content)['success'], False)
+
+    def test_non_object_json_body_does_not_500(self):
+        for body in ['null', '42', '[1,2]', '"x"', 'true', 'not json at all']:
+            r = self.client.post(self.url, data=body, content_type='application/json')
+            self.assertEqual(r.status_code, 200)
+            self.assertFalse(json.loads(r.content)['success'])
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.timezone, '')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CheckinLocalDateConsistencyTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='cld', password='x')
+        self.user.timezone = 'America/Chicago'
+        self.user.save()
+        self.client.force_login(self.user)
+
+    def test_quick_checkin_evening_counts_toward_local_streak(self):
+        from apps.accounts.models import DailyCheckIn
+        # 2026-07-05 02:00 UTC == 2026-07-04 21:00 Chicago
+        fixed = datetime.datetime(2026, 7, 5, 2, 0, tzinfo=datetime.timezone.utc)
+        with patch('django.utils.timezone.now', return_value=fixed):
+            self.client.post(reverse('accounts:quick_checkin'), {'mood': '4'})
+            row = DailyCheckIn.objects.get(user=self.user)
+            self.assertEqual(str(row.date), '2026-07-04')   # local day
+            self.assertEqual(self.user.get_checkin_streak(), 1)  # streak counts it
+
+
+class DailyPledgeNotePhotoTests(TestCase):
+    def test_defaults_blank(self):
+        u = User.objects.create_user(username='np', password='x')
+        p = DailyPledge.objects.create(user=u, date=djtz.localdate())
+        self.assertEqual(p.note, '')
+        self.assertFalse(p.photo)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class UpdatePledgeTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='up', password='x')
+        self.client.force_login(self.user)
+        self.url = reverse('accounts:update_pledge')
+
+    def test_adds_note_to_todays_pledge(self):
+        self.client.post(reverse('accounts:pledge_today'))
+        r = self.client.post(self.url, {'note': 'grateful for my kids'})
+        self.assertEqual(r.status_code, 200)
+        p = DailyPledge.objects.get(user=self.user, date=djtz.localdate())
+        self.assertEqual(p.note, 'grateful for my kids')
+
+    def test_note_editable_after_completion(self):
+        self.client.post(reverse('accounts:pledge_today'))
+        self.client.post(self.url, {'note': 'first'})
+        self.client.post(self.url, {'note': 'edited'})
+        p = DailyPledge.objects.get(user=self.user, date=djtz.localdate())
+        self.assertEqual(p.note, 'edited')
+
+    def test_update_creates_pledge_if_missing(self):
+        self.client.post(self.url, {'note': 'pledged via note'})
+        self.assertTrue(DailyPledge.objects.filter(user=self.user, date=djtz.localdate()).exists())
+
+    def test_requires_login(self):
+        self.client.logout()
+        self.assertIn(self.client.post(self.url).status_code, (302, 401, 403))
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class SharePledgeToFeedTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='sh', password='x')
+        self.client.force_login(self.user)
+
+    def test_share_creates_public_post(self):
+        self.client.post(reverse('accounts:pledge_today'))
+        self.client.post(reverse('accounts:update_pledge'), {'note': 'one day at a time'})
+        r = self.client.post(reverse('accounts:share_pledge_to_feed'))
+        self.assertEqual(r.status_code, 200)
+        post = SocialPost.objects.filter(author=self.user).latest('created_at')
+        self.assertEqual(post.visibility, 'public')
+        self.assertIn('pledged to stay sober today', post.content)
+        self.assertIn('one day at a time', post.content)
+
+    def test_requires_login(self):
+        self.client.logout()
+        resp = self.client.post(reverse('accounts:share_pledge_to_feed'))
+        self.assertIn(resp.status_code, (302, 401, 403))
+
+    def test_requires_post(self):
+        resp = self.client.get(reverse('accounts:share_pledge_to_feed'))
+        self.assertEqual(resp.status_code, 405)
+
+    def test_creates_pledge_if_missing(self):
+        r = self.client.post(reverse('accounts:share_pledge_to_feed'))
+        self.assertEqual(r.status_code, 200)
+        self.assertTrue(DailyPledge.objects.filter(user=self.user, date=djtz.localdate()).exists())
+
+    def test_no_note_omits_blank_second_line(self):
+        self.client.post(reverse('accounts:share_pledge_to_feed'))
+        post = SocialPost.objects.filter(author=self.user).latest('created_at')
+        self.assertNotIn('\n\n', post.content)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CheckinNoNestedFormTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='nf', password='x')
+        self.client.force_login(self.user)
+
+    def test_checkin_page_has_no_nested_forms(self):
+        from html.parser import HTMLParser
+        html = self.client.get(reverse('accounts:daily_checkin')).content.decode()
+
+        class P(HTMLParser):
+            depth = 0
+            max_depth = 0
+
+            def handle_starttag(self, tag, attrs):
+                if tag == 'form':
+                    self.depth += 1
+                    self.max_depth = max(self.max_depth, self.depth)
+
+            def handle_endtag(self, tag):
+                if tag == 'form' and self.depth > 0:
+                    self.depth -= 1
+
+        p = P()
+        p.feed(html)
+        self.assertLessEqual(p.max_depth, 1, "check-in page must not nest <form> elements")

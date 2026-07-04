@@ -142,6 +142,107 @@
     }
     .pledge-streak-text i { color: var(--gold-accent); }
 
+    /* ---- Pledge note/share affordances ---- */
+    .pledge-note-display {
+        margin: 0.9rem auto 0;
+        max-width: 420px;
+        font-size: 0.92rem;
+        font-style: italic;
+        color: var(--text-body);
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .pledge-photo-display { margin: 0.75rem auto 0; }
+    .pledge-photo-display img {
+        max-width: 100%;
+        max-height: 220px;
+        border-radius: var(--radius-md);
+        display: block;
+        margin: 0 auto;
+        object-fit: cover;
+    }
+
+    .pledge-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1.1rem;
+    }
+
+    .pledge-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.9rem;
+        background: var(--surface-card);
+        border: 1.5px solid var(--border-input);
+        border-radius: var(--radius-pill);
+        color: var(--color-primary);
+        font-family: var(--font-sans);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+    }
+    .pledge-action-btn:hover { box-shadow: var(--shadow-hover); }
+
+    .pledge-share-confirm {
+        display: inline-block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--color-accent-hover);
+    }
+
+    .pledge-note-form {
+        margin: 1rem auto 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-width: 460px;
+        text-align: left;
+    }
+    .pledge-note-form textarea {
+        width: 100%;
+        min-height: 70px;
+        padding: 0.6rem 0.75rem;
+        border: 1.5px solid var(--border-input);
+        border-radius: var(--radius-md);
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        color: var(--text-body);
+        background: var(--surface-input);
+        resize: vertical;
+        box-sizing: border-box;
+    }
+    .pledge-note-form input[type="file"] {
+        font-size: 0.82rem;
+        max-width: 100%;
+        color: var(--text-body);
+    }
+    .pledge-note-form-actions { display: flex; gap: 0.5rem; }
+    .pledge-note-error { color: #c0392b; font-size: 0.82rem; }
+
+    .pledge-external-fallback {
+        display: flex;
+        justify-content: center;
+        gap: 0.6rem;
+        margin-top: 0.6rem;
+    }
+    .pledge-external-fallback a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--surface-sunken);
+        color: var(--color-primary);
+        font-size: 1rem;
+    }
+
     /* ---- Card headings ---- */
     .ck-card h3 {
         margin: 0;
@@ -308,14 +409,62 @@
         <input type="hidden" name="craving_level" id="cravingInput" value="0">
 
         <!-- Pledge -->
-        <div class="ck-card pledge-card" id="pledgeCard" style="margin-bottom:1.25rem;">
+        <div class="ck-card pledge-card{% if pledged_today %} taken{% endif %}" id="pledgeCard" style="margin-bottom:1.25rem;">
             <div class="pledge-icon">
-                <i class="fas fa-hand-holding-heart" id="pledgeIcon" aria-hidden="true"></i>
+                <i class="fas {% if pledged_today %}fa-circle-check{% else %}fa-hand-holding-heart{% endif %}" id="pledgeIcon" aria-hidden="true"></i>
             </div>
-            <h2 id="pledgeHeading">I pledge to stay sober today</h2>
-            <p id="pledgeBody">One day at a time. Take your daily pledge to start your check-in.</p>
+            <h2 id="pledgeHeading">{% if pledged_today %}Pledge taken for today{% else %}I pledge to stay sober today{% endif %}</h2>
+            <p id="pledgeBody">{% if pledged_today %}That's {{ pledge_streak }} day{{ pledge_streak|pluralize }} in a row. One day at a time — you've got this.{% else %}One day at a time. Take your daily pledge to start your check-in.{% endif %}</p>
             <div class="pledge-action" id="pledgeAction">
+                {% if pledged_today %}
+                <span class="pledge-streak-text"><i class="fas fa-fire" aria-hidden="true"></i> {{ pledge_streak }}-day pledge streak</span>
+                {% else %}
                 <button type="button" class="ck-btn" id="pledgeBtn"><i class="fas fa-check" aria-hidden="true"></i> Take my pledge</button>
+                {% endif %}
+            </div>
+
+            <p class="pledge-note-display" id="pledgeNoteDisplay" {% if not pledge_note %}hidden{% endif %}>{{ pledge_note }}</p>
+            <div class="pledge-photo-display" id="pledgePhotoDisplay" {% if not pledge_photo_url %}hidden{% endif %}>
+                <img src="{{ pledge_photo_url }}" alt="Today's pledge photo" id="pledgePhotoImg">
+            </div>
+
+            <div class="pledge-actions">
+                <button type="button" class="pledge-action-btn" id="pledgeNoteToggleBtn">
+                    <i class="fas fa-pen" aria-hidden="true"></i>
+                    <span id="pledgeNoteToggleLabel">{% if pledge_note or pledge_photo_url %}Edit note or photo{% else %}Add a note or photo{% endif %}</span>
+                </button>
+                <button type="button" class="pledge-action-btn" id="pledgeShareFeedBtn">
+                    <i class="fas fa-comment-dots" aria-hidden="true"></i> Share to feed
+                </button>
+                <button type="button" class="pledge-action-btn share-btn" id="pledgeExternalShareBtn"
+                        data-share-url="https://www.myrecoverypal.com"
+                        data-share-title="MyRecoveryPal"
+                        data-share-text="I pledged to stay sober today. One day at a time. 💪 Join me:">
+                    <i class="fas fa-share-nodes" aria-hidden="true"></i> Share
+                </button>
+                <span class="pledge-share-confirm" id="pledgeShareConfirm" hidden>Shared ✓</span>
+            </div>
+
+            <div class="pledge-note-form" id="pledgeNoteForm" hidden>
+                <textarea name="note" id="pledgeNoteInput" maxlength="280"
+                          placeholder="What's keeping you going today? (optional)">{{ pledge_note }}</textarea>
+                <input type="file" name="photo" id="pledgePhotoInput" accept="image/*">
+                <span class="pledge-note-error" id="pledgeNoteError" hidden></span>
+                <div class="pledge-note-form-actions">
+                    <button type="button" class="btn btn-primary" id="pledgeNoteSaveBtn">Save</button>
+                    <button type="button" class="pledge-action-btn" id="pledgeNoteCancelBtn">Cancel</button>
+                </div>
+            </div>
+
+            <div class="pledge-external-fallback" id="pledgeExternalFallback" hidden>
+                <a href="https://twitter.com/intent/tweet?text={{ pledge_share_text|urlencode }}&amp;url=https://www.myrecoverypal.com"
+                   target="_blank" rel="noopener" aria-label="Share on X">
+                    <i class="fab fa-x-twitter" aria-hidden="true"></i>
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.myrecoverypal.com"
+                   target="_blank" rel="noopener" aria-label="Share on Facebook">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
             </div>
         </div>
 
@@ -385,20 +534,151 @@ document.addEventListener('DOMContentLoaded', function() {
             String(now.getDate()).padStart(2, '0');
     }
 
-    // Pledge toggle (one-way)
+    // Pledge — fetch-POSTs to the same endpoint the progress card uses, so
+    // both surfaces share one DailyPledge instead of a client-only toggle.
+    function markPledgeTaken(streak) {
+        document.getElementById('pledgeInput').value = 'on';
+        document.getElementById('pledgeCard').classList.add('taken');
+        document.getElementById('pledgeIcon').className = 'fas fa-circle-check';
+        document.getElementById('pledgeHeading').textContent = 'Pledge taken for today';
+        document.getElementById('pledgeBody').textContent =
+            "That's " + streak + " day" + (streak === 1 ? '' : 's') + " in a row. One day at a time — you've got this.";
+        document.getElementById('pledgeAction').innerHTML =
+            '<span class="pledge-streak-text"><i class="fas fa-fire" aria-hidden="true"></i> ' +
+            streak + '-day pledge streak</span>';
+    }
+
     var pledgeBtn = document.getElementById('pledgeBtn');
-    var streakCount = {{ checkin_streak|default:0 }} + 1;
     if (pledgeBtn) {
         pledgeBtn.addEventListener('click', function() {
-            document.getElementById('pledgeInput').value = 'on';
-            document.getElementById('pledgeCard').classList.add('taken');
-            document.getElementById('pledgeIcon').className = 'fas fa-circle-check';
-            document.getElementById('pledgeHeading').textContent = 'Pledge taken for today';
-            document.getElementById('pledgeBody').textContent =
-                "That's " + streakCount + " days in a row. One day at a time — you've got this.";
-            document.getElementById('pledgeAction').innerHTML =
-                '<span class="pledge-streak-text"><i class="fas fa-fire" aria-hidden="true"></i> ' +
-                streakCount + '-day pledge streak</span>';
+            pledgeBtn.disabled = true;
+            fetch("{% url 'accounts:pledge_today' %}", {
+                method: 'POST',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            }).then(function(r) { return r.json(); }).then(function(data) {
+                if (!data.success) { pledgeBtn.disabled = false; return; }
+                markPledgeTaken(data.streak);
+                if (typeof gtag === 'function') {
+                    gtag('event', 'daily_pledge', { streak_days: data.streak, method: 'checkin_card_tap' });
+                }
+                if (window.MRPNative && window.MRPNative.hapticSuccess) {
+                    window.MRPNative.hapticSuccess();
+                }
+            }).catch(function() { pledgeBtn.disabled = false; });
+        });
+    }
+
+    // Add/edit note or photo on today's pledge.
+    var noteToggleBtn = document.getElementById('pledgeNoteToggleBtn');
+    var noteToggleLabel = document.getElementById('pledgeNoteToggleLabel');
+    var noteForm = document.getElementById('pledgeNoteForm');
+    var noteCancelBtn = document.getElementById('pledgeNoteCancelBtn');
+    var noteErrorEl = document.getElementById('pledgeNoteError');
+    var noteDisplay = document.getElementById('pledgeNoteDisplay');
+    var photoDisplay = document.getElementById('pledgePhotoDisplay');
+    var photoImg = document.getElementById('pledgePhotoImg');
+
+    if (noteToggleBtn && noteForm) {
+        noteToggleBtn.addEventListener('click', function() {
+            noteForm.hidden = !noteForm.hidden;
+        });
+    }
+    if (noteCancelBtn && noteForm) {
+        noteCancelBtn.addEventListener('click', function() {
+            noteForm.hidden = true;
+        });
+    }
+    var noteSaveBtn = document.getElementById('pledgeNoteSaveBtn');
+    var noteTextarea = document.getElementById('pledgeNoteInput');
+    var notePhotoInput = document.getElementById('pledgePhotoInput');
+    if (noteSaveBtn) {
+        noteSaveBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (noteErrorEl) { noteErrorEl.hidden = true; noteErrorEl.textContent = ''; }
+            var saveBtn = noteSaveBtn;
+            if (saveBtn) saveBtn.disabled = true;
+
+            var fd = new FormData();
+            fd.append('note', noteTextarea ? noteTextarea.value : '');
+            if (notePhotoInput && notePhotoInput.files[0]) fd.append('photo', notePhotoInput.files[0]);
+
+            fetch("{% url 'accounts:update_pledge' %}", {
+                method: 'POST',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                body: fd,
+            }).then(function(r) { return r.json(); }).then(function(data) {
+                if (saveBtn) saveBtn.disabled = false;
+                if (!data.success) {
+                    if (noteErrorEl) {
+                        noteErrorEl.textContent = data.error || 'Could not save. Please try again.';
+                        noteErrorEl.hidden = false;
+                    }
+                    return;
+                }
+                if (noteDisplay) {
+                    noteDisplay.textContent = data.note || '';
+                    noteDisplay.hidden = !data.note;
+                }
+                if (photoDisplay && photoImg) {
+                    if (data.photo_url) {
+                        photoImg.src = data.photo_url;
+                        photoDisplay.hidden = false;
+                    } else {
+                        photoDisplay.hidden = true;
+                    }
+                }
+                markPledgeTaken(data.streak);
+                if (noteToggleLabel) noteToggleLabel.textContent = 'Edit note or photo';
+                noteForm.hidden = true;
+                if (window.MRPNative && window.MRPNative.hapticSuccess) {
+                    window.MRPNative.hapticSuccess();
+                }
+            }).catch(function() {
+                if (saveBtn) saveBtn.disabled = false;
+                if (noteErrorEl) {
+                    noteErrorEl.textContent = 'Network error. Please try again.';
+                    noteErrorEl.hidden = false;
+                }
+            });
+        });
+    }
+
+    // Share today's pledge to the in-app feed.
+    var shareFeedBtn = document.getElementById('pledgeShareFeedBtn');
+    var shareConfirm = document.getElementById('pledgeShareConfirm');
+    if (shareFeedBtn) {
+        shareFeedBtn.addEventListener('click', function() {
+            shareFeedBtn.disabled = true;
+            fetch("{% url 'accounts:share_pledge_to_feed' %}", {
+                method: 'POST',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            }).then(function(r) { return r.json(); }).then(function(data) {
+                shareFeedBtn.disabled = false;
+                if (data.success && shareConfirm) {
+                    shareConfirm.hidden = false;
+                    setTimeout(function() { shareConfirm.hidden = true; }, 4000);
+                }
+            }).catch(function() { shareFeedBtn.disabled = false; });
+        });
+    }
+
+    // External share. On native (Capacitor), capacitor-native.js already
+    // intercepts clicks on [data-share-url] in the capture phase, so this
+    // listener never fires there. On the web, that script exits immediately,
+    // so this is the only handler.
+    var externalBtn = document.getElementById('pledgeExternalShareBtn');
+    var externalFallback = document.getElementById('pledgeExternalFallback');
+    if (externalBtn) {
+        externalBtn.addEventListener('click', function() {
+            if (navigator.share) {
+                navigator.share({
+                    title: externalBtn.getAttribute('data-share-title'),
+                    text: externalBtn.getAttribute('data-share-text'),
+                    url: externalBtn.getAttribute('data-share-url'),
+                }).catch(function() {});
+                return;
+            }
+            if (externalFallback) externalFallback.hidden = !externalFallback.hidden;
         });
     }
 
