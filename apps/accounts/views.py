@@ -797,7 +797,7 @@ def daily_checkin_view(request):
             )
 
             if checkin.pledge_taken:
-                DailyPledge.objects.get_or_create(user=request.user, date=checkin.date)
+                DailyPledge.objects.get_or_create(user=request.user, date=timezone.localdate())
 
             if is_shared:
                 # Create a SocialPost so it appears on the feed

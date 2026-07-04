@@ -414,3 +414,31 @@ class SharePledgeToFeedTests(TestCase):
         self.client.post(reverse('accounts:share_pledge_to_feed'))
         post = SocialPost.objects.filter(author=self.user).latest('created_at')
         self.assertNotIn('\n\n', post.content)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CheckinNoNestedFormTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='nf', password='x')
+        self.client.force_login(self.user)
+
+    def test_checkin_page_has_no_nested_forms(self):
+        from html.parser import HTMLParser
+        html = self.client.get(reverse('accounts:daily_checkin')).content.decode()
+
+        class P(HTMLParser):
+            depth = 0
+            max_depth = 0
+
+            def handle_starttag(self, tag, attrs):
+                if tag == 'form':
+                    self.depth += 1
+                    self.max_depth = max(self.max_depth, self.depth)
+
+            def handle_endtag(self, tag):
+                if tag == 'form' and self.depth > 0:
+                    self.depth -= 1
+
+        p = P()
+        p.feed(html)
+        self.assertLessEqual(p.max_depth, 1, "check-in page must not nest <form> elements")

@@ -445,16 +445,16 @@
                 <span class="pledge-share-confirm" id="pledgeShareConfirm" hidden>Shared ✓</span>
             </div>
 
-            <form class="pledge-note-form" id="pledgeNoteForm" method="post" enctype="multipart/form-data" hidden>
+            <div class="pledge-note-form" id="pledgeNoteForm" hidden>
                 <textarea name="note" id="pledgeNoteInput" maxlength="280"
                           placeholder="What's keeping you going today? (optional)">{{ pledge_note }}</textarea>
                 <input type="file" name="photo" id="pledgePhotoInput" accept="image/*">
                 <span class="pledge-note-error" id="pledgeNoteError" hidden></span>
                 <div class="pledge-note-form-actions">
-                    <button type="submit" class="btn btn-primary" id="pledgeNoteSaveBtn">Save</button>
+                    <button type="button" class="btn btn-primary" id="pledgeNoteSaveBtn">Save</button>
                     <button type="button" class="pledge-action-btn" id="pledgeNoteCancelBtn">Cancel</button>
                 </div>
-            </form>
+            </div>
 
             <div class="pledge-external-fallback" id="pledgeExternalFallback" hidden>
                 <a href="https://twitter.com/intent/tweet?text={{ pledge_share_text|urlencode }}&amp;url=https://www.myrecoverypal.com"
@@ -588,17 +588,24 @@ document.addEventListener('DOMContentLoaded', function() {
             noteForm.hidden = true;
         });
     }
-    if (noteForm) {
-        noteForm.addEventListener('submit', function(e) {
+    var noteSaveBtn = document.getElementById('pledgeNoteSaveBtn');
+    var noteTextarea = document.getElementById('pledgeNoteInput');
+    var notePhotoInput = document.getElementById('pledgePhotoInput');
+    if (noteSaveBtn) {
+        noteSaveBtn.addEventListener('click', function(e) {
             e.preventDefault();
             if (noteErrorEl) { noteErrorEl.hidden = true; noteErrorEl.textContent = ''; }
-            var saveBtn = document.getElementById('pledgeNoteSaveBtn');
+            var saveBtn = noteSaveBtn;
             if (saveBtn) saveBtn.disabled = true;
+
+            var fd = new FormData();
+            fd.append('note', noteTextarea ? noteTextarea.value : '');
+            if (notePhotoInput && notePhotoInput.files[0]) fd.append('photo', notePhotoInput.files[0]);
 
             fetch("{% url 'accounts:update_pledge' %}", {
                 method: 'POST',
                 headers: {'X-CSRFToken': '{{ csrf_token }}'},
-                body: new FormData(noteForm),
+                body: fd,
             }).then(function(r) { return r.json(); }).then(function(data) {
                 if (saveBtn) saveBtn.disabled = false;
                 if (!data.success) {
