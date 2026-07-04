@@ -867,6 +867,40 @@ def pledge_today(request):
     })
 
 
+@login_required
+@require_POST
+def update_pledge(request):
+    """Add/edit a note and/or photo on today's pledge (even after completion).
+    Updating implies pledging, so this creates today's DailyPledge if missing."""
+    from .image_utils import validate_image, compress_image, is_cloudinary_enabled
+
+    pledge, _ = DailyPledge.objects.get_or_create(
+        user=request.user, date=timezone.localdate())
+
+    if 'note' in request.POST:
+        pledge.note = (request.POST.get('note') or '').strip()[:280]
+
+    if request.POST.get('remove_photo') == 'on':
+        pledge.photo = None
+
+    photo = request.FILES.get('photo')
+    if photo:
+        is_valid, error = validate_image(photo)
+        if not is_valid:
+            return JsonResponse({'success': False, 'error': error}, status=400)
+        if not is_cloudinary_enabled():
+            photo = compress_image(photo, max_dimension=1920)
+        pledge.photo = photo
+
+    pledge.save()
+    return JsonResponse({
+        'success': True,
+        'note': pledge.note,
+        'photo_url': pledge.photo.url if pledge.photo else '',
+        'streak': request.user.get_pledge_streak(),
+    })
+
+
 @functools.lru_cache(maxsize=1)
 def _available_timezones():
     """Cache zoneinfo.available_timezones() to avoid re-scanning on every call."""

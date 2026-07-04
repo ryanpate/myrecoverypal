@@ -304,3 +304,33 @@ class DailyPledgeNotePhotoTests(TestCase):
         p = DailyPledge.objects.create(user=u, date=djtz.localdate())
         self.assertEqual(p.note, '')
         self.assertFalse(p.photo)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class UpdatePledgeTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='up', password='x')
+        self.client.force_login(self.user)
+        self.url = reverse('accounts:update_pledge')
+
+    def test_adds_note_to_todays_pledge(self):
+        self.client.post(reverse('accounts:pledge_today'))
+        r = self.client.post(self.url, {'note': 'grateful for my kids'})
+        self.assertEqual(r.status_code, 200)
+        p = DailyPledge.objects.get(user=self.user, date=djtz.localdate())
+        self.assertEqual(p.note, 'grateful for my kids')
+
+    def test_note_editable_after_completion(self):
+        self.client.post(reverse('accounts:pledge_today'))
+        self.client.post(self.url, {'note': 'first'})
+        self.client.post(self.url, {'note': 'edited'})
+        p = DailyPledge.objects.get(user=self.user, date=djtz.localdate())
+        self.assertEqual(p.note, 'edited')
+
+    def test_update_creates_pledge_if_missing(self):
+        self.client.post(self.url, {'note': 'pledged via note'})
+        self.assertTrue(DailyPledge.objects.filter(user=self.user, date=djtz.localdate()).exists())
+
+    def test_requires_login(self):
+        self.client.logout()
+        self.assertIn(self.client.post(self.url).status_code, (302, 401, 403))
