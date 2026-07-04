@@ -173,3 +173,38 @@ class UserProfileFormPledgeTests(TestCase):
     def test_form_includes_pledge_fields(self):
         self.assertIn('pledge_reason', UserProfileForm.Meta.fields)
         self.assertIn('pledge_photo', UserProfileForm.Meta.fields)
+
+
+class UserTimezoneMiddlewareTests(TestCase):
+    def _apply(self, user):
+        from django.test import RequestFactory
+        from apps.accounts.middleware import UserTimezoneMiddleware
+        rf = RequestFactory()
+        req = rf.get('/')
+        req.user = user
+        seen = {}
+
+        def get_response(r):
+            seen['date'] = timezone.localdate()
+            return 'ok'
+
+        UserTimezoneMiddleware(get_response)(req)
+        return seen['date']
+
+    def test_activates_user_timezone(self):
+        import datetime
+        from unittest.mock import patch
+
+        u = User.objects.create_user(username='tzu', password='x')
+        u.timezone = 'America/Chicago'
+        u.save()
+        # 2026-01-01 05:30 UTC is still 2025-12-31 in Chicago (UTC-6)
+        fixed = datetime.datetime(2026, 1, 1, 5, 30, tzinfo=datetime.timezone.utc)
+        with override_settings(USE_TZ=True):
+            with patch('django.utils.timezone.now', return_value=fixed):
+                self.assertEqual(str(self._apply(u)), '2025-12-31')
+
+    def test_blank_timezone_falls_back_to_utc(self):
+        u = User.objects.create_user(username='tzu2', password='x')
+        d = self._apply(u)  # no crash, uses default
+        self.assertIsNotNone(d)

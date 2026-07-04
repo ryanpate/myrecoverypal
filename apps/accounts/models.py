@@ -88,6 +88,9 @@ class User(AbstractUser):
 
     # Profile
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    timezone = models.CharField(
+        max_length=64, blank=True, default='',
+        help_text="IANA timezone (e.g. America/Chicago), auto-detected from the browser.")
 
     # Email settings
     email_notifications = models.BooleanField(default=True)
