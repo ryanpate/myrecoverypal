@@ -432,7 +432,7 @@
         </div>
 
         <div class="onboarding-content">
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 {% if step == 1 %}
@@ -519,13 +519,24 @@
                     {% endif %}
                 </div>
 
+                <div class="form-group">
+                    <label for="pledge_reason">Who or what are you staying sober for?</label>
+                    <input type="text" class="form-control" id="pledge_reason" name="pledge_reason"
+                           placeholder="e.g. my daughter, my health, my future" maxlength="120">
+                </div>
+
+                <div class="form-group">
+                    <label for="pledge_photo">Add a photo (optional)</label>
+                    <input type="file" class="form-control" id="pledge_photo" name="pledge_photo" accept="image/*">
+                </div>
+
                 {% endif %}
 
                 <!-- Navigation -->
                 <div class="nav-buttons">
                     {% if step == 3 %}
                     <button type="submit" class="btn btn-primary">
-                        Go to My Feed <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        Go to My Progress <i class="fas fa-arrow-right" aria-hidden="true"></i>
                     </button>
                     <p class="completion-note">You can complete your profile anytime</p>
                     {% else %}

@@ -14,7 +14,7 @@ from django.db.models import Q, Count, Prefetch, Avg
 from django.utils import timezone
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
-from .models import GroupPost, User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, ActivityComment, UserConnection, SponsorRelationship, RecoveryPal, RecoveryGroup, GroupMembership, SocialPost, SocialPostComment, PostReaction
+from .models import GroupPost, User, Milestone, SupportMessage, ActivityFeed, DailyCheckIn, DailyPledge, ActivityComment, UserConnection, SponsorRelationship, RecoveryPal, RecoveryGroup, GroupMembership, SocialPost, SocialPostComment, PostReaction
 from .forms import CustomUserCreationForm, UserProfileForm, MilestoneForm, SupportMessageForm, SponsorRequestForm, RecoveryPalForm, RecoveryGroupForm, GroupPostForm, GroupMembershipForm
 from .signals import create_profile_update_activity
 from django.core.paginator import Paginator
@@ -279,11 +279,16 @@ def onboarding_view(request):
             return redirect(reverse('accounts:onboarding') + '?step=3')
 
         elif step == 3:
+            pledge_reason = request.POST.get('pledge_reason', '').strip()
+            if pledge_reason:
+                user.pledge_reason = pledge_reason[:120]
+            if request.FILES.get('pledge_photo'):
+                user.pledge_photo = request.FILES['pledge_photo']
             user.has_completed_onboarding = True
-            user.save(update_fields=['has_completed_onboarding'])
+            user.save()
             ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding')
             messages.success(request, "Welcome to MyRecoveryPal!")
-            return redirect('accounts:social_feed')
+            return redirect('accounts:progress')
 
     context = {
         'step': step,
@@ -790,6 +795,9 @@ def daily_checkin_view(request):
                 pledge_time=timezone.now() if pledge_taken else None,
             )
 
+            if checkin.pledge_taken:
+                DailyPledge.objects.get_or_create(user=request.user, date=checkin.date)
+
             if is_shared:
                 # Create a SocialPost so it appears on the feed
                 mood_display = checkin.get_mood_display_with_emoji()
@@ -843,6 +851,19 @@ def daily_checkin_view(request):
         'checkin_streak': request.user.get_checkin_streak(),
     }
     return render(request, 'accounts/daily_checkin.html', context)
+
+
+@login_required
+@require_POST
+def pledge_today(request):
+    """One-tap daily pledge. Records a DailyPledge for today (idempotent).
+    Deliberately does NOT touch DailyCheckIn / mood analytics."""
+    DailyPledge.objects.get_or_create(user=request.user, date=timezone.now().date())
+    return JsonResponse({
+        'success': True,
+        'pledged': True,
+        'streak': request.user.get_pledge_streak(),
+    })
 
 
 @login_required
@@ -1197,6 +1218,8 @@ def progress_view(request):
         'is_milestone_day': is_milestone_day,
         'years_sober': 0,
         'months_sober': 0,
+        'pledge_streak': request.user.get_pledge_streak(),
+        'pledged_today': DailyPledge.objects.filter(user=request.user, date=timezone.now().date()).exists(),
     }
 
     # Compute years/months for display

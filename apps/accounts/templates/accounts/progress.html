@@ -1339,10 +1339,171 @@
     .android-native-app .premium-gate-overlay-card {
         padding: 1.5rem 1.25rem !important;
     }
+
+    /* ===== Daily Pledge Card ===== */
+    .pledge-card {
+        max-width: 760px;
+        margin: 1.5rem auto 0;
+        padding: 1.75rem;
+        background: linear-gradient(135deg, #eef5ff 0%, #f7fbff 100%);
+        border: 1px solid #cfe0f5;
+        border-radius: 20px;
+        box-shadow: 0 2px 14px rgba(15, 45, 86, 0.08);
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+    }
+
+    .pledge-photo {
+        flex-shrink: 0;
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 8px rgba(15, 45, 86, 0.15);
+    }
+
+    .pledge-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .pledge-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .pledge-title {
+        margin: 0 0 0.35rem;
+        font-size: 1.25rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        color: #1e3a5f;
+    }
+
+    .pledge-reason {
+        margin: 0 0 0.6rem;
+        font-size: 0.92rem;
+        color: #4b5f7a;
+    }
+
+    .pledge-reason strong {
+        color: #1e4d8b;
+    }
+
+    .pledge-streak {
+        display: inline-block;
+        margin: 0 0 0.85rem;
+        padding: 0.3rem 0.75rem;
+        background: linear-gradient(135deg, #ffa502 0%, #ff6348 100%);
+        color: #fff;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    #pledgeTodayBtn {
+        border-radius: 50px;
+        padding: 0.7rem 1.75rem;
+        font-weight: 700;
+        box-shadow: 0 4px 14px rgba(82, 183, 136, 0.3);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    #pledgeTodayBtn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(82, 183, 136, 0.4);
+    }
+
+    #pledgeTodayBtn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .pledge-done {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #166534;
+    }
+
+    [data-theme="dark"] .pledge-card {
+        background: linear-gradient(135deg, #1e293b 0%, #1e3a5f 100%);
+        border-color: #334155;
+    }
+
+    [data-theme="dark"] .pledge-photo {
+        border-color: #0f172a;
+    }
+
+    [data-theme="dark"] .pledge-title {
+        color: #e2e8f0;
+    }
+
+    [data-theme="dark"] .pledge-reason {
+        color: #94a3b8;
+    }
+
+    [data-theme="dark"] .pledge-reason strong {
+        color: #6ea8e0;
+    }
+
+    [data-theme="dark"] .pledge-done {
+        color: #bbf7d0;
+    }
+
+    @media (max-width: 600px) {
+        .pledge-card {
+            flex-direction: column;
+            text-align: center;
+            padding: 1.5rem 1.25rem;
+            margin: 1rem 1rem 0;
+            max-width: none;
+        }
+
+        .pledge-body {
+            width: 100%;
+        }
+
+        #pledgeTodayBtn {
+            width: 100%;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- ===== Daily Pledge Card ===== -->
+<div class="pledge-card" id="pledgeCard" data-pledged="{{ pledged_today|yesno:'1,0' }}">
+    <div class="pledge-photo">
+        {% if user.pledge_photo %}<img src="{{ user.pledge_photo.url }}" alt="">
+        {% elif user.avatar %}<img src="{{ user.avatar.url }}" alt="">
+        {% else %}<img src="{% static 'images/icon-180.png' %}" alt="">{% endif %}
+    </div>
+    <div class="pledge-body">
+        <h2 class="pledge-title">I pledge to stay sober today</h2>
+        <p class="pledge-reason">Staying sober for:
+            <strong>{{ user.pledge_reason|default:user.recovery_goals|truncatewords:8|default:"one day at a time" }}</strong>
+        </p>
+        <p class="pledge-streak" {% if pledge_streak == 0 %}hidden{% endif %}>
+            🔥 <span id="pledgeStreakCount">{{ pledge_streak }}</span>-day pledge streak
+        </p>
+        <button type="button" class="btn btn-primary btn-lg" id="pledgeTodayBtn"
+                {% if pledged_today %}hidden{% endif %}>I pledge to stay sober today</button>
+        <div class="pledge-done" id="pledgeDone" {% if not pledged_today %}hidden{% endif %}>
+            ✅ Pledged today — see you tomorrow.
+        </div>
+    </div>
+</div>
+
 <!-- ===== Tab Bar ===== -->
 <div class="landing-tabs">
     <button class="landing-tab active" data-tab="progress" id="tabProgress">
@@ -1811,6 +1972,31 @@
 {% endblock %}
 
 {% block extra_js %}
+<script>
+(function () {
+    const btn = document.getElementById('pledgeTodayBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+        btn.disabled = true;
+        fetch("{% url 'accounts:pledge_today' %}", {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+        }).then(r => r.json()).then(data => {
+            if (!data.success) { btn.disabled = false; return; }
+            const streakEl = document.getElementById('pledgeStreakCount');
+            const streakP = document.querySelector('.pledge-streak');
+            if (streakEl) streakEl.textContent = data.streak;
+            if (streakP) streakP.hidden = false;
+            btn.hidden = true;
+            const done = document.getElementById('pledgeDone');
+            if (done) done.hidden = false;
+            if (window.MRPNative && window.MRPNative.hapticSuccess) {
+                window.MRPNative.hapticSuccess();
+            }
+        }).catch(() => { btn.disabled = false; });
+    });
+})();
+</script>
 {% if not is_free_user %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 {% if total_checkins > 0 %}

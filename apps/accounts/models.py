@@ -67,6 +67,12 @@ class User(AbstractUser):
     )
     recovery_goals = models.TextField(
         blank=True, help_text="Your personal recovery goals")
+    pledge_reason = models.CharField(
+        max_length=120, blank=True,
+        help_text="A short reason you're staying sober, e.g. 'my daughter'. Shown on your daily pledge.")
+    pledge_photo = models.ImageField(
+        upload_to='pledge_photos/', blank=True, null=True,
+        help_text="Optional photo shown on your daily pledge card.")
     is_sponsor = models.BooleanField(
         default=False, help_text="Are you available as a sponsor?")
     bio = models.TextField(blank=True, help_text="Tell us about yourself")
@@ -199,6 +205,26 @@ class User(AbstractUser):
             streak += 1
             current_date -= timedelta(days=1)
 
+        return streak
+
+    def get_pledge_streak(self):
+        """Consecutive days with a DailyPledge ending today or yesterday."""
+        from datetime import timedelta
+        today = timezone.now().date()
+        pledge_dates = set(
+            self.daily_pledges.values_list('date', flat=True)
+        )
+        if not pledge_dates:
+            return 0
+        if today in pledge_dates:
+            streak, current_date = 1, today - timedelta(days=1)
+        elif (today - timedelta(days=1)) in pledge_dates:
+            streak, current_date = 1, today - timedelta(days=2)
+        else:
+            return 0
+        while current_date in pledge_dates:
+            streak += 1
+            current_date -= timedelta(days=1)
         return streak
 
     def get_milestone_to_celebrate(self):
@@ -681,6 +707,22 @@ class DailyCheckIn(models.Model):
     def needs_support(self):
         """True when this check-in indicates a struggling/high-craving moment."""
         return self.mood <= 2 or self.craving_level >= 3
+
+
+class DailyPledge(models.Model):
+    """A single daily sobriety pledge. One row per user per day. Kept separate
+    from DailyCheckIn so a one-tap pledge never touches mood/craving analytics."""
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='daily_pledges')
+    date = models.DateField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user', 'date']
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.user.username} pledged {self.date}"
 
 
 class DailyRecoveryThought(models.Model):

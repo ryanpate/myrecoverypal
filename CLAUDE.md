@@ -248,6 +248,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 3. ~~Meeting reminders (push before saved meetings)~~ ✅ COMPLETE
 4. ~~Progress visualizations (mood/craving trends)~~ ✅ COMPLETE
 5. ~~Accountability nudges for Recovery Pals~~ ✅ COMPLETE
+6. ~~Daily pledge ritual on the progress home~~ ✅ COMPLETE — one-tap "I pledge to stay sober today" card (photo + personal reason + pledge streak). Backed by the `DailyPledge` model (separate from `DailyCheckIn` so it never touches mood analytics). Endpoint `POST /accounts/pledge-today/`; streak via `User.get_pledge_streak()`. Onboarding step 3 captures `pledge_reason`/`pledge_photo` and now lands on `accounts:progress`.
 
 #### Polish (Priority: MEDIUM) - ALL COMPLETE ✅
 1. ~~Dark mode~~ ✅ COMPLETE
@@ -314,6 +315,7 @@ All social features live here:
 - `SponsorRelationship` - 1:1 mentorship
 - `RecoveryPal` - Mutual accountability
 - `DailyCheckIn` - Mood/craving with social sharing
+- `DailyPledge` - One-tap daily sobriety pledge (own model, `unique_together` per day; drives the pledge streak, kept separate from check-in/mood analytics)
 - `ActivityFeed` - Aggregated stream
 - `Notification` - 12 notification types
 - `SupportMessage` - Direct messaging
@@ -384,6 +386,7 @@ User (extends AbstractUser):
 
     # Methods
     get_days_sober()
+    get_pledge_streak()   # consecutive DailyPledge days (distinct from get_checkin_streak)
     get_following(), get_followers()
     is_following(user), follow_user(user), unfollow_user(user)
     get_active_sponsor(), get_recovery_pal()
