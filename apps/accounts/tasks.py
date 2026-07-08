@@ -181,6 +181,99 @@ def send_onboarding_sequence_emails(self):
     return {'sent': sent_count, 'skipped': skipped_count, 'exited': exited_count}
 
 
+@shared_task(bind=True, max_retries=3)
+def send_reengagement_emails(self):
+    """
+    Daily driver for the re-engagement sequence (R1/R2/R3 at days 0/5/12
+    after 21 days of inactivity). Any activity exits the sequence naturally.
+    After R3, the user is left alone for 90 days before a new cycle can
+    start. Tone rule from the spec: never guilt-trip absence.
+    """
+    from .models import User
+    from .email_sequences import (
+        REENGAGEMENT_EMAILS, get_last_activity, is_crisis_suppressed,
+        marketing_unsubscribe_url, INACTIVITY_DAYS, REENGAGEMENT_REENTRY_DAYS,
+    )
+
+    now = timezone.now()
+    inactivity_cutoff = now - timedelta(days=INACTIVITY_DAYS)
+    reentry_cutoff = now - timedelta(days=REENGAGEMENT_REENTRY_DAYS)
+    site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
+
+    users = User.objects.filter(
+        is_active=True,
+        email_notifications=True,
+        marketing_emails_enabled=True,
+        date_joined__lt=inactivity_cutoff,  # never during onboarding
+    )
+
+    sent_count = 0
+
+    def render_and_send(user, email):
+        context = {
+            'user': user,
+            'site_url': site_url,
+            'current_year': now.year,
+            'unsubscribe_url': marketing_unsubscribe_url(user),
+        }
+        html_message = render_to_string(email['template'], context)
+        plain_message = strip_tags(html_message)
+        success, error = send_email(
+            subject=email['subject'],
+            plain_message=plain_message,
+            html_message=html_message,
+            recipient_email=user.email,
+        )
+        if not success:
+            raise Exception(f"send failed: {error}")
+
+    for user in users:
+        try:
+            if get_last_activity(user) > inactivity_cutoff:
+                continue  # active -> exit sequence
+            if is_crisis_suppressed(user):
+                continue
+
+            r1 = user.reengagement_email_1_sent
+            r3 = user.reengagement_email_3_sent
+
+            if r3 and r3 > reentry_cutoff:
+                continue  # sequence finished recently; leave them alone
+
+            if r1 is None or r1 < reentry_cutoff:
+                # Start (or restart) a cycle with R1.
+                render_and_send(user, REENGAGEMENT_EMAILS[0])
+                user.reengagement_email_1_sent = now
+                user.reengagement_email_2_sent = None
+                user.reengagement_email_3_sent = None
+                user.save(update_fields=[
+                    'reengagement_email_1_sent',
+                    'reengagement_email_2_sent',
+                    'reengagement_email_3_sent',
+                ])
+            elif user.reengagement_email_2_sent is None and \
+                    r1 <= now - timedelta(days=5):
+                render_and_send(user, REENGAGEMENT_EMAILS[1])
+                user.reengagement_email_2_sent = now
+                user.save(update_fields=['reengagement_email_2_sent'])
+            elif user.reengagement_email_3_sent is None and \
+                    r1 <= now - timedelta(days=12):
+                render_and_send(user, REENGAGEMENT_EMAILS[2])
+                user.reengagement_email_3_sent = now
+                user.save(update_fields=['reengagement_email_3_sent'])
+            else:
+                continue
+
+            sent_count += 1
+            time.sleep(0.5)
+
+        except Exception as e:
+            logger.error(f"Error in re-engagement sequence for {user.email}: {e}")
+
+    logger.info(f"Re-engagement sequence: sent={sent_count}")
+    return {'sent': sent_count}
+
+
 # ========================================
 # Daily Check-in Reminder
 # ========================================

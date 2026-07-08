@@ -168,3 +168,74 @@ class OnboardingSequenceTests(TestCase):
         User.objects.filter(pk=user.pk).update(marketing_emails_enabled=False)
         mock_send = self.run_task()
         mock_send.assert_not_called()
+
+
+class ReengagementSequenceTests(TestCase):
+    def run_task(self):
+        from apps.accounts.tasks import send_reengagement_emails
+        with patch('apps.accounts.tasks.send_email',
+                   return_value=(True, None)) as mock_send:
+            send_reengagement_emails()
+        return mock_send
+
+    def test_inactive_21_days_gets_r1(self):
+        user = make_user(username='ghost', days_ago=30)
+        mock_send = self.run_task()
+        user.refresh_from_db()
+        self.assertIsNotNone(user.reengagement_email_1_sent)
+        self.assertEqual(mock_send.call_args.kwargs['subject'],
+                         "Your seat's still here 💙")
+
+    def test_active_user_gets_nothing(self):
+        user = make_user(username='alive', days_ago=30)
+        User.objects.filter(pk=user.pk).update(last_seen=timezone.now())
+        mock_send = self.run_task()
+        mock_send.assert_not_called()
+
+    def test_r2_after_5_days_r3_after_12(self):
+        user = make_user(username='drip', days_ago=60)
+        User.objects.filter(pk=user.pk).update(
+            reengagement_email_1_sent=timezone.now() - timedelta(days=5))
+        mock_send = self.run_task()
+        user.refresh_from_db()
+        self.assertIsNotNone(user.reengagement_email_2_sent)
+        self.assertEqual(mock_send.call_args.kwargs['subject'],
+                         "What you've missed (the good kind)")
+
+        User.objects.filter(pk=user.pk).update(
+            reengagement_email_1_sent=timezone.now() - timedelta(days=12))
+        mock_send = self.run_task()
+        user.refresh_from_db()
+        self.assertIsNotNone(user.reengagement_email_3_sent)
+        self.assertEqual(mock_send.call_args.kwargs['subject'],
+                         "One honest question")
+
+    def test_90_day_reentry_suppression(self):
+        user = make_user(username='done', days_ago=120)
+        User.objects.filter(pk=user.pk).update(
+            reengagement_email_1_sent=timezone.now() - timedelta(days=40),
+            reengagement_email_2_sent=timezone.now() - timedelta(days=35),
+            reengagement_email_3_sent=timezone.now() - timedelta(days=28),
+        )
+        mock_send = self.run_task()
+        mock_send.assert_not_called()
+
+    def test_new_cycle_after_90_days_restarts_at_r1(self):
+        user = make_user(username='cycle', days_ago=400)
+        User.objects.filter(pk=user.pk).update(
+            reengagement_email_1_sent=timezone.now() - timedelta(days=200),
+            reengagement_email_2_sent=timezone.now() - timedelta(days=195),
+            reengagement_email_3_sent=timezone.now() - timedelta(days=188),
+        )
+        mock_send = self.run_task()
+        user.refresh_from_db()
+        self.assertEqual(mock_send.call_args.kwargs['subject'],
+                         "Your seat's still here 💙")
+        self.assertIsNone(user.reengagement_email_2_sent)  # cycle reset
+        self.assertIsNone(user.reengagement_email_3_sent)
+
+    def test_crisis_flag_suppresses(self):
+        user = make_user(username='rcrisis', days_ago=30)
+        RecoveryCoachSession.objects.create(user=user, trigger='checkin_support')
+        mock_send = self.run_task()
+        mock_send.assert_not_called()
