@@ -1,6 +1,6 @@
 """Eligibility helpers and definitions for the member email sequences.
 
-Two sequences (spec: ~/Downloads/pack/email-sequences.md):
+Two sequences (spec: docs/plans/2026-07-08-email-sequences.md):
 - Onboarding: E1 immediately (signal-triggered), E2–E6 on days 1/3/6/9/14.
   Early exit once the user has done the three actions that predict
   retention: a check-in (streak), a journal entry, a community action.
@@ -63,12 +63,34 @@ def is_crisis_suppressed(user):
 
 
 def get_last_activity(user):
-    """Most recent activity signal we have for the user."""
+    """Most recent activity signal we have for the user.
+
+    ANY activity should exit the re-engagement sequence, so this looks past
+    `last_login`/`last_seen` (which are only updated by explicit login and a
+    single page) to the user's most recent check-in, post, or journal entry.
+    """
     candidates = [user.date_joined]
     if user.last_login:
         candidates.append(user.last_login)
     if user.last_seen:
         candidates.append(user.last_seen)
+
+    last_checkin = user.daily_checkins.order_by(
+        '-created_at').values_list('created_at', flat=True).first()
+    if last_checkin:
+        candidates.append(last_checkin)
+
+    last_post = user.social_posts.order_by(
+        '-created_at').values_list('created_at', flat=True).first()
+    if last_post:
+        candidates.append(last_post)
+
+    from apps.journal.models import JournalEntry
+    last_journal = JournalEntry.objects.filter(user=user).order_by(
+        '-created_at').values_list('created_at', flat=True).first()
+    if last_journal:
+        candidates.append(last_journal)
+
     return max(candidates)
 
 

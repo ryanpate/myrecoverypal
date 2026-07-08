@@ -100,7 +100,9 @@ def send_onboarding_sequence_emails(self):
         marketing_emails_enabled=True,
         welcome_email_1_sent__isnull=False,
         onboarding_email_6_sent__isnull=True,
-        date_joined__gte=now - timedelta(days=25),
+        # Anchor the candidate window to E1 send (onboarding completion),
+        # not date_joined, so a slow onboarder still gets the full sequence.
+        welcome_email_1_sent__gte=now - timedelta(days=25),
     )
 
     sent_count = 0
@@ -124,7 +126,10 @@ def send_onboarding_sequence_emails(self):
                 exited_count += 1
                 continue
 
-            days = (now - user.date_joined).days
+            # Drip is anchored to when the welcome email went out (onboarding
+            # completion), not date_joined, so slow onboarders still get the
+            # full 14-day sequence.
+            days = (now - user.welcome_email_1_sent).days
             due = [e for e in remaining if days >= e['day']]
             if not due:
                 continue

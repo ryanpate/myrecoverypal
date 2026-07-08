@@ -59,6 +59,17 @@ class EligibilityHelperTests(TestCase):
         user.last_seen = timezone.now() - timedelta(days=2)
         self.assertEqual(seq.get_last_activity(user), user.last_seen)
 
+    def test_get_last_activity_considers_checkin_post_and_journal(self):
+        user = make_user(days_ago=30)
+        checkin = DailyCheckIn.objects.create(user=user, mood=3, energy_level=3)
+        self.assertEqual(seq.get_last_activity(user), checkin.created_at)
+
+        post = SocialPost.objects.create(author=user, content='hello')
+        self.assertEqual(seq.get_last_activity(user), post.created_at)
+
+        entry = JournalEntry.objects.create(user=user, content='line')
+        self.assertEqual(seq.get_last_activity(user), entry.created_at)
+
     def test_unsubscribe_url_contains_token_path(self):
         user = make_user()
         url = seq.marketing_unsubscribe_url(user)
@@ -123,6 +134,21 @@ class OnboardingSequenceTests(TestCase):
         self.assertIsNotNone(user.onboarding_email_2_sent)
         self.assertEqual(mock_send.call_args.kwargs['subject'],
                          "Meet Anchor (it's awake when no one else is)")
+
+    def test_drip_anchored_to_welcome_email_not_date_joined(self):
+        # date_joined is 10 days ago, but E1 (welcome_email_1_sent) only
+        # went out 1 day ago -- a slow onboarder. Drip should be at day 1
+        # (E2/Anchor), not day 10 territory (E5).
+        user = make_user(username='slowonboard', days_ago=10)
+        User.objects.filter(pk=user.pk).update(
+            welcome_email_1_sent=timezone.now() - timedelta(days=1))
+        user.refresh_from_db()
+        mock_send = self.run_task()
+        user.refresh_from_db()
+        self.assertIsNotNone(user.onboarding_email_2_sent)
+        self.assertEqual(mock_send.call_args.kwargs['subject'],
+                         "Meet Anchor (it's awake when no one else is)")
+        self.assertIsNone(user.onboarding_email_5_sent)
 
     def test_anchor_user_skips_e2_silently(self):
         user = self.make_onboarded_user('anchored', days_ago=1)
@@ -199,6 +225,16 @@ class ReengagementSequenceTests(TestCase):
         User.objects.filter(pk=user.pk).update(last_seen=timezone.now())
         mock_send = self.run_task()
         mock_send.assert_not_called()
+
+    def test_user_with_recent_checkin_gets_nothing(self):
+        # Mobile user: last_login/last_seen are stale, but a DailyCheckIn
+        # today is a real activity signal that must exit the sequence.
+        user = make_user(username='mobileuser', days_ago=30)
+        DailyCheckIn.objects.create(user=user, mood=4, energy_level=4)
+        mock_send = self.run_task()
+        user.refresh_from_db()
+        mock_send.assert_not_called()
+        self.assertIsNone(user.reengagement_email_1_sent)
 
     def test_r2_after_5_days_r3_after_12(self):
         user = make_user(username='drip', days_ago=60)
