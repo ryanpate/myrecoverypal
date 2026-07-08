@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 # ========================================
-# Welcome Email Sequence (Day 1, 3, 7)
+# Onboarding Email Sequence (E1 immediate, E2-E6 drip)
 # ========================================
 
 @shared_task(bind=True, max_retries=3)
@@ -75,137 +75,110 @@ def send_welcome_email_day_1(self, user_id):
 
 
 @shared_task(bind=True, max_retries=3)
-def send_welcome_emails_day_3(self):
+def send_onboarding_sequence_emails(self):
     """
-    Scheduled task to send Day 3 welcome emails.
-    Sent to users who joined 3+ days ago and haven't received this email yet.
-    Uses date (not datetime) to avoid missing users if Celery runs inconsistently.
+    Daily driver for onboarding emails E2-E6 (days 1/3/6/9/14 after signup).
+
+    Per user, sends only the latest due unsent email and stamps earlier
+    missed ones as skipped. Users who complete all three activation actions
+    (streak + journal + community action) exit the sequence early. Users
+    with a crisis-triggered coach session in the last 48h are deferred to
+    the next run — never emailed mid-crisis.
     """
     from .models import User
+    from .email_sequences import (
+        ONBOARDING_EMAILS, is_activated, is_crisis_suppressed,
+        has_started_streak, marketing_unsubscribe_url,
+    )
 
-    # Target users who joined 3+ days ago (using date to be more reliable)
-    three_days_ago = (timezone.now() - timedelta(days=3)).date()
+    now = timezone.now()
+    site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
 
-    # Users who joined 3+ days ago but haven't received Day 3 email
     users = User.objects.filter(
-        date_joined__date__lte=three_days_ago,
+        is_active=True,
         email_notifications=True,
-        welcome_email_2_sent__isnull=True,
-        welcome_email_1_sent__isnull=False,  # Must have received Day 1
-    ).exclude(
-        # Don't send to users who joined more than 10 days ago (too late)
-        date_joined__date__lt=(timezone.now() - timedelta(days=10)).date()
+        marketing_emails_enabled=True,
+        welcome_email_1_sent__isnull=False,
+        onboarding_email_6_sent__isnull=True,
+        date_joined__gte=now - timedelta(days=25),
     )
 
     sent_count = 0
-    failed_count = 0
-    site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
+    skipped_count = 0
+    exited_count = 0
 
     for user in users:
         try:
-            html_message = render_to_string('emails/welcome_day_3.html', {
+            if is_crisis_suppressed(user):
+                skipped_count += 1
+                continue
+
+            remaining = [e for e in ONBOARDING_EMAILS
+                         if getattr(user, e['field']) is None]
+
+            if is_activated(user):
+                # Sequence goal reached - close out without sending.
+                for email in remaining:
+                    setattr(user, email['field'], now)
+                user.save(update_fields=[e['field'] for e in remaining])
+                exited_count += 1
+                continue
+
+            days = (now - user.date_joined).days
+            due = [e for e in remaining if days >= e['day']]
+            if not due:
+                continue
+
+            email = due[-1]
+            stamped_fields = []
+            # Stamp earlier missed emails as skipped rather than blasting them.
+            for missed in due[:-1]:
+                setattr(user, missed['field'], now)
+                stamped_fields.append(missed['field'])
+
+            if email['skip'] and email['skip'](user):
+                setattr(user, email['field'], now)
+                stamped_fields.append(email['field'])
+                user.save(update_fields=stamped_fields)
+                skipped_count += 1
+                continue
+
+            context = {
                 'user': user,
                 'site_url': site_url,
-                'has_completed_onboarding': user.has_completed_onboarding,
-                'days_sober': user.get_days_sober(),
-                'current_year': timezone.now().year,
-            })
+                'current_year': now.year,
+                'unsubscribe_url': marketing_unsubscribe_url(user),
+            }
+            if email['number'] == 5:
+                context['streak'] = user.get_checkin_streak()
+                context['has_streak'] = has_started_streak(user)
+
+            html_message = render_to_string(email['template'], context)
             plain_message = strip_tags(html_message)
 
             success, error = send_email(
-                subject="How's your recovery journey going? 💪",
+                subject=email['subject'],
                 plain_message=plain_message,
                 html_message=html_message,
                 recipient_email=user.email,
             )
-
             if not success:
-                raise Exception(f"Failed to send Day 3 email to {user.email}: {error}")
+                raise Exception(f"send failed: {error}")
 
-            user.welcome_email_2_sent = timezone.now()
-            user.save(update_fields=['welcome_email_2_sent'])
+            setattr(user, email['field'], now)
+            stamped_fields.append(email['field'])
+            user.save(update_fields=stamped_fields)
             sent_count += 1
 
-            # Small delay between emails to avoid rate limiting
             time.sleep(0.5)
 
         except Exception as e:
-            failed_count += 1
-            logger.error(f"Error sending Day 3 email to {user.email}: {e}")
+            logger.error(f"Error in onboarding sequence for {user.email}: {e}")
 
-    logger.info(f"Welcome email Day 3 sent to {sent_count} users, {failed_count} failed")
-    return sent_count
-
-
-@shared_task(bind=True, max_retries=3)
-def send_welcome_emails_day_7(self):
-    """
-    Scheduled task to send Day 7 welcome emails.
-    Celebrates their first week and encourages engagement.
-    Uses date (not datetime) to avoid missing users if Celery runs inconsistently.
-    """
-    from .models import User
-
-    # Target users who joined 7+ days ago (using date to be more reliable)
-    seven_days_ago = (timezone.now() - timedelta(days=7)).date()
-
-    users = User.objects.filter(
-        date_joined__date__lte=seven_days_ago,
-        email_notifications=True,
-        welcome_email_3_sent__isnull=True,
-        welcome_email_2_sent__isnull=False,  # Must have received Day 3
-    ).exclude(
-        # Don't send to users who joined more than 21 days ago (too late)
-        date_joined__date__lt=(timezone.now() - timedelta(days=21)).date()
-    )
-
-    sent_count = 0
-    failed_count = 0
-    site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
-
-    for user in users:
-        try:
-            # Get some engagement stats
-            post_count = user.social_posts.count()
-            follower_count = user.follower_connections.filter(connection_type='follow').count()
-            following_count = user.following_connections.filter(connection_type='follow').count()
-            checkin_count = user.daily_checkins.count()
-
-            html_message = render_to_string('emails/welcome_day_7.html', {
-                'user': user,
-                'site_url': site_url,
-                'post_count': post_count,
-                'follower_count': follower_count,
-                'following_count': following_count,
-                'checkin_count': checkin_count,
-                'days_sober': user.get_days_sober(),
-                'current_year': timezone.now().year,
-            })
-            plain_message = strip_tags(html_message)
-
-            success, error = send_email(
-                subject="🎉 One week with MyRecoveryPal!",
-                plain_message=plain_message,
-                html_message=html_message,
-                recipient_email=user.email,
-            )
-
-            if not success:
-                raise Exception(f"Failed to send Day 7 email to {user.email}: {error}")
-
-            user.welcome_email_3_sent = timezone.now()
-            user.save(update_fields=['welcome_email_3_sent'])
-            sent_count += 1
-
-            # Small delay between emails to avoid rate limiting
-            time.sleep(0.5)
-
-        except Exception as e:
-            failed_count += 1
-            logger.error(f"Error sending Day 7 email to {user.email}: {e}")
-
-    logger.info(f"Welcome email Day 7 sent to {sent_count} users, {failed_count} failed")
-    return sent_count
+    logger.info(
+        f"Onboarding sequence: sent={sent_count}, skipped={skipped_count}, "
+        f"exited={exited_count}")
+    return {'sent': sent_count, 'skipped': skipped_count, 'exited': exited_count}
 
 
 # ========================================

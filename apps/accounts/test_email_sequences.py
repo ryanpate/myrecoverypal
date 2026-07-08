@@ -99,3 +99,72 @@ class WelcomeEmailE1Tests(TestCase):
         self.assertEqual(kwargs['subject'],
                          "Welcome in. You're a founding member. 💙")
         self.assertIn('unsubscribe', kwargs['html_message'].lower())
+
+
+class OnboardingSequenceTests(TestCase):
+    def run_task(self):
+        from apps.accounts.tasks import send_onboarding_sequence_emails
+        with patch('apps.accounts.tasks.send_email',
+                   return_value=(True, None)) as mock_send:
+            send_onboarding_sequence_emails()
+        return mock_send
+
+    def make_onboarded_user(self, username, days_ago):
+        user = make_user(username=username, days_ago=days_ago)
+        User.objects.filter(pk=user.pk).update(
+            welcome_email_1_sent=timezone.now() - timedelta(days=days_ago))
+        user.refresh_from_db()
+        return user
+
+    def test_day_1_sends_anchor_email(self):
+        user = self.make_onboarded_user('day1', days_ago=1)
+        mock_send = self.run_task()
+        user.refresh_from_db()
+        self.assertIsNotNone(user.onboarding_email_2_sent)
+        self.assertEqual(mock_send.call_args.kwargs['subject'],
+                         "Meet Anchor (it's awake when no one else is)")
+
+    def test_anchor_user_skips_e2_silently(self):
+        user = self.make_onboarded_user('anchored', days_ago=1)
+        session = RecoveryCoachSession.objects.create(user=user)
+        CoachMessage.objects.create(session=session, role='user', content='hi')
+        mock_send = self.run_task()
+        user.refresh_from_db()
+        self.assertIsNotNone(user.onboarding_email_2_sent)  # stamped
+        mock_send.assert_not_called()                        # not sent
+
+    def test_only_latest_due_email_sent(self):
+        user = self.make_onboarded_user('midway', days_ago=9)
+        mock_send = self.run_task()
+        user.refresh_from_db()
+        self.assertEqual(mock_send.call_count, 1)
+        self.assertEqual(mock_send.call_args.kwargs['subject'],
+                         "Your first medallion is closer than you think")
+        # earlier ones stamped as skipped
+        self.assertIsNotNone(user.onboarding_email_2_sent)
+        self.assertIsNotNone(user.onboarding_email_3_sent)
+        self.assertIsNotNone(user.onboarding_email_4_sent)
+
+    def test_activated_user_exits_sequence(self):
+        user = self.make_onboarded_user('activated', days_ago=3)
+        DailyCheckIn.objects.create(user=user, mood=4, energy_level=4)
+        JournalEntry.objects.create(user=user, content='line')
+        SocialPost.objects.create(author=user, content='hello all')
+        mock_send = self.run_task()
+        user.refresh_from_db()
+        mock_send.assert_not_called()
+        self.assertIsNotNone(user.onboarding_email_6_sent)  # sequence closed
+
+    def test_crisis_flag_suppresses_send_but_not_sequence(self):
+        user = self.make_onboarded_user('crisis', days_ago=3)
+        RecoveryCoachSession.objects.create(user=user, trigger='checkin_support')
+        mock_send = self.run_task()
+        user.refresh_from_db()
+        mock_send.assert_not_called()
+        self.assertIsNone(user.onboarding_email_3_sent)  # retried next run
+
+    def test_unsubscribed_user_gets_nothing(self):
+        user = self.make_onboarded_user('unsub', days_ago=3)
+        User.objects.filter(pk=user.pk).update(marketing_emails_enabled=False)
+        mock_send = self.run_task()
+        mock_send.assert_not_called()
