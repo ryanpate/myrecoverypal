@@ -85,3 +85,17 @@ class TemplateRenderTests(TestCase):
             })
             self.assertIn('unsubscribe', html.lower(), tpl)
             self.assertIn('render', html, tpl)  # greeting uses username fallback
+
+
+class WelcomeEmailE1Tests(TestCase):
+    @patch('apps.accounts.tasks.send_email', return_value=(True, None))
+    def test_e1_uses_new_subject_and_marks_sent(self, mock_send):
+        from apps.accounts.tasks import send_welcome_email_day_1
+        user = make_user(username='e1user')
+        send_welcome_email_day_1(user.id)
+        user.refresh_from_db()
+        self.assertIsNotNone(user.welcome_email_1_sent)
+        kwargs = mock_send.call_args.kwargs
+        self.assertEqual(kwargs['subject'],
+                         "Welcome in. You're a founding member. 💙")
+        self.assertIn('unsubscribe', kwargs['html_message'].lower())
