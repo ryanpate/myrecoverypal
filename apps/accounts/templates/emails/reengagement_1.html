@@ -1,0 +1,12 @@
+{% extends 'emails/sequence_base.html' %}
+{% block title %}Your seat's still here{% endblock %}
+{% block content %}
+<p>{{ user.first_name|default:user.username }},</p>
+<p>Just one thing, said plainly: your seat in the community is still here, and
+it doesn't matter how long it's been.</p>
+<p>Streak broken? Streaks restart. Rough stretch? That's exactly what this
+place is for. Nothing to explain, nothing to catch up on.</p>
+<div class="cta-wrap">
+    <a class="cta" href="{{ site_url }}/accounts/social-feed/">Come say hi &rarr;</a>
+</div>
+{% endblock %}

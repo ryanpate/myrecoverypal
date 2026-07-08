@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 from django.test import TestCase
 from django.utils import timezone
+from django.template.loader import render_to_string
 
 from apps.accounts.models import (
     User, DailyCheckIn, SocialPost, RecoveryCoachSession, CoachMessage,
@@ -63,3 +64,24 @@ class EligibilityHelperTests(TestCase):
         url = seq.marketing_unsubscribe_url(user)
         self.assertIn('/email/unsubscribe/', url)
         self.assertTrue(url.startswith('http'))
+
+
+class TemplateRenderTests(TestCase):
+    def test_all_sequence_templates_render(self):
+        user = make_user(username='render')
+        templates = (
+            ['emails/onboarding_1.html']
+            + [e['template'] for e in seq.ONBOARDING_EMAILS]
+            + [e['template'] for e in seq.REENGAGEMENT_EMAILS]
+        )
+        for tpl in templates:
+            html = render_to_string(tpl, {
+                'user': user,
+                'site_url': 'https://www.myrecoverypal.com',
+                'current_year': 2026,
+                'unsubscribe_url': 'https://www.myrecoverypal.com/email/unsubscribe/x/',
+                'streak': 3,
+                'has_streak': True,
+            })
+            self.assertIn('unsubscribe', html.lower(), tpl)
+            self.assertIn('render', html, tpl)  # greeting uses username fallback

@@ -1,0 +1,11 @@
+{% extends 'emails/sequence_base.html' %}
+{% block title %}New since you were here{% endblock %}
+{% block content %}
+<p>{{ user.first_name|default:user.username }},</p>
+<p>Since you were last here: new members joining daily, new milestones on the
+feed every week, and Anchor's been there for a lot of 2am conversations.</p>
+<p>The door's open whenever. One tap and you're back in the room.</p>
+<div class="cta-wrap">
+    <a class="cta" href="{{ site_url }}/accounts/social-feed/">See what's new &rarr;</a>
+</div>
+{% endblock %}
