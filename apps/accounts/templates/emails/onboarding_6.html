@@ -1,0 +1,11 @@
+{% extends 'emails/sequence_base.html' %}
+{% block title %}Two weeks in — one question{% endblock %}
+{% block content %}
+<p>{{ user.first_name|default:user.username }},</p>
+<p>You've been a member for two weeks, so — honestly — how's it going?</p>
+<p>Not a survey. Just hit reply and tell us one thing: what's working, what's
+confusing, or what you wish MyRecoveryPal did. A real human reads every reply,
+and member answers have already shaped the site.</p>
+<p>And if the last two weeks have been heavy: that's not failure, that's the
+road. The community and Anchor are there on the hard days especially.</p>
+{% endblock %}

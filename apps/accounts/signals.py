@@ -69,6 +69,7 @@ def _send_welcome_email_directly(user):
     from django.utils import timezone
     from django.conf import settings
     from .email_service import send_email
+    from .email_sequences import marketing_unsubscribe_url
 
     if not user.email_notifications:
         logger.info(f"Skipping welcome email for {user.email} - notifications disabled")
@@ -76,15 +77,16 @@ def _send_welcome_email_directly(user):
 
     site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
 
-    html_message = render_to_string('emails/welcome_day_1.html', {
+    html_message = render_to_string('emails/onboarding_1.html', {
         'user': user,
         'site_url': site_url,
         'current_year': timezone.now().year,
+        'unsubscribe_url': marketing_unsubscribe_url(user),
     })
     plain_message = strip_tags(html_message)
 
     success, error = send_email(
-        subject="Welcome to MyRecoveryPal! 🌟",
+        subject="Welcome in. You're a founding member. 💙",
         plain_message=plain_message,
         html_message=html_message,
         recipient_email=user.email,

@@ -757,14 +757,15 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.newsletter.tasks.send_scheduled_newsletters',
         'schedule': crontab(minute='*/15'),  # Check every 15 minutes
     },
-    # Welcome email sequence - Day 3 and Day 7 (Day 1 is triggered on registration)
-    'send-welcome-emails-day-3': {
-        'task': 'apps.accounts.tasks.send_welcome_emails_day_3',
+    # Onboarding email sequence E2-E6 (E1 is signal-triggered on registration)
+    'send-onboarding-sequence-emails': {
+        'task': 'apps.accounts.tasks.send_onboarding_sequence_emails',
         'schedule': crontab(hour=10, minute=0),  # Daily at 10 AM
     },
-    'send-welcome-emails-day-7': {
-        'task': 'apps.accounts.tasks.send_welcome_emails_day_7',
-        'schedule': crontab(hour=10, minute=15),  # Daily at 10:15 AM
+    # Re-engagement sequence R1-R3 for members inactive 21+ days
+    'send-reengagement-emails': {
+        'task': 'apps.accounts.tasks.send_reengagement_emails',
+        'schedule': crontab(hour=10, minute=45),  # Daily at 10:45 AM
     },
     # Daily check-in reminders - afternoon to catch evening check-ins
     'send-checkin-reminders': {

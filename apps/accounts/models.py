@@ -120,6 +120,26 @@ class User(AbstractUser):
     premium_nudge_sent = models.DateTimeField(null=True, blank=True,
         help_text="Premium trial nudge email sent timestamp")
 
+    # Onboarding email sequence (E2–E6; E1 uses welcome_email_1_sent)
+    onboarding_email_2_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Onboarding E2 (Anchor, day 1) sent/skipped timestamp")
+    onboarding_email_3_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Onboarding E3 (journal, day 3) sent/skipped timestamp")
+    onboarding_email_4_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Onboarding E4 (community, day 6) sent/skipped timestamp")
+    onboarding_email_5_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Onboarding E5 (milestone, day 9) sent/skipped timestamp")
+    onboarding_email_6_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Onboarding E6 (check-in, day 14) sent/skipped timestamp")
+
+    # Re-engagement email sequence (triggered after 21 days inactive)
+    reengagement_email_1_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Re-engagement R1 (door open) sent timestamp")
+    reengagement_email_2_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Re-engagement R2 (what's new) sent timestamp")
+    reengagement_email_3_sent = models.DateTimeField(null=True, blank=True,
+        help_text="Re-engagement R3 (honest ask) sent timestamp")
+
     # Timestamps
     last_seen = models.DateTimeField(null=True, blank=True)
 

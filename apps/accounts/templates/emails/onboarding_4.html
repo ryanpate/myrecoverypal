@@ -1,0 +1,15 @@
+{% extends 'emails/sequence_base.html' %}
+{% block title %}You're not doing this alone{% endblock %}
+{% block content %}
+<p>{{ user.first_name|default:user.username }},</p>
+<p>The best recovery advice doesn't come from ads or algorithms. It comes from
+people a few steps ahead on the same road.</p>
+<p>That's the community feed: people celebrating 24 hours, people on year eight
+answering questions, people just saying "today was rough" and getting twenty
+replies that say "same, and here's what helped."</p>
+<p>Drop in and leave one comment or one 💙 on someone's post. That's how
+belonging starts.</p>
+<div class="cta-wrap">
+    <a class="cta" href="{{ site_url }}/accounts/social-feed/">See what people are sharing &rarr;</a>
+</div>
+{% endblock %}

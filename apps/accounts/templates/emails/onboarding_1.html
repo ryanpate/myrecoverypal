@@ -1,0 +1,18 @@
+{% extends 'emails/sequence_base.html' %}
+{% block title %}Welcome to MyRecoveryPal{% endblock %}
+{% block content %}
+<p>Hi {{ user.first_name|default:user.username }},</p>
+<p>Welcome to MyRecoveryPal. Whatever brought you here — day one, year ten, or
+somewhere in the messy middle — you belong here.</p>
+<p>This community runs on three promises: <strong>no judgment, no ads,
+ever.</strong> Just tools and people for the road ahead.</p>
+<p>Here's the one thing worth doing today (it takes 10 seconds): start your
+streak. It becomes your first medallion sooner than you'd think.</p>
+<div class="cta-wrap">
+    <a class="cta" href="{{ site_url }}/accounts/progress/">Start my streak &rarr;</a>
+</div>
+{% endblock %}
+{% block postscript %}
+<p style="color: #888; font-size: 13px;">P.S. This inbox is a real one. Reply
+anytime — a human reads it.</p>
+{% endblock %}

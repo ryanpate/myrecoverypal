@@ -1,0 +1,14 @@
+{% extends 'emails/sequence_base.html' %}
+{% block title %}The journal only you can read{% endblock %}
+{% block content %}
+<p>{{ user.first_name|default:user.username }},</p>
+<p>Some things are easier to write than to say out loud.</p>
+<p>Your MyRecoveryPal journal is completely private — visible to you and no one
+else, ever. People use it for cravings they rode out, wins nobody else noticed,
+and the stuff that's not ready to be said in a meeting.</p>
+<p>Today's ask is tiny: write <strong>one line.</strong> "Today was hard but
+I'm here" counts.</p>
+<div class="cta-wrap">
+    <a class="cta" href="{{ site_url }}/journal/write/">Write one line &rarr;</a>
+</div>
+{% endblock %}

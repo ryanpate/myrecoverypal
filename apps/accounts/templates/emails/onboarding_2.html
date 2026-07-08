@@ -1,0 +1,15 @@
+{% extends 'emails/sequence_base.html' %}
+{% block title %}Meet Anchor{% endblock %}
+{% block content %}
+<p>{{ user.first_name|default:user.username }},</p>
+<p>Cravings and racing thoughts don't make appointments. They show up at 2am,
+in the car, at the family dinner.</p>
+<p>That's what <strong>Anchor</strong> is for — an AI recovery coach inside
+MyRecoveryPal you can talk to any hour, about anything, with zero judgment.
+It's not therapy, and it doesn't replace your people. It's the thing you reach
+for in the gap.</p>
+<p>Try it now so it's familiar before you need it:</p>
+<div class="cta-wrap">
+    <a class="cta" href="{{ site_url }}/accounts/recovery-coach/">Say hi to Anchor &rarr;</a>
+</div>
+{% endblock %}

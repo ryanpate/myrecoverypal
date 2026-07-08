@@ -1,0 +1,11 @@
+{% extends 'emails/sequence_base.html' %}
+{% block title %}One honest question{% endblock %}
+{% block content %}
+<p>{{ user.first_name|default:user.username }},</p>
+<p>Last note from us for a while — we don't believe in nagging.</p>
+<p>If MyRecoveryPal wasn't what you needed, would you hit reply and tell us
+why? One sentence helps us build something better for the next person on day
+one.</p>
+<p>And if you're doing this season of life without an app — genuinely, we're
+rooting for you. The door stays open, no expiration.</p>
+{% endblock %}

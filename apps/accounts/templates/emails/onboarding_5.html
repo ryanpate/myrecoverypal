@@ -1,0 +1,22 @@
+{% extends 'emails/sequence_base.html' %}
+{% block title %}Your first medallion is closer than you think{% endblock %}
+{% block content %}
+<p>{{ user.first_name|default:user.username }},</p>
+{% if has_streak %}
+<p>Quick check-in: your streak is building toward your first medallion — a
+marker you've <em>earned</em>, that nobody can take.</p>
+{% else %}
+<p>It's not too late to start counting — day one starts whenever you say it
+does. Your streak becomes your first medallion — a marker you've
+<em>earned</em>, that nobody can take.</p>
+{% endif %}
+<p>People keep them private, share them with a sponsor, or post them to the
+feed and collect a wall of congratulations. Your call. Your recovery.</p>
+<div class="cta-wrap">
+    {% if has_streak %}
+    <a class="cta" href="{{ site_url }}/accounts/progress/">Check my streak &rarr;</a>
+    {% else %}
+    <a class="cta" href="{{ site_url }}/accounts/progress/">Start my streak today &rarr;</a>
+    {% endif %}
+</div>
+{% endblock %}
