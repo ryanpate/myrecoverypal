@@ -169,6 +169,14 @@ class OnboardingSequenceTests(TestCase):
         mock_send = self.run_task()
         mock_send.assert_not_called()
 
+    def test_send_failure_does_not_stamp_sent_timestamp(self):
+        from apps.accounts.tasks import send_onboarding_sequence_emails
+        user = self.make_onboarded_user('failsend', days_ago=1)
+        with patch('apps.accounts.tasks.send_email', return_value=(False, 'boom')):
+            send_onboarding_sequence_emails()
+        user.refresh_from_db()
+        self.assertIsNone(user.onboarding_email_2_sent)
+
 
 class ReengagementSequenceTests(TestCase):
     def run_task(self):
@@ -239,3 +247,11 @@ class ReengagementSequenceTests(TestCase):
         RecoveryCoachSession.objects.create(user=user, trigger='checkin_support')
         mock_send = self.run_task()
         mock_send.assert_not_called()
+
+    def test_send_failure_does_not_stamp_sent_timestamp(self):
+        from apps.accounts.tasks import send_reengagement_emails
+        user = make_user(username='failsend', days_ago=30)
+        with patch('apps.accounts.tasks.send_email', return_value=(False, 'boom')):
+            send_reengagement_emails()
+        user.refresh_from_db()
+        self.assertIsNone(user.reengagement_email_1_sent)
