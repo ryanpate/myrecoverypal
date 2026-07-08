@@ -19,6 +19,9 @@ from django.utils import timezone
 CRISIS_SUPPRESSION_HOURS = 48
 INACTIVITY_DAYS = 21
 REENGAGEMENT_REENTRY_DAYS = 90
+# Cap sends per daily run so the first run (and any backlog) drips out
+# over days instead of blasting every long-inactive member at once.
+REENGAGEMENT_MAX_SENDS_PER_RUN = 25
 
 
 def has_started_streak(user):

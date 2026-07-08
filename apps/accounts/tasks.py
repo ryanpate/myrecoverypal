@@ -198,6 +198,7 @@ def send_reengagement_emails(self):
     from .email_sequences import (
         REENGAGEMENT_EMAILS, get_last_activity, is_crisis_suppressed,
         marketing_unsubscribe_url, INACTIVITY_DAYS, REENGAGEMENT_REENTRY_DAYS,
+        REENGAGEMENT_MAX_SENDS_PER_RUN,
     )
 
     now = timezone.now()
@@ -233,6 +234,12 @@ def send_reengagement_emails(self):
             raise Exception(f"send failed: {error}")
 
     for user in users:
+        if sent_count >= REENGAGEMENT_MAX_SENDS_PER_RUN:
+            logger.info(
+                f"Re-engagement sequence: per-run cap "
+                f"({REENGAGEMENT_MAX_SENDS_PER_RUN}) reached, remaining "
+                f"users deferred to next run")
+            break
         try:
             if get_last_activity(user) > inactivity_cutoff:
                 continue  # active -> exit sequence

@@ -254,6 +254,19 @@ class ReengagementSequenceTests(TestCase):
         self.assertEqual(mock_send.call_args.kwargs['subject'],
                          "One honest question")
 
+    def test_per_run_send_cap(self):
+        for i in range(3):
+            make_user(username=f'capped{i}', days_ago=30)
+        with patch('apps.accounts.email_sequences.'
+                   'REENGAGEMENT_MAX_SENDS_PER_RUN', 2):
+            mock_send = self.run_task()
+        self.assertEqual(mock_send.call_count, 2)
+        stamped = User.objects.filter(
+            username__startswith='capped',
+            reengagement_email_1_sent__isnull=False,
+        ).count()
+        self.assertEqual(stamped, 2)
+
     def test_90_day_reentry_suppression(self):
         user = make_user(username='done', days_ago=120)
         User.objects.filter(pk=user.pk).update(
