@@ -253,9 +253,11 @@ def payment_success(request):
             )
             subscription.save()
 
+            tier_names = {'premium': 'Premium', 'court': 'Court Compliance',
+                          'supporter': 'Supporter'}
             messages.success(
                 request,
-                'Payment successful! Your subscription is now active. Welcome to Premium!'
+                f'Payment successful! Welcome to {tier_names.get(subscription.tier, "Premium")}.'
             )
 
         except Exception as e:
@@ -266,8 +268,10 @@ def payment_success(request):
                 'Please contact support if you don\'t see your benefits.'
             )
 
+    sub = getattr(request.user, 'subscription', None)
     context = {
         'session_id': session_id,
+        'tier': getattr(sub, 'tier', 'premium'),
     }
     return render(request, 'accounts/payment_success.html', context)
 
@@ -697,14 +701,24 @@ def ios_subscription_sync(request):
         defaults={'tier': 'free', 'status': 'active'}
     )
 
-    # Only update if this is an Apple-sourced subscription
-    # Don't overwrite active Stripe subscriptions
-    if subscription.subscription_source == 'stripe' and subscription.is_premium():
+    # Only update if this is an Apple-sourced subscription.
+    # Don't overwrite ANY active paid Stripe subscription — including
+    # supporter, which is_premium() does not cover.
+    if (subscription.subscription_source == 'stripe'
+            and subscription.tier != 'free' and subscription.is_active()):
         logger.info(f'Skipping iOS sync for user {request.user.id} — active Stripe subscription')
         return JsonResponse({'status': 'skipped', 'reason': 'active_stripe_subscription'})
 
     if is_premium:
-        subscription.tier = 'premium'
+        # Derive tier from the purchased product rather than assuming
+        # premium — only premium is sold via IAP today, but a future court/
+        # supporter product must not silently grant the wrong tier.
+        tier = 'premium'
+        if product_id and 'court' in product_id:
+            tier = 'court'
+        elif product_id and 'supporter' in product_id:
+            tier = 'supporter'
+        subscription.tier = tier
         subscription.status = 'active'
         subscription.subscription_source = 'apple'
         if expires_date:

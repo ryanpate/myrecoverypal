@@ -704,9 +704,9 @@ def dashboard_view(request):
 
     # Social posts for mobile feed (gracefully handle if table doesn't exist yet)
     try:
-        social_posts = SocialPost.objects.select_related('author').prefetch_related(
+        social_posts = SocialPost.objects.select_related('author', 'author__subscription').prefetch_related(
             'reactions',
-            'comments__author'
+            'comments__author__subscription'
         ).all()[:10]
 
         # Filter posts based on visibility
@@ -3585,20 +3585,21 @@ def create_challenge(request, group_id=None):
         # Free users can't create challenges
         messages.warning(
             request,
-            'Creating challenges is a Premium feature. Upgrade to Premium or Pro to create and lead your own challenges!'
+            'Creating challenges is a Premium feature. Upgrade to Premium to create and lead your own challenges!'
         )
         return redirect('accounts:pricing')
-    elif hasattr(request.user, 'subscription') and request.user.subscription.tier == 'premium':
-        # Premium users limited to 3 active challenges
+    else:
+        # All paying tiers (premium/court/supporter) share a generous
+        # anti-spam cap — high enough that no genuine user hits it.
         active_challenges = GroupChallenge.objects.filter(
             creator=request.user,
             status__in=['active', 'upcoming']
         ).count()
 
-        if active_challenges >= 3:
+        if active_challenges >= 10:
             messages.warning(
                 request,
-                'You can run up to 3 active challenges at a time. '
+                'You can run up to 10 active challenges at a time. '
                 'Complete or archive one of your current challenges to create a new one.'
             )
             return redirect('accounts:challenges_home')
@@ -4143,7 +4144,7 @@ def social_feed_view(request):
         # Get posts visible to the current user
         posts = SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
             'reactions',
-            'comments__author'
+            'comments__author__subscription'
         ).order_by('-created_at')
 
         # Filter posts based on visibility

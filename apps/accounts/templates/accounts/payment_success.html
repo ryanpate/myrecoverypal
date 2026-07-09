@@ -12,20 +12,45 @@
                     <div class="mb-4">
                         <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
                     </div>
-                    <h1 class="display-4 mb-3">Welcome to Premium!</h1>
-                    <p class="lead mb-4">
-                        Your payment was successful and your subscription is now active.
-                    </p>
 
-                    <div class="alert alert-info my-4">
-                        <i class="fas fa-info-circle"></i>
-                        You now have access to all premium features including unlimited groups, messaging, and advanced journaling!
+                    {% if tier == 'court' %}
+                    <h1 class="display-4 mb-3">Welcome to Court Compliance!</h1>
+                    <p class="lead mb-4">
+                        Your payment was successful. Let's get your attendance record started —
+                        it takes about two minutes.
+                    </p>
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-3">
+                            <a href="{% url 'accounts:court_profile' %}" class="btn btn-primary btn-lg btn-block">
+                                <i class="fas fa-gavel"></i> Set Up Your Court Profile
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a href="{% url 'accounts:court_dashboard' %}" class="btn btn-outline-secondary btn-lg btn-block">
+                                <i class="fas fa-clipboard-check"></i> Open Court Dashboard
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h5>Your first week:</h5>
+                        <ul class="list-unstyled text-left">
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Enter your case number, court, and probation officer's email — once</li>
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Log each meeting right after you attend (about 20 seconds)</li>
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Generate a tamper-evident PDF report any time</li>
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Email it to your PO in one tap — with a verification link built in</li>
+                        </ul>
                     </div>
 
-                    <div class="row mt-5">
+                    {% elif tier == 'supporter' %}
+                    <h1 class="display-4 mb-3">Welcome, Supporter!</h1>
+                    <p class="lead mb-4">
+                        Your payment was successful. The next step is connecting with your loved one —
+                        they choose what to share, and sharing is always free for them.
+                    </p>
+                    <div class="row mt-4">
                         <div class="col-md-6 mb-3">
-                            <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary btn-lg btn-block">
-                                <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                            <a href="{% url 'accounts:supporter_manage' %}" class="btn btn-primary btn-lg btn-block">
+                                <i class="fas fa-heart"></i> Connect With Your Loved One
                             </a>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -34,16 +59,43 @@
                             </a>
                         </div>
                     </div>
-
                     <div class="mt-4">
-                        <h5>What's Next?</h5>
+                        <h5>How it works:</h5>
                         <ul class="list-unstyled text-left">
-                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Join unlimited recovery groups</li>
-                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Start advanced journaling with mood tracking</li>
-                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Create your own private group</li>
-                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Connect with unlimited members</li>
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Invite your loved one (or accept their invitation)</li>
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> They pick a sharing level — milestones only, up to check-in trends</li>
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Send one-tap encouragement when it matters</li>
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Optionally get a gentle heads-up if they go quiet</li>
                         </ul>
                     </div>
+
+                    {% else %}
+                    <h1 class="display-4 mb-3">Welcome to Premium!</h1>
+                    <p class="lead mb-4">
+                        Your payment was successful and your subscription is now active.
+                    </p>
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-3">
+                            <a href="{% url 'accounts:recovery_coach' %}" class="btn btn-primary btn-lg btn-block">
+                                <i class="fas fa-comment-dots"></i> Talk to Anchor (20 msgs/day)
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a href="{% url 'accounts:progress' %}" class="btn btn-outline-secondary btn-lg btn-block">
+                                <i class="fas fa-chart-line"></i> See Your Full Analytics
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h5>What you just unlocked:</h5>
+                        <ul class="list-unstyled text-left">
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Anchor AI Recovery Coach — 20 messages a day, any hour</li>
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Full mood, craving &amp; energy analytics on your progress page</li>
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Unlimited groups — and create private ones</li>
+                            <li class="mb-2"><i class="fas fa-arrow-right text-primary"></i> Unlimited direct messages and journal export</li>
+                        </ul>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 

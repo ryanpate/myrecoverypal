@@ -79,4 +79,66 @@ class PricingPageTests(TestCase):
         self.assertNotIn('10 AI Coach messages', content)   # real limit is 3/day
         self.assertNotIn('30-day journal', content)          # never enforced
         self.assertNotIn('PDF export', content)              # export is CSV
+        self.assertNotIn('Priority support', content)        # no such mechanism
         self.assertIn('3 AI Coach messages per day', content)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class PaymentSuccessTierTests(TestCase):
+    """The post-purchase page must speak to the tier that was bought —
+    it used to show 'Welcome to Premium' + premium features to everyone."""
+
+    def _user_with_tier(self, username, tier):
+        user = User.objects.create_user(
+            username=username, email=f'{username}@example.com', password='pw')
+        user.subscription.tier = tier
+        user.subscription.status = 'active'
+        user.subscription.save()
+        return user
+
+    def _success_page(self, user):
+        self.client.force_login(user)
+        # No session_id: skips Stripe reconciliation, renders for current sub
+        return self.client.get(reverse('accounts:payment_success')).content.decode()
+
+    def test_court_buyer_sees_court_onboarding(self):
+        content = self._success_page(self._user_with_tier('courtbuyer', 'court'))
+        self.assertIn('Welcome to Court Compliance', content)
+        self.assertIn('Set Up Your Court Profile', content)
+        self.assertNotIn('Welcome to Premium', content)
+
+    def test_supporter_buyer_sees_supporter_onboarding(self):
+        content = self._success_page(self._user_with_tier('supbuyer', 'supporter'))
+        self.assertIn('Welcome, Supporter', content)
+        self.assertIn('Connect With Your Loved One', content)
+        self.assertNotIn('Welcome to Premium', content)
+
+    def test_premium_buyer_sees_premium_onboarding(self):
+        content = self._success_page(self._user_with_tier('prembuyer', 'premium'))
+        self.assertIn('Welcome to Premium', content)
+        self.assertIn('Anchor', content)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class IosSyncTierGuardTests(TestCase):
+    """iOS sync must not clobber ANY active paid Stripe tier (the old guard
+    used is_premium(), which let supporter subscriptions be overwritten)."""
+
+    def test_stripe_supporter_not_overwritten_by_ios_sync(self):
+        import json
+        user = User.objects.create_user(
+            username='websupporter', email='ws@example.com', password='pw')
+        sub = user.subscription
+        sub.tier = 'supporter'
+        sub.status = 'active'
+        sub.subscription_source = 'stripe'
+        sub.save()
+        self.client.force_login(user)
+        resp = self.client.post(
+            reverse('accounts:ios_subscription_sync'),
+            data=json.dumps({'is_premium': True,
+                             'product_id': 'com.myrecoverypal.premium.monthly'}),
+            content_type='application/json')
+        self.assertEqual(resp.json().get('status'), 'skipped')
+        sub.refresh_from_db()
+        self.assertEqual(sub.tier, 'supporter')

@@ -162,6 +162,52 @@
                     {% endif %}
                 </div>
             </div>
+
+            <!-- Invoices / Receipts -->
+            {% if invoices %}
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-file-invoice-dollar"></i> Invoices &amp; Receipts</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Invoice #</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for invoice in invoices %}
+                                    <tr>
+                                        <td>{{ invoice.invoice_date|date:"M d, Y" }}</td>
+                                        <td>{{ invoice.invoice_number|default:invoice.stripe_invoice_id|truncatechars:18 }}</td>
+                                        <td>${{ invoice.amount_paid|default:invoice.amount_due }}</td>
+                                        <td>
+                                            <span class="badge {% if invoice.status == 'paid' %}badge-success{% else %}badge-secondary{% endif %}">
+                                                {{ invoice.get_status_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if invoice.stripe_invoice_pdf %}
+                                                <a href="{{ invoice.stripe_invoice_pdf }}" target="_blank" rel="noopener">
+                                                    <i class="fas fa-download"></i> PDF
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-muted small mb-0">Keep receipts if you need to document program costs for a court or employer.</p>
+                </div>
+            </div>
+            {% endif %}
         </div>
 
         <!-- Plan Features -->

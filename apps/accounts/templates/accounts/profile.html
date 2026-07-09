@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static subscription_tags %}
 
 {% block title %}{{ profile_user.get_full_name|default:profile_user.username }} - Profile{% endblock %}
 
@@ -662,7 +662,7 @@
 
 {% block content %}
 <div class="profile-header">
-    <h1>{{ profile_user.get_full_name|default:profile_user.username }}</h1>
+    <h1>{{ profile_user.get_full_name|default:profile_user.username }}{% if profile_user|is_premium_member %} <span class="premium-badge" title="Premium Member" style="font-size: 0.55em; vertical-align: middle; color: #ffc107;"><i class="fas fa-star" aria-hidden="true"></i></span>{% endif %}</h1>
     {% if profile_user.location %}
     <p><i class="fas fa-map-marker-alt"></i> {{ profile_user.location }}</p>
     {% endif %}

@@ -274,7 +274,7 @@
                             <div class="avatar-initials comment-avatar" style="background: hsl({{ comment.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ comment.author.username|slice:":1"|upper }}</div>
                             {% endif %}
                             <div class="comment-content">
-                                <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</div>
+                                <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}{% if comment.author|is_premium_member %} <span class="premium-badge" title="Premium Member"><i class="fas fa-star" aria-hidden="true"></i></span>{% endif %}</div>
                                 <div class="comment-text">{{ comment.content }}</div>
                                 <div class="comment-meta">
                                     <span class="comment-time">{{ comment.created_at|timesince }} ago</span>
