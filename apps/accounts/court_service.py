@@ -18,7 +18,6 @@ import logging
 from datetime import date, datetime
 from io import BytesIO
 
-from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils import timezone
 
@@ -108,18 +107,18 @@ def generate_court_report(user, period_start: date, period_end: date) -> CourtRe
         meeting_date__date__lte=period_end,
     ).count()
 
+    # PDF bytes live in Postgres (pdf_data), not external storage: reports
+    # are small and privacy-sensitive, and Cloudinary refuses PDF delivery.
     report = CourtReport.objects.create(
         user=user,
         period_start=period_start,
         period_end=period_end,
         pdf_hash=pdf_hash,
         pdf_embedded_hash=embedded_hash,
+        pdf_data=pdf_bytes,
         attendance_count=attendance_count,
         legal_name_snapshot=profile.legal_name or '',
         case_number_snapshot=profile.case_number or '',
         court_name_snapshot=profile.court_name or '',
     )
-
-    filename = f"court-report-{user.username}-{period_start:%Y%m}-{report.id}-{pdf_hash[:8]}.pdf"
-    report.pdf.save(filename, ContentFile(pdf_bytes), save=True)
     return report

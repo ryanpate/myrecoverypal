@@ -229,7 +229,10 @@ class CourtServiceTest(TestCase):
         self.assertEqual(len(report.pdf_hash), 64)
         self.assertEqual(len(report.pdf_embedded_hash), 64)
         self.assertNotEqual(report.pdf_embedded_hash, report.pdf_hash)
-        self.assertTrue(report.pdf.name.endswith('.pdf'))
+        # Bytes live in Postgres (canonical storage) and match the file hash
+        pdf_bytes = report.get_pdf_bytes()
+        self.assertTrue(pdf_bytes and pdf_bytes.startswith(b'%PDF-'))
+        self.assertEqual(hashlib.sha256(pdf_bytes).hexdigest(), report.pdf_hash)
 
     @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
     def test_printed_fingerprint_resolves_on_verify_endpoint(self):
@@ -466,6 +469,22 @@ class CourtReportGenerationTest(TestCase):
         self.assertEqual(CourtReport.objects.filter(user=self.user).count(), 1)
         report = CourtReport.objects.get(user=self.user)
         self.assertEqual(len(report.pdf_hash), 64)
+
+    def test_download_serves_pdf_bytes_from_postgres(self):
+        """The download endpoint must serve the exact stored bytes — the
+        legacy FileField storage (Cloudinary) refuses PDF reads in prod."""
+        today = timezone.now().date()
+        self.client.post(reverse('accounts:court_report_generate'), {
+            'period_start': today.replace(day=1).isoformat(),
+            'period_end': today.isoformat(),
+        })
+        report = CourtReport.objects.get(user=self.user)
+        resp = self.client.get(
+            reverse('accounts:court_report_download', args=[report.id]))
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp['Content-Type'], 'application/pdf')
+        self.assertEqual(resp.content, report.get_pdf_bytes())
+        self.assertTrue(resp.content.startswith(b'%PDF-'))
 
 
 from unittest.mock import patch

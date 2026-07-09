@@ -175,7 +175,12 @@ class CourtReport(models.Model):
     period_start = models.DateField()
     period_end = models.DateField()
 
+    # Legacy external-storage field. New reports store bytes in pdf_data —
+    # court documents are small (~26KB), privacy-sensitive, and Cloudinary
+    # refuses PDF delivery (401), so Postgres is the canonical home.
     pdf = models.FileField(upload_to='court/reports/', null=True, blank=True)
+    pdf_data = models.BinaryField(null=True, blank=True, editable=False,
+                                  help_text='PDF bytes (canonical storage)')
     pdf_hash = models.CharField(max_length=64, db_index=True, help_text='SHA-256 of the PDF bytes')
     # The fingerprint PRINTED INSIDE the PDF. Necessarily different from
     # pdf_hash — a hash embedded in the bytes cannot also be the hash of those
@@ -214,3 +219,19 @@ class CourtReport(models.Model):
     @property
     def short_hash(self):
         return self.pdf_hash[:8] if self.pdf_hash else ''
+
+    def get_pdf_bytes(self):
+        """Return the PDF bytes, or None if unavailable.
+
+        Postgres (pdf_data) is canonical; the legacy FileField is a fallback
+        for rows created before 2026-07 (its storage may refuse reads)."""
+        if self.pdf_data:
+            return bytes(self.pdf_data)
+        if self.pdf:
+            try:
+                data = self.pdf.read()
+                self.pdf.close()
+                return data
+            except Exception:
+                return None
+        return None

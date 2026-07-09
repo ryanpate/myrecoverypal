@@ -170,9 +170,10 @@ def court_report_generate(request):
 @court_required
 def court_report_download(request, report_id):
     report = get_object_or_404(CourtReport, pk=report_id, user=request.user)
-    if not report.pdf:
+    pdf_bytes = report.get_pdf_bytes()
+    if not pdf_bytes:
         raise Http404('Report PDF missing')
-    response = HttpResponse(report.pdf.read(), content_type='application/pdf')
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
     response['Content-Disposition'] = (
         f'attachment; filename="court-report-{report.period_start:%Y%m}-{report.short_hash}.pdf"'
     )
@@ -188,7 +189,8 @@ def court_report_email(request, report_id):
     if not recipient:
         messages.error(request, 'Recipient email required.')
         return redirect('accounts:court_report_list')
-    if not report.pdf:
+    pdf_bytes = report.get_pdf_bytes()
+    if not pdf_bytes:
         messages.error(request, 'Report PDF missing — regenerate.')
         return redirect('accounts:court_report_list')
 
@@ -215,9 +217,6 @@ def court_report_email(request, report_id):
         f"Meetings attended: {report.attendance_count}\n"
         f"Verify integrity: {verify_url}\n"
     )
-
-    pdf_bytes = report.pdf.read()
-    report.pdf.close()
 
     success, err = send_email(
         subject=f'Court Compliance Report — {legal_name} — {report.period_start:%b %Y}',
