@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Sobriety Calculator: Days Sober, Money Saved & Milestones (Free){% endblock %}
-{% block meta_description %}Enter your sobriety date and instantly see days, weeks & months sober — plus milestones reached, money saved, and health benefits. Free, no signup.{% endblock %}
+{% block title %}Sobriety Calculator: Days Sober, AA Milestones & Money Saved{% endblock %}
+{% block meta_description %}Free sobriety calculator & day counter: enter your sobriety date to see exact days sober, AA/NA milestones reached, money saved & health benefits. No signup.{% endblock %}
 {% block meta_keywords %}sobriety calculator, how long have i been sober, sober calculator, clean time calculator, sobriety date calculator, days sober calculator, sobriety clock, sober time calculator{% endblock %}
 
 {% block canonical_url %}https://www.myrecoverypal.com/sobriety-calculator/{% endblock %}
@@ -106,6 +106,14 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Yes. Enter your sober date (the day you stopped) and it instantly calculates your clean time. Whether you call it a sober date calculator, clean date calculator, or sobriety date calculator, it counts the exact days, weeks, months, and years since your quit date."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the difference between a sobriety clock, sobriety calendar, and day counter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "They all track the same thing: time since your quit date. A sobriety clock counts up in real time (days, hours, minutes), a sobriety calendar marks each sober day on a calendar view, and a day counter shows your total days sober. This calculator gives you the day count instantly, and a free MyRecoveryPal account adds a live sobriety clock, calendar check-ins, and milestone reminders."
       }
     }
   ]
@@ -824,6 +832,15 @@
             <li><strong>Nomo app:</strong> Free unlimited sobriety clocks. Good for tracking multiple substances.</li>
             <li><strong>Simple online calculators:</strong> Basic day counters without health benefits or community features.</li>
         </ul>
+
+        <h3>Sobriety Clock, Sobriety Calendar, or Day Counter — Which Do You Need?</h3>
+        <p>People search for this tool under a lot of names — sobriety clock, sober day counter, sobriety calendar, clean time counter — and they all measure the same thing: the time since your quit date.</p>
+        <ul>
+            <li><strong>Sobriety clock:</strong> counts up in real time — days, hours, and minutes since your last drink or use. Good for early recovery, when every hour counts.</li>
+            <li><strong>Sobriety calendar:</strong> marks each sober day on a calendar so you can see your streak build week by week.</li>
+            <li><strong>Sober day counter:</strong> the simple total — exactly how many days sober you are today.</li>
+        </ul>
+        <p>This page gives you the instant day count. If you want a live sobriety clock, a daily check-in calendar, and automatic milestone reminders, the free <a href="{% url 'core:sobriety_counter_app' %}">MyRecoveryPal sobriety counter app</a> includes all three.</p>
     </div>
 </section>
 
@@ -878,6 +895,10 @@
         <div class="faq-item">
             <h3>Can I use this as a sober date or clean date calculator?</h3>
             <p>Absolutely. Enter your sober date — the day you stopped — and it instantly calculates your clean time. Whether you call it a sober date calculator, clean date calculator, or sobriety date calculator, it does the same thing: counts the exact days, weeks, months, and years since your quit date.</p>
+        </div>
+        <div class="faq-item">
+            <h3>What's the difference between a sobriety clock, sobriety calendar, and day counter?</h3>
+            <p>They all track the same thing: time since your quit date. A sobriety clock counts up in real time (days, hours, minutes), a sobriety calendar marks each sober day on a calendar view, and a day counter shows your total days sober. This calculator gives you the day count instantly, and a free MyRecoveryPal account adds a live sobriety clock, calendar check-ins, and milestone reminders.</p>
         </div>
     </div>
 </section>

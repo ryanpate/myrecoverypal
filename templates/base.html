@@ -761,6 +761,17 @@
                 </ul>
             </div>
             <div class="footer-section">
+                <h3>Free Tools</h3>
+                <ul>
+                    <li><a href="{% url 'core:sobriety_calculator' %}">Sobriety Calculator</a></li>
+                    <li><a href="{% url 'core:clean_time_calculator' %}">Clean Time Calculator</a></li>
+                    <li><a href="{% url 'core:sobriety_medallion_maker' %}">Sobriety Medallion Maker</a></li>
+                    <li><a href="{% url 'core:sobriety_counter_app' %}">Sobriety Counter App</a></li>
+                    <li><a href="{% url 'support_services:meeting_list' %}">Meeting Finder</a></li>
+                    <li><a href="{% url 'core:crisis' %}">Crisis Resources</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
                 <h3>Legal</h3>
                 <ul>
                     <li><a href="{% url 'core:privacy' %}">Privacy Policy</a></li>
@@ -769,6 +780,15 @@
                 </ul>
             </div>
         </div>
+        <nav class="footer-apps-row" aria-label="Recovery app guides">
+            <a href="{% url 'core:alcohol_recovery_app' %}">Alcohol Recovery App</a>
+            <a href="{% url 'core:drug_addiction_recovery_app' %}">Drug Addiction Recovery App</a>
+            <a href="{% url 'core:mental_health_recovery_app' %}">Mental Health Recovery App</a>
+            <a href="{% url 'core:free_aa_app' %}">Free AA App</a>
+            <a href="{% url 'core:sober_grid_alternative' %}">Sober Grid Alternative</a>
+            <a href="{% url 'core:court_ordered_meeting_tracker' %}">Court-Ordered Meeting Tracker</a>
+            <a href="{% url 'core:support_a_loved_one' %}">Support a Loved One</a>
+        </nav>
         <div class="footer-support-banner stripe-only">
             <p style="margin: 0 0 0.5rem 0; font-weight: 600; font-size: 1rem;">Support Our Mission</p>
             <p style="margin: 0 0 0.75rem 0; opacity: 0.9; font-size: 0.85rem;">MyRecoveryPal is free to use. Help us keep it that way.</p>

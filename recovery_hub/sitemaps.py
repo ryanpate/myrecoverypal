@@ -41,8 +41,8 @@ class StaticViewSitemap(Sitemap):
             ('core:alcohol_recovery_app', 0.85),  # "alcohol recovery app" keyword
             ('core:drug_addiction_recovery_app', 0.85),  # "drug addiction app" keyword
             ('core:free_aa_app', 0.85),  # "free AA app" keyword
-            ('core:opioid_recovery_app', 0.85),  # "opioid recovery app" keyword
-            ('core:gambling_addiction_app', 0.85),  # "gambling addiction app" keyword
+            # opioid_recovery_app + gambling_addiction_app intentionally excluded:
+            # both 301 to consolidated pages (GSC flags redirecting sitemap URLs)
             ('core:mental_health_recovery_app', 0.85),  # "mental health recovery app" keyword
             ('core:ai_recovery_coach', 0.9),  # "AI recovery coach" keyword
             ('core:court_ordered_meeting_tracker', 0.9),  # "court ordered AA app" — Court Compliance tier landing
@@ -62,8 +62,7 @@ class StaticViewSitemap(Sitemap):
             ('core:team', 0.6),  # Team page
             ('core:guidelines', 0.6),  # Community guidelines
 
-            # Account pages
-            ('accounts:login', 0.5),  # Login
+            # Account pages (login intentionally excluded — auth page, no search value)
             ('accounts:register', 0.6),  # Signup
 
             # Legal pages

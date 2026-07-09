@@ -2178,8 +2178,30 @@ footer {
     max-width: 1200px;
     margin: 0 auto 2.5rem;
     display: grid;
-    grid-template-columns: 1.4fr repeat(4, 1fr);
+    grid-template-columns: 1.4fr repeat(5, 1fr);
     gap: 2rem;
+}
+
+.footer-apps-row {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 1.4rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-apps-row a {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    font-size: 0.82rem;
+    transition: color 0.3s ease;
+}
+
+.footer-apps-row a:hover {
+    color: #fff;
 }
 
 .footer-brand-top {

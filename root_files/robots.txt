@@ -46,9 +46,9 @@ Disallow: /journal/
 Disallow: /admin/
 Disallow: /api/
 
-# Block query-parameter variants for login/register (saves crawl budget)
-Disallow: /accounts/login/?
-Disallow: /accounts/register/?
+# Note: /accounts/login/?next= and /accounts/register/?next= variants are
+# intentionally NOT disallowed here. SEONoIndexMiddleware serves them with
+# X-Robots-Tag: noindex — Google must be able to crawl them to see it.
 
 # Note: /blog/tag/, /blog/category/, /blog/?page=, /blog/?filter=, and
 # /support/services/?* are intentionally NOT in robots.txt. They are

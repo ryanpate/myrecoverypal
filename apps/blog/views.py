@@ -389,3 +389,10 @@ def create_seo_posts(request):
             content_type="text/html",
             status=500
         )
+
+
+def legacy_post_redirect(request, slug):
+    """301 old /blog/<slug>/ URLs (indexed by Google before the /blog/post/
+    prefix was added) to the current /blog/post/<slug>/ location."""
+    post = get_object_or_404(Post, slug=slug, status='published')
+    return redirect(post.get_absolute_url(), permanent=True)

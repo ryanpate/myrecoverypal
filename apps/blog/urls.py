@@ -21,4 +21,7 @@ urlpatterns = [
     path('admin/create-seo-posts/', views.create_seo_posts, name='create_seo_posts'),
     # Admin-only: Backfill push notifications for a published post
     path('admin/backfill-push/<slug:slug>/', views.backfill_blog_push, name='backfill_blog_push'),
+    # Legacy: posts were originally served at /blog/<slug>/ and Google indexed
+    # them there. Must stay LAST so it only catches otherwise-unmatched paths.
+    path('<slug:slug>/', views.legacy_post_redirect, name='legacy_post_redirect'),
 ]

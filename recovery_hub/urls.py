@@ -29,6 +29,11 @@ urlpatterns = [
     path('ai-coach/', RedirectView.as_view(pattern_name='accounts:recovery_coach', permanent=True)),
     path('pricing/', RedirectView.as_view(pattern_name='accounts:pricing', permanent=True)),
     path('home/', RedirectView.as_view(url='/', permanent=True)),
+    # 404s reported in Google Search Console (July 2026)
+    path('pages/home/', RedirectView.as_view(url='/', permanent=True)),
+    path('delete/', RedirectView.as_view(url='/', permanent=True)),
+    path('edit/', RedirectView.as_view(url='/', permanent=True)),
+    path('accounts/milestone/', RedirectView.as_view(url='/accounts/milestone-badge/', permanent=True)),
     # Short URL used in court-compliance outreach emails
     path('court-compliance/', RedirectView.as_view(pattern_name='core:court_ordered_meeting_tracker', permanent=True)),
 

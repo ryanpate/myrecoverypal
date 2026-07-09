@@ -4,6 +4,8 @@
 {% block title %}Court-Ordered AA/NA Meeting Tracker &mdash; Court-Acceptable PDF Reports{% endblock %}
 {% block meta_description %}Track court-ordered AA, NA, or SMART Recovery meeting attendance and generate tamper-evident PDF reports you can email to your probation officer. $19.99/mo.{% endblock %}
 
+{% block canonical_url %}https://www.myrecoverypal.com/court-ordered-meeting-tracker/{% endblock %}
+
 {% block structured_data %}
 <script type="application/ld+json">
 {
@@ -19,6 +21,54 @@
     "priceSpecification": {"@type": "UnitPriceSpecification", "billingDuration": "P1M"}
   },
   "description": "Track court-ordered recovery meeting attendance and generate tamper-evident PDF reports."
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does the court verify AA meeting attendance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Courts traditionally verify AA or NA attendance with a paper card signed by the meeting chair, which your probation officer reviews. Increasingly, courts and POs also accept digital attendance logs. MyRecoveryPal generates a PDF attendance report with a tamper-evident SHA-256 fingerprint and a public verification URL, so a probation officer can independently confirm the report hasn't been altered. Always confirm with your PO which formats your court accepts."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Will my court accept a PDF report instead of a signed paper card?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most courts now accept digital documentation. The tamper-evident fingerprint and verification URL make the report strong evidence, and probation officers can confirm authenticity instantly. We recommend confirming with your specific PO that they accept email submissions. Self-reported entries are clearly flagged in the report."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if my court requires meeting chair signatures?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Phase 1 supports typed-name chair signatures with a timestamp. If your court requires a physical signature from the meeting secretary, continue using a paper attendance card alongside this, and use MyRecoveryPal for the cumulative report and verification."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this for SMART Recovery or other secular programs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Courts cannot constitutionally require 12-step-only attendance. MyRecoveryPal tracks AA, NA, CA, MA, GA, SMART Recovery, Refuge Recovery, LifeRing, and other recovery programs equally."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this a substitute for actually attending meetings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. This is a record-keeping tool. Self-reported entries are clearly flagged. Misrepresenting attendance to a court is perjury."
+      }
+    }
+  ]
 }
 </script>
 {% endblock %}
@@ -79,6 +129,11 @@
 <section style="background:#f7f9fc; padding:4rem 1rem;">
     <div style="max-width:700px; margin:auto;">
         <h2 style="text-align:center; color:#1e4d8b; margin-bottom:2rem;">Frequently Asked Questions</h2>
+
+        <details style="background:white; padding:1rem 1.25rem; border-radius:10px; margin-bottom:.75rem;">
+            <summary style="font-weight:600; cursor:pointer;">How does the court verify AA meeting attendance?</summary>
+            <p style="margin-top:.75rem;">Courts traditionally verify AA or NA attendance with a paper card signed by the meeting chair, which your probation officer reviews at check-ins. Increasingly, courts and POs also accept digital attendance logs. MyRecoveryPal generates a PDF attendance report with a tamper-evident SHA-256 fingerprint and a public verification URL, so your probation officer can independently confirm the report hasn't been altered &mdash; something a paper card can't offer. Always confirm with your PO which formats your court accepts.</p>
+        </details>
 
         <details style="background:white; padding:1rem 1.25rem; border-radius:10px; margin-bottom:.75rem;">
             <summary style="font-weight:600; cursor:pointer;">Will my court accept a PDF report instead of a signed paper card?</summary>
