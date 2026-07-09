@@ -132,6 +132,48 @@
             {% endif %}
         </div>
 
+        {% if premium_recap %}
+        <div class="section" style="background: linear-gradient(135deg, #f0f9ff, #f0fdfa); border: 1px solid #52b788; border-radius: 12px; padding: 20px;">
+            <h3 class="section-title" style="margin-top: 0;">
+                <span style="font-size: 24px;">&#11088;</span> Your Week in Review
+                <span style="font-size: 11px; background: #1e4d8b; color: #fff; padding: 2px 8px; border-radius: 10px; vertical-align: middle;">PREMIUM</span>
+            </h3>
+            <table role="presentation" width="100%" style="border-collapse: collapse; text-align: center;">
+                <tr>
+                    <td style="padding: 8px;">
+                        <div style="font-size: 26px; font-weight: 700; color: #1e4d8b;">{{ premium_recap.checkin_count }}</div>
+                        <div style="font-size: 12px; color: #666;">check-ins this week</div>
+                    </td>
+                    {% if premium_recap.avg_mood %}
+                    <td style="padding: 8px;">
+                        <div style="font-size: 26px; font-weight: 700; color: #1e4d8b;">{{ premium_recap.avg_mood }}/6</div>
+                        <div style="font-size: 12px; color: #666;">avg mood{% if premium_recap.mood_trend %} &mdash; {{ premium_recap.mood_trend }}{% endif %}</div>
+                    </td>
+                    {% endif %}
+                    {% if premium_recap.pledge_streak > 0 %}
+                    <td style="padding: 8px;">
+                        <div style="font-size: 26px; font-weight: 700; color: #1e4d8b;">{{ premium_recap.pledge_streak }}</div>
+                        <div style="font-size: 12px; color: #666;">day pledge streak</div>
+                    </td>
+                    {% endif %}
+                </tr>
+            </table>
+            {% if premium_recap.avg_craving is not None and premium_recap.craving_trend %}
+            <p style="text-align: center; color: #555; font-size: 14px; margin: 10px 0 0;">
+                Cravings averaged {{ premium_recap.avg_craving }}/4 this week &mdash; {{ premium_recap.craving_trend }}.
+            </p>
+            {% endif %}
+            {% if premium_recap.next_milestone %}
+            <p style="text-align: center; color: #1e4d8b; font-weight: 600; font-size: 15px; margin: 12px 0 0;">
+                &#127942; {{ premium_recap.days_to_milestone }} day{{ premium_recap.days_to_milestone|pluralize }} to your {{ premium_recap.next_milestone }}-day milestone
+            </p>
+            {% endif %}
+            <p style="text-align: center; margin: 15px 0 0;">
+                <a href="{{ site_url }}/accounts/progress/" style="color: #1e4d8b; font-weight: 600;">See your full analytics &rarr;</a>
+            </p>
+        </div>
+        {% endif %}
+
         {% if unread_notifications > 0 %}
         <div style="text-align: center; margin: 25px 0;">
             <span class="notification-badge">{{ unread_notifications }} unread notification{{ unread_notifications|pluralize }}</span>

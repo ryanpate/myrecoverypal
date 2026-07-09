@@ -154,6 +154,35 @@ def get_conversation_history(session, limit=10):
     ]
 
 
+def get_previous_session_context(user, current_session, max_messages=6):
+    """Premium continuity: a short transcript excerpt from the user's most
+    recent OTHER session, so Anchor can pick up where they left off.
+    Returns a string for the system prompt, or '' if there's no prior session.
+    """
+    from apps.accounts.models import RecoveryCoachSession
+
+    prev = (RecoveryCoachSession.objects
+            .filter(user=user)
+            .exclude(pk=current_session.pk)
+            .order_by('-updated_at')
+            .first())
+    if not prev:
+        return ''
+    messages = list(prev.messages.order_by('-created_at')[:max_messages])
+    if not messages:
+        return ''
+    lines = []
+    for msg in reversed(messages):
+        speaker = 'User' if msg.role == 'user' else 'You (Anchor)'
+        lines.append(f'{speaker}: {msg.content[:300]}')
+    when = prev.updated_at.strftime('%B %d')
+    return (
+        f"\n\nCONTINUITY — excerpt from your previous conversation with this "
+        f"user (from {when}). Use it to remember what they were working "
+        f"through, but don't recite it back verbatim:\n" + "\n".join(lines)
+    )
+
+
 def send_coach_message(user, session, user_message):
     """
     Send a message to the AI coach and get a response.
@@ -166,10 +195,18 @@ def send_coach_message(user, session, user_message):
         logger.error("ANTHROPIC_API_KEY not configured")
         return None, "AI Coach is temporarily unavailable. Please try again later."
 
-    # Build context and history
+    # Build context and history. Premium gets real memory: a 4x deeper
+    # history window plus continuity context from their previous session.
+    is_premium = hasattr(user, 'subscription') and user.subscription.is_premium()
     user_context = build_user_context(user)
     system_prompt = RECOVERY_COACH_SYSTEM_PROMPT.format(user_context=user_context)
-    history = get_conversation_history(session, limit=10)
+
+    history_limit = 40 if is_premium else 10
+    history = get_conversation_history(session, limit=history_limit)
+
+    if is_premium and len(history) < 2:
+        # Fresh session: carry over what they were working through last time
+        system_prompt += get_previous_session_context(user, session)
 
     # Add the new user message to history
     history.append({"role": "user", "content": user_message})

@@ -373,11 +373,75 @@ def send_checkin_reminders(self):
 # Weekly Digest Email
 # ========================================
 
+MILESTONE_DAYS = [1, 7, 14, 30, 60, 90, 180, 365, 548, 730, 1095, 1460, 1825, 2555, 3650]
+
+
+def _build_premium_recap(user, today):
+    """Personal week-in-review stats for premium subscribers' weekly digest.
+    Returns a dict, or None for free users / users with nothing to show."""
+    from django.db.models import Avg
+    from .models import DailyCheckIn
+
+    try:
+        if not user.subscription.is_premium():
+            return None
+    except Exception:
+        return None
+
+    week_ago = today - timedelta(days=7)
+    two_weeks_ago = today - timedelta(days=14)
+
+    this_week = DailyCheckIn.objects.filter(user=user, date__gt=week_ago, date__lte=today)
+    last_week = DailyCheckIn.objects.filter(user=user, date__gt=two_weeks_ago, date__lte=week_ago)
+
+    checkin_count = this_week.count()
+    stats = this_week.aggregate(mood=Avg('mood'), craving=Avg('craving_level'))
+    prev_stats = last_week.aggregate(mood=Avg('mood'), craving=Avg('craving_level'))
+
+    days_sober = user.get_days_sober() or 0
+    next_milestone = next((m for m in MILESTONE_DAYS if m > days_sober), None)
+
+    try:
+        pledge_streak = user.get_pledge_streak()
+    except Exception:
+        pledge_streak = 0
+    try:
+        checkin_streak = user.get_checkin_streak()
+    except Exception:
+        checkin_streak = 0
+
+    if checkin_count == 0 and days_sober == 0 and pledge_streak == 0:
+        return None
+
+    def _trend(current, previous, lower_is_better=False):
+        if current is None or previous is None:
+            return ''
+        delta = current - previous
+        if abs(delta) < 0.25:
+            return 'steady'
+        improving = delta < 0 if lower_is_better else delta > 0
+        return 'improving' if improving else 'dipping'
+
+    return {
+        'checkin_count': checkin_count,
+        'avg_mood': round(stats['mood'], 1) if stats['mood'] is not None else None,
+        'mood_trend': _trend(stats['mood'], prev_stats['mood']),
+        'avg_craving': round(stats['craving'], 1) if stats['craving'] is not None else None,
+        'craving_trend': _trend(stats['craving'], prev_stats['craving'], lower_is_better=True),
+        'pledge_streak': pledge_streak,
+        'checkin_streak': checkin_streak,
+        'days_sober': days_sober,
+        'next_milestone': next_milestone,
+        'days_to_milestone': (next_milestone - days_sober) if next_milestone else None,
+    }
+
+
 @shared_task(bind=True, max_retries=3)
 def send_weekly_digests(self):
     """
     Send weekly digest emails summarizing activity.
-    Includes: new followers, missed posts, community highlights.
+    Includes: new followers, missed posts, community highlights — and for
+    premium subscribers, a personal week-in-review recap.
     """
     from .models import User, SocialPost, UserConnection, Notification
     from django.db import models as db_models
@@ -427,8 +491,12 @@ def send_weekly_digests(self):
                 like_count=db_models.Count('likes')
             ).order_by('-like_count')[:3]
 
-            # If no activity, skip sending
-            if not new_followers.exists() and unread_notifications == 0 and not popular_posts.exists():
+            # Premium subscribers get a personal week-in-review recap
+            premium_recap = _build_premium_recap(user, timezone.now().date())
+
+            # If no activity and no recap, skip sending
+            if (not new_followers.exists() and unread_notifications == 0
+                    and not popular_posts.exists() and premium_recap is None):
                 skipped_count += 1
                 continue
 
@@ -440,6 +508,7 @@ def send_weekly_digests(self):
                 'unread_notifications': unread_notifications,
                 'popular_posts': popular_posts,
                 'days_sober': user.get_days_sober(),
+                'premium_recap': premium_recap,
                 'current_year': timezone.now().year,
             })
             plain_message = strip_tags(html_message)
