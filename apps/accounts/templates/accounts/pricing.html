@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}Pricing — Free Recovery App with Premium & Court Compliance Plans{% endblock %}
-{% block meta_description %}MyRecoveryPal pricing: free forever plan with sobriety counter, check-ins & community. Premium adds the AI Recovery Coach and full analytics. Court Compliance from $19.99/mo.{% endblock %}
+{% block meta_description %}MyRecoveryPal pricing: free forever plan with sobriety counter, check-ins & community. Premium adds the AI Recovery Coach and full analytics. Court Compliance plan for court-ordered meeting proof.{% endblock %}
 {% block canonical_url %}https://www.myrecoverypal.com/accounts/pricing/{% endblock %}
 
 {% block extra_css %}
@@ -321,9 +321,11 @@
                 <div class="card-header text-center text-white" style="background: linear-gradient(135deg, #1e4d8b, #0f2d56) !important;">
                     <span class="badge mb-2" style="background:#f5a623; color:#0f2d56; font-weight:700;">FOR COURT-ORDERED USERS</span>
                     <h3 class="my-3" style="color: white !important;">Court Compliance</h3>
-                    <h2 class="display-4" style="color: white !important;">$19.99</h2>
+                    <h2 class="display-4" style="color: white !important;">${% if court_monthly_plan %}{{ court_monthly_plan.price|floatformat:2 }}{% else %}29.99{% endif %}</h2>
                     <p style="color: white !important;">per month</p>
-                    <small style="color: rgba(255,255,255,0.85);">Annual: $179/yr (save 25%)</small>
+                    {% if court_yearly_plan %}
+                    <small style="color: rgba(255,255,255,0.85);">Annual: ${{ court_yearly_plan.price|floatformat:0 }}/yr (save 25%)</small>
+                    {% endif %}
                 </div>
                 <div class="card-body text-dark bg-white">
                     <p class="mb-2" style="font-weight: 600; color: #1e4d8b;"><i class="fas fa-check-double text-success"></i> Everything in Premium, plus:</p>
@@ -350,14 +352,14 @@
                         <button class="btn btn-light btn-block subscribe-btn stripe-only"
                                 data-plan-id="{{ court_monthly_plan.id }}"
                                 data-plan-name="{{ court_monthly_plan.name }}">
-                            Start Court Compliance &mdash; $19.99/mo
+                            Start Court Compliance &mdash; ${{ court_monthly_plan.price|floatformat:2 }}/mo
                         </button>
                         {% if court_yearly_plan %}
                         <button class="btn btn-link btn-block subscribe-btn stripe-only mt-1 p-0"
                                 style="color: rgba(255,255,255,0.9); text-decoration: underline;"
                                 data-plan-id="{{ court_yearly_plan.id }}"
                                 data-plan-name="{{ court_yearly_plan.name }}">
-                            or pay annually &mdash; $179/yr (save 25%)
+                            or pay annually &mdash; ${{ court_yearly_plan.price|floatformat:0 }}/yr (save 25%)
                         </button>
                         {% endif %}
                     {% else %}

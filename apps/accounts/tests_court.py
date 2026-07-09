@@ -194,19 +194,23 @@ class CourtServiceTest(TestCase):
                 verification_method='self',
             )
 
-    def test_render_pdf_returns_bytes_and_hash(self):
-        pdf_bytes, sha256 = court_service.render_court_report_pdf(
+    def test_render_pdf_returns_bytes_and_hashes(self):
+        pdf_bytes, file_hash, embedded_hash = court_service.render_court_report_pdf(
             user=self.user,
             period_start=date(2026, 5, 1),
             period_end=date(2026, 5, 31),
         )
         self.assertIsInstance(pdf_bytes, bytes)
         self.assertGreater(len(pdf_bytes), 1000)  # real PDFs are >1KB
-        self.assertEqual(len(sha256), 64)
-        self.assertEqual(sha256, hashlib.sha256(pdf_bytes).hexdigest())
+        self.assertEqual(len(file_hash), 64)
+        self.assertEqual(file_hash, hashlib.sha256(pdf_bytes).hexdigest())
+        # The embedded hash is printed inside the bytes, so it can't equal
+        # the hash OF those bytes — both must be kept for verification.
+        self.assertEqual(len(embedded_hash), 64)
+        self.assertNotEqual(embedded_hash, file_hash)
 
     def test_render_pdf_starts_with_pdf_magic_bytes(self):
-        pdf_bytes, _ = court_service.render_court_report_pdf(
+        pdf_bytes, _, _ = court_service.render_court_report_pdf(
             user=self.user,
             period_start=date(2026, 5, 1),
             period_end=date(2026, 5, 31),
@@ -223,7 +227,28 @@ class CourtServiceTest(TestCase):
         self.assertEqual(report.legal_name_snapshot, 'Pat Doe')
         self.assertEqual(report.case_number_snapshot, '2026-CR-0007')
         self.assertEqual(len(report.pdf_hash), 64)
+        self.assertEqual(len(report.pdf_embedded_hash), 64)
+        self.assertNotEqual(report.pdf_embedded_hash, report.pdf_hash)
         self.assertTrue(report.pdf.name.endswith('.pdf'))
+
+    @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+    def test_printed_fingerprint_resolves_on_verify_endpoint(self):
+        """Regression: the fingerprint PRINTED INSIDE the PDF (embedded hash)
+        must resolve at /verify/court/ — a PO holding only the printout has
+        nothing else to paste. Before pdf_embedded_hash existed this 404ed."""
+        report = court_service.generate_court_report(
+            user=self.user,
+            period_start=date(2026, 5, 1),
+            period_end=date(2026, 5, 31),
+        )
+        resp = self.client.get(f'/verify/court/{report.pdf_embedded_hash}/')
+        self.assertEqual(resp.status_code, 200)
+        # Short prefix (as printed in the PDF's footer verify URL) also works
+        resp = self.client.get(f'/verify/court/{report.pdf_embedded_hash[:8]}/')
+        self.assertEqual(resp.status_code, 200)
+        # And the file hash still resolves
+        resp = self.client.get(f'/verify/court/{report.pdf_hash}/')
+        self.assertEqual(resp.status_code, 200)
 
     def test_attendance_outside_period_excluded(self):
         # Add an April attendance — should NOT count toward May report

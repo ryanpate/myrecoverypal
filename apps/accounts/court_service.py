@@ -3,12 +3,15 @@
 Court Compliance PDF report generation.
 
 Two-pass rendering:
-  Pass 1: render PDF with a placeholder hash → compute SHA-256
-  Pass 2: re-render with the real hash embedded → compute SHA-256 again
-  Store the second hash; serve the second PDF.
+  Pass 1: render PDF with a placeholder hash → compute SHA-256 (the
+          "embedded hash", printed inside the pass-2 PDF)
+  Pass 2: re-render with the embedded hash → compute SHA-256 of the bytes
+          that actually leave the server (the "file hash")
 
-This guarantees the hash printed inside the PDF matches the hash of the
-PDF bytes themselves.
+A hash embedded in the bytes cannot also be the hash of those bytes, so the
+two are necessarily different. We store BOTH and the public verify endpoint
+accepts either — a PO can verify from the fingerprint printed on the page or
+by hashing the PDF file itself.
 """
 import hashlib
 import logging
@@ -77,24 +80,26 @@ def render_court_report_pdf(user, period_start: date, period_end: date):
     """
     Render a court compliance PDF for `user` covering `period_start..period_end`.
 
-    Returns: (pdf_bytes, sha256_hex_string)
+    Returns: (pdf_bytes, file_hash, embedded_hash) where file_hash is the
+    SHA-256 of pdf_bytes and embedded_hash is the fingerprint printed inside
+    the document. Both must be stored — the verify endpoint accepts either.
     """
-    # Pass 1: placeholder hash → render → compute real hash
+    # Pass 1: placeholder hash → render → compute the embedded hash
     ctx1 = _build_context(user, period_start, period_end, PLACEHOLDER_HASH)
     pdf_pass1 = _render_pdf_bytes(ctx1)
-    real_hash = hashlib.sha256(pdf_pass1).hexdigest()
+    embedded_hash = hashlib.sha256(pdf_pass1).hexdigest()
 
-    # Pass 2: real hash embedded → render → return bytes
-    ctx2 = _build_context(user, period_start, period_end, real_hash)
+    # Pass 2: embedded hash printed in the document → render → return bytes
+    ctx2 = _build_context(user, period_start, period_end, embedded_hash)
     pdf_pass2 = _render_pdf_bytes(ctx2)
-    # Final hash is over the bytes that actually leave the server
-    final_hash = hashlib.sha256(pdf_pass2).hexdigest()
-    return pdf_pass2, final_hash
+    # File hash is over the bytes that actually leave the server
+    file_hash = hashlib.sha256(pdf_pass2).hexdigest()
+    return pdf_pass2, file_hash, embedded_hash
 
 
 def generate_court_report(user, period_start: date, period_end: date) -> CourtReport:
     """Render the PDF and persist a `CourtReport` row."""
-    pdf_bytes, pdf_hash = render_court_report_pdf(user, period_start, period_end)
+    pdf_bytes, pdf_hash, embedded_hash = render_court_report_pdf(user, period_start, period_end)
 
     profile = getattr(user, 'court_profile', None) or CourtReportProfile(user=user)
     attendance_count = MeetingAttendance.objects.filter(
@@ -108,6 +113,7 @@ def generate_court_report(user, period_start: date, period_end: date) -> CourtRe
         period_start=period_start,
         period_end=period_end,
         pdf_hash=pdf_hash,
+        pdf_embedded_hash=embedded_hash,
         attendance_count=attendance_count,
         legal_name_snapshot=profile.legal_name or '',
         case_number_snapshot=profile.case_number or '',

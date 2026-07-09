@@ -634,7 +634,7 @@ iOS app is **live** (App Store ID 6760084657, v1.1.0). The full submission check
 - [x] Premium feature gates (AI Coach message limits, progressive upgrade hints)
 - [x] 14-day free trial on signup
 
-### Court Compliance Tier ($19.99/mo) — Added 2026-05-23
+### Court Compliance Tier ($29.99/mo, $269/yr) — Added 2026-05-23, repriced 2026-07-09
 
 Fourth subscription tier targeting court-ordered AA/NA/SMART attendees (DUI, drug court, family court). Court-ordered users have legally-mandated proof-of-attendance obligations — high willingness-to-pay, distinct from recovery-community Premium audience.
 
@@ -673,11 +673,7 @@ Fourth subscription tier targeting court-ordered AA/NA/SMART attendees (DUI, dru
 
 **Plan:** `docs/plans/2026-05-23-court-compliance.md`
 
-**Stripe wiring TODO** (deferred from this code release):
-- Create Product "MyRecoveryPal Court Compliance" in Stripe with $19.99/mo + $179/yr prices
-- Seed `SubscriptionPlan` rows for tier='court' (monthly + yearly)
-- Update pricing page CTA — currently uses `mailto:` placeholder since `accounts:checkout` URL doesn't exist
-- Update Stripe webhook handler to map court-tier price IDs to `tier='court'`
+**Stripe wiring: DONE** (verified live 2026-07-03 — product, prices, plan rows, checkout, and webhook all work; the old "mailto placeholder" TODO here was stale). **Reprice to $29.99/mo + $269/yr (2026-07-09):** run `python3 manage.py setup_court_stripe --commit` in a Railway shell (new defaults bake in the new prices; idempotent — creates new Stripe prices, transfers lookup_keys, archives old, syncs `SubscriptionPlan` rows). All price copy (pricing page + court landing page) renders from the plan rows, so it updates the moment the command runs.
 
 #### 4. Recovery Merchandise Store
 - [ ] Milestone tokens/coins (physical)

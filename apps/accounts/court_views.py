@@ -2,6 +2,7 @@
 """Court Compliance views."""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -17,11 +18,18 @@ def verify_court_report(request, hash_value):
     """
     Public endpoint — court / probation officer pastes a hash and we confirm
     that hash matches a real report. We do NOT leak any personal info.
+
+    Matches either the file hash (SHA-256 of the PDF bytes) or the embedded
+    hash (the fingerprint printed inside the PDF) — they are necessarily
+    different values, and a PO may be holding either one.
     """
     if len(hash_value) == 64:
-        report = CourtReport.objects.filter(pdf_hash=hash_value).first()
+        report = CourtReport.objects.filter(
+            Q(pdf_hash=hash_value) | Q(pdf_embedded_hash=hash_value)).first()
     elif len(hash_value) >= 8:
-        report = CourtReport.objects.filter(pdf_hash__startswith=hash_value).first()
+        report = CourtReport.objects.filter(
+            Q(pdf_hash__startswith=hash_value)
+            | Q(pdf_embedded_hash__startswith=hash_value)).first()
     else:
         report = None
 

@@ -146,6 +146,21 @@ class AIRecoveryCoachView(TemplateView):
 class CourtOrderedMeetingTrackerView(TemplateView):
     template_name = 'core/court_ordered_meeting_tracker.html'
 
+    def get_context_data(self, **kwargs):
+        from apps.accounts.payment_models import SubscriptionPlan
+        context = super().get_context_data(**kwargs)
+        context['court_monthly_plan'] = SubscriptionPlan.objects.filter(
+            tier='court', billing_period='monthly', is_active=True).first()
+        context['court_yearly_plan'] = SubscriptionPlan.objects.filter(
+            tier='court', billing_period='yearly', is_active=True).first()
+        return context
+
+
+class ForProbationOfficersView(TemplateView):
+    """Print-friendly verification guide for POs / drug-court coordinators.
+    Doubles as the outreach one-pager linked in emails to referral sources."""
+    template_name = 'core/for_probation_officers.html'
+
 
 class SupportLovedOneView(TemplateView):
     """SEO landing page for the Supporter feature — family/friends following a

@@ -32,15 +32,19 @@ PRODUCT_DESC = ("Court-ready proof of meeting attendance — hash-verified PDF "
                 "for DUI/drug-court/family-court requirements.")
 MONTHLY_LOOKUP = "court_monthly"
 YEARLY_LOOKUP = "court_yearly"
-MONTHLY_CENTS = 1999
+# Phase 3 reprice defaults (was $19.99 / $179). Soberlink comps are $150-290/mo
+# for the same legally-mandated need; $29.99 is still ~10x under market.
+MONTHLY_CENTS = 2999
 
 
 class Command(BaseCommand):
     help = "Create/verify the Stripe Court Compliance product + prices and sync SubscriptionPlan rows."
 
     def add_arguments(self, parser):
-        parser.add_argument('--yearly', type=int, default=179,
-                            help='Yearly price in whole USD (default 179). 0 = monthly only.')
+        parser.add_argument('--monthly-cents', type=int, default=MONTHLY_CENTS,
+                            help=f'Monthly price in cents (default {MONTHLY_CENTS} = ${MONTHLY_CENTS/100:.2f}).')
+        parser.add_argument('--yearly', type=int, default=269,
+                            help='Yearly price in whole USD (default 269). 0 = monthly only.')
         parser.add_argument('--commit', action='store_true',
                             help='Actually create/update. Default is a dry-run.')
 
@@ -52,21 +56,22 @@ class Command(BaseCommand):
         mode = 'LIVE' if key.startswith('sk_live') else ('TEST' if key.startswith('sk_test') else 'UNKNOWN')
         commit = opts['commit']
         yearly = opts['yearly']
+        monthly_cents = opts['monthly_cents']
 
         self.stdout.write(self.style.WARNING(f"Stripe mode: {mode}"))
         self.stdout.write(f"Mode: {'COMMIT (writing changes)' if commit else 'DRY-RUN (no changes will be made)'}")
-        self.stdout.write(f"Monthly: $19.99   Yearly: {'(none)' if yearly == 0 else f'${yearly}.00'}")
+        self.stdout.write(f"Monthly: ${monthly_cents/100:.2f}   Yearly: {'(none)' if yearly == 0 else f'${yearly}.00'}")
         self.stdout.write("")
 
         product_id = self._ensure_product(commit)
         self.stdout.write("Prices:")
-        monthly_price_id = self._ensure_price(MONTHLY_LOOKUP, MONTHLY_CENTS, 'month', product_id, commit)
+        monthly_price_id = self._ensure_price(MONTHLY_LOOKUP, monthly_cents, 'month', product_id, commit)
         yearly_price_id = None
         if yearly > 0:
             yearly_price_id = self._ensure_price(YEARLY_LOOKUP, yearly * 100, 'year', product_id, commit)
 
         self.stdout.write("\nSubscriptionPlan rows:")
-        self._sync_plan('monthly', Decimal('19.99'), product_id, monthly_price_id, True, commit)
+        self._sync_plan('monthly', Decimal(monthly_cents) / 100, product_id, monthly_price_id, True, commit)
         if yearly > 0:
             self._sync_plan('yearly', Decimal(f'{yearly}.00'), product_id, yearly_price_id, True, commit)
         else:

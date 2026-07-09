@@ -177,6 +177,13 @@ class CourtReport(models.Model):
 
     pdf = models.FileField(upload_to='court/reports/', null=True, blank=True)
     pdf_hash = models.CharField(max_length=64, db_index=True, help_text='SHA-256 of the PDF bytes')
+    # The fingerprint PRINTED INSIDE the PDF. Necessarily different from
+    # pdf_hash — a hash embedded in the bytes cannot also be the hash of those
+    # bytes. The verify endpoint accepts either, so a PO can verify from the
+    # printed page (embedded hash) or from the file itself (pdf_hash).
+    pdf_embedded_hash = models.CharField(
+        max_length=64, db_index=True, blank=True, default='',
+        help_text='SHA-256 fingerprint printed inside the PDF')
     attendance_count = models.PositiveIntegerField(default=0)
 
     # Snapshot of profile fields at the moment of generation (so a report

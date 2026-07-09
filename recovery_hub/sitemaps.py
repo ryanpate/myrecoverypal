@@ -46,6 +46,7 @@ class StaticViewSitemap(Sitemap):
             ('core:mental_health_recovery_app', 0.85),  # "mental health recovery app" keyword
             ('core:ai_recovery_coach', 0.9),  # "AI recovery coach" keyword
             ('core:court_ordered_meeting_tracker', 0.9),  # "court ordered AA app" — Court Compliance tier landing
+            ('core:for_probation_officers', 0.7),  # PO verification guide / outreach one-pager
 
             # Pricing (paid tier discovery)
             ('accounts:pricing', 0.75),
