@@ -660,7 +660,7 @@ Fourth subscription tier targeting court-ordered AA/NA/SMART attendees (DUI, dru
 - Public verify endpoint at `/verify/court/<hash>/` intentionally does NOT show legal name or case number — only confirms a report with that fingerprint exists. Privacy by default.
 - Court tier is a superset of Premium: `is_premium()` returns True for court-tier users.
 - Program-neutral coverage (AA, NA, CA, MA, GA, SMART, Refuge, LifeRing, secular) — important because courts cannot constitutionally require 12-step-only attendance.
-- WeasyPrint on macOS requires `DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib` (Pango libs from Homebrew). Linux/Railway has the libs in the default path.
+- WeasyPrint on macOS requires `DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib` (Pango libs from Homebrew). On Railway the pango/harfbuzz/fonts apt packages must be installed in `Dockerfile.railway` — they were MISSING until 2026-07-09 (every prod PDF generation raised "cannot load library 'gobject-2.0-0'"); don't remove them.
 - `send_email()` in `email_service.py` now supports an `attachments` kwarg (list of `(filename, bytes, content_type)` tuples). Resend HTTP only; SMTP fallback ignores attachments.
 
 **Phase 2 deferred:**

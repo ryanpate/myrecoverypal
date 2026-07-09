@@ -14,10 +14,17 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # Install system dependencies
+# pango/harfbuzz/fonts are required by WeasyPrint (court report PDFs) —
+# without them PDF generation raises "cannot load library 'gobject-2.0-0'"
 RUN apt-get update && apt-get install -y \
     postgresql-client \
     build-essential \
     libpq-dev \
+    libpango-1.0-0 \
+    libpangoft2-1.0-0 \
+    libharfbuzz0b \
+    libharfbuzz-subset0 \
+    fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
