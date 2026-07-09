@@ -80,8 +80,14 @@ class CourtReportProfile(models.Model):
     # Behavior
     auto_email_monthly = models.BooleanField(
         default=False,
-        help_text='Phase 2 — automatically email a monthly report to the probation officer.',
+        verbose_name='Auto-email monthly report to my probation officer',
+        help_text="On the 1st of each month, automatically generate last month's "
+                  "attendance report and email it to your probation officer.",
     )
+
+    # Task dedupe stamps (user-local dates)
+    last_meeting_reminder_sent = models.DateField(null=True, blank=True)
+    last_auto_po_email_sent = models.DateField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

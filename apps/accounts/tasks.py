@@ -1247,3 +1247,170 @@ def send_facility_risk_digest():
                 recipient_email=staff.user.email)
             emails_sent += 1
     return emails_sent
+
+
+# ========================================
+# Court Compliance engagement (Phase 3 retention)
+# ========================================
+
+def _user_zoneinfo(user):
+    """ZoneInfo for the user's stored IANA timezone, falling back to UTC."""
+    from zoneinfo import ZoneInfo
+    try:
+        return ZoneInfo(user.timezone) if getattr(user, 'timezone', '') else ZoneInfo('UTC')
+    except Exception:
+        from zoneinfo import ZoneInfo
+        return ZoneInfo('UTC')
+
+
+@shared_task
+def send_court_meeting_reminders():
+    """
+    Evening nudge for court-tier users who are behind their weekly meeting
+    requirement and haven't logged a meeting today (user-local day).
+    In-app notification + push, max once per user-local day.
+    """
+    from .court_models import CourtReportProfile, MeetingAttendance
+    from .models import Notification
+
+    sent = 0
+    profiles = CourtReportProfile.objects.filter(
+        required_meetings_per_week__gt=0,
+        user__subscription__tier='court',
+    ).select_related('user')
+
+    for profile in profiles:
+        user = profile.user
+        sub = getattr(user, 'subscription', None)
+        if not (sub and sub.is_active()):
+            continue
+
+        with timezone.override(_user_zoneinfo(user)):
+            today = timezone.localdate()
+            # Respect the compliance window if one is set
+            if profile.report_period_end and today > profile.report_period_end:
+                continue
+            if profile.last_meeting_reminder_sent == today:
+                continue
+            if MeetingAttendance.objects.filter(
+                    user=user, meeting_date__date=today).exists():
+                continue
+
+            week_start = today - timedelta(days=today.weekday())  # Monday
+            week_count = MeetingAttendance.objects.filter(
+                user=user,
+                meeting_date__date__gte=week_start,
+                meeting_date__date__lte=today,
+            ).count()
+            if week_count >= profile.required_meetings_per_week:
+                continue
+
+            remaining = profile.required_meetings_per_week - week_count
+            days_left = 7 - today.weekday()  # today counts
+            message = (
+                f"You're at {week_count} of {profile.required_meetings_per_week} "
+                f"meetings this week with {days_left} day{'s' if days_left != 1 else ''} "
+                f"left. Attended one today? Logging it takes 20 seconds."
+            )
+
+        try:
+            Notification.objects.create(
+                recipient=user,
+                sender=user,
+                notification_type='meeting_reminder',
+                title=f'{remaining} more meeting{"s" if remaining != 1 else ""} needed this week',
+                message=message,
+                link='/accounts/court/attendance/',
+            )
+            try:
+                from .push_notifications import PushNotificationService
+                PushNotificationService._send_push(
+                    recipient=user,
+                    notification_type='meeting_reminder',
+                    sender=user,
+                    data={'link': '/accounts/court/attendance/',
+                          'type': 'meeting_reminder'},
+                )
+            except Exception as push_err:
+                logger.warning(f'Court reminder push failed for {user.email}: {push_err}')
+
+            profile.last_meeting_reminder_sent = today
+            profile.save(update_fields=['last_meeting_reminder_sent'])
+            sent += 1
+        except Exception as e:
+            logger.error(f'Court meeting reminder failed for {user.email}: {e}')
+
+    logger.info(f'Court meeting reminders sent: {sent}')
+    return sent
+
+
+@shared_task
+def send_court_monthly_po_reports():
+    """
+    On the 1st of each month: for court users who opted in
+    (auto_email_monthly + PO email on file), generate last month's attendance
+    report and email it to their probation officer. Notifies the user either
+    way — silence about a compliance document is never acceptable.
+    """
+    from datetime import date
+    from .court_models import CourtReportProfile
+    from .court_service import email_report_to_po, generate_court_report
+    from .models import Notification
+
+    today = timezone.now().date()
+    period_end = today.replace(day=1) - timedelta(days=1)   # last day of prev month
+    period_start = period_end.replace(day=1)                # first day of prev month
+
+    sent = 0
+    profiles = CourtReportProfile.objects.filter(
+        auto_email_monthly=True,
+        user__subscription__tier='court',
+    ).exclude(probation_officer_email='').select_related('user')
+
+    for profile in profiles:
+        user = profile.user
+        sub = getattr(user, 'subscription', None)
+        if not (sub and sub.is_active()):
+            continue
+        # Once per calendar month, even if the task reruns
+        if (profile.last_auto_po_email_sent
+                and profile.last_auto_po_email_sent >= today.replace(day=1)):
+            continue
+
+        try:
+            report = generate_court_report(user, period_start, period_end)
+            success, err = email_report_to_po(report, profile.probation_officer_email)
+        except Exception as e:
+            logger.error(f'Auto PO report failed for {user.email}: {e}')
+            success, err = False, str(e)
+
+        if success:
+            profile.last_auto_po_email_sent = today
+            profile.save(update_fields=['last_auto_po_email_sent'])
+            title = f'Report sent to {profile.probation_officer_name or "your probation officer"}'
+            message = (
+                f'Your {period_start:%B} attendance report ({report.attendance_count} '
+                f'meetings) was emailed to {profile.probation_officer_email} with its '
+                f'verification link.'
+            )
+            link = '/accounts/court/reports/'
+            sent += 1
+        else:
+            title = 'Monthly report could not be sent'
+            message = (
+                f'We could not email your {period_start:%B} report to your probation '
+                f'officer ({err}). Please send it manually from your reports page.'
+            )
+            link = '/accounts/court/reports/'
+
+        try:
+            Notification.objects.create(
+                recipient=user, sender=user,
+                notification_type='meeting_reminder',
+                title=title, message=message, link=link,
+            )
+        except Exception as e:
+            logger.error(f'Auto PO report notification failed for {user.email}: {e}')
+
+    logger.info(f'Court monthly PO reports sent: {sent}')
+    return sent

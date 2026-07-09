@@ -825,6 +825,18 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_supporter_inactivity_alerts',
         'schedule': crontab(hour=18, minute=0),  # Daily at 6 PM UTC (after the 5 PM check-in reminder)
     },
+    # Court compliance: evening nudge for users behind their weekly meeting
+    # requirement — 23:00 UTC ≈ 6-7 PM US Central/Eastern
+    'send-court-meeting-reminders': {
+        'task': 'apps.accounts.tasks.send_court_meeting_reminders',
+        'schedule': crontab(hour=23, minute=0),
+    },
+    # Court compliance: auto-email last month's report to the PO (opt-in) —
+    # 1st of the month, 14:00 UTC ≈ 9 AM ET
+    'send-court-monthly-po-reports': {
+        'task': 'apps.accounts.tasks.send_court_monthly_po_reports',
+        'schedule': crontab(hour=14, minute=0, day_of_month=1),
+    },
     'expire-ended-trials': {
         'task': 'apps.accounts.tasks.expire_ended_trials',
         'schedule': crontab(hour=9, minute=0),  # Daily at 9 AM, before the 10 AM email tasks

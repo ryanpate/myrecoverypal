@@ -515,7 +515,7 @@ class CourtReportEmailTest(TestCase):
         )
         self.client.login(username='mailer', password='pw')
 
-    @patch('apps.accounts.court_views.send_email')
+    @patch('apps.accounts.email_service.send_email')
     def test_email_report_to_probation_officer(self, mock_send):
         mock_send.return_value = (True, None)
         resp = self.client.post(
@@ -531,7 +531,7 @@ class CourtReportEmailTest(TestCase):
         self.assertIn('po@court.gov', self.report.emailed_to)
         self.assertIsNotNone(self.report.emailed_at)
 
-    @patch('apps.accounts.court_views.send_email')
+    @patch('apps.accounts.email_service.send_email')
     def test_email_failure_does_not_update_audit(self, mock_send):
         mock_send.return_value = (False, 'SMTP timeout')
         self.client.post(

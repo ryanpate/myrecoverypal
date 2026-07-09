@@ -96,6 +96,63 @@ def render_court_report_pdf(user, period_start: date, period_end: date):
     return pdf_pass2, file_hash, embedded_hash
 
 
+def email_report_to_po(report: CourtReport, recipient: str):
+    """Email a report PDF to `recipient` (PO, attorney, etc.).
+
+    Shared by the manual send button and the monthly auto-email task, so it
+    builds the verify URL from settings.SITE_URL rather than a request.
+    Returns (success: bool, err: str|None) and records the send on success.
+    """
+    from django.conf import settings
+    from django.urls import reverse
+
+    from apps.accounts.email_service import send_email
+
+    pdf_bytes = report.get_pdf_bytes()
+    if not pdf_bytes:
+        return False, 'Report PDF missing'
+
+    user = report.user
+    profile = getattr(user, 'court_profile', None)
+    legal_name = (profile.legal_name if profile else None) or user.username
+    case_number = (profile.case_number if profile else None) or '(no case number on file)'
+
+    site_url = getattr(settings, 'SITE_URL', 'https://www.myrecoverypal.com').rstrip('/')
+    verify_url = site_url + reverse('verify_court_report', args=[report.pdf_hash[:8]])
+
+    html_body = render_to_string('court/email_pdf.html', {
+        'legal_name': legal_name,
+        'case_number': case_number,
+        'period_start': report.period_start,
+        'period_end': report.period_end,
+        'attendance_count': report.attendance_count,
+        'verify_url': verify_url,
+    })
+    plain_body = (
+        f"Recovery meeting attendance report for {legal_name}\n"
+        f"Case: {case_number}\n"
+        f"Period: {report.period_start} – {report.period_end}\n"
+        f"Meetings attended: {report.attendance_count}\n"
+        f"Verify integrity: {verify_url}\n"
+    )
+
+    success, err = send_email(
+        subject=f'Court Compliance Report — {legal_name} — {report.period_start:%b %Y}',
+        plain_message=plain_body,
+        html_message=html_body,
+        recipient_email=recipient,
+        attachments=[(f'court-report-{report.short_hash}.pdf', pdf_bytes, 'application/pdf')],
+    )
+    if not success:
+        return False, err
+
+    existing = report.emailed_to or ''
+    report.emailed_to = (existing + ',' + recipient).strip(',')
+    report.emailed_at = timezone.now()
+    report.save(update_fields=['emailed_to', 'emailed_at'])
+    return True, None
+
+
 def generate_court_report(user, period_start: date, period_end: date) -> CourtReport:
     """Render the PDF and persist a `CourtReport` row."""
     pdf_bytes, pdf_hash, embedded_hash = render_court_report_pdf(user, period_start, period_end)

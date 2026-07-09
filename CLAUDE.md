@@ -669,7 +669,7 @@ Fourth subscription tier targeting court-ordered AA/NA/SMART attendees (DUI, dru
 - QR code check-in at meetings
 - Photo upload of paper attendance cards
 - Calendar heatmap of attendance history
-- Auto-recurring monthly email to probation officer
+- ~~Auto-recurring monthly email to probation officer~~ ✅ SHIPPED 2026-07-09 (`send_court_monthly_po_reports`, opt-in via `CourtReportProfile.auto_email_monthly`; plus evening behind-pace reminders via `send_court_meeting_reminders`)
 
 **Plan:** `docs/plans/2026-05-23-court-compliance.md`
 

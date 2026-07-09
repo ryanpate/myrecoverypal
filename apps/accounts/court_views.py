@@ -42,14 +42,11 @@ def verify_court_report(request, hash_value):
     })
 
 
-from django.template.loader import render_to_string
-
 from apps.accounts.court_forms import (
     CourtReportProfileForm, MeetingAttendanceForm,
 )
 from apps.accounts.court_service import generate_court_report
 from apps.accounts.decorators import court_required
-from apps.accounts.email_service import send_email
 from datetime import date
 
 
@@ -189,50 +186,11 @@ def court_report_email(request, report_id):
     if not recipient:
         messages.error(request, 'Recipient email required.')
         return redirect('accounts:court_report_list')
-    pdf_bytes = report.get_pdf_bytes()
-    if not pdf_bytes:
-        messages.error(request, 'Report PDF missing — regenerate.')
-        return redirect('accounts:court_report_list')
-
-    profile = getattr(request.user, 'court_profile', None)
-    legal_name = (profile.legal_name if profile else None) or request.user.username
-    case_number = (profile.case_number if profile else None) or '(no case number on file)'
-
-    verify_url = request.build_absolute_uri(
-        reverse('verify_court_report', args=[report.pdf_hash[:8]])
-    )
-
-    html_body = render_to_string('court/email_pdf.html', {
-        'legal_name': legal_name,
-        'case_number': case_number,
-        'period_start': report.period_start,
-        'period_end': report.period_end,
-        'attendance_count': report.attendance_count,
-        'verify_url': verify_url,
-    })
-    plain_body = (
-        f"Recovery meeting attendance report for {legal_name}\n"
-        f"Case: {case_number}\n"
-        f"Period: {report.period_start} – {report.period_end}\n"
-        f"Meetings attended: {report.attendance_count}\n"
-        f"Verify integrity: {verify_url}\n"
-    )
-
-    success, err = send_email(
-        subject=f'Court Compliance Report — {legal_name} — {report.period_start:%b %Y}',
-        plain_message=plain_body,
-        html_message=html_body,
-        recipient_email=recipient,
-        attachments=[(f'court-report-{report.short_hash}.pdf', pdf_bytes, 'application/pdf')],
-    )
-
+    from apps.accounts.court_service import email_report_to_po
+    success, err = email_report_to_po(report, recipient)
     if not success:
         messages.error(request, f'Email failed: {err}')
         return redirect('accounts:court_report_list')
 
-    existing = report.emailed_to or ''
-    report.emailed_to = (existing + ',' + recipient).strip(',')
-    report.emailed_at = timezone.now()
-    report.save(update_fields=['emailed_to', 'emailed_at'])
     messages.success(request, f'Report emailed to {recipient}.')
     return redirect('accounts:court_report_list')

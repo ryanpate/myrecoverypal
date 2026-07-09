@@ -13,6 +13,7 @@ class CourtReportProfileForm(forms.ModelForm):
             'legal_name', 'case_number', 'court_name', 'jurisdiction', 'judge_name',
             'probation_officer_name', 'probation_officer_email', 'attorney_email',
             'required_meetings_per_week', 'report_period_start', 'report_period_end',
+            'auto_email_monthly',
         ]
         widgets = {
             'report_period_start': forms.DateInput(attrs={'type': 'date'}),
