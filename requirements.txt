@@ -45,7 +45,10 @@ certifi==2024.2.2
 Pillow==10.2.0
 
 # PDF generation (court compliance reports)
+# pydyf must stay pinned: 0.12+ breaks WeasyPrint 62.x
+# ("'super' object has no attribute 'transform'" at render time)
 WeasyPrint==62.3
+pydyf==0.11.0
 
 # Error Monitoring
 sentry-sdk==1.40.0
