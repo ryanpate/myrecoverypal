@@ -3598,9 +3598,10 @@ def create_challenge(request, group_id=None):
         if active_challenges >= 3:
             messages.warning(
                 request,
-                'You\'ve reached the Premium limit of 3 active challenges. Upgrade to Pro for unlimited challenge creation!'
+                'You can run up to 3 active challenges at a time. '
+                'Complete or archive one of your current challenges to create a new one.'
             )
-            return redirect('accounts:pricing')
+            return redirect('accounts:challenges_home')
 
     group = None
     if group_id:

@@ -29,10 +29,11 @@ logger = logging.getLogger(__name__)
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-@login_required
 def pricing(request):
     """
-    Pricing page showing available subscription plans
+    Pricing page showing available subscription plans.
+    Public (no login required) so prospects can see prices before signing up
+    and search engines can index it — it's in the sitemap.
     """
     plans = SubscriptionPlan.objects.filter(is_active=True).order_by('sort_order')
 
@@ -41,8 +42,10 @@ def pricing(request):
     if hasattr(request.user, 'subscription'):
         user_subscription = request.user.subscription
 
-    # Court Compliance card is hardcoded (different layout from the Premium loop),
-    # so it needs its own plan reference for the checkout button to send the right plan_id.
+    # Each card needs its own plan reference so the checkout button sends the
+    # right plan_id. Premium renders one card with a monthly/annual toggle.
+    premium_monthly_plan = plans.filter(tier='premium', billing_period='monthly').first()
+    premium_yearly_plan = plans.filter(tier='premium', billing_period='yearly').first()
     court_monthly_plan = plans.filter(tier='court', billing_period='monthly').first()
     court_yearly_plan = plans.filter(tier='court', billing_period='yearly').first()
     supporter_monthly_plan = plans.filter(tier='supporter', billing_period='monthly').first()
@@ -50,6 +53,8 @@ def pricing(request):
     context = {
         'plans': plans,
         'user_subscription': user_subscription,
+        'premium_monthly_plan': premium_monthly_plan,
+        'premium_yearly_plan': premium_yearly_plan,
         'court_monthly_plan': court_monthly_plan,
         'court_yearly_plan': court_yearly_plan,
         'supporter_monthly_plan': supporter_monthly_plan,

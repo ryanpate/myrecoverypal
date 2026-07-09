@@ -7,13 +7,13 @@
             <div style="color: white;">
                 <h3 style="color: white !important; margin-bottom: 1rem;">
                     <i class="fas fa-star" style="color: #ffc107;"></i>
-                    {% if prompt_title %}{{ prompt_title }}{% else %}Try Premium Free for 14 Days{% endif %}
+                    {% if prompt_title %}{{ prompt_title }}{% else %}Unlock Everything with Premium{% endif %}
                 </h3>
                 <p style="color: rgba(255,255,255,0.95); margin-bottom: 1.5rem; font-size: 1.1rem;">
                     {% if prompt_message %}
                         {{ prompt_message }}
                     {% else %}
-                        Start your free 14-day trial and unlock unlimited groups, messaging, private groups, and more premium features. No credit card required to start!
+                        Unlock unlimited groups, messaging, private groups, and more premium features. Cancel anytime.
                     {% endif %}
                 </p>
                 <ul class="list-unstyled" style="color: rgba(255,255,255,0.9); margin-bottom: 1.5rem;">
@@ -22,10 +22,10 @@
                         <li style="margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> {{ feature }}</li>
                         {% endfor %}
                     {% else %}
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> AI Recovery Coach (20 messages/day)</li>
                     <li style="margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> Unlimited groups & messages</li>
-                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> Advanced journaling tools</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> Full mood & craving analytics</li>
                     <li style="margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> Create private groups</li>
-                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check-circle" style="color: #52b788;"></i> Ad-free experience</li>
                     {% endif %}
                 </ul>
             </div>
@@ -33,9 +33,9 @@
         <div class="col-md-4 text-center">
             <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 10px; backdrop-filter: blur(10px);">
                 <div style="color: white; margin-bottom: 1rem;">
-                    <div style="font-size: 0.9rem; opacity: 0.9;">Starting at</div>
-                    <div style="font-size: 2.5rem; font-weight: 700; line-height: 1;">$9.99</div>
-                    <div style="font-size: 0.9rem; opacity: 0.9;">per month</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">From</div>
+                    <div style="font-size: 2.5rem; font-weight: 700; line-height: 1;">$5</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">per month, billed annually</div>
                 </div>
                 <a href="{% url 'accounts:pricing' %}" class="btn btn-light btn-lg" style="width: 100%; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                     <i class="fas fa-arrow-right"></i> View Plans

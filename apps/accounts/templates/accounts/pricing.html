@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Pricing - MyRecoveryPal{% endblock %}
+{% block title %}Pricing — Free Recovery App with Premium & Court Compliance Plans{% endblock %}
+{% block meta_description %}MyRecoveryPal pricing: free forever plan with sobriety counter, check-ins & community. Premium adds the AI Recovery Coach and full analytics. Court Compliance from $19.99/mo.{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com/accounts/pricing/{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -29,6 +31,37 @@
         margin-left: 4px;
         font-weight: 600;
         letter-spacing: 0.5px;
+    }
+    .billing-toggle {
+        display: inline-flex;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 50px;
+        padding: 4px;
+        margin-bottom: 0.75rem;
+    }
+    .billing-toggle-btn {
+        border: none;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.85);
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .billing-toggle-btn.active {
+        background: #fff;
+        color: #1e4d8b;
+    }
+    .toggle-save {
+        background: #52b788;
+        color: #fff;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 8px;
+        margin-left: 4px;
+        vertical-align: middle;
     }
     .ai-coach-desc {
         font-size: 0.85rem;
@@ -125,7 +158,11 @@
 <div class="page-header">
     <div class="container">
         <h1>Choose Your Plan</h1>
-        <p>Start with a 14-day free trial of Premium features</p>
+        {% if user.is_authenticated %}
+        <p>Simple plans for every stage of recovery. Cancel anytime.</p>
+        {% else %}
+        <p>Every new account starts with a 14-day free trial of Premium</p>
+        {% endif %}
     </div>
 </div>
 
@@ -144,7 +181,7 @@
             </div>
         </div>
         <p style="color: #666; font-size: 0.95rem; margin: 0;">20 AI Coach messages/day = ~600/month of personalized recovery support.</p>
-        <p style="color: #888; font-size: 0.85rem; margin: 0.5rem 0 0;">14-day free trial. Cancel anytime. No questions asked.</p>
+        <p style="color: #888; font-size: 0.85rem; margin: 0.5rem 0 0;">Cancel anytime. No questions asked.</p>
     </div>
 
     <!-- Trial Status Alert -->
@@ -176,14 +213,14 @@
                 </div>
                 <div class="card-body text-dark bg-white">
                     <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Sobriety counter, streaks & daily pledge</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited social feed & posts</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited messaging</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Daily check-in & mood tracking</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Private journal</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Join up to 5 groups</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Daily check-in & streaks</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> 30-day journal</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Community challenges</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> 10 AI Coach messages</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Basic progress charts (7-day)</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> 3 AI Coach messages per day</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Crisis resources — always free</li>
                     </ul>
                 </div>
                 <div class="card-footer text-center bg-light">
@@ -200,64 +237,83 @@
             </div>
         </div>
 
-        <!-- Premium Tier -->
-        {% for plan in plans %}
-            {% if plan.tier == 'premium' %}
-            <div class="col-lg-5 col-md-6 mb-4">
-                <div class="card h-100 shadow-lg border-primary" style="transform: scale(1.05);">
-                    <div class="card-header text-center bg-primary text-white" style="background-color: #1e4d8b !important;">
-                        <span class="badge badge-warning mb-2">MOST POPULAR</span>
-                        <span class="badge badge-success mb-2 ml-1" style="background: linear-gradient(135deg, #52b788, #40916c);">14-DAY FREE TRIAL</span>
-                        <h3 class="my-3" style="color: white !important;">Premium</h3>
-                        <h2 class="display-4" style="color: white !important;">${{ plan.price|floatformat:2 }}</h2>
-                        <p style="color: white !important;">per {{ plan.billing_period }}</p>
-                        {% if plan.billing_period == 'yearly' %}
-                            <small class="text-white-50" style="color: rgba(255,255,255,0.7) !important;">Save $60/year!</small>
-                        {% endif %}
-                    </div>
-                    <div class="card-body text-dark bg-white">
-                        <p class="mb-2" style="font-weight: 600; color: #1e4d8b;"><i class="fas fa-check-double text-success"></i> Everything in Free, plus:</p>
+        <!-- Premium Tier — one card, monthly/annual toggle (annual default) -->
+        {% if premium_monthly_plan or premium_yearly_plan %}
+        <div class="col-lg-5 col-md-6 mb-4">
+            <div class="card h-100 shadow-lg border-primary" style="transform: scale(1.05);">
+                <div class="card-header text-center bg-primary text-white" style="background-color: #1e4d8b !important;">
+                    <span class="badge badge-warning mb-2">MOST POPULAR</span>
+                    {% if not user.is_authenticated %}
+                    <span class="badge badge-success mb-2 ml-1" style="background: linear-gradient(135deg, #52b788, #40916c);">14-DAY FREE TRIAL</span>
+                    {% endif %}
+                    <h3 class="my-3" style="color: white !important;">Premium</h3>
 
-                        <!-- AI Coach - Featured Premium Benefit -->
-                        <div class="pricing-ai-highlight">
-                            <li class="mb-1" style="list-style: none;">
-                                <i class="fas fa-star" style="color: #667eea;"></i>
-                                <strong>AI Recovery Coach</strong> (20 messages/day)
-                                <span class="badge-new">NEW</span>
-                            </li>
-                            <p class="ai-coach-desc mb-0">24/7 AI-powered recovery companion</p>
-                        </div>
+                    {% if premium_monthly_plan and premium_yearly_plan %}
+                    <div class="billing-toggle" role="tablist" aria-label="Billing period">
+                        <button type="button" class="billing-toggle-btn" data-period="monthly" aria-pressed="false">Monthly</button>
+                        <button type="button" class="billing-toggle-btn active" data-period="yearly" aria-pressed="true">Annual <span class="toggle-save">Save 50%</span></button>
+                    </div>
+                    {% endif %}
 
-                        <ul class="list-unstyled mt-2">
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited groups + create private groups</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited journal + PDF export</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> 90-day progress analytics & charts</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Create custom challenges</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Premium profile badge</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Priority support</li>
-                        </ul>
+                    <div id="premium-price-monthly" {% if premium_yearly_plan %}style="display:none;"{% endif %}>
+                        <h2 class="display-4" style="color: white !important;">${{ premium_monthly_plan.price|floatformat:2 }}</h2>
+                        <p style="color: white !important;">per month</p>
                     </div>
-                    <div class="card-footer text-center bg-primary">
-                        {% if user_subscription.tier == 'premium' and user_subscription.is_active %}
-                            <button class="btn btn-light btn-block" disabled>Current Plan</button>
-                        {% else %}
-                            <!-- Stripe button (hidden on iOS native app via CSS) -->
-                            <button class="btn btn-light btn-block subscribe-btn stripe-only"
-                                    data-plan-id="{{ plan.id }}"
-                                    data-plan-name="{{ plan.name }}">
-                                Get Premium
-                            </button>
-                            <!-- IAP button (shown only on iOS native app via CSS) -->
-                            <button class="btn btn-light btn-block iap-only iap-subscribe-btn"
-                                    onclick="console.log('[IAP] Button clicked, MRPIAP exists:', !!window.MRPIAP); if(window.MRPIAP) { window.MRPIAP.showPurchaseUI(); } else { document.title='IAP NOT LOADED'; }">
-                                Subscribe with Apple
-                            </button>
-                        {% endif %}
+                    {% if premium_yearly_plan %}
+                    <div id="premium-price-yearly">
+                        <h2 class="display-4" style="color: white !important;">${{ premium_yearly_plan.price|floatformat:2 }}</h2>
+                        <p style="color: white !important; margin-bottom: 0;">per year</p>
+                        <small style="color: rgba(255,255,255,0.85) !important;">that's $5/month — half the monthly price</small>
                     </div>
+                    {% endif %}
+                </div>
+                <div class="card-body text-dark bg-white">
+                    <p class="mb-2" style="font-weight: 600; color: #1e4d8b;"><i class="fas fa-check-double text-success"></i> Everything in Free, plus:</p>
+
+                    <!-- AI Coach - Featured Premium Benefit -->
+                    <div class="pricing-ai-highlight">
+                        <li class="mb-1" style="list-style: none;">
+                            <i class="fas fa-star" style="color: #667eea;"></i>
+                            <strong>AI Recovery Coach</strong> (20 messages/day)
+                        </li>
+                        <p class="ai-coach-desc mb-0">24/7 AI-powered recovery companion</p>
+                    </div>
+
+                    <ul class="list-unstyled mt-2">
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Full mood, craving & energy analytics</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited groups + create private groups</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited direct messages</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Journal export & backup</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Create custom challenges</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Premium profile badge</li>
+                    </ul>
+                </div>
+                <div class="card-footer text-center bg-primary">
+                    {% if user.is_authenticated and user_subscription.tier == 'premium' and user_subscription.is_active %}
+                        <button class="btn btn-light btn-block" disabled>Current Plan</button>
+                    {% elif not user.is_authenticated %}
+                        <a class="btn btn-light btn-block" href="{% url 'accounts:register' %}">
+                            Start 14-Day Free Trial
+                        </a>
+                    {% else %}
+                        <!-- Stripe button (hidden on iOS native app via CSS) -->
+                        <button class="btn btn-light btn-block subscribe-btn stripe-only" id="premium-subscribe-btn"
+                                data-plan-id="{% if premium_yearly_plan %}{{ premium_yearly_plan.id }}{% else %}{{ premium_monthly_plan.id }}{% endif %}"
+                                data-plan-name="{% if premium_yearly_plan %}{{ premium_yearly_plan.name }}{% else %}{{ premium_monthly_plan.name }}{% endif %}"
+                                {% if premium_monthly_plan %}data-monthly-id="{{ premium_monthly_plan.id }}" data-monthly-name="{{ premium_monthly_plan.name }}"{% endif %}
+                                {% if premium_yearly_plan %}data-yearly-id="{{ premium_yearly_plan.id }}" data-yearly-name="{{ premium_yearly_plan.name }}"{% endif %}>
+                            Get Premium
+                        </button>
+                        <!-- IAP button (shown only on iOS native app via CSS) -->
+                        <button class="btn btn-light btn-block iap-only iap-subscribe-btn"
+                                onclick="if(window.MRPIAP) { window.MRPIAP.showPurchaseUI(); } else { this.textContent='Purchases unavailable — please try again'; console.error('[IAP] MRPIAP bridge not loaded'); }">
+                            Subscribe with Apple
+                        </button>
+                    {% endif %}
                 </div>
             </div>
-            {% endif %}
-        {% endfor %}
+        </div>
+        {% endif %}
 
         <!-- Court Compliance Tier -->
         <div class="col-lg-5 col-md-6 mb-4">
@@ -325,10 +381,14 @@
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Optional alert if they go quiet</li>
                     </ul>
                     <p class="small text-muted">For family, partners, and sponsors. The person you support shares for free and controls what you see.</p>
-                    {% if supporter_monthly_plan %}
+                    {% if not user.is_authenticated %}
+                        <a class="btn btn-primary btn-block" href="{% url 'accounts:register' %}">Sign Up to Get Supporter</a>
+                    {% elif supporter_monthly_plan %}
                         <button class="btn btn-primary btn-block subscribe-btn"
                                 data-plan-id="{{ supporter_monthly_plan.id }}"
                                 data-plan-name="{{ supporter_monthly_plan.name }}">Get Supporter</button>
+                    {% else %}
+                        <a class="btn btn-primary btn-block" href="{% url 'core:contact' %}">Contact Us to Get Supporter</a>
                     {% endif %}
                 </div>
             </div>
@@ -378,7 +438,7 @@
                     </div>
                     <div id="collapse2" class="collapse" data-parent="#faqAccordion">
                         <div class="card-body">
-                            Yes! Premium comes with a 14-day free trial so you can experience all features, including the AI Recovery Coach. The Free tier is available forever with no credit card required, and includes 10 AI Coach messages.
+                            Yes! Every new account automatically starts with a 14-day free trial of Premium — no credit card required — so you can experience all features, including the AI Recovery Coach. After the trial, the Free tier is yours forever and includes 3 AI Coach messages per day.
                         </div>
                     </div>
                 </div>
@@ -437,6 +497,31 @@
     </button>
 </div>
 
+<!-- Billing period toggle (monthly/annual) for the Premium card -->
+<script>
+    document.querySelectorAll('.billing-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const period = this.getAttribute('data-period');
+            document.querySelectorAll('.billing-toggle-btn').forEach(b => {
+                const active = b === this;
+                b.classList.toggle('active', active);
+                b.setAttribute('aria-pressed', active ? 'true' : 'false');
+            });
+            const monthly = document.getElementById('premium-price-monthly');
+            const yearly = document.getElementById('premium-price-yearly');
+            if (monthly) monthly.style.display = period === 'monthly' ? '' : 'none';
+            if (yearly) yearly.style.display = period === 'yearly' ? '' : 'none';
+            const subBtn = document.getElementById('premium-subscribe-btn');
+            if (subBtn) {
+                const id = subBtn.getAttribute(`data-${period}-id`);
+                const name = subBtn.getAttribute(`data-${period}-name`);
+                if (id) subBtn.setAttribute('data-plan-id', id);
+                if (name) subBtn.setAttribute('data-plan-name', name);
+            }
+        });
+    });
+</script>
+
 <!-- Stripe Checkout Integration (hidden on iOS native app) -->
 <div class="stripe-only">
 <script src="https://js.stripe.com/v3/"></script>
@@ -446,7 +531,7 @@
     document.querySelectorAll('.subscribe-btn').forEach(button => {
         button.addEventListener('click', async function() {
             const planId = this.getAttribute('data-plan-id');
-            const planName = this.getAttribute('data-plan-name');
+            const originalLabel = this.innerHTML;
 
             // Disable button and show loading
             this.disabled = true;
@@ -468,7 +553,7 @@
                 if (data.error) {
                     alert('Error: ' + data.error);
                     this.disabled = false;
-                    this.innerHTML = 'Get Premium';
+                    this.innerHTML = originalLabel;
                     return;
                 }
 
@@ -479,7 +564,7 @@
                 console.error('Error:', error);
                 alert('An error occurred. Please try again.');
                 this.disabled = false;
-                this.innerHTML = 'Get Premium';
+                this.innerHTML = originalLabel;
             }
         });
     });
