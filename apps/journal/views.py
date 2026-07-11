@@ -123,16 +123,57 @@ def create_entry(request):
             entry = form.save(commit=False)
             entry.user = request.user
             entry.save()
-            
+
             # Update streak
             streak, created = JournalStreak.objects.get_or_create(user=request.user)
             streak.update_streak()
-            
+
             messages.success(request, 'Journal entry saved successfully!')
             return redirect('journal:entry_detail', pk=entry.pk)
     else:
         form = JournalEntryForm()
-    
+
+    return render(request, 'journal/entry_form.html', {'form': form})
+
+@login_required
+def reflect_today(request):
+    """Journal entry pre-filled with today's recovery thought.
+
+    POST delegates to create_entry so saving/streaks/redirects stay in one
+    place. "Today" for the title and duplicate guard is the user's local
+    day (timezone.localdate(), per repo convention); the thought itself is
+    looked up by server date inside get_daily_thought.
+    """
+    if request.method == 'POST':
+        return create_entry(request)
+
+    today_local = timezone.localdate()
+
+    existing = JournalEntry.objects.filter(
+        user=request.user,
+        title__startswith='Daily Reflection',
+        created_at__date=today_local,
+    ).first()
+    if existing:
+        return redirect('journal:entry_detail', pk=existing.pk)
+
+    from apps.accounts.daily_content import get_daily_thought
+    thought = get_daily_thought()
+
+    title = f"Daily Reflection — {today_local.strftime('%B %-d, %Y')}"
+    if thought:
+        seed_lines = [f'"{thought.quote}"']
+        if thought.author_attribution:
+            seed_lines.append(f"— {thought.author_attribution}")
+        if thought.reflection_prompt:
+            seed_lines.append("")
+            seed_lines.append(thought.reflection_prompt)
+        seed_lines.append("")
+        content = "\n".join(seed_lines)
+    else:
+        content = ""
+
+    form = JournalEntryForm(initial={'title': title, 'content': content})
     return render(request, 'journal/entry_form.html', {'form': form})
 
 @login_required

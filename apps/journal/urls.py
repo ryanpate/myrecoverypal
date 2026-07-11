@@ -12,6 +12,7 @@ urlpatterns = [
     path('entry/<int:pk>/', views.JournalEntryDetailView.as_view(),
          name='entry_detail'),
     path('write/', views.create_entry, name='create_entry'),
+    path('reflect/', views.reflect_today, name='reflect_today'),
 
     # Guided journaling
     path('guided/', views.guided_entry, name='guided_entry'),
