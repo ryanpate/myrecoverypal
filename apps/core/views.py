@@ -170,6 +170,14 @@ class CravingSOSView(TemplateView):
         return context
 
 
+class RelapsePreventionPlanLandingView(TemplateView):
+    """SEO landing page targeting "relapse prevention plan" queries.
+
+    Static content (worksheet preview + FAQ); the interactive builder
+    lives behind login at accounts:relapse_plan."""
+    template_name = 'core/relapse_prevention_plan.html'
+
+
 class SobrietyMedallionMakerView(TemplateView):
     """SEO landing page for the milestone badge creator.
 

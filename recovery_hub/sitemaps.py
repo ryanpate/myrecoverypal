@@ -48,6 +48,7 @@ class StaticViewSitemap(Sitemap):
             ('core:court_ordered_meeting_tracker', 0.9),  # "court ordered AA app" — Court Compliance tier landing
             ('core:online_aa_meetings', 0.9),  # "online AA meetings" — live meeting directory
             ('core:craving_sos', 0.9),  # "how to stop cravings" — interactive SOS toolbox
+            ('core:relapse_prevention_plan', 0.9),  # "relapse prevention plan template" — guided builder landing
             ('core:for_probation_officers', 0.7),  # PO verification guide / outreach one-pager
 
             # Pricing (paid tier discovery)

@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Relapse Prevention Plan: Free Template & Guided Builder{% endblock %}
+{% block meta_description %}Build a relapse prevention plan in 10 minutes: triggers, warning signs, coping strategies, support contacts & emergency steps. Free guided template, printable PDF.{% endblock %}
+{% block meta_keywords %}relapse prevention plan, relapse prevention plan template, relapse prevention worksheet, how to make a relapse prevention plan, recovery plan template{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/relapse-prevention-plan/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a relapse prevention plan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A relapse prevention plan is a written document that maps your personal triggers, early warning signs, coping strategies, support contacts, and exact steps to take if a slip happens or feels close. Therapists and counselors assign it because relapse usually starts days or weeks before the first drink or use — a plan catches the drift early."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should a relapse prevention plan include?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The standard structure has six parts: your triggers (people, places, feelings), early warning signs, coping strategies that work for you, support contacts with phone numbers, your reasons for recovery, and emergency steps for a slip. Many plans add a HALT self-check — how hunger, anger, loneliness, and tiredness show up for you."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do relapse prevention plans actually work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Relapse prevention planning comes from cognitive-behavioral relapse prevention therapy, one of the most-studied approaches in addiction treatment. The core insight holds up: people who can name their triggers and have a decided response ready are far better at interrupting a lapse before it becomes a relapse. A plan works because you write it on a calm day and read it on a hard one."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often should I update my plan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Review it after anything it didn't predict: a close call, a new trigger, a changed relationship, a slip. Many people also revisit it at recovery milestones. A plan that never changes is a plan that has stopped describing your life."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is a relapse prevention plan a substitute for treatment?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. It's a tool that supports treatment, meetings, therapy, and community — not a replacement for professional care. If you are in crisis or thinking about harming yourself, call or text 988 (Suicide and Crisis Lifeline) or 911 right away."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .rpl-hero { text-align: center; padding: 3rem 1rem 1.5rem; max-width: 800px; margin: 0 auto; }
+    .rpl-hero h1 { font-size: 2.1rem; margin-bottom: 1rem; }
+    .rpl-section { max-width: 800px; margin: 0 auto; padding: 1.2rem 1rem; }
+    .rpl-cta {
+        display: inline-block; background: var(--primary-color, #2c7a7b); color: #fff;
+        padding: 0.8rem 1.8rem; border-radius: 8px; font-weight: 600;
+        text-decoration: none; margin-top: 1rem;
+    }
+    .rpl-card {
+        border: 1px solid rgba(128,128,128,0.25); border-radius: 12px;
+        padding: 1rem 1.2rem; margin-bottom: 0.9rem;
+    }
+    .rpl-card h3 { font-size: 1.05rem; margin-bottom: 0.3rem; }
+    .rpl-card p { opacity: 0.85; font-size: 0.95rem; margin: 0; }
+    .rpl-faq h3 { margin-top: 1.3rem; font-size: 1.05rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="rpl-hero">
+    <h1>Build Your Relapse Prevention Plan</h1>
+    <p>Ten calm minutes now is what future-you reaches for on a hard day.
+        Free guided builder, private like a journal, printable as a PDF.</p>
+    <a class="rpl-cta" href="{% url 'accounts:relapse_plan' %}">Start your plan free</a>
+</div>
+
+<div class="rpl-section">
+    <h2>What goes in the plan — the template</h2>
+    <div class="rpl-card"><h3>1. My triggers</h3>
+        <p>People, places, and feelings that put you at risk. Knowing them turns ambushes into forecasts.</p></div>
+    <div class="rpl-card"><h3>2. My early warning signs</h3>
+        <p>Relapse starts before the first drink or use &mdash; skipped meetings, "just one" thoughts, isolating.</p></div>
+    <div class="rpl-card"><h3>3. Coping strategies that work for me</h3>
+        <p>In the moment you won't invent a strategy. You'll reach for one you wrote down.</p></div>
+    <div class="rpl-card"><h3>4. My support contacts</h3>
+        <p>Names and numbers of people you can actually call. Two minutes on the phone beats two hours in your head.</p></div>
+    <div class="rpl-card"><h3>5. My reasons for recovery</h3>
+        <p>On the hardest days, the "why" carries you when willpower can't.</p></div>
+    <div class="rpl-card"><h3>6. HALT self-check + emergency steps</h3>
+        <p>How hunger, anger, loneliness, and tiredness show up for you &mdash; and the exact steps if a slip happens.</p></div>
+    <a class="rpl-cta" href="{% url 'accounts:register' %}">Create a free account to save yours</a>
+</div>
+
+<div class="rpl-section rpl-faq">
+    <h2>Relapse prevention plan FAQ</h2>
+    <h3>What is a relapse prevention plan?</h3>
+    <p>A relapse prevention plan is a written document that maps your personal triggers, early warning signs, coping strategies, support contacts, and exact steps to take if a slip happens or feels close. Therapists and counselors assign it because relapse usually starts days or weeks before the first drink or use &mdash; a plan catches the drift early.</p>
+    <h3>What should a relapse prevention plan include?</h3>
+    <p>The standard structure has six parts: your triggers (people, places, feelings), early warning signs, coping strategies that work for you, support contacts with phone numbers, your reasons for recovery, and emergency steps for a slip. Many plans add a HALT self-check &mdash; how hunger, anger, loneliness, and tiredness show up for you.</p>
+    <h3>Do relapse prevention plans actually work?</h3>
+    <p>Relapse prevention planning comes from cognitive-behavioral relapse prevention therapy, one of the most-studied approaches in addiction treatment. The core insight holds up: people who can name their triggers and have a decided response ready are far better at interrupting a lapse before it becomes a relapse. A plan works because you write it on a calm day and read it on a hard one.</p>
+    <h3>How often should I update my plan?</h3>
+    <p>Review it after anything it didn't predict: a close call, a new trigger, a changed relationship, a slip. Many people also revisit it at recovery milestones. A plan that never changes is a plan that has stopped describing your life.</p>
+    <h3>Is a relapse prevention plan a substitute for treatment?</h3>
+    <p>No. It's a tool that supports treatment, meetings, therapy, and community &mdash; not a replacement for professional care. If you are in crisis or thinking about harming yourself, call or text 988 (Suicide and Crisis Lifeline) or 911 right away.</p>
+</div>
+
+{% include 'core/partials/_related_tools.html' with exclude='relapse_prevention_plan' %}
+{% endblock %}
