@@ -2003,6 +2003,7 @@ class RecoveryCoachSession(models.Model):
     TRIGGER_CHOICES = [
         ('manual', 'Manual'),
         ('checkin_support', 'Check-in support'),
+        ('sos', 'Craving SOS'),
     ]
     trigger = models.CharField(
         max_length=20, choices=TRIGGER_CHOICES, default='manual')

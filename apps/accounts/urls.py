@@ -216,6 +216,7 @@ urlpatterns = [
     path('recovery-coach/session/<int:session_id>/', views.coach_load_session, name='coach_load_session'),
     path('recovery-coach/from-checkin/<int:checkin_id>/',
          views.coach_start_from_checkin, name='coach_start_from_checkin'),
+    path('recovery-coach/sos/', views.coach_start_sos, name='coach_start_sos'),
 
     # Sponsor invite
     path('invite/sponsor/', views.create_sponsor_invite, name='create_sponsor_invite'),

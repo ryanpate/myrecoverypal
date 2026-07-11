@@ -5062,6 +5062,48 @@ def coach_start_from_checkin(request, checkin_id):
 
 
 @login_required
+def coach_start_sos(request):
+    """Open (or reuse) a Craving SOS coach session from the SOS page.
+
+    The opener is static — no API call — so the coach responds instantly
+    in a craving moment. SOS sessions share the checkin_support rate-limit
+    exemption (see coach_service.can_send_message).
+    """
+    from apps.accounts.models import RecoveryCoachSession, CoachMessage
+
+    today_start = timezone.now().replace(
+        hour=0, minute=0, second=0, microsecond=0)
+    session = RecoveryCoachSession.objects.filter(
+        user=request.user, trigger='sos', created_at__gte=today_start,
+    ).first()
+
+    if session is None:
+        RecoveryCoachSession.objects.filter(
+            user=request.user, is_active=True).update(is_active=False)
+        session = RecoveryCoachSession.objects.create(
+            user=request.user, trigger='sos', is_active=True,
+            title='Craving SOS',
+        )
+        CoachMessage.objects.create(
+            session=session, role='assistant',
+            content=(
+                "I'm right here with you. Cravings feel overwhelming, but "
+                "they rise, peak, and pass — usually within 20-30 minutes. "
+                "Reaching out instead of giving in is exactly the right "
+                "move. What's happening right now?"
+            ),
+        )
+    else:
+        RecoveryCoachSession.objects.filter(
+            user=request.user, is_active=True,
+        ).exclude(id=session.id).update(is_active=False)
+        session.is_active = True
+        session.save(update_fields=['is_active'])
+
+    return redirect('accounts:recovery_coach')
+
+
+@login_required
 def coach_load_session(request, session_id):
     """Load a previous coach conversation session."""
     from apps.accounts.models import RecoveryCoachSession

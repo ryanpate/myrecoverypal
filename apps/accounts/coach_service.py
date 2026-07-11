@@ -122,16 +122,16 @@ def get_message_count_today(user):
         session__user=user,
         role='user',
         created_at__gte=today_start,
-    ).exclude(session__trigger='checkin_support').count()
+    ).exclude(session__trigger__in=('checkin_support', 'sos')).count()
 
 
 def can_send_message(user, session=None):
     """Check if user can send a coach message. Returns (allowed, reason).
 
-    Crisis-triggered (checkin_support) sessions are never limited.
+    Crisis-triggered (checkin_support, sos) sessions are never limited.
     Free users get 3 routine messages/day; premium gets 20/day.
     """
-    if session is not None and session.trigger == 'checkin_support':
+    if session is not None and session.trigger in ('checkin_support', 'sos'):
         return True, None
 
     is_premium = hasattr(user, 'subscription') and user.subscription.is_premium()
