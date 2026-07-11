@@ -76,6 +76,12 @@ def sync_source(key, source, approve=True, limit=None,
     if limit:
         online = online[:limit]
 
+    if not online:
+        logger.warning(
+            "Feed %r returned no online meetings; skipping deactivation "
+            "to avoid wiping the source", key)
+        return {"created": 0, "updated": 0, "skipped": 0, "deactivated": 0}
+
     created = updated = skipped = 0
     seen = []
     for m in online:

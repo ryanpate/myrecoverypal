@@ -95,13 +95,24 @@ class SyncSourceTests(TestCase):
         self.assertEqual(result["deactivated"], 0)
 
     def test_reactivates_meeting_that_returns_to_feed(self):
+        other = dict(ONLINE_MEETING, name="Other Meeting", slug="other-meeting")
         sync_source("test", feed_file([ONLINE_MEETING]))
-        sync_source("test", feed_file([]))
+        sync_source("test", feed_file([other]))
         self.assertFalse(
             Meeting.objects.get(
                 slug="online-test-morning-serenity").is_active)
 
         sync_source("test", feed_file([ONLINE_MEETING]))
+        self.assertTrue(
+            Meeting.objects.get(
+                slug="online-test-morning-serenity").is_active)
+
+    def test_empty_feed_skips_deactivation(self):
+        sync_source("test", feed_file([ONLINE_MEETING]))
+
+        result = sync_source("test", feed_file([]))
+
+        self.assertEqual(result["deactivated"], 0)
         self.assertTrue(
             Meeting.objects.get(
                 slug="online-test-morning-serenity").is_active)
