@@ -90,6 +90,7 @@ def sync_source(key, source, approve=True, limit=None,
         .filter(
             slug__startswith=f"{SLUG_PREFIX}-{key}-",
             submitted_by__isnull=True,
+            is_active=True,
         )
         .exclude(slug__in=seen)
         .update(is_active=False)
@@ -111,6 +112,8 @@ def sync_all(sources=None):
     task's autoretry kicks in for total outages but not partial ones.
     """
     sources = sources if sources is not None else FEED_SOURCES
+    if not sources:
+        return {}
     results = {}
     failures = 0
     for src in sources:

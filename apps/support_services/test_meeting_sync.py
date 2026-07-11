@@ -86,6 +86,11 @@ class SyncSourceTests(TestCase):
             Meeting.objects.get(
                 slug="online-test-morning-serenity").is_active)
 
+        # A third sync with the same feed must not re-count the
+        # already-deactivated meeting.
+        result = sync_source("test", feed_file([ONLINE_MEETING]))
+        self.assertEqual(result["deactivated"], 0)
+
     def test_reactivates_meeting_that_returns_to_feed(self):
         sync_source("test", feed_file([ONLINE_MEETING]))
         sync_source("test", feed_file([]))
@@ -154,6 +159,16 @@ class SyncAllTests(TestCase):
                "timezone": "America/Chicago"}
         with self.assertRaises(RuntimeError):
             sync_all([bad])
+
+    def test_empty_sources_list_is_a_noop(self):
+        sync_source("test", feed_file([ONLINE_MEETING]))
+
+        results = sync_all([])
+
+        self.assertEqual(results, {})
+        self.assertTrue(
+            Meeting.objects.get(
+                slug="online-test-morning-serenity").is_active)
 
     def test_legacy_bare_prefix_rows_deactivated_when_all_succeed(self):
         # Row from the old single-source seed: bare "online-" prefix,
