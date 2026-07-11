@@ -847,7 +847,7 @@ CELERY_BEAT_SCHEDULE = {
     },
     'refresh-online-meetings': {
         'task': 'apps.support_services.tasks.refresh_online_meetings_task',
-        'schedule': crontab(hour=4, minute=0, day_of_month=1),  # Monthly, 1st at 4 AM UTC
+        'schedule': crontab(hour=4, minute=0, day_of_week=1),  # Weekly, Mondays 4 AM UTC
     },
     'send_facility_risk_digest': {
         'task': 'apps.accounts.tasks.send_facility_risk_digest',

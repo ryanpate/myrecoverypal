@@ -5,8 +5,11 @@ path), so no HTTP mocking is needed except for the all-sources-failed case.
 """
 import json
 import tempfile
+from io import StringIO
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
 from django.test import TestCase
 
 from apps.support_services.meeting_sync import sync_all, sync_source
@@ -192,3 +195,45 @@ class SyncAllTests(TestCase):
         self.assertTrue(
             Meeting.objects.get(
                 slug="online-test-morning-serenity").is_active)
+
+
+class SeedCommandTests(TestCase):
+    def test_single_source_mode_with_key(self):
+        out = StringIO()
+        call_command(
+            "seed_online_meetings",
+            source=feed_file([ONLINE_MEETING]),
+            key="cli",
+            stdout=out,
+        )
+        self.assertTrue(
+            Meeting.objects.filter(
+                slug="online-cli-morning-serenity").exists())
+        self.assertIn("Done.", out.getvalue())
+
+    def test_no_args_syncs_all_configured_sources(self):
+        with patch(
+            "apps.support_services.management.commands."
+            "seed_online_meetings.sync_all",
+            return_value={"seattle": {"created": 5, "updated": 0,
+                                      "skipped": 0, "deactivated": 0},
+                          "legacy_deactivated": 0},
+        ) as mock_sync:
+            out = StringIO()
+            call_command("seed_online_meetings", stdout=out)
+        mock_sync.assert_called_once_with()
+        self.assertIn("seattle", out.getvalue())
+
+
+class RefreshTaskTests(TestCase):
+    def test_task_calls_sync_all(self):
+        with patch(
+            "apps.support_services.tasks.sync_all",
+            return_value={"seattle": {"created": 1, "updated": 0,
+                                      "skipped": 0, "deactivated": 0}},
+        ) as mock_sync:
+            from apps.support_services.tasks import (
+                refresh_online_meetings_task,
+            )
+            refresh_online_meetings_task.apply()
+        mock_sync.assert_called_once_with()
