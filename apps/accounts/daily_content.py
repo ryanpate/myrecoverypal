@@ -32,4 +32,8 @@ def get_daily_reading():
     count = posts.count()
     if not count:
         return None
-    return posts[timezone.now().date().toordinal() % count]
+    try:
+        return posts[timezone.now().date().toordinal() % count]
+    except IndexError:
+        # A post was deleted between count() and the indexed fetch.
+        return None

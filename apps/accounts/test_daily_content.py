@@ -47,9 +47,32 @@ class DailyReadingTests(TestCase):
         self.assertIn(first, self.posts)  # never the draft
 
     def test_rotates_across_days(self):
-        today = timezone.now().date()
-        expected_index = today.toordinal() % 3
-        self.assertEqual(get_daily_reading(), self.posts[expected_index])
+        from datetime import date, datetime
+        from unittest.mock import patch
+        from zoneinfo import ZoneInfo
+
+        class Day1(datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return datetime(2026, 7, 8, 12, 0, tzinfo=ZoneInfo("UTC"))
+
+        class Day2(datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return datetime(2026, 7, 9, 12, 0, tzinfo=ZoneInfo("UTC"))
+
+        with patch("apps.accounts.daily_content.timezone") as tz_mock:
+            tz_mock.now = Day1.now
+            first = get_daily_reading()
+            self.assertEqual(
+                first,
+                self.posts[date(2026, 7, 8).toordinal() % 3])
+            tz_mock.now = Day2.now
+            second = get_daily_reading()
+            self.assertEqual(
+                second,
+                self.posts[date(2026, 7, 9).toordinal() % 3])
+        self.assertNotEqual(first, second)
 
     def test_none_when_no_published_posts(self):
         Post.objects.all().delete()
