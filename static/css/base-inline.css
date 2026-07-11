@@ -3271,18 +3271,34 @@ select:focus {
 /* Craving SOS nav pill — always visible, including in the native apps
    (the native ultra-minimal nav hides other extras; SOS must survive). */
 .sos-pill {
-    background: #dc3545;
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #e0424f 0%, #b02a37 100%);
     color: #fff !important;
-    font-weight: 700;
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    padding: 0.35rem 0.7rem;
-    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    padding: 0.45rem 1rem;
+    border-radius: 25px;
     text-decoration: none;
     margin-right: 0.5rem;
     flex-shrink: 0;
     align-self: center;
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.45);
+    animation: sos-pulse 2.4s ease-out infinite;
 }
-.sos-pill:hover { background: #b02a37; color: #fff; }
+.sos-pill:hover {
+    background: linear-gradient(135deg, #c9333f 0%, #91202b 100%);
+    color: #fff;
+    animation: none;
+}
+@keyframes sos-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.45); }
+    55% { box-shadow: 0 0 0 7px rgba(220, 53, 69, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .sos-pill { animation: none; box-shadow: 0 2px 8px rgba(220, 53, 69, 0.35); }
+}
 .ios-native-app .sos-pill,
-.android-native-app .sos-pill { display: inline-block !important; }
+.android-native-app .sos-pill { display: inline-flex !important; }

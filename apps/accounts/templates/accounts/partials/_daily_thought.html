@@ -1,4 +1,47 @@
 {% if daily_thought %}
+{# Self-contained styles: this partial renders on the social feed AND the
+   progress home, so its rules live here rather than in either page's
+   style block. Design tokens (--gradient-accent etc.) are global (main.css). #}
+<style>
+    .daily-thought-panel {
+        position: relative; overflow: hidden; border-radius: var(--radius-xl, 20px); color: #fff;
+        background: var(--gradient-accent, linear-gradient(135deg, #4db8e8 0%, #52b788 100%));
+        box-shadow: var(--shadow, 0 2px 10px rgba(0, 0, 0, 0.1));
+        padding: 1.9rem 1.75rem 1.6rem; text-align: center; margin-bottom: 1.25rem;
+    }
+    .daily-thought-orb {
+        position: absolute; top: -70px; right: -50px; width: 220px; height: 220px;
+        border-radius: 50%; background: rgba(255,255,255,0.10);
+    }
+    .daily-thought-inner { position: relative; }
+    .daily-thought-eyebrow {
+        font-size: 0.72rem; font-weight: 700; letter-spacing: var(--tracking-label-wide, 0.12em);
+        text-transform: uppercase; color: rgba(255,255,255,0.85);
+    }
+    .daily-thought-quote {
+        margin: 1rem auto 0.9rem; max-width: 460px; font-size: 1.18rem;
+        line-height: 1.5; font-weight: 600; font-style: italic;
+    }
+    .daily-thought-attr { font-size: 0.92rem; color: rgba(255,255,255,0.9); }
+    .daily-thought-cta {
+        margin-top: 1.25rem; display: inline-flex; align-items: center; gap: 0.5rem;
+        background: rgba(255,255,255,0.18); color: #fff; border: 1px solid rgba(255,255,255,0.35);
+        backdrop-filter: blur(4px); border-radius: var(--radius-pill, 50px); padding: 0.6rem 1.2rem;
+        font-weight: 600; font-size: 0.9rem;
+    }
+    .daily-thought-actions {
+        margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.6rem;
+        align-items: center; justify-content: center;
+    }
+    .daily-thought-actions a {
+        display: inline-flex; align-items: center; gap: 0.45rem;
+        background: rgba(255,255,255,0.92); color: #1c6ea4;
+        border-radius: var(--radius-pill, 50px); padding: 0.5rem 1.1rem;
+        font-weight: 700; font-size: 0.88rem; text-decoration: none;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+    .daily-thought-actions a:hover { background: #fff; color: #14547e; }
+</style>
 <div class="daily-thought-panel">
     <div class="daily-thought-orb" aria-hidden="true"></div>
     <div class="daily-thought-inner">
@@ -14,21 +57,18 @@
             <i class="far fa-comment-dots" aria-hidden="true"></i> {{ daily_thought.reflection_prompt }}
         </span>
         {% endif %}
-        <div class="daily-thought-actions" style="margin-top: 0.9rem; display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;">
+        <div class="daily-thought-actions">
             {% if user.is_authenticated %}
                 {% if todays_reflection %}
-                <a href="{% url 'journal:entry_detail' pk=todays_reflection.pk %}"
-                    style="font-weight: 600; text-decoration: none;">
+                <a href="{% url 'journal:entry_detail' pk=todays_reflection.pk %}">
                     <i class="fas fa-book-open" aria-hidden="true"></i> View today's reflection</a>
                 {% else %}
-                <a href="{% url 'journal:reflect_today' %}"
-                    style="font-weight: 600; text-decoration: none;">
+                <a href="{% url 'journal:reflect_today' %}">
                     <i class="fas fa-pen" aria-hidden="true"></i> Reflect in your journal</a>
                 {% endif %}
             {% endif %}
             {% if daily_reading %}
-            <a href="{{ daily_reading.get_absolute_url }}"
-                style="font-weight: 600; text-decoration: none;">
+            <a href="{{ daily_reading.get_absolute_url }}">
                 <i class="fas fa-book" aria-hidden="true"></i> Today's reading: {{ daily_reading.title }}</a>
             {% endif %}
         </div>
