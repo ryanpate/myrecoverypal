@@ -55,6 +55,14 @@
     <form method="post" id="rpp-form">
         {% csrf_token %}
 
+        {% if form.errors %}
+        <div class="alert alert-danger" style="margin-bottom: 1rem;">
+            {% for field, errors in form.errors.items %}{% for error in errors %}
+            <div>{{ error }}</div>
+            {% endfor %}{% endfor %}
+        </div>
+        {% endif %}
+
         <div class="rpp-card">
             <h2>1. My triggers</h2>
             <p class="rpp-why">Knowing the people, places, and feelings that put you at risk turns ambushes into forecasts.</p>
@@ -154,7 +162,14 @@
     initial.forEach(row);
     if (!initial.length) row({});
 
-    addBtn.addEventListener('click', function () { row({}); });
+    addBtn.addEventListener('click', function () {
+        if (wrap.querySelectorAll('.rpp-contact-row').length >= 10) {
+            addBtn.textContent = 'Maximum 10 contacts';
+            addBtn.disabled = true;
+            return;
+        }
+        row({});
+    });
     form.addEventListener('submit', serialize);
 })();
 </script>

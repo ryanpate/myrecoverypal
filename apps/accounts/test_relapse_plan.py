@@ -93,6 +93,15 @@ class PlanFormContactsTests(TestCase):
         self.assertEqual(
             len(form.cleaned_data["support_contacts"][0]["name"]), 100)
 
+    def test_null_values_become_empty_strings(self):
+        form = self._form(json.dumps([
+            {"name": "Ana", "phone": None, "relationship": None},
+        ]))
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data["support_contacts"], [
+            {"name": "Ana", "phone": "", "relationship": ""},
+        ])
+
 
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class PlanBuilderViewTests(TestCase):
@@ -135,6 +144,20 @@ class PlanBuilderViewTests(TestCase):
         follow = self.client.get(reverse("accounts:relapse_plan"))
         self.assertContains(follow, "Payday fridays")
         self.assertContains(follow, "7 of 7")
+
+    def test_eleven_contacts_shows_visible_error(self):
+        rows = [{"name": f"P{i}", "phone": "", "relationship": ""}
+                for i in range(11)]
+        resp = self.client.post(reverse("accounts:relapse_plan"), {
+            "triggers": "x", "warning_signs": "", "coping_strategies": "",
+            "reasons": "", "emergency_steps": "", "halt_notes": "",
+            "support_contacts": json.dumps(rows),
+        })
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "10 contacts or fewer")
+        from apps.accounts.models import RelapsePreventionPlan
+        plan = RelapsePreventionPlan.objects.get(user=self.user)
+        self.assertEqual(plan.support_contacts, [])
 
 
 from unittest import skipUnless

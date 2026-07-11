@@ -48,7 +48,7 @@ class RelapsePreventionPlanForm(forms.ModelForm):
             if not isinstance(row, dict):
                 raise forms.ValidationError("Each contact must be an object.")
             contact = {
-                key: str(row.get(key, '')).strip()[:MAX_VALUE_LEN]
+                key: str(row.get(key) or '').strip()[:MAX_VALUE_LEN]
                 for key in CONTACT_KEYS
             }
             if any(contact.values()):
