@@ -244,6 +244,8 @@
             </div>
 
             <div class="nav-right">
+                <a href="{% url 'core:craving_sos' %}" class="sos-pill"
+                    title="Craving SOS — get help right now">SOS</a>
                 {% if user.is_authenticated %}
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <!-- User Menu with Notification Indicator -->

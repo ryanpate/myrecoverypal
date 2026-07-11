@@ -3267,3 +3267,22 @@ select:focus {
 .pull-refresh-indicator.visible {
     opacity: 1;
 }
+
+/* Craving SOS nav pill — always visible, including in the native apps
+   (the native ultra-minimal nav hides other extras; SOS must survive). */
+.sos-pill {
+    background: #dc3545;
+    color: #fff !important;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    text-decoration: none;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+    align-self: center;
+}
+.sos-pill:hover { background: #b02a37; color: #fff; }
+.ios-native-app .sos-pill,
+.android-native-app .sos-pill { display: inline-block !important; }
