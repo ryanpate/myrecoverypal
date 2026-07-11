@@ -82,3 +82,32 @@ class StartingSoonTests(TestCase):
         make_meeting("bad-tz", day=3, t=time(22, 30), tz="Not/AZone")
         make_meeting("good", day=3, t=time(22, 30))
         self.assertEqual([m.slug for m in starting_soon()], ["good"])
+
+
+DAYTIME_NOW = datetime(2026, 7, 8, 10, 0, tzinfo=ZoneInfo("America/Chicago"))
+
+
+class DaytimeDatetime(datetime):
+    @classmethod
+    def now(cls, tz=None):
+        return DAYTIME_NOW.astimezone(tz) if tz else DAYTIME_NOW.replace(tzinfo=None)
+
+
+@patch("apps.support_services.meeting_queries.datetime", DaytimeDatetime)
+class StartingSoonDaytimeTests(TestCase):
+    # Fixed now: Wed 10:00 Chicago. Window (3h): 10:00 .. 13:00 same day —
+    # exercises the non-midnight-crossing branch and its upper bound.
+
+    def test_meeting_inside_daytime_window_included(self):
+        make_meeting("midday", day=3, t=time(12, 30))
+        result = starting_soon()
+        self.assertEqual([m.slug for m in result], ["midday"])
+        self.assertEqual(result[0].minutes_until, 150)
+
+    def test_meeting_after_daytime_window_excluded(self):
+        make_meeting("too-late-today", day=3, t=time(13, 30))
+        self.assertEqual(starting_soon(), [])
+
+    def test_tomorrow_not_included_when_window_stays_in_today(self):
+        make_meeting("tomorrow-morning", day=4, t=time(10, 30))
+        self.assertEqual(starting_soon(), [])
