@@ -4214,10 +4214,9 @@ def social_feed_view(request):
         }
 
         # Daily recovery thought for feed
-        from apps.accounts.models import DailyRecoveryThought
-        context['daily_thought'] = DailyRecoveryThought.objects.filter(
-            date=timezone.now().date()
-        ).first()
+        from apps.accounts.daily_content import get_daily_thought, get_daily_reading
+        context['daily_thought'] = get_daily_thought()
+        context['daily_reading'] = get_daily_reading()
 
         # For authenticated users, check if feed is empty/sparse and add suggestions
         if user.is_authenticated:
