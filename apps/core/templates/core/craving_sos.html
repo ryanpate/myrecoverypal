@@ -152,7 +152,7 @@
         <h2><i class="fas fa-wind" aria-hidden="true"></i> Guided breathing (4-7-8)</h2>
         <p class="sos-sub">Breathe in 4 seconds, hold 7, out 8. Four rounds takes about 80 seconds.</p>
         <div id="breath-circle"></div>
-        <div id="breath-phase">Press start and follow the circle</div>
+        <div id="breath-phase" aria-live="polite">Press start and follow the circle</div>
         <div style="text-align:center; margin-top:0.8rem;">
             <button class="sos-btn" id="breath-toggle" type="button">Start breathing</button>
             <span id="breath-count" style="margin-left:0.8rem; opacity:0.8;"></span>
@@ -162,7 +162,7 @@
     <div class="sos-tool" id="sos-urge">
         <h2><i class="fas fa-water" aria-hidden="true"></i> Urge surfing (10 minutes)</h2>
         <p class="sos-sub">Don't fight the wave &mdash; watch it. It will peak and pass.</p>
-        <div id="urge-message">Press start. For the next 10 minutes your only job is to notice the craving, not act on it.</div>
+        <div id="urge-message" aria-live="polite">Press start. For the next 10 minutes your only job is to notice the craving, not act on it.</div>
         <div id="urge-bar-track"><div id="urge-bar"></div></div>
         <button class="sos-btn" id="urge-toggle" type="button">Start surfing</button>
         <span id="urge-clock" style="margin-left:0.8rem; opacity:0.8;"></span>
@@ -171,7 +171,7 @@
     <div class="sos-tool" id="sos-grounding">
         <h2><i class="fas fa-hand" aria-hidden="true"></i> Grounding (5-4-3-2-1)</h2>
         <p class="sos-sub">Pull your mind back into the room, one sense at a time.</p>
-        <div id="grounding-step">Press start when you're ready.</div>
+        <div id="grounding-step" aria-live="polite">Press start when you're ready.</div>
         <button class="sos-btn" id="grounding-next" type="button">Start grounding</button>
     </div>
 
@@ -257,7 +257,7 @@
     var urgeMsg = document.getElementById('urge-message');
     var urgeClock = document.getElementById('urge-clock');
     var URGE_TOTAL = 600; // seconds
-    var urgeElapsed = 0, urgeTimer = null;
+    var urgeElapsed = 0, urgeTimer = null, urgeStartedAt = null;
     var STAGES = [
         [0,   'Find where the craving lives in your body. Chest? Stomach? Jaw? Just notice it.'],
         [120, 'It may be building. That’s the wave rising — it cannot rise forever.'],
@@ -265,7 +265,7 @@
         [480, 'It’s losing power. You’ve out-lasted the worst of it.'],
     ];
     function urgeTick() {
-        urgeElapsed += 1;
+        urgeElapsed = Math.min(URGE_TOTAL, Math.floor((Date.now() - urgeStartedAt) / 1000));
         urgeBar.style.width = (urgeElapsed / URGE_TOTAL * 100) + '%';
         var m = Math.floor((URGE_TOTAL - urgeElapsed) / 60);
         var s = (URGE_TOTAL - urgeElapsed) % 60;
@@ -278,7 +278,7 @@
         }
     }
     function stopUrge(msg) {
-        clearInterval(urgeTimer); urgeTimer = null; urgeElapsed = 0;
+        clearInterval(urgeTimer); urgeTimer = null; urgeElapsed = 0; urgeStartedAt = null;
         urgeClock.textContent = '';
         if (msg) { urgeMsg.textContent = msg; urgeBar.style.width = '100%'; }
         else { urgeMsg.textContent = 'Press start. For the next 10 minutes your only job is to notice the craving, not act on it.'; urgeBar.style.width = '0%'; }
@@ -289,6 +289,7 @@
         urgeBtn.textContent = 'Stop';
         urgeBar.style.width = '0%';
         urgeMsg.textContent = STAGES[0][1];
+        urgeStartedAt = Date.now();
         urgeTimer = setInterval(urgeTick, 1000);
     });
 
