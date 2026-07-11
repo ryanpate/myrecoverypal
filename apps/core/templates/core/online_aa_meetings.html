@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Online AA Meetings Today: Free Zoom AA Meetings, All Time Zones{% endblock %}
+{% block meta_description %}Find free online AA meetings happening today. Searchable directory of Zoom AA meetings with join links, updated weekly — mornings, evenings & late night, every time zone.{% endblock %}
+{% block meta_keywords %}online aa meetings, aa meetings online, zoom aa meetings, virtual aa meetings, online aa meetings today, aa zoom meetings near me, 24 hour aa meetings online{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/online-aa-meetings/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Are online AA meetings free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. AA meetings, including online meetings, are free to attend. There are no dues or fees — groups are self-supporting through voluntary contributions, and contributing is never required to attend."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I join an online AA meeting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pick a meeting from the directory and click its join link at the scheduled time. Most online AA meetings use Zoom. You can keep your camera off and just listen — many newcomers do exactly that for their first meetings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do online AA meetings count for court-ordered attendance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Many courts and probation officers accept online meeting attendance, but requirements vary — always confirm with your PO or the court first. MyRecoveryPal's Court Compliance tools can log your attendance and generate verifiable PDF reports."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I attend an online AA meeting in another time zone?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Online meetings are open to anyone, anywhere. Because meetings run in every US time zone, you can almost always find one happening within the next few hours — including late at night."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I have to speak or turn my camera on?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. You can join with your camera off and simply listen. If a meeting does introductions, you can pass. Go at your own pace — showing up is what counts."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .oam-hero {
+        text-align: center;
+        padding: 3rem 1rem 2rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .oam-hero h1 { font-size: 2.2rem; margin-bottom: 1rem; }
+    .oam-hero .oam-count {
+        display: inline-block;
+        background: var(--primary-color, #2c7a7b);
+        color: #fff;
+        border-radius: 999px;
+        padding: 0.4rem 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    .oam-section { max-width: 800px; margin: 0 auto; padding: 1.5rem 1rem; }
+    .oam-meeting-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        border: 1px solid rgba(128, 128, 128, 0.25);
+        border-radius: 10px;
+        padding: 0.9rem 1.1rem;
+        margin-bottom: 0.75rem;
+    }
+    .oam-meeting-card .oam-name { font-weight: 600; }
+    .oam-meeting-card .oam-time { white-space: nowrap; opacity: 0.85; }
+    .oam-cta {
+        display: inline-block;
+        background: var(--primary-color, #2c7a7b);
+        color: #fff;
+        padding: 0.8rem 1.8rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        margin-top: 1rem;
+    }
+    .oam-faq h3 { margin-top: 1.5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="oam-hero">
+    <h1>Online AA Meetings — Join From Anywhere, Free</h1>
+    {% if online_count %}
+    <span class="oam-count">{{ online_count }} online meetings in the directory</span>
+    {% endif %}
+    <p>
+        Every meeting below is a real AA meeting with a working join link,
+        imported from intergroup schedules and re-verified weekly. No signup
+        is needed to browse. Cameras optional — you can just listen.
+    </p>
+    <a class="oam-cta" href="{% url 'support_services:meeting_list' %}">Search All Meetings</a>
+</div>
+
+<div class="oam-section">
+    <h2>Online AA Meetings Today{% if today_name %} ({{ today_name }}){% endif %}</h2>
+    {% for meeting in todays_meetings %}
+    <div class="oam-meeting-card">
+        <div>
+            <div class="oam-name">{{ meeting.name }}</div>
+            {% if meeting.group %}<div>{{ meeting.group }}</div>{% endif %}
+        </div>
+        <div class="oam-time">
+            {% if meeting.time %}{{ meeting.time|time:"g:i A" }} {{ meeting.timezone_display }}{% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <p>
+        The directory is being refreshed — use the full
+        <a href="{% url 'support_services:meeting_list' %}">meeting search</a>
+        to browse every day of the week.
+    </p>
+    {% endfor %}
+    <a class="oam-cta" href="{% url 'support_services:meeting_list' %}?attendance=online">See every online meeting →</a>
+</div>
+
+<div class="oam-section">
+    <h2>Why Online Meetings Work</h2>
+    <p>
+        Online AA meetings remove the two biggest barriers to getting
+        support: distance and timing. Whether you're in a small town with
+        one meeting a week, traveling, or it's 2 AM and a craving hit,
+        there's a meeting you can join in the next few hours. They follow
+        the same format as in-person AA — a reading, sharing, and fellowship
+        — and the only requirement for membership is a desire to stop
+        drinking.
+    </p>
+    <p>
+        If you want more than meetings, MyRecoveryPal adds a daily
+        sobriety pledge, a supportive community feed, an AI recovery coach
+        for the moments between meetings, and tools to track your streak —
+        <a href="{% url 'accounts:register' %}">free to join</a>.
+    </p>
+</div>
+
+<div class="oam-section oam-faq">
+    <h2>Frequently Asked Questions</h2>
+    <h3>Are online AA meetings free?</h3>
+    <p>Yes. AA meetings, including online meetings, are free to attend. There are no dues or fees — groups are self-supporting through voluntary contributions, and contributing is never required.</p>
+    <h3>How do I join an online AA meeting?</h3>
+    <p>Pick a meeting from the directory and click its join link at the scheduled time. Most use Zoom. You can keep your camera off and just listen — many newcomers do exactly that at first.</p>
+    <h3>Do online AA meetings count for court-ordered attendance?</h3>
+    <p>Many courts and probation officers accept online attendance, but requirements vary — confirm with your PO or the court first. Our <a href="{% url 'core:court_ordered_meeting_tracker' %}">Court Compliance tools</a> can log attendance and generate verifiable PDF reports.</p>
+    <h3>Can I attend a meeting in another time zone?</h3>
+    <p>Yes. Online meetings are open to anyone, anywhere. Meeting times above show their home time zone, and with meetings across every US time zone there's almost always one starting soon.</p>
+    <h3>Do I have to speak or turn my camera on?</h3>
+    <p>No. Join with your camera off and simply listen. If a meeting does introductions, you can pass. Showing up is what counts.</p>
+</div>
+
+{% include 'core/partials/_related_tools.html' with exclude='online_aa_meetings' %}
+{% endblock %}

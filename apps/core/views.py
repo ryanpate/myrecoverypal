@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, View
 from django.contrib.auth.decorators import login_required
@@ -121,6 +123,30 @@ class CleanTimeCalculatorView(TemplateView):
     NA language (clean date, key tags, drug recovery) with a substance-neutral
     recovery timeline — distinct enough to avoid duplicate-content overlap."""
     template_name = 'core/clean_time_calculator.html'
+
+
+class OnlineAAMeetingsView(TemplateView):
+    """SEO landing page targeting "online AA meetings" queries.
+
+    Renders live directory data (counts + today's meetings) so the page
+    stays fresh without manual maintenance; the weekly sync task keeps the
+    underlying meetings current."""
+    template_name = 'core/online_aa_meetings.html'
+
+    def get_context_data(self, **kwargs):
+        from apps.support_services.models import Meeting
+        context = super().get_context_data(**kwargs)
+        online = Meeting.objects.filter(
+            is_active=True, is_approved=True, attendance_option='online',
+        )
+        # Python weekday: 0=Monday; Meeting model: 0=Sunday.
+        today_meeting_day = (datetime.now().weekday() + 1) % 7
+        context['online_count'] = online.count()
+        context['todays_meetings'] = list(
+            online.filter(day=today_meeting_day).order_by('time')[:12])
+        context['today_name'] = dict(Meeting.DAY_CHOICES).get(
+            today_meeting_day, '')
+        return context
 
 
 class SobrietyMedallionMakerView(TemplateView):
