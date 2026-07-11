@@ -101,7 +101,7 @@
                 <div class="meeting-detail-time">
                     {% if meeting.day is not None %}{{ meeting.get_day_display }}{% endif %}
                     {% if meeting.time %}
-                        {{ meeting.time|time:"g:i A" }}{% if meeting.end_time %} &ndash; {{ meeting.end_time|time:"g:i A" }}{% endif %}
+                        {{ meeting.time|time:"g:i A" }}{% if meeting.end_time %} &ndash; {{ meeting.end_time|time:"g:i A" }}{% endif %} {{ meeting.timezone_display }}
                     {% endif %}
                 </div>
                 <span class="attendance-badge {{ meeting.attendance_option }}">

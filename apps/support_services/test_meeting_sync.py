@@ -237,3 +237,19 @@ class RefreshTaskTests(TestCase):
             )
             refresh_online_meetings_task.apply()
         mock_sync.assert_called_once_with()
+
+
+class TimezoneDisplayTests(TestCase):
+    def test_known_zone_returns_abbreviation(self):
+        m = Meeting.objects.create(
+            name="TZ Test", slug="tz-test",
+            timezone="America/Los_Angeles",
+        )
+        # PST or PDT depending on date — both are acceptable.
+        self.assertIn(m.timezone_display, ("PST", "PDT"))
+
+    def test_unknown_zone_falls_back_to_raw_value(self):
+        m = Meeting.objects.create(
+            name="TZ Bad", slug="tz-bad", timezone="Not/AZone",
+        )
+        self.assertEqual(m.timezone_display, "Not/AZone")

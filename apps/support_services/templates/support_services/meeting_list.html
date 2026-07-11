@@ -372,7 +372,7 @@
                                                 {{ meeting.get_day_display }}
                                             {% endif %}
                                             {% if meeting.time %}
-                                                {{ meeting.time|time:"g:i A" }}
+                                                {{ meeting.time|time:"g:i A" }} {{ meeting.timezone_display }}
                                             {% endif %}
                                         </span>
                                         {% if meeting.day == today_day %}

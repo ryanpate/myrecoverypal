@@ -205,6 +205,21 @@ class Meeting(models.Model):
 
         return data
 
+    @property
+    def timezone_display(self):
+        """Short label for the meeting's stored IANA zone (e.g. 'PDT').
+
+        Online meeting times are meaningless without a zone; this gives
+        templates a compact label. Falls back to the raw stored string if
+        the zone name is invalid.
+        """
+        try:
+            from datetime import datetime
+            from zoneinfo import ZoneInfo
+            return datetime.now(ZoneInfo(self.timezone)).strftime("%Z")
+        except Exception:
+            return self.timezone
+
 
 class SupportService(models.Model):
     """Support services including helplines, treatment facilities, etc."""
