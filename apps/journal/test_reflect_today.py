@@ -68,3 +68,18 @@ class ReflectTodayTests(TestCase):
         resp = self.client.get(reverse("journal:reflect_today"))
         self.assertEqual(resp.status_code, 302)
         self.assertIn("login", resp["Location"])
+
+    def test_post_after_existing_reflection_redirects_without_duplicate(self):
+        entry = JournalEntry.objects.create(
+            user=self.user, title="Daily Reflection — earlier",
+            content="already done",
+        )
+        resp = self.client.post(reverse("journal:reflect_today"), {
+            "title": "Daily Reflection — second",
+            "content": "should not save",
+        })
+        self.assertRedirects(
+            resp, reverse("journal:entry_detail", kwargs={"pk": entry.pk}),
+            fetch_redirect_response=False)
+        self.assertEqual(
+            JournalEntry.objects.filter(user=self.user).count(), 1)

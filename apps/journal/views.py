@@ -144,9 +144,6 @@ def reflect_today(request):
     day (timezone.localdate(), per repo convention); the thought itself is
     looked up by server date inside get_daily_thought.
     """
-    if request.method == 'POST':
-        return create_entry(request)
-
     today_local = timezone.localdate()
 
     existing = JournalEntry.objects.filter(
@@ -156,6 +153,9 @@ def reflect_today(request):
     ).first()
     if existing:
         return redirect('journal:entry_detail', pk=existing.pk)
+
+    if request.method == 'POST':
+        return create_entry(request)
 
     from apps.accounts.daily_content import get_daily_thought
     thought = get_daily_thought()

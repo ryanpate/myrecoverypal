@@ -1,6 +1,4 @@
 """Acceptance tests for the expanded daily-quote corpus."""
-from datetime import date
-
 from django.core.management import call_command
 from django.test import TestCase
 
