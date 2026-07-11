@@ -12,6 +12,7 @@ from apps.accounts.court_views import (
     court_report_email,
 )
 from apps.accounts import supporter_views
+from apps.accounts import plan_views
 from .facility_views import (
     facility_join, facility_leave, facility_dashboard, facility_roster,
     facility_member_detail, facility_generate_invite, facility_revoke_member,
@@ -244,6 +245,9 @@ urlpatterns = [
     path('court/reports/generate/', court_report_generate, name='court_report_generate'),
     path('court/reports/<int:report_id>/download/', court_report_download, name='court_report_download'),
     path('court/reports/<int:report_id>/email/', court_report_email, name='court_report_email'),
+
+    # Relapse prevention plan
+    path('plan/', plan_views.relapse_plan_view, name='relapse_plan'),
 
     # Supporter
     path('supporter/renew/', supporter_views.supporter_renew, name='supporter_renew'),

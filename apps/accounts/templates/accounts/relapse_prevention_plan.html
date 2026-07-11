@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Relapse Prevention Plan - MyRecoveryPal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .rpp-wrap { max-width: 860px; margin: 1.5rem auto 3rem; padding: 0 1rem; }
+    .rpp-wrap h1 { font-size: 1.7rem; margin-bottom: 0.3rem; }
+    .rpp-sub { opacity: 0.8; margin-bottom: 0.4rem; }
+    .rpp-progress {
+        display: inline-block; font-weight: 700; font-size: 0.85rem;
+        background: rgba(82,183,136,0.15); color: #2f7d56;
+        border-radius: 999px; padding: 0.3rem 0.9rem; margin-bottom: 1.2rem;
+    }
+    .rpp-card {
+        border: 1px solid rgba(128,128,128,0.25); border-radius: 14px;
+        padding: 1.2rem 1.3rem; margin-bottom: 1.1rem;
+    }
+    .rpp-card h2 { font-size: 1.12rem; margin-bottom: 0.25rem; }
+    .rpp-why { opacity: 0.75; font-size: 0.9rem; margin-bottom: 0.7rem; }
+    .rpp-card textarea { width: 100%; }
+    .rpp-contact-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+    .rpp-contact-row input { flex: 1 1 140px; }
+    .rpp-remove { background: none; border: none; color: #b02a37; cursor: pointer; font-size: 1rem; }
+    .rpp-actions { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; margin-top: 1.2rem; }
+    .rpp-save {
+        background: var(--primary-color, #2c7a7b); color: #fff; border: none;
+        font-weight: 700; font-size: 1rem; padding: 0.75rem 1.8rem;
+        border-radius: 8px; cursor: pointer;
+    }
+    .rpp-pdf, .rpp-pdf-locked {
+        display: inline-flex; align-items: center; gap: 0.45rem;
+        font-weight: 600; text-decoration: none;
+        border-radius: 8px; padding: 0.7rem 1.3rem;
+    }
+    .rpp-pdf { background: #1e4d8b; color: #fff; }
+    .rpp-pdf-locked { background: rgba(128,128,128,0.15); color: inherit; }
+    .rpp-add-contact { background: none; border: 1px dashed rgba(128,128,128,0.5);
+        border-radius: 8px; padding: 0.45rem 1rem; cursor: pointer; font-weight: 600; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="rpp-wrap">
+    <h1><i class="fas fa-clipboard-list" aria-hidden="true"></i> My Relapse Prevention Plan</h1>
+    <p class="rpp-sub">A plan written on a calm day is what future-you reaches for on a hard one.
+        Private, like your journal — only you can see it.</p>
+    <span class="rpp-progress">{{ plan.filled_section_count }} of 7 sections filled</span>
+
+    {% if messages %}{% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" style="margin-bottom: 1rem;">{{ message }}</div>
+    {% endfor %}{% endif %}
+
+    <form method="post" id="rpp-form">
+        {% csrf_token %}
+
+        <div class="rpp-card">
+            <h2>1. My triggers</h2>
+            <p class="rpp-why">Knowing the people, places, and feelings that put you at risk turns ambushes into forecasts.</p>
+            {{ form.triggers }}
+        </div>
+
+        <div class="rpp-card">
+            <h2>2. My early warning signs</h2>
+            <p class="rpp-why">Relapse starts before the first drink or use — name the drift so you can catch it early.</p>
+            {{ form.warning_signs }}
+        </div>
+
+        <div class="rpp-card">
+            <h2>3. Coping strategies that work for me</h2>
+            <p class="rpp-why">In the moment, you won't invent a strategy — you'll reach for one you wrote down.</p>
+            {{ form.coping_strategies }}
+        </div>
+
+        <div class="rpp-card">
+            <h2>4. My support contacts</h2>
+            <p class="rpp-why">Two minutes on the phone beats two hours in your head. Add the people you can actually call.</p>
+            <div id="rpp-contacts"></div>
+            <button type="button" class="rpp-add-contact" id="rpp-add-contact">
+                <i class="fas fa-plus" aria-hidden="true"></i> Add a contact</button>
+            {{ form.support_contacts }}
+        </div>
+
+        <div class="rpp-card">
+            <h2>5. My reasons for recovery</h2>
+            <p class="rpp-why">On the hardest days, the "why" carries you when willpower can't.</p>
+            {{ form.reasons }}
+        </div>
+
+        <div class="rpp-card">
+            <h2>6. HALT self-check</h2>
+            <p class="rpp-why">Hungry, Angry, Lonely, Tired — how does each one show up for you, and what heads it off?</p>
+            {{ form.halt_notes }}
+        </div>
+
+        <div class="rpp-card">
+            <h2>7. If a slip happens — my emergency steps</h2>
+            <p class="rpp-why">A slip is an event, not an identity. Decide now what the next hour looks like.</p>
+            {{ form.emergency_steps }}
+        </div>
+
+        <div class="rpp-actions">
+            <button type="submit" class="rpp-save">Save my plan</button>
+            {% url 'accounts:relapse_plan_pdf' as pdf_url %}
+            {% if has_premium and pdf_url %}
+            <a class="rpp-pdf" href="{{ pdf_url }}">
+                <i class="fas fa-file-pdf" aria-hidden="true"></i> Export PDF</a>
+            {% elif not has_premium %}
+            <a class="rpp-pdf-locked" href="{% url 'accounts:pricing' %}"
+                title="PDF export is a Premium feature">
+                <i class="fas fa-lock" aria-hidden="true"></i> Export PDF (Premium)</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    var hidden = document.querySelector('input[name="support_contacts"]');
+    var wrap = document.getElementById('rpp-contacts');
+    var addBtn = document.getElementById('rpp-add-contact');
+    var form = document.getElementById('rpp-form');
+
+    function row(contact) {
+        var div = document.createElement('div');
+        div.className = 'rpp-contact-row';
+        div.innerHTML =
+            '<input type="text" maxlength="100" placeholder="Name" value="' + esc(contact.name) + '" data-k="name">' +
+            '<input type="tel" maxlength="100" placeholder="Phone" value="' + esc(contact.phone) + '" data-k="phone">' +
+            '<input type="text" maxlength="100" placeholder="Relationship (sponsor, friend…)" value="' + esc(contact.relationship) + '" data-k="relationship">' +
+            '<button type="button" class="rpp-remove" title="Remove" aria-label="Remove contact">&times;</button>';
+        div.querySelector('.rpp-remove').addEventListener('click', function () { div.remove(); });
+        wrap.appendChild(div);
+    }
+    function esc(s) {
+        return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    }
+    function serialize() {
+        var rows = [];
+        wrap.querySelectorAll('.rpp-contact-row').forEach(function (r) {
+            var c = {};
+            r.querySelectorAll('input').forEach(function (i) { c[i.dataset.k] = i.value; });
+            rows.push(c);
+        });
+        hidden.value = JSON.stringify(rows);
+    }
+
+    var initial = [];
+    try { initial = JSON.parse(hidden.value || '[]'); } catch (e) { initial = []; }
+    if (!Array.isArray(initial)) initial = [];
+    initial.forEach(row);
+    if (!initial.length) row({});
+
+    addBtn.addEventListener('click', function () { row({}); });
+    form.addEventListener('submit', serialize);
+})();
+</script>
+{% endblock %}
