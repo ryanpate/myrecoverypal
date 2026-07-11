@@ -37,3 +37,7 @@ class SosPlanEntryTests(TestCase):
         resp = self.client.get(reverse("core:craving_sos"))
         self.assertNotContains(resp, "My relapse plan")
         self.assertNotContains(resp, "Build your relapse prevention plan")
+
+    def test_anonymous_nav_has_no_plan_link(self):
+        resp = self.client.get(reverse("core:craving_sos"))
+        self.assertNotContains(resp, reverse("accounts:relapse_plan"))
