@@ -1359,6 +1359,18 @@ def progress_view(request):
     ).exists()
     context['show_supporter_cta'] = (not context['show_premium_cta']) and not has_supporter_link
 
+    # Daily thought + reading card (shared partial with the social feed).
+    from apps.accounts.daily_content import get_daily_thought, get_daily_reading
+    context['daily_thought'] = get_daily_thought()
+    context['daily_reading'] = get_daily_reading()
+    # User-local "today" for the reflect duplicate-guard (repo convention).
+    from apps.journal.models import JournalEntry
+    context['todays_reflection'] = JournalEntry.objects.filter(
+        user=request.user,
+        title__startswith='Daily Reflection',
+        created_at__date=timezone.localdate(),
+    ).first()
+
     return render(request, 'accounts/progress.html', context)
 
 

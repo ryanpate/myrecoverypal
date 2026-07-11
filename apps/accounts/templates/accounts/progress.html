@@ -1627,6 +1627,7 @@
 {% endblock %}
 
 {% block content %}
+{% include 'accounts/partials/_daily_thought.html' %}
 <!-- ===== Daily Pledge Card ===== -->
 <div class="pledge-card" id="pledgeCard" data-pledged="{{ pledged_today|yesno:'1,0' }}">
     <div class="pledge-photo">
