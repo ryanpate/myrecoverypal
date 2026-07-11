@@ -1213,8 +1213,8 @@ QUOTES = [
         "prompt": "What's feeding your hope right now, and what's feeding your doubt?",
     },
     {
-        "quote": "You have survived one hundred percent of your worst days so far.",
-        "prompt": "What does that track record tell you about today?",
+        "quote": "Your record against hard days is unbeaten. Not one of them has managed to stop you yet.",
+        "prompt": "What does that unbeaten record tell you about today?",
     },
     {
         "quote": "Hope is quieter than despair, so you have to listen for it on purpose.",

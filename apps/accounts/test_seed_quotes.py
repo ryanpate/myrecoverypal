@@ -17,8 +17,8 @@ class QuoteCorpusTests(TestCase):
         self.assertEqual(len(texts), len(set(texts)))
 
     def test_new_entries_all_have_prompts(self):
-        # Entries beyond the original 109 must each carry a prompt.
-        missing = [i for i, q in enumerate(QUOTES[109:], start=109)
+        # Entries beyond the original 108 must each carry a prompt.
+        missing = [i for i, q in enumerate(QUOTES[108:], start=108)
                    if not q.get("prompt")]
         self.assertEqual(missing, [])
 
