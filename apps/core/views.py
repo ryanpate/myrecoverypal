@@ -9,6 +9,8 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
+from apps.support_services.meeting_queries import starting_soon
+
 
 class IndexView(TemplateView):
     template_name = 'core/index.html'
@@ -146,6 +148,20 @@ class OnlineAAMeetingsView(TemplateView):
             online.filter(day=today_meeting_day).order_by('time')[:12])
         context['today_name'] = dict(Meeting.DAY_CHOICES).get(
             today_meeting_day, '')
+        return context
+
+
+class CravingSOSView(TemplateView):
+    """Craving SOS — the "2 AM toolbox".
+
+    Public: breathing / urge surfing / grounding tools, crisis line, and
+    online meetings starting soon. Logged-in members additionally get a
+    one-tap never-rate-limited Anchor session and their pledge reason."""
+    template_name = 'core/craving_sos.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['soon_meetings'] = starting_soon(hours=3, limit=6)
         return context
 
 

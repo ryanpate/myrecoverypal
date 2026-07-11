@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Craving SOS: Stop an Alcohol or Drug Craving Right Now{% endblock %}
+{% block meta_description %}Free craving emergency toolbox: guided breathing, urge surfing timer, 5-4-3-2-1 grounding, and online AA meetings starting in the next 3 hours. No signup needed.{% endblock %}
+{% block meta_keywords %}how to stop alcohol cravings, how to stop drug cravings, urge surfing, craving help, breathing exercise for cravings, craving emergency{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/craving-sos/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How long does a craving last?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most cravings rise, peak, and pass within 20 to 30 minutes — even intense ones. They feel endless in the moment, but they are waves, not tides. Riding one out with a distraction, breathing, or a meeting makes the next one weaker."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is urge surfing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Urge surfing is a mindfulness technique: instead of fighting a craving, you observe it like a wave — noticing where you feel it, letting it build, peak, and fade without acting on it. Research shows it reduces both the intensity and the frequency of cravings over time."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does deep breathing really help with cravings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Slow, structured breathing like the 4-7-8 pattern activates the parasympathetic nervous system, lowering the stress response that fuels cravings. A few minutes of guided breathing gives the craving time to peak and pass."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When should I call 988 instead?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If you are thinking about harming yourself, feel unsafe, or are in medical danger (severe withdrawal symptoms like seizures or hallucinations), call or text 988 (Suicide & Crisis Lifeline) or 911 immediately. Cravings are survivable; a crisis needs professional help now."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I really join an online AA meeting right now?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Online AA meetings run around the clock across every US time zone, are free, and are open to anyone. You can join with your camera off and just listen. This page shows meetings starting within the next 3 hours."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .sos-crisis-strip {
+        background: #b02a37; color: #fff; text-align: center;
+        padding: 0.7rem 1rem; font-weight: 600;
+    }
+    .sos-crisis-strip a { color: #fff; text-decoration: underline; }
+    .sos-wrap { max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+    .sos-wrap h1 { text-align: center; font-size: 1.9rem; margin: 1rem 0 0.5rem; }
+    .sos-lede { text-align: center; opacity: 0.85; margin-bottom: 1.5rem; }
+    .sos-tool {
+        border: 1px solid rgba(128,128,128,0.25); border-radius: 14px;
+        padding: 1.3rem; margin-bottom: 1.2rem;
+    }
+    .sos-tool h2 { font-size: 1.25rem; margin-bottom: 0.4rem; }
+    .sos-tool p.sos-sub { opacity: 0.8; margin-bottom: 0.9rem; }
+    .sos-btn {
+        display: inline-block; border: none; cursor: pointer;
+        background: var(--primary-color, #2c7a7b); color: #fff;
+        font-weight: 600; font-size: 1rem;
+        padding: 0.7rem 1.6rem; border-radius: 8px; text-decoration: none;
+    }
+    .sos-btn.secondary { background: #6c757d; }
+    /* Breathing */
+    #breath-circle {
+        width: 130px; height: 130px; border-radius: 50%;
+        background: var(--primary-color, #2c7a7b); opacity: 0.85;
+        margin: 1rem auto; transition: transform 4s ease-in-out;
+        transform: scale(0.6);
+    }
+    #breath-circle.inhale { transition-duration: 4s; transform: scale(1); }
+    #breath-circle.hold { transition-duration: 0s; transform: scale(1); }
+    #breath-circle.exhale { transition-duration: 8s; transform: scale(0.6); }
+    #breath-phase { text-align: center; font-size: 1.15rem; font-weight: 600; min-height: 1.6em; }
+    /* Urge surfing */
+    #urge-bar-track {
+        background: rgba(128,128,128,0.2); border-radius: 999px;
+        height: 12px; margin: 0.9rem 0; overflow: hidden;
+    }
+    #urge-bar { background: var(--primary-color, #2c7a7b); height: 100%; width: 0%; }
+    #urge-message { min-height: 3em; font-size: 1.05rem; }
+    /* Grounding */
+    #grounding-step { font-size: 1.1rem; min-height: 3.5em; margin-bottom: 0.6rem; }
+    /* Meetings */
+    .sos-meeting {
+        display: flex; justify-content: space-between; align-items: center;
+        gap: 0.8rem; padding: 0.7rem 0;
+        border-bottom: 1px solid rgba(128,128,128,0.15);
+    }
+    .sos-meeting:last-child { border-bottom: none; }
+    .sos-faq h3 { margin-top: 1.3rem; font-size: 1.05rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sos-crisis-strip">
+    In danger or thinking of harming yourself? Call or text <a href="tel:988">988</a> now
+    &middot; <a href="{% url 'core:crisis' %}">More crisis resources</a>
+</div>
+
+<div class="sos-wrap">
+    <h1>Craving SOS</h1>
+    <p class="sos-lede">This craving will pass — usually within 20&ndash;30 minutes.
+        Pick a tool below and ride it out. You don't need an account.</p>
+
+    {% if user.is_authenticated %}
+    <div class="sos-tool" style="text-align:center;">
+        {% if user.pledge_reason %}
+        <p style="font-size:1.05rem; margin-bottom:0.8rem;">Remember why you started:
+            <strong>&ldquo;{{ user.pledge_reason }}&rdquo;</strong></p>
+        {% endif %}
+        {% if user.pledge_photo %}
+        <img src="{{ user.pledge_photo.url }}" alt="Your reason"
+            style="max-width:180px; border-radius:12px; margin-bottom:0.8rem;">
+        {% endif %}
+        <form method="post" action="{% url 'accounts:coach_start_sos' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="sos-btn">
+                <i class="fas fa-anchor" aria-hidden="true"></i> Talk to Anchor now</button>
+        </form>
+        <p style="opacity:0.75; margin-top:0.5rem; font-size:0.9rem;">
+            Your AI recovery coach &mdash; SOS chats are never limited.</p>
+    </div>
+    {% else %}
+    <div class="sos-tool" style="text-align:center;">
+        <p style="margin-bottom:0.8rem;">Want a coach in your pocket for moments like this?</p>
+        <a class="sos-btn" href="{% url 'accounts:register' %}">Get free support</a>
+    </div>
+    {% endif %}
+
+    <div class="sos-tool" id="sos-breathing">
+        <h2><i class="fas fa-wind" aria-hidden="true"></i> Guided breathing (4-7-8)</h2>
+        <p class="sos-sub">Breathe in 4 seconds, hold 7, out 8. Four rounds takes about 80 seconds.</p>
+        <div id="breath-circle"></div>
+        <div id="breath-phase">Press start and follow the circle</div>
+        <div style="text-align:center; margin-top:0.8rem;">
+            <button class="sos-btn" id="breath-toggle" type="button">Start breathing</button>
+            <span id="breath-count" style="margin-left:0.8rem; opacity:0.8;"></span>
+        </div>
+    </div>
+
+    <div class="sos-tool" id="sos-urge">
+        <h2><i class="fas fa-water" aria-hidden="true"></i> Urge surfing (10 minutes)</h2>
+        <p class="sos-sub">Don't fight the wave &mdash; watch it. It will peak and pass.</p>
+        <div id="urge-message">Press start. For the next 10 minutes your only job is to notice the craving, not act on it.</div>
+        <div id="urge-bar-track"><div id="urge-bar"></div></div>
+        <button class="sos-btn" id="urge-toggle" type="button">Start surfing</button>
+        <span id="urge-clock" style="margin-left:0.8rem; opacity:0.8;"></span>
+    </div>
+
+    <div class="sos-tool" id="sos-grounding">
+        <h2><i class="fas fa-hand" aria-hidden="true"></i> Grounding (5-4-3-2-1)</h2>
+        <p class="sos-sub">Pull your mind back into the room, one sense at a time.</p>
+        <div id="grounding-step">Press start when you're ready.</div>
+        <button class="sos-btn" id="grounding-next" type="button">Start grounding</button>
+    </div>
+
+    <div class="sos-tool">
+        <h2><i class="fas fa-video" aria-hidden="true"></i> Meetings starting soon</h2>
+        <p class="sos-sub">Real people, right now. Camera off is fine &mdash; just listen.</p>
+        {% for meeting in soon_meetings %}
+        <div class="sos-meeting">
+            <div>
+                <strong>{{ meeting.name }}</strong><br>
+                <span style="opacity:0.75;">in {{ meeting.minutes_until }} min
+                    ({{ meeting.time|time:"g:i A" }} {{ meeting.timezone_display }})</span>
+            </div>
+            <a class="sos-btn" href="{{ meeting.conference_url }}"
+                target="_blank" rel="noopener">Join</a>
+        </div>
+        {% empty %}
+        <p>No meetings in the next 3 hours &mdash; but the
+            <a href="{% url 'core:online_aa_meetings' %}">full directory</a> has
+            1,500+ online meetings across every time zone.</p>
+        {% endfor %}
+        <p style="margin-top:0.8rem;"><a href="{% url 'support_services:meeting_list' %}?attendance=online">Browse all online meetings &rarr;</a></p>
+    </div>
+
+    <div class="sos-faq">
+        <h2>Craving questions, answered</h2>
+        <h3>How long does a craving last?</h3>
+        <p>Most cravings rise, peak, and pass within 20&ndash;30 minutes — even intense ones. They feel endless in the moment, but they are waves, not tides.</p>
+        <h3>What is urge surfing?</h3>
+        <p>A mindfulness technique: instead of fighting a craving, you observe it like a wave — noticing where you feel it, letting it build, peak, and fade without acting on it.</p>
+        <h3>Does deep breathing really help?</h3>
+        <p>Yes. Slow, structured breathing like 4-7-8 activates the parasympathetic nervous system, lowering the stress response that fuels cravings.</p>
+        <h3>When should I call 988 instead?</h3>
+        <p>If you are thinking about harming yourself, feel unsafe, or have severe withdrawal symptoms (seizures, hallucinations), call or text 988 or 911 immediately.</p>
+        <h3>Can I really join an AA meeting right now?</h3>
+        <p>Yes — online AA meetings run around the clock, are free, and you can join with your camera off and just listen.</p>
+    </div>
+</div>
+
+{% include 'core/partials/_related_tools.html' with exclude='craving_sos' %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    // ---- Breathing: 4-7-8, four rounds ----
+    var breathBtn = document.getElementById('breath-toggle');
+    var circle = document.getElementById('breath-circle');
+    var phaseEl = document.getElementById('breath-phase');
+    var countEl = document.getElementById('breath-count');
+    var breathTimer = null, round = 0;
+    var PHASES = [
+        {cls: 'inhale', label: 'Breathe in…', secs: 4},
+        {cls: 'hold',   label: 'Hold…',       secs: 7},
+        {cls: 'exhale', label: 'Breathe out…', secs: 8},
+    ];
+    function runPhase(i) {
+        if (i === 0) {
+            round += 1;
+            if (round > 4) { stopBreathing('Nice work. Notice how you feel.'); return; }
+            countEl.textContent = 'Round ' + round + ' of 4';
+        }
+        var p = PHASES[i];
+        circle.className = p.cls;
+        phaseEl.textContent = p.label;
+        breathTimer = setTimeout(function () { runPhase((i + 1) % 3); }, p.secs * 1000);
+    }
+    function stopBreathing(msg) {
+        clearTimeout(breathTimer); breathTimer = null; round = 0;
+        circle.className = ''; countEl.textContent = '';
+        phaseEl.textContent = msg || 'Press start and follow the circle';
+        breathBtn.textContent = 'Start breathing';
+    }
+    breathBtn.addEventListener('click', function () {
+        if (breathTimer) { stopBreathing(); return; }
+        breathBtn.textContent = 'Stop';
+        runPhase(0);
+    });
+
+    // ---- Urge surfing: 10-minute staged walkthrough ----
+    var urgeBtn = document.getElementById('urge-toggle');
+    var urgeBar = document.getElementById('urge-bar');
+    var urgeMsg = document.getElementById('urge-message');
+    var urgeClock = document.getElementById('urge-clock');
+    var URGE_TOTAL = 600; // seconds
+    var urgeElapsed = 0, urgeTimer = null;
+    var STAGES = [
+        [0,   'Find where the craving lives in your body. Chest? Stomach? Jaw? Just notice it.'],
+        [120, 'It may be building. That’s the wave rising — it cannot rise forever.'],
+        [300, 'Halfway. Waves peak. If it hasn’t already, it will soon — keep watching it, not fighting it.'],
+        [480, 'It’s losing power. You’ve out-lasted the worst of it.'],
+    ];
+    function urgeTick() {
+        urgeElapsed += 1;
+        urgeBar.style.width = (urgeElapsed / URGE_TOTAL * 100) + '%';
+        var m = Math.floor((URGE_TOTAL - urgeElapsed) / 60);
+        var s = (URGE_TOTAL - urgeElapsed) % 60;
+        urgeClock.textContent = m + ':' + (s < 10 ? '0' : '') + s + ' left';
+        for (var i = STAGES.length - 1; i >= 0; i--) {
+            if (urgeElapsed >= STAGES[i][0]) { urgeMsg.textContent = STAGES[i][1]; break; }
+        }
+        if (urgeElapsed >= URGE_TOTAL) {
+            stopUrge('You rode it out. That craving passed — and so will the next one.');
+        }
+    }
+    function stopUrge(msg) {
+        clearInterval(urgeTimer); urgeTimer = null; urgeElapsed = 0;
+        urgeClock.textContent = '';
+        if (msg) { urgeMsg.textContent = msg; urgeBar.style.width = '100%'; }
+        else { urgeMsg.textContent = 'Press start. For the next 10 minutes your only job is to notice the craving, not act on it.'; urgeBar.style.width = '0%'; }
+        urgeBtn.textContent = 'Start surfing';
+    }
+    urgeBtn.addEventListener('click', function () {
+        if (urgeTimer) { stopUrge(); return; }
+        urgeBtn.textContent = 'Stop';
+        urgeBar.style.width = '0%';
+        urgeMsg.textContent = STAGES[0][1];
+        urgeTimer = setInterval(urgeTick, 1000);
+    });
+
+    // ---- Grounding: 5-4-3-2-1 tap-through ----
+    var gBtn = document.getElementById('grounding-next');
+    var gStep = document.getElementById('grounding-step');
+    var G_STEPS = [
+        'Name 5 things you can SEE. Look around slowly — anything counts.',
+        'Name 4 things you can HEAR. The hum of a fridge, traffic, your own breath.',
+        'Name 3 things you can TOUCH. Feel their texture for a moment.',
+        'Name 2 things you can SMELL (or two smells you like).',
+        'Name 1 thing you can TASTE. Take a sip of water if you have one.',
+        'You’re here, in this room, in this moment. The craving is just a visitor — and it’s leaving.',
+    ];
+    var gIndex = -1;
+    gBtn.addEventListener('click', function () {
+        gIndex += 1;
+        if (gIndex >= G_STEPS.length) {
+            gIndex = -1;
+            gStep.textContent = 'Press start when you’re ready.';
+            gBtn.textContent = 'Start grounding';
+            return;
+        }
+        gStep.textContent = G_STEPS[gIndex];
+        gBtn.textContent = gIndex === G_STEPS.length - 1 ? 'Done' : 'Next';
+    });
+})();
+</script>
+{% endblock %}

@@ -47,6 +47,7 @@ class StaticViewSitemap(Sitemap):
             ('core:ai_recovery_coach', 0.9),  # "AI recovery coach" keyword
             ('core:court_ordered_meeting_tracker', 0.9),  # "court ordered AA app" — Court Compliance tier landing
             ('core:online_aa_meetings', 0.9),  # "online AA meetings" — live meeting directory
+            ('core:craving_sos', 0.9),  # "how to stop cravings" — interactive SOS toolbox
             ('core:for_probation_officers', 0.7),  # PO verification guide / outreach one-pager
 
             # Pricing (paid tier discovery)
