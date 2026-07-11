@@ -56,7 +56,7 @@ class CoachStartSosViewTests(TestCase):
         self.client.force_login(self.user)
 
     def test_creates_sos_session_with_static_opener(self):
-        resp = self.client.get(reverse("accounts:coach_start_sos"))
+        resp = self.client.post(reverse("accounts:coach_start_sos"))
         self.assertRedirects(
             resp, reverse("accounts:recovery_coach"),
             fetch_redirect_response=False)
@@ -68,8 +68,8 @@ class CoachStartSosViewTests(TestCase):
         self.assertIn("Cravings", opener.content)
 
     def test_reuses_todays_sos_session(self):
-        self.client.get(reverse("accounts:coach_start_sos"))
-        self.client.get(reverse("accounts:coach_start_sos"))
+        self.client.post(reverse("accounts:coach_start_sos"))
+        self.client.post(reverse("accounts:coach_start_sos"))
         self.assertEqual(
             RecoveryCoachSession.objects.filter(
                 user=self.user, trigger='sos').count(), 1)
@@ -77,12 +77,16 @@ class CoachStartSosViewTests(TestCase):
     def test_deactivates_other_active_sessions(self):
         other = RecoveryCoachSession.objects.create(
             user=self.user, trigger='manual', is_active=True)
-        self.client.get(reverse("accounts:coach_start_sos"))
+        self.client.post(reverse("accounts:coach_start_sos"))
         other.refresh_from_db()
         self.assertFalse(other.is_active)
 
+    def test_get_not_allowed(self):
+        resp = self.client.get(reverse("accounts:coach_start_sos"))
+        self.assertEqual(resp.status_code, 405)
+
     def test_requires_login(self):
         self.client.logout()
-        resp = self.client.get(reverse("accounts:coach_start_sos"))
+        resp = self.client.post(reverse("accounts:coach_start_sos"))
         self.assertEqual(resp.status_code, 302)
         self.assertIn("login", resp["Location"])

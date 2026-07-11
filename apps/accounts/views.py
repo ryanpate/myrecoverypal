@@ -5062,6 +5062,7 @@ def coach_start_from_checkin(request, checkin_id):
 
 
 @login_required
+@require_POST
 def coach_start_sos(request):
     """Open (or reuse) a Craving SOS coach session from the SOS page.
 
