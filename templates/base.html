@@ -482,6 +482,9 @@
                 <a href="{% url 'support_services:meeting_list' %}">
                     <i class="fas fa-location-dot" style="margin-right: 0.5rem;"></i> Meeting Finder
                 </a>
+                <a href="{% url 'accounts:relapse_plan' %}">
+                    <i class="fas fa-clipboard-list" style="margin-right: 0.5rem;"></i> Relapse Prevention Plan
+                </a>
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-newspaper" style="margin-right: 0.5rem;"></i> Blog

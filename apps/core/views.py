@@ -162,6 +162,11 @@ class CravingSOSView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['soon_meetings'] = starting_soon(hours=3, limit=6)
+        if self.request.user.is_authenticated:
+            from apps.accounts.plan_models import RelapsePreventionPlan
+            plan = RelapsePreventionPlan.objects.filter(
+                user=self.request.user).first()
+            context['has_plan'] = bool(plan and plan.filled_section_count)
         return context
 
 

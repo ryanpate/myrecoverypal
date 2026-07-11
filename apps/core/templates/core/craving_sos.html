@@ -138,8 +138,18 @@
             <button type="submit" class="sos-btn">
                 <i class="fas fa-anchor" aria-hidden="true"></i> Talk to Anchor now</button>
         </form>
+        {% if has_plan %}
+        <a class="sos-btn secondary" href="{% url 'accounts:relapse_plan' %}"
+            style="margin-left: 0.6rem;">
+            <i class="fas fa-clipboard-list" aria-hidden="true"></i> My relapse plan</a>
+        {% endif %}
         <p style="opacity:0.75; margin-top:0.5rem; font-size:0.9rem;">
             Your AI recovery coach &mdash; SOS chats are never limited.</p>
+        {% if not has_plan %}
+        <p style="margin-top: 0.6rem; font-size: 0.95rem;">
+            <a href="{% url 'accounts:relapse_plan' %}">Build your relapse prevention plan</a>
+            &mdash; ten calm minutes now is what future-you reaches for at 2 AM.</p>
+        {% endif %}
     </div>
     {% else %}
     <div class="sos-tool" style="text-align:center;">
