@@ -1627,7 +1627,10 @@
 {% endblock %}
 
 {% block content %}
-{% include 'accounts/partials/_daily_thought.html' %}
+{# Same width constraint as .pledge-card below so the two cards align #}
+<div style="max-width: 1000px; margin: 1.5rem auto 0; padding: 0 1rem;">
+    {% include 'accounts/partials/_daily_thought.html' %}
+</div>
 <!-- ===== Daily Pledge Card ===== -->
 <div class="pledge-card" id="pledgeCard" data-pledged="{{ pledged_today|yesno:'1,0' }}">
     <div class="pledge-photo">

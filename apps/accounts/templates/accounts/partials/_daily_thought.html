@@ -1,7 +1,9 @@
 {% if daily_thought %}
-{# Self-contained styles: this partial renders on the social feed AND the
-   progress home, so its rules live here rather than in either page's
-   style block. Design tokens (--gradient-accent etc.) are global (main.css). #}
+{% comment %}
+Self-contained styles: this partial renders on the social feed AND the
+progress home, so its rules live here rather than in either page's
+style block. Design tokens (--gradient-accent etc.) are global (main.css).
+{% endcomment %}
 <style>
     .daily-thought-panel {
         position: relative; overflow: hidden; border-radius: var(--radius-xl, 20px); color: #fff;
@@ -69,7 +71,7 @@
             {% endif %}
             {% if daily_reading %}
             <a href="{{ daily_reading.get_absolute_url }}">
-                <i class="fas fa-book" aria-hidden="true"></i> Today's reading: {{ daily_reading.title }}</a>
+                <i class="fas fa-book" aria-hidden="true"></i> Today's reading: {{ daily_reading.title|truncatechars:48 }}</a>
             {% endif %}
         </div>
     </div>
