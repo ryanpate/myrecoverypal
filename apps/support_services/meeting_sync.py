@@ -33,6 +33,16 @@ FEED_SOURCES = [
         "url": "https://www.seattleaa.org/wp-admin/admin-ajax.php?action=meetings",
         "timezone": "America/Los_Angeles",
     },
+    {
+        "key": "houston",
+        "url": "https://aahouston.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Chicago",
+    },
+    {
+        "key": "nyintergroup",
+        "url": "https://meetings.nyintergroup.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/New_York",
+    },
 ]
 
 
