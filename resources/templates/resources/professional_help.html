@@ -561,7 +561,13 @@
     async function loadFacilities() {
         try {
             // Try to load from static file
-            const response = await fetch("{% static 'resources/data/my_facilities_example.json' %}");
+            {% comment %}
+            Literal URL on purpose: this data file is optional and has never
+            shipped. A static-tag manifest lookup 500s the whole page on a
+            missing entry, while a plain fetch just 404s into the
+            sample-data fallback below.
+            {% endcomment %}
+            const response = await fetch("/static/resources/data/my_facilities_example.json");
             if (response.ok) {
                 facilitiesData = await response.json();
             } else {
