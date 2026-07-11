@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    @page { size: letter; margin: 2cm 1.8cm; }
+    body { font-family: Helvetica, Arial, sans-serif; color: #1a2733; font-size: 11pt; }
+    h1 { font-size: 19pt; color: #1e4d8b; margin-bottom: 2pt; }
+    .meta { color: #667; font-size: 9pt; margin-bottom: 14pt; }
+    h2 { font-size: 12.5pt; color: #1e4d8b; border-bottom: 1.5pt solid #cfe0f5;
+         padding-bottom: 3pt; margin: 14pt 0 6pt; }
+    .body-text { white-space: pre-wrap; line-height: 1.45; }
+    .empty { color: #99a; font-style: italic; }
+    table { width: 100%; border-collapse: collapse; margin-top: 4pt; }
+    th, td { text-align: left; padding: 4pt 6pt; border-bottom: 0.75pt solid #dde5ee; font-size: 10.5pt; }
+    th { color: #556; font-size: 9pt; text-transform: uppercase; letter-spacing: 0.06em; }
+    .footer { margin-top: 20pt; padding-top: 8pt; border-top: 1.5pt solid #cfe0f5;
+              font-size: 9.5pt; color: #556; }
+    .footer strong { color: #b02a37; }
+</style>
+</head>
+<body>
+    <h1>Relapse Prevention Plan</h1>
+    <div class="meta">{{ plan_user.get_full_name|default:plan_user.username }}
+        &middot; generated {{ generated|date:"F j, Y" }} &middot; myrecoverypal.com</div>
+
+    <h2>1. My triggers</h2>
+    <div class="body-text">{% if plan.triggers %}{{ plan.triggers }}{% else %}<span class="empty">Not filled in yet</span>{% endif %}</div>
+
+    <h2>2. My early warning signs</h2>
+    <div class="body-text">{% if plan.warning_signs %}{{ plan.warning_signs }}{% else %}<span class="empty">Not filled in yet</span>{% endif %}</div>
+
+    <h2>3. Coping strategies that work for me</h2>
+    <div class="body-text">{% if plan.coping_strategies %}{{ plan.coping_strategies }}{% else %}<span class="empty">Not filled in yet</span>{% endif %}</div>
+
+    <h2>4. My support contacts</h2>
+    {% if plan.support_contacts %}
+    <table>
+        <tr><th>Name</th><th>Phone</th><th>Relationship</th></tr>
+        {% for c in plan.support_contacts %}
+        <tr><td>{{ c.name }}</td><td>{{ c.phone }}</td><td>{{ c.relationship }}</td></tr>
+        {% endfor %}
+    </table>
+    {% else %}<span class="empty">Not filled in yet</span>{% endif %}
+
+    <h2>5. My reasons for recovery</h2>
+    <div class="body-text">{% if plan.reasons %}{{ plan.reasons }}{% else %}<span class="empty">Not filled in yet</span>{% endif %}</div>
+
+    <h2>6. HALT self-check</h2>
+    <div class="body-text">{% if plan.halt_notes %}{{ plan.halt_notes }}{% else %}<span class="empty">Not filled in yet</span>{% endif %}</div>
+
+    <h2>7. If a slip happens &mdash; my emergency steps</h2>
+    <div class="body-text">{% if plan.emergency_steps %}{{ plan.emergency_steps }}{% else %}<span class="empty">Not filled in yet</span>{% endif %}</div>
+
+    <div class="footer">
+        In crisis or thinking about harming yourself? Call or text <strong>988</strong>
+        (Suicide &amp; Crisis Lifeline) or 911. &middot; More tools:
+        myrecoverypal.com/craving-sos
+    </div>
+</body>
+</html>

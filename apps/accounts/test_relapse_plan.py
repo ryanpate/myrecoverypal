@@ -135,3 +135,48 @@ class PlanBuilderViewTests(TestCase):
         follow = self.client.get(reverse("accounts:relapse_plan"))
         self.assertContains(follow, "Payday fridays")
         self.assertContains(follow, "7 of 7")
+
+
+from unittest import skipUnless
+from unittest.mock import patch
+
+try:
+    import weasyprint  # noqa: F401
+    HAS_WEASYPRINT = True
+except Exception:
+    HAS_WEASYPRINT = False
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class PlanPdfGateTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="pdfu", password="x")
+        self.client.force_login(self.user)
+
+    def test_free_user_redirected_to_pricing(self):
+        self.user.subscription.tier = 'free'
+        self.user.subscription.save()
+        resp = self.client.get(reverse("accounts:relapse_plan_pdf"))
+        self.assertEqual(resp.status_code, 302)
+        self.assertIn(reverse("accounts:pricing"), resp["Location"])
+
+    def test_premium_user_gets_pdf_response(self):
+        # New users default to a premium trial (signal), which is_premium().
+        with patch("apps.accounts.plan_views.render_plan_pdf",
+                   return_value=b"%PDF-fake") as mock_render:
+            resp = self.client.get(reverse("accounts:relapse_plan_pdf"))
+        mock_render.assert_called_once_with(self.user)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp["Content-Type"], "application/pdf")
+        self.assertIn("relapse-prevention-plan.pdf",
+                      resp["Content-Disposition"])
+
+    @skipUnless(HAS_WEASYPRINT, "WeasyPrint not available in this env")
+    def test_real_render_produces_pdf_bytes(self):
+        from apps.accounts.plan_service import render_plan_pdf
+        RelapsePreventionPlan.objects.create(
+            user=self.user, triggers="Payday fridays",
+            support_contacts=[{"name": "Sam", "phone": "555-0100",
+                               "relationship": "sponsor"}])
+        pdf = render_plan_pdf(self.user)
+        self.assertTrue(pdf.startswith(b"%PDF"))

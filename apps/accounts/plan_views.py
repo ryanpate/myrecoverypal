@@ -12,6 +12,7 @@ from django.shortcuts import redirect, render
 from apps.accounts.decorators import premium_required
 from apps.accounts.plan_forms import RelapsePreventionPlanForm
 from apps.accounts.plan_models import RelapsePreventionPlan
+from apps.accounts.plan_service import render_plan_pdf
 
 
 @login_required
@@ -34,3 +35,14 @@ def relapse_plan_view(request):
         'plan': plan,
         'has_premium': has_premium,
     })
+
+
+@login_required
+@premium_required
+def relapse_plan_pdf_view(request):
+    """Premium: download the plan as a print-ready PDF."""
+    pdf_bytes = render_plan_pdf(request.user)
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    response['Content-Disposition'] = (
+        'attachment; filename="relapse-prevention-plan.pdf"')
+    return response

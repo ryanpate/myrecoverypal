@@ -248,6 +248,7 @@ urlpatterns = [
 
     # Relapse prevention plan
     path('plan/', plan_views.relapse_plan_view, name='relapse_plan'),
+    path('plan/pdf/', plan_views.relapse_plan_pdf_view, name='relapse_plan_pdf'),
 
     # Supporter
     path('supporter/renew/', supporter_views.supporter_renew, name='supporter_renew'),
