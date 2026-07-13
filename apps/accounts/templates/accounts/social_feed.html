@@ -2132,7 +2132,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const videoPreview = document.getElementById('video-preview');
     const removeVideoBtn = document.getElementById('remove-video-btn');
 
+    let currentVideoObjectUrl = null;
+
     function clearVideoSelection() {
+        if (currentVideoObjectUrl) {
+            URL.revokeObjectURL(currentVideoObjectUrl);
+            currentVideoObjectUrl = null;
+        }
         if (videoInput) videoInput.value = '';
         if (videoPreviewContainer) videoPreviewContainer.style.display = 'none';
         if (videoPreview) videoPreview.removeAttribute('src');
@@ -2146,6 +2152,12 @@ document.addEventListener('DOMContentLoaded', function() {
         videoInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
+
+            // A new selection replaces any previously-tracked preview URL
+            if (currentVideoObjectUrl) {
+                URL.revokeObjectURL(currentVideoObjectUrl);
+                currentVideoObjectUrl = null;
+            }
 
             if (!file.type.startsWith('video/')) {
                 alert('Please select a video file');
@@ -2165,8 +2177,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const probe = document.createElement('video');
             probe.preload = 'metadata';
             probe.onloadedmetadata = function() {
-                URL.revokeObjectURL(objectUrl);
                 if (probe.duration > 60) {
+                    URL.revokeObjectURL(objectUrl);
                     alert('Videos must be 60 seconds or less');
                     input.value = '';
                     return;
@@ -2177,7 +2189,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (imagePreview) imagePreview.src = '';
 
                 if (videoPreview && videoPreviewContainer) {
-                    videoPreview.src = URL.createObjectURL(file);
+                    currentVideoObjectUrl = objectUrl;
+                    videoPreview.src = objectUrl;
                     videoPreviewContainer.style.display = 'block';
                 }
                 if (submitBtn) submitBtn.disabled = false;
