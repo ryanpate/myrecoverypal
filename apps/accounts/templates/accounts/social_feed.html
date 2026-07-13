@@ -1569,11 +1569,25 @@
                     </div>
                 </div>
 
+                <!-- Video Preview -->
+                <div id="video-preview-container" style="display: none; padding: 0.5rem; margin-top: 0.5rem;">
+                    <div style="position: relative; display: inline-block; max-width: 100%;">
+                        <video id="video-preview" muted playsinline style="max-width: 100%; max-height: 300px; border-radius: 8px;"></video>
+                        <button type="button" id="remove-video-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <div class="post-actions">
                     <div style="display: flex; gap: 0.5rem; align-items: center;">
                         <input type="file" name="image" id="post-image-input" accept="image/*" style="display: none;">
                         <button type="button" id="add-photo-btn" class="action-btn" style="padding: 0.25rem 0.75rem; margin: 0;">
                             <i class="fas fa-image"></i>
+                        </button>
+                        <input type="file" name="video" id="post-video-input" accept="video/*" style="display: none;">
+                        <button type="button" id="add-video-btn" class="action-btn" style="padding: 0.25rem 0.75rem; margin: 0;" title="Add video (max 60s)">
+                            <i class="fas fa-video"></i>
                         </button>
                         <select name="visibility" class="visibility-select">
                             <option value="public">🌍 Everyone</option>
@@ -2043,7 +2057,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const length = this.value.length;
             // Enable submit button if there's content or an image
             const hasImage = document.getElementById('post-image-input').files.length > 0;
-            submitBtn.disabled = length === 0 && !hasImage;
+            const hasVideo = document.getElementById('post-video-input').files.length > 0;
+            submitBtn.disabled = length === 0 && !hasImage && !hasVideo;
         });
     }
 
@@ -2077,6 +2092,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
 
+                clearVideoSelection();
+
                 // Show preview
                 const reader = new FileReader();
                 reader.onload = function(e) {
@@ -2102,7 +2119,85 @@ document.addEventListener('DOMContentLoaded', function() {
             // Disable submit button if no content
             if (textarea && submitBtn) {
                 const hasContent = textarea.value.trim().length > 0;
-                submitBtn.disabled = !hasContent;
+                const hasVideo = videoInput && videoInput.files.length > 0;
+                submitBtn.disabled = !hasContent && !hasVideo;
+            }
+        });
+    }
+
+    // Video upload handlers
+    const addVideoBtn = document.getElementById('add-video-btn');
+    const videoInput = document.getElementById('post-video-input');
+    const videoPreviewContainer = document.getElementById('video-preview-container');
+    const videoPreview = document.getElementById('video-preview');
+    const removeVideoBtn = document.getElementById('remove-video-btn');
+
+    function clearVideoSelection() {
+        if (videoInput) videoInput.value = '';
+        if (videoPreviewContainer) videoPreviewContainer.style.display = 'none';
+        if (videoPreview) videoPreview.removeAttribute('src');
+    }
+
+    if (addVideoBtn && videoInput) {
+        addVideoBtn.addEventListener('click', function() {
+            videoInput.click();
+        });
+
+        videoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('video/')) {
+                alert('Please select a video file');
+                this.value = '';
+                return;
+            }
+
+            if (file.size > 50 * 1024 * 1024) {
+                alert('Video size must be less than 50MB');
+                this.value = '';
+                return;
+            }
+
+            // Check duration (max 60s) by loading metadata
+            const input = this;
+            const objectUrl = URL.createObjectURL(file);
+            const probe = document.createElement('video');
+            probe.preload = 'metadata';
+            probe.onloadedmetadata = function() {
+                URL.revokeObjectURL(objectUrl);
+                if (probe.duration > 60) {
+                    alert('Videos must be 60 seconds or less');
+                    input.value = '';
+                    return;
+                }
+                // Video replaces any selected image (one media per post)
+                if (imageInput) imageInput.value = '';
+                if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+                if (imagePreview) imagePreview.src = '';
+
+                if (videoPreview && videoPreviewContainer) {
+                    videoPreview.src = URL.createObjectURL(file);
+                    videoPreviewContainer.style.display = 'block';
+                }
+                if (submitBtn) submitBtn.disabled = false;
+            };
+            probe.onerror = function() {
+                URL.revokeObjectURL(objectUrl);
+                alert('Could not read that video file');
+                input.value = '';
+            };
+            probe.src = objectUrl;
+        });
+    }
+
+    if (removeVideoBtn) {
+        removeVideoBtn.addEventListener('click', function() {
+            clearVideoSelection();
+            if (textarea && submitBtn) {
+                const hasContent = textarea.value.trim().length > 0;
+                const hasImage = imageInput && imageInput.files.length > 0;
+                submitBtn.disabled = !hasContent && !hasImage;
             }
         });
     }
@@ -2135,6 +2230,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (imageInput) imageInput.value = '';
                     if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
                     if (imagePreview) imagePreview.src = '';
+                    clearVideoSelection();
                     if (submitBtn) submitBtn.disabled = true;
 
                     // Reload page to show new post
