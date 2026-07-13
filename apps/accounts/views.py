@@ -4497,6 +4497,11 @@ def create_social_post(request):
             }
         })
     except Exception:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.exception("create_social_post failed (video=%s, image=%s)", bool(video), bool(image))
+        if video:
+            return JsonResponse({'error': 'Could not upload your video. Please try again.'}, status=503)
         return JsonResponse({'error': 'Social feed is being set up. Please try again later.'}, status=503)
 
 
