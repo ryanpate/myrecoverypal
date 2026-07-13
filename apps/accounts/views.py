@@ -4400,6 +4400,7 @@ def social_feed_posts_api(request):
                 },
                 'content': post.content,
                 'image_url': post.image.url if post.image else None,
+                'video_url': post.video.url if post.video else None,
                 'visibility': post.visibility,
                 'created_at': timesince(post.created_at) + ' ago',
                 'likes_count': len(all_reactions),
@@ -4435,15 +4436,20 @@ def social_feed_posts_api(request):
 @require_POST
 def create_social_post(request):
     """Create a new social post via AJAX"""
-    from .image_utils import validate_image, compress_image, is_cloudinary_enabled
+    from .image_utils import validate_image, compress_image, is_cloudinary_enabled, validate_video
 
     content = request.POST.get('content', '').strip()
     visibility = request.POST.get('visibility', 'public')
     image = request.FILES.get('image')
+    video = request.FILES.get('video')
 
-    # Require either content or image
-    if not content and not image:
-        return JsonResponse({'error': 'Post must have either text or an image'}, status=400)
+    # Require either content or media
+    if not content and not image and not video:
+        return JsonResponse({'error': 'Post must have text, an image, or a video'}, status=400)
+
+    # One media per post
+    if image and video:
+        return JsonResponse({'error': 'A post can have an image or a video, not both'}, status=400)
 
     # Process image if provided
     if image:
@@ -4455,13 +4461,20 @@ def create_social_post(request):
         if not is_cloudinary_enabled():
             image = compress_image(image, max_dimension=1920)
 
+    # Validate video if provided (duration is capped client-side; size here)
+    if video:
+        is_valid, error = validate_video(video)
+        if not is_valid:
+            return JsonResponse({'error': error}, status=400)
+
     try:
         # Create the post
         post = SocialPost.objects.create(
             author=request.user,
             content=content,
             visibility=visibility,
-            image=image
+            image=image,
+            video=video
         )
 
         # Return post data for dynamic update
@@ -4476,6 +4489,7 @@ def create_social_post(request):
                 },
                 'content': post.content,
                 'image_url': post.image.url if post.image else None,
+                'video_url': post.video.url if post.video else None,
                 'visibility': post.get_visibility_display(),
                 'created_at': post.created_at.strftime('%B %d, %Y at %I:%M %p'),
                 'likes_count': 0,
