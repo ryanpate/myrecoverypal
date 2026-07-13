@@ -30,6 +30,14 @@ ALLOWED_IMAGE_TYPES = {
     'image/webp': '.webp',
 }
 
+# Video upload limits (social feed video posts)
+MAX_VIDEO_SIZE_MB = 50
+ALLOWED_VIDEO_TYPES = {
+    'video/mp4': '.mp4',
+    'video/quicktime': '.mov',
+    'video/webm': '.webm',
+}
+
 
 def is_cloudinary_enabled():
     """Check if Cloudinary storage is configured and enabled."""
@@ -272,3 +280,29 @@ def process_uploaded_image(image_file, folder='uploads', max_dimension=MAX_IMAGE
     # Fall back to local compression
     compressed = compress_image(image_file, max_dimension=max_dimension)
     return True, compressed
+
+
+def validate_video(video_file):
+    """
+    Validate an uploaded video file (type + size only — duration is
+    enforced client-side; the size cap bounds a bypassed duration check).
+
+    Args:
+        video_file: Django UploadedFile object
+
+    Returns:
+        tuple: (is_valid, error_message)
+    """
+    if not video_file:
+        return False, "No video file provided"
+
+    max_size = MAX_VIDEO_SIZE_MB * 1024 * 1024
+    if video_file.size > max_size:
+        return False, f"Video size exceeds {MAX_VIDEO_SIZE_MB}MB limit"
+
+    content_type = getattr(video_file, 'content_type', None)
+    ext = os.path.splitext(video_file.name)[1].lower()
+    if content_type not in ALLOWED_VIDEO_TYPES and ext not in ALLOWED_VIDEO_TYPES.values():
+        return False, "Video must be an MP4, MOV, or WebM file"
+
+    return True, None
