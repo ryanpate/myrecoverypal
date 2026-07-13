@@ -2157,6 +2157,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (currentVideoObjectUrl) {
                 URL.revokeObjectURL(currentVideoObjectUrl);
                 currentVideoObjectUrl = null;
+                if (videoPreview) videoPreview.removeAttribute('src');
+                if (videoPreviewContainer) videoPreviewContainer.style.display = 'none';
             }
 
             if (!file.type.startsWith('video/')) {
