@@ -246,6 +246,8 @@
 
                 {% if post.image %}
                 <img src="{{ post.image.url }}" alt="Post image" class="post-image" loading="lazy">
+                {% elif post.video %}
+                <video src="{{ post.video.url }}" class="post-image" controls preload="metadata" playsinline></video>
                 {% endif %}
 
                 <div class="post-engagement">

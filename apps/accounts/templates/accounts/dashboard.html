@@ -1158,6 +1158,8 @@
                         <div class="mobile-post-content">{{ post.content }}</div>
                         {% if post.image %}
                         <img src="{{ post.image.url }}" alt="Image shared by {{ post.author.username }} in recovery community" class="mobile-post-image">
+                        {% elif post.video %}
+                        <video src="{{ post.video.url }}" class="mobile-post-image" controls preload="metadata" playsinline></video>
                         {% endif %}
                         <div class="mobile-post-engagement">
                             <button class="mobile-action-btn mobile-like-btn {% if post.user_has_reacted %}liked{% endif %}" data-post-id="{{ post.id }}">

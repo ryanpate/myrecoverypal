@@ -1735,6 +1735,8 @@
                 <!-- Post Image -->
                 {% if post.image %}
                 <img src="{{ post.image.url }}" alt="Image shared by {{ post.author.username }} in recovery community" class="post-image" loading="lazy">
+                {% elif post.video %}
+                <video src="{{ post.video.url }}" class="post-image" controls preload="metadata" playsinline></video>
                 {% endif %}
 
                 <!-- Engagement Stats (hidden; counts shown inline below) -->

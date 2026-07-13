@@ -116,3 +116,15 @@ class CreateVideoPostViewTests(TestCase):
             resp = self.client.get(reverse('accounts:social_feed_posts_api'))
             posts = resp.json()['posts']
             self.assertTrue(posts[0]['video_url'])
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class FeedVideoRenderTests(TestCase):
+    def test_feed_renders_video_player(self):
+        user = User.objects.create_user(username='render', password='x')
+        with override_settings(MEDIA_ROOT=tempfile.mkdtemp()):
+            SocialPost.objects.create(author=user, content='clip', video=small_mp4())
+            self.client.force_login(user)
+            resp = self.client.get(reverse('accounts:social_feed'))
+            self.assertContains(resp, '<video')
+            self.assertContains(resp, 'playsinline')
