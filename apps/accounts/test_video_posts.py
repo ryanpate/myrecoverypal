@@ -63,16 +63,7 @@ class SocialPostVideoFieldTests(TestCase):
             self.assertTrue(post.video.url)
 
 
-@override_settings(
-    SECURE_SSL_REDIRECT=False,
-    ALLOWED_HOSTS=['testserver'],
-    MIDDLEWARE=[
-        'django.contrib.sessions.middleware.SessionMiddleware',
-        'django.middleware.csrf.CsrfViewMiddleware',
-        'django.contrib.auth.middleware.AuthenticationMiddleware',
-        'django.contrib.messages.middleware.MessageMiddleware',
-    ]
-)
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class CreateVideoPostViewTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='poster', password='x')
