@@ -51,3 +51,13 @@ class ValidateVideoTests(TestCase):
         from apps.accounts.image_utils import validate_video
         is_valid, error = validate_video(None)
         self.assertFalse(is_valid)
+
+
+class SocialPostVideoFieldTests(TestCase):
+    def test_post_accepts_video_file(self):
+        user = User.objects.create_user(username='vid', password='x')
+        with override_settings(MEDIA_ROOT=tempfile.mkdtemp()):
+            post = SocialPost.objects.create(
+                author=user, content='clip', video=small_mp4())
+            self.assertTrue(post.video.name.startswith('social_posts/videos/'))
+            self.assertTrue(post.video.url)

@@ -1851,6 +1851,18 @@ class SavedBadge(models.Model):
         return urlencode(params)
 
 
+def _social_post_video_storage():
+    """Videos must upload to Cloudinary with resource_type='video' — the
+    default MediaCloudinaryStorage uploads as an image resource and
+    rejects video files. Falls back to default storage locally."""
+    from apps.accounts.image_utils import is_cloudinary_enabled
+    if is_cloudinary_enabled():
+        from cloudinary_storage.storage import VideoMediaCloudinaryStorage
+        return VideoMediaCloudinaryStorage()
+    from django.core.files.storage import default_storage
+    return default_storage
+
+
 class SocialPost(models.Model):
     """User-generated social media posts for the community feed"""
     VISIBILITY_CHOICES = [
@@ -1862,6 +1874,9 @@ class SocialPost(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='social_posts')
     content = models.TextField(blank=True, help_text="Share your thoughts, wins, or encouragement")
     image = models.ImageField(upload_to='social_posts/', blank=True, null=True)
+    video = models.FileField(
+        upload_to='social_posts/videos/', blank=True, null=True,
+        storage=_social_post_video_storage)
     linked_checkin = models.ForeignKey(
         'DailyCheckIn', on_delete=models.SET_NULL,
         null=True, blank=True, related_name='social_posts'
