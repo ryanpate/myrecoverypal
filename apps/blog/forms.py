@@ -1,3 +1,5 @@
+import uuid
+
 from django import forms
 from django_summernote.widgets import SummernoteWidget
 from .models import Post, Comment, Category, Tag
@@ -79,7 +81,8 @@ class PostForm(forms.ModelForm):
 
         # Auto-generate slug if not provided
         if not instance.slug:
-            base_slug = slugify(instance.title)
+            # slugify() strips emoji/non-ASCII — never allow an empty slug
+            base_slug = slugify(instance.title) or f"post-{uuid.uuid4().hex[:8]}"
             slug = base_slug
             counter = 1
             while Post.objects.filter(slug=slug).exists():

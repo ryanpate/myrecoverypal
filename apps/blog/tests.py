@@ -158,3 +158,34 @@ class SendDailyBlogDigestTest(TestCase):
         self.assertEqual(mock_send.call_count, 2)
         # Cache still set (run completed)
         mock_cache.set.assert_called_once()
+
+
+class SlugGenerationTest(TestCase):
+    """A title that slugifies to '' (emoji/non-ASCII only) must never
+    produce an empty slug — empty slugs make get_absolute_url raise
+    NoReverseMatch (Sentry: blog/models.py get_absolute_url)."""
+
+    def setUp(self):
+        self.author = User.objects.create_user(
+            username='slugauthor', email='slugauthor@example.com', password='x',
+        )
+        from apps.blog.models import Category
+        self.category = Category.objects.create(name='General')
+
+    def test_model_save_emoji_title_gets_nonempty_slug(self):
+        post = Post.objects.create(title="💪🙏", author=self.author, content="hi")
+        self.assertTrue(post.slug)
+        # Must not raise NoReverseMatch
+        self.assertTrue(post.get_absolute_url())
+
+    def test_form_save_emoji_title_gets_nonempty_slug(self):
+        from apps.blog.forms import PostForm
+        form = PostForm(data={
+            'title': "💪🙏",
+            'content': "hi",
+            'status': 'draft',
+            'category': self.category.pk,
+        })
+        self.assertTrue(form.is_valid(), form.errors)
+        post = form.save(commit=False)
+        self.assertTrue(post.slug)

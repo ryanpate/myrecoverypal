@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
@@ -93,7 +95,9 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            # slugify() strips emoji/non-ASCII, so an all-emoji title yields
+            # '' — an empty slug breaks get_absolute_url (NoReverseMatch)
+            self.slug = slugify(self.title) or f"post-{uuid.uuid4().hex[:8]}"
 
         # Set published_at when status changes to published
         if self.status == 'published' and not self.published_at:
