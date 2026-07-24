@@ -14,7 +14,7 @@
     "cap:run:ios": "npx cap run ios",
     "build:android:debug": "cd android && ./gradlew assembleDebug",
     "build:android:release": "cd android && ./gradlew bundleRelease",
-    "icons:setup": "./setup-app-icons.sh"
+    "icons:setup": "./scripts/setup-app-icons.sh"
   },
   "repository": {
     "type": "git",

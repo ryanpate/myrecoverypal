@@ -159,7 +159,7 @@ python manage.py test_email recipient@example.com --resend-api
 1. Set up Firebase project and add `google-services.json`
 2. Configure APNs certificates in Apple Developer Portal
 3. Implement `send_fcm_notification` and `send_apns_notification` in push_notifications.py
-4. See `PUSH_NOTIFICATIONS_SETUP.md` for full guide
+4. See `docs/PUSH_NOTIFICATIONS_SETUP.md` for full guide
 
 ### AI Recovery Coach
 
