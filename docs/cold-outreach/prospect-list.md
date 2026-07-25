@@ -166,6 +166,10 @@ actually have reachable inboxes.
      evaluations (~15 yrs, telehealth statewide). 1999 Wabash Ave Suite 209 ·
      (217) 891-6063 · duieats.com · **duieats@gmail.com** (verified via contact
      page + Facebook, Jul 2026). *Emailed dui-services variant 2026-07-25.*
+   - ✅ **A+ DUI Services, LLC** — Springfield DUI evaluations, risk education,
+     substance-abuse counseling. 1305 W Wabash Ave Suite E · 217-698-3900 ·
+     aplusduiservices.com · **info@aplusduiservices.com** (verified directly on
+     contact.php, Jul 2026). *Drafted dui-services variant 2026-07-25.*
 2. **DUI & criminal-defense attorneys (Sangamon + surrounding counties).** ⭐ This
    is where cold email *actually works* — law firms publish staff emails on their
    sites. Their clients all need proof of compliance, and lawyers love tools that
