@@ -34,7 +34,14 @@ violation. Pitch the **court-liaison variant** reframed as a *referral aid*.
 | **W. Scott Hanken, Attorney at Law** | former prosecutor, 35+ yrs | 217-544-4057 | hankenlaw.com | form | 1100 S 5th St, Springfield 62703 ⚠️ |
 
 **More leads to verify:** Johnson Law Group (jlawgroup.com), M. Reid Law /
-MRLS (mreidlaw.com). For the wider region, use the Justia and FindLaw DUI
+MRLS (mreidlaw.com).
+
+**Verified inbox (wider region):**
+- ✅ **Pioletti Pioletti & Nichols** — DUI/criminal defense, Bloomington +
+  Eureka offices, serves central IL (Springfield, Decatur, Champaign, Peoria).
+  piolettilaw.com · **info@piolettilaw.com** (on their contact page, verified
+  Jul 2026). *Drafted lawyers variant 2026-07-25.* First firm found with a
+  published inbox — the six Springfield firms remain form-only. For the wider region, use the Justia and FindLaw DUI
 directories filtered to Sangamon County and adjacent counties (Morgan/Jacksonville,
 Macon/Decatur, McLean/Bloomington, Champaign).
 

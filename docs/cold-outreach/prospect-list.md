@@ -53,6 +53,11 @@ oxfordvacancies.com or apply directly). Confirm street/ZIP before use:
 > Oxford Houses *are* your end-users (court-ordered residents), but they're a
 > poor fit for facility cold-email — peer-run, no admin inbox. Better reached by
 > a flyer/QR drop or the house's vacancy contact than by email.
+>
+> Re-checked Jul 2026: still no published inboxes in this category (Vanderburgh,
+> Freedom House Decatur, sober-house directories all phone/form-only). Mercy
+> Communities (info@mercycommunities.org) is family-homelessness housing, NOT
+> recovery housing — wrong audience, do not email.
 
 ---
 
@@ -170,6 +175,16 @@ actually have reachable inboxes.
      substance-abuse counseling. 1305 W Wabash Ave Suite E · 217-698-3900 ·
      aplusduiservices.com · **info@aplusduiservices.com** (verified directly on
      contact.php, Jul 2026). *Drafted dui-services variant 2026-07-25.*
+   - ✅ **Hopewell Clinical** — DUI evaluations + license reinstatement, 20+ yrs.
+     Offices: Quincy (1258 Broadway, all scheduling), Springfield (801 E
+     Lawrence), Jacksonville (331 W Douglas) · 217-223-0170 ·
+     hopewellclinical.com · **hopewell2@adams.net** (mailto link on homepage,
+     verified Jul 2026). *Drafted dui-services variant 2026-07-25.*
+   - ✅ **Advanced Counseling (ACET)** — DUI evaluations + substance-use
+     education, Bloomington–Normal. 705 E Lincoln Suite 204, Normal, IL 61761 ·
+     (309) 808-1017 · acetduiservices.com · **mikeburash@acetduiservices.com**
+     (named contact Mike Burash, on contact page, verified Jul 2026). *Drafted
+     dui-services variant (greeting "Mike") 2026-07-25.*
 2. **DUI & criminal-defense attorneys (Sangamon + surrounding counties).** ⭐ This
    is where cold email *actually works* — law firms publish staff emails on their
    sites. Their clients all need proof of compliance, and lawyers love tools that
