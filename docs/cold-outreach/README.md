@@ -51,7 +51,7 @@ who has opted out.
 
 ## Sending best practices (important)
 
-1. **Send from `ryan@myrecoverypal.com`** (a real personal inbox), not a
+1. **Send from `ryan@trymyrecoverypal.com`** (a real personal inbox), not a
    `noreply@` address or bulk tool. Replies should reach you.
 2. **Small batches** — 20–30/day. Large blasts can flag your sending domain and
    break your transactional/retention email (which runs through Resend).

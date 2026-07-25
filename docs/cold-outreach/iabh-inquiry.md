@@ -3,7 +3,7 @@
 One-to-one inquiry to the Illinois Association for Behavioral Health about
 corporate membership, conference sponsorship, and newsletter advertising.
 
-**Send as plain text from `ryan@myrecoverypal.com`** — this is a personal business
+**Send as plain text from `ryan@trymyrecoverypal.com`** — this is a personal business
 inquiry to a staffed inbox, not bulk outreach, so it doesn't need the CAN-SPAM
 footer or unsubscribe link the facility cold-emails use.
 
@@ -41,7 +41,7 @@ Thank you for the work IABH does for behavioral health across Illinois.
 Best,
 Ryan Pate
 Founder, MyRecoveryPal
-ryan@myrecoverypal.com
+ryan@trymyrecoverypal.com
 www.myrecoverypal.com
 
 ---

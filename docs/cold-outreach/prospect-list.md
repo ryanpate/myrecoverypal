@@ -127,7 +127,7 @@ verification link as the hook (no sales pitch). Lower priority than facilities.
 4. Sober-living (Oxford/Vanderburgh) → defer to a QR-flyer approach, not email.
 
 > **Before any send:** check the opt-out list (admin → Cold-outreach opt-outs)
-> and keep batches to 20–30/day from ryan@myrecoverypal.com.
+> and keep batches to 20–30/day from ryan@trymyrecoverypal.com.
 
 ---
 
