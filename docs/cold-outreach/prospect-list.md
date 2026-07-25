@@ -162,6 +162,10 @@ actually have reachable inboxes.
    list (ilsos.gov → drivers → remedial education) and the IDHS DUI page
    (dhs.state.il.us, item 68381). Helpline for referral sources: 1-833-234-6343 /
    helplineil.org.
+   - ✅ **DUI Evaluation & Treatment Services (DUIEATS)** — Springfield DUI
+     evaluations (~15 yrs, telehealth statewide). 1999 Wabash Ave Suite 209 ·
+     (217) 891-6063 · duieats.com · **duieats@gmail.com** (verified via contact
+     page + Facebook, Jul 2026). *Emailed dui-services variant 2026-07-25.*
 2. **DUI & criminal-defense attorneys (Sangamon + surrounding counties).** ⭐ This
    is where cold email *actually works* — law firms publish staff emails on their
    sites. Their clients all need proof of compliance, and lawyers love tools that
