@@ -8,11 +8,16 @@ import tempfile
 from io import StringIO
 from unittest.mock import patch
 
+import requests
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase
 
-from apps.support_services.meeting_sync import sync_all, sync_source
+from apps.support_services.meeting_sync import (
+    FeedFetchError,
+    sync_all,
+    sync_source,
+)
 from apps.support_services.models import Meeting
 
 User = get_user_model()
@@ -144,6 +149,109 @@ class SyncSourceTests(TestCase):
         result = sync_source("test", feed_file([nameless]))
         self.assertEqual(result["skipped"], 1)
         self.assertEqual(Meeting.objects.count(), 0)
+
+
+class FakeResponse:
+    """Minimal stand-in for a requests Response."""
+
+    def __init__(self, body, status=200, content_type="text/html"):
+        self.text = body
+        self.status_code = status
+        self.headers = {"Content-Type": content_type}
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise requests.HTTPError(
+                f"{self.status_code} Server Error", response=self)
+
+    def json(self):
+        return json.loads(self.text)
+
+
+# What aahouston.org actually served when the weekly sync blew up: HTTP 200,
+# but an HTML error page instead of the feed.
+HTML_ERROR_PAGE = "<!DOCTYPE html><html><body>Service Unavailable</body></html>"
+GOOD_FEED = json.dumps([ONLINE_MEETING])
+
+
+@patch("apps.support_services.meeting_sync.time.sleep")
+class LoadFeedTests(TestCase):
+    """A 200 response whose body isn't JSON must not burn the whole sync."""
+
+    def test_retries_and_succeeds_when_feed_briefly_returns_html(self, sleep):
+        responses = [
+            FakeResponse(HTML_ERROR_PAGE),
+            FakeResponse(HTML_ERROR_PAGE),
+            FakeResponse(GOOD_FEED, content_type="application/json"),
+        ]
+        with patch("apps.support_services.meeting_sync.requests.get",
+                   side_effect=responses) as get:
+            result = sync_source("houston", "https://aahouston.org/feed")
+
+        self.assertEqual(get.call_count, 3)
+        self.assertEqual(result["created"], 1)
+        self.assertTrue(
+            Meeting.objects.filter(
+                slug="online-houston-morning-serenity").exists())
+
+    def test_error_names_the_content_type_and_body_after_retries(self, sleep):
+        with patch("apps.support_services.meeting_sync.requests.get",
+                   return_value=FakeResponse(HTML_ERROR_PAGE)) as get:
+            with self.assertRaises(FeedFetchError) as ctx:
+                sync_source("houston", "https://aahouston.org/feed")
+
+        self.assertEqual(get.call_count, 3)
+        message = str(ctx.exception)
+        # The whole point: Sentry must show what came back, not a bare
+        # "Expecting value: line 1 column 1".
+        self.assertIn("aahouston.org", message)
+        self.assertIn("text/html", message)
+        self.assertIn("Service Unavailable", message)
+
+    def test_retries_on_connection_error(self, sleep):
+        with patch(
+            "apps.support_services.meeting_sync.requests.get",
+            side_effect=[
+                requests.ConnectionError("connection reset"),
+                FakeResponse(GOOD_FEED, content_type="application/json"),
+            ],
+        ) as get:
+            result = sync_source("houston", "https://aahouston.org/feed")
+
+        self.assertEqual(get.call_count, 2)
+        self.assertEqual(result["created"], 1)
+
+    def test_rejects_json_that_is_not_a_list_or_object(self, sleep):
+        # WordPress admin-ajax.php answers a request it can't route with a
+        # bare "0" — valid JSON, useless feed.
+        with patch("apps.support_services.meeting_sync.requests.get",
+                   return_value=FakeResponse("0",
+                                             content_type="application/json")):
+            with self.assertRaises(FeedFetchError):
+                sync_source("houston", "https://aahouston.org/feed")
+
+    def test_local_file_feeds_are_not_retried(self, sleep):
+        # File paths skip the HTTP path entirely; a missing file still fails
+        # fast so sync_all can isolate it.
+        with self.assertRaises(OSError):
+            sync_source("test", "/nonexistent/feed.json")
+        sleep.assert_not_called()
+
+    def test_sync_all_isolates_a_feed_that_never_returns_json(self, sleep):
+        sync_source("houston", feed_file([ONLINE_MEETING]))
+        good = {"key": "good", "url": feed_file([
+            dict(ONLINE_MEETING, slug="other")])}
+        bad = {"key": "houston", "url": "https://aahouston.org/feed"}
+
+        with patch("apps.support_services.meeting_sync.requests.get",
+                   return_value=FakeResponse(HTML_ERROR_PAGE)):
+            results = sync_all([good, bad])
+
+        self.assertIsNone(results["houston"])
+        # Houston's meetings survive its feed being broken.
+        self.assertTrue(
+            Meeting.objects.get(
+                slug="online-houston-morning-serenity").is_active)
 
 
 class SyncAllTests(TestCase):

@@ -13,6 +13,7 @@ submissions (submitted_by set) are never touched.
 """
 import json
 import logging
+import time
 from datetime import datetime
 
 import requests
@@ -23,6 +24,17 @@ from apps.support_services.models import Meeting
 logger = logging.getLogger(__name__)
 
 SLUG_PREFIX = "online"
+
+# Every feed we use is a WordPress admin-ajax.php endpoint, and those
+# intermittently answer 200 with an empty body, an HTML error page, or a
+# bare "0" instead of the feed. Retry briefly rather than let one blip
+# leave a source stale until next week's run.
+FETCH_ATTEMPTS = 3
+
+
+class FeedFetchError(Exception):
+    """A feed could not be fetched or did not return a usable JSON body."""
+
 
 # Verified TSML feeds. "timezone" is the fallback when a feed row omits its
 # own — set it to the intergroup's home zone. Task 5 verifies and extends
@@ -49,15 +61,57 @@ FEED_SOURCES = [
 def load_feed(source):
     """Load a TSML feed from a URL or local file path."""
     if str(source).startswith("http"):
-        resp = requests.get(
-            source,
-            headers={"User-Agent": "MyRecoveryPal/1.0"},
-            timeout=60,
-        )
-        resp.raise_for_status()
-        return resp.json()
+        return _fetch_json(source)
     with open(source) as f:
         return json.load(f)
+
+
+def _fetch_json(url):
+    """GET a feed, retrying transient failures.
+
+    Raises FeedFetchError naming the status, content type and body prefix.
+    A bare JSONDecodeError from resp.json() reports only "Expecting value:
+    line 1 column 1", which says nothing about what the server actually
+    sent — and that is the one thing worth knowing when a feed misbehaves.
+    """
+    detail = None
+    for attempt in range(FETCH_ATTEMPTS):
+        resp = None
+        try:
+            resp = requests.get(
+                url,
+                headers={"User-Agent": "MyRecoveryPal/1.0"},
+                timeout=60,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            if not isinstance(data, (list, dict)):
+                # admin-ajax.php answers an unroutable request with "0":
+                # valid JSON, useless feed.
+                raise ValueError(f"expected a list or object, got {data!r}")
+            return data
+        except (requests.RequestException, ValueError) as exc:
+            detail = _describe(resp, exc)
+            logger.warning(
+                "Feed fetch attempt %d/%d failed for %s: %s",
+                attempt + 1, FETCH_ATTEMPTS, url, detail)
+            if attempt < FETCH_ATTEMPTS - 1:
+                time.sleep(2 * (attempt + 1))  # Exponential backoff
+
+    raise FeedFetchError(
+        f"{url} did not return a usable JSON feed after "
+        f"{FETCH_ATTEMPTS} attempts: {detail}")
+
+
+def _describe(resp, exc):
+    """Describe a failed fetch: what the server sent, or why it never got sent."""
+    if resp is None:
+        return repr(exc)
+    return (
+        f"HTTP {resp.status_code}, "
+        f"Content-Type {resp.headers.get('Content-Type', 'unknown')!r}, "
+        f"body starts {resp.text[:200]!r}"
+    )
 
 
 def sync_source(key, source, approve=True, limit=None,
