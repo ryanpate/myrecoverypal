@@ -33,7 +33,14 @@ urlpatterns = [
     path('password-reset/',
          auth_views.PasswordResetView.as_view(
              template_name='registration/password_reset.html',
-             email_template_name='registration/password_reset_email.html',
+             # NOTE: these must NOT live under templates/registration/.
+             # django.contrib.admin ships its own registration/password_reset_email.html
+             # and precedes apps.accounts in INSTALLED_APPS, so with APP_DIRS=True it
+             # shadows ours. Its copy reverses the un-namespaced 'password_reset_confirm',
+             # which this project only registers as 'accounts:password_reset_confirm'
+             # -> NoReverseMatch on every reset request (Sentry PYTHON-DJANGO-1G).
+             email_template_name='emails/password_reset_email.txt',
+             html_email_template_name='emails/password_reset_email.html',
              success_url='/accounts/password-reset/done/'),
          name='password_reset'),
     path('password-reset/done/',
