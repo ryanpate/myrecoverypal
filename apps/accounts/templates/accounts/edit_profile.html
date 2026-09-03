@@ -285,21 +285,107 @@
 
 {% block extra_js %}
 <script>
-    // Preview avatar image before upload
+    // Downscale the avatar in the browser before it is uploaded.
+    //
+    // A raw phone photo is often 8-12MB. Sent over mobile data it can take
+    // longer than gunicorn's 120s timeout just to read the request body, and the
+    // worker is aborted mid-multipart-parse before any view code runs — so the
+    // server-side 5MB check and PIL resize never get a chance to help
+    // (Sentry PYTHON-DJANGO-4V/4W/4X/4Y).
+    //
+    // edit_profile_view already reduces avatars to 800x800 JPEG q85 and flattens
+    // transparency onto white, so anything larger is wasted bytes. Matching those
+    // numbers here makes the server-side pass a no-op.
+    const AVATAR_MAX_PX = 800;
+    const AVATAR_QUALITY = 0.85;
+
+    // Resolves to a smaller File, or null when the original should be sent as-is.
+    async function downscaleAvatar(file) {
+        if (!window.createImageBitmap || !window.DataTransfer) return null;
+        // Canvas would flatten an animated GIF to a single frame.
+        if (file.type === 'image/gif') return null;
+
+        // imageOrientation honours the EXIF tag, so phone photos aren't rotated.
+        const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+        try {
+            const scale = Math.min(1, AVATAR_MAX_PX / Math.max(bitmap.width, bitmap.height));
+            const width = Math.round(bitmap.width * scale);
+            const height = Math.round(bitmap.height * scale);
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            // Without this, alpha in a PNG turns black once encoded as JPEG.
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(bitmap, 0, 0, width, height);
+
+            const blob = await new Promise(function (resolve) {
+                canvas.toBlob(resolve, 'image/jpeg', AVATAR_QUALITY);
+            });
+            // An already-optimised image can come out bigger than it went in.
+            if (!blob || blob.size >= file.size) return null;
+
+            return new File([blob], file.name.replace(/\.[^.]+$/, '') + '.jpg', {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+            });
+        } finally {
+            bitmap.close();
+        }
+    }
+
+    function showAvatarPreview(file) {
+        const avatar = document.querySelector('.current-avatar');
+        if (!avatar) return;
+        const url = URL.createObjectURL(file);
+        const img = document.createElement('img');
+        img.alt = 'Preview';
+        img.onload = function () { URL.revokeObjectURL(url); };
+        img.src = url;
+        avatar.replaceChildren(img);
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         const avatarInput = document.getElementById('id_avatar');
         if (avatarInput) {
-            avatarInput.addEventListener('change', function (e) {
-                const file = e.target.files[0];
-                if (file && file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        const avatar = document.querySelector('.current-avatar');
-                        avatar.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            let resizing = null;
+
+            avatarInput.addEventListener('change', function () {
+                const file = this.files[0];
+                if (!file || !file.type.startsWith('image/')) return;
+
+                resizing = (async function () {
+                    let chosen = file;
+                    try {
+                        const smaller = await downscaleAvatar(file);
+                        if (smaller) {
+                            const transfer = new DataTransfer();
+                            transfer.items.add(smaller);
+                            avatarInput.files = transfer.files;
+                            chosen = smaller;
+                        }
+                    } catch (err) {
+                        // Best-effort only: on any failure send the original and let
+                        // the server's 5MB limit reject it if it is genuinely too big.
+                        console.warn('Avatar downscale failed, sending original:', err);
                     }
-                    reader.readAsDataURL(file);
-                }
+                    showAvatarPreview(chosen);
+                })();
+                resizing.finally(function () { resizing = null; });
             });
+
+            // Submitting mid-resize would send the original file.
+            const form = avatarInput.form;
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    if (!resizing) return;
+                    e.preventDefault();
+                    // form.submit() skips listeners, so this cannot re-enter.
+                    resizing.then(function () { form.submit(); });
+                });
+            }
         }
 
         // Add character counter for bio
