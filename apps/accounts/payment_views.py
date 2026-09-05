@@ -475,6 +475,32 @@ def handle_invoice_payment_failed(invoice):
         logger.error(f'Subscription not found for customer {customer_id}')
 
 
+def _webhook_subscription_period(stripe_subscription):
+    """Return (start, end) datetimes for a subscription's current period.
+
+    Stripe's Basil release (2025-03-31) removed current_period_start/end from
+    the subscription and put them on its items, so a webhook payload carries
+    either shape depending on the API version the event was rendered with.
+    Returns (None, None) if neither location has them.
+    """
+    start = stripe_subscription.get('current_period_start')
+    end = stripe_subscription.get('current_period_end')
+
+    if start is None or end is None:
+        items = (stripe_subscription.get('items') or {}).get('data') or []
+        if items:
+            start = start if start is not None else items[0].get('current_period_start')
+            end = end if end is not None else items[0].get('current_period_end')
+
+    if start is None or end is None:
+        return None, None
+
+    return (
+        datetime.fromtimestamp(start, tz=dt_timezone.utc),
+        datetime.fromtimestamp(end, tz=dt_timezone.utc),
+    )
+
+
 def handle_subscription_updated(stripe_subscription):
     """Handle subscription updates"""
     subscription_id = stripe_subscription.get('id')
@@ -484,12 +510,14 @@ def handle_subscription_updated(stripe_subscription):
 
         # Update subscription details
         subscription.status = stripe_subscription.get('status')
-        subscription.current_period_start = datetime.fromtimestamp(
-            stripe_subscription.get('current_period_start'), tz=dt_timezone.utc
-        )
-        subscription.current_period_end = datetime.fromtimestamp(
-            stripe_subscription.get('current_period_end'), tz=dt_timezone.utc
-        )
+        period_start, period_end = _webhook_subscription_period(stripe_subscription)
+        if period_start and period_end:
+            subscription.current_period_start = period_start
+            subscription.current_period_end = period_end
+        else:
+            logger.warning(
+                f'No billing period on subscription webhook payload: {subscription_id}'
+            )
 
         # Check if subscription was canceled
         if stripe_subscription.get('cancel_at_period_end'):
