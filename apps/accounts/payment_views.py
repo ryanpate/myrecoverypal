@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.html import escape
 from datetime import datetime, timedelta, timezone as dt_timezone
 from decimal import Decimal
 import logging
@@ -245,12 +246,10 @@ def payment_success(request):
             subscription.status = stripe_subscription.status
             subscription.stripe_subscription_id = stripe_subscription.id
             subscription.stripe_price_id = price_id
-            subscription.current_period_start = datetime.fromtimestamp(
-                stripe_subscription.current_period_start, tz=dt_timezone.utc
-            )
-            subscription.current_period_end = datetime.fromtimestamp(
-                stripe_subscription.current_period_end, tz=dt_timezone.utc
-            )
+            period_start, period_end = _subscription_period(stripe_subscription)
+            if period_start and period_end:
+                subscription.current_period_start = period_start
+                subscription.current_period_end = period_end
             subscription.save()
 
             tier_names = {'premium': 'Premium', 'court': 'Court Compliance',
@@ -328,6 +327,15 @@ def stripe_webhook(request):
         elif event_type == 'invoice.payment_failed':
             handle_invoice_payment_failed(event_data)
 
+        elif event_type == 'invoice.payment_action_required':
+            handle_payment_action_required(event_data)
+
+        elif event_type == 'charge.refunded':
+            handle_charge_refunded(event_data)
+
+        elif event_type == 'charge.dispute.created':
+            handle_dispute_created(event_data)
+
         elif event_type == 'customer.subscription.updated':
             handle_subscription_updated(event_data)
 
@@ -337,11 +345,158 @@ def stripe_webhook(request):
         elif event_type == 'customer.subscription.trial_will_end':
             handle_trial_will_end(event_data)
 
+        else:
+            logger.info(f'Unhandled Stripe event type: {event_type}')
+
     except Exception as e:
         logger.error(f'Error handling webhook {event_type}: {e}')
         return HttpResponse(status=500)
 
     return HttpResponse(status=200)
+
+
+def handle_payment_action_required(invoice):
+    """Handle an invoice that needs the customer to authenticate (3D Secure).
+
+    Stripe won't retry until the customer acts, so they lose access silently
+    unless we tell them.
+    """
+    customer_id = invoice.get('customer')
+    amount_due = Decimal(str(invoice.get('amount_due', 0))) / 100
+    action_url = invoice.get('hosted_invoice_url') or \
+        'https://www.myrecoverypal.com/accounts/subscription/'
+
+    try:
+        subscription = Subscription.objects.get(stripe_customer_id=customer_id)
+    except Subscription.DoesNotExist:
+        logger.error(f'Subscription not found for customer {customer_id}')
+        return
+
+    logger.warning(f'Payment action required for subscription {subscription.id}')
+
+    user = subscription.user
+    body = (
+        f'Your bank needs you to confirm your ${amount_due} subscription payment '
+        'before it can go through. It only takes a moment, and your Premium '
+        'features stay exactly as they are.'
+    )
+    try:
+        send_email(
+            subject='Confirm your payment - MyRecoveryPal',
+            plain_message=(
+                f'Hi {user.first_name or user.username},\n\n{body}\n\n'
+                f'Confirm here: {action_url}\n\n'
+                'Your recovery journey matters to us,\nThe MyRecoveryPal Team'
+            ),
+            html_message=_billing_email_html(
+                user, 'Confirm Your Payment', body, 'Confirm Payment', action_url
+            ),
+            recipient_email=user.email,
+        )
+    except Exception as email_err:
+        logger.error(f'Failed to send payment action email: {email_err}')
+
+
+def handle_charge_refunded(charge):
+    """Record a refund against the user's transaction history.
+
+    Keyed on the charge so partial-then-full refunds and Stripe's retries
+    update one row instead of stacking duplicates.
+    """
+    customer_id = charge.get('customer')
+    charge_id = charge.get('id')
+    amount_refunded = Decimal(str(charge.get('amount_refunded', 0))) / 100
+
+    try:
+        subscription = Subscription.objects.get(stripe_customer_id=customer_id)
+    except Subscription.DoesNotExist:
+        logger.error(f'Subscription not found for refunded charge {charge_id}')
+        return
+
+    Transaction.objects.update_or_create(
+        transaction_type='refund',
+        stripe_charge_id=charge_id,
+        defaults={
+            'user': subscription.user,
+            'subscription': subscription,
+            'status': 'refunded',
+            'amount': amount_refunded,
+            'currency': charge.get('currency', 'usd').upper(),
+            'stripe_payment_intent_id': charge.get('payment_intent'),
+            'description': f'Refund - {subscription.get_tier_display()}',
+        },
+    )
+
+    logger.info(f'Refund recorded for subscription {subscription.id}: {charge_id}')
+
+
+def handle_dispute_created(dispute):
+    """Alert a human about a chargeback.
+
+    Disputes have a hard response deadline and cost a fee whichever way they
+    go, so this one has to reach a person rather than only the logs.
+    """
+    dispute_id = dispute.get('id')
+    amount = Decimal(str(dispute.get('amount', 0))) / 100
+    reason = dispute.get('reason', 'unknown')
+    due_by = (dispute.get('evidence_details') or {}).get('due_by')
+    due_text = (
+        datetime.fromtimestamp(due_by, tz=dt_timezone.utc).strftime('%B %d, %Y')
+        if due_by else 'unknown'
+    )
+
+    logger.error(
+        f'Stripe dispute {dispute_id} opened: ${amount} ({reason}), respond by {due_text}'
+    )
+
+    details = (
+        f'A payment dispute was opened.\n\n'
+        f'Dispute: {dispute_id}\n'
+        f'Charge: {dispute.get("charge")}\n'
+        f'Amount: ${amount} {dispute.get("currency", "usd").upper()}\n'
+        f'Reason: {reason}\n'
+        f'Status: {dispute.get("status")}\n'
+        f'Evidence due by: {due_text}\n\n'
+        'Respond in the Stripe Dashboard: https://dashboard.stripe.com/disputes'
+    )
+
+    try:
+        send_email(
+            subject=f'[Action Required] Stripe dispute {dispute_id} - ${amount}',
+            plain_message=details,
+            html_message=f'<pre style="font-family:monospace">{escape(details)}</pre>',
+            recipient_email=settings.SUPPORT_EMAIL,
+        )
+    except Exception as email_err:
+        logger.error(f'Failed to send dispute alert: {email_err}')
+
+
+
+def _subscription_period(stripe_subscription):
+    """Return (start, end) datetimes for a subscription's current period.
+
+    Stripe's Basil release (2025-03-31) removed current_period_start/end from
+    the subscription and put them on its items, so a subscription carries
+    either shape depending on the API version that rendered it — the account
+    default for webhook payloads, the SDK's pinned version for API calls.
+    Returns (None, None) if neither location has them.
+    """
+    start = stripe_subscription.get('current_period_start')
+    end = stripe_subscription.get('current_period_end')
+
+    if start is None or end is None:
+        items = (stripe_subscription.get('items') or {}).get('data') or []
+        if items:
+            start = start if start is not None else items[0].get('current_period_start')
+            end = end if end is not None else items[0].get('current_period_end')
+
+    if start is None or end is None:
+        return None, None
+
+    return (
+        datetime.fromtimestamp(start, tz=dt_timezone.utc),
+        datetime.fromtimestamp(end, tz=dt_timezone.utc),
+    )
 
 
 def handle_checkout_session_completed(session):
@@ -373,12 +528,10 @@ def handle_checkout_session_completed(session):
                 except SubscriptionPlan.DoesNotExist:
                     subscription.tier = 'premium'
 
-            subscription.current_period_start = datetime.fromtimestamp(
-                stripe_subscription.current_period_start, tz=dt_timezone.utc
-            )
-            subscription.current_period_end = datetime.fromtimestamp(
-                stripe_subscription.current_period_end, tz=dt_timezone.utc
-            )
+            period_start, period_end = _subscription_period(stripe_subscription)
+            if period_start and period_end:
+                subscription.current_period_start = period_start
+                subscription.current_period_end = period_end
             subscription.save()
 
         logger.info(f'Checkout completed for subscription {subscription.id}')
@@ -387,11 +540,36 @@ def handle_checkout_session_completed(session):
         logger.error(f'Subscription not found for customer {customer_id}')
 
 
+def _invoice_payment_ids(invoice):
+    """Return (payment_intent_id, charge_id) for a paid invoice.
+
+    Stripe's Basil release (2025-03-31) removed the invoice's top-level
+    `charge` and `payment_intent` and exposes `payments` instead, where each
+    entry names either a PaymentIntent or a Charge. Returns None for an id the
+    payload doesn't carry.
+    """
+    payment_intent_id = invoice.get('payment_intent')
+    charge_id = invoice.get('charge')
+
+    if not payment_intent_id and not charge_id:
+        for entry in (invoice.get('payments') or {}).get('data') or []:
+            if entry.get('status', 'paid') != 'paid':
+                continue
+            payment = entry.get('payment') or {}
+            payment_intent_id = payment.get('payment_intent')
+            charge_id = payment.get('charge')
+            if payment_intent_id or charge_id:
+                break
+
+    return payment_intent_id, charge_id
+
+
 def handle_invoice_paid(invoice):
     """Handle successful invoice payment"""
     customer_id = invoice.get('customer')
     subscription_id = invoice.get('subscription')
     amount_paid = Decimal(str(invoice.get('amount_paid', 0))) / 100  # Convert from cents
+    payment_intent_id, charge_id = _invoice_payment_ids(invoice)
 
     try:
         subscription = Subscription.objects.get(stripe_customer_id=customer_id)
@@ -405,7 +583,8 @@ def handle_invoice_paid(invoice):
             amount=amount_paid,
             currency=invoice.get('currency', 'usd').upper(),
             stripe_invoice_id=invoice.get('id'),
-            stripe_charge_id=invoice.get('charge'),
+            stripe_payment_intent_id=payment_intent_id,
+            stripe_charge_id=charge_id,
             description=f'Subscription payment - {subscription.get_tier_display()}',
         )
 
@@ -475,32 +654,6 @@ def handle_invoice_payment_failed(invoice):
         logger.error(f'Subscription not found for customer {customer_id}')
 
 
-def _webhook_subscription_period(stripe_subscription):
-    """Return (start, end) datetimes for a subscription's current period.
-
-    Stripe's Basil release (2025-03-31) removed current_period_start/end from
-    the subscription and put them on its items, so a webhook payload carries
-    either shape depending on the API version the event was rendered with.
-    Returns (None, None) if neither location has them.
-    """
-    start = stripe_subscription.get('current_period_start')
-    end = stripe_subscription.get('current_period_end')
-
-    if start is None or end is None:
-        items = (stripe_subscription.get('items') or {}).get('data') or []
-        if items:
-            start = start if start is not None else items[0].get('current_period_start')
-            end = end if end is not None else items[0].get('current_period_end')
-
-    if start is None or end is None:
-        return None, None
-
-    return (
-        datetime.fromtimestamp(start, tz=dt_timezone.utc),
-        datetime.fromtimestamp(end, tz=dt_timezone.utc),
-    )
-
-
 def handle_subscription_updated(stripe_subscription):
     """Handle subscription updates"""
     subscription_id = stripe_subscription.get('id')
@@ -510,7 +663,7 @@ def handle_subscription_updated(stripe_subscription):
 
         # Update subscription details
         subscription.status = stripe_subscription.get('status')
-        period_start, period_end = _webhook_subscription_period(stripe_subscription)
+        period_start, period_end = _subscription_period(stripe_subscription)
         if period_start and period_end:
             subscription.current_period_start = period_start
             subscription.current_period_end = period_end
@@ -663,10 +816,17 @@ def cancel_subscription(request):
         subscription.canceled_at = timezone.now()
         subscription.save()
 
+        # Stripe has already accepted the cancellation by this point, so a
+        # missing period end must not turn success into an error message.
+        if subscription.current_period_end:
+            access_until = subscription.current_period_end.strftime("%B %d, %Y")
+            detail = f'You\'ll continue to have access until {access_until}.'
+        else:
+            detail = 'You\'ll continue to have access until the end of your billing period.'
+
         messages.success(
             request,
-            f'Your subscription has been scheduled for cancellation. '
-            f'You\'ll continue to have access until {subscription.current_period_end.strftime("%B %d, %Y")}.'
+            f'Your subscription has been scheduled for cancellation. {detail}'
         )
 
     except Exception as e:

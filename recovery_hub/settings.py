@@ -600,9 +600,18 @@ DEFAULT_FROM_EMAIL = os.environ.get(
 )  # ✅ From env
 SERVER_EMAIL = os.environ.get('SERVER_EMAIL', DEFAULT_FROM_EMAIL)  # ✅ From env
 
+# The address users are told to write to, and where operational alerts land
+# (payment disputes, facility signups, Django 500 mail). This must be a mailbox
+# a human actually reads — never noreply@, which nobody monitors.
+SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'ryan@myrecoverypal.com')
+
+# Django mails unhandled 500s here (belt and braces alongside Sentry).
+ADMINS = [('MyRecoveryPal', SUPPORT_EMAIL)]
+MANAGERS = ADMINS
+
 # Where new self-serve facility-signup notifications are sent.
 FACILITY_SIGNUP_NOTIFY_EMAIL = os.environ.get(
-    'FACILITY_SIGNUP_NOTIFY_EMAIL', DEFAULT_FROM_EMAIL)
+    'FACILITY_SIGNUP_NOTIFY_EMAIL', SUPPORT_EMAIL)
 
 # Email timeout settings
 EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '30'))

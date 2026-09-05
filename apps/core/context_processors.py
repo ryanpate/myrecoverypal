@@ -44,6 +44,7 @@ def seo_defaults(request):
         'seo_image': default_image,
         'seo_url': current_url,
         'site_name': 'MyRecoveryPal',
+        'SUPPORT_EMAIL': settings.SUPPORT_EMAIL,
         'twitter_site': '@myrecoverypal',
         'twitter_creator': '@myrecoverypal',
         'REVENUECAT_IOS_API_KEY': getattr(settings, 'REVENUECAT_IOS_API_KEY', ''),
