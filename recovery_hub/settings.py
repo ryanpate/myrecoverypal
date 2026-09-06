@@ -603,7 +603,9 @@ SERVER_EMAIL = os.environ.get('SERVER_EMAIL', DEFAULT_FROM_EMAIL)  # ✅ From en
 # The address users are told to write to, and where operational alerts land
 # (payment disputes, facility signups, Django 500 mail). This must be a mailbox
 # a human actually reads — never noreply@, which nobody monitors.
-SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'ryan@myrecoverypal.com')
+# Cloudflare Email Routing forwards support@ (and privacy@, ryan@, plus a
+# catch-all) on to the real inbox; see the zone's email routing rules.
+SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'support@myrecoverypal.com')
 
 # Django mails unhandled 500s here (belt and braces alongside Sentry).
 ADMINS = [('MyRecoveryPal', SUPPORT_EMAIL)]
