@@ -135,6 +135,16 @@ def meeting_list(request):
         # seo_url is pinned to the bare hub URL so filtered permutations
         # (?day=, ?city=, ...) canonicalise here instead of competing.
         'states': hub_states(),
+        # The in-person directory only covers the metros we hold feeds for,
+        # so a miss needs to say why and point at the online meetings, which
+        # work from anywhere. Only computed when there is nothing to show.
+        'online_total': (
+            Meeting.objects.filter(
+                is_approved=True, is_active=True,
+                attendance_option__in=('online', 'hybrid'),
+            ).count()
+            if not meetings_page.object_list else 0
+        ),
         # The directory is sourced entirely from AA intergroup feeds. The
         # previous copy claimed NA and SMART meetings it does not carry, and
         # "1,500+" understated the count by 4x.
