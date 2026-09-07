@@ -102,8 +102,12 @@ class BlogPostSitemap(Sitemap):
     priority = 0.8
 
     def items(self):
-        # Return published blog posts only, ordered by most recent
-        return Post.objects.filter(status='published').order_by('-published_at')
+        # Published keyword posts only. Personal narratives are noindexed
+        # and excluded — 73 posts produced 0 clicks in 3 months while
+        # taking 59% of the sitemap. They stay reachable in the app.
+        return (Post.objects
+                .filter(status='published', is_personal_story=False)
+                .order_by('-published_at'))
 
     def lastmod(self, obj):
         return obj.updated_at if hasattr(obj, 'updated_at') else obj.created_at
