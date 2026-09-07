@@ -498,8 +498,26 @@
                 <!-- No Results -->
                 <div class="no-results">
                     <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                    <h3>No meetings found</h3>
-                    <p>Try adjusting your search filters, or search the worldwide network of AA, NA, Al-Anon, SMART and more.</p>
+                    <h3>No meetings found{% if search_query %} for &ldquo;{{ search_query }}&rdquo;{% endif %}</h3>
+                    {% if states %}
+                    <p class="mb-2">
+                        Our <strong>in-person</strong> listings currently cover
+                        {% for s in states %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}{{ s.state }}{% endfor %}.
+                        We&rsquo;re adding more areas.
+                    </p>
+                    {% endif %}
+                    {% if online_total %}
+                    <p class="mb-3">
+                        <strong>{{ online_total }} online meeting{{ online_total|pluralize }}</strong>
+                        are available wherever you are &mdash; no travel needed.
+                    </p>
+                    <a href="{% url 'core:online_aa_meetings' %}" class="btn btn-primary">
+                        <i class="fas fa-video"></i> Browse online meetings
+                    </a>
+                    {% endif %}
+                    <p class="mt-3 mb-2 text-muted" style="font-size:0.9rem;">
+                        Or search the worldwide network of AA, NA, Al-Anon, SMART and more.
+                    </p>
                     <a href="{% url 'support_services:meeting_finder' %}" class="btn btn-info">
                         <i class="fas fa-globe"></i> Worldwide Meeting Search
                     </a>
