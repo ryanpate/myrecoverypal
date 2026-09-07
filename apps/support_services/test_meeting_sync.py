@@ -91,18 +91,22 @@ HYBRID_MEETING = {
 
 
 class SyncSourceTests(TestCase):
-    def test_creates_online_meetings_with_namespaced_slug(self):
+    def test_creates_meetings_with_namespaced_slug(self):
         path = feed_file([ONLINE_MEETING, IN_PERSON_MEETING])
         result = sync_source("test", path)
 
-        self.assertEqual(result["created"], 1)
-        m = Meeting.objects.get(slug="online-test-morning-serenity")
+        self.assertEqual(result["created"], 2)
+        m = Meeting.objects.get(slug="mtg-test-morning-serenity")
         self.assertEqual(m.attendance_option, "online")
         self.assertEqual(m.conference_url, "https://zoom.us/j/123")
         self.assertTrue(m.is_approved)
         self.assertTrue(m.is_active)
-        # In-person meetings from the feed are never imported.
-        self.assertEqual(Meeting.objects.count(), 1)
+        # In-person meetings are imported too, as of the 2026-09 expansion.
+        self.assertEqual(Meeting.objects.count(), 2)
+        self.assertEqual(
+            Meeting.objects.get(slug="mtg-test-downtown-noon").attendance_option,
+            "in_person",
+        )
 
     def test_updates_existing_meeting_by_slug(self):
         path = feed_file([ONLINE_MEETING])
@@ -113,7 +117,7 @@ class SyncSourceTests(TestCase):
 
         self.assertEqual(result["created"], 0)
         self.assertEqual(result["updated"], 1)
-        m = Meeting.objects.get(slug="online-test-morning-serenity")
+        m = Meeting.objects.get(slug="mtg-test-morning-serenity")
         self.assertEqual(m.name, "Morning Serenity (Renamed)")
 
     def test_deactivates_meetings_missing_from_feed(self):
@@ -125,10 +129,10 @@ class SyncSourceTests(TestCase):
 
         self.assertEqual(result["deactivated"], 1)
         self.assertFalse(
-            Meeting.objects.get(slug="online-test-evening-hope").is_active)
+            Meeting.objects.get(slug="mtg-test-evening-hope").is_active)
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-test-morning-serenity").is_active)
+                slug="mtg-test-morning-serenity").is_active)
 
         # A third sync with the same feed must not re-count the
         # already-deactivated meeting.
@@ -141,12 +145,12 @@ class SyncSourceTests(TestCase):
         sync_source("test", feed_file([other]))
         self.assertFalse(
             Meeting.objects.get(
-                slug="online-test-morning-serenity").is_active)
+                slug="mtg-test-morning-serenity").is_active)
 
         sync_source("test", feed_file([ONLINE_MEETING]))
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-test-morning-serenity").is_active)
+                slug="mtg-test-morning-serenity").is_active)
 
     def test_empty_feed_skips_deactivation(self):
         sync_source("test", feed_file([ONLINE_MEETING]))
@@ -156,7 +160,7 @@ class SyncSourceTests(TestCase):
         self.assertEqual(result["deactivated"], 0)
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-test-morning-serenity").is_active)
+                slug="mtg-test-morning-serenity").is_active)
 
     def test_never_touches_community_submitted_meetings(self):
         user = User.objects.create_user(
@@ -177,7 +181,7 @@ class SyncSourceTests(TestCase):
     def test_default_timezone_applied_when_feed_omits_it(self):
         path = feed_file([ONLINE_MEETING])  # no "timezone" key
         sync_source("test", path, default_tz="America/Los_Angeles")
-        m = Meeting.objects.get(slug="online-test-morning-serenity")
+        m = Meeting.objects.get(slug="mtg-test-morning-serenity")
         self.assertEqual(m.timezone, "America/Los_Angeles")
 
     def test_skips_meetings_without_a_name(self):
@@ -228,7 +232,7 @@ class LoadFeedTests(TestCase):
         self.assertEqual(result["created"], 1)
         self.assertTrue(
             Meeting.objects.filter(
-                slug="online-houston-morning-serenity").exists())
+                slug="mtg-houston-morning-serenity").exists())
 
     def test_error_names_the_content_type_and_body_after_retries(self, sleep):
         with patch("apps.support_services.meeting_sync.requests.get",
@@ -287,7 +291,7 @@ class LoadFeedTests(TestCase):
         # Houston's meetings survive its feed being broken.
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-houston-morning-serenity").is_active)
+                slug="mtg-houston-morning-serenity").is_active)
 
 
 class SyncAllTests(TestCase):
@@ -308,7 +312,7 @@ class SyncAllTests(TestCase):
         # The bad source's existing meeting survives its feed being down.
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-bad-bad-meeting").is_active)
+                slug="mtg-bad-bad-meeting").is_active)
         # Legacy cleanup is skipped on partial failure.
         self.assertNotIn("legacy_deactivated", results)
 
@@ -326,7 +330,7 @@ class SyncAllTests(TestCase):
         self.assertEqual(results, {})
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-test-morning-serenity").is_active)
+                slug="mtg-test-morning-serenity").is_active)
 
     def test_legacy_bare_prefix_rows_deactivated_when_all_succeed(self):
         # Row from the old single-source seed: bare "online-" prefix,
@@ -343,13 +347,14 @@ class SyncAllTests(TestCase):
 
         results = sync_all([good])
 
-        # "online-old-..." does not match "online-test-", so it is legacy.
+        # "online-old-..." matches neither "mtg-test-" nor
+        # "online-test-", so it is legacy.
         self.assertEqual(results["legacy_deactivated"], 1)
         legacy.refresh_from_db()
         self.assertFalse(legacy.is_active)
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-test-morning-serenity").is_active)
+                slug="mtg-test-morning-serenity").is_active)
 
 
 class SeedCommandTests(TestCase):
@@ -363,7 +368,7 @@ class SeedCommandTests(TestCase):
         )
         self.assertTrue(
             Meeting.objects.filter(
-                slug="online-cli-morning-serenity").exists())
+                slug="mtg-cli-morning-serenity").exists())
         self.assertIn("Done.", out.getvalue())
 
     def test_no_args_syncs_all_configured_sources(self):
@@ -499,3 +504,110 @@ class MapAddressFieldsTests(TestCase):
 
     def test_meeting_without_a_name_is_still_skipped(self):
         self.assertIsNone(_map({"city": "Houston"}, True, "UTC"))
+
+
+class ImportsAllAttendanceTypesTests(TestCase):
+    def test_in_person_meetings_are_imported(self):
+        path = feed_file([ONLINE_MEETING, FULL_IN_PERSON_MEETING])
+        result = sync_source("test", path)
+
+        self.assertEqual(result["created"], 2)
+        self.assertEqual(Meeting.objects.count(), 2)
+        m = Meeting.objects.get(slug="mtg-test-downtown-noon")
+        self.assertEqual(m.attendance_option, "in_person")
+        self.assertEqual(m.city, "Houston")
+        self.assertEqual(m.state, "TX")
+
+    def test_new_online_meetings_use_the_mtg_prefix(self):
+        path = feed_file([ONLINE_MEETING])
+        sync_source("test", path)
+        self.assertTrue(
+            Meeting.objects.filter(slug="mtg-test-morning-serenity").exists())
+
+    def test_existing_online_row_is_updated_in_place_not_duplicated(self):
+        """The 1,565 legacy `online-` rows must keep their indexed URLs."""
+        Meeting.objects.create(
+            slug="online-test-morning-serenity",
+            name="Morning Serenity",
+            attendance_option="online",
+            conference_url="https://zoom.us/j/OLD",
+            is_approved=True, is_active=True,
+        )
+        path = feed_file([ONLINE_MEETING])
+        result = sync_source("test", path)
+
+        self.assertEqual(result["created"], 0)
+        self.assertEqual(result["updated"], 1)
+        self.assertEqual(Meeting.objects.count(), 1)
+        m = Meeting.objects.get(slug="online-test-morning-serenity")
+        self.assertEqual(m.conference_url, "https://zoom.us/j/123")
+
+    def test_online_meeting_that_becomes_hybrid_keeps_its_url(self):
+        Meeting.objects.create(
+            slug="online-test-bridge-group",
+            name="Bridge Group",
+            attendance_option="online",
+            conference_url="https://zoom.us/j/999",
+            is_approved=True, is_active=True,
+        )
+        path = feed_file([HYBRID_MEETING])
+        sync_source("test", path)
+
+        self.assertEqual(Meeting.objects.count(), 1)
+        m = Meeting.objects.get(slug="online-test-bridge-group")
+        self.assertEqual(m.attendance_option, "hybrid")
+        self.assertEqual(m.city, "Seattle")
+
+    def test_deactivation_covers_both_prefixes(self):
+        Meeting.objects.create(
+            slug="online-test-gone-legacy", name="Gone Legacy",
+            is_approved=True, is_active=True)
+        Meeting.objects.create(
+            slug="mtg-test-gone-new", name="Gone New",
+            is_approved=True, is_active=True)
+        path = feed_file([ONLINE_MEETING])
+        result = sync_source("test", path)
+
+        self.assertEqual(result["deactivated"], 2)
+        self.assertFalse(Meeting.objects.get(slug="online-test-gone-legacy").is_active)
+        self.assertFalse(Meeting.objects.get(slug="mtg-test-gone-new").is_active)
+
+    def test_community_submissions_are_never_deactivated(self):
+        user = User.objects.create_user("c", "c@example.com", "pw")
+        Meeting.objects.create(
+            slug="mtg-test-community-run", name="Community Run",
+            submitted_by=user, is_approved=True, is_active=True)
+        path = feed_file([ONLINE_MEETING])
+        result = sync_source("test", path)
+
+        self.assertEqual(result["deactivated"], 0)
+        self.assertTrue(Meeting.objects.get(slug="mtg-test-community-run").is_active)
+
+    def test_empty_feed_still_skips_deactivation(self):
+        Meeting.objects.create(
+            slug="mtg-test-survivor", name="Survivor",
+            is_approved=True, is_active=True)
+        result = sync_source("test", feed_file([]))
+
+        self.assertEqual(result["deactivated"], 0)
+        self.assertTrue(Meeting.objects.get(slug="mtg-test-survivor").is_active)
+
+    def test_meetings_without_a_name_are_skipped_not_imported(self):
+        path = feed_file([ONLINE_MEETING, {"slug": "nameless", "day": 1}])
+        result = sync_source("test", path)
+        self.assertEqual(result["created"], 1)
+        self.assertEqual(result["skipped"], 1)
+
+    def test_feed_of_only_unusable_rows_does_not_deactivate(self):
+        """A feed that returns rows but none we can map must not wipe the
+        source — same protection as an empty feed."""
+        Meeting.objects.create(
+            slug="mtg-test-survivor", name="Survivor",
+            is_approved=True, is_active=True)
+        path = feed_file([{"slug": "nameless", "day": 1}, {"day": 2}])
+        result = sync_source("test", path)
+
+        self.assertEqual(result["created"], 0)
+        self.assertEqual(result["skipped"], 2)
+        self.assertEqual(result["deactivated"], 0)
+        self.assertTrue(Meeting.objects.get(slug="mtg-test-survivor").is_active)

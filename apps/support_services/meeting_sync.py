@@ -1,13 +1,16 @@
-"""Sync online meetings from public TSML/Meeting Guide JSON feeds.
+"""Sync recovery meetings from public TSML/Meeting Guide JSON feeds.
 
-Online meetings are location-independent: the conference URL works for anyone,
-anywhere, and the source intergroup keeps those links current. We import only
-the *online* subset of each feed so the meeting search returns accurate,
-joinable results instead of an empty list.
+Every meeting a feed carries is imported — in-person, hybrid and online. The
+importer was online-only until 2026-09, which discarded the entire in-person
+schedule of three metro intergroups.
 
-Each source owns a slug namespace ("online-<key>-...") so feeds never collide
-with each other or with community-submitted meetings. Rows that disappear from
-their source feed are deactivated — but only when that feed fetched
+Each source owns a slug namespace so feeds never collide with each other or
+with community-submitted meetings. New rows use "mtg-<key>-...";
+"online-<key>-..." is the legacy namespace and those rows keep their slugs
+permanently, because they are indexed URLs. The prefix encodes the import
+source, never the attendance option — a meeting that changes from online to
+hybrid must keep its URL. Rows that disappear from their source feed are
+deactivated — but only when that feed fetched
 successfully, so a down feed never wipes out its meetings. Community
 submissions (submitted_by set) are never touched.
 """
@@ -18,13 +21,21 @@ from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
 import requests
+from django.db.models import Q
 from django.utils.text import slugify
 
 from apps.support_services.models import Meeting
 
 logger = logging.getLogger(__name__)
 
-SLUG_PREFIX = "online"
+# Namespace for rows created by a feed import. "online" is the legacy prefix:
+# ~1,565 rows were created under it when the importer was online-only, and
+# they keep those slugs forever — they are indexed URLs. New rows use "mtg",
+# which encodes the import source and NOT the attendance option, so a meeting
+# that changes from online to hybrid keeps its URL.
+SLUG_PREFIX = "mtg"
+LEGACY_SLUG_PREFIX = "online"
+IMPORT_SLUG_PREFIXES = (SLUG_PREFIX, LEGACY_SLUG_PREFIX)
 
 # Every feed we use is a WordPress admin-ajax.php endpoint, and those
 # intermittently answer 200 with an empty body, an HTML error page, or a
@@ -124,27 +135,27 @@ def sync_source(key, source, approve=True, limit=None,
     """
     data = load_feed(source)
     meetings = data if isinstance(data, list) else data.get("meetings", [])
-    online = [
-        m for m in meetings
-        if m.get("attendance_option") == "online" and m.get("conference_url")
-    ]
+    # Import every meeting the feed carries — in-person, hybrid and online.
+    # The importer used to keep online meetings only, discarding the whole
+    # in-person schedule of three metro intergroups.
+    incoming = list(meetings)
     if limit:
-        online = online[:limit]
+        incoming = incoming[:limit]
 
-    if not online:
+    if not incoming:
         logger.warning(
-            "Feed %r returned no online meetings; skipping deactivation "
+            "Feed %r returned no meetings; skipping deactivation "
             "to avoid wiping the source", key)
         return {"created": 0, "updated": 0, "skipped": 0, "deactivated": 0}
 
     created = updated = skipped = 0
     seen = []
-    for m in online:
-        slug = _slug(key, m)
+    for m in incoming:
         defaults = _map(m, approve, default_tz)
         if defaults is None:
             skipped += 1
             continue
+        slug = _resolve_slug(key, m)
         _, was_created = Meeting.objects.update_or_create(
             slug=slug, defaults=defaults
         )
@@ -156,13 +167,19 @@ def sync_source(key, source, approve=True, limit=None,
     # submitted_by guard: community submissions always have a submitter,
     # imported rows never do — so a community meeting whose name slugifies
     # into this namespace can never be deactivated here.
+    if not seen:
+        logger.warning(
+            "Feed %r returned %d meetings but none were usable; skipping "
+            "deactivation to avoid wiping the source", key, len(incoming))
+        return {"created": created, "updated": updated,
+                "skipped": skipped, "deactivated": 0}
+
+    prefix_match = Q()
+    for prefix in IMPORT_SLUG_PREFIXES:
+        prefix_match |= Q(slug__startswith=f"{prefix}-{key}-")
     deactivated = (
         Meeting.objects
-        .filter(
-            slug__startswith=f"{SLUG_PREFIX}-{key}-",
-            submitted_by__isnull=True,
-            is_active=True,
-        )
+        .filter(prefix_match, submitted_by__isnull=True, is_active=True)
         .exclude(slug__in=seen)
         .update(is_active=False)
     )
@@ -211,18 +228,35 @@ def _deactivate_legacy_rows(keys):
     """One-time cleanup: the old seed used bare 'online-<slug>' rows with no
     source key. Once the namespaced re-import succeeds they are duplicates."""
     qs = Meeting.objects.filter(
-        slug__startswith=f"{SLUG_PREFIX}-",
+        slug__startswith=f"{LEGACY_SLUG_PREFIX}-",
         submitted_by__isnull=True,
         is_active=True,
     )
     for key in keys:
-        qs = qs.exclude(slug__startswith=f"{SLUG_PREFIX}-{key}-")
+        for prefix in IMPORT_SLUG_PREFIXES:
+            qs = qs.exclude(slug__startswith=f"{prefix}-{key}-")
     return qs.update(is_active=False)
 
 
 def _slug(key, m):
     base = m.get("slug") or slugify(m.get("name", "meeting"))
     return f"{SLUG_PREFIX}-{key}-{base}"[:255]
+
+
+def _resolve_slug(key, m):
+    """Return the slug to upsert under.
+
+    Prefers an existing imported row under any known prefix so legacy
+    `online-` rows are updated in place rather than duplicated under `mtg-`.
+    """
+    base = m.get("slug") or slugify(m.get("name", "meeting"))
+    for prefix in IMPORT_SLUG_PREFIXES:
+        candidate = f"{prefix}-{key}-{base}"[:255]
+        if Meeting.objects.filter(
+            slug=candidate, submitted_by__isnull=True
+        ).exists():
+            return candidate
+    return _slug(key, m)
 
 
 def _map(m, approve, default_tz):
