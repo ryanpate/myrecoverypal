@@ -777,3 +777,60 @@ class UpdatedAtFreshnessTests(TestCase):
         sync_source('fresh', path)
 
         self.assertGreater(Meeting.objects.get(pk=m.pk).updated_at, stale)
+
+
+class InactiveFeedEntryTests(TestCase):
+    """Feeds mark retired meetings with attendance_option 'inactive'.
+
+    That value is not one of ours, so _attendance_option would derive from
+    the payload and import a retired meeting as in-person — sending someone
+    to a group that no longer exists. Skip them.
+    """
+
+    INACTIVE = {
+        "name": "Santa Rosa Group",
+        "slug": "santa-rosa-group",
+        "day": 1,
+        "time": "07:00",
+        "attendance_option": "inactive",
+        "formatted_address": "1 Main St, Phoenix, AZ 85016, USA",
+    }
+
+    def test_inactive_entries_are_not_imported(self):
+        result = sync_source("az", feed_file([ONLINE_MEETING, self.INACTIVE]))
+        self.assertEqual(result["created"], 1)
+        self.assertEqual(result["skipped"], 1)
+        self.assertFalse(Meeting.objects.filter(name="Santa Rosa Group").exists())
+
+    def test_a_meeting_that_goes_inactive_is_deactivated(self):
+        """It vanishes from the usable set, so the normal deactivation
+        sweep must retire the row rather than leave it live."""
+        active = dict(self.INACTIVE, attendance_option="in_person")
+        sync_source("az", feed_file([ONLINE_MEETING, active]))
+        self.assertTrue(
+            Meeting.objects.get(slug="mtg-az-santa-rosa-group").is_active)
+
+        sync_source("az", feed_file([ONLINE_MEETING, self.INACTIVE]))
+        self.assertFalse(
+            Meeting.objects.get(slug="mtg-az-santa-rosa-group").is_active)
+
+
+class FeedSourceConfigTests(TestCase):
+    def test_every_configured_source_has_the_required_keys(self):
+        from apps.support_services.meeting_sync import FEED_SOURCES
+        for src in FEED_SOURCES:
+            self.assertIn("key", src)
+            self.assertIn("url", src)
+            self.assertIn("timezone", src)
+
+    def test_source_keys_are_unique(self):
+        from apps.support_services.meeting_sync import FEED_SOURCES
+        keys = [s["key"] for s in FEED_SOURCES]
+        self.assertEqual(len(keys), len(set(keys)))
+
+    def test_source_keys_contain_no_hyphen(self):
+        """Slugs are '<prefix>-<key>-<base>'; a hyphen in the key would make
+        the namespace ambiguous for the deactivation prefix match."""
+        from apps.support_services.meeting_sync import FEED_SOURCES
+        for src in FEED_SOURCES:
+            self.assertNotIn("-", src["key"])

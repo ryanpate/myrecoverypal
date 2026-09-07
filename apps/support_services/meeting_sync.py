@@ -70,6 +70,19 @@ FEED_SOURCES = [
         "url": "https://meetings.nyintergroup.org/wp-admin/admin-ajax.php?action=meetings",
         "timezone": "America/New_York",
     },
+    {
+        "key": "phoenix",
+        "url": "https://www.aaphoenix.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Phoenix",
+    },
+    {
+        "key": "atlanta",
+        "url": "https://www.atlantaaa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/New_York",
+    },
+    # Chicago (chicagoaa.org) and Los Angeles (lacoaa.org) both sit behind a
+    # Cloudflare bot challenge and cannot be fetched programmatically. Left
+    # out deliberately rather than worked around.
 ]
 
 
@@ -306,6 +319,12 @@ def _resolve_slug(key, m, known_slugs):
 def _map(m, approve, default_tz):
     name = (m.get("name") or "").strip()
     if not name:
+        return None
+    # Feeds mark retired meetings with attendance_option "inactive". That is
+    # not one of our values, so _attendance_option would derive from the
+    # payload and import a dead group as in-person — sending someone to a
+    # meeting that no longer exists.
+    if (m.get("attendance_option") or "").strip().lower() == "inactive":
         return None
 
     attendance = _attendance_option(m)
