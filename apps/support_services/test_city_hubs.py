@@ -112,3 +112,86 @@ class ResolveCityTests(TestCase):
     def test_below_threshold_city_does_not_resolve(self):
         make_meetings('Weimar', 'TX', 1)
         self.assertIsNone(resolve_city('TX', 'weimar'))
+
+
+from django.test import override_settings                                # noqa: E402
+from django.urls import reverse                                          # noqa: E402
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CityHubViewTests(TestCase):
+    def setUp(self):
+        make_meetings('Houston', 'TX', 5)
+        make_meetings('Weimar', 'TX', 1)
+        self.url = reverse('support_services:city_hub',
+                           kwargs={'state': 'tx', 'city_slug': 'houston'})
+
+    def test_page_renders(self):
+        self.assertEqual(self.client.get(self.url).status_code, 200)
+
+    def test_lists_the_city_meetings(self):
+        html = self.client.get(self.url).content.decode()
+        self.assertIn('Houston Group 0', html)
+
+    def test_title_targets_the_local_query(self):
+        html = self.client.get(self.url).content.decode()
+        self.assertIn('<title>AA Meetings in Houston, TX', html)
+
+    def test_description_is_specific_not_boilerplate(self):
+        html = self.client.get(self.url).content.decode()
+        self.assertNotIn('Free recovery community. Track milestones', html)
+        self.assertIn('Houston, TX', html)
+
+    def test_canonical_is_self(self):
+        html = self.client.get(self.url).content.decode()
+        self.assertIn('/support/meetings/tx/houston/"', html)
+
+    def test_links_to_its_state_hub(self):
+        html = self.client.get(self.url).content.decode()
+        self.assertIn(reverse('support_services:state_hub',
+                              kwargs={'state': 'tx'}), html)
+
+    def test_below_threshold_city_404s(self):
+        url = reverse('support_services:city_hub',
+                      kwargs={'state': 'tx', 'city_slug': 'weimar'})
+        self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_unknown_city_404s(self):
+        url = reverse('support_services:city_hub',
+                      kwargs={'state': 'tx', 'city_slug': 'atlantis'})
+        self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_uppercase_state_in_url_still_resolves(self):
+        self.assertEqual(self.client.get('/support/meetings/TX/houston/').status_code, 200)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class StateHubViewTests(TestCase):
+    def setUp(self):
+        make_meetings('Houston', 'TX', 5)
+        make_meetings('Katy', 'TX', 3)
+        make_meetings('Weimar', 'TX', 1)
+        self.url = reverse('support_services:state_hub', kwargs={'state': 'tx'})
+
+    def test_page_renders(self):
+        self.assertEqual(self.client.get(self.url).status_code, 200)
+
+    def test_lists_qualifying_cities_with_links(self):
+        html = self.client.get(self.url).content.decode()
+        self.assertIn('Houston', html)
+        self.assertIn('/support/meetings/tx/houston/', html)
+        self.assertIn('/support/meetings/tx/katy/', html)
+
+    def test_title_names_the_state(self):
+        html = self.client.get(self.url).content.decode()
+        self.assertIn('<title>AA Meetings in Texas', html)
+
+    def test_state_with_no_qualifying_city_404s(self):
+        make_meetings('Trenton', 'NJ', 1)
+        url = reverse('support_services:state_hub', kwargs={'state': 'nj'})
+        self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_meeting_detail_slug_route_still_works(self):
+        """The 2-letter state route must not swallow meeting detail URLs."""
+        m = Meeting.objects.filter(city='Houston').first()
+        self.assertEqual(self.client.get(m.get_absolute_url()).status_code, 200)

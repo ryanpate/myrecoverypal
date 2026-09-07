@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block canonical_url %}{{ seo_url }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <a href="{% url 'support_services:meeting_list' %}">Meetings</a>
+        &rsaquo;
+        <a href="{% url 'support_services:state_hub' state=state|lower %}">{{ state_name }}</a>
+        &rsaquo; <span>{{ city }}</span>
+    </nav>
+
+    <h1>AA Meetings in {{ city }}, {{ state }}</h1>
+    <p class="lead">
+        {{ total }} meeting{{ total|pluralize }} in {{ city }} &mdash;
+        {{ in_person_count }} in person{% if online_count %},
+        {{ online_count }} with an online option{% endif %}.
+        Updated weekly from the local AA intergroup.
+    </p>
+
+    {% include 'support_services/_court_compliance_nudge.html' %}
+
+    {% for day, day_meetings in by_day.items %}
+    <section class="mb-4">
+        <h2 style="font-size:1.15rem;">{{ day }}</h2>
+        <ul class="list-unstyled">
+            {% for m in day_meetings %}
+            <li class="mb-2">
+                <a href="{{ m.get_absolute_url }}"><strong>{{ m.name }}</strong></a>
+                {% if m.time %} &middot; {{ m.time|time:"g:i A" }}{% endif %}
+                {% if m.location %} &middot; {{ m.location }}{% endif %}
+                {% if m.attendance_option != 'in_person' %}
+                    <span class="badge bg-info">Online option</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endfor %}
+
+    <p><a href="{% url 'support_services:state_hub' state=state|lower %}">
+        All AA meetings in {{ state_name }} &rarr;</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block canonical_url %}{{ seo_url }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <a href="{% url 'support_services:meeting_list' %}">Meetings</a>
+        &rsaquo; <span>{{ state_name }}</span>
+    </nav>
+
+    <h1>AA Meetings in {{ state_name }}</h1>
+    <p class="lead">
+        {{ total }} meeting{{ total|pluralize }} across
+        {{ cities|length }} cit{{ cities|length|pluralize:"y,ies" }}.
+        Updated weekly from local AA intergroups.
+    </p>
+
+    <div class="row">
+        {% for c in cities %}
+        <div class="col-md-4 col-sm-6 mb-2">
+            <a href="{% url 'support_services:city_hub' state=c.state|lower city_slug=c.slug %}">
+                {{ c.city }}</a>
+            <span class="text-muted">({{ c.count }})</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <p class="mt-4"><a href="{% url 'support_services:meeting_list' %}">
+        Search all meetings &rarr;</a></p>
+</div>
+{% endblock %}
