@@ -705,3 +705,75 @@ class MapParsesFormattedAddressTests(TestCase):
         d = _map(self.REAL_FEED_ROW, True, "America/Chicago")
         self.assertEqual(str(d["latitude"]), "29.5119506")
         self.assertEqual(str(d["longitude"]), "-95.0725082")
+
+
+class SyncQueryCountTests(TestCase):
+    """The importer must not scale queries with feed size.
+
+    _resolve_slug checked both slug namespaces with one .exists() query per
+    meeting. At ~6,500 meetings that was ~13,000 extra round trips, and the
+    first production sync took 33 minutes. Phase 3 multiplies the feed count,
+    so this has to be flat before more feeds are added.
+    """
+
+    def _feed(self, n):
+        return feed_file([
+            dict(ONLINE_MEETING, name=f'Group {i}', slug=f'group-{i}')
+            for i in range(n)
+        ])
+
+    def test_slug_resolution_does_not_scale_with_feed_size(self):
+        from django.test.utils import CaptureQueriesContext
+        from django.db import connection
+
+        with CaptureQueriesContext(connection) as small:
+            sync_source('qa', self._feed(2))
+        with CaptureQueriesContext(connection) as large:
+            sync_source('qb', self._feed(12))
+
+        # One write per meeting, nothing else. Was ~8 queries/meeting when
+        # _resolve_slug queried per row and update_or_create paid a SELECT
+        # plus savepoints on top; now ~1.02.
+        extra = len(large.captured_queries) - len(small.captured_queries)
+        self.assertLessEqual(
+            extra, 10 + 3,
+            f'query count grew by {extra} for 10 extra meetings — '
+            f'expected ~10 (one write each), so lookups are per-row again')
+
+    def test_existing_rows_are_still_matched_in_one_pass(self):
+        """The prefetch must not break in-place updates of legacy slugs."""
+        Meeting.objects.create(
+            slug='online-qc-group-0', name='Group 0',
+            attendance_option='online', conference_url='https://zoom.us/j/OLD',
+            is_approved=True, is_active=True)
+        result = sync_source('qc', self._feed(3))
+
+        self.assertEqual(result['created'], 2)
+        self.assertEqual(result['updated'], 1)
+        self.assertEqual(
+            Meeting.objects.get(slug='online-qc-group-0').conference_url,
+            'https://zoom.us/j/123')
+
+
+class UpdatedAtFreshnessTests(TestCase):
+    """updated_at is rendered as "Last verified" on in-person meeting pages.
+
+    QuerySet.update() bypasses save(), so auto_now would never fire and every
+    in-person listing would show a frozen verification date — a stale address
+    presented as current.
+    """
+
+    def test_resyncing_advances_updated_at(self):
+        from datetime import timedelta
+        from django.utils import timezone as tz
+
+        path = feed_file([ONLINE_MEETING])
+        sync_source('fresh', path)
+        m = Meeting.objects.get(slug='mtg-fresh-morning-serenity')
+        Meeting.objects.filter(pk=m.pk).update(
+            updated_at=tz.now() - timedelta(days=30))
+        stale = Meeting.objects.get(pk=m.pk).updated_at
+
+        sync_source('fresh', path)
+
+        self.assertGreater(Meeting.objects.get(pk=m.pk).updated_at, stale)

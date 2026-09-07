@@ -22,7 +22,9 @@ from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
 import requests
+from django.db import IntegrityError
 from django.db.models import Q
+from django.utils import timezone
 from django.utils.text import slugify
 
 from apps.support_services.models import Meeting
@@ -151,18 +153,29 @@ def sync_source(key, source, approve=True, limit=None,
 
     created = updated = skipped = 0
     seen = []
+    known_slugs = _existing_import_slugs(key)
     for m in incoming:
         defaults = _map(m, approve, default_tz)
         if defaults is None:
             skipped += 1
             continue
-        slug = _resolve_slug(key, m)
-        _, was_created = Meeting.objects.update_or_create(
-            slug=slug, defaults=defaults
-        )
+        slug = _resolve_slug(key, m, known_slugs)
+        # known_slugs already tells us whether the row exists, so branch
+        # instead of paying update_or_create's SELECT + savepoint round
+        # trips on every meeting (~6 queries/row on 6,500 rows).
+        if slug in known_slugs:
+            _apply_update(slug, defaults)
+            updated += 1
+        else:
+            try:
+                Meeting.objects.create(slug=slug, **defaults)
+                created += 1
+            except IntegrityError:
+                # The row appeared between the prefetch and now — another
+                # sync running concurrently. Fall back to updating it.
+                _apply_update(slug, defaults)
+                updated += 1
         seen.append(slug)
-        created += was_created
-        updated += not was_created
 
     # Deactivate imported rows that vanished from this source's feed.
     # submitted_by guard: community submissions always have a submitter,
@@ -175,12 +188,9 @@ def sync_source(key, source, approve=True, limit=None,
         return {"created": created, "updated": updated,
                 "skipped": skipped, "deactivated": 0}
 
-    prefix_match = Q()
-    for prefix in IMPORT_SLUG_PREFIXES:
-        prefix_match |= Q(slug__startswith=f"{prefix}-{key}-")
     deactivated = (
         Meeting.objects
-        .filter(prefix_match, submitted_by__isnull=True, is_active=True)
+        .filter(_import_slug_filter(key), submitted_by__isnull=True, is_active=True)
         .exclude(slug__in=seen)
         .update(is_active=False)
     )
@@ -244,18 +254,51 @@ def _slug(key, m):
     return f"{SLUG_PREFIX}-{key}-{base}"[:255]
 
 
-def _resolve_slug(key, m):
+def _apply_update(slug, defaults):
+    """Update one imported row.
+
+    QuerySet.update() bypasses save(), so `updated_at` (auto_now=True) would
+    never advance — and that field is rendered as "Last verified" on every
+    in-person meeting page. Set it explicitly.
+    """
+    Meeting.objects.filter(slug=slug).update(
+        updated_at=timezone.now(), **defaults)
+
+
+def _import_slug_filter(key):
+    """Q matching every imported slug namespace for one source."""
+    match = Q()
+    for prefix in IMPORT_SLUG_PREFIXES:
+        match |= Q(slug__startswith=f"{prefix}-{key}-")
+    return match
+
+
+def _existing_import_slugs(key):
+    """Every imported slug already stored for this source, in ONE query.
+
+    This used to be an .exists() per meeting per namespace — ~13,000 extra
+    round trips on a 6,500-meeting sync, and the reason the first
+    production run took 33 minutes.
+    """
+    return set(
+        Meeting.objects
+        .filter(_import_slug_filter(key), submitted_by__isnull=True)
+        .values_list("slug", flat=True)
+    )
+
+
+def _resolve_slug(key, m, known_slugs):
     """Return the slug to upsert under.
 
     Prefers an existing imported row under any known prefix so legacy
     `online-` rows are updated in place rather than duplicated under `mtg-`.
+    `known_slugs` comes from _existing_import_slugs() — resolution is a set
+    membership test, not a query.
     """
     base = m.get("slug") or slugify(m.get("name", "meeting"))
     for prefix in IMPORT_SLUG_PREFIXES:
         candidate = f"{prefix}-{key}-{base}"[:255]
-        if Meeting.objects.filter(
-            slug=candidate, submitted_by__isnull=True
-        ).exists():
+        if candidate in known_slugs:
             return candidate
     return _slug(key, m)
 
