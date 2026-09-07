@@ -17,6 +17,7 @@ from apps.support_services.meeting_sync import (
     FeedFetchError,
     _attendance_option,
     _map,
+    _split_address,
     sync_all,
     sync_source,
 )
@@ -611,3 +612,96 @@ class ImportsAllAttendanceTypesTests(TestCase):
         self.assertEqual(result["skipped"], 2)
         self.assertEqual(result["deactivated"], 0)
         self.assertTrue(Meeting.objects.get(slug="mtg-test-survivor").is_active)
+
+
+class SplitAddressTests(TestCase):
+    """Real TSML feeds send only `formatted_address` — no discrete city or
+    state. Without parsing it, every in-person meeting has an empty city,
+    which breaks both the SEO title and any future city hub page."""
+
+    def test_full_us_address_with_country(self):
+        self.assertEqual(
+            _split_address("2111 Webster St, League City, TX 77573, USA"),
+            {"address": "2111 Webster St", "city": "League City",
+             "state": "TX", "postal_code": "77573"},
+        )
+
+    def test_address_without_country(self):
+        self.assertEqual(
+            _split_address("9 Oak Ave, Seattle, WA 98101"),
+            {"address": "9 Oak Ave", "city": "Seattle",
+             "state": "WA", "postal_code": "98101"},
+        )
+
+    def test_address_without_postal_code(self):
+        self.assertEqual(
+            _split_address("9 Oak Ave, Seattle, WA"),
+            {"address": "9 Oak Ave", "city": "Seattle",
+             "state": "WA", "postal_code": ""},
+        )
+
+    def test_multi_part_street_is_kept_whole(self):
+        self.assertEqual(
+            _split_address("First Church, 100 Main St, Houston, TX 77002, USA"),
+            {"address": "First Church, 100 Main St", "city": "Houston",
+             "state": "TX", "postal_code": "77002"},
+        )
+
+    def test_zip_plus_four(self):
+        self.assertEqual(
+            _split_address("1 A St, Austin, TX 78701-1234, USA")["postal_code"],
+            "78701-1234",
+        )
+
+    def test_lowercase_state_is_upcased(self):
+        self.assertEqual(
+            _split_address("1 A St, Austin, tx 78701")["state"], "TX")
+
+    def test_unparseable_address_yields_empty_fields(self):
+        self.assertEqual(
+            _split_address("Somewhere vague"),
+            {"address": "", "city": "", "state": "", "postal_code": ""},
+        )
+
+    def test_empty_input_yields_empty_fields(self):
+        self.assertEqual(
+            _split_address(""),
+            {"address": "", "city": "", "state": "", "postal_code": ""},
+        )
+
+    def test_non_us_address_is_not_forced_into_state(self):
+        """A trailing token that is not a 2-letter state must not become one."""
+        self.assertEqual(
+            _split_address("12 Rue Cler, Paris, France")["state"], "")
+
+
+class MapParsesFormattedAddressTests(TestCase):
+    REAL_FEED_ROW = {
+        "name": "Daily Bread Group",
+        "slug": "daily-bread-group",
+        "day": 1,
+        "time": "06:00",
+        "attendance_option": "in_person",
+        "location": "Bay Area Club",
+        "formatted_address": "2111 Webster St, League City, TX 77573, USA",
+        "latitude": 29.5119506,
+        "longitude": -95.0725082,
+        "region": "Clear Lake - Galveston",
+    }
+
+    def test_city_and_state_are_derived_from_formatted_address(self):
+        d = _map(self.REAL_FEED_ROW, True, "America/Chicago")
+        self.assertEqual(d["city"], "League City")
+        self.assertEqual(d["state"], "TX")
+        self.assertEqual(d["postal_code"], "77573")
+        self.assertEqual(d["address"], "2111 Webster St")
+
+    def test_explicit_feed_fields_win_over_the_parsed_address(self):
+        row = dict(self.REAL_FEED_ROW, city="Webster", state="TX")
+        d = _map(row, True, "America/Chicago")
+        self.assertEqual(d["city"], "Webster")
+
+    def test_float_coordinates_survive(self):
+        d = _map(self.REAL_FEED_ROW, True, "America/Chicago")
+        self.assertEqual(str(d["latitude"]), "29.5119506")
+        self.assertEqual(str(d["longitude"]), "-95.0725082")

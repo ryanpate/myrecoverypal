@@ -16,6 +16,7 @@ submissions (submitted_by set) are never touched.
 """
 import json
 import logging
+import re
 import time
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
@@ -299,18 +300,61 @@ def _map(m, approve, default_tz):
             "longitude": None,
         })
     else:
+        formatted = (m.get("formatted_address") or "")
+        # Feeds send either discrete fields or a single formatted string.
+        # Prefer whatever the feed states explicitly; fall back to parsing.
+        parsed = _split_address(formatted)
         mapped.update({
             "location": (m.get("location") or "")[:255],
-            "formatted_address": (m.get("formatted_address") or "")[:500],
-            "address": (m.get("address") or "")[:255],
-            "city": (m.get("city") or "")[:100],
-            "state": (m.get("state") or "")[:2],
-            "postal_code": (m.get("postal_code") or "")[:10],
+            "formatted_address": formatted[:500],
+            "address": (m.get("address") or parsed["address"])[:255],
+            "city": (m.get("city") or parsed["city"])[:100],
+            "state": (m.get("state") or parsed["state"])[:2],
+            "postal_code": (m.get("postal_code") or parsed["postal_code"])[:10],
             "region": (m.get("region") or "")[:100],
             "latitude": _decimal(m.get("latitude")),
             "longitude": _decimal(m.get("longitude")),
         })
     return mapped
+
+
+US_STATE_RE = re.compile(r"^([A-Za-z]{2})(?:\s+(\d{5}(?:-\d{4})?))?$")
+
+
+def _split_address(formatted):
+    """Pull street / city / state / ZIP out of a formatted address.
+
+    Real TSML feeds (aahouston.org, seattleaa.org, nyintergroup.org) send a
+    single Google-geocoder string — "2111 Webster St, League City, TX 77573,
+    USA" — and no discrete city or state fields. Without this, every
+    in-person meeting lands with an empty city, which empties the SEO title
+    and leaves nothing to build city pages on.
+
+    Returns empty strings rather than guessing when the shape doesn't match;
+    a non-US address must not have its last token forced into `state`.
+    """
+    blank = {"address": "", "city": "", "state": "", "postal_code": ""}
+    parts = [p.strip() for p in (formatted or "").split(",") if p.strip()]
+    if len(parts) < 3:
+        return blank
+
+    # Drop a trailing country token so "..., TX 77573, USA" and
+    # "..., TX 77573" parse identically.
+    if parts[-1].upper() in ("USA", "US", "UNITED STATES"):
+        parts = parts[:-1]
+    if len(parts) < 3:
+        return blank
+
+    m = US_STATE_RE.match(parts[-1])
+    if not m:
+        return blank
+
+    return {
+        "address": ", ".join(parts[:-2]),
+        "city": parts[-2],
+        "state": m.group(1).upper(),
+        "postal_code": m.group(2) or "",
+    }
 
 
 def _decimal(value):
