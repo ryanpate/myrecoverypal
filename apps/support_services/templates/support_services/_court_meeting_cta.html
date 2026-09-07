@@ -1,4 +1,5 @@
-{# Court Compliance CTA for a single meeting page.
+{% comment %}
+Court Compliance CTA for a single meeting page.
 
    Meeting detail pages are the site's highest-intent surface for
    court-ordered users: someone under a court order searches for a meeting
@@ -11,7 +12,8 @@
    rather than a pitch for something they already pay for.
 
    stripe-only: Court is web-only, hidden inside the iOS app per
-   App Store Guideline 3.1. #}
+   App Store Guideline 3.1.
+{% endcomment %}
 <div class="court-meeting-cta stripe-only" role="complementary" aria-label="Court Compliance">
     <span class="court-meeting-cta-icon" aria-hidden="true"><i class="fas fa-gavel"></i></span>
     {% if is_court_user %}

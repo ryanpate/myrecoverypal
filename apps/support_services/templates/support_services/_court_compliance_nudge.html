@@ -1,4 +1,5 @@
-{# Contextual Court Compliance nudge for the meeting finder — the highest-intent
+{% comment %}
+Contextual Court Compliance nudge for the meeting finder — the highest-intent
    spot for court-ordered users. Shown to everyone except existing court-tier
    users, and only on web (stripe-only hides it in the iOS app, where Court is
    web-only). Links to the public Court landing page. Dismissible for 30 days
@@ -7,7 +8,8 @@
    Anonymous visitors see this deliberately: the finder now ranks in search,
    and a logged-out arrival from Google is precisely the person who has a
    court order and has never heard of the feature. Gating it behind login
-   hid it from the entire acquisition audience. #}
+   hid it from the entire acquisition audience.
+{% endcomment %}
 {% if not is_court_user %}
 <div class="court-nudge stripe-only" id="courtNudge" style="display:none;" role="complementary" aria-label="Court Compliance">
     <span class="court-nudge-icon" aria-hidden="true"><i class="fas fa-gavel"></i></span>
