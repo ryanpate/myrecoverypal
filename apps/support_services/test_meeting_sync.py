@@ -15,6 +15,9 @@ from django.test import TestCase
 
 from apps.support_services.meeting_sync import (
     FeedFetchError,
+    _attendance_option,
+    _map,
+    _split_address,
     sync_all,
     sync_source,
 )
@@ -53,20 +56,58 @@ IN_PERSON_MEETING = {
     "attendance_option": "in_person",
 }
 
+FULL_IN_PERSON_MEETING = {
+    "name": "Downtown Noon",
+    "slug": "downtown-noon",
+    "day": 2,
+    "time": "12:00",
+    "end_time": "13:00",
+    "attendance_option": "in_person",
+    "location": "First Methodist Church",
+    "formatted_address": "123 Main St, Houston, TX 77002, USA",
+    "address": "123 Main St",
+    "city": "Houston",
+    "state": "TX",
+    "postal_code": "77002",
+    "country": "US",
+    "latitude": "29.76043200",
+    "longitude": "-95.36980300",
+    "region": "Downtown",
+    "website": "https://aahouston.org/",
+    "types": ["O", "D"],
+}
+
+HYBRID_MEETING = {
+    "name": "Bridge Group",
+    "slug": "bridge-group",
+    "day": 3,
+    "time": "18:00",
+    "attendance_option": "hybrid",
+    "conference_url": "https://zoom.us/j/999",
+    "location": "Community Hall",
+    "formatted_address": "9 Oak Ave, Seattle, WA",
+    "city": "Seattle",
+    "state": "WA",
+}
+
 
 class SyncSourceTests(TestCase):
-    def test_creates_online_meetings_with_namespaced_slug(self):
+    def test_creates_meetings_with_namespaced_slug(self):
         path = feed_file([ONLINE_MEETING, IN_PERSON_MEETING])
         result = sync_source("test", path)
 
-        self.assertEqual(result["created"], 1)
-        m = Meeting.objects.get(slug="online-test-morning-serenity")
+        self.assertEqual(result["created"], 2)
+        m = Meeting.objects.get(slug="mtg-test-morning-serenity")
         self.assertEqual(m.attendance_option, "online")
         self.assertEqual(m.conference_url, "https://zoom.us/j/123")
         self.assertTrue(m.is_approved)
         self.assertTrue(m.is_active)
-        # In-person meetings from the feed are never imported.
-        self.assertEqual(Meeting.objects.count(), 1)
+        # In-person meetings are imported too, as of the 2026-09 expansion.
+        self.assertEqual(Meeting.objects.count(), 2)
+        self.assertEqual(
+            Meeting.objects.get(slug="mtg-test-downtown-noon").attendance_option,
+            "in_person",
+        )
 
     def test_updates_existing_meeting_by_slug(self):
         path = feed_file([ONLINE_MEETING])
@@ -77,7 +118,7 @@ class SyncSourceTests(TestCase):
 
         self.assertEqual(result["created"], 0)
         self.assertEqual(result["updated"], 1)
-        m = Meeting.objects.get(slug="online-test-morning-serenity")
+        m = Meeting.objects.get(slug="mtg-test-morning-serenity")
         self.assertEqual(m.name, "Morning Serenity (Renamed)")
 
     def test_deactivates_meetings_missing_from_feed(self):
@@ -89,10 +130,10 @@ class SyncSourceTests(TestCase):
 
         self.assertEqual(result["deactivated"], 1)
         self.assertFalse(
-            Meeting.objects.get(slug="online-test-evening-hope").is_active)
+            Meeting.objects.get(slug="mtg-test-evening-hope").is_active)
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-test-morning-serenity").is_active)
+                slug="mtg-test-morning-serenity").is_active)
 
         # A third sync with the same feed must not re-count the
         # already-deactivated meeting.
@@ -105,12 +146,12 @@ class SyncSourceTests(TestCase):
         sync_source("test", feed_file([other]))
         self.assertFalse(
             Meeting.objects.get(
-                slug="online-test-morning-serenity").is_active)
+                slug="mtg-test-morning-serenity").is_active)
 
         sync_source("test", feed_file([ONLINE_MEETING]))
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-test-morning-serenity").is_active)
+                slug="mtg-test-morning-serenity").is_active)
 
     def test_empty_feed_skips_deactivation(self):
         sync_source("test", feed_file([ONLINE_MEETING]))
@@ -120,7 +161,7 @@ class SyncSourceTests(TestCase):
         self.assertEqual(result["deactivated"], 0)
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-test-morning-serenity").is_active)
+                slug="mtg-test-morning-serenity").is_active)
 
     def test_never_touches_community_submitted_meetings(self):
         user = User.objects.create_user(
@@ -141,7 +182,7 @@ class SyncSourceTests(TestCase):
     def test_default_timezone_applied_when_feed_omits_it(self):
         path = feed_file([ONLINE_MEETING])  # no "timezone" key
         sync_source("test", path, default_tz="America/Los_Angeles")
-        m = Meeting.objects.get(slug="online-test-morning-serenity")
+        m = Meeting.objects.get(slug="mtg-test-morning-serenity")
         self.assertEqual(m.timezone, "America/Los_Angeles")
 
     def test_skips_meetings_without_a_name(self):
@@ -192,7 +233,7 @@ class LoadFeedTests(TestCase):
         self.assertEqual(result["created"], 1)
         self.assertTrue(
             Meeting.objects.filter(
-                slug="online-houston-morning-serenity").exists())
+                slug="mtg-houston-morning-serenity").exists())
 
     def test_error_names_the_content_type_and_body_after_retries(self, sleep):
         with patch("apps.support_services.meeting_sync.requests.get",
@@ -251,7 +292,7 @@ class LoadFeedTests(TestCase):
         # Houston's meetings survive its feed being broken.
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-houston-morning-serenity").is_active)
+                slug="mtg-houston-morning-serenity").is_active)
 
 
 class SyncAllTests(TestCase):
@@ -272,7 +313,7 @@ class SyncAllTests(TestCase):
         # The bad source's existing meeting survives its feed being down.
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-bad-bad-meeting").is_active)
+                slug="mtg-bad-bad-meeting").is_active)
         # Legacy cleanup is skipped on partial failure.
         self.assertNotIn("legacy_deactivated", results)
 
@@ -290,7 +331,7 @@ class SyncAllTests(TestCase):
         self.assertEqual(results, {})
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-test-morning-serenity").is_active)
+                slug="mtg-test-morning-serenity").is_active)
 
     def test_legacy_bare_prefix_rows_deactivated_when_all_succeed(self):
         # Row from the old single-source seed: bare "online-" prefix,
@@ -307,13 +348,14 @@ class SyncAllTests(TestCase):
 
         results = sync_all([good])
 
-        # "online-old-..." does not match "online-test-", so it is legacy.
+        # "online-old-..." matches neither "mtg-test-" nor
+        # "online-test-", so it is legacy.
         self.assertEqual(results["legacy_deactivated"], 1)
         legacy.refresh_from_db()
         self.assertFalse(legacy.is_active)
         self.assertTrue(
             Meeting.objects.get(
-                slug="online-test-morning-serenity").is_active)
+                slug="mtg-test-morning-serenity").is_active)
 
 
 class SeedCommandTests(TestCase):
@@ -327,7 +369,7 @@ class SeedCommandTests(TestCase):
         )
         self.assertTrue(
             Meeting.objects.filter(
-                slug="online-cli-morning-serenity").exists())
+                slug="mtg-cli-morning-serenity").exists())
         self.assertIn("Done.", out.getvalue())
 
     def test_no_args_syncs_all_configured_sources(self):
@@ -372,3 +414,294 @@ class TimezoneDisplayTests(TestCase):
             name="TZ Bad", slug="tz-bad", timezone="Not/AZone",
         )
         self.assertEqual(m.timezone_display, "Not/AZone")
+
+
+class AttendanceOptionDerivationTests(TestCase):
+    """Older TSML feeds omit attendance_option; derive it from the payload."""
+
+    def test_explicit_value_is_trusted(self):
+        self.assertEqual(
+            _attendance_option({"attendance_option": "hybrid"}), "hybrid")
+
+    def test_conference_url_and_address_is_hybrid(self):
+        self.assertEqual(
+            _attendance_option({
+                "conference_url": "https://zoom.us/j/1",
+                "formatted_address": "123 Main St, Houston, TX",
+            }),
+            "hybrid",
+        )
+
+    def test_conference_url_only_is_online(self):
+        self.assertEqual(
+            _attendance_option({"conference_url": "https://zoom.us/j/1"}),
+            "online",
+        )
+
+    def test_address_only_is_in_person(self):
+        self.assertEqual(
+            _attendance_option({"formatted_address": "123 Main St"}),
+            "in_person",
+        )
+
+    def test_bare_address_field_counts_as_a_location(self):
+        self.assertEqual(_attendance_option({"address": "123 Main St"}), "in_person")
+
+    def test_no_signal_at_all_is_in_person(self):
+        self.assertEqual(_attendance_option({}), "in_person")
+
+    def test_unrecognised_explicit_value_is_derived_instead(self):
+        self.assertEqual(
+            _attendance_option({
+                "attendance_option": "hybrid_but_typoed",
+                "conference_url": "https://zoom.us/j/1",
+            }),
+            "online",
+        )
+
+
+class MapAddressFieldsTests(TestCase):
+    def test_in_person_meeting_carries_its_address(self):
+        d = _map(FULL_IN_PERSON_MEETING, True, "America/Chicago")
+        self.assertEqual(d["attendance_option"], "in_person")
+        self.assertEqual(d["location"], "First Methodist Church")
+        self.assertEqual(d["formatted_address"], "123 Main St, Houston, TX 77002, USA")
+        self.assertEqual(d["address"], "123 Main St")
+        self.assertEqual(d["city"], "Houston")
+        self.assertEqual(d["state"], "TX")
+        self.assertEqual(d["postal_code"], "77002")
+        self.assertEqual(d["region"], "Downtown")
+        self.assertEqual(d["website"], "https://aahouston.org/")
+        self.assertEqual(str(d["latitude"]), "29.76043200")
+
+    def test_in_person_meeting_has_no_conference_url(self):
+        d = _map(FULL_IN_PERSON_MEETING, True, "America/Chicago")
+        self.assertEqual(d["conference_url"], "")
+
+    def test_hybrid_meeting_carries_both_address_and_join_link(self):
+        d = _map(HYBRID_MEETING, True, "America/Chicago")
+        self.assertEqual(d["attendance_option"], "hybrid")
+        self.assertEqual(d["conference_url"], "https://zoom.us/j/999")
+        self.assertEqual(d["city"], "Seattle")
+
+    def test_online_meeting_keeps_its_placeholder_location(self):
+        """Online meetings must not look like somewhere you travel to."""
+        d = _map(ONLINE_MEETING, True, "America/Chicago")
+        self.assertEqual(d["attendance_option"], "online")
+        self.assertEqual(d["location"], "Online Meeting")
+        self.assertEqual(d["formatted_address"], "")
+        self.assertEqual(d["city"], "")
+
+    def test_state_is_truncated_to_the_column_width(self):
+        """Meeting.state is CharField(max_length=2); some feeds send
+        full state names, which would raise DataError on Postgres."""
+        d = _map({**FULL_IN_PERSON_MEETING, "state": "Texas"}, True, "UTC")
+        self.assertEqual(d["state"], "Te")
+
+    def test_missing_coordinates_become_none_not_empty_string(self):
+        d = _map(HYBRID_MEETING, True, "America/Chicago")
+        self.assertIsNone(d["latitude"])
+        self.assertIsNone(d["longitude"])
+
+    def test_meeting_without_a_name_is_still_skipped(self):
+        self.assertIsNone(_map({"city": "Houston"}, True, "UTC"))
+
+
+class ImportsAllAttendanceTypesTests(TestCase):
+    def test_in_person_meetings_are_imported(self):
+        path = feed_file([ONLINE_MEETING, FULL_IN_PERSON_MEETING])
+        result = sync_source("test", path)
+
+        self.assertEqual(result["created"], 2)
+        self.assertEqual(Meeting.objects.count(), 2)
+        m = Meeting.objects.get(slug="mtg-test-downtown-noon")
+        self.assertEqual(m.attendance_option, "in_person")
+        self.assertEqual(m.city, "Houston")
+        self.assertEqual(m.state, "TX")
+
+    def test_new_online_meetings_use_the_mtg_prefix(self):
+        path = feed_file([ONLINE_MEETING])
+        sync_source("test", path)
+        self.assertTrue(
+            Meeting.objects.filter(slug="mtg-test-morning-serenity").exists())
+
+    def test_existing_online_row_is_updated_in_place_not_duplicated(self):
+        """The 1,565 legacy `online-` rows must keep their indexed URLs."""
+        Meeting.objects.create(
+            slug="online-test-morning-serenity",
+            name="Morning Serenity",
+            attendance_option="online",
+            conference_url="https://zoom.us/j/OLD",
+            is_approved=True, is_active=True,
+        )
+        path = feed_file([ONLINE_MEETING])
+        result = sync_source("test", path)
+
+        self.assertEqual(result["created"], 0)
+        self.assertEqual(result["updated"], 1)
+        self.assertEqual(Meeting.objects.count(), 1)
+        m = Meeting.objects.get(slug="online-test-morning-serenity")
+        self.assertEqual(m.conference_url, "https://zoom.us/j/123")
+
+    def test_online_meeting_that_becomes_hybrid_keeps_its_url(self):
+        Meeting.objects.create(
+            slug="online-test-bridge-group",
+            name="Bridge Group",
+            attendance_option="online",
+            conference_url="https://zoom.us/j/999",
+            is_approved=True, is_active=True,
+        )
+        path = feed_file([HYBRID_MEETING])
+        sync_source("test", path)
+
+        self.assertEqual(Meeting.objects.count(), 1)
+        m = Meeting.objects.get(slug="online-test-bridge-group")
+        self.assertEqual(m.attendance_option, "hybrid")
+        self.assertEqual(m.city, "Seattle")
+
+    def test_deactivation_covers_both_prefixes(self):
+        Meeting.objects.create(
+            slug="online-test-gone-legacy", name="Gone Legacy",
+            is_approved=True, is_active=True)
+        Meeting.objects.create(
+            slug="mtg-test-gone-new", name="Gone New",
+            is_approved=True, is_active=True)
+        path = feed_file([ONLINE_MEETING])
+        result = sync_source("test", path)
+
+        self.assertEqual(result["deactivated"], 2)
+        self.assertFalse(Meeting.objects.get(slug="online-test-gone-legacy").is_active)
+        self.assertFalse(Meeting.objects.get(slug="mtg-test-gone-new").is_active)
+
+    def test_community_submissions_are_never_deactivated(self):
+        user = User.objects.create_user("c", "c@example.com", "pw")
+        Meeting.objects.create(
+            slug="mtg-test-community-run", name="Community Run",
+            submitted_by=user, is_approved=True, is_active=True)
+        path = feed_file([ONLINE_MEETING])
+        result = sync_source("test", path)
+
+        self.assertEqual(result["deactivated"], 0)
+        self.assertTrue(Meeting.objects.get(slug="mtg-test-community-run").is_active)
+
+    def test_empty_feed_still_skips_deactivation(self):
+        Meeting.objects.create(
+            slug="mtg-test-survivor", name="Survivor",
+            is_approved=True, is_active=True)
+        result = sync_source("test", feed_file([]))
+
+        self.assertEqual(result["deactivated"], 0)
+        self.assertTrue(Meeting.objects.get(slug="mtg-test-survivor").is_active)
+
+    def test_meetings_without_a_name_are_skipped_not_imported(self):
+        path = feed_file([ONLINE_MEETING, {"slug": "nameless", "day": 1}])
+        result = sync_source("test", path)
+        self.assertEqual(result["created"], 1)
+        self.assertEqual(result["skipped"], 1)
+
+    def test_feed_of_only_unusable_rows_does_not_deactivate(self):
+        """A feed that returns rows but none we can map must not wipe the
+        source — same protection as an empty feed."""
+        Meeting.objects.create(
+            slug="mtg-test-survivor", name="Survivor",
+            is_approved=True, is_active=True)
+        path = feed_file([{"slug": "nameless", "day": 1}, {"day": 2}])
+        result = sync_source("test", path)
+
+        self.assertEqual(result["created"], 0)
+        self.assertEqual(result["skipped"], 2)
+        self.assertEqual(result["deactivated"], 0)
+        self.assertTrue(Meeting.objects.get(slug="mtg-test-survivor").is_active)
+
+
+class SplitAddressTests(TestCase):
+    """Real TSML feeds send only `formatted_address` — no discrete city or
+    state. Without parsing it, every in-person meeting has an empty city,
+    which breaks both the SEO title and any future city hub page."""
+
+    def test_full_us_address_with_country(self):
+        self.assertEqual(
+            _split_address("2111 Webster St, League City, TX 77573, USA"),
+            {"address": "2111 Webster St", "city": "League City",
+             "state": "TX", "postal_code": "77573"},
+        )
+
+    def test_address_without_country(self):
+        self.assertEqual(
+            _split_address("9 Oak Ave, Seattle, WA 98101"),
+            {"address": "9 Oak Ave", "city": "Seattle",
+             "state": "WA", "postal_code": "98101"},
+        )
+
+    def test_address_without_postal_code(self):
+        self.assertEqual(
+            _split_address("9 Oak Ave, Seattle, WA"),
+            {"address": "9 Oak Ave", "city": "Seattle",
+             "state": "WA", "postal_code": ""},
+        )
+
+    def test_multi_part_street_is_kept_whole(self):
+        self.assertEqual(
+            _split_address("First Church, 100 Main St, Houston, TX 77002, USA"),
+            {"address": "First Church, 100 Main St", "city": "Houston",
+             "state": "TX", "postal_code": "77002"},
+        )
+
+    def test_zip_plus_four(self):
+        self.assertEqual(
+            _split_address("1 A St, Austin, TX 78701-1234, USA")["postal_code"],
+            "78701-1234",
+        )
+
+    def test_lowercase_state_is_upcased(self):
+        self.assertEqual(
+            _split_address("1 A St, Austin, tx 78701")["state"], "TX")
+
+    def test_unparseable_address_yields_empty_fields(self):
+        self.assertEqual(
+            _split_address("Somewhere vague"),
+            {"address": "", "city": "", "state": "", "postal_code": ""},
+        )
+
+    def test_empty_input_yields_empty_fields(self):
+        self.assertEqual(
+            _split_address(""),
+            {"address": "", "city": "", "state": "", "postal_code": ""},
+        )
+
+    def test_non_us_address_is_not_forced_into_state(self):
+        """A trailing token that is not a 2-letter state must not become one."""
+        self.assertEqual(
+            _split_address("12 Rue Cler, Paris, France")["state"], "")
+
+
+class MapParsesFormattedAddressTests(TestCase):
+    REAL_FEED_ROW = {
+        "name": "Daily Bread Group",
+        "slug": "daily-bread-group",
+        "day": 1,
+        "time": "06:00",
+        "attendance_option": "in_person",
+        "location": "Bay Area Club",
+        "formatted_address": "2111 Webster St, League City, TX 77573, USA",
+        "latitude": 29.5119506,
+        "longitude": -95.0725082,
+        "region": "Clear Lake - Galveston",
+    }
+
+    def test_city_and_state_are_derived_from_formatted_address(self):
+        d = _map(self.REAL_FEED_ROW, True, "America/Chicago")
+        self.assertEqual(d["city"], "League City")
+        self.assertEqual(d["state"], "TX")
+        self.assertEqual(d["postal_code"], "77573")
+        self.assertEqual(d["address"], "2111 Webster St")
+
+    def test_explicit_feed_fields_win_over_the_parsed_address(self):
+        row = dict(self.REAL_FEED_ROW, city="Webster", state="TX")
+        d = _map(row, True, "America/Chicago")
+        self.assertEqual(d["city"], "Webster")
+
+    def test_float_coordinates_survive(self):
+        d = _map(self.REAL_FEED_ROW, True, "America/Chicago")
+        self.assertEqual(str(d["latitude"]), "29.5119506")
+        self.assertEqual(str(d["longitude"]), "-95.0725082")

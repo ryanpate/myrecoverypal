@@ -47,6 +47,7 @@ from apps.accounts.court_forms import (
 )
 from apps.accounts.court_service import generate_court_report
 from apps.accounts.decorators import court_required
+from apps.support_services.models import Meeting
 from datetime import date
 
 
@@ -99,17 +100,37 @@ def court_attendance_list(request):
 @login_required
 @court_required
 def court_attendance_create(request):
+    # ?meeting=<slug> prefills from the directory, so "Log this meeting" on a
+    # meeting page lands on a filled-in form instead of a blank one. The
+    # Meeting row is kept on the FK; the denormalised fields still carry the
+    # values so a report renders even if the meeting is later removed.
+    meeting = None
+    slug = request.GET.get('meeting')
+    if slug:
+        meeting = Meeting.objects.filter(
+            slug=slug, is_approved=True, is_active=True).first()
+
     if request.method == 'POST':
         form = MeetingAttendanceForm(request.POST)
         if form.is_valid():
             att = form.save(commit=False)
             att.user = request.user
+            att.meeting = meeting
             att.save()
             messages.success(request, 'Meeting logged.')
             return redirect('accounts:court_attendance_list')
     else:
-        form = MeetingAttendanceForm(initial={'meeting_date': timezone.now()})
-    return render(request, 'court/attendance_form.html', {'form': form, 'mode': 'create'})
+        initial = {'meeting_date': timezone.now()}
+        if meeting:
+            initial.update({
+                'meeting_name': meeting.name,
+                'meeting_address': meeting.formatted_address or meeting.address,
+                'meeting_online': meeting.attendance_option in ('online', 'hybrid'),
+                'meeting_platform': 'Zoom' if meeting.conference_url else '',
+            })
+        form = MeetingAttendanceForm(initial=initial)
+    return render(request, 'court/attendance_form.html',
+                  {'form': form, 'mode': 'create', 'prefill_meeting': meeting})
 
 
 @login_required

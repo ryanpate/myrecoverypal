@@ -205,6 +205,69 @@ class Meeting(models.Model):
 
         return data
 
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('support_services:meeting_detail', kwargs={'slug': self.slug})
+
+    @property
+    def seo_title(self):
+        """Page/OG/Twitter title for the detail page.
+
+        The old title was "{name} - Recovery Meeting - MyRecoveryPal" for
+        all 1,565 pages, carrying none of the schedule or location terms
+        people actually search for.
+        """
+        bits = []
+        if self.day is not None:
+            bits.append(f'{self.get_day_display()}s')
+        if self.time:
+            bits.append(self.time.strftime('%-I:%M %p'))
+        if self.attendance_option == 'online':
+            bits.append('Online')
+        elif self.city:
+            bits.append(f'{self.city}, {self.state}' if self.state else self.city)
+        bits.append('Recovery Meeting')
+        return f'{self.name} \u2014 {" ".join(bits)}'
+
+    @property
+    def seo_description(self):
+        """Meta description for the detail page.
+
+        1,565 meeting pages previously shared the site-wide boilerplate
+        description, which is why Google left them in "Crawled - currently
+        not indexed". Builds a factual, per-meeting sentence instead.
+        Program-neutral wording ("recovery meeting") — the directory
+        carries AA, NA, SMART and secular groups alike.
+        """
+        if self.attendance_option == 'online':
+            kind = 'free online recovery meeting'
+        elif self.attendance_option == 'hybrid':
+            kind = 'free recovery meeting held in person and online'
+        else:
+            kind = 'free recovery meeting'
+
+        where = ''
+        if self.attendance_option != 'online':
+            if self.city and self.state:
+                where = f' in {self.city}, {self.state}'
+            elif self.city:
+                where = f' in {self.city}'
+
+        when = ''
+        if self.day is not None and self.time:
+            when = (f' on {self.get_day_display()}s at '
+                    f'{self.time.strftime("%-I:%M %p")} {self.timezone_display}')
+        elif self.day is not None:
+            when = f' on {self.get_day_display()}s'
+
+        if self.attendance_option == 'in_person':
+            tail = 'See the address, meeting format and full schedule.'
+        else:
+            tail = 'Get the join link, meeting format and full schedule.'
+
+        text = f'{self.name} is a {kind}{where}{when}. {tail}'
+        return text if len(text) <= 160 else text[:157].rstrip() + '...'
+
     @property
     def timezone_display(self):
         """Short label for the meeting's stored IANA zone (e.g. 'PDT').
