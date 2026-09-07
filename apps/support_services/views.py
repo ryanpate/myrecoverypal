@@ -69,11 +69,21 @@ def meeting_list(request):
     meeting_type = request.GET.get('type', '')
 
     if search_query:
+        # Location fields matter as much as the name: people search a ZIP
+        # or a city, not a group name. Without these a ZIP returned nothing
+        # even for ZIPs we hold data for.
+        # state is iexact, not icontains — a 2-letter query like "in" would
+        # otherwise match Indiana plus every name containing "in".
         meetings = meetings.filter(
             Q(name__icontains=search_query) |
             Q(group__icontains=search_query) |
             Q(location__icontains=search_query) |
-            Q(notes__icontains=search_query)
+            Q(notes__icontains=search_query) |
+            Q(city__icontains=search_query) |
+            Q(formatted_address__icontains=search_query) |
+            Q(address__icontains=search_query) |
+            Q(postal_code__istartswith=search_query) |
+            Q(state__iexact=search_query)
         )
 
     if day:
