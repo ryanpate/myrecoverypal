@@ -1,9 +1,14 @@
 {# Contextual Court Compliance nudge for the meeting finder — the highest-intent
-   spot for court-ordered users. Shown only to authenticated non-court users, and
-   only on web (stripe-only hides it in the iOS app, where Court is web-only).
-   Links to the public Court landing page. Dismissible for 30 days (most
-   meeting-finder users aren't court-ordered, so it shouldn't nag). #}
-{% if user.is_authenticated and not is_court_user %}
+   spot for court-ordered users. Shown to everyone except existing court-tier
+   users, and only on web (stripe-only hides it in the iOS app, where Court is
+   web-only). Links to the public Court landing page. Dismissible for 30 days
+   (most meeting-finder users aren't court-ordered, so it shouldn't nag).
+
+   Anonymous visitors see this deliberately: the finder now ranks in search,
+   and a logged-out arrival from Google is precisely the person who has a
+   court order and has never heard of the feature. Gating it behind login
+   hid it from the entire acquisition audience. #}
+{% if not is_court_user %}
 <div class="court-nudge stripe-only" id="courtNudge" style="display:none;" role="complementary" aria-label="Court Compliance">
     <span class="court-nudge-icon" aria-hidden="true"><i class="fas fa-gavel"></i></span>
     <span class="court-nudge-text"><strong>Court-ordered to attend meetings?</strong> Get hash-verified, court-ready proof of attendance you can send straight to your PO.</span>

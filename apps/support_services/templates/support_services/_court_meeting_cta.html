@@ -1,0 +1,63 @@
+{# Court Compliance CTA for a single meeting page.
+
+   Meeting detail pages are the site's highest-intent surface for
+   court-ordered users: someone under a court order searches for a meeting
+   first and needs proof of attendance second. Unlike the finder's
+   dismissible nudge, this shows to ANONYMOUS visitors too — organic search
+   is exactly the audience, and a logged-out visitor is the one who has not
+   heard of the feature yet.
+
+   Court-tier users get the useful action (log this meeting, prefilled)
+   rather than a pitch for something they already pay for.
+
+   stripe-only: Court is web-only, hidden inside the iOS app per
+   App Store Guideline 3.1. #}
+<div class="court-meeting-cta stripe-only" role="complementary" aria-label="Court Compliance">
+    <span class="court-meeting-cta-icon" aria-hidden="true"><i class="fas fa-gavel"></i></span>
+    {% if is_court_user %}
+        <span class="court-meeting-cta-text">
+            <strong>Attended this meeting?</strong>
+            Log it now and it goes straight onto your next court report.
+        </span>
+        <a class="court-meeting-cta-btn"
+           href="{% url 'accounts:court_attendance_create' %}?meeting={{ meeting.slug }}">
+            Log this meeting
+        </a>
+    {% else %}
+        <span class="court-meeting-cta-text">
+            <strong>Court-ordered to attend meetings?</strong>
+            Track attendance at this meeting and generate a tamper-evident PDF
+            your probation officer can verify.
+        </span>
+        <a class="court-meeting-cta-btn"
+           href="{% url 'core:court_ordered_meeting_tracker' %}">
+            See how it works
+        </a>
+    {% endif %}
+</div>
+<style>
+    .court-meeting-cta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        background: linear-gradient(135deg, #1e4d8b, #2d6a9f);
+        color: #fff;
+        border-radius: 12px;
+        padding: 0.9rem 1.1rem;
+        margin: 0 0 1.5rem;
+    }
+    .court-meeting-cta-icon { font-size: 1.2rem; }
+    .court-meeting-cta-text { flex: 1 1 240px; font-size: 0.9rem; line-height: 1.4; }
+    .court-meeting-cta-btn {
+        background: #fff;
+        color: #1e4d8b;
+        font-weight: 700;
+        padding: 0.45rem 1.1rem;
+        border-radius: 50px;
+        text-decoration: none;
+        white-space: nowrap;
+        font-size: 0.88rem;
+    }
+    .court-meeting-cta-btn:hover { color: #0f2d56; }
+</style>

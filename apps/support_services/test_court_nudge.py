@@ -9,8 +9,12 @@ User = get_user_model()
 
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class CourtComplianceNudgeTests(TestCase):
-    """The meeting-finder Court nudge: shown to authenticated non-court users,
-    hidden from court users (they already have it)."""
+    """The meeting-finder Court nudge: shown to everyone except court-tier
+    users (they already pay for it).
+
+    Anonymous visitors DO see it. It used to be login-gated, which hid it
+    from every organic-search arrival — the exact audience the Court tier
+    is sold to. See _court_compliance_nudge.html."""
 
     def setUp(self):
         self.user = User.objects.create_user('u', 'u@example.com', 'pw')
@@ -30,5 +34,6 @@ class CourtComplianceNudgeTests(TestCase):
         self.client.force_login(self.user)
         self.assertNotContains(self._get(), 'courtNudge')
 
-    def test_anonymous_does_not_see_nudge(self):
-        self.assertNotContains(self._get(), 'courtNudge')
+    def test_anonymous_sees_nudge(self):
+        """Logged-out search traffic is the acquisition audience."""
+        self.assertContains(self._get(), 'courtNudge')
