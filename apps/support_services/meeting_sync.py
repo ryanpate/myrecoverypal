@@ -15,6 +15,7 @@ import json
 import logging
 import time
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 
 import requests
 from django.utils.text import slugify
@@ -228,24 +229,68 @@ def _map(m, approve, default_tz):
     name = (m.get("name") or "").strip()
     if not name:
         return None
-    return {
+
+    attendance = _attendance_option(m)
+    online_only = attendance == "online"
+
+    mapped = {
         "name": name,
         "day": m.get("day"),
         "time": _parse_time(m.get("time")),
         "end_time": _parse_time(m.get("end_time")),
         "timezone": m.get("timezone") or default_tz,
-        "attendance_option": "online",
-        "conference_url": m.get("conference_url") or "",
+        "attendance_option": attendance,
+        "conference_url": "" if attendance == "in_person" else (m.get("conference_url") or ""),
         "conference_phone": (m.get("conference_phone") or "")[:30],
         "types": m.get("types") or [],
-        # Online meetings have no physical location; keep address fields
-        # blank so users don't think they need to travel.
-        "location": "Online Meeting",
         "group": (m.get("group") or "")[:255],
         "notes": m.get("notes") or "",  # join instructions / passwords
+        "website": (m.get("website") or "")[:200],
         "is_approved": approve,
         "is_active": True,
     }
+
+    if online_only:
+        # Online meetings have no physical location; keep address fields
+        # blank so users don't think they need to travel.
+        mapped.update({
+            "location": "Online Meeting",
+            "formatted_address": "",
+            "address": "",
+            "city": "",
+            "state": "",
+            "postal_code": "",
+            "region": "",
+            "latitude": None,
+            "longitude": None,
+        })
+    else:
+        mapped.update({
+            "location": (m.get("location") or "")[:255],
+            "formatted_address": (m.get("formatted_address") or "")[:500],
+            "address": (m.get("address") or "")[:255],
+            "city": (m.get("city") or "")[:100],
+            "state": (m.get("state") or "")[:2],
+            "postal_code": (m.get("postal_code") or "")[:10],
+            "region": (m.get("region") or "")[:100],
+            "latitude": _decimal(m.get("latitude")),
+            "longitude": _decimal(m.get("longitude")),
+        })
+    return mapped
+
+
+def _decimal(value):
+    """Coerce a feed coordinate to Decimal, or None if it is unusable.
+
+    Feeds send coordinates as strings, sometimes empty, occasionally "0" for
+    "unknown". A bad coordinate must not abort a whole sync.
+    """
+    if value in (None, "", "0", 0):
+        return None
+    try:
+        return Decimal(str(value))
+    except (InvalidOperation, ValueError):
+        return None
 
 
 VALID_ATTENDANCE = {"online", "hybrid", "in_person"}

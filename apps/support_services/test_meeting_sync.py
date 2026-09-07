@@ -16,6 +16,7 @@ from django.test import TestCase
 from apps.support_services.meeting_sync import (
     FeedFetchError,
     _attendance_option,
+    _map,
     sync_all,
     sync_source,
 )
@@ -52,6 +53,40 @@ IN_PERSON_MEETING = {
     "day": 2,
     "time": "12:00",
     "attendance_option": "in_person",
+}
+
+FULL_IN_PERSON_MEETING = {
+    "name": "Downtown Noon",
+    "slug": "downtown-noon",
+    "day": 2,
+    "time": "12:00",
+    "end_time": "13:00",
+    "attendance_option": "in_person",
+    "location": "First Methodist Church",
+    "formatted_address": "123 Main St, Houston, TX 77002, USA",
+    "address": "123 Main St",
+    "city": "Houston",
+    "state": "TX",
+    "postal_code": "77002",
+    "country": "US",
+    "latitude": "29.76043200",
+    "longitude": "-95.36980300",
+    "region": "Downtown",
+    "website": "https://aahouston.org/",
+    "types": ["O", "D"],
+}
+
+HYBRID_MEETING = {
+    "name": "Bridge Group",
+    "slug": "bridge-group",
+    "day": 3,
+    "time": "18:00",
+    "attendance_option": "hybrid",
+    "conference_url": "https://zoom.us/j/999",
+    "location": "Community Hall",
+    "formatted_address": "9 Oak Ave, Seattle, WA",
+    "city": "Seattle",
+    "state": "WA",
 }
 
 
@@ -417,3 +452,50 @@ class AttendanceOptionDerivationTests(TestCase):
             }),
             "online",
         )
+
+
+class MapAddressFieldsTests(TestCase):
+    def test_in_person_meeting_carries_its_address(self):
+        d = _map(FULL_IN_PERSON_MEETING, True, "America/Chicago")
+        self.assertEqual(d["attendance_option"], "in_person")
+        self.assertEqual(d["location"], "First Methodist Church")
+        self.assertEqual(d["formatted_address"], "123 Main St, Houston, TX 77002, USA")
+        self.assertEqual(d["address"], "123 Main St")
+        self.assertEqual(d["city"], "Houston")
+        self.assertEqual(d["state"], "TX")
+        self.assertEqual(d["postal_code"], "77002")
+        self.assertEqual(d["region"], "Downtown")
+        self.assertEqual(d["website"], "https://aahouston.org/")
+        self.assertEqual(str(d["latitude"]), "29.76043200")
+
+    def test_in_person_meeting_has_no_conference_url(self):
+        d = _map(FULL_IN_PERSON_MEETING, True, "America/Chicago")
+        self.assertEqual(d["conference_url"], "")
+
+    def test_hybrid_meeting_carries_both_address_and_join_link(self):
+        d = _map(HYBRID_MEETING, True, "America/Chicago")
+        self.assertEqual(d["attendance_option"], "hybrid")
+        self.assertEqual(d["conference_url"], "https://zoom.us/j/999")
+        self.assertEqual(d["city"], "Seattle")
+
+    def test_online_meeting_keeps_its_placeholder_location(self):
+        """Online meetings must not look like somewhere you travel to."""
+        d = _map(ONLINE_MEETING, True, "America/Chicago")
+        self.assertEqual(d["attendance_option"], "online")
+        self.assertEqual(d["location"], "Online Meeting")
+        self.assertEqual(d["formatted_address"], "")
+        self.assertEqual(d["city"], "")
+
+    def test_state_is_truncated_to_the_column_width(self):
+        """Meeting.state is CharField(max_length=2); some feeds send
+        full state names, which would raise DataError on Postgres."""
+        d = _map({**FULL_IN_PERSON_MEETING, "state": "Texas"}, True, "UTC")
+        self.assertEqual(d["state"], "Te")
+
+    def test_missing_coordinates_become_none_not_empty_string(self):
+        d = _map(HYBRID_MEETING, True, "America/Chicago")
+        self.assertIsNone(d["latitude"])
+        self.assertIsNone(d["longitude"])
+
+    def test_meeting_without_a_name_is_still_skipped(self):
+        self.assertIsNone(_map({"city": "Houston"}, True, "UTC"))
