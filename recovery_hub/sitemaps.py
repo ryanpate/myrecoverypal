@@ -200,6 +200,49 @@ class MeetingSitemap(Sitemap):
         return super().get_urls(page=page, site=site, protocol='https')
 
 
+class CityHubSitemap(Sitemap):
+    """City directory pages — the ones that can rank for
+    "aa meetings in <city>". Detail pages cannot."""
+    protocol = 'https'
+    changefreq = 'weekly'
+    priority = 0.8      # above detail pages (0.6), below the finder hub (0.9)
+
+    def items(self):
+        from apps.support_services.hubs import hub_cities
+        return hub_cities()
+
+    def location(self, obj):
+        return reverse('support_services:city_hub',
+                       kwargs={'state': obj['state'].lower(),
+                               'city_slug': obj['slug']})
+
+    def get_urls(self, page=1, site=None, protocol=None):
+        from django.contrib.sites.models import Site
+        if site is None:
+            site = Site(domain=settings.SITE_DOMAIN, name=settings.SITE_DOMAIN)
+        return super().get_urls(page=page, site=site, protocol='https')
+
+
+class StateHubSitemap(Sitemap):
+    protocol = 'https'
+    changefreq = 'weekly'
+    priority = 0.7
+
+    def items(self):
+        from apps.support_services.hubs import hub_states
+        return hub_states()
+
+    def location(self, obj):
+        return reverse('support_services:state_hub',
+                       kwargs={'state': obj['state'].lower()})
+
+    def get_urls(self, page=1, site=None, protocol=None):
+        from django.contrib.sites.models import Site
+        if site is None:
+            site = Site(domain=settings.SITE_DOMAIN, name=settings.SITE_DOMAIN)
+        return super().get_urls(page=page, site=site, protocol='https')
+
+
 # Dictionary of all sitemaps
 sitemaps = {
     'static': StaticViewSitemap,
@@ -207,4 +250,6 @@ sitemaps = {
     'store_categories': StoreCategorySitemap,
     'resources': ResourceSitemap,
     'meetings': MeetingSitemap,
+    'state_hubs': StateHubSitemap,
+    'city_hubs': CityHubSitemap,
 }

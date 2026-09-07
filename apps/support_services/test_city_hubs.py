@@ -216,3 +216,22 @@ class DetailBacklinkTests(TestCase):
             attendance_option='online', conference_url='https://zoom.us/j/1',
             is_approved=True, is_active=True)
         self.assertEqual(Meeting.objects.get(slug='mtg-t-online-1').city_hub_url, '')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class HubSitemapTests(TestCase):
+    def setUp(self):
+        make_meetings('Houston', 'TX', 5)
+        make_meetings('Weimar', 'TX', 1)
+
+    def test_city_hub_is_listed(self):
+        xml = self.client.get('/sitemap.xml').content.decode()
+        self.assertIn('/support/meetings/tx/houston/</loc>', xml)
+
+    def test_state_hub_is_listed(self):
+        xml = self.client.get('/sitemap.xml').content.decode()
+        self.assertIn('/support/meetings/tx/</loc>', xml)
+
+    def test_below_threshold_city_is_not_listed(self):
+        xml = self.client.get('/sitemap.xml').content.decode()
+        self.assertNotIn('/support/meetings/tx/weimar/', xml)
