@@ -4,6 +4,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.views.generic import RedirectView
 from . import views
+from .forms import ResendPasswordResetForm
 from . import payment_views
 from apps.accounts.court_views import (
     court_dashboard, court_profile,
@@ -41,6 +42,10 @@ urlpatterns = [
              # -> NoReverseMatch on every reset request (Sentry PYTHON-DJANGO-1G).
              email_template_name='emails/password_reset_email.txt',
              html_email_template_name='emails/password_reset_email.html',
+             # Routes the email through email_service.send_email() (Resend
+             # HTTP) instead of Django's SMTP backend, which is what every
+             # other email in the project uses. See Sentry PYTHON-DJANGO-50.
+             form_class=ResendPasswordResetForm,
              success_url='/accounts/password-reset/done/'),
          name='password_reset'),
     path('password-reset/done/',

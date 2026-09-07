@@ -1,6 +1,8 @@
 # apps/accounts/forms.py
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import (
+    UserCreationForm, UserChangeForm, PasswordResetForm,
+)
 from .models import (
     User, Milestone, SupportMessage, SponsorRelationship,
     RecoveryPal, RecoveryGroup, GroupMembership, GroupPost,
@@ -9,6 +11,12 @@ from .models import (
 # CORRECT - no CustomUserCreationForm here
 from .invite_models import WaitlistRequest, InviteCode, SystemSettings
 from django.core.exceptions import ValidationError
+from django.template import loader
+import logging
+
+from .email_service import send_email
+
+logger = logging.getLogger(__name__)
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML, Field
 from crispy_forms.bootstrap import TabHolder, Tab
@@ -613,3 +621,49 @@ class UserSearchForm(forms.Form):
             ),
             Submit('submit', 'Search', css_class='btn btn-outline-primary')
         )
+
+
+class ResendPasswordResetForm(PasswordResetForm):
+    """Password reset that uses the project's own email transport.
+
+    Django's PasswordResetForm.send_mail() builds an EmailMultiAlternatives
+    and calls .send(), which goes straight to the SMTP backend. That made
+    password reset the only email in the project not using
+    email_service.send_email() (Resend HTTP, with SMTP only as a fallback),
+    and it broke the moment the SMTP credentials stopped authenticating —
+    Sentry PYTHON-DJANGO-50, SMTPServerDisconnected.
+
+    The subject is built here rather than rendered from
+    registration/password_reset_subject.txt: django.contrib.admin ships its
+    own copy of that template and precedes this app in INSTALLED_APPS, so
+    with APP_DIRS=True it wins. Same shadowing trap as PYTHON-DJANGO-1G.
+    """
+
+    subject = 'Reset your MyRecoveryPal password'
+
+    def send_mail(self, subject_template_name, email_template_name, context,
+                  from_email, to_email, html_email_template_name=None):
+        plain_message = loader.render_to_string(email_template_name, context)
+        html_message = (
+            loader.render_to_string(html_email_template_name, context)
+            if html_email_template_name else ''
+        )
+        try:
+            sent, error = send_email(
+                subject=self.subject,
+                plain_message=plain_message,
+                html_message=html_message,
+                recipient_email=to_email,
+                from_email=from_email,
+            )
+        except Exception:
+            # A dead mail provider must not 500 a password reset POST, and
+            # must not reveal whether the address has an account. The user
+            # still lands on the "check your inbox" page.
+            logger.exception(
+                'Password reset email raised for %s', to_email)
+            return
+
+        if not sent:
+            logger.error(
+                'Password reset email to %s failed: %s', to_email, error)
