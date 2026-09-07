@@ -9,6 +9,7 @@ tags to the page's own title/description.
 """
 import re
 
+from django.core.cache import caches
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -90,6 +91,14 @@ class SitemapNoRedirectTests(TestCase):
     Five landing pages were consolidated into others over time; three of
     them were still being submitted to Google months later.
     """
+
+    def setUp(self):
+        # Independent of accumulated rate-limit state from earlier tests.
+        for alias in ('default', 'rate_limiting'):
+            try:
+                caches[alias].clear()
+            except Exception:
+                pass
 
     def test_every_static_sitemap_url_returns_200(self):
         from recovery_hub.sitemaps import StaticViewSitemap

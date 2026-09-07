@@ -23,6 +23,7 @@ from .payment_models import (
     Invoice, SubscriptionPlan
 )
 from .email_service import send_email
+from apps.core.analytics import queue_ga_event
 
 logger = logging.getLogger(__name__)
 
@@ -159,7 +160,18 @@ def create_checkout_session(request):
         checkout_session = _build_checkout_session(request, plan)
         return JsonResponse({
             'sessionId': checkout_session.id,
-            'url': checkout_session.url
+            'url': checkout_session.url,
+            # For the client-side GA4 begin_checkout event. It has to fire
+            # client-side: the next page after this is Stripe's, so a queued
+            # server event would never reach an abandoned checkout.
+            'analytics': {
+                'value': float(plan.price),
+                'currency': plan.currency,
+                'item_id': plan.stripe_price_id or plan.tier,
+                'item_name': plan.name,
+                'item_category': plan.tier,
+                'item_variant': plan.billing_period,
+            },
         })
 
     except Exception as e:
@@ -236,6 +248,7 @@ def payment_success(request):
             price_id = stripe_subscription['items']['data'][0]['price']['id']
 
             # Determine tier from SubscriptionPlan by matching Stripe price ID
+            plan = None
             try:
                 plan = SubscriptionPlan.objects.get(stripe_price_id=price_id, is_active=True)
                 subscription.tier = plan.tier
@@ -251,6 +264,24 @@ def payment_success(request):
                 subscription.current_period_start = period_start
                 subscription.current_period_end = period_end
             subscription.save()
+
+            # GA4 revenue conversion. Without this GA4 reports
+            # "Total revenue: 0" no matter how many people subscribe.
+            if plan:
+                queue_ga_event(
+                    request, 'purchase',
+                    transaction_id=session_id,
+                    value=float(plan.price),
+                    currency=plan.currency,
+                    items=[{
+                        'item_id': plan.stripe_price_id or plan.tier,
+                        'item_name': plan.name,
+                        'item_category': plan.tier,
+                        'item_variant': plan.billing_period,
+                        'price': float(plan.price),
+                        'quantity': 1,
+                    }],
+                )
 
             tier_names = {'premium': 'Premium', 'court': 'Court Compliance',
                           'supporter': 'Supporter'}

@@ -19,6 +19,23 @@
         gtag('js', new Date());
         gtag('config', 'G-81SZGNRESW');
     </script>
+    {% if ga_events %}
+    {# Conversion events queued server-side by apps/core/analytics.py. Most
+       conversions end in a redirect, so they cannot be fired inline by the
+       view that produced them. #}
+    {{ ga_events|json_script:"ga-queued-events" }}
+    <script>
+        (function () {
+            var el = document.getElementById('ga-queued-events');
+            if (!el) return;
+            try {
+                JSON.parse(el.textContent).forEach(function (e) {
+                    gtag('event', e.name, e.params || {});
+                });
+            } catch (err) { /* analytics must never break the page */ }
+        })();
+    </script>
+    {% endif %}
 
     <!-- Google AdSense removed - denied for recovery content, was loading ~100KB wasted JS -->
 

@@ -48,6 +48,7 @@ from apps.accounts.court_forms import (
 from apps.accounts.court_service import generate_court_report
 from apps.accounts.decorators import court_required
 from apps.support_services.models import Meeting
+from apps.core.analytics import queue_ga_event
 from datetime import date
 
 
@@ -80,9 +81,16 @@ def court_dashboard(request):
 def court_profile(request):
     profile, _ = CourtReportProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
+        # get_or_create above makes a blank row on first GET, so "new" has to
+        # mean "had no case number yet", not "row didn't exist".
+        was_blank = not profile.case_number
         form = CourtReportProfileForm(request.POST, instance=profile)
         if form.is_valid():
-            form.save()
+            saved = form.save()
+            if was_blank and saved.case_number:
+                # The activation moment for the Court tier — a subscriber
+                # who never fills this in never generates a report.
+                queue_ga_event(request, 'court_profile_completed')
             messages.success(request, 'Court profile saved.')
             return redirect('accounts:court_dashboard')
     else:

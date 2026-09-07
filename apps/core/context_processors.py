@@ -51,3 +51,13 @@ def seo_defaults(request):
         'trial_ending_soon': trial_ending_soon,
         'trial_days_left': trial_days_left,
     }
+
+
+def ga_events(request):
+    """Hand any server-queued GA4 events to base.html.
+
+    Popping here is what makes them fire once: the next render clears the
+    session queue. See apps/core/analytics.py.
+    """
+    from apps.core.analytics import pop_ga_events
+    return {'ga_events': pop_ga_events(request)}

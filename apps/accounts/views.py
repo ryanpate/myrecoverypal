@@ -38,6 +38,8 @@ from .forms import (
 )
 from .payment_models import Subscription
 from .ab_testing import ABTestingService
+from apps.core.analytics import queue_ga_event
+
 
 def register_view(request):
     """
@@ -85,6 +87,13 @@ def register_view(request):
 
                 user = authenticate(username=username, password=password)
                 login(request, user)
+
+                # GA4 conversion. Queued rather than inline: registration
+                # redirects to onboarding, so this fires on that page.
+                queue_ga_event(
+                    request, 'sign_up',
+                    method='invite' if request.POST.get('invite_code') else 'email',
+                )
 
                 if user.sobriety_date:
                     Milestone.objects.create(
@@ -169,6 +178,10 @@ def register_view(request):
 
             user = authenticate(username=username, password=password)
             login(request, user)
+
+            # GA4 conversion. This is the invite-only branch — the one that
+            # actually runs while invite-only mode is on.
+            queue_ga_event(request, 'sign_up', method='invite')
 
             if user.sobriety_date:
                 Milestone.objects.create(

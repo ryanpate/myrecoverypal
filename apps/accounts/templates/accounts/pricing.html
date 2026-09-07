@@ -564,6 +564,25 @@
                     return;
                 }
 
+                // GA4 funnel step. Fired here, not server-side: the next
+                // page is Stripe's, so an abandoned checkout would never
+                // render a page that could report it.
+                if (data.analytics && typeof gtag === 'function') {
+                    var a = data.analytics;
+                    gtag('event', 'begin_checkout', {
+                        value: a.value,
+                        currency: a.currency,
+                        items: [{
+                            item_id: a.item_id,
+                            item_name: a.item_name,
+                            item_category: a.item_category,
+                            item_variant: a.item_variant,
+                            price: a.value,
+                            quantity: 1
+                        }]
+                    });
+                }
+
                 // Redirect to Stripe Checkout
                 window.location.href = data.url;
 
