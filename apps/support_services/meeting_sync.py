@@ -248,6 +248,30 @@ def _map(m, approve, default_tz):
     }
 
 
+VALID_ATTENDANCE = {"online", "hybrid", "in_person"}
+
+
+def _attendance_option(m):
+    """Resolve a meeting's attendance option.
+
+    `attendance_option` is a newer field in the Meeting Guide spec; plenty of
+    intergroup feeds predate it. Derive from what the payload actually has:
+    a join link plus a street address is hybrid, a join link alone is online,
+    anything else is in-person.
+    """
+    explicit = (m.get("attendance_option") or "").strip()
+    if explicit in VALID_ATTENDANCE:
+        return explicit
+
+    has_url = bool(m.get("conference_url"))
+    has_address = bool(m.get("formatted_address") or m.get("address"))
+    if has_url and has_address:
+        return "hybrid"
+    if has_url:
+        return "online"
+    return "in_person"
+
+
 def _parse_time(value):
     if not value:
         return None

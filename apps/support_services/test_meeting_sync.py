@@ -15,6 +15,7 @@ from django.test import TestCase
 
 from apps.support_services.meeting_sync import (
     FeedFetchError,
+    _attendance_option,
     sync_all,
     sync_source,
 )
@@ -372,3 +373,47 @@ class TimezoneDisplayTests(TestCase):
             name="TZ Bad", slug="tz-bad", timezone="Not/AZone",
         )
         self.assertEqual(m.timezone_display, "Not/AZone")
+
+
+class AttendanceOptionDerivationTests(TestCase):
+    """Older TSML feeds omit attendance_option; derive it from the payload."""
+
+    def test_explicit_value_is_trusted(self):
+        self.assertEqual(
+            _attendance_option({"attendance_option": "hybrid"}), "hybrid")
+
+    def test_conference_url_and_address_is_hybrid(self):
+        self.assertEqual(
+            _attendance_option({
+                "conference_url": "https://zoom.us/j/1",
+                "formatted_address": "123 Main St, Houston, TX",
+            }),
+            "hybrid",
+        )
+
+    def test_conference_url_only_is_online(self):
+        self.assertEqual(
+            _attendance_option({"conference_url": "https://zoom.us/j/1"}),
+            "online",
+        )
+
+    def test_address_only_is_in_person(self):
+        self.assertEqual(
+            _attendance_option({"formatted_address": "123 Main St"}),
+            "in_person",
+        )
+
+    def test_bare_address_field_counts_as_a_location(self):
+        self.assertEqual(_attendance_option({"address": "123 Main St"}), "in_person")
+
+    def test_no_signal_at_all_is_in_person(self):
+        self.assertEqual(_attendance_option({}), "in_person")
+
+    def test_unrecognised_explicit_value_is_derived_instead(self):
+        self.assertEqual(
+            _attendance_option({
+                "attendance_option": "hybrid_but_typoed",
+                "conference_url": "https://zoom.us/j/1",
+            }),
+            "online",
+        )
