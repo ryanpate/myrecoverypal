@@ -1,7 +1,7 @@
 # Meeting Directory Expansion — Design
 
 **Date:** 2026-09-07
-**Status:** Approved direction; implementation plan in `2026-09-07-meeting-directory-expansion-plan.md`
+**Status:** Phase 1 implemented 2026-09-07 on `feat/meeting-directory-expansion`. Plan: `2026-09-07-meeting-directory-expansion-plan.md`. Phases 2-5 still open.
 **Analytics reference:** GSC (3mo to 2026-09-05) + GA4 (2026-08-10 → 2026-09-06)
 
 ---
@@ -90,6 +90,8 @@ Three functions in `apps/support_services/meeting_sync.py` change:
    defines and TSML already sends.
 3. **`_slug` / deactivation** — dual-prefix namespace so existing rows are
    updated in place rather than duplicated.
+4. **`_split_address`** (added during execution) — parse city/state/ZIP out of
+   `formatted_address`, because real feeds send nothing else. See Risks.
 
 The SEO work landed on 2026-09-07 already handles in-person correctly:
 `Meeting.seo_title` uses `{City}, {ST}` and `Meeting.seo_description` says
@@ -97,10 +99,28 @@ The SEO work landed on 2026-09-07 already handles in-person correctly:
 
 ## Risks
 
-**Volume is unmeasured.** Three metro AA schedules could be 3,000 or 15,000
-in-person meetings. Phase 1 must measure before Phase 3 adds feeds. The
-sitemap stays a single flat file below ~40,000 URLs; above that it needs a
-sitemap index (`django.contrib.sitemaps.views.index`).
+**Volume — measured 2026-09-07.** The Houston feed alone carries **1,938
+meetings, of which 1,704 are in-person or hybrid**, spread across **85
+distinct cities** (Houston 694, Spring 121, Pasadena 70, Katy 65, League City
+56, Bryan 48, then a long tail). Extrapolating to Seattle and NY Intergroup
+puts the three configured feeds at roughly **5,000–6,000 total meetings**.
+
+Consequences:
+- The sitemap stays a **single flat file** — ~6,000 URLs is well under the
+  50,000 limit. Phase 4's sitemap index is **not needed yet**. Re-check if
+  Phase 3 pushes past ~40,000.
+- Phase 3 (more feeds) is **cleared to proceed** on volume grounds. At ~1,700
+  meetings per metro feed, roughly 20 more feeds would reach the 40,000 mark.
+- `meeting_list`'s `.extra()` sort is the **first thing that will hurt**, not
+  the sitemap. Profile it before Phase 3, not after.
+
+**Feeds carry no discrete city/state.** Discovered while executing Phase 1:
+real TSML feeds send only `formatted_address`
+("2111 Webster St, League City, TX 77573, USA") with no `city`, `state` or
+`postal_code` keys. `_split_address()` parses it; without that every
+in-person meeting has an empty city, which empties `Meeting.seo_title` and
+leaves Phase 2 nothing to key city pages on. Non-US feeds return empty
+fields rather than a forced guess.
 
 **Stale in-person data is a safety problem.** An out-of-date Zoom link wastes
 a click. An out-of-date address wastes a bus ride, at a moment when someone
@@ -118,7 +138,8 @@ meetings = meetings.extra(
 
 Fine at 1,565 rows. Not fine at 50,000. (The f-string is not an injection
 risk — `today_meeting_day` is computed from `datetime.now().weekday()`.)
-Deferred to Phase 4, gated on the Phase 1 volume measurement.
+Now the binding constraint: at the measured ~6,000 rows this is the first
+thing that degrades, ahead of the sitemap. Profile before Phase 3.
 
 **Feed shape drift.** `attendance_option` is a newer field in the Meeting
 Guide spec. The derivation fallback covers feeds that predate it.
