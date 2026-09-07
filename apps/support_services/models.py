@@ -547,3 +547,33 @@ class UserBookmark(models.Model):
         if self.meeting:
             return f"{self.user.username} - {self.meeting.name}"
         return f"{self.user.username} - {self.service.name}"
+
+
+class CoverageRequest(models.Model):
+    """A meeting search that came back empty.
+
+    The in-person directory only covers the metros we hold feeds for.
+    Rather than guess which to add next, record the misses and rank them by
+    demand. Acquiring a feed needs a human — some intergroups sit behind a
+    bot challenge and have to be emailed — so this is a prioritised queue,
+    not an automatic fetch.
+
+    Deliberately not linked to a user. A search is location data about
+    someone looking for a recovery meeting; the aggregate is what is
+    useful and the identity is not ours to keep.
+    """
+    query = models.CharField(max_length=120, unique=True, db_index=True)
+    postal_code = models.CharField(max_length=10, blank=True, db_index=True)
+    hits = models.PositiveIntegerField(default=1)
+    first_seen = models.DateTimeField(auto_now_add=True)
+    last_seen = models.DateTimeField(auto_now=True)
+    resolved = models.BooleanField(
+        default=False,
+        help_text="Tick once a feed covering this area has been added.")
+
+    class Meta:
+        ordering = ['-hits', '-last_seen']
+        verbose_name = 'coverage request'
+
+    def __str__(self):
+        return f"{self.query} ({self.hits} searches)"

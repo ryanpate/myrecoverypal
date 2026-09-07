@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils import timezone
-from .models import Meeting, SupportService, ServiceSubmission, UserBookmark
+from .models import CoverageRequest, Meeting, SupportService, ServiceSubmission, UserBookmark
 
 
 @admin.register(Meeting)
@@ -99,3 +99,19 @@ class UserBookmarkAdmin(admin.ModelAdmin):
             return f"Meeting: {obj.meeting.name}"
         return f"Service: {obj.service.name}"
     get_item.short_description = 'Bookmarked Item'
+
+
+@admin.register(CoverageRequest)
+class CoverageRequestAdmin(admin.ModelAdmin):
+    """Ranked queue of areas people searched for that we do not cover.
+
+    Work top-down: the feed worth chasing next is the one most people have
+    already asked for.
+    """
+    list_display = ['query', 'postal_code', 'hits', 'resolved',
+                    'first_seen', 'last_seen']
+    list_filter = ['resolved', 'last_seen']
+    search_fields = ['query', 'postal_code']
+    readonly_fields = ['query', 'postal_code', 'hits', 'first_seen', 'last_seen']
+    list_editable = ['resolved']
+    ordering = ['-hits', '-last_seen']
