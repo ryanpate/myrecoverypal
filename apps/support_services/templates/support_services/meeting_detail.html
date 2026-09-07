@@ -201,6 +201,14 @@
             </div>
 
             {% include 'support_services/_court_meeting_cta.html' %}
+
+            {% if meeting.city_hub_url %}
+            <p class="mb-3">
+                <a href="{{ meeting.city_hub_url }}">
+                    &larr; All AA meetings in {{ meeting.city }}, {{ meeting.state }}
+                </a>
+            </p>
+            {% endif %}
         </div>
 
         <div class="col-lg-4">

@@ -195,3 +195,24 @@ class StateHubViewTests(TestCase):
         """The 2-letter state route must not swallow meeting detail URLs."""
         m = Meeting.objects.filter(city='Houston').first()
         self.assertEqual(self.client.get(m.get_absolute_url()).status_code, 200)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class DetailBacklinkTests(TestCase):
+    def test_detail_page_links_to_its_city_hub(self):
+        make_meetings('Houston', 'TX', 4)
+        m = Meeting.objects.filter(city='Houston').first()
+        html = self.client.get(m.get_absolute_url()).content.decode()
+        self.assertIn('/support/meetings/tx/houston/', html)
+
+    def test_no_backlink_when_city_is_below_threshold(self):
+        make_meetings('Weimar', 'TX', 1)
+        m = Meeting.objects.get(city='Weimar')
+        self.assertEqual(m.city_hub_url, '')
+
+    def test_no_backlink_for_an_online_meeting(self):
+        Meeting.objects.create(
+            name='Online One', slug='mtg-t-online-1',
+            attendance_option='online', conference_url='https://zoom.us/j/1',
+            is_approved=True, is_active=True)
+        self.assertEqual(Meeting.objects.get(slug='mtg-t-online-1').city_hub_url, '')
