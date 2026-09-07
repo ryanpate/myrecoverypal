@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ meeting.name }} - Recovery Meeting - MyRecoveryPal{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -185,6 +184,8 @@
                 </div>
                 {% endif %}
             </div>
+
+            {% include 'support_services/_court_meeting_cta.html' %}
         </div>
 
         <div class="col-lg-4">

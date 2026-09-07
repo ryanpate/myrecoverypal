@@ -175,9 +175,15 @@ class SEONoIndexMiddleware:
             response['X-Robots-Tag'] = 'noindex, nofollow'
             return response
 
-        # Noindex blog/support pages with filter/page query params
-        if (path.startswith('/blog/') or path.startswith('/support/')) and (
-            request.GET.get('filter') or request.GET.get('page') or request.GET.get('type')
+        # Noindex blog/support pages with filter/page query params.
+        # The meeting finder's own filters (day/city/state/q/attendance)
+        # are included: /support/meetings/ is now in the sitemap, so its
+        # filter permutations would otherwise become thin duplicates.
+        if (path.startswith('/blog/') or path.startswith('/support/')) and any(
+            request.GET.get(param) for param in (
+                'filter', 'page', 'type',
+                'day', 'city', 'state', 'q', 'attendance',
+            )
         ):
             response['X-Robots-Tag'] = 'noindex, nofollow'
             return response

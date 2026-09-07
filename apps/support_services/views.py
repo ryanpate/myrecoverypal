@@ -1,6 +1,7 @@
 # apps/support_services/views.py
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
@@ -116,6 +117,24 @@ def meeting_list(request):
         'days': Meeting.DAY_CHOICES,
         'meeting_types': Meeting.MEETING_TYPES,
         'attendance_options': Meeting.ATTENDANCE_CHOICES,
+
+        # SEO: override the site-wide defaults from
+        # apps.core.context_processors.seo_defaults. These keys drive
+        # <title>, meta description, og: and twitter: tags together.
+        # seo_url is pinned to the bare hub URL so filtered permutations
+        # (?day=, ?city=, ...) canonicalise here instead of competing.
+        'seo_title': 'Recovery Meeting Finder: AA, NA & SMART Meetings Near You',
+        'seo_description': (
+            'Search 1,500+ free recovery meetings — AA, NA, SMART Recovery '
+            'and secular groups. Filter by day, city, state or online, with '
+            'Zoom links and full schedule details.'
+        ),
+        'seo_keywords': (
+            'recovery meetings, aa meetings near me, na meetings near me, '
+            'smart recovery meetings, aa meeting finder, na meeting finder, '
+            'online recovery meetings, aa meeting schedule'
+        ),
+        'seo_url': request.build_absolute_uri(reverse('support_services:meeting_list')),
     }
 
     return render(request, 'support_services/meeting_list.html', context)
@@ -142,6 +161,12 @@ def meeting_detail(request, slug):
         'meeting': meeting,
         'nearby_meetings': nearby_meetings,
         'is_bookmarked': False,
+
+        # SEO: all 1,565 detail pages previously shared the site-wide
+        # boilerplate title/description, which is why they sat in GSC
+        # "Crawled - currently not indexed".
+        'seo_title': meeting.seo_title,
+        'seo_description': meeting.seo_description,
     }
 
     if request.user.is_authenticated:
