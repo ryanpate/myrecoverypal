@@ -1,7 +1,7 @@
 # Update apps/support_services/urls.py
 # Add this to your urlpatterns list
 
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 
 app_name = 'support_services'
@@ -15,6 +15,14 @@ urlpatterns = [
     path('meetings/finder/', views.meeting_finder,
          name='meeting_finder'),  # Add this line
     path('meetings/submit/', views.submit_meeting, name='submit_meeting'),
+    # Hub pages. These MUST precede meetings/<slug:slug>/ — a bare slug
+    # converter would otherwise match "tx" and route /meetings/tx/ to the
+    # detail view. The state pattern is pinned to exactly two letters.
+    re_path(r'^meetings/(?P<state>[A-Za-z]{2})/$',
+            views.state_hub, name='state_hub'),
+    re_path(r'^meetings/(?P<state>[A-Za-z]{2})/(?P<city_slug>[a-z0-9-]+)/$',
+            views.city_hub, name='city_hub'),
+
     path('meetings/<slug:slug>/', views.meeting_detail, name='meeting_detail'),
 
     # Services

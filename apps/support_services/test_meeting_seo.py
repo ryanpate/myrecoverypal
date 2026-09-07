@@ -134,9 +134,9 @@ class MeetingPageMetaTests(TestCase):
     def test_hub_page_replaces_boilerplate_everywhere(self):
         html = self.client.get(reverse('support_services:meeting_list')).content.decode()
         self.assertNotIn(BOILERPLATE, html)
-        self.assertIn('Search 1,500+ free recovery meetings', html)
+        self.assertIn('Search thousands of free AA meetings', html)
         self.assertIn(
-            '<title>Recovery Meeting Finder: AA, NA &amp; SMART Meetings Near You</title>',
+            '<title>AA Meeting Finder — Search Local &amp; Online AA Meetings</title>',
             html,
         )
 
@@ -233,3 +233,25 @@ class MeetingFreshnessTests(TestCase):
                      website='https://aahouston.org/')
         html = self.client.get(m.get_absolute_url()).content.decode()
         self.assertIn('https://aahouston.org/', html)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class DirectoryCopyAccuracyTests(TestCase):
+    """The directory is sourced entirely from AA intergroup feeds. Claiming
+    NA and SMART meetings it does not have is a factual error, and "1,500+"
+    understates it by 4x."""
+
+    def test_description_does_not_claim_programs_we_do_not_carry(self):
+        html = self.client.get(reverse('support_services:meeting_list')).content.decode()
+        self.assertNotIn('SMART Recovery and secular groups', html)
+        self.assertNotIn('1,500+', html)
+
+    def test_description_says_aa(self):
+        html = self.client.get(reverse('support_services:meeting_list')).content.decode()
+        self.assertIn('AA meetings', html)
+
+    def test_finder_links_to_state_hubs(self):
+        from apps.support_services.test_city_hubs import make_meetings
+        make_meetings('Houston', 'TX', 4)
+        html = self.client.get(reverse('support_services:meeting_list')).content.decode()
+        self.assertIn('/support/meetings/tx/', html)

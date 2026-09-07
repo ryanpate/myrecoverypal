@@ -230,6 +230,24 @@ class Meeting(models.Model):
         return f'{self.name} \u2014 {" ".join(bits)}'
 
     @property
+    def city_hub_url(self):
+        """URL of this meeting's city hub, or '' when there isn't one.
+
+        Gives every detail page a crawl parent, which is what makes the
+        6,451 thin-ish detail pages more likely to index rather than less.
+        Empty for online meetings and for cities below MIN_MEETINGS_FOR_HUB.
+        """
+        if not self.city or not self.state:
+            return ''
+        from django.urls import reverse
+        from apps.support_services.hubs import city_slug, hub_cities
+        slug = city_slug(self.city)
+        if not any(c['slug'] == slug for c in hub_cities(self.state)):
+            return ''
+        return reverse('support_services:city_hub',
+                       kwargs={'state': self.state.lower(), 'city_slug': slug})
+
+    @property
     def seo_description(self):
         """Meta description for the detail page.
 

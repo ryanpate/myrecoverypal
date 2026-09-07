@@ -2,9 +2,10 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from apps.support_services.hubs import hub_cities, hub_states, resolve_city
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, Http404
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
@@ -123,16 +124,20 @@ def meeting_list(request):
         # <title>, meta description, og: and twitter: tags together.
         # seo_url is pinned to the bare hub URL so filtered permutations
         # (?day=, ?city=, ...) canonicalise here instead of competing.
-        'seo_title': 'Recovery Meeting Finder: AA, NA & SMART Meetings Near You',
+        'states': hub_states(),
+        # The directory is sourced entirely from AA intergroup feeds. The
+        # previous copy claimed NA and SMART meetings it does not carry, and
+        # "1,500+" understated the count by 4x.
+        'seo_title': 'AA Meeting Finder — Search Local & Online AA Meetings',
         'seo_description': (
-            'Search 1,500+ free recovery meetings — AA, NA, SMART Recovery '
-            'and secular groups. Filter by day, city, state or online, with '
-            'Zoom links and full schedule details.'
+            'Search thousands of free AA meetings by day, city, state or '
+            'online. Times, addresses and Zoom links, updated weekly from '
+            'local AA intergroups. No signup.'
         ),
         'seo_keywords': (
-            'recovery meetings, aa meetings near me, na meetings near me, '
-            'smart recovery meetings, aa meeting finder, na meeting finder, '
-            'online recovery meetings, aa meeting schedule'
+            'aa meetings near me, aa meeting finder, aa meeting directory, '
+            'online aa meetings, aa meeting schedule, alcoholics anonymous '
+            'meetings, find aa meetings'
         ),
         'seo_url': request.build_absolute_uri(reverse('support_services:meeting_list')),
     }
@@ -510,3 +515,102 @@ def crisis_resources(request):
     }
 
     return render(request, 'support_services/crisis_resources.html', context)
+
+
+US_STATES = {
+    'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
+    'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut',
+    'DE': 'Delaware', 'DC': 'District of Columbia', 'FL': 'Florida',
+    'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois',
+    'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas', 'KY': 'Kentucky',
+    'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
+    'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota',
+    'MS': 'Mississippi', 'MO': 'Missouri', 'MT': 'Montana',
+    'NE': 'Nebraska', 'NV': 'Nevada', 'NH': 'New Hampshire',
+    'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York',
+    'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio',
+    'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania',
+    'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota',
+    'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont',
+    'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
+    'WI': 'Wisconsin', 'WY': 'Wyoming',
+}
+
+
+def city_hub(request, state, city_slug):
+    """Directory of every meeting in one city — the page that answers
+    "aa meetings in <city>". Detail pages cannot rank for that query."""
+    state = state.upper()
+    city = resolve_city(state, city_slug)
+    if not city:
+        raise Http404('No meeting hub for that city')
+
+    meetings = list(
+        Meeting.objects
+        .filter(is_approved=True, is_active=True, state=state, city=city)
+        .order_by('day', 'time', 'name')
+    )
+    by_day = {}
+    for m in meetings:
+        label = m.get_day_display() if m.day is not None else 'Schedule varies'
+        by_day.setdefault(label, []).append(m)
+
+    state_name = US_STATES.get(state, state)
+    total = len(meetings)
+    online = sum(1 for m in meetings if m.attendance_option != 'in_person')
+
+    return render(request, 'support_services/city_hub.html', {
+        'city': city,
+        'state': state,
+        'state_name': state_name,
+        'meetings': meetings,
+        'by_day': by_day,
+        'total': total,
+        'online_count': online,
+        'in_person_count': total - online,
+        'seo_title': f'AA Meetings in {city}, {state} \u2014 {total} Local Meeting Times',
+        'seo_description': (
+            f'{total} AA meetings in {city}, {state}. Browse by day with '
+            f'times, addresses and online options \u2014 free, no signup, '
+            f'updated weekly from the local AA intergroup.'
+        ),
+        'seo_keywords': (
+            f'aa meetings {city.lower()}, aa meetings in {city.lower()} {state.lower()}, '
+            f'alcoholics anonymous {city.lower()}, aa meeting schedule {city.lower()}, '
+            f'{city.lower()} recovery meetings'
+        ),
+        'seo_url': request.build_absolute_uri(
+            reverse('support_services:city_hub',
+                    kwargs={'state': state.lower(), 'city_slug': city_slug.lower()})),
+    })
+
+
+def state_hub(request, state):
+    """Index of the cities in one state that have their own hub."""
+    state = state.upper()
+    cities = hub_cities(state)
+    if not cities:
+        raise Http404('No meeting hub for that state')
+
+    state_name = US_STATES.get(state, state)
+    total = sum(c['count'] for c in cities)
+
+    return render(request, 'support_services/state_hub.html', {
+        'state': state,
+        'state_name': state_name,
+        'cities': sorted(cities, key=lambda c: c['city']),
+        'cities_by_size': cities,
+        'total': total,
+        'seo_title': f'AA Meetings in {state_name} \u2014 {total} Meetings in {len(cities)} Cities',
+        'seo_description': (
+            f'Find AA meetings across {state_name}. {total} meetings in '
+            f'{len(cities)} cities with times, addresses and online options '
+            f'\u2014 free and updated weekly.'
+        ),
+        'seo_keywords': (
+            f'aa meetings {state_name.lower()}, alcoholics anonymous '
+            f'{state_name.lower()}, aa meeting directory {state_name.lower()}'
+        ),
+        'seo_url': request.build_absolute_uri(
+            reverse('support_services:state_hub', kwargs={'state': state.lower()})),
+    })
