@@ -201,3 +201,35 @@ class SitemapCoverageTests(TestCase):
         self.assertIn(
             '/sobriety-medallion-maker/</loc>', xml
         )
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class MeetingFreshnessTests(TestCase):
+    """In-person listings send people somewhere physical — say how fresh."""
+
+    def test_in_person_meeting_shows_last_verified(self):
+        m = _meeting(slug='houston', attendance_option='in_person',
+                     conference_url='', city='Houston', state='TX',
+                     formatted_address='123 Main St, Houston, TX')
+        html = self.client.get(m.get_absolute_url()).content.decode()
+        self.assertIn('Last verified', html)
+
+    def test_hybrid_meeting_shows_last_verified(self):
+        m = _meeting(slug='hybrid', attendance_option='hybrid',
+                     city='Austin', state='TX',
+                     formatted_address='9 Oak Ave, Austin, TX')
+        html = self.client.get(m.get_absolute_url()).content.decode()
+        self.assertIn('Last verified', html)
+
+    def test_online_meeting_does_not_show_last_verified(self):
+        """No journey to waste; the join link either works or it doesn't."""
+        m = _meeting()
+        html = self.client.get(m.get_absolute_url()).content.decode()
+        self.assertNotIn('Last verified', html)
+
+    def test_source_website_is_credited_when_present(self):
+        m = _meeting(slug='credited', attendance_option='in_person',
+                     conference_url='', city='Houston', state='TX',
+                     website='https://aahouston.org/')
+        html = self.client.get(m.get_absolute_url()).content.decode()
+        self.assertIn('https://aahouston.org/', html)

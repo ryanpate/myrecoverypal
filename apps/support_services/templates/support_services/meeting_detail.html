@@ -176,6 +176,21 @@
                 </div>
                 {% endif %}
 
+                {% if meeting.attendance_option != 'online' %}
+                <div class="meeting-detail-section">
+                    <p class="text-muted mb-0" style="font-size: 0.85rem;">
+                        <i class="fas fa-clock" aria-hidden="true"></i>
+                        Last verified {{ meeting.updated_at|date:"F j, Y" }} from
+                        {% if meeting.website %}
+                            <a href="{{ meeting.website }}" target="_blank" rel="noopener">the group's listing</a>.
+                        {% else %}
+                            the group's published schedule.
+                        {% endif %}
+                        Meeting times and locations change &mdash; call ahead if you can.
+                    </p>
+                </div>
+                {% endif %}
+
                 {% if user.is_authenticated %}
                 <div class="meeting-detail-section">
                     <a href="{% url 'support_services:bookmark_toggle' 'meeting' meeting.id %}" class="btn btn-outline-primary">
