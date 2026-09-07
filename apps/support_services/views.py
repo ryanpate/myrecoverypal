@@ -124,16 +124,20 @@ def meeting_list(request):
         # <title>, meta description, og: and twitter: tags together.
         # seo_url is pinned to the bare hub URL so filtered permutations
         # (?day=, ?city=, ...) canonicalise here instead of competing.
-        'seo_title': 'Recovery Meeting Finder: AA, NA & SMART Meetings Near You',
+        'states': hub_states(),
+        # The directory is sourced entirely from AA intergroup feeds. The
+        # previous copy claimed NA and SMART meetings it does not carry, and
+        # "1,500+" understated the count by 4x.
+        'seo_title': 'AA Meeting Finder — Search Local & Online AA Meetings',
         'seo_description': (
-            'Search 1,500+ free recovery meetings — AA, NA, SMART Recovery '
-            'and secular groups. Filter by day, city, state or online, with '
-            'Zoom links and full schedule details.'
+            'Search thousands of free AA meetings by day, city, state or '
+            'online. Times, addresses and Zoom links, updated weekly from '
+            'local AA intergroups. No signup.'
         ),
         'seo_keywords': (
-            'recovery meetings, aa meetings near me, na meetings near me, '
-            'smart recovery meetings, aa meeting finder, na meeting finder, '
-            'online recovery meetings, aa meeting schedule'
+            'aa meetings near me, aa meeting finder, aa meeting directory, '
+            'online aa meetings, aa meeting schedule, alcoholics anonymous '
+            'meetings, find aa meetings'
         ),
         'seo_url': request.build_absolute_uri(reverse('support_services:meeting_list')),
     }

@@ -181,6 +181,17 @@
         </ol>
     </nav>
 
+    {% if states %}
+    <section class="mb-4">
+        <h2 style="font-size:1.05rem;">Browse by state</h2>
+        {% for s in states %}
+        <a class="badge bg-light text-dark me-1"
+           href="{% url 'support_services:state_hub' state=s.state|lower %}">
+            {{ s.state }} ({{ s.count }})</a>
+        {% endfor %}
+    </section>
+    {% endif %}
+
     {% include 'support_services/_court_compliance_nudge.html' %}
 
     <!-- Search and Filters -->
