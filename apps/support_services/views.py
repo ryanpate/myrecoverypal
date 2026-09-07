@@ -3,6 +3,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from apps.support_services.hubs import hub_cities, hub_states, resolve_city
+from apps.support_services.coverage import record_coverage_gap
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse, Http404
@@ -115,6 +116,12 @@ def meeting_list(request):
     paginator = Paginator(meetings, 20)
     page = request.GET.get('page')
     meetings_page = paginator.get_page(page)
+
+    # A search that found nothing is a coverage gap worth ranking. A
+    # day/attendance filter finding nothing is not — that is the filter
+    # working. See apps/support_services/coverage.py.
+    if search_query and not meetings_page.object_list:
+        record_coverage_gap(search_query)
 
     context = {
         'meetings': meetings_page,
