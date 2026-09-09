@@ -150,8 +150,8 @@ I checked each top facility's real contact page for a published inbox:
 | Rosecrance | ❌ none | 866-330-8729 · format is `[finitial][last]@rosecrance.org` |
 | Wells Center (Jacksonville) | ❌ none found | 217-243-1871 · 1300 Lincoln Ave (site blocks crawlers) |
 
-**Conclusion:** Centerstone is the *only* treatment center that publishes a usable
-inbox. For everyone else, cold *email* is a dead end at the org level — you'd be
+**Conclusion (June 2026, since REVISED — see the Sep 2026 sweep below):**
+Centerstone was the only treatment center found with a usable inbox at that time. For everyone else, cold *email* is a dead end at the org level — you'd be
 emailing a form. The realistic plays are a phone call to get the named
 DUI/court-services contact, or pivoting to the avenues below where decision-makers
 actually have reachable inboxes.
@@ -219,3 +219,56 @@ actually have reachable inboxes.
 > **Best next move:** email **Centerstone–Alton** today, then spend an hour
 > emailing **DUI-defense attorneys** (real inboxes, perfect-intent clients) and
 > look into an **IABH** listing to hit all the treatment centers at once.
+
+---
+
+## Treatment-center email sweep — September 2026 (revises the June conclusion)
+
+Swept ~30 Illinois treatment centers and behavioral-health providers by pulling
+each contact page directly and extracting `mailto:` links and Cloudflare-obfuscated
+addresses (June's check missed those — Cloudflare renders them as
+`[email protected]` to a normal reader, so they look like no address at all).
+
+**June's "Centerstone is the only one" conclusion was wrong.** Three more
+Illinois treatment centers publish usable inboxes:
+
+| Facility | Inbox | Fit |
+|----------|-------|-----|
+| ✅ **Nicasa Behavioral Health Services** — Lake County, since 1966 | `info@nicasa.org` | **Best of the three.** Adult SUD *and* state-required DUI services — their clients are court-mandated by definition |
+| ✅ **Illinois Recovery Center** — Swansea + Highland (Metro East) | `info@illinoisrecoverycenter.com` | Detox, residential, PHP, IOP on one campus. Address was Cloudflare-obfuscated on the page |
+| ✅ **Rincon Family Services** — Chicago (60618) + Kankakee | `contactus@rinconfamilyservices.org` | SUD treatment + recovery support; no DUI/court program advertised, so a weaker angle than the other two |
+
+### ⚠️ Lookalike domains — verify the STATE before emailing
+
+Two searches surfaced organizations with the right name and the wrong state.
+Both would have been embarrassing sends:
+
+- `TheWellsCenter@gmail.com` (thewellscenter.org) is a **North Carolina**
+  nonprofit in Winston-Salem — NOT the Wells Center in Jacksonville, IL. The
+  Jacksonville Wells Center still has no email found; 217-243-1871.
+- `frontoffice@familyguidancecenters.com` is a **Virginia** therapy practice
+  (Chesterfield/Midlothian/Henrico) — NOT Family Guidance Centers, Inc. of
+  Illinois.
+
+### Found but do NOT use
+
+- `dlondon@rosecrance.org` — appears only in Rosecrance's page source, not as a
+  published contact. Emailing it is emailing a person who never published an inbox.
+- `medicalrecords@sinnissippi.com` (Sinnissippi Centers, Dixon) — records
+  department. Wrong audience for a pitch; they'd just forward it to the void.
+- `pr@respublicagroup.com` — the outside PR agency listed on Haymarket Center's
+  contact page. Useless for a product pitch, but a real press contact if the
+  founder-story angle ever gets picked up.
+
+### Confirmed no published inbox (call or use the form)
+
+Gateway Foundation, Rosecrance, Haymarket Center, Prairie Center, Above & Beyond,
+Stepping Stones, Serenity House Decatur, The Way Back Inn, TASC, Pillars,
+Robert Young Center, Arukah, Human Service Center, BCBHC, LSSI (main line — but
+note LSSI's *DUI program* does publish `DUIRiskEd@LSSI.org`, drafted in wave 2),
+Healthcare Alternative Systems, South Suburban Council, Leyden Family Service,
+New Age Services, HRDI, Family Guidance Centers Inc (IL).
+
+**Takeaway for future sweeps:** grep contact pages for `data-cfemail` as well as
+`mailto:` — and confirm the org's street address is in the state you think it is
+before adding it to a wave.
