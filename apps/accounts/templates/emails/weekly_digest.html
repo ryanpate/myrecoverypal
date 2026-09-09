@@ -169,7 +169,7 @@
             </p>
             {% endif %}
             <p style="text-align: center; margin: 15px 0 0;">
-                <a href="{{ site_url }}/accounts/progress/" style="color: #1e4d8b; font-weight: 600;">See your full analytics &rarr;</a>
+                <a href="{{ site_url }}{% url 'accounts:progress' %}" style="color: #1e4d8b; font-weight: 600;">See your full analytics &rarr;</a>
             </p>
         </div>
         {% endif %}
@@ -223,10 +223,10 @@
         {% endif %}
 
         <div style="text-align: center; margin: 30px 0;">
-            <a href="{{ site_url }}/accounts/social-feed/" class="cta-button">
+            <a href="{{ site_url }}{% url 'accounts:social_feed' %}" class="cta-button">
                 See Your Feed
             </a>
-            <a href="{{ site_url }}/accounts/daily-checkin/" class="cta-button secondary">
+            <a href="{{ site_url }}{% url 'accounts:daily_checkin' %}" class="cta-button secondary">
                 Check In
             </a>
         </div>
@@ -238,7 +238,7 @@
 
         <div class="footer">
             <p style="margin: 10px 0;">
-                <a href="{{ site_url }}/accounts/edit-profile/" style="color: #4db8e8; text-decoration: none;">Email Settings</a> |
+                <a href="{{ site_url }}{% url 'accounts:edit_profile' %}" style="color: #4db8e8; text-decoration: none;">Email Settings</a> |
                 <a href="{{ site_url }}" style="color: #4db8e8; text-decoration: none;">Visit MyRecoveryPal</a>
             </p>
             <p style="margin: 20px 0 10px 0; font-size: 12px; color: #999;">

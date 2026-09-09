@@ -94,7 +94,7 @@
         </div>
 
         <div style="text-align: center;">
-            <a href="{{ site_url }}/accounts/daily-checkin/" class="cta-button">
+            <a href="{{ site_url }}{% url 'accounts:daily_checkin' %}" class="cta-button">
                 &#10004; Do Your Check-in
             </a>
         </div>
@@ -114,12 +114,12 @@
 
         <div style="background: #e8f4f8; padding: 20px; border-radius: 10px; margin: 25px 0; text-align: center;">
             <p style="margin: 0 0 10px 0; color: #1e4d8b; font-weight: 600;">Want to reach out to {{ pal_name }}?</p>
-            <a href="{{ site_url }}/accounts/send-message/{{ pal.username }}/" style="color: #4db8e8; text-decoration: none;">Send a Message</a>
+            <a href="{{ site_url }}{% url 'accounts:send_message' pal.username %}" style="color: #4db8e8; text-decoration: none;">Send a Message</a>
         </div>
 
         <div class="footer">
             <p style="margin: 10px 0;">
-                <a href="{{ site_url }}/accounts/pals/" style="color: #4db8e8; text-decoration: none;">Recovery Pals</a> |
+                <a href="{{ site_url }}{% url 'accounts:pal_dashboard' %}" style="color: #4db8e8; text-decoration: none;">Recovery Pals</a> |
                 <a href="{{ site_url }}" style="color: #4db8e8; text-decoration: none;">Visit MyRecoveryPal</a>
             </p>
             <p style="margin: 20px 0 10px 0; font-size: 12px; color: #999;">

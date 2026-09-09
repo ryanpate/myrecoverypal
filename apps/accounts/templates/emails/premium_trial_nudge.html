@@ -90,11 +90,11 @@
         </div>
 
         <div style="text-align: center; margin: 30px 0;">
-            <a href="{{ site_url }}/accounts/pricing/" class="cta-button primary">
+            <a href="{{ site_url }}{% url 'accounts:pricing' %}" class="cta-button primary">
                 Start Your Free Trial
             </a>
             <br>
-            <a href="{{ site_url }}/accounts/recovery-coach/" class="cta-button secondary">
+            <a href="{{ site_url }}{% url 'accounts:recovery_coach' %}" class="cta-button secondary">
                 Try AI Coach Free First
             </a>
         </div>
@@ -110,7 +110,7 @@
 
         <div class="footer">
             <p style="margin: 10px 0;">
-                <a href="{{ site_url }}/accounts/edit-profile/" style="color: #4db8e8; text-decoration: none;">Email Settings</a> |
+                <a href="{{ site_url }}{% url 'accounts:edit_profile' %}" style="color: #4db8e8; text-decoration: none;">Email Settings</a> |
                 <a href="{{ site_url }}" style="color: #4db8e8; text-decoration: none;">Visit MyRecoveryPal</a>
             </p>
             <p style="margin: 20px 0 10px 0; font-size: 12px; color: #999;">

@@ -133,7 +133,7 @@
         {% endif %}
 
         <div style="text-align: center;">
-            <a href="{{ site_url }}/support/meetings/{{ meeting.slug }}/" class="cta-button">
+            <a href="{{ site_url }}{% url 'support_services:meeting_detail' meeting.slug %}" class="cta-button">
                 View Meeting Details
             </a>
         </div>
@@ -144,7 +144,7 @@
 
         <div class="footer">
             <p style="margin: 10px 0;">
-                <a href="{{ site_url }}/support/bookmarks/" style="color: #4db8e8; text-decoration: none;">Manage Bookmarks</a> |
+                <a href="{{ site_url }}{% url 'support_services:my_bookmarks' %}" style="color: #4db8e8; text-decoration: none;">Manage Bookmarks</a> |
                 <a href="{{ site_url }}" style="color: #4db8e8; text-decoration: none;">Visit MyRecoveryPal</a>
             </p>
             <p style="margin: 20px 0 10px 0; font-size: 12px; color: #999;">

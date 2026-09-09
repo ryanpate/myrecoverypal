@@ -1,4 +1,6 @@
 """Tests for the onboarding + re-engagement email sequences."""
+import pathlib
+import re
 from datetime import timedelta
 from unittest.mock import patch
 
@@ -10,6 +12,7 @@ from apps.accounts.models import (
     User, DailyCheckIn, SocialPost, RecoveryCoachSession, CoachMessage,
 )
 from apps.journal.models import JournalEntry
+from apps.support_services.models import Meeting
 from apps.accounts import email_sequences as seq
 
 
@@ -307,54 +310,70 @@ class ReengagementSequenceTests(TestCase):
 
 
 class RetentionEmailLinkTests(TestCase):
-    """Every hardcoded link in a retention email must resolve to a real view."""
+    """Every link in an email template must resolve to a real view.
+
+    Emails build absolute URLs as ``{{ site_url }}{% url ... %}``. This
+    renders each template and resolves every link, so a renamed route or a
+    bad reverse argument fails here instead of shipping a dead CTA.
+    """
 
     SITE_URL = 'https://example.com'
+    TEMPLATE_DIR = pathlib.Path(__file__).parent / 'templates' / 'emails'
 
-    def assert_links_resolve(self, template, context):
+    def context(self):
+        """Superset of what the sending tasks pass, for any email template."""
+        user = make_user(username='linkcheck')
+        pal = make_user(username='linkpal')
+        meeting = Meeting.objects.create(
+            name='Sunrise Group', slug='sunrise-group',
+            day=0, time='09:00',
+        )
+        return {
+            'user': user,
+            'pal': pal,
+            'pal_name': pal.username,
+            'meeting': meeting,
+            'meeting_name': meeting.name,
+            'meeting_time': '09:00 AM',
+            'site_url': self.SITE_URL,
+            'current_year': 2026,
+            'streak': 5,
+            'days_sober': 30,
+            'days_inactive': 4,
+            'days_since_signup': 7,
+            'last_checkin_date': timezone.localdate() - timedelta(days=1),
+        }
+
+    def test_every_email_link_resolves(self):
         import re
         from django.urls import Resolver404, resolve
 
-        html = render_to_string(template, context)
-        paths = re.findall(
-            r'href="%s(/[^"]*)"' % re.escape(self.SITE_URL), html)
-        self.assertTrue(paths, f'{template} has no {self.SITE_URL} links')
-        for path in paths:
-            try:
-                resolve(path)
-            except Resolver404:
-                self.fail(f'{template} links to dead path {path}')
+        context = self.context()
+        pattern = re.compile(r'href="%s(/[^"]*)"' % re.escape(self.SITE_URL))
+        checked = 0
 
-    def test_checkin_reminder_links_resolve(self):
-        user = make_user(username='reminder')
-        self.assert_links_resolve('emails/checkin_reminder.html', {
-            'user': user,
-            'site_url': self.SITE_URL,
-            'streak': 5,
-            'last_checkin_date': timezone.localdate() - timedelta(days=1),
-            'days_sober': 30,
-            'current_year': 2026,
-        })
+        for path in sorted(self.TEMPLATE_DIR.glob('*.html')):
+            if '{{ site_url }}' not in path.read_text():
+                continue
+            template = f'emails/{path.name}'
+            # A bad {% url %} name or argument raises NoReverseMatch here.
+            html = render_to_string(template, context)
+            for link in pattern.findall(html):
+                try:
+                    resolve(link)
+                except Resolver404:
+                    self.fail(f'{template} links to dead path {link}')
+                checked += 1
 
-    def test_weekly_digest_links_resolve(self):
-        user = make_user(username='digest')
-        self.assert_links_resolve('emails/weekly_digest.html', {
-            'user': user,
-            'site_url': self.SITE_URL,
-            'current_year': 2026,
-        })
+        self.assertGreater(checked, 20, 'expected to check many email links')
 
-    def test_premium_trial_nudge_links_resolve(self):
-        self.assert_links_resolve('emails/premium_trial_nudge.html', {
-            'user': make_user(username='nudge'),
-            'site_url': self.SITE_URL,
-            'days_since_signup': 7,
-            'current_year': 2026,
-        })
+    def test_links_are_absolute(self):
+        """An href opening with {% url %} renders relative, which is dead in email.
 
-    def test_ios_app_launch_links_resolve(self):
-        self.assert_links_resolve('emails/ios_app_launch.html', {
-            'user': make_user(username='ioslaunch'),
-            'site_url': self.SITE_URL,
-            'current_year': 2026,
-        })
+        The absolute prefix differs by template ({{ site_url }} for the
+        sequences, {{ protocol }}://{{ domain }} for password reset), so this
+        only requires that *some* prefix precedes the tag.
+        """
+        for path in sorted(self.TEMPLATE_DIR.glob('*.html')):
+            for bad in re.findall(r'href="\{% url [^"]*"', path.read_text()):
+                self.fail(f'{path.name} has a relative link: {bad}')

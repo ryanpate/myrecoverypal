@@ -14,9 +14,9 @@ does. Your streak becomes your first medallion — a marker you've
 feed and collect a wall of congratulations. Your call. Your recovery.</p>
 <div class="cta-wrap">
     {% if has_streak %}
-    <a class="cta" href="{{ site_url }}/accounts/progress/">Check my streak &rarr;</a>
+    <a class="cta" href="{{ site_url }}{% url 'accounts:progress' %}">Check my streak &rarr;</a>
     {% else %}
-    <a class="cta" href="{{ site_url }}/accounts/progress/">Start my streak today &rarr;</a>
+    <a class="cta" href="{{ site_url }}{% url 'accounts:progress' %}">Start my streak today &rarr;</a>
     {% endif %}
 </div>
 {% endblock %}

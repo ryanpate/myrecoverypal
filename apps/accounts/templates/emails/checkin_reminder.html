@@ -97,7 +97,7 @@
         </div>
 
         <div style="text-align: center;">
-            <a href="{{ site_url }}/accounts/daily-checkin/" class="cta-button">
+            <a href="{{ site_url }}{% url 'accounts:daily_checkin' %}" class="cta-button">
                 &#10004; Check In Now
             </a>
         </div>
@@ -115,7 +115,7 @@
 
         <div class="footer">
             <p style="margin: 10px 0;">
-                <a href="{{ site_url }}/accounts/edit-profile/" style="color: #4db8e8; text-decoration: none;">Manage Reminders</a> |
+                <a href="{{ site_url }}{% url 'accounts:edit_profile' %}" style="color: #4db8e8; text-decoration: none;">Manage Reminders</a> |
                 <a href="{{ site_url }}" style="color: #4db8e8; text-decoration: none;">Visit MyRecoveryPal</a>
             </p>
             <p style="margin: 20px 0 10px 0; font-size: 12px; color: #999;">
