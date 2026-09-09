@@ -800,7 +800,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const input = this.querySelector('.comment-input');
 
             try {
-                const response = await fetch(`/accounts/challenges/check-in/${checkInId}/comment/`, {
+                const response = await fetch(`/accounts/ajax/challenge-comment/${checkInId}/`, {
                     method: 'POST',
                     body: formData,
                     headers: {

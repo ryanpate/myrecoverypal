@@ -261,13 +261,12 @@
     })();
 
     // ========================================
-    // Biometric Settings Toggles (Edit Profile / Settings)
+    // Biometric Settings Toggles (Edit Profile)
     // ========================================
-    // Injects "Security" section with Face ID toggles on profile/settings pages
+    // Injects "Security" section with Face ID toggles on the edit-profile page
     (function() {
         var path = window.location.pathname;
-        if (path.indexOf('/accounts/edit-profile/') !== 0 &&
-            path.indexOf('/accounts/settings/') !== 0) {
+        if (path.indexOf('/accounts/edit-profile/') !== 0) {
             return;
         }
 

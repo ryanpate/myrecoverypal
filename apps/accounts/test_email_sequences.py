@@ -304,3 +304,57 @@ class ReengagementSequenceTests(TestCase):
             send_reengagement_emails()
         user.refresh_from_db()
         self.assertIsNone(user.reengagement_email_1_sent)
+
+
+class RetentionEmailLinkTests(TestCase):
+    """Every hardcoded link in a retention email must resolve to a real view."""
+
+    SITE_URL = 'https://example.com'
+
+    def assert_links_resolve(self, template, context):
+        import re
+        from django.urls import Resolver404, resolve
+
+        html = render_to_string(template, context)
+        paths = re.findall(
+            r'href="%s(/[^"]*)"' % re.escape(self.SITE_URL), html)
+        self.assertTrue(paths, f'{template} has no {self.SITE_URL} links')
+        for path in paths:
+            try:
+                resolve(path)
+            except Resolver404:
+                self.fail(f'{template} links to dead path {path}')
+
+    def test_checkin_reminder_links_resolve(self):
+        user = make_user(username='reminder')
+        self.assert_links_resolve('emails/checkin_reminder.html', {
+            'user': user,
+            'site_url': self.SITE_URL,
+            'streak': 5,
+            'last_checkin_date': timezone.localdate() - timedelta(days=1),
+            'days_sober': 30,
+            'current_year': 2026,
+        })
+
+    def test_weekly_digest_links_resolve(self):
+        user = make_user(username='digest')
+        self.assert_links_resolve('emails/weekly_digest.html', {
+            'user': user,
+            'site_url': self.SITE_URL,
+            'current_year': 2026,
+        })
+
+    def test_premium_trial_nudge_links_resolve(self):
+        self.assert_links_resolve('emails/premium_trial_nudge.html', {
+            'user': make_user(username='nudge'),
+            'site_url': self.SITE_URL,
+            'days_since_signup': 7,
+            'current_year': 2026,
+        })
+
+    def test_ios_app_launch_links_resolve(self):
+        self.assert_links_resolve('emails/ios_app_launch.html', {
+            'user': make_user(username='ioslaunch'),
+            'site_url': self.SITE_URL,
+            'current_year': 2026,
+        })
