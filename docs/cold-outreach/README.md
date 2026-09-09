@@ -19,7 +19,7 @@ covers recipients whose clients strip HTML. Fill the same `{{FIRST_NAME}}` and
 `{{RECIPIENT_EMAIL}}` tokens in both.
 
 All use the **B2C-referral model**: the facility pays nothing; their
-clients/residents subscribe individually ($19.99/mo). The facility's incentive
+clients/residents subscribe individually ($29.99/mo). The facility's incentive
 is less paperwork — an easy "yes."
 
 ## Before sending — fill in these placeholders
