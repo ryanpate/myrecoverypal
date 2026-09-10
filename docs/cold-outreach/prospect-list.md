@@ -272,3 +272,88 @@ New Age Services, HRDI, Family Guidance Centers Inc (IL).
 **Takeaway for future sweeps:** grep contact pages for `data-cfemail` as well as
 `mailto:` — and confirm the org's street address is in the state you think it is
 before adding it to a wave.
+
+---
+
+## Out-of-state expansion — Missouri & Indiana (September 2026)
+
+First outreach outside Illinois. Both states were picked for *structure*, not
+proximity: each has a statewide, court-mandated pipeline that produces exactly
+the clients the Court Compliance tier is built for. Drafts live in
+`wave5-2026-09-10-missouri.md` and `wave6-2026-09-10-indiana.md`.
+
+### Missouri — the SATOP pipeline
+
+Every DWI conviction in Missouri routes through **SATOP** (Substance Awareness
+Traffic Offender Program): a mandatory screening plus one of four program levels
+(OEP, WIP, CIP, SROP), delivered by DMH-certified **private** providers at
+state-standardized prices. That's an entire industry of small businesses whose
+clientele is court-mandated by definition and who answer their own email — the
+same profile as the Illinois DUI-evaluation providers that responded best in
+wave 1, but larger and more centralized.
+
+| Verified inbox | Org | Type |
+|---|---|---|
+| `Stacey@motreatmentcourts.org` | Missouri Assoc. of Treatment Court Professionals | Association (statewide leverage) |
+| `SATOP@pfh.org` | Preferred Family Healthcare | Multi-site SATOP provider |
+| `admin@midwestadp.net` | Midwest ADP (Independence) | SATOP + supervised probation |
+| `dwigambler@aol.com` | Community Services of Missouri (St. Peters) | SATOP provider |
+| `tbobski@heartlandcbc.org` | Alternatives Inc. (Springfield/Branson/Nixa/Cassville) | SATOP provider |
+| `info@recoveryoutreach.com` | Recovery Outreach Services LLC (Springfield) | Court-ordered outpatient, MRT/BIP/SAP |
+| `Jared.Prater@courts.mo.gov` | Jasper County Treatment Court | Treatment court administrator |
+| `info@macdl.net` | Missouri Assoc. of Criminal Defense Lawyers | Association (published obfuscated as `info "at" macdl.net`) |
+| `daniel@finderlaw.com` | Finder Law (Jefferson City area) | OWI/DWI defense attorney |
+| `info@gambitrecovery.com` | Gambit Recovery (MO homes; AZ HQ) | Sober living operator |
+
+**No published inbox (call instead):** Safety Council of Greater St. Louis,
+Northland Dependency Services, St. Joseph Safety & Health Council, OCCS of
+Missouri, Correction Services of SW Missouri, Private Probation Services,
+Healing House KC, Heartland Center for Behavioral Change, Missouri Behavioral
+Health Council, MCRSP, Travis Noble P.C., Twibell Pierson.
+
+⚠️ **Dead-domain trap:** `dstoecker@morecovery.org` shows up in a 2019 DMH PDF
+for the Springfield Recovery Community Center. **morecovery.org is now a
+placeholder template site** — fake "Santa Barbara, MO" address, 800-555 phone
+numbers. SRCC's live domain is spfdrcc.org. Same class of mistake as the
+wrong-state lookalikes: an address found in a document is not an address that
+still works.
+
+⚠️ **Wrong door:** `satop@dmh.mo.gov` is the state's offender-compliance help
+desk, not a vendor channel.
+
+### Indiana — the state publishes the contact list
+
+Indiana serves a **live, generated directory of every certified court alcohol
+and drug program**, with each program director's name, county, phone and email:
+
+```
+https://courtapps.in.gov/reports/api/courtaddirectory
+```
+
+It returns a PDF (despite the `/api/` path). The copy pulled 2026-09-10 is
+stamped "Indiana Court Alcohol and Drug Program Directory - September 2026" and
+covers ~40 counties. Under IC 12-23-14 these programs handle screening,
+assessment, referral and case management for court-involved people with alcohol
+and drug issues — i.e. **they are the people who receive AA/NA attendance
+documentation**, and the state hands over their inboxes. Re-pull before each
+wave; it's regenerated.
+
+Ten selected for wave 6: IOCS (`jamie.bergacs@courts.in.gov`), Indiana Council
+of CMHCs (`ljordan@indianacouncil.org`), Marion, Lake, Allen, Hamilton,
+St. Joseph and Vanderburgh county programs, plus two nonprofit operators running
+county programs (PACT in Porter County, Our Place Services in Washington
+County). A dozen more counties are listed as spares in the wave file.
+
+⚠️ **Stale contact:** `diane.mains@courts.in.gov` is what search engines return
+for Indiana's CADP contact; the current in.gov page lists Jamie Bergacs and Lora
+Moeller instead.
+
+⚠️ **Terminology:** Indiana says **OWI** — not DUI, not DWI. Missouri says
+**DWI**. Using the wrong acronym flags you as an out-of-state vendor in the
+first sentence.
+
+**Technique note for future states:** before hand-checking facility contact
+pages, look for the state judiciary's own program directory. Illinois publishes
+a probation-department contact list; Indiana publishes a full A&D program
+directory with emails. That's an hour of sweeping replaced by one fetch — and
+the contacts are the decision-makers, not a general inbox.
