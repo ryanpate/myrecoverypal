@@ -4163,132 +4163,147 @@ def create_notification(recipient, sender, notification_type, title, message, li
 
 def social_feed_view(request):
     """Display the social media feed"""
-    try:
-        user = request.user
+    user = request.user
 
-        # Get posts visible to the current user
-        posts = SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
-            'reactions',
-            'comments__author__subscription'
-        ).order_by('-created_at')
+    # Get posts visible to the current user
+    posts = SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
+        'reactions',
+        'comments__author__subscription'
+    ).order_by('-created_at')
 
-        # Filter posts based on visibility
-        visible_posts = []
-        following_posts = []  # Posts from users they follow
+    # Filter posts based on visibility
+    visible_posts = []
+    following_posts = []  # Posts from users they follow
 
-        if user.is_authenticated:
-            following_ids = set(user.get_following().values_list('id', flat=True))
-        else:
-            following_ids = set()
+    if user.is_authenticated:
+        following_ids = set(user.get_following().values_list('id', flat=True))
+    else:
+        following_ids = set()
 
-        # Mood tag styling for posts linked to a check-in (feed mood pill)
-        mood_tags = {
-            1: {'emoji': '😣', 'label': 'Struggling', 'kind': 'okay'},
-            2: {'emoji': '😔', 'label': 'Down', 'kind': 'okay'},
-            3: {'emoji': '😐', 'label': 'Okay', 'kind': 'okay'},
-            4: {'emoji': '🙂', 'label': 'Good', 'kind': 'good'},
-            5: {'emoji': '😄', 'label': 'Great', 'kind': 'good'},
-            6: {'emoji': '🌟', 'label': 'Amazing', 'kind': 'amazing'},
-        }
+    # Mood tag styling for posts linked to a check-in (feed mood pill)
+    mood_tags = {
+        1: {'emoji': '😣', 'label': 'Struggling', 'kind': 'okay'},
+        2: {'emoji': '😔', 'label': 'Down', 'kind': 'okay'},
+        3: {'emoji': '😐', 'label': 'Okay', 'kind': 'okay'},
+        4: {'emoji': '🙂', 'label': 'Good', 'kind': 'good'},
+        5: {'emoji': '😄', 'label': 'Great', 'kind': 'good'},
+        6: {'emoji': '🌟', 'label': 'Amazing', 'kind': 'amazing'},
+    }
 
-        for post in posts:
-            if post.is_visible_to(user if user.is_authenticated else None):
-                # Single pass over prefetched reactions (cache list once)
-                reactions_list = list(post.reactions.all())
-                post.reaction_count = len(reactions_list)
-                post.user_has_reacted = (
-                    user.is_authenticated
-                    and any(r.user_id == user.id for r in reactions_list)
-                )
-                # Per-type counts + this user's reaction type (Support/Strength)
-                counts = {}
-                post.user_reaction = None
-                for r in reactions_list:
-                    counts[r.reaction_type] = counts.get(r.reaction_type, 0) + 1
-                    if user.is_authenticated and r.user_id == user.id:
-                        post.user_reaction = r.reaction_type
-                post.reaction_counts = counts
-                # Mood pill from a linked check-in
-                if post.linked_checkin_id and post.linked_checkin:
-                    post.mood_tag = mood_tags.get(post.linked_checkin.mood)
-                visible_posts.append(post)
-                # Track posts from followed users
-                if user.is_authenticated and post.author_id in following_ids:
-                    following_posts.append(post)
+    for post in posts:
+        if post.is_visible_to(user if user.is_authenticated else None):
+            # Single pass over prefetched reactions (cache list once)
+            reactions_list = list(post.reactions.all())
+            post.reaction_count = len(reactions_list)
+            post.user_has_reacted = (
+                user.is_authenticated
+                and any(r.user_id == user.id for r in reactions_list)
+            )
+            # Per-type counts + this user's reaction type (Support/Strength)
+            counts = {}
+            post.user_reaction = None
+            for r in reactions_list:
+                counts[r.reaction_type] = counts.get(r.reaction_type, 0) + 1
+                if user.is_authenticated and r.user_id == user.id:
+                    post.user_reaction = r.reaction_type
+            post.reaction_counts = counts
+            # Mood pill from a linked check-in
+            if post.linked_checkin_id and post.linked_checkin:
+                post.mood_tag = mood_tags.get(post.linked_checkin.mood)
+            visible_posts.append(post)
+            # Track posts from followed users
+            if user.is_authenticated and post.author_id in following_ids:
+                following_posts.append(post)
 
-        # For anonymous users, limit to 3 posts to encourage signup
-        is_gated = False
-        total_posts_count = len(visible_posts)
-        if not user.is_authenticated and len(visible_posts) > 3:
-            visible_posts = visible_posts[:3]
-            is_gated = True
+    # For anonymous users, limit to 3 posts to encourage signup
+    is_gated = False
+    total_posts_count = len(visible_posts)
+    if not user.is_authenticated and len(visible_posts) > 3:
+        visible_posts = visible_posts[:3]
+        is_gated = True
 
-        # Pagination (only for authenticated users)
-        if user.is_authenticated:
-            paginator = Paginator(visible_posts, 20)
-            page_number = request.GET.get('page')
-            page_obj = paginator.get_page(page_number)
-        else:
-            page_obj = None
+    # Pagination (only for authenticated users)
+    if user.is_authenticated:
+        paginator = Paginator(visible_posts, 20)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+    else:
+        page_obj = None
 
-        context = {
-            'page_obj': page_obj,
-            'posts': visible_posts if not user.is_authenticated else page_obj,
-            'is_gated': is_gated,
-            'total_posts_count': total_posts_count,
-        }
+    context = {
+        'page_obj': page_obj,
+        'posts': visible_posts if not user.is_authenticated else page_obj,
+        'is_gated': is_gated,
+        'total_posts_count': total_posts_count,
+    }
 
-        # Daily recovery thought for feed
-        from apps.accounts.daily_content import get_daily_thought, get_daily_reading
-        context['daily_thought'] = get_daily_thought()
-        context['daily_reading'] = get_daily_reading()
+    # Daily recovery thought for feed
+    from apps.accounts.daily_content import get_daily_thought, get_daily_reading
+    context['daily_thought'] = get_daily_thought()
+    context['daily_reading'] = get_daily_reading()
 
-        # For authenticated users, check if feed is empty/sparse and add suggestions
-        if user.is_authenticated:
-            # Today's check-in for the widget
-            today = timezone.localdate()
-            todays_checkin = DailyCheckIn.objects.filter(user=user, date=today).first()
-            context['todays_checkin'] = todays_checkin
-            context['checkin_streak'] = user.get_checkin_streak()
-            context['is_premium'] = hasattr(user, 'subscription') and user.subscription.is_premium()
+    # For authenticated users, check if feed is empty/sparse and add suggestions
+    if user.is_authenticated:
+        # Today's check-in for the widget
+        today = timezone.localdate()
+        todays_checkin = DailyCheckIn.objects.filter(user=user, date=today).first()
+        context['todays_checkin'] = todays_checkin
+        context['checkin_streak'] = user.get_checkin_streak()
+        context['is_premium'] = hasattr(user, 'subscription') and user.subscription.is_premium()
 
-            # Supporter presence row ("X of Y supporters are online now")
-            try:
-                from datetime import timedelta
-                online_cutoff = timezone.now() - timedelta(minutes=5)
-                supporter_links = list(
-                    user.supporter_links.filter(status='active')
-                    .exclude(supporter__isnull=True)
-                    .select_related('supporter')
-                )
-                supporters = [link.supporter for link in supporter_links]
-                context['supporter_total'] = len(supporters)
-                context['supporter_online'] = sum(
-                    1 for s in supporters if s.last_seen and s.last_seen >= online_cutoff
-                )
-                # A few sample supporters for the overlapping avatars (online first)
-                context['supporter_samples'] = sorted(
-                    supporters,
-                    key=lambda s: s.last_seen or timezone.datetime.min.replace(tzinfo=timezone.utc),
-                    reverse=True,
-                )[:4]
-            except Exception:
-                context['supporter_total'] = 0
-                context['supporter_online'] = 0
-                context['supporter_samples'] = []
-            profile_completion = user.get_profile_completion()
-            context['profile_completion'] = profile_completion
-            context['show_profile_banner'] = not profile_completion['is_complete'] and not user.has_completed_onboarding
+        # Supporter presence row ("X of Y supporters are online now")
+        try:
+            from datetime import timedelta
+            online_cutoff = timezone.now() - timedelta(minutes=5)
+            supporter_links = list(
+                user.supporter_links.filter(status='active')
+                .exclude(supporter__isnull=True)
+                .select_related('supporter')
+            )
+            supporters = [link.supporter for link in supporter_links]
+            context['supporter_total'] = len(supporters)
+            context['supporter_online'] = sum(
+                1 for s in supporters if s.last_seen and s.last_seen >= online_cutoff
+            )
+            # A few sample supporters for the overlapping avatars (online first)
+            context['supporter_samples'] = sorted(
+                supporters,
+                key=lambda s: s.last_seen or timezone.datetime.min.replace(tzinfo=timezone.utc),
+                reverse=True,
+            )[:4]
+        except Exception:
+            context['supporter_total'] = 0
+            context['supporter_online'] = 0
+            context['supporter_samples'] = []
+        profile_completion = user.get_profile_completion()
+        context['profile_completion'] = profile_completion
+        context['show_profile_banner'] = not profile_completion['is_complete'] and not user.has_completed_onboarding
 
-            # Check if user has a sparse feed (following few people or few posts from followed users)
-            is_new_user = len(following_ids) < 3
-            has_sparse_feed = len(following_posts) < 5
+        # Check if user has a sparse feed (following few people or few posts from followed users)
+        is_new_user = len(following_ids) < 3
+        has_sparse_feed = len(following_posts) < 5
 
-            if is_new_user or has_sparse_feed:
-                # Get suggested users to follow
-                from django.db.models import Count, Q
+        if is_new_user or has_sparse_feed:
+            # Get suggested users to follow
+            from django.db.models import Count, Q
 
-                # First try users who have posted
+            # First try users who have posted
+            suggested_users = User.objects.filter(
+                is_active=True,
+                is_profile_public=True
+            ).exclude(
+                id=user.id
+            ).exclude(
+                id__in=following_ids
+            ).annotate(
+                annotated_followers=Count('follower_connections', filter=Q(follower_connections__connection_type='follow')),
+                posts_count=Count('social_posts')
+            ).filter(
+                posts_count__gt=0  # Only suggest users who have posted
+            ).order_by('-annotated_followers', '-posts_count')[:6]
+
+            # Fallback: if no users have posted, get any active users
+            if not suggested_users.exists():
                 suggested_users = User.objects.filter(
                     is_active=True,
                     is_profile_public=True
@@ -4296,42 +4311,22 @@ def social_feed_view(request):
                     id=user.id
                 ).exclude(
                     id__in=following_ids
-                ).annotate(
-                    annotated_followers=Count('follower_connections', filter=Q(follower_connections__connection_type='follow')),
-                    posts_count=Count('social_posts')
-                ).filter(
-                    posts_count__gt=0  # Only suggest users who have posted
-                ).order_by('-annotated_followers', '-posts_count')[:6]
+                ).order_by('-date_joined')[:6]
 
-                # Fallback: if no users have posted, get any active users
-                if not suggested_users.exists():
-                    suggested_users = User.objects.filter(
-                        is_active=True,
-                        is_profile_public=True
-                    ).exclude(
-                        id=user.id
-                    ).exclude(
-                        id__in=following_ids
-                    ).order_by('-date_joined')[:6]
+            context['suggested_users'] = suggested_users
+            context['show_suggestions'] = True
+            context['is_new_user'] = is_new_user
+            context['following_count'] = len(following_ids)
 
-                context['suggested_users'] = suggested_users
-                context['show_suggestions'] = True
-                context['is_new_user'] = is_new_user
-                context['following_count'] = len(following_ids)
+            # Get discover posts (recent public posts from users they don't follow)
+            discover_posts = [p for p in visible_posts if p.author_id not in following_ids and p.author_id != user.id][:5]
+            context['discover_posts'] = discover_posts
 
-                # Get discover posts (recent public posts from users they don't follow)
-                discover_posts = [p for p in visible_posts if p.author_id not in following_ids and p.author_id != user.id][:5]
-                context['discover_posts'] = discover_posts
+    # Return fragment template if requested (for AJAX tab loading on progress page)
+    if request.GET.get('fragment') == '1' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, 'accounts/social_feed_fragment.html', context)
 
-        # Return fragment template if requested (for AJAX tab loading on progress page)
-        if request.GET.get('fragment') == '1' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return render(request, 'accounts/social_feed_fragment.html', context)
-
-        return render(request, 'accounts/social_feed.html', context)
-    except Exception as e:
-        import traceback, logging
-        logging.getLogger(__name__).error(f"Error in social_feed_view: {e}\n{traceback.format_exc()}")
-        raise
+    return render(request, 'accounts/social_feed.html', context)
 
 
 

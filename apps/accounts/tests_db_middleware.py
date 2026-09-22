@@ -7,13 +7,16 @@ before it reaches the middleware __call__ — it never propagates as an exceptio
 The middleware therefore cannot rely on catching the exception in __call__; it
 must detect the failure another way (a flag set by process_exception) and retry.
 """
+import logging
 from unittest import mock
 
+from django.contrib.auth import get_user_model
 from django.db import InterfaceError
 from django.http import HttpResponse
-from django.test import SimpleTestCase
+from django.test import RequestFactory, SimpleTestCase, TestCase
 
 from apps.accounts.middleware import DatabaseConnectionMiddleware
+from apps.accounts.views import social_feed_view
 
 
 class _Request:
@@ -94,3 +97,46 @@ class DatabaseConnectionRetryTest(SimpleTestCase):
         # 1 initial + 3 retries
         self.assertEqual(calls['n'], 1 + len(DatabaseConnectionMiddleware.BACKOFF_DELAYS))
         self.assertEqual(response.status_code, 500)
+
+
+class SocialFeedDropIsNotLoggedTest(TestCase):
+    """
+    A mid-request connection drop must reach Sentry only as an *exception* event.
+
+    settings._drop_recovered_db_drops filters those out by inspecting
+    hint['exc_info'], which only exists for exception events. A view that logs
+    its own `logger.error("...")` produces a *message* event with no exc_info,
+    so the filter can't see it and the retried-and-recovered request still
+    creates a Sentry issue (PYTHON-DJANGO-52).
+    """
+
+    def test_connection_drop_propagates_without_an_error_log(self):
+        User = get_user_model()
+        user = User.objects.create_user(username='feeduser', password='x')
+
+        request = RequestFactory().get('/accounts/social-feed/')
+        request.user = user
+
+        records = []
+
+        class _Capture(logging.Handler):
+            def emit(self, record):
+                records.append(record)
+
+        handler = _Capture()
+        view_logger = logging.getLogger('apps.accounts.views')
+        view_logger.addHandler(handler)
+        try:
+            with mock.patch.object(
+                User, 'get_following', side_effect=InterfaceError('cursor already closed')
+            ):
+                with self.assertRaises(InterfaceError):
+                    social_feed_view(request)
+        finally:
+            view_logger.removeHandler(handler)
+
+        self.assertEqual(
+            [r.getMessage() for r in records if r.levelno >= logging.ERROR],
+            [],
+            "the view must not log the drop itself — that bypasses the Sentry filter",
+        )
