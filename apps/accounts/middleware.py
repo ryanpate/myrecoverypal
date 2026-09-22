@@ -7,6 +7,21 @@ from django.db import close_old_connections, connection, connections, Operationa
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
+# Django normally translates psycopg2 errors into django.db.* ones via
+# wrap_database_errors. sentry-sdk's SQL instrumentation doesn't go through it:
+# its CursorWrapper.execute calls _set_db_data() ->
+# connection.get_dsn_parameters(), so a mid-query connection drop can surface as
+# the *raw* psycopg2 error instead. That one isn't a django.db.InterfaceError, so
+# it used to slip past the retry below and 500 the user (Sentry
+# PYTHON-DJANGO-51, /accounts/progress/). Match both flavours.
+DB_CONNECTION_ERRORS = (OperationalError, InterfaceError)
+try:
+    import psycopg2
+except ImportError:  # sqlite (local dev / build phase)
+    pass
+else:
+    DB_CONNECTION_ERRORS += (psycopg2.OperationalError, psycopg2.InterfaceError)
+
 
 class DatabaseConnectionMiddleware:
     """
@@ -62,7 +77,7 @@ class DatabaseConnectionMiddleware:
         # Railway's proxy can kill idle connections before conn_max_age expires.
         try:
             connection.ensure_connection()
-        except (OperationalError, InterfaceError):
+        except DB_CONNECTION_ERRORS:
             logger.warning("Stale database connection detected pre-request, reconnecting")
             self._close_all_connections()
 
@@ -74,7 +89,7 @@ class DatabaseConnectionMiddleware:
             response = None
             try:
                 response = self.get_response(request)
-            except (OperationalError, InterfaceError) as e:
+            except DB_CONNECTION_ERRORS as e:
                 # Defensive: some response paths (streaming, etc.) can still let the
                 # error propagate as an exception rather than going through
                 # process_exception. Treat it the same way.
@@ -111,7 +126,7 @@ class DatabaseConnectionMiddleware:
         __call__ can retry, and close all connections so the retry (and the next
         request) starts fresh.
         """
-        if isinstance(exception, (OperationalError, InterfaceError)):
+        if isinstance(exception, DB_CONNECTION_ERRORS):
             logger.warning("Database connection error during request: %s", exception)
             request._db_connection_dropped = exception
             self._close_all_connections()

@@ -42,8 +42,21 @@ if SENTRY_DSN:
         exc_info = hint.get('exc_info')
         if exc_info:
             from django.db.utils import OperationalError, InterfaceError
+            # sentry-sdk's own SQL instrumentation reads
+            # connection.get_dsn_parameters() outside Django's
+            # wrap_database_errors, so a drop can arrive as the raw psycopg2
+            # error rather than the django.db one. Match both, in step with
+            # middleware.DB_CONNECTION_ERRORS — anything the retry recovers
+            # from must also be filtered here.
+            db_errors = (OperationalError, InterfaceError)
+            try:
+                import psycopg2
+            except ImportError:
+                pass
+            else:
+                db_errors += (psycopg2.OperationalError, psycopg2.InterfaceError)
             exc_value = exc_info[1]
-            if isinstance(exc_value, (OperationalError, InterfaceError)):
+            if isinstance(exc_value, db_errors):
                 msg = str(exc_value).lower()
                 transient_signatures = (
                     'cursor already closed',

@@ -140,3 +140,50 @@ class SocialFeedDropIsNotLoggedTest(TestCase):
             [],
             "the view must not log the drop itself — that bypasses the Sentry filter",
         )
+
+
+class RawPsycopg2DropIsRetriedTest(SimpleTestCase):
+    """
+    sentry-sdk's SQL instrumentation (CursorWrapper.execute -> _set_db_data ->
+    connection.get_dsn_parameters()) runs outside Django's wrap_database_errors,
+    so a mid-query drop there raises a *raw* psycopg2.InterfaceError that Django
+    never translates. It isn't a django.db.InterfaceError, so it used to bypass
+    the retry entirely and 500 the user (PYTHON-DJANGO-51: /accounts/progress/
+    returned 500 at 06:25:24 with no retry logged, while a django.db-flavoured
+    drop on /support/meetings/ one millisecond earlier retried and served 200).
+    """
+
+    @mock.patch.object(DatabaseConnectionMiddleware, '_close_all_connections')
+    @mock.patch('apps.accounts.middleware.connection')
+    @mock.patch('apps.accounts.middleware.close_old_connections')
+    @mock.patch('time.sleep', return_value=None)
+    def test_raw_psycopg2_interface_error_is_retried(
+        self, _sleep, _close_old, _conn, _close_all
+    ):
+        import psycopg2
+
+        self.assertNotIsInstance(
+            psycopg2.InterfaceError('connection already closed'), InterfaceError,
+            "precondition: the raw driver error is not a django.db.InterfaceError",
+        )
+
+        calls = {'n': 0}
+        mw_holder = {}
+
+        def downstream(request):
+            calls['n'] += 1
+            try:
+                if calls['n'] == 1:
+                    raise psycopg2.InterfaceError('connection already closed')
+                return HttpResponse('OK', status=200)
+            except Exception as exc:
+                mw_holder['mw'].process_exception(request, exc)
+                return HttpResponse('Server Error', status=500)
+
+        mw = DatabaseConnectionMiddleware(downstream)
+        mw_holder['mw'] = mw
+
+        response = mw(_Request())
+
+        self.assertEqual(calls['n'], 2, "a raw psycopg2 drop must be retried too")
+        self.assertEqual(response.status_code, 200)
