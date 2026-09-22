@@ -1613,7 +1613,11 @@ a.btn-primary:hover {
     min-width: 220px;
     z-index: 1051;
     margin-top: 0.5rem;
-    overflow: hidden;
+    /* Nav is position:fixed, so a menu taller than the viewport can't be
+       reached by page scroll — cap it and scroll inside instead. */
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .user-dropdown.active {
