@@ -1,0 +1,66 @@
+{% comment %}
+Progress-home prompt for users with no sobriety date: without one there is no
+day counter and no milestone emails. Posts to accounts:set_sobriety_date and
+works without JavaScript; JS only adds the 3-day "Not now" dismissal.
+{% endcomment %}
+<div class="sd-prompt" id="sobrietyDatePrompt">
+    <div class="sd-icon" aria-hidden="true"><i class="fas fa-calendar-check"></i></div>
+    <div class="sd-body">
+        <h2 class="sd-title">When did your recovery start?</h2>
+        <p class="sd-sub">Add your date to start your day counter and get a medallion at every milestone.
+            Starting fresh today counts too.</p>
+        <form method="post" action="{% url 'accounts:set_sobriety_date' %}" class="sd-form">
+            {% csrf_token %}
+            <input type="date" name="sobriety_date" class="sd-input" aria-label="Your sobriety date"
+                   max="{% now 'Y-m-d' %}">
+            <button type="submit" class="sd-btn">Start my counter</button>
+            <button type="submit" name="start_today" value="1" class="sd-btn sd-btn-ghost" formnovalidate>I'm starting today</button>
+        </form>
+        <p class="sd-note">
+            You control who sees it in <a href="{% url 'accounts:edit_profile' %}">Settings</a>.
+            <button type="button" class="sd-dismiss" id="sobrietyDateDismiss">Not now</button>
+        </p>
+    </div>
+</div>
+<style>
+    .sd-prompt { max-width: 1000px; margin: 1.5rem auto 0; padding: 1.5rem 1.75rem; display: flex; gap: 1.1rem;
+        align-items: flex-start; background: linear-gradient(135deg, #ecfdf5 0%, #f7fbff 100%);
+        border: 1px solid #b7e4c7; border-radius: 20px; box-shadow: 0 2px 14px rgba(15, 45, 86, 0.08); }
+    .sd-icon { flex: none; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center;
+        justify-content: center; background: #52b788; color: #fff; font-size: 1.35rem; }
+    .sd-body { flex: 1; min-width: 0; }
+    .sd-title { margin: 0 0 .3rem; font-size: 1.25rem; font-weight: 800; color: #1a2a44; }
+    .sd-sub { margin: 0 0 .9rem; color: #4b5563; line-height: 1.5; font-size: .95rem; }
+    .sd-form { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+    .sd-input { padding: .6rem .8rem; border: 1px solid #cfd8e3; border-radius: 10px; font-size: 1rem;
+        background: #fff; color: #1a2a44; min-width: 160px; }
+    .sd-btn { border: none; cursor: pointer; border-radius: 999px; padding: .65rem 1.2rem; font-weight: 700;
+        font-size: .95rem; color: #fff; background: linear-gradient(135deg, #1e4d8b, #52b788); }
+    .sd-btn-ghost { background: transparent; color: #1e4d8b; border: 1.5px solid #1e4d8b; }
+    .sd-note { margin: .75rem 0 0; font-size: .82rem; color: #6b7280; }
+    .sd-dismiss { background: none; border: none; color: #6b7280; text-decoration: underline; cursor: pointer;
+        font-size: .82rem; margin-left: .5rem; padding: 0; }
+    [data-theme="dark"] .sd-prompt { background: linear-gradient(135deg, #1e293b 0%, #16352a 100%); border-color: #2f5b45; }
+    [data-theme="dark"] .sd-title { color: #e8eef7; }
+    [data-theme="dark"] .sd-sub, [data-theme="dark"] .sd-note, [data-theme="dark"] .sd-dismiss { color: #9ca3af; }
+    [data-theme="dark"] .sd-input { background: #374151; border-color: #4b5563; color: #e8eef7; }
+    [data-theme="dark"] .sd-btn-ghost { color: #cfe0f5; border-color: #cfe0f5; }
+    @media (max-width: 600px) {
+        .sd-prompt { margin: 1rem .75rem 0; padding: 1.25rem; }
+        .sd-icon { display: none; }
+        .sd-input, .sd-btn { flex: 1 1 100%; }
+    }
+</style>
+<script>
+(function () {
+    var card = document.getElementById('sobrietyDatePrompt');
+    var KEY = 'mrpSobrietyPromptHiddenUntil';
+    try {
+        if (Date.now() < Number(localStorage.getItem(KEY) || 0)) card.style.display = 'none';
+    } catch (e) {}
+    document.getElementById('sobrietyDateDismiss').addEventListener('click', function () {
+        card.style.display = 'none';
+        try { localStorage.setItem(KEY, String(Date.now() + 3 * 24 * 3600 * 1000)); } catch (e) {}
+    });
+})();
+</script>

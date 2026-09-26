@@ -974,6 +974,44 @@ def _available_timezones():
 
 @login_required
 @require_POST
+def set_sobriety_date(request):
+    """Progress-home prompt: start the day counter for someone with no date yet.
+
+    Only ever sets a MISSING date — changing an existing one belongs in
+    settings or the slip log, never a stale prompt in another tab.
+    """
+    user = request.user
+    if user.sobriety_date:
+        return redirect('accounts:progress')
+    if request.POST.get('start_today'):
+        chosen = timezone.localdate()
+    else:
+        chosen = CustomUserCreationForm.parse_carried_date(request.POST.get('sobriety_date'))
+    if not chosen:
+        messages.error(request, 'Please choose a date that isn\'t in the future.')
+        return redirect('accounts:progress')
+
+    user.sobriety_date = chosen
+    fields = ['sobriety_date']
+    if not user.recovery_start_date:
+        user.recovery_start_date = chosen
+        fields.append('recovery_start_date')
+    user.save(update_fields=fields)
+    Milestone.objects.get_or_create(
+        user=user, days_sober=0, milestone_type='days',
+        defaults={'title': 'Started My Recovery Journey',
+                  'description': 'The day I decided to change my life.',
+                  'date_achieved': chosen},
+    )
+    queue_ga_event(request, 'sobriety_date_set', source='progress_prompt')
+    days = (timezone.localdate() - chosen).days
+    messages.success(request, 'Your counter has started. Day one is the bravest one.' if days == 0
+                     else f'{days:,} days. That took everything, and you did it.')
+    return redirect('accounts:progress')
+
+
+@login_required
+@require_POST
 def set_timezone(request):
     """Store the browser-detected IANA timezone on the user, once validated."""
     try:

@@ -95,6 +95,7 @@ urlpatterns = [
     path('pledge/update/', views.update_pledge, name='update_pledge'),
     path('pledge/share-feed/', views.share_pledge_to_feed, name='share_pledge_to_feed'),
     path('set-timezone/', views.set_timezone, name='set_timezone'),
+    path('set-sobriety-date/', views.set_sobriety_date, name='set_sobriety_date'),
     path('checkin-status/', views.get_checkin_status, name='checkin_status'),
     path('checkin/done/', views.checkin_confirmation, name='checkin_confirmation'),
     path('progress/', views.progress_view, name='progress'),
