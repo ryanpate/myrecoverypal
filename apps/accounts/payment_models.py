@@ -132,6 +132,14 @@ class Subscription(models.Model):
         """
         return self.tier == 'supporter' and self.is_active()
 
+    def card_trial_eligible(self):
+        """May start the 7-day card-required Premium trial at checkout.
+
+        Only people who have never had any trial (including the legacy
+        automatic signup trial) and never subscribed through Stripe.
+        """
+        return not self.trial_end and not self.stripe_subscription_id
+
     def is_trialing(self):
         """Check if user is in trial period"""
         return self.status == 'trialing' and self.trial_end and self.trial_end > timezone.now()

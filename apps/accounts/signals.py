@@ -24,20 +24,17 @@ def create_user_joined_activity(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def create_user_subscription(sender, instance, created, **kwargs):
-    """Create a 14-day Premium trial subscription for new users"""
+    """New accounts start on the free tier.
+
+    Until 2026-09-26 every signup got an automatic no-card 14-day Premium
+    trial (1 paid user from 411 signups). Premium's trial is now a 7-day,
+    card-required Stripe trial started at checkout; see
+    Subscription.card_trial_eligible() and _build_checkout_session().
+    """
     if created:
-        from django.utils import timezone
-        from datetime import timedelta
-
-        trial_end = timezone.now() + timedelta(days=14)
-
         Subscription.objects.get_or_create(
             user=instance,
-            defaults={
-                'tier': 'premium',
-                'status': 'trialing',
-                'trial_end': trial_end,
-            }
+            defaults={'tier': 'free', 'status': 'active'},
         )
 
 

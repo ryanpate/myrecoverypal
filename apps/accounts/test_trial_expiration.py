@@ -9,7 +9,16 @@ from apps.accounts.payment_models import Subscription
 
 
 def make_user(username):
-    return User.objects.create_user(username, f'{username}@t.co', 'pw')
+    """A user on the LEGACY automatic signup trial (premium / trialing / +14d).
+
+    New signups start free since 2026-09-26, but accounts created before then
+    still carry this trial, so its expiry logic stays under test.
+    """
+    user = User.objects.create_user(username, f'{username}@t.co', 'pw')
+    Subscription.objects.filter(user=user).update(
+        tier='premium', status='trialing', trial_end=timezone.now() + timedelta(days=14))
+    user.refresh_from_db()
+    return user
 
 
 class IsActiveGateTest(TestCase):

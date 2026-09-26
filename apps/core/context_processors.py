@@ -28,7 +28,9 @@ def seo_defaults(request):
     if hasattr(request, 'user') and request.user.is_authenticated:
         try:
             sub = getattr(request.user, 'subscription', None)
-            if sub and sub.is_trialing() and sub.trial_end:
+            # Only no-card signup trials: someone with a Stripe subscription has
+            # already subscribed and must not be told to "Keep Premium".
+            if sub and sub.is_trialing() and sub.trial_end and not sub.stripe_subscription_id:
                 from django.utils import timezone as tz
                 delta = sub.trial_end - tz.now()
                 if delta.days <= 2:

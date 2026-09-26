@@ -46,8 +46,9 @@ class PricingPageTests(TestCase):
     def test_anonymous_sees_trial_framing_and_register_cta(self):
         response = self.client.get(reverse('accounts:pricing'))
         content = response.content.decode()
-        self.assertIn('14-day free trial', content.lower())
-        self.assertIn('Start 14-Day Free Trial', content)
+        self.assertIn('try premium free for 7 days', content.lower())
+        self.assertIn('Start 7-day free trial', content)
+        self.assertNotIn('14-day', content.lower())
 
     def test_single_premium_card_with_annual_default(self):
         response = self.client.get(reverse('accounts:pricing'))

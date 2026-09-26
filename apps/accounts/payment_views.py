@@ -60,9 +60,13 @@ def pricing(request):
         'court_monthly_plan': court_monthly_plan,
         'court_yearly_plan': court_yearly_plan,
         'supporter_monthly_plan': supporter_monthly_plan,
+        'card_trial_eligible': bool(user_subscription and user_subscription.card_trial_eligible()),
         'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
     }
     return render(request, 'accounts/pricing.html', context)
+
+
+CARD_TRIAL_DAYS = 7
 
 
 def _build_checkout_session(request, plan, coupon=None):
@@ -94,14 +98,16 @@ def _build_checkout_session(request, plan, coupon=None):
         'tier': plan.tier,
     }
     subscription_data = {'metadata': sub_metadata}
-    # Never grant a SECOND free trial. Every user already gets a 14-day app
-    # trial at signup, so re-offering "start a 14-day free trial / $0 today"
-    # at checkout just confuses them into abandoning (observed: 0/13 completed).
-    # Instead, align Stripe's trial_end to whatever the user has LEFT on their
-    # existing trial, so they're billed exactly when the free period they were
+    # Premium's trial is a 7-day, card-required Stripe trial, offered once to
+    # people who have never had a trial. Checkout always collects the card.
+    if plan.tier == 'premium' and subscription and subscription.card_trial_eligible():
+        subscription_data['trial_period_days'] = CARD_TRIAL_DAYS
+    # Never grant a SECOND free trial. Legacy accounts got an automatic app
+    # trial at signup (before 2026-09-26): align Stripe's trial_end to whatever
+    # they have LEFT, so they're billed exactly when the free period they were
     # promised ends. If that's gone (or <48h out, Stripe's minimum), they
     # subscribe and are billed now.
-    if subscription and not subscription.stripe_subscription_id and subscription.trial_end:
+    elif subscription and not subscription.stripe_subscription_id and subscription.trial_end:
         min_trial_end = timezone.now() + timedelta(hours=48)
         if subscription.trial_end > min_trial_end:
             subscription_data['trial_end'] = int(subscription.trial_end.timestamp())
@@ -803,7 +809,7 @@ def handle_trial_will_end(stripe_subscription):
                 subject='Your Free Trial Ends Soon - MyRecoveryPal',
                 plain_message=(
                     f'Hi {user.first_name or user.username},\n\n'
-                    'Your 14-day free trial of MyRecoveryPal Premium ends in 3 days. '
+                    'Your free trial of MyRecoveryPal Premium ends in 3 days. '
                     'After that, your card on file will be charged.\n\n'
                     'To keep Premium: No action needed - your subscription continues automatically.\n'
                     'To cancel: Visit https://www.myrecoverypal.com/accounts/subscription/\n\n'
@@ -812,7 +818,7 @@ def handle_trial_will_end(stripe_subscription):
                 html_message=_billing_email_html(
                     user,
                     'Your Trial Ends in 3 Days',
-                    'Your 14-day free trial of MyRecoveryPal Premium ends in 3 days. '
+                    'Your free trial of MyRecoveryPal Premium ends in 3 days. '
                     'After that, your card on file will be charged automatically. '
                     'No action needed to keep Premium &mdash; or manage your subscription below.',
                     'Manage Subscription',

@@ -925,10 +925,17 @@ def send_trial_ending_notifications(self):
     tomorrow_start = now + timedelta(hours=24)
     tomorrow_end = now + timedelta(hours=48)
 
+    from django.db.models import Q
+
+    # Legacy no-card signup trials only. Card trials are Stripe's: those users
+    # will be charged, not "lose access", and Stripe's trial_will_end webhook
+    # emails them (handle_trial_will_end).
     expiring_subs = Subscription.objects.filter(
         status='trialing',
         trial_end__gte=tomorrow_start,
         trial_end__lt=tomorrow_end,
+    ).filter(
+        Q(stripe_subscription_id__isnull=True) | Q(stripe_subscription_id='')
     ).select_related('user')
 
     sent_count = 0

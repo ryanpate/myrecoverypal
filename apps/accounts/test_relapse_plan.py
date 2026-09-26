@@ -184,7 +184,9 @@ class PlanPdfGateTests(TestCase):
         self.assertIn(reverse("accounts:pricing"), resp["Location"])
 
     def test_premium_user_gets_pdf_response(self):
-        # New users default to a premium trial (signal), which is_premium().
+        self.user.subscription.tier = 'premium'
+        self.user.subscription.status = 'active'
+        self.user.subscription.save()
         with patch("apps.accounts.plan_views.render_plan_pdf",
                    return_value=b"%PDF-fake") as mock_render:
             resp = self.client.get(reverse("accounts:relapse_plan_pdf"))

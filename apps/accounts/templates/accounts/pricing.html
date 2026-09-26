@@ -165,7 +165,7 @@
         {% if user.is_authenticated %}
         <p>Simple plans for every stage of recovery. Cancel anytime.</p>
         {% else %}
-        <p>Every new account starts with a 14-day free trial of Premium</p>
+        <p>Free forever for the essentials. Try Premium free for 7 days.</p>
         {% endif %}
     </div>
 </div>
@@ -247,8 +247,8 @@
             <div class="card h-100 shadow-lg border-primary" style="transform: scale(1.05);">
                 <div class="card-header text-center bg-primary text-white" style="background-color: #1e4d8b !important;">
                     <span class="badge badge-warning mb-2">MOST POPULAR</span>
-                    {% if not user.is_authenticated %}
-                    <span class="badge badge-success mb-2 ml-1" style="background: linear-gradient(135deg, #52b788, #40916c);">14-DAY FREE TRIAL</span>
+                    {% if not user.is_authenticated or card_trial_eligible %}
+                    <span class="badge badge-success mb-2 ml-1" style="background: linear-gradient(135deg, #52b788, #40916c);">7-DAY FREE TRIAL</span>
                     {% endif %}
                     <h3 class="my-3" style="color: white !important;">Premium</h3>
 
@@ -286,7 +286,7 @@
                     <ul class="list-unstyled mt-2">
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Full mood, craving & energy analytics</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited groups + create private groups</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited direct messages</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> HD Medallion Pack included (animated video + print-quality)</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Journal export & backup</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Create custom challenges</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Premium profile badge</li>
@@ -296,8 +296,8 @@
                     {% if user.is_authenticated and user_subscription.tier == 'premium' and user_subscription.is_active %}
                         <button class="btn btn-light btn-block" disabled>Current Plan</button>
                     {% elif not user.is_authenticated %}
-                        <a class="btn btn-light btn-block" href="{% url 'accounts:register' %}">
-                            Start 14-Day Free Trial
+                        <a class="btn btn-light btn-block" href="{% url 'accounts:register' %}?next={% url 'accounts:pricing' %}">
+                            Start 7-day free trial
                         </a>
                     {% else %}
                         <!-- Stripe button (hidden on iOS native app via CSS) -->
@@ -306,8 +306,9 @@
                                 data-plan-name="{% if premium_yearly_plan %}{{ premium_yearly_plan.name }}{% else %}{{ premium_monthly_plan.name }}{% endif %}"
                                 {% if premium_monthly_plan %}data-monthly-id="{{ premium_monthly_plan.id }}" data-monthly-name="{{ premium_monthly_plan.name }}"{% endif %}
                                 {% if premium_yearly_plan %}data-yearly-id="{{ premium_yearly_plan.id }}" data-yearly-name="{{ premium_yearly_plan.name }}"{% endif %}>
-                            Get Premium
+                            {% if card_trial_eligible %}Start 7-day free trial{% else %}Get Premium{% endif %}
                         </button>
+                        {% if card_trial_eligible %}<small class="d-block mt-2 text-white-50 stripe-only">Card required. Cancel before day 7 and you won't be charged.</small>{% endif %}
                         <!-- IAP button (shown only on iOS native app via CSS) -->
                         <button class="btn btn-light btn-block iap-only iap-subscribe-btn"
                                 onclick="if(window.MRPIAP) { window.MRPIAP.showPurchaseUI(); } else { this.textContent='Purchases unavailable — please try again'; console.error('[IAP] MRPIAP bridge not loaded'); }">
@@ -445,7 +446,7 @@
                     </div>
                     <div id="collapse2" class="collapse" data-parent="#faqAccordion">
                         <div class="card-body">
-                            Yes! Every new account automatically starts with a 14-day free trial of Premium — no credit card required — so you can experience all features, including the AI Recovery Coach. After the trial, the Free tier is yours forever and includes 3 AI Coach messages per day.
+                            Yes. Premium comes with a 7-day free trial, once per account. You add a card at checkout and aren't charged until day 7; cancel any time before then and you pay nothing. The Free tier is yours forever either way, including 3 AI Coach messages a day and unlimited support when you're struggling.
                         </div>
                     </div>
                 </div>

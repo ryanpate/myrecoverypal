@@ -27,7 +27,7 @@
     "offers": [
       {
         "@type": "Offer",
-        "name": "Free Trial",
+        "name": "Free",
         "price": "0",
         "priceCurrency": "USD",
         "description": "3 free messages a day to experience the AI Recovery Coach"
@@ -960,12 +960,12 @@
                 <li><i class="fas fa-check"></i> Session history & continuity</li>
                 <li><i class="fas fa-check"></i> Advanced recovery analytics</li>
                 <li><i class="fas fa-check"></i> Unlimited private groups</li>
-                <li><i class="fas fa-check"></i> Unlimited direct messages</li>
+                <li><i class="fas fa-check"></i> HD Medallion Pack included</li>
             </ul>
             {% if user.is_authenticated %}
             <a href="{% url 'accounts:recovery_coach' %}" class="cta-button cta-button-primary">Try AI Coach</a>
             {% else %}
-            <a href="{% url 'accounts:register' %}" class="cta-button cta-button-primary">Start Free Trial</a>
+            <a href="{% url 'accounts:register' %}" class="cta-button cta-button-primary">Try Anchor free</a>
             {% endif %}
         </div>
     </div>

@@ -669,7 +669,7 @@
     {% endif %}
 
     <!-- Trial Countdown Banner -->
-    {% if user.is_authenticated and user_subscription and user_subscription.status == 'trialing' and user_subscription.trial_end %}
+    {% if user.is_authenticated and user_subscription and user_subscription.status == 'trialing' and user_subscription.trial_end and not user_subscription.stripe_subscription_id %}
     {% with days_left=user_subscription.trial_end|days_remaining %}
     <div class="trial-countdown-banner {{ days_left|trial_urgency_class }}" style="
         background: linear-gradient(135deg,
