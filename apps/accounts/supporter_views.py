@@ -10,6 +10,7 @@ from apps.accounts.supporter_models import SupporterLink, PRESET_CHOICES
 from apps.accounts.supporter_forms import SupporterInviteForm, PresetForm
 from apps.accounts.decorators import supporter_required
 from apps.accounts import supporter_service
+from apps.accounts.email_service import send_email
 
 
 @login_required
@@ -23,7 +24,12 @@ def manage_links(request):
     links = SupporterLink.objects.filter(member=request.user).exclude(
         status__in=['revoked', 'declined']
     ).select_related('supporter')
-    return render(request, 'accounts/supporter/manage_links.html', {'links': links})
+    supporting = SupporterLink.objects.filter(supporter=request.user).exclude(
+        status__in=['revoked', 'declined']
+    ).select_related('member')
+    return render(request, 'accounts/supporter/manage_links.html', {
+        'links': links, 'supporting': supporting,
+    })
 
 
 @login_required
@@ -167,3 +173,139 @@ def request_support(request):
     ):
         return redirect(nxt)
     return redirect('accounts:social_feed')
+
+
+
+# --- Family-started support (supporter-initiated) ----------------------------
+#
+# A family member invites the person in recovery. Nothing is shared until that
+# person accepts and picks a sharing level; the family member pays for
+# Supporter only after acceptance. Privacy rule: never reveal whether an email
+# already has an account — every invite behaves identically.
+
+MAX_FAMILY_INVITES_PER_DAY = 5
+
+
+def _asker_name(user):
+    return (user.first_name or '').strip() or 'Someone who cares about you'
+
+
+@login_required
+def supporter_invite_member(request):
+    from datetime import timedelta
+    from django.core.exceptions import ValidationError
+    from django.core.validators import validate_email
+    from django.urls import reverse
+
+    context = {}
+    if request.method == 'POST':
+        name = (request.POST.get('loved_one_name') or '').strip()[:60]
+        email = (request.POST.get('email') or '').strip().lower()
+        note = (request.POST.get('note') or '').strip()[:500]
+        recent = SupporterLink.objects.filter(
+            supporter=request.user, initiated_by='supporter',
+            created_at__gte=timezone.now() - timedelta(days=1)).count()
+        error = None
+        if not name:
+            error = 'Tell us what you call them, so the invite feels personal.'
+        elif email:
+            try:
+                validate_email(email)
+            except ValidationError:
+                error = 'That email address doesn’t look right.'
+        if not error and recent >= MAX_FAMILY_INVITES_PER_DAY:
+            error = 'You’ve sent the most invites allowed today. Try again tomorrow.'
+        if error:
+            context.update(error=error, form={'loved_one_name': name, 'email': email, 'note': note})
+        else:
+            link = SupporterLink.objects.create(
+                supporter=request.user, initiated_by='supporter', status='pending',
+                invite_token=secrets.token_urlsafe(32), invite_email=email,
+                loved_one_name=name, invite_note=note,
+            )
+            accept_url = request.build_absolute_uri(
+                reverse('accounts:supporter_member_accept', args=[link.invite_token]))
+            if email:
+                _email_invite(request.user, link, accept_url)
+            context.update(link=link, accept_url=accept_url, emailed=bool(email))
+    return render(request, 'accounts/supporter/invite_member.html', context)
+
+
+def _email_invite(supporter, link, accept_url):
+    asker = _asker_name(supporter)
+    note_plain = f'\n\n"{link.invite_note}"\n' if link.invite_note else ''
+    plain = (
+        f'{asker} would like to support your recovery on MyRecoveryPal.{note_plain}\n\n'
+        'You decide what they see (just your day count and milestones, or a little more), '
+        'and you can pause or stop sharing at any time. Nothing is shared unless you accept.\n\n'
+        f'See the request: {accept_url}\n\n'
+        "If you don't recognise this, ignore it and nothing will be shared."
+    )
+    from django.utils.html import escape
+    note_html = (f'<blockquote style="border-left:3px solid #52b788;padding-left:12px;color:#444;">'
+                 f'{escape(link.invite_note)}</blockquote>') if link.invite_note else ''
+    html = (
+        f'<p><strong>{escape(asker)}</strong> would like to support your recovery on MyRecoveryPal.</p>'
+        f'{note_html}'
+        '<p>You decide what they see, and you can pause or stop sharing at any time. '
+        'Nothing is shared unless you accept.</p>'
+        f'<p><a href="{accept_url}" style="background:#1e4d8b;color:#fff;padding:12px 20px;'
+        'border-radius:8px;text-decoration:none;font-weight:600;">See the request</a></p>'
+        "<p style=\"color:#888;font-size:12px;\">If you don't recognise this, ignore it and nothing will be shared.</p>"
+    )
+    try:
+        send_email(subject=f'{asker} would like to support your recovery',
+                   plain_message=plain, html_message=html, recipient_email=link.invite_email)
+    except Exception:
+        import logging
+        logging.getLogger(__name__).exception('Family invite email failed for link %s', link.pk)
+
+
+@login_required
+def supporter_member_accept(request, token):
+    """The person in recovery reviews a family-started request and accepts or declines."""
+    link = get_object_or_404(SupporterLink, invite_token=token, status='pending',
+                             initiated_by='supporter', member__isnull=True)
+    if link.supporter_id == request.user.id:
+        messages.info(request, 'This invite is for your loved one. Share the link with them.')
+        return redirect('accounts:supporter_manage')
+
+    if request.method == 'POST':
+        if request.POST.get('decision') != 'accept':
+            link.decline()
+            messages.info(request, 'Declined. Nothing has been shared.')
+            return redirect('accounts:progress')
+        if SupporterLink.objects.filter(member=request.user, supporter=link.supporter).exists():
+            messages.info(request, 'You already have a connection with this person.')
+            return redirect('accounts:supporter_manage')
+        preset = request.POST.get('preset', 'standard')
+        if preset not in {c[0] for c in PRESET_CHOICES}:
+            preset = 'standard'
+        link.member = request.user
+        link.save(update_fields=['member', 'updated_at'])
+        link.consent(preset=preset)
+        _email_family_accepted(link)
+        messages.success(request, 'Connected. You control what they see and can pause anytime.')
+        return redirect('accounts:supporter_manage')
+
+    return render(request, 'accounts/supporter/consent.html', {
+        'link': link, 'asker_name': _asker_name(link.supporter),
+    })
+
+
+def _email_family_accepted(link):
+    from django.conf import settings
+    from django.urls import reverse
+    name = link.loved_one_name or 'Your loved one'
+    url = settings.SITE_URL.rstrip('/') + reverse('accounts:supporter_dashboard', args=[link.id])
+    plain = (f'{name} accepted your invitation to support them on MyRecoveryPal.\n\n'
+             f'See how they\'re doing: {url}\n\n— MyRecoveryPal')
+    from django.utils.html import escape
+    html = (f'<p><strong>{escape(name)}</strong> accepted your invitation to support them.</p>'
+            f'<p><a href="{url}">See how they\'re doing</a></p>')
+    try:
+        send_email(subject=f'{name} accepted your support', plain_message=plain,
+                   html_message=html, recipient_email=link.supporter.email)
+    except Exception:
+        import logging
+        logging.getLogger(__name__).exception('Family accepted email failed for link %s', link.pk)

@@ -34,7 +34,9 @@ INITIATED_BY_CHOICES = [
 class SupporterLink(models.Model):
     member = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='supporter_links',
-        help_text='Person in recovery whose progress is shared.',
+        null=True, blank=True,
+        help_text='Person in recovery whose progress is shared. Null only while a '
+                  'family-started (supporter-initiated) invite awaits their consent.',
     )
     supporter = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name='supporting_links',
@@ -47,6 +49,9 @@ class SupporterLink(models.Model):
 
     invite_email = models.EmailField(blank=True)
     invite_token = models.CharField(max_length=64, blank=True, db_index=True)
+    # Family-started invites: the name the supporter knows them by, and a note.
+    loved_one_name = models.CharField(max_length=60, blank=True)
+    invite_note = models.TextField(blank=True)
 
     inactivity_threshold_days = models.PositiveSmallIntegerField(default=3)
     last_inactivity_alert_sent = models.DateTimeField(null=True, blank=True)

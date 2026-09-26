@@ -142,6 +142,27 @@
     </div>
   {% endif %}
 
+  {% if supporting %}
+  <div class="sc-section-label">People you support</div>
+  {% for link in supporting %}
+  <div class="sc-card">
+    <div class="sc-avatar">{{ link.loved_one_name|default:"?"|make_list|first|upper }}</div>
+    <div style="flex:1;">
+      <strong>{{ link.loved_one_name|default:"Your loved one" }}</strong>
+      {% if link.status == 'pending' %}
+      <div style="font-size:.88rem; color:var(--text-muted,#6b7689);">Waiting for {{ link.loved_one_name|default:"them" }} to accept.
+        Share this link: <input type="text" readonly onclick="this.select()" value="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:supporter_member_accept' link.invite_token %}" style="width:100%; margin-top:.35rem; padding:.4rem; border:1px solid #ccc; border-radius:6px; font-size:.8rem;"></div>
+      {% elif link.status == 'active' %}
+      <div><a href="{% url 'accounts:supporter_dashboard' link.id %}">See how they're doing &rarr;</a></div>
+      {% else %}
+      <div style="font-size:.88rem; color:var(--text-muted,#6b7689);">Sharing is paused.</div>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+  <p style="margin:.5rem 0 1.5rem;"><a href="{% url 'accounts:supporter_invite_member' %}">Supporting someone in recovery? Invite them &rarr;</a></p>
+
   <div class="sc-section-label">What each level shares</div>
   <div class="sc-levels">
     <div class="sc-level">

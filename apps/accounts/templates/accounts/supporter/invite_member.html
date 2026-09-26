@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Support a Loved One in Recovery | MyRecoveryPal{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<style>
+  .fam-page { max-width: 640px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+  .fam-card { background: var(--card-bg,#fff); border: 1px solid var(--border-color,#e8ecf1);
+    border-radius: 20px; padding: 2rem; box-shadow: 0 6px 20px rgba(16,32,64,.06); color: var(--text-color,#1f2a44); }
+  .fam-card h1 { margin: 0 0 .35rem; font-size: 1.55rem; font-weight: 800; letter-spacing: -.02em; }
+  .fam-card .sub { margin: 0 0 1.4rem; color: var(--text-muted,#6b7689); line-height: 1.55; }
+  .fam-label { display: block; font-weight: 700; font-size: .82rem; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--text-muted,#7a869a); margin: 1rem 0 .45rem; }
+  .fam-input { width: 100%; box-sizing: border-box; border: 1px solid var(--border-color,#d4dbe6);
+    border-radius: 12px; padding: .8rem 1rem; font-size: 1rem; background: var(--bg-light,#f8f9fa);
+    color: var(--text-color,#1f2a44); }
+  .fam-hint { font-size: .82rem; color: var(--text-muted,#8a94a6); margin: .35rem 0 0; }
+  .fam-btn { margin-top: 1.5rem; width: 100%; border: none; cursor: pointer; border-radius: 999px; padding: .95rem;
+    font-size: 1rem; font-weight: 700; color: #fff; background: var(--gradient-primary, linear-gradient(135deg,#1e4d8b,#52b788)); }
+  .fam-error { background: #fdecec; color: #b23b3b; padding: .75rem 1rem; border-radius: 10px; margin-bottom: 1rem; }
+  .fam-done { background: rgba(82,183,136,.1); border-radius: 14px; padding: 1rem 1.1rem; margin-top: 1rem; }
+  .fam-share { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .75rem; }
+  .fam-share a { padding: .6rem 1rem; border-radius: 999px; background: #1e4d8b; color: #fff; text-decoration: none; font-weight: 600; font-size: .9rem; }
+  .fam-share a.fam-secondary { background: transparent; color: var(--primary-dark,#1e4d8b); border: 1px solid currentColor; }
+  [data-theme="dark"] .fam-card { background: #243041; border-color: #344256; color: #e8eef7; }
+  [data-theme="dark"] .fam-share a.fam-secondary { color: #cfe0f5; }
+</style>
+
+<div class="fam-page">
+  <div class="fam-card">
+    {% if link %}
+    <h1>Your invitation is ready</h1>
+    <p class="sub">
+      {% if emailed %}We've emailed it. {% endif %}You can also send the link yourself: a text often lands better.
+      Nothing is shared until {{ link.loved_one_name }} accepts and chooses what you'll see.
+    </p>
+    <div class="fam-done">
+      <input class="fam-input" type="text" readonly value="{{ accept_url }}" onclick="this.select()">
+      <div class="fam-share">
+        <a href="sms:?&body={{ "I'd love to support you. No pressure: "|urlencode }}{{ accept_url|urlencode }}">Send as a text</a>
+        <a href="{% url 'accounts:supporter_manage' %}" class="fam-secondary">Done</a>
+      </div>
+    </div>
+    <p class="fam-hint" style="margin-top:1rem;">
+      When they accept, we'll email you. Seeing their progress needs a Supporter plan, and you only
+      pay once they've said yes.
+    </p>
+    {% else %}
+    <h1>Support someone in recovery</h1>
+    <p class="sub">
+      Invite them to share their progress with you. They choose how much (from just their day
+      count to their check-ins), and can pause or stop anytime. It's support, not surveillance.
+    </p>
+    {% if error %}<div class="fam-error">{{ error }}</div>{% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <label class="fam-label" for="loved_one_name">What do you call them?</label>
+      <input class="fam-input" id="loved_one_name" name="loved_one_name" maxlength="60" required
+             value="{{ form.loved_one_name|default:'' }}" placeholder="e.g. Alex, Mom, my brother">
+
+      <label class="fam-label" for="email">Their email (optional)</label>
+      <input class="fam-input" id="email" name="email" type="email" autocomplete="off"
+             value="{{ form.email|default:'' }}" placeholder="We'll send the invite for you">
+      <p class="fam-hint">Or skip it and text them the link yourself on the next step.</p>
+
+      <label class="fam-label" for="note">A note from you (optional)</label>
+      <textarea class="fam-input" id="note" name="note" rows="3" maxlength="500"
+                placeholder="I'm proud of you and I want to be there for you.">{{ form.note|default:'' }}</textarea>
+
+      <button type="submit" class="fam-btn">Create my invitation</button>
+    </form>
+    <p class="fam-hint" style="margin-top:1rem;">
+      Worried someone is in immediate danger? Call or text <strong>988</strong>, or call 911.
+    </p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -40,7 +40,7 @@
     {"@type": "Question", "name": "What if they don't want to share everything?",
      "acceptedAnswer": {"@type": "Answer", "text": "That's the design. The person in recovery controls a sharing level per supporter — from milestones only, up to check-in trends and inactivity alerts — and can change it or stop sharing at any time. Nothing is shared without their explicit consent."}},
     {"@type": "Question", "name": "How much does it cost to be a supporter?",
-     "acceptedAnswer": {"@type": "Answer", "text": "A Supporter membership is $7.99/month and lets you follow a loved one's progress, send encouragement, and receive optional inactivity alerts. Sharing is always free for the person in recovery — only the supporter subscribes."}},
+     "acceptedAnswer": {"@type": "Answer", "text": "Inviting is free; you subscribe only once your loved one accepts. A Supporter membership is $7.99/month and lets you follow a loved one's progress, send encouragement, and receive optional inactivity alerts. Sharing is always free for the person in recovery — only the supporter subscribes."}},
     {"@type": "Question", "name": "Is it private and safe?",
      "acceptedAnswer": {"@type": "Answer", "text": "Yes. Sharing is consent-based and fully controlled by the person in recovery. Their journal, cravings, and anything they write privately are never shared at any level. Crisis resources (988 Suicide & Crisis Lifeline) are always shown."}}
   ]
@@ -56,8 +56,8 @@
         <p style="font-size:1.25rem; opacity:.95; line-height:1.55; max-width:720px; margin:0 auto 2rem;">
             Follow your loved one's recovery progress, cheer them on, and get a gentle heads-up if they go quiet — all with their consent, and always under their control.
         </p>
-        <a href="{% url 'accounts:register' %}" style="display:inline-block; padding:1rem 2.5rem; background:#fff; color:#1e4d8b; text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem; box-shadow:0 8px 20px rgba(0,0,0,.18);">Get started &rarr;</a>
-        <p style="font-size:.9rem; opacity:.85; margin-top:1rem;">Supporter membership $7.99/mo &middot; Cancel anytime &middot; Free for the person in recovery</p>
+        <a href="{% if user.is_authenticated %}{% url 'accounts:supporter_invite_member' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:supporter_invite_member' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:#fff; color:#1e4d8b; text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem; box-shadow:0 8px 20px rgba(0,0,0,.18);">Invite your loved one &rarr;</a>
+        <p style="font-size:.9rem; opacity:.85; margin-top:1rem;">Free to invite &middot; Supporter $7.99/mo only once they accept &middot; Free for the person in recovery</p>
     </div>
 </section>
 
@@ -141,7 +141,7 @@
             <div><h3 style="color:#1e4d8b; margin:0 0 .35rem;">What if they don't want to share everything?</h3>
                 <p style="color:#555; margin:0; line-height:1.6;">That's the whole point. The person in recovery controls the level per supporter and can change it or stop sharing at any time. Nothing is shared without their explicit consent.</p></div>
             <div><h3 style="color:#1e4d8b; margin:0 0 .35rem;">How much does it cost?</h3>
-                <p style="color:#555; margin:0; line-height:1.6;">A Supporter membership is $7.99/month. Sharing is always free for the person in recovery — only the supporter subscribes. Cancel anytime.</p></div>
+                <p style="color:#555; margin:0; line-height:1.6;">Inviting is free, and you only subscribe once your loved one accepts. A Supporter membership is $7.99/month. Sharing is always free for the person in recovery. Cancel anytime.</p></div>
             <div><h3 style="color:#1e4d8b; margin:0 0 .35rem;">Is it private and safe?</h3>
                 <p style="color:#555; margin:0; line-height:1.6;">Yes. Sharing is consent-based and fully controlled by your loved one. Journal entries, cravings, and private notes are never shared. Crisis resources (988 Suicide &amp; Crisis Lifeline) are always shown.</p></div>
         </div>
@@ -153,7 +153,7 @@
     <div style="max-width:760px; margin:auto;">
         <h2 style="font-size:2rem; font-weight:800; margin:0 0 1rem;">Be part of their journey</h2>
         <p style="font-size:1.15rem; opacity:.95; margin:0 0 2rem;">Create a free account, then connect with your loved one in minutes.</p>
-        <a href="{% url 'accounts:register' %}" style="display:inline-block; padding:1rem 2.5rem; background:#fff; color:#1e4d8b; text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem;">Get started &rarr;</a>
+        <a href="{% if user.is_authenticated %}{% url 'accounts:supporter_invite_member' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:supporter_invite_member' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:#fff; color:#1e4d8b; text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem;">Invite your loved one &rarr;</a>
         <p style="font-size:.95rem; opacity:.9; margin-top:1.5rem;">
             In recovery yourself? <a href="{% url 'accounts:register' %}" style="color:#fff; text-decoration:underline;">Invite a supporter to follow your progress &rarr;</a>
         </p>
