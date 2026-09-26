@@ -224,6 +224,7 @@
     }
     .pledge-note-form-actions { display: flex; gap: 0.5rem; }
     .pledge-note-error { color: #c0392b; font-size: 0.82rem; }
+    .pledge-remove-photo { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; }
 
     .pledge-external-fallback {
         display: flex;
@@ -449,6 +450,9 @@
                 <textarea name="note" id="pledgeNoteInput" maxlength="280"
                           placeholder="What's keeping you going today? (optional)">{{ pledge_note }}</textarea>
                 <input type="file" name="photo" id="pledgePhotoInput" accept="image/*">
+                {% if user.pledge_photo or pledge_photo_url %}
+                <label class="pledge-remove-photo"><input type="checkbox" name="remove_photo" id="pledgeRemovePhoto"> Remove my pledge photo</label>
+                {% endif %}
                 <span class="pledge-note-error" id="pledgeNoteError" hidden></span>
                 <div class="pledge-note-form-actions">
                     <button type="button" class="btn btn-primary" id="pledgeNoteSaveBtn">Save</button>
@@ -601,6 +605,8 @@ document.addEventListener('DOMContentLoaded', function() {
             var fd = new FormData();
             fd.append('note', noteTextarea ? noteTextarea.value : '');
             if (notePhotoInput && notePhotoInput.files[0]) fd.append('photo', notePhotoInput.files[0]);
+            var removePhotoChk = document.getElementById('pledgeRemovePhoto');
+            if (removePhotoChk && removePhotoChk.checked) fd.append('remove_photo', 'on');
 
             fetch("{% url 'accounts:update_pledge' %}", {
                 method: 'POST',

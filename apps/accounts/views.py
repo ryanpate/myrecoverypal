@@ -915,6 +915,10 @@ def update_pledge(request):
 
     if request.POST.get('remove_photo') == 'on':
         pledge.photo = None
+        # The card header shows the onboarding photo, so clear that too.
+        if request.user.pledge_photo:
+            request.user.pledge_photo = None
+            request.user.save(update_fields=['pledge_photo'])
 
     photo = request.FILES.get('photo')
     if photo:

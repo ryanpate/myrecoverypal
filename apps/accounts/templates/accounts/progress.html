@@ -1526,6 +1526,13 @@
         font-size: 0.82rem;
     }
 
+    .pledge-remove-photo {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+    }
+
     .pledge-external-fallback {
         display: flex;
         gap: 0.6rem;
@@ -1634,7 +1641,8 @@
 <!-- ===== Daily Pledge Card ===== -->
 <div class="pledge-card" id="pledgeCard" data-pledged="{{ pledged_today|yesno:'1,0' }}">
     <div class="pledge-photo">
-        {% if user.pledge_photo %}<img src="{{ user.pledge_photo.url }}" alt="">
+        {% if user.pledge_photo %}<img src="{{ user.pledge_photo.url }}" alt="" id="pledgeHeaderImg"
+            data-fallback-src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'images/icon-180.png' %}{% endif %}">
         {% elif user.avatar %}<img src="{{ user.avatar.url }}" alt="">
         {% else %}<img src="{% static 'images/icon-180.png' %}" alt="">{% endif %}
     </div>
@@ -1678,6 +1686,9 @@
             <textarea name="note" id="pledgeNoteInput" maxlength="280"
                       placeholder="What's keeping you going today? (optional)">{{ pledge_note }}</textarea>
             <input type="file" name="photo" id="pledgePhotoInput" accept="image/*">
+            {% if user.pledge_photo or pledge_photo_url %}
+            <label class="pledge-remove-photo"><input type="checkbox" name="remove_photo" id="pledgeRemovePhoto"> Remove my pledge photo</label>
+            {% endif %}
             <span class="pledge-note-error" id="pledgeNoteError" hidden></span>
             <div class="pledge-note-form-actions">
                 <button type="submit" class="btn btn-primary" id="pledgeNoteSaveBtn">Save</button>
@@ -2255,6 +2266,11 @@
                     } else {
                         photoDisplay.hidden = true;
                     }
+                }
+                const removeChk = document.getElementById('pledgeRemovePhoto');
+                const headerImg = document.getElementById('pledgeHeaderImg');
+                if (removeChk && removeChk.checked && headerImg) {
+                    headerImg.src = headerImg.dataset.fallbackSrc;
                 }
                 if (streakEl) streakEl.textContent = data.streak;
                 if (streakP) streakP.hidden = false;

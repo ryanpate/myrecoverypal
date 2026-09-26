@@ -162,6 +162,14 @@ class PledgeCardRenderTests(TestCase):
         self.assertIn('data-share-url="https://www.myrecoverypal.com"', html)
         self.assertIn('Add a note', html)
 
+    def test_card_has_remove_photo_control_only_when_photo_exists(self):
+        html = self.client.get(reverse('accounts:progress')).content.decode()
+        self.assertNotIn('id="pledgeRemovePhoto"', html)
+        self.user.pledge_photo = 'pledge_photos/onboarding.jpg'
+        self.user.save()
+        html = self.client.get(reverse('accounts:progress')).content.decode()
+        self.assertIn('id="pledgeRemovePhoto"', html)
+
 
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class CheckinPledgeSyncTests(TestCase):
@@ -190,6 +198,12 @@ class CheckinPledgeSyncTests(TestCase):
         content = resp.content.decode()
         self.assertIn('Take my pledge', content)
         self.assertNotIn('pledge-card taken', content)
+
+    def test_checkin_pledge_card_has_remove_photo_control(self):
+        self.user.pledge_photo = 'pledge_photos/onboarding.jpg'
+        self.user.save()
+        html = self.client.get(reverse('accounts:daily_checkin')).content.decode()
+        self.assertIn('id="pledgeRemovePhoto"', html)
 
     def test_checkin_pledge_card_has_share_and_note_affordances(self):
         resp = self.client.get(reverse('accounts:daily_checkin'))
@@ -374,6 +388,19 @@ class UpdatePledgeTests(TestCase):
     def test_update_creates_pledge_if_missing(self):
         self.client.post(self.url, {'note': 'pledged via note'})
         self.assertTrue(DailyPledge.objects.filter(user=self.user, date=djtz.localdate()).exists())
+
+    def test_remove_photo_clears_onboarding_and_todays_photo(self):
+        # The card's header shows the onboarding photo (User.pledge_photo), so
+        # "remove photo" must clear it too, not just today's DailyPledge.photo.
+        self.user.pledge_photo = 'pledge_photos/onboarding.jpg'
+        self.user.save()
+        DailyPledge.objects.create(user=self.user, date=djtz.localdate(),
+                                   photo='pledge_photos/today.jpg')
+        r = self.client.post(self.url, {'remove_photo': 'on'})
+        self.assertEqual(r.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.pledge_photo)
+        self.assertFalse(DailyPledge.objects.get(user=self.user, date=djtz.localdate()).photo)
 
     def test_requires_login(self):
         self.client.logout()
