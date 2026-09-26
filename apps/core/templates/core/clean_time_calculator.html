@@ -670,7 +670,7 @@
             <div class="calc-cta">
                 <h3>Save Your Clean Date</h3>
                 <p>Create a free account to track your clean time, get milestone reminders, and connect with others in recovery.</p>
-                <a href="{% url 'accounts:register' %}" class="cta-button">Save My Clean Date</a>
+                <a href="{% url 'accounts:register' %}" class="cta-button js-carry-date">Save My Clean Date</a>
                 <div class="benefits-list">
                     <span><i class="fas fa-check"></i> Free to Join</span>
                     <span><i class="fas fa-check"></i> Milestone Alerts</span>
@@ -796,7 +796,7 @@
 <section class="final-cta">
     <h2>Every Day Clean Matters</h2>
     <p>Join a growing community tracking their recovery journey</p>
-    <a href="{% url 'accounts:register' %}" class="cta-button">Start Your Journey Free</a>
+    <a href="{% url 'accounts:register' %}" class="cta-button js-carry-date">Start Your Journey Free</a>
     <p class="subtext">No credit card required</p>
 </section>
 {% endblock %}
@@ -947,10 +947,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (banner) banner.style.display = 'none';
     }
 
+    // Carry a date the visitor actually entered (never the demo date) into
+    // the signup links, so registering saves it to their day counter.
+    function carryDateToSignup(date) {
+        document.querySelectorAll('a.js-carry-date').forEach(function(link) {
+            const url = new URL(link.href, window.location.origin);
+            url.searchParams.set('sobriety_date', date);
+            link.href = url.toString();
+        });
+    }
+
     dateInput.addEventListener('change', function() {
         if (this.value) {
             hideDemoBanner();
             updateDisplay(this.value);
+            carryDateToSignup(this.value);
         }
     });
 
@@ -961,6 +972,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dateInput.value = dateParam;
         hideDemoBanner();
         updateDisplay(dateParam);
+        carryDateToSignup(dateParam);
     } else {
         // Show 90-day demo so page has visible content for Google/first-time visitors
         const demoDate = new Date();

@@ -97,6 +97,15 @@
                     {% if form.password.errors %}<div style="color: #dc3545; font-size: 0.85rem; margin-top: 0.25rem;">{{ form.password.errors }}</div>{% endif %}
                 </div>
 
+                {# Date carried over from the calculators — only rendered when present. #}
+                {% with carried=form.carried_date %}{% if carried %}
+                {{ form.sobriety_date }}
+                <p style="margin: 0 0 1.25rem; padding: 0.6rem 0.85rem; background: #e3f4ec; color: #2f7a55; border-radius: 8px; font-size: 0.85rem;">
+                    <i class="fas fa-check-circle" aria-hidden="true"></i>
+                    Your sobriety date (<strong>{{ carried|date:"M j, Y" }}</strong>) will be saved to your day counter.
+                </p>
+                {% endif %}{% endwith %}
+
                 <button type="submit" class="btn btn-success" style="width: 100%; padding: 0.85rem; font-size: 1rem; font-weight: 700; border-radius: 8px;">Create Account</button>
 
                 <p style="text-align: center; color: #888; font-size: 0.75rem; margin-top: 1rem; line-height: 1.5;">

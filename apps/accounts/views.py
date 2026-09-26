@@ -142,7 +142,10 @@ def register_view(request):
                 # Redirect to social feed - onboarding is now progressive
                 return redirect('accounts:progress')
         else:
-            form = CustomUserCreationForm()
+            carried = CustomUserCreationForm.parse_carried_date(
+                request.GET.get('sobriety_date'))
+            form = CustomUserCreationForm(
+                initial={'sobriety_date': carried.isoformat()} if carried else None)
 
         return render(request, 'registration/register.html', {
             'form': form,

@@ -58,8 +58,12 @@ class SignupFormTest(TestCase):
     def test_form_has_only_email_and_password(self):
         from apps.accounts.forms import CustomUserCreationForm
         form = CustomUserCreationForm()
-        # The visible fields must be exactly email + password
-        self.assertEqual(set(form.fields.keys()), {'email', 'password'})
+        # The visible fields must be exactly email + password; sobriety_date
+        # is a hidden carry-over from the calculators.
+        visible = {f.name for f in form.visible_fields()}
+        self.assertEqual(visible, {'email', 'password'})
+        self.assertEqual(
+            set(form.fields.keys()), {'email', 'password', 'sobriety_date'})
 
     def test_email_required(self):
         from apps.accounts.forms import CustomUserCreationForm
@@ -249,3 +253,93 @@ class RegisterTemplateTest(TestCase):
     def test_password_input_has_signup_autocomplete(self):
         resp = self.client.get(reverse('accounts:register'))
         self.assertContains(resp, 'autocomplete="new-password"')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CalculatorDateCarryOverTest(TestCase):
+    """A sobriety date entered on the calculators survives into signup.
+
+    92% of recent signups had no sobriety date, which leaves the day counter
+    (and milestone emails) blank. The calculators already collect the date;
+    registration must not throw it away.
+    """
+
+    def setUp(self):
+        from apps.accounts.invite_models import SystemSettings
+        s = SystemSettings.get_settings()
+        s.invite_only_mode = False
+        s.save()
+        from django.core.cache import caches
+        for name in ('rate_limiting', 'default'):
+            try:
+                caches[name].clear()
+            except Exception:
+                pass
+
+    def test_get_with_date_renders_hidden_field_and_confirmation(self):
+        resp = self.client.get(
+            reverse('accounts:register') + '?sobriety_date=2026-06-01')
+        self.assertContains(resp, 'type="hidden" name="sobriety_date"')
+        self.assertContains(resp, 'value="2026-06-01"')
+        self.assertContains(resp, 'Jun 1, 2026')
+
+    def test_get_with_garbage_date_renders_plain_form(self):
+        resp = self.client.get(
+            reverse('accounts:register') + '?sobriety_date=not-a-date')
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotContains(resp, 'name="sobriety_date"')
+
+    def test_post_with_date_saves_it_on_user(self):
+        import datetime
+        resp = self.client.post(reverse('accounts:register'), {
+            'email': 'dated@example.com',
+            'password': TEST_PW,
+            'sobriety_date': '2026-06-01',
+        })
+        self.assertEqual(resp.status_code, 302)
+        user = User.objects.get(email='dated@example.com')
+        self.assertEqual(user.sobriety_date, datetime.date(2026, 6, 1))
+
+    def test_post_with_date_creates_start_milestone(self):
+        from apps.accounts.models import Milestone
+        self.client.post(reverse('accounts:register'), {
+            'email': 'ms@example.com',
+            'password': TEST_PW,
+            'sobriety_date': '2026-06-01',
+        })
+        user = User.objects.get(email='ms@example.com')
+        self.assertTrue(Milestone.objects.filter(user=user, days_sober=0).exists())
+
+    def test_bad_carried_dates_are_dropped_not_blocking(self):
+        """An invalid hidden date must never block signup (the user can't
+        see or fix a hidden field) — it is dropped instead."""
+        import datetime
+        future = (datetime.date.today() + datetime.timedelta(days=10)).isoformat()
+        for i, bad in enumerate(['garbage', '2026-02-30', '1850-01-01', future]):
+            self.setUp()  # reset the per-IP signup rate limit between posts
+            email = f'bad{i}@example.com'
+            resp = self.client.post(reverse('accounts:register'), {
+                'email': email, 'password': TEST_PW, 'sobriety_date': bad,
+            })
+            self.assertEqual(resp.status_code, 302, bad)
+            self.assertIsNone(User.objects.get(email=email).sobriety_date, bad)
+
+    def test_post_without_date_leaves_it_empty(self):
+        self.client.post(reverse('accounts:register'), {
+            'email': 'nodate@example.com',
+            'password': TEST_PW,
+        })
+        self.assertIsNone(User.objects.get(email='nodate@example.com').sobriety_date)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CalculatorSignupLinkTest(TestCase):
+    """The calculators' signup CTAs are wired to carry the entered date."""
+
+    def test_calculator_ctas_marked_for_date_carry(self):
+        for name in ('core:sobriety_calculator', 'core:clean_time_calculator'):
+            resp = self.client.get(reverse(name))
+            self.assertEqual(resp.status_code, 200, name)
+            html = resp.content.decode()
+            self.assertGreaterEqual(html.count('js-carry-date'), 2, name)
+            self.assertIn("searchParams.set('sobriety_date'", html, name)

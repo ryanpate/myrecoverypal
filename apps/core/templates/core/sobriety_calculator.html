@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Sobriety Calculator: Days Sober, AA Milestones & Money Saved{% endblock %}
-{% block meta_description %}Free sobriety calculator & day counter: enter your sobriety date to see exact days sober, AA/NA milestones reached, money saved & health benefits. No signup.{% endblock %}
+{% block title %}Sobriety Calculator: How Many Days Sober Am I? (Free){% endblock %}
+{% block meta_description %}How long have you been sober? Enter your sobriety date to see exact days sober, your next AA/NA milestone & money saved. Free, instant, no signup.{% endblock %}
 {% block meta_keywords %}sobriety calculator, how long have i been sober, sober calculator, clean time calculator, sobriety date calculator, days sober calculator, sobriety clock, sober time calculator{% endblock %}
-{% block og_title %}Sobriety Calculator: Days Sober, AA Milestones & Money Saved{% endblock %}
-{% block og_description %}Free sobriety calculator & day counter: enter your sobriety date to see exact days sober, AA/NA milestones reached, money saved & health benefits. No signup.{% endblock %}
-{% block twitter_title %}Sobriety Calculator: Days Sober, AA Milestones & Money Saved{% endblock %}
-{% block twitter_description %}Free sobriety calculator & day counter: enter your sobriety date to see exact days sober, AA/NA milestones reached, money saved & health benefits. No signup.{% endblock %}
+{% block og_title %}Sobriety Calculator: How Many Days Sober Am I? (Free){% endblock %}
+{% block og_description %}How long have you been sober? Enter your sobriety date to see exact days sober, your next AA/NA milestone & money saved. Free, instant, no signup.{% endblock %}
+{% block twitter_title %}Sobriety Calculator: How Many Days Sober Am I? (Free){% endblock %}
+{% block twitter_description %}How long have you been sober? Enter your sobriety date to see exact days sober, your next AA/NA milestone & money saved. Free, instant, no signup.{% endblock %}
 
 {% block canonical_url %}https://www.myrecoverypal.com/sobriety-calculator/{% endblock %}
 
@@ -651,7 +651,7 @@
 <!-- Page Header -->
 <section class="calculator-header">
     <div class="container">
-        <h1>Free Sobriety Calculator</h1>
+        <h1>Sobriety Calculator: How Many Days Sober Are You?</h1>
         <p>Calculate how long you've been sober instantly. See milestones, money saved, and health benefits.</p>
     </div>
 </section>
@@ -738,7 +738,7 @@
             <div class="calc-cta">
                 <h3>Save Your Progress</h3>
                 <p>Create a free account to track milestones, get reminders, and connect with others in recovery.</p>
-                <a href="{% url 'accounts:register' %}" class="cta-button">Save My Sobriety Date</a>
+                <a href="{% url 'accounts:register' %}" class="cta-button js-carry-date">Save My Sobriety Date</a>
                 <div class="benefits-list">
                     <span><i class="fas fa-check"></i> Free to Join</span>
                     <span><i class="fas fa-check"></i> Milestone Alerts</span>
@@ -913,7 +913,7 @@
 <section class="final-cta">
     <h2>Every Day Sober Matters</h2>
     <p>Join a growing community tracking their recovery journey</p>
-    <a href="{% url 'accounts:register' %}" class="cta-button">Start Your Journey Free</a>
+    <a href="{% url 'accounts:register' %}" class="cta-button js-carry-date">Start Your Journey Free</a>
     <p class="subtext">No credit card required</p>
 </section>
 {% endblock %}
@@ -1064,10 +1064,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (banner) banner.style.display = 'none';
     }
 
+    // Carry a date the visitor actually entered (never the demo date) into
+    // the signup links, so registering saves it to their day counter.
+    function carryDateToSignup(date) {
+        document.querySelectorAll('a.js-carry-date').forEach(function(link) {
+            const url = new URL(link.href, window.location.origin);
+            url.searchParams.set('sobriety_date', date);
+            link.href = url.toString();
+        });
+    }
+
     dateInput.addEventListener('change', function() {
         if (this.value) {
             hideDemoBanner();
             updateDisplay(this.value);
+            carryDateToSignup(this.value);
         }
     });
 
@@ -1078,6 +1089,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dateInput.value = dateParam;
         hideDemoBanner();
         updateDisplay(dateParam);
+        carryDateToSignup(dateParam);
     } else {
         // Show 90-day demo so page has visible content for Google/first-time visitors
         const demoDate = new Date();

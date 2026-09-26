@@ -138,10 +138,39 @@ class CustomUserCreationForm(forms.ModelForm):
         }),
         help_text='At least 8 characters.',
     )
+    # Carried over from the sobriety/clean-time calculators
+    # (?sobriety_date=YYYY-MM-DD) so the date the visitor just entered isn't
+    # lost at signup. Hidden, so the plain signup page stays email + password.
+    sobriety_date = forms.CharField(required=False, widget=forms.HiddenInput)
 
     class Meta:
         model = User
         fields = ('email',)  # username and password are handled in save()
+
+    @staticmethod
+    def parse_carried_date(value):
+        """Return a plausible past date from a YYYY-MM-DD string, else None."""
+        import datetime
+        from django.utils import timezone
+        from django.utils.dateparse import parse_date
+        try:
+            d = parse_date(value or '')
+        except ValueError:  # well-formed but impossible, e.g. 2026-02-30
+            return None
+        # One day of slack: the visitor's local "today" can be ahead of ours.
+        latest = timezone.localdate() + datetime.timedelta(days=1)
+        if d is None or d.year < 1900 or d > latest:
+            return None
+        return d
+
+    def carried_date(self):
+        """The carried-over date for display on the signup page, if valid."""
+        return self.parse_carried_date(self['sobriety_date'].value())
+
+    def clean_sobriety_date(self):
+        # Drop a bad value instead of raising: the visitor can't see or fix
+        # a hidden field, so an error here would silently block signup.
+        return self.parse_carried_date(self.cleaned_data.get('sobriety_date'))
 
     def clean_email(self):
         email = self.cleaned_data['email'].lower().strip()
@@ -156,6 +185,7 @@ class CustomUserCreationForm(forms.ModelForm):
         user = User(
             email=self.cleaned_data['email'],
             username=generate_unique_username(),
+            sobriety_date=self.cleaned_data.get('sobriety_date'),
         )
         user.set_password(self.cleaned_data['password'])
         if commit:
