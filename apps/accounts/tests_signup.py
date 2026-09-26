@@ -343,3 +343,34 @@ class CalculatorSignupLinkTest(TestCase):
             html = resp.content.decode()
             self.assertGreaterEqual(html.count('js-carry-date'), 2, name)
             self.assertIn("searchParams.set('sobriety_date'", html, name)
+
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class RegisterNextTest(TestCase):
+    """?next= returns a new user to what they were doing (e.g. the court log)."""
+
+    def setUp(self):
+        from apps.accounts.invite_models import SystemSettings
+        s = SystemSettings.get_settings()
+        s.invite_only_mode = False
+        s.save()
+        from django.core.cache import caches
+        for name in ('rate_limiting', 'default'):
+            try:
+                caches[name].clear()
+            except Exception:
+                pass
+
+    def test_safe_next_is_followed_after_signup(self):
+        target = reverse('accounts:court_attendance_create')
+        self.client.get(reverse('accounts:register') + f'?next={target}')
+        resp = self.client.post(reverse('accounts:register'),
+                                {'email': 'next@example.com', 'password': TEST_PW})
+        self.assertRedirects(resp, target, fetch_redirect_response=False)
+
+    def test_offsite_next_is_ignored(self):
+        self.client.get(reverse('accounts:register') + '?next=https://evil.example/phish')
+        resp = self.client.post(reverse('accounts:register'),
+                                {'email': 'evil@example.com', 'password': TEST_PW})
+        self.assertRedirects(resp, reverse('accounts:progress'), fetch_redirect_response=False)

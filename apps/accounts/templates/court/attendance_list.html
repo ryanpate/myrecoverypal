@@ -24,8 +24,11 @@
             <td style="padding:.75rem 1rem;"><strong>{{ a.meeting_name }}</strong>{% if a.meeting_online %} <span style="background:#fef3c7; color:#92400e; padding:1px 6px; border-radius:8px; font-size:.75rem;">Online</span>{% endif %}</td>
             <td style="padding:.75rem 1rem;">{{ a.get_program_display }}</td>
             <td style="padding:.75rem 1rem;">{{ a.get_meeting_type_display }}</td>
-            <td style="padding:.75rem 1rem;">{{ a.get_verification_method_display }}</td>
-            <td style="padding:.75rem 1rem; text-align:right;">
+            <td style="padding:.75rem 1rem;">
+                {% if a.chair_signature_at %}<span style="color:#2f7a55; font-weight:600;">&#x2713; Chair-confirmed</span>{% else %}Self-reported{% endif %}
+            </td>
+            <td style="padding:.75rem 1rem; text-align:right; white-space:nowrap;">
+                {% if not a.chair_signature_at %}<a href="{% url 'accounts:court_attendance_chair' a.id %}">Get chair confirmation</a> &middot; {% endif %}
                 <a href="{% url 'accounts:court_attendance_edit' a.id %}">Edit</a>
                 <form method="post" action="{% url 'accounts:court_attendance_delete' a.id %}" style="display:inline; margin-left:.5rem;" onsubmit="return confirm('Delete this meeting record?')">
                     {% csrf_token %}<button type="submit" style="background:none; border:none; color:#dc3545; cursor:pointer;">Delete</button>

@@ -93,6 +93,10 @@
             Log AA, NA, SMART Recovery, and secular recovery meeting attendance. Generate court-acceptable PDF reports with tamper-evident fingerprints. Email them straight to your probation officer.
         </p>
         <a href="{% url 'accounts:pricing' %}" style="display:inline-block; padding:1rem 2.5rem; background:#52b788; color:white; text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem;">Start for ${% firstof court_monthly_plan.price|floatformat:2 '29.99' %}/mo &rarr;</a>
+        <p style="margin-top:1rem; font-size:0.95rem;">
+            Or <a href="{% if user.is_authenticated %}{% url 'accounts:court_attendance_create' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:court_attendance_create' %}{% endif %}">start logging meetings free</a>
+            and pay $9.99 only when you need a report.
+        </p>
         <p style="font-size:0.9rem; opacity:.8; margin-top:1rem;">No long-term contract &middot; Cancel anytime &middot; Works on web, iPhone, and Android</p>
     </div>
 </section>

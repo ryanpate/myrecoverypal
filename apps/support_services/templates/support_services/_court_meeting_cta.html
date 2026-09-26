@@ -25,6 +25,17 @@ Court Compliance CTA for a single meeting page.
            href="{% url 'accounts:court_attendance_create' %}?meeting={{ meeting.slug }}">
             Log this meeting
         </a>
+    {% elif user.is_authenticated %}
+        {# Logging is free for everyone; they pay only when they need a report. #}
+        <span class="court-meeting-cta-text">
+            <strong>Court-ordered to attend meetings?</strong>
+            Log this meeting free, have the chair confirm it, and get a verified
+            PDF for your probation officer when you need one.
+        </span>
+        <a class="court-meeting-cta-btn"
+           href="{% url 'accounts:court_attendance_create' %}?meeting={{ meeting.slug }}">
+            Log this meeting free
+        </a>
     {% else %}
         <span class="court-meeting-cta-text">
             <strong>Court-ordered to attend meetings?</strong>

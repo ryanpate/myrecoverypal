@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Chair confirmation — MyRecoveryPal{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:520px; margin:2rem auto; padding:0 1rem; text-align:center;">
+    <h1 style="font-size:1.5rem;">Get chair confirmation</h1>
+    <p style="color:#666;">{{ att.meeting_name }} &middot; {{ att.meeting_date|date:"D M j, g:i A" }}</p>
+
+    {% if att.chair_signature_at %}
+    <div style="background:#e3f4ec; color:#2f7a55; padding:1rem; border-radius:12px; margin:1.5rem 0;">
+        &#x2713; Confirmed by {{ att.chair_signature_name }} ({{ att.chair_role }}) at {{ att.chair_signature_at|date:"g:i A" }}.
+    </div>
+    {% else %}
+    <div style="background:white; padding:1.5rem; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,.08); margin:1.5rem 0;">
+        <div style="display:inline-block;">{{ qr_svg|safe }}</div>
+        <p style="margin:1rem 0 0; font-weight:600; color:#1a2a44;">Ask the chair or secretary to scan this with their own phone.</p>
+        <p style="margin:.5rem 0 0; color:#666; font-size:.85rem;">
+            They'll see only your first name and last initial, and confirm with theirs. Online meeting?
+            Paste this link in the chat instead:
+        </p>
+        <input type="text" readonly value="{{ confirm_url }}" onclick="this.select()"
+               style="width:100%; margin-top:.5rem; padding:.5rem; border:1px solid #ccc; border-radius:8px; font-size:.8rem;">
+    </div>
+    {% if not window_open %}
+    <p style="color:#92400e; background:#fef3c7; padding:.75rem; border-radius:8px; font-size:.9rem;">
+        This link works from an hour before the meeting until 6 hours after it.
+    </p>
+    {% endif %}
+    {% endif %}
+    <p><a href="{% url 'accounts:court_attendance_list' %}">&larr; Back to my meetings</a></p>
+</div>
+{% endblock %}

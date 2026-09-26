@@ -442,6 +442,10 @@ def handle_charge_refunded(charge):
     if refund_keepsake(charge.get('payment_intent')):
         logger.info(f"Keepsake refunded: {charge.get('id')}")
         return
+    from .court_purchase import refund_court_report
+    if refund_court_report(charge.get('payment_intent')):
+        logger.info(f"Court single report refunded: {charge.get('id')}")
+        return
 
     customer_id = charge.get('customer')
     charge_id = charge.get('id')
@@ -550,6 +554,10 @@ def handle_checkout_session_completed(session):
         return
     if kind == keepsakes.KEEPSAKE_KIND:
         keepsakes.fulfil_keepsake_session(session)
+        return
+    from . import court_purchase
+    if kind == court_purchase.COURT_REPORT_KIND:
+        court_purchase.fulfil_court_report_session(session)
         return
 
     customer_id = session.get('customer')

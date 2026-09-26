@@ -10,7 +10,7 @@ from apps.accounts.court_views import (
     court_dashboard, court_profile,
     court_attendance_list, court_attendance_create, court_attendance_edit, court_attendance_delete,
     court_report_list, court_report_generate, court_report_download,
-    court_report_email,
+    court_report_email, court_report_success, court_attendance_chair, court_chair_confirm,
 )
 from apps.accounts import supporter_views
 from apps.accounts import plan_views
@@ -270,6 +270,9 @@ urlpatterns = [
     path('court/reports/generate/', court_report_generate, name='court_report_generate'),
     path('court/reports/<int:report_id>/download/', court_report_download, name='court_report_download'),
     path('court/reports/<int:report_id>/email/', court_report_email, name='court_report_email'),
+    path('court/reports/success/', court_report_success, name='court_report_success'),
+    path('court/attendance/<int:attendance_id>/chair/', court_attendance_chair, name='court_attendance_chair'),
+    path('court/confirm/<str:token>/', court_chair_confirm, name='court_chair_confirm'),
 
     # Relapse prevention plan
     path('plan/', plan_views.relapse_plan_view, name='relapse_plan'),

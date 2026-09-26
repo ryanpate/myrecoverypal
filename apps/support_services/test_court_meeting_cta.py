@@ -53,6 +53,10 @@ class CourtMeetingCtaTests(TestCase):
         self.client.force_login(self.user)
         self.assertContains(self._get(), 'Court-ordered to attend meetings?')
 
+    def test_logged_in_non_court_user_can_log_free(self):
+        self.client.login(username=self.user.username, password='pw')
+        self.assertContains(self._get(), 'Log this meeting free')
+
     def test_court_user_gets_the_log_action_not_the_pitch(self):
         """A paying court user should get the useful action, not a sales pitch."""
         self._make_court_user()

@@ -139,9 +139,18 @@ def register_view(request):
                     except Exception:
                         pass
 
-                # Redirect to social feed - onboarding is now progressive
+                # Send them back to what they were doing (e.g. the court
+                # meeting log), else to the progress home.
+                next_url = request.session.pop('register_next', '')
+                if next_url:
+                    return redirect(next_url)
                 return redirect('accounts:progress')
         else:
+            from django.utils.http import url_has_allowed_host_and_scheme
+            next_url = request.GET.get('next', '')
+            if next_url and url_has_allowed_host_and_scheme(
+                    next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+                request.session['register_next'] = next_url
             carried = CustomUserCreationForm.parse_carried_date(
                 request.GET.get('sobriety_date'))
             form = CustomUserCreationForm(

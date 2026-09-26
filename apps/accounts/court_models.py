@@ -141,10 +141,16 @@ class MeetingAttendance(models.Model):
         max_length=20, choices=VERIFICATION_CHOICES, default='self',
     )
 
-    # Phase 1: digital chair signature is just a typed name + timestamp.
-    # Phase 2 will add per-signer verification.
+    # Chair confirmation. Set ONLY by the chair's QR flow (court_chair_confirm),
+    # never by the member's own form, so a report can't claim verification the
+    # member typed in themselves.
     chair_signature_name = models.CharField(max_length=120, blank=True)
     chair_signature_at = models.DateTimeField(null=True, blank=True)
+    chair_role = models.CharField(max_length=20, blank=True)
+    chair_confirm_token = models.CharField(max_length=64, unique=True, null=True, blank=True)
+    chair_confirm_ip = models.GenericIPAddressField(null=True, blank=True)
+    chair_confirm_user_agent = models.CharField(max_length=300, blank=True)
+    qr_shown_ip = models.GenericIPAddressField(null=True, blank=True)
 
     # Phase 2 fields (declared now so migrations don't churn later)
     gps_latitude = models.DecimalField(max_digits=10, decimal_places=8, null=True, blank=True)
@@ -241,3 +247,31 @@ class CourtReport(models.Model):
             except Exception:
                 return None
         return None
+
+
+class CourtReportPurchase(models.Model):
+    """A one-time $9.99 court report for someone without the Court subscription.
+
+    The report is generated only once Stripe confirms payment (success page
+    or webhook, whichever arrives first — fulfilment is idempotent).
+    """
+    STATUS_CHOICES = [('pending', 'Pending'), ('paid', 'Paid'), ('refunded', 'Refunded')]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='court_report_purchases')
+    period_start = models.DateField()
+    period_end = models.DateField()
+    amount_cents = models.PositiveIntegerField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    stripe_session_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    stripe_payment_intent_id = models.CharField(max_length=255, blank=True, db_index=True)
+    report = models.OneToOneField(
+        CourtReport, null=True, blank=True, on_delete=models.SET_NULL, related_name='purchase')
+    created_at = models.DateTimeField(auto_now_add=True)
+    paid_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'Court report purchase #{self.pk} ({self.status})'

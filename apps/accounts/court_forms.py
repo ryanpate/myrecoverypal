@@ -35,9 +35,10 @@ class MeetingAttendanceForm(forms.ModelForm):
         fields = [
             'meeting_name', 'meeting_date', 'meeting_end_time',
             'meeting_address', 'meeting_online', 'meeting_platform',
-            'program', 'meeting_type', 'verification_method',
-            'chair_signature_name', 'notes',
+            'program', 'meeting_type', 'notes',
         ]
+        # verification_method / chair fields are deliberately absent: they are
+        # set only by the chair's own confirmation (QR flow), never self-picked.
         widgets = {
             'meeting_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'meeting_end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),

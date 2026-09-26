@@ -17,8 +17,21 @@
                 <label style="display:block; font-size:.85rem; color:#555;">Period end</label>
                 <input type="date" name="period_end" required style="padding:.5rem; border:1px solid #ccc; border-radius:6px;">
             </div>
+            {% if is_court_user %}
             <button type="submit" class="btn btn-primary">Generate Report</button>
+            {% else %}
+            <button type="submit" class="btn btn-primary stripe-only">Generate verified report: $9.99</button>
+            {% endif %}
         </form>
+        {% if not is_court_user %}
+        <p class="stripe-only" style="margin:.75rem 0 0; color:#666; font-size:.9rem;">
+            One-time payment, no subscription. Need reports every month?
+            <a href="{% url 'core:court_ordered_meeting_tracker' %}">Court Compliance</a> includes unlimited reports and emails your probation officer automatically.
+        </p>
+        <p class="iap-only" style="margin:.75rem 0 0; color:#666; font-size:.9rem;">
+            Keep logging meetings here. Reports are generated on myrecoverypal.com.
+        </p>
+        {% endif %}
     </div>
 
     {% if reports %}

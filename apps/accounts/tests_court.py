@@ -389,12 +389,13 @@ class CourtViewsGatingTest(TestCase):
             self.assertEqual(resp.status_code, 302, f'{url} did not redirect')
             self.assertIn('/login', resp.url)
 
-    def test_free_user_redirected_to_pricing(self):
+    def test_free_user_can_log_meetings(self):
+        # Since 2026-09-26 logging is free; free users pay $9.99 per report
+        # (see test_court_single_report.py) instead of being sent to pricing.
         self.client.login(username='free', password='pw')
         for url in self._urls():
             resp = self.client.get(url)
-            self.assertEqual(resp.status_code, 302, f'{url} did not redirect')
-            self.assertIn('pricing', resp.url)
+            self.assertEqual(resp.status_code, 200, f'{url} was not reachable')
 
     def test_court_user_can_load_dashboard(self):
         self.client.login(username='court', password='pw')

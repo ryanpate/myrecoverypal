@@ -2054,7 +2054,7 @@ class CoachMessage(models.Model):
 
 # Re-export court compliance models so Django discovers them at app load
 from apps.accounts.court_models import (  # noqa: E402, F401
-    CourtReportProfile, MeetingAttendance, CourtReport,
+    CourtReportProfile, MeetingAttendance, CourtReport, CourtReportPurchase,
 )
 
 # Re-export cold-outreach suppression model so Django discovers it at app load
