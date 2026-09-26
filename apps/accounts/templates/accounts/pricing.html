@@ -221,8 +221,8 @@
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited social feed & posts</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Daily check-in & mood tracking</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Private journal</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Join up to 5 groups</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Community challenges</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Groups, messaging &amp; challenges</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Meeting finder &amp; reminders</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> 3 AI Coach messages per day</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Crisis resources — always free</li>
                     </ul>
@@ -284,11 +284,12 @@
                     </div>
 
                     <ul class="list-unstyled mt-2">
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Full mood, craving & energy analytics</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited groups + create private groups</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> HD Medallion Pack included (animated video + print-quality)</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Journal export & backup</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Create custom challenges</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> <strong>Your milestone medallion</strong>, emailed at 7, 30, 90, 180 days and every year: HD + animated video</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> <strong>1 Supporter seat included</strong>: a loved one follows your progress free</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> HD Medallion Pack for any design you make</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> 20% off keepsakes (mugs &amp; stickers)</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Full mood, craving &amp; energy analytics + weekly recap</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Relapse plan PDF &amp; journal export</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Premium profile badge</li>
                     </ul>
                 </div>
@@ -388,7 +389,7 @@
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Send one-tap encouragement</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Optional alert if they go quiet</li>
                     </ul>
-                    <p class="small text-muted">For family, partners, and sponsors. The person you support shares for free and controls what you see.</p>
+                    <p class="small text-muted">For family, partners, and sponsors. The person you support shares for free and controls what you see. <strong>Free if they have Premium</strong>: it includes one Supporter seat.</p>
                     {% if not user.is_authenticated %}
                         <a class="btn btn-primary btn-block" href="{% url 'accounts:register' %}">Sign Up to Get Supporter</a>
                     {% elif supporter_monthly_plan %}

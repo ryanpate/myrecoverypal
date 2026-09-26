@@ -2101,15 +2101,6 @@ def create_group(request):
             if not is_cloudinary_enabled():
                 group_image = compress_image(group_image, max_dimension=1200)
 
-        # Check if user is trying to create a private/secret group
-        if privacy_level in ['private', 'secret']:
-            if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
-                messages.warning(
-                    request,
-                    'Creating private groups is a Premium feature. Upgrade now to create private groups!'
-                )
-                return redirect('accounts:pricing')
-
         if name and description and group_type:
             group = RecoveryGroup.objects.create(
                 name=name,
@@ -2179,21 +2170,6 @@ def join_group(request, group_id):
                 'success': False,
                 'message': 'You are already a member of this group.'
             })
-
-        # Check group limit for free users
-        if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
-            current_groups = GroupMembership.objects.filter(
-                user=request.user,
-                status__in=['active', 'moderator', 'admin']
-            ).count()
-
-            if current_groups >= 5:
-                return JsonResponse({
-                    'success': False,
-                    'message': 'You\'ve reached the free limit of 5 groups. Upgrade to Premium for unlimited groups!',
-                    'redirect': '/accounts/pricing/',
-                    'show_upgrade': True
-                })
 
         # Check if group is full
         if group.is_full:
@@ -2494,12 +2470,6 @@ def edit_group(request, group_id):
             # Compress for local storage (Cloudinary handles optimization automatically)
             if not is_cloudinary_enabled():
                 group_image = compress_image(group_image, max_dimension=1200)
-
-        # Check premium for private/secret groups
-        if privacy_level in ['private', 'secret'] and group.privacy_level == 'public':
-            if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
-                messages.warning(request, 'Private groups require a Premium subscription.')
-                return redirect('accounts:edit_group', group_id=group_id)
 
         if name and description and group_type:
             group.name = name
@@ -3643,29 +3613,19 @@ def challenge_detail(request, challenge_id):
 def create_challenge(request, group_id=None):
     """Create a new group challenge"""
 
-    # Check challenge creation limits
-    if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
-        # Free users can't create challenges
+    # Creating challenges is free for everyone (2026-09-26). A generous
+    # anti-spam cap, high enough that no genuine user hits it.
+    active_challenges = GroupChallenge.objects.filter(
+        creator=request.user,
+        status__in=['active', 'upcoming']
+    ).count()
+    if active_challenges >= 10:
         messages.warning(
             request,
-            'Creating challenges is a Premium feature. Upgrade to Premium to create and lead your own challenges!'
+            'You can run up to 10 active challenges at a time. '
+            'Complete or archive one of your current challenges to create a new one.'
         )
-        return redirect('accounts:pricing')
-    else:
-        # All paying tiers (premium/court/supporter) share a generous
-        # anti-spam cap — high enough that no genuine user hits it.
-        active_challenges = GroupChallenge.objects.filter(
-            creator=request.user,
-            status__in=['active', 'upcoming']
-        ).count()
-
-        if active_challenges >= 10:
-            messages.warning(
-                request,
-                'You can run up to 10 active challenges at a time. '
-                'Complete or archive one of your current challenges to create a new one.'
-            )
-            return redirect('accounts:challenges_home')
+        return redirect('accounts:challenges_home')
 
     group = None
     if group_id:
@@ -5780,6 +5740,7 @@ def milestone_badge_creator(request):
     the full set. Signed-in users with a sobriety date get days auto-filled.
     """
     from apps.accounts.milestone_image import BADGE_STYLES, TIME_FORMATS, FREE_BADGE_STYLES
+    from apps.accounts.keepsakes import keepsake_price_cents
 
     user = request.user
     if user.is_authenticated and user.sobriety_date:
@@ -5798,5 +5759,7 @@ def milestone_badge_creator(request):
         'is_anonymous': not user.is_authenticated,
         'pack_included': (user.is_authenticated and hasattr(user, 'subscription')
                           and user.subscription.is_premium()),
+        'mug_price': keepsake_price_cents('mug', user) / 100,
+        'sticker_price': keepsake_price_cents('sticker', user) / 100,
     }
     return render(request, 'accounts/milestone_badge_creator.html', context)

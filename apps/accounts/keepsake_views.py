@@ -16,7 +16,8 @@ from django.views.decorators.http import require_POST
 from apps.core.analytics import queue_ga_event
 
 from .keepsakes import (
-    KEEPSAKE_KIND, PRODUCTS, fulfil_keepsake_session, handle_printify_event, render_print_file,
+    KEEPSAKE_KIND, PRODUCTS, fulfil_keepsake_session, handle_printify_event, keepsake_price_cents,
+    render_print_file,
 )
 from .medallion_models import KeepsakeOrder
 from .medallion_pack_views import _badge_fields, _see_other
@@ -33,12 +34,13 @@ def keepsake_checkout(request):
     if product not in PRODUCTS:
         return HttpResponseBadRequest('Unknown product')
     spec = PRODUCTS[product]
+    price_cents = keepsake_price_cents(product, request.user)
     fields = _badge_fields(request.POST)
     user = request.user if request.user.is_authenticated else None
 
     order = KeepsakeOrder.objects.create(
         user=user, email=user.email if user else '', product=product,
-        amount_cents=spec['price_cents'], **fields)
+        amount_cents=price_cents, **fields)
     params = {'days': fields['days'], 'style': fields['style']}
     creator_url = request.build_absolute_uri(reverse('accounts:milestone_badge_creator'))
     session_kwargs = {
@@ -47,7 +49,7 @@ def keepsake_checkout(request):
             'quantity': 1,
             'price_data': {
                 'currency': 'usd',
-                'unit_amount': spec['price_cents'],
+                'unit_amount': price_cents,
                 'product_data': {
                     'name': f'{spec["label"]}: {fields["days"]} days '
                             f'({BADGE_STYLES[fields["style"]]["label"]})',

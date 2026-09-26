@@ -113,6 +113,7 @@
         <span class="sc-badge {% if link.status == 'active' %}active{% else %}pending{% endif %}">
           {{ link.get_status_display }}
         </span>
+        {% if link.is_included_seat %}<span class="sc-badge active">Included with Premium</span>{% endif %}
       </div>
       <form method="post" action="{% url 'accounts:supporter_set_preset' link.id %}">
         {% csrf_token %}

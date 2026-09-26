@@ -1054,7 +1054,7 @@ def expire_ended_trials(self):
                 sender=user,
                 notification_type='milestone',
                 title='Your Premium Trial Ended',
-                message='Upgrade to keep Anchor, unlimited groups, and analytics.',
+                message='Upgrade to keep Anchor, milestone medallions, and analytics.',
                 link='/accounts/pricing/',
             )
         except Exception as e:

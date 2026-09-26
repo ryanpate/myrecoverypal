@@ -42,6 +42,18 @@ PRODUCTS = {
     },
 }
 
+PREMIUM_KEEPSAKE_DISCOUNT = 0.20
+
+
+def keepsake_price_cents(product, user):
+    """Price for this buyer: Premium (and Court) members get 20% off."""
+    price = PRODUCTS[product]['price_cents']
+    sub = getattr(user, 'subscription', None) if getattr(user, 'is_authenticated', False) else None
+    if sub and sub.is_premium():
+        price = int(price * (1 - PREMIUM_KEEPSAKE_DISCOUNT))
+    return price
+
+
 # Printify statuses meaning "created, but production can't be requested yet".
 _NOT_READY = {'pending', 'cost-calculation'}
 # Our statuses in which the Printify order can still be cancelled on refund.

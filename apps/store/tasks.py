@@ -41,7 +41,13 @@ def daily_milestone_celebration_task(self):
     pairs = find_users_hitting_milestone_today()
     sent = 0
     for user, milestone_days in pairs:
-        if send_milestone_celebration_email(user, milestone_days):
+        # Premium members get their milestone medallion instead of a shop promo.
+        sub = getattr(user, 'subscription', None)
+        if sub and sub.is_premium():
+            from apps.accounts.medallion_pack import send_premium_milestone_medallion
+            if send_premium_milestone_medallion(user, milestone_days):
+                sent += 1
+        elif send_milestone_celebration_email(user, milestone_days):
             sent += 1
     logger.info(
         'Milestone celebration task: %d/%d emails sent',

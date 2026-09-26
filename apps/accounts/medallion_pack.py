@@ -115,3 +115,74 @@ def revoke_for_refund(payment_intent_id):
     return MedallionPackPurchase.objects.filter(
         stripe_payment_intent_id=payment_intent_id,
     ).update(status='refunded') > 0
+
+
+def _milestone_label(days):
+    if days >= 365 and days % 365 == 0:
+        years = days // 365
+        return f'{years}-year'
+    return f'{days}-day'
+
+
+def send_premium_milestone_medallion(user, milestone_days):
+    """Premium celebration: the member's medallion pack for this milestone, emailed.
+
+    Uses the design of their most recently saved medallion (else Classic),
+    pre-renders the animated video, and replaces the shop promo email for that
+    milestone. Returns True once the email is sent; the MilestoneEmailSent row
+    (shared with the shop email) makes it once per milestone, and is only
+    written after a successful send so a failure retries the next day.
+    """
+    from apps.store.email_service import _build_unsubscribe_url
+    from apps.store.models import MilestoneEmailSent
+    from .models import SavedBadge
+
+    if not user.email or MilestoneEmailSent.objects.filter(
+            user=user, milestone_days=milestone_days).exists():
+        return False
+
+    pack = MedallionPackPurchase.objects.filter(
+        user=user, days=milestone_days, amount_cents=0, status='paid').first()
+    if not pack:
+        badge = SavedBadge.objects.filter(user=user).order_by('-id').first()
+        design = ({'style': badge.style, 'name': badge.name, 'time_format': badge.time_format,
+                   'font_size': badge.font_size, 'color': badge.color, 'outline': badge.outline}
+                  if badge else {'style': 'classic'})
+        pack = MedallionPackPurchase.objects.create(
+            user=user, email=user.email, status='paid', amount_cents=0,
+            paid_at=timezone.now(), days=milestone_days, **design)
+        queue_video_prerender(pack.id)
+
+    site = settings.SITE_URL.rstrip('/')
+    pack_url = site + reverse('accounts:medallion_pack', args=[pack.token])
+    image_url = site + reverse('accounts:medallion_pack_file', args=[pack.token, 'square'])
+    keepsake_url = site + reverse('accounts:milestone_badge_creator') + f'?days={milestone_days}'
+    unsubscribe = _build_unsubscribe_url(user)
+    label = _milestone_label(milestone_days)
+    from django.utils.html import escape
+    name = user.first_name or 'friend'
+    plain = (
+        f'Congratulations, {name}. {milestone_days} days.\n\n'
+        f'Your {label} medallion is ready: the HD version, a story and phone wallpaper, '
+        f'and an animated video to share.\n{pack_url}\n\n'
+        f'Want to hold it? As a Premium member you get 20% off a mug or sticker: {keepsake_url}\n\n'
+        f'Unsubscribe from milestone emails: {unsubscribe}'
+    )
+    html = (
+        f'<p>Congratulations, {escape(name)}. <strong>{milestone_days} days.</strong></p>'
+        f'<p><img src="{image_url}" alt="Your {label} medallion" width="320" '
+        f'style="max-width:100%;border-radius:12px;"></p>'
+        f'<p>Your {label} medallion is ready: HD, story and phone wallpaper, and an animated video to share.</p>'
+        f'<p><a href="{pack_url}" style="background:#1e4d8b;color:#fff;padding:12px 20px;'
+        f'border-radius:8px;text-decoration:none;font-weight:600;">Get your medallion</a></p>'
+        f'<p style="color:#555;">Want to hold it? Premium members get <a href="{keepsake_url}">20% off a mug or sticker</a>.</p>'
+        f'<p style="color:#999;font-size:12px;"><a href="{unsubscribe}">Unsubscribe from milestone emails</a></p>'
+    )
+    try:
+        send_email(subject=f'Your {label} medallion is ready', plain_message=plain,
+                   html_message=html, recipient_email=user.email)
+    except Exception:
+        logger.exception('Premium milestone medallion email failed for user %s', user.pk)
+        return False
+    MilestoneEmailSent.objects.get_or_create(user=user, milestone_days=milestone_days)
+    return True

@@ -80,6 +80,22 @@ class SupporterLink(models.Model):
         if self.member_id and self.member_id == self.supporter_id:
             raise ValidationError("A user cannot be their own supporter.")
 
+    def is_included_seat(self):
+        """True if the member's Premium plan covers this supporter's access.
+
+        Premium includes ONE Supporter seat: the member's earliest-connected
+        active supporter. If that link ends, the seat passes to the next one.
+        """
+        if self.status != 'active' or not self.member_id or not self.supporter_id:
+            return False
+        sub = getattr(self.member, 'subscription', None)
+        if not (sub and sub.is_premium()):
+            return False
+        first = (SupporterLink.objects
+                 .filter(member_id=self.member_id, status='active', supporter__isnull=False)
+                 .order_by('consented_at', 'id').values_list('id', flat=True).first())
+        return first == self.id
+
     def is_live(self):
         """True when this link is actively sharing data."""
         return self.status == 'active'

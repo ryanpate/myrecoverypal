@@ -102,6 +102,13 @@ def supporter_required(view_func):
             return redirect('accounts:login')
         sub = getattr(request.user, 'subscription', None)
         if sub is None or not sub.is_supporter():
+            # Premium members' plans include one Supporter seat (per link).
+            from apps.accounts.supporter_models import SupporterLink
+            link = SupporterLink.objects.filter(
+                id=kwargs.get('link_id'), supporter=request.user, status='active',
+            ).select_related('member').first() if kwargs.get('link_id') else None
+            if link and link.is_included_seat():
+                return view_func(request, *args, **kwargs)
             messages.warning(
                 request,
                 'Viewing a loved one’s progress requires an active Supporter subscription.'

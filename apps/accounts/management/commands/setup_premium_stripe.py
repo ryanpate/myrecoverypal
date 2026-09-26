@@ -29,8 +29,8 @@ from django.core.management.base import BaseCommand, CommandError
 from apps.accounts.payment_models import SubscriptionPlan
 
 PRODUCT_NAME = "MyRecoveryPal Premium"
-PRODUCT_DESC = ("Unlimited AI Recovery Coach, unlimited groups, 90-day "
-                "analytics, journal export, and a Premium badge.")
+PRODUCT_DESC = ("AI Recovery Coach, your medallion at every milestone, 1 Supporter "
+                "seat, 90-day analytics, 20% off keepsakes, and a Premium badge.")
 MONTHLY_LOOKUP = "premium_monthly"
 YEARLY_LOOKUP = "premium_yearly"
 

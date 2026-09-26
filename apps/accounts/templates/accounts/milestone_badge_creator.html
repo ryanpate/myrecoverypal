@@ -744,11 +744,11 @@
         <div class="pack-cta keepsake-cta">
             <div class="pack-cta-text">
                 <strong>Hold it in your hands</strong>
-                <span>Your medallion, printed and shipped · free US shipping</span>
+                <span>Your medallion, printed and shipped · free US shipping{% if pack_included %} · 20% off with Premium{% endif %}</span>
             </div>
             <div class="keepsake-buttons">
-                <button type="submit" name="product" value="mug" class="btn pack-cta-btn">Mug · $24.99</button>
-                <button type="submit" name="product" value="sticker" class="btn pack-cta-btn">Sticker · $7.99</button>
+                <button type="submit" name="product" value="mug" class="btn pack-cta-btn">Mug · ${{ mug_price|floatformat:2 }}</button>
+                <button type="submit" name="product" value="sticker" class="btn pack-cta-btn">Sticker · ${{ sticker_price|floatformat:2 }}</button>
             </div>
         </div>
     </form>
