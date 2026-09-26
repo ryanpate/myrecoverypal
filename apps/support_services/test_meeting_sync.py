@@ -877,3 +877,35 @@ class FeedSourceConfigTests(TestCase):
         for s in FEED_SOURCES:
             self.assertTrue(s['url'].startswith('https://'), s['key'])
             ZoneInfo(s['timezone'])  # raises if not a real IANA zone
+
+
+# What atlantaaa.org's host (SiteGround) served Railway on 2026-09-26.
+SG_CAPTCHA_PAGE = ('<html><head><link rel="icon" href="data:;"><meta http-equiv="refresh" '
+                   'content="0;/.well-known/sgcaptcha/?r=%2Fwp-admin%2Fadmin-ajax.php"></meta>')
+
+
+@patch("apps.support_services.meeting_sync.time.sleep")
+class BotChallengeTests(TestCase):
+    """A host serving a bot challenge is a known, expected condition: don't
+    hammer it with retries, don't page Sentry every week, keep its meetings."""
+
+    def test_challenge_is_not_retried(self, sleep):
+        from apps.support_services.meeting_sync import FeedBlockedError, load_feed
+        with patch("apps.support_services.meeting_sync.requests.get",
+                   return_value=FakeResponse(SG_CAPTCHA_PAGE, status=202)) as get:
+            with self.assertRaises(FeedBlockedError):
+                load_feed("https://www.atlantaaa.org/wp-admin/admin-ajax.php?action=meetings")
+        self.assertEqual(get.call_count, 1)
+
+    def test_blocked_source_logs_a_warning_not_an_error_and_keeps_rows(self, sleep):
+        sync_source("atlanta", feed_file([ONLINE_MEETING]))
+        blocked = {"key": "atlanta", "url": "https://www.atlantaaa.org/feed"}
+        with patch("apps.support_services.meeting_sync.requests.get",
+                   return_value=FakeResponse(SG_CAPTCHA_PAGE, status=202)), \
+                self.assertLogs("apps.support_services.meeting_sync", level="WARNING") as logs:
+            results = sync_all([blocked, {"key": "good", "url": feed_file([
+                dict(ONLINE_MEETING, slug="other")])}])
+        self.assertIsNone(results["atlanta"])
+        self.assertFalse([r for r in logs.records
+                          if r.levelname == "ERROR" and "atlanta" in r.getMessage()])
+        self.assertTrue(Meeting.objects.get(slug="mtg-atlanta-morning-serenity").is_active)

@@ -51,6 +51,18 @@ class FeedFetchError(Exception):
     """A feed could not be fetched or did not return a usable JSON body."""
 
 
+class FeedBlockedError(FeedFetchError):
+    """The feed's host answered with a bot challenge (captcha) instead of data.
+
+    Expected and not ours to fix: we never try to get past a challenge. The
+    source's existing meetings are kept; retrying would only hammer the host.
+    """
+
+
+# Markers of host-level bot challenges seen from Railway's IPs.
+BOT_CHALLENGE_MARKERS = ("sgcaptcha", "cf-chl", "challenge-platform", "Just a moment...")
+
+
 # Verified TSML feeds. "timezone" is the fallback when a feed row omits its
 # own — set it to the intergroup's home zone. Task 5 verifies and extends
 # this list.
@@ -166,6 +178,10 @@ def _fetch_json(url):
                 headers={"User-Agent": "MyRecoveryPal/1.0"},
                 timeout=60,
             )
+            if any(marker in resp.text[:2000] for marker in BOT_CHALLENGE_MARKERS):
+                raise FeedBlockedError(
+                    f"{url} served a bot challenge (HTTP {resp.status_code}); "
+                    "the host is blocking automated requests from this server")
             resp.raise_for_status()
             data = resp.json()
             if not isinstance(data, (list, dict)):
@@ -289,6 +305,12 @@ def sync_all(sources=None):
                 src["key"], src["url"],
                 default_tz=src.get("timezone", "America/Chicago"),
             )
+        except FeedBlockedError as exc:
+            # A warning, not an error: expected, and not something a weekly
+            # Sentry alert can fix. Its existing meetings are kept.
+            logger.warning("Meeting feed %r skipped: %s", src["key"], exc)
+            results[src["key"]] = None
+            failures += 1
         except Exception:
             logger.exception(
                 "Meeting feed sync failed for source %r", src["key"])
