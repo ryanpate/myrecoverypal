@@ -1855,6 +1855,28 @@ MOBILE SLIDE-OUT NAVIGATION
     transform: translateX(-280px);
 }
 
+/* Dark mode for the web slide menu (the native app has its own rules above).
+   The menu hardcodes white while its links use the light dark-mode text colour,
+   which left the main mobile navigation unreadable. */
+[data-theme="dark"] .mobile-slide-menu {
+    background: var(--card-bg, #1f2937);
+    box-shadow: -2px 0 20px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .mobile-menu-section {
+    border-bottom-color: var(--border-color, #374151);
+}
+
+[data-theme="dark"] .mobile-menu-label {
+    color: var(--text-muted, #9ca3af);
+}
+
+/* The logged-out "Login / Sign Up" button is an <a>, so the global dark link
+   colour would otherwise paint it blue on green. */
+[data-theme="dark"] a.mobile-logout-btn {
+    color: #fff;
+}
+
 /* Mobile Menu Header */
 .mobile-menu-header {
     background: var(--gradient-primary);
@@ -3070,6 +3092,26 @@ select:focus {
 .mobile-sticky-cta-btn:hover {
     color: white;
     transform: scale(1.02);
+}
+
+/* Dark mode: the bar hardcodes white, and the global dark link colour
+   ([data-theme="dark"] a) outranks the button's white text. */
+[data-theme="dark"] .mobile-sticky-cta {
+    background: var(--card-bg, #1f2937);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .mobile-sticky-cta-text strong {
+    color: var(--text-dark, #e4e4e7);
+}
+
+[data-theme="dark"] .mobile-sticky-cta-text span {
+    color: var(--text-muted, #9ca3af);
+}
+
+[data-theme="dark"] a.mobile-sticky-cta-btn,
+[data-theme="dark"] a.mobile-sticky-cta-btn:hover {
+    color: #fff;
 }
 
 /* Show only on mobile */
