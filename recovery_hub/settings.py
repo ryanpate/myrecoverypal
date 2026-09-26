@@ -870,6 +870,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_winback_offers',
         'schedule': crontab(hour=9, minute=30),  # Daily at 9:30 AM, after trials expire at 9
     },
+    'sweep-stranded-keepsakes': {
+        'task': 'apps.accounts.keepsakes.sweep_stranded_keepsakes',
+        'schedule': crontab(minute='*/10'),  # re-queue paid keepsakes whose task was lost
+    },
     'send-meeting-email-reminders': {
         'task': 'apps.support_services.reminders.send_meeting_email_reminders_task',
         'schedule': crontab(minute='*/15'),  # emails ~1h before confirmed meetings

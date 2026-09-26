@@ -253,3 +253,39 @@ class KeepsakeRefundTest(TestCase):
         order.refresh_from_db()
         self.assertEqual(order.status, 'refunded')
         cancel.assert_called_once_with('pf_r')
+
+
+class KeepsakeQueueResilienceTest(TestCase):
+    """A paid keepsake must reach Printify even if the broker hiccups at payment time."""
+
+    @patch('apps.accounts.keepsakes.send_email')
+    @patch('apps.accounts.keepsakes.submit_keepsake_order')
+    def test_broker_outage_at_payment_does_not_break_fulfilment(self, submit, send):
+        from apps.accounts.keepsakes import fulfil_keepsake_session
+        submit.delay.side_effect = ConnectionError('redis down')
+        order = _order(status='pending', email='', shipping_name='', shipping_address={})
+        with self.captureOnCommitCallbacks(execute=True):
+            fulfil_keepsake_session(_paid_session(order))
+        order.refresh_from_db()
+        self.assertEqual(order.status, 'paid')
+
+    def _aged(self, minutes, **kw):
+        from datetime import timedelta
+        from django.utils import timezone
+        order = _order(**kw)
+        KeepsakeOrder.objects.filter(pk=order.pk).update(paid_at=timezone.now() - timedelta(minutes=minutes))
+        return order
+
+    @patch('apps.accounts.keepsakes.send_keepsake_to_production')
+    @patch('apps.accounts.keepsakes.submit_keepsake_order')
+    def test_sweep_requeues_stranded_orders_only(self, submit, send):
+        from apps.accounts.keepsakes import sweep_stranded_keepsakes
+        stranded_paid = self._aged(20, status='paid', printify_order_id='')
+        fresh_paid = self._aged(5, status='paid', printify_order_id='')
+        stranded_submitted = self._aged(60, status='submitted', printify_order_id='pf_s')
+        fresh_submitted = self._aged(20, status='submitted', printify_order_id='pf_f')
+        self._aged(60, status='in_production', printify_order_id='pf_p')
+        self._aged(60, status='failed', printify_order_id='')
+        sweep_stranded_keepsakes()
+        submit.delay.assert_called_once_with(stranded_paid.id)
+        send.delay.assert_called_once_with(stranded_submitted.id)

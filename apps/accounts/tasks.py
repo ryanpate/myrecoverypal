@@ -1495,6 +1495,6 @@ def send_court_monthly_po_reports():
 # Keepsake fulfilment tasks live with their service code; import them here so
 # Celery's autodiscover_tasks() (which only imports tasks.py) registers them.
 from apps.accounts.keepsakes import (  # noqa: E402, F401
-    send_keepsake_to_production, submit_keepsake_order,
+    send_keepsake_to_production, submit_keepsake_order, sweep_stranded_keepsakes,
 )
 from apps.accounts.medallion_pack import prerender_pack_video  # noqa: E402, F401

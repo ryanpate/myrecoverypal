@@ -7,6 +7,7 @@ once Printify has finished cost calculation -> Printify's order:shipment:created
 webhook marks it shipped and emails tracking.
 """
 import logging
+from datetime import timedelta
 from io import BytesIO
 
 from celery import shared_task
@@ -111,12 +112,49 @@ def fulfil_keepsake_session(session):
         order.save()
 
     if newly_paid:
-        transaction.on_commit(lambda: submit_keepsake_order.delay(order.id))
+        transaction.on_commit(lambda: _safe_delay(submit_keepsake_order, order.id))
     if should_email:
         _email(order, 'Your medallion keepsake is on its way to the printer',
                f'Thank you! Your {PRODUCTS[order.product]["label"]} celebrating '
                f'{order.days} days is being made. We\'ll email you tracking as soon as it ships.')
     return order
+
+
+def _safe_delay(task, order_id):
+    """Queue a fulfilment task without ever failing the caller.
+
+    A broker outage at payment time must not turn a completed purchase into an
+    error page; sweep_stranded_keepsakes() picks the order up later instead.
+    """
+    try:
+        task.delay(order_id)
+    except Exception:
+        logger.exception('Could not queue %s for keepsake %s; the sweep will retry',
+                         getattr(task, 'name', task), order_id)
+
+
+# How long an order may sit in a state before the sweep assumes its task was
+# lost. Longer than each task's own retry window, so the sweep doesn't race it.
+STRANDED_PAID_AFTER = timedelta(minutes=15)       # submit: 5 retries x 2 min
+STRANDED_SUBMITTED_AFTER = timedelta(minutes=45)  # production: 20 retries x 1 min
+
+
+@shared_task(ignore_result=True)
+def sweep_stranded_keepsakes():
+    """Re-queue paid keepsakes whose fulfilment task was lost (e.g. broker outage).
+
+    Both steps are idempotent: submission is skipped once a Printify order id
+    exists, and production is skipped once the order has left 'submitted'.
+    """
+    now = timezone.now()
+    paid = KeepsakeOrder.objects.filter(
+        status='paid', printify_order_id='', paid_at__lt=now - STRANDED_PAID_AFTER)
+    submitted = KeepsakeOrder.objects.filter(
+        status='submitted', paid_at__lt=now - STRANDED_SUBMITTED_AFTER)
+    for order_id in paid.values_list('id', flat=True):
+        _safe_delay(submit_keepsake_order, order_id)
+    for order_id in submitted.values_list('id', flat=True):
+        _safe_delay(send_keepsake_to_production, order_id)
 
 
 def _printify_payload(order):
