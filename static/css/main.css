@@ -248,6 +248,47 @@
     border-color: var(--border-color);
 }
 
+/* Dark Mode - Meeting directory. These templates hardcode light backgrounds
+   while the dark heading/body colours above still apply, which left light
+   text on white cards (the meeting name was nearly invisible). */
+[data-theme="dark"] .meeting-detail-card,
+[data-theme="dark"] .meeting-finder-container,
+[data-theme="dark"] .meeting-filters,
+[data-theme="dark"] .support-card {
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+    color: var(--text-dark);
+}
+
+[data-theme="dark"] .meeting-detail-name,
+[data-theme="dark"] .nearby-meeting {
+    color: var(--text-dark);
+}
+
+[data-theme="dark"] .meeting-detail-time,
+[data-theme="dark"] .nearby-meeting:hover {
+    color: #a78bfa;
+}
+
+[data-theme="dark"] .meeting-detail-section h3 {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .meeting-detail-location {
+    color: #d1d5db;
+}
+
+[data-theme="dark"] .nearby-meeting {
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .btn-filter:not(.active),
+[data-theme="dark"] .toggle-btn:not(.active) {
+    background: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-dark);
+}
+
 /* Dark Mode - Navigation */
 [data-theme="dark"] .navbar,
 [data-theme="dark"] #siteNav,
