@@ -243,3 +243,62 @@ class CreatorPackCtaTest(TestCase):
         resp = self.client.get(reverse('accounts:milestone_badge_creator'))
         self.assertContains(resp, 'Included with Premium')
         self.assertNotContains(resp, '$4.99')
+
+
+class PackVideoPrerenderTest(TestCase):
+    """The ~7s video render happens on the Celery worker when a pack is paid,
+    so the buyer's first download is a cache hit, not a blocked web worker."""
+
+    @patch('apps.accounts.medallion_pack.send_email')
+    @patch('apps.accounts.medallion_pack.prerender_pack_video')
+    def test_paid_session_queues_one_prerender(self, task, send):
+        from apps.accounts.medallion_pack import fulfil_checkout_session
+        p = _purchase(status='pending', email='', stripe_session_id='cs_pre')
+        session = {'id': 'cs_pre', 'payment_status': 'paid', 'payment_intent': 'pi_pre',
+                   'metadata': {'kind': 'medallion_pack', 'purchase_id': str(p.id)},
+                   'customer_details': {'email': 'pre@example.com'}}
+        with self.captureOnCommitCallbacks(execute=True):
+            fulfil_checkout_session(session)
+            fulfil_checkout_session(session)  # success page + webhook
+        task.delay.assert_called_once_with(p.id)
+
+    @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+    @patch('apps.accounts.medallion_pack.prerender_pack_video')
+    def test_premium_included_pack_queues_prerender(self, task):
+        user = User.objects.create_user(username='prem_pre', email='pp@example.com', password='pw')
+        user.subscription.tier, user.subscription.status = 'premium', 'active'
+        user.subscription.save()
+        self.client.login(username='prem_pre', password='pw')
+        with self.captureOnCommitCallbacks(execute=True):
+            self.client.post(reverse('accounts:medallion_pack_checkout'), BADGE)
+        task.delay.assert_called_once_with(MedallionPackPurchase.objects.get().id)
+
+    @patch('apps.accounts.medallion_video.generate_story_video')
+    def test_task_renders_the_buyers_design(self, render):
+        from apps.accounts.medallion_pack import prerender_pack_video
+        p = _purchase()
+        prerender_pack_video(p.id)
+        render.assert_called_once_with(p.days, **p.badge_kwargs())
+
+    @patch('apps.accounts.medallion_video.generate_story_video')
+    def test_task_skips_unpaid_refunded_or_missing(self, render):
+        from apps.accounts.medallion_pack import prerender_pack_video
+        prerender_pack_video(_purchase(status='refunded').id)
+        prerender_pack_video(_purchase(status='pending').id)
+        prerender_pack_video(999999)
+        render.assert_not_called()
+
+
+    @patch('apps.accounts.medallion_pack.send_email')
+    @patch('apps.accounts.medallion_pack.prerender_pack_video')
+    def test_broker_outage_does_not_break_fulfilment(self, task, send):
+        from apps.accounts.medallion_pack import fulfil_checkout_session
+        task.delay.side_effect = ConnectionError('redis down')
+        p = _purchase(status='pending', email='', stripe_session_id='cs_down')
+        session = {'id': 'cs_down', 'payment_status': 'paid', 'payment_intent': 'pi_down',
+                   'metadata': {'kind': 'medallion_pack', 'purchase_id': str(p.id)},
+                   'customer_details': {'email': 'down@example.com'}}
+        with self.captureOnCommitCallbacks(execute=True):
+            fulfil_checkout_session(session)
+        p.refresh_from_db()
+        self.assertEqual(p.status, 'paid')

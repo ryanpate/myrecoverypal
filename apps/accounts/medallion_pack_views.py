@@ -13,7 +13,7 @@ from django.views.decorators.http import require_POST
 from apps.core.analytics import queue_ga_event
 
 from .medallion_models import MedallionPackPurchase
-from .medallion_pack import PACK_KIND, PACK_PRICE_CENTS, fulfil_checkout_session
+from .medallion_pack import PACK_KIND, PACK_PRICE_CENTS, fulfil_checkout_session, queue_video_prerender
 from .medallion_video import generate_story_video
 from .milestone_image import (
     BADGE_STYLES, TEXT_COLORS, TIME_FORMATS, generate_milestone_image, generate_story_image,
@@ -76,6 +76,7 @@ def medallion_pack_checkout(request):
     if _is_premium(request.user):
         purchase = MedallionPackPurchase.objects.create(
             user=user, email=user.email, status='paid', amount_cents=0, **fields)
+        queue_video_prerender(purchase.id)
         return redirect('accounts:medallion_pack', token=purchase.token)
 
     purchase = MedallionPackPurchase.objects.create(

@@ -1,6 +1,7 @@
 """HD Medallion Pack: fulfilment shared by the success page and the Stripe webhook."""
 import logging
 
+from celery import shared_task
 from django.conf import settings
 from django.db import transaction
 from django.urls import reverse
@@ -33,7 +34,8 @@ def fulfil_checkout_session(session):
         except (MedallionPackPurchase.DoesNotExist, ValueError, TypeError):
             logger.error('Medallion pack session %s has no matching purchase', session.get('id'))
             return None
-        if purchase.status == 'pending':
+        newly_paid = purchase.status == 'pending'
+        if newly_paid:
             purchase.status = 'paid'
             purchase.paid_at = timezone.now()
         purchase.stripe_payment_intent_id = session.get('payment_intent') or purchase.stripe_payment_intent_id
@@ -45,9 +47,41 @@ def fulfil_checkout_session(session):
             purchase.receipt_emailed = True
         purchase.save()
 
+    if newly_paid:
+        queue_video_prerender(purchase.id)
     if should_email:
         _send_receipt(purchase)
     return purchase
+
+
+def queue_video_prerender(purchase_id):
+    """Queue the video render after commit. Never fails the caller: the render
+    is only a speed-up (downloads fall back to rendering on demand), so a broker
+    outage must not turn a completed payment into an error page."""
+    def _queue():
+        try:
+            prerender_pack_video.delay(purchase_id)
+        except Exception:
+            logger.exception('Could not queue video pre-render for medallion pack %s', purchase_id)
+    transaction.on_commit(_queue)
+
+
+@shared_task(ignore_result=True)
+def prerender_pack_video(purchase_id):
+    """Render the pack's animated video on the worker so it's cached before download.
+
+    The render takes several seconds of CPU; doing it here keeps it off the
+    web workers. The download view still renders on demand if the cached copy
+    has expired, so a failure here only costs speed.
+    """
+    from .medallion_video import generate_story_video
+    purchase = MedallionPackPurchase.objects.filter(pk=purchase_id, status='paid').first()
+    if not purchase:
+        return
+    try:
+        generate_story_video(purchase.days, **purchase.badge_kwargs())
+    except Exception:
+        logger.exception('Pre-rendering video for medallion pack %s failed', purchase_id)
 
 
 def _send_receipt(purchase):
