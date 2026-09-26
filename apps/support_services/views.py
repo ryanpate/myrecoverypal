@@ -644,3 +644,49 @@ def state_hub(request, state):
         'seo_url': request.build_absolute_uri(
             reverse('support_services:state_hub', kwargs={'state': state.lower()})),
     })
+
+
+# --- Meeting email reminders (no account needed; double opt-in) -------------
+
+@require_http_methods(['POST'])
+def meeting_reminder_signup(request, slug):
+    from django.core.exceptions import ValidationError
+    from django.core.validators import validate_email
+    from .reminders import request_reminder
+
+    meeting = get_object_or_404(Meeting, slug=slug, is_approved=True, is_active=True)
+    email = (request.POST.get('email') or '').strip()
+    try:
+        validate_email(email)
+    except ValidationError:
+        messages.error(request, 'Please enter a valid email address.')
+        return redirect('support_services:meeting_detail', slug=slug)
+    reminder, error = request_reminder(email, meeting)
+    if error:
+        messages.error(request, error)
+    else:
+        messages.success(request, 'Check your inbox and tap the link to confirm your reminder.')
+    return redirect('support_services:meeting_detail', slug=slug)
+
+
+def meeting_reminder_confirm(request, token):
+    from .models import MeetingReminder
+    reminder = get_object_or_404(MeetingReminder, token=token)
+    if not reminder.confirmed_at:
+        reminder.confirmed_at = timezone.now()
+        reminder.save(update_fields=['confirmed_at'])
+    messages.success(request, "You're set. We'll email you about an hour before each meeting.")
+    return redirect('support_services:meeting_detail', slug=reminder.meeting.slug)
+
+
+@require_http_methods(['GET', 'POST'])
+def meeting_reminder_unsubscribe(request, token):
+    """GET shows a button (mail scanners prefetch links); POST deletes the row."""
+    from .models import MeetingReminder
+    reminder = MeetingReminder.objects.filter(token=token).select_related('meeting').first()
+    if request.method == 'POST':
+        if reminder:
+            reminder.delete()
+        return render(request, 'support_services/reminder_unsubscribe.html', {'done': True})
+    return render(request, 'support_services/reminder_unsubscribe.html',
+                  {'reminder': reminder, 'done': reminder is None})

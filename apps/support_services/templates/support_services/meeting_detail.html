@@ -197,6 +197,21 @@
                         {% if is_bookmarked %}Remove Bookmark{% else %}Bookmark this Meeting{% endif %}
                     </a>
                 </div>
+                {% elif meeting.day is not None and meeting.time %}
+                {# Weekly email reminder for logged-out visitors (double opt-in). #}
+                <div class="meeting-detail-section meeting-reminder" id="remind">
+                    <h2 class="h5">Never miss this meeting</h2>
+                    <p class="text-muted mb-2">Get an email about an hour before it starts each week. No account needed.</p>
+                    <form method="post" action="{% url 'support_services:meeting_reminder_signup' meeting.slug %}"
+                          id="meeting-reminder-form" class="d-flex gap-2 flex-wrap">
+                        {% csrf_token %}
+                        <input type="email" name="email" required placeholder="you@example.com"
+                               autocomplete="email" class="form-control" style="max-width: 280px;"
+                               aria-label="Email for meeting reminders">
+                        <button type="submit" class="btn btn-primary">Remind me</button>
+                    </form>
+                    <small class="text-muted d-block mt-1">We'll only use this for reminders. Stop anytime.</small>
+                </div>
                 {% endif %}
             </div>
 

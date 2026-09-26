@@ -834,3 +834,37 @@ class FeedSourceConfigTests(TestCase):
         from apps.support_services.meeting_sync import FEED_SOURCES
         for src in FEED_SOURCES:
             self.assertNotIn("-", src["key"])
+
+
+class UrlSchemeSafetyTests(TestCase):
+    """Feed URLs render as hrefs: only http(s) may pass, or a compromised
+    third-party feed could inject a javascript: link into our pages."""
+
+    def _mapped(self, **fields):
+        from apps.support_services.meeting_sync import _map
+        row = {'name': 'Test Group', 'day': 1, 'time': '19:00',
+               'attendance_option': 'online', **fields}
+        return _map(row, approve=True, default_tz='America/Chicago')
+
+    def test_http_urls_kept(self):
+        m = self._mapped(conference_url='https://zoom.us/j/123', website='http://example.org')
+        self.assertEqual((m['conference_url'], m['website']),
+                         ('https://zoom.us/j/123', 'http://example.org'))
+
+    def test_dangerous_schemes_dropped(self):
+        for bad in ('javascript:alert(1)', ' JavaScript:alert(1)', 'data:text/html,x',
+                    'vbscript:x', '//evil.example', 'zoom.us/j/1'):
+            m = self._mapped(conference_url=bad, website=bad)
+            self.assertEqual((m['conference_url'], m['website']), ('', ''), bad)
+
+
+class FeedSourceConfigTests(TestCase):
+    def test_every_source_has_unique_key_https_url_and_valid_timezone(self):
+        from zoneinfo import ZoneInfo
+        from apps.support_services.meeting_sync import FEED_SOURCES
+        keys = [s['key'] for s in FEED_SOURCES]
+        self.assertEqual(len(keys), len(set(keys)))
+        self.assertGreaterEqual(len(FEED_SOURCES), 15)
+        for s in FEED_SOURCES:
+            self.assertTrue(s['url'].startswith('https://'), s['key'])
+            ZoneInfo(s['timezone'])  # raises if not a real IANA zone

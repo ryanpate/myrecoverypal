@@ -29,3 +29,7 @@ def refresh_online_meetings_task(self):
     """
     results = sync_all()
     logger.info('Online meetings sync complete: %s', results)
+
+
+# Lives with its service code; imported here so autodiscover_tasks() registers it.
+from apps.support_services.reminders import send_meeting_email_reminders_task  # noqa: E402, F401

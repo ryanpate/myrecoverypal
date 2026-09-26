@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Meeting reminders — MyRecoveryPal{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 560px; margin: 3rem auto; text-align: center;">
+    {% if done %}
+    <h1 class="h3">You won't get any more reminders</h1>
+    <p class="text-muted">We've deleted your email for this meeting.</p>
+    <p><a href="{% url 'support_services:meeting_list' %}">Find another meeting</a></p>
+    {% else %}
+    <h1 class="h3">Stop reminders for {{ reminder.meeting.name }}?</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Stop reminders</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

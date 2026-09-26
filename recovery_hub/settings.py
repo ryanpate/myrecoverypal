@@ -870,6 +870,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_winback_offers',
         'schedule': crontab(hour=9, minute=30),  # Daily at 9:30 AM, after trials expire at 9
     },
+    'send-meeting-email-reminders': {
+        'task': 'apps.support_services.reminders.send_meeting_email_reminders_task',
+        'schedule': crontab(minute='*/15'),  # emails ~1h before confirmed meetings
+    },
     'refresh-online-meetings': {
         'task': 'apps.support_services.tasks.refresh_online_meetings_task',
         'schedule': crontab(hour=4, minute=0, day_of_week=1),  # Weekly, Mondays 4 AM UTC

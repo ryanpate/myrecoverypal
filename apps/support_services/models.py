@@ -577,3 +577,30 @@ class CoverageRequest(models.Model):
 
     def __str__(self):
         return f"{self.query} ({self.hits} searches)"
+
+
+def _reminder_token():
+    import secrets
+    return secrets.token_urlsafe(24)
+
+
+class MeetingReminder(models.Model):
+    """A weekly email reminder before a meeting, for anyone (no account needed).
+
+    Double opt-in: nothing is sent until `confirmed_at` is set via the emailed
+    link. Meeting attendance is sensitive, so unsubscribing deletes the row
+    rather than flagging it.
+    """
+    email = models.EmailField()
+    meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE, related_name='reminders')
+    token = models.CharField(max_length=64, unique=True, default=_reminder_token)
+    confirmed_at = models.DateTimeField(null=True, blank=True)
+    last_sent_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['email', 'meeting']
+        indexes = [models.Index(fields=['confirmed_at'])]
+
+    def __str__(self):
+        return f'Reminder for {self.meeting_id} ({"confirmed" if self.confirmed_at else "pending"})'

@@ -24,6 +24,12 @@ urlpatterns = [
             views.city_hub, name='city_hub'),
 
     path('meetings/<slug:slug>/', views.meeting_detail, name='meeting_detail'),
+    path('meetings/<slug:slug>/remind/', views.meeting_reminder_signup,
+         name='meeting_reminder_signup'),
+    path('reminders/<str:token>/confirm/', views.meeting_reminder_confirm,
+         name='meeting_reminder_confirm'),
+    path('reminders/<str:token>/stop/', views.meeting_reminder_unsubscribe,
+         name='meeting_reminder_unsubscribe'),
 
     # Services
     path('services/', views.service_list, name='service_list'),

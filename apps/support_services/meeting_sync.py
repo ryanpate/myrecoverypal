@@ -80,6 +80,61 @@ FEED_SOURCES = [
         "url": "https://www.atlantaaa.org/wp-admin/admin-ajax.php?action=meetings",
         "timezone": "America/New_York",
     },
+    # Added 2026-09-26 from a probe of 45 intergroups: metros with GA4 traffic
+    # or coverage-gap searches and a public feed. Feeds answering 401 have
+    # deliberately switched sharing off and are respected, not worked around.
+    # Also public but not yet added: indyaa.org, aadesmoines.org,
+    # aatucson.org, aarichmond.org.
+    {
+        "key": "denver",
+        "url": "https://daccaa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Denver",
+    },
+    {
+        "key": "sandiego",
+        "url": "https://aasandiego.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Los_Angeles",
+    },
+    {
+        "key": "orangecounty",
+        "url": "https://oc-aa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Los_Angeles",
+    },
+    {
+        "key": "lasvegas",
+        "url": "https://lvcentraloffice.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Los_Angeles",
+    },
+    {
+        "key": "dc",
+        "url": "https://aa-dc.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/New_York",
+    },
+    {
+        "key": "sanantonio",
+        "url": "https://aasanantonio.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Chicago",
+    },
+    {
+        "key": "nashville",
+        "url": "https://aanashville.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Chicago",
+    },
+    {
+        "key": "minneapolis",
+        "url": "https://aaminneapolis.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Chicago",
+    },
+    {
+        "key": "stlouis",
+        "url": "https://aastl.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Chicago",
+    },
+    {
+        "key": "cincinnati",
+        "url": "https://aacincinnati.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/New_York",
+    },
     # Chicago (chicagoaa.org) and Los Angeles (lacoaa.org) both sit behind a
     # Cloudflare bot challenge and cannot be fetched programmatically. Left
     # out deliberately rather than worked around.
@@ -316,6 +371,12 @@ def _resolve_slug(key, m, known_slugs):
     return _slug(key, m)
 
 
+def _safe_url(value):
+    """Keep only absolute http(s) URLs — these render as hrefs on our pages."""
+    value = (value or "").strip()
+    return value if re.match(r"https?://", value, re.IGNORECASE) else ""
+
+
 def _map(m, approve, default_tz):
     name = (m.get("name") or "").strip()
     if not name:
@@ -337,12 +398,12 @@ def _map(m, approve, default_tz):
         "end_time": _parse_time(m.get("end_time")),
         "timezone": m.get("timezone") or default_tz,
         "attendance_option": attendance,
-        "conference_url": "" if attendance == "in_person" else (m.get("conference_url") or ""),
+        "conference_url": "" if attendance == "in_person" else _safe_url(m.get("conference_url")),
         "conference_phone": (m.get("conference_phone") or "")[:30],
         "types": m.get("types") or [],
         "group": (m.get("group") or "")[:255],
         "notes": m.get("notes") or "",  # join instructions / passwords
-        "website": (m.get("website") or "")[:200],
+        "website": _safe_url(m.get("website"))[:200],
         "is_approved": approve,
         "is_active": True,
     }
