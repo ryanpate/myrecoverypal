@@ -851,6 +851,15 @@ class UrlSchemeSafetyTests(TestCase):
         self.assertEqual((m['conference_url'], m['website']),
                          ('https://zoom.us/j/123', 'http://example.org'))
 
+    def test_long_conference_url_fits_the_column(self):
+        # Minneapolis's feed carries a 200+ char Zoom link; Postgres rejected
+        # the whole source when the column was varchar(200).
+        from apps.support_services.models import Meeting
+        long_url = 'https://us02web.zoom.us/j/1?pwd=' + 'x' * 300
+        m = self._mapped(conference_url=long_url)
+        self.assertEqual(m['conference_url'], long_url)
+        self.assertGreaterEqual(Meeting._meta.get_field('conference_url').max_length, len(long_url))
+
     def test_dangerous_schemes_dropped(self):
         for bad in ('javascript:alert(1)', ' JavaScript:alert(1)', 'data:text/html,x',
                     'vbscript:x', '//evil.example', 'zoom.us/j/1'):

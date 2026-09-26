@@ -120,7 +120,7 @@ class Meeting(models.Model):
     mailing_address = models.CharField(max_length=500, blank=True)
 
     # Online meeting fields
-    conference_url = models.URLField(blank=True)
+    conference_url = models.URLField(max_length=500, blank=True)  # some Zoom links exceed 200
     conference_url_notes = models.TextField(blank=True)
     conference_phone = models.CharField(max_length=30, blank=True)
     conference_phone_notes = models.TextField(blank=True)
