@@ -14,6 +14,7 @@ from apps.accounts.court_views import (
 )
 from apps.accounts import supporter_views
 from apps.accounts import plan_views
+from apps.accounts import medallion_pack_views
 from .facility_views import (
     facility_join, facility_leave, facility_dashboard, facility_roster,
     facility_member_detail, facility_generate_invite, facility_revoke_member,
@@ -242,6 +243,11 @@ urlpatterns = [
     path('milestone-badge/save/', views.save_badge, name='save_badge'),
     path('my-medallions/', views.my_medallions, name='my_medallions'),
     path('my-medallions/<int:badge_id>/delete/', views.delete_saved_badge, name='delete_saved_badge'),
+    # HD Medallion Pack (one-time $4.99; included with Premium)
+    path('medallion-pack/checkout/', medallion_pack_views.medallion_pack_checkout, name='medallion_pack_checkout'),
+    path('medallion-pack/success/', medallion_pack_views.medallion_pack_success, name='medallion_pack_success'),
+    path('medallion-pack/<str:token>/', medallion_pack_views.medallion_pack, name='medallion_pack'),
+    path('medallion-pack/<str:token>/<str:fmt>/', medallion_pack_views.medallion_pack_file, name='medallion_pack_file'),
 
     # Relapse / slip tracking
     path('log-slip/', views.log_slip_view, name='log_slip'),

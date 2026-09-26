@@ -145,7 +145,8 @@ def _fit_font_to_width(draw, text, max_font, max_width, min_font=24):
 
 
 def generate_milestone_image(days, style='classic', name='', time_format='auto',
-                              text_y=50, font_size=110, color='white', outline=True):
+                              text_y=50, font_size=110, color='white', outline=True,
+                              size=1080, watermark=True):
     """Generate a personalized milestone badge image.
 
     Places the sobriety time inside the gold center circle of the badge,
@@ -160,6 +161,9 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
         font_size: Maximum font size in pixels (24-160). Shrinks to fit circle.
         color: Color name from TEXT_COLORS or hex '#RRGGBB'.
         outline: Whether to draw a dark outline around text.
+        size: Output edge length in px. Layout is designed at 1080 and scaled,
+            so the HD pack (2048) looks identical, just sharper.
+        watermark: Burn in the site URL. Only the paid HD pack turns it off.
     """
     if style not in BADGE_STYLES:
         style = 'classic'
@@ -177,6 +181,8 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
     fill = (*rgb, 255)
 
     params = f'{days}_{style}_{time_format}_{text_y}_{font_size}_{color}_{int(outline)}_{safe_name}'
+    if size != 1080 or not watermark:
+        params += f'_{size}_{int(watermark)}'
     cache_key = f'milestone_v9_{hashlib.md5(params.encode()).hexdigest()}'
     cached = cache.get(cache_key)
     if cached:
@@ -186,8 +192,11 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
     badge_path = os.path.join(BADGE_DIR, config['file'])
 
     badge = Image.open(badge_path).convert('RGBA')
-    target = 1080
+    target = size
     badge = badge.resize((target, target), Image.LANCZOS)
+    # Every pixel measurement below is tuned for a 1080px badge; scale them.
+    scale = target / 1080
+    font_size = round(font_size * scale)
 
     overlay = Image.new('RGBA', (target, target), (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
@@ -196,8 +205,9 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
     primary_text, unit_text = format_sobriety_time(days, time_format)
 
     # Fit primary text (number or Roman numeral) to the gold center circle width.
-    max_text_width = int(target * CENTER_WIDTH_RATIO) - 20
-    font_time, fitted_size = _fit_font_to_width(draw, primary_text, font_size, max_text_width)
+    max_text_width = int(target * CENTER_WIDTH_RATIO) - round(20 * scale)
+    font_time, fitted_size = _fit_font_to_width(draw, primary_text, font_size, max_text_width,
+                                                min_font=round(24 * scale))
 
     # Unit label ("Months"/"Days") sits under the number at ~42% of the primary size.
     unit_font = None
@@ -205,20 +215,22 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
     unit_h = 0
     unit_gap = 0
     if unit_text:
-        unit_target_size = max(20, int(fitted_size * 0.42))
-        unit_font, _ = _fit_font_to_width(draw, unit_text, unit_target_size, max_text_width, min_font=16)
+        unit_target_size = max(round(20 * scale), int(fitted_size * 0.42))
+        unit_font, _ = _fit_font_to_width(draw, unit_text, unit_target_size, max_text_width,
+                                          min_font=round(16 * scale))
         ubbox = draw.textbbox((0, 0), unit_text, font=unit_font)
         unit_w = ubbox[2] - ubbox[0]
         unit_h = ubbox[3] - ubbox[1]
-        unit_gap = max(4, int(fitted_size * 0.08))
+        unit_gap = max(round(4 * scale), int(fitted_size * 0.08))
 
-    name_max_size = max(20, fitted_size - 24)
+    name_max_size = max(round(20 * scale), fitted_size - round(24 * scale))
     font_name = _load_font(name_max_size)
     if safe_name:
-        font_name, _ = _fit_font_to_width(draw, safe_name, name_max_size, max_text_width)
+        font_name, _ = _fit_font_to_width(draw, safe_name, name_max_size, max_text_width,
+                                          min_font=round(24 * scale))
 
     # text_y percentage → pixel position. At 50% the text sits centered on the badge.
-    margin = 40
+    margin = round(40 * scale)
     usable = target - 2 * margin
     pixel_y_anchor = margin + int(usable * text_y / 100)
 
@@ -230,7 +242,7 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
     time_y = pixel_y_anchor - stack_h // 2 - bbox[1]
     x = cx - tw // 2
 
-    outline_w = 3 if outline else 0
+    outline_w = max(1, round(3 * scale)) if outline else 0
     if outline:
         _draw_outlined_text(draw, x, time_y, primary_text, font_time, fill, outline_w)
     else:
@@ -248,7 +260,7 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
         nbbox = draw.textbbox((0, 0), safe_name, font=font_name)
         ntw = nbbox[2] - nbbox[0]
         nx = cx - ntw // 2
-        ny = time_y + stack_h + 12
+        ny = time_y + stack_h + round(12 * scale)
 
         if outline:
             _draw_outlined_text(draw, nx, ny, safe_name, font_name, fill, max(1, outline_w - 1))
@@ -257,12 +269,14 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
 
     # Brand watermark: centered near the bottom edge, semi-transparent white with a
     # dark outline so it stays legible on both light and dark badge templates.
-    wm_font = _load_font(30)
-    wbbox = draw.textbbox((0, 0), WATERMARK_TEXT, font=wm_font)
-    ww = wbbox[2] - wbbox[0]
-    wm_x = cx - ww // 2
-    wm_y = target - 58
-    _draw_outlined_text(draw, wm_x, wm_y, WATERMARK_TEXT, wm_font, (255, 255, 255, 210), 2)
+    if watermark:
+        wm_font = _load_font(round(30 * scale))
+        wbbox = draw.textbbox((0, 0), WATERMARK_TEXT, font=wm_font)
+        ww = wbbox[2] - wbbox[0]
+        wm_x = cx - ww // 2
+        wm_y = target - round(58 * scale)
+        _draw_outlined_text(draw, wm_x, wm_y, WATERMARK_TEXT, wm_font, (255, 255, 255, 210),
+                            max(1, round(2 * scale)))
 
     result = Image.alpha_composite(badge, overlay)
     final = result.convert('RGB')
@@ -273,3 +287,29 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
 
     cache.set(cache_key, img_bytes, 86400)
     return img_bytes
+
+
+def generate_story_image(days, **badge_kwargs):
+    """Portrait 1080x1920 story / phone-wallpaper version of a medallion (no watermark).
+
+    The medallion sits centred over a blurred, darkened blow-up of itself, so
+    the background always matches whichever style was chosen.
+    """
+    from PIL import ImageEnhance, ImageFilter
+
+    badge_kwargs.update(size=1080, watermark=False)
+    badge = Image.open(BytesIO(generate_milestone_image(days, **badge_kwargs))).convert('RGB')
+    width, height = 1080, 1920
+
+    background = badge.resize((height, height), Image.LANCZOS)
+    left = (height - width) // 2
+    background = background.crop((left, 0, left + width, height))
+    background = background.filter(ImageFilter.GaussianBlur(40))
+    background = ImageEnhance.Brightness(background).enhance(0.45)
+
+    medallion = badge.resize((960, 960), Image.LANCZOS)
+    background.paste(medallion, ((width - 960) // 2, (height - 960) // 2))
+
+    buffer = BytesIO()
+    background.save(buffer, 'PNG', optimize=True)
+    return buffer.getvalue()

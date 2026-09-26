@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Your HD Medallion Pack — MyRecoveryPal{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<style>
+    .pack-page { max-width: 760px; margin: 2rem auto; padding: 0 1rem; text-align: center; }
+    .pack-page h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.35rem; }
+    .pack-page .pack-sub { color: var(--text-muted, #666); margin-bottom: 1.5rem; }
+    .pack-preview { width: 100%; max-width: 360px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); }
+    .pack-downloads { display: grid; gap: 0.75rem; margin: 1.75rem auto 1rem; max-width: 460px; }
+    .pack-download {
+        display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+        padding: 0.9rem 1.1rem; border-radius: 12px; text-decoration: none; font-weight: 600;
+        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+    }
+    .pack-page a.pack-download, .pack-page a.pack-download:hover { color: #fff; }
+    .pack-download:hover { transform: translateY(-1px); }
+    .pack-note { color: var(--text-muted, #666); font-size: 0.85rem; }
+    .pack-pending {
+        margin: 1.5rem auto; max-width: 460px; padding: 1rem 1.25rem; border-radius: 12px;
+        background: #fff7e0; color: #7a5a00;
+    }
+</style>
+
+<div class="pack-page">
+    {% if purchase.status == 'paid' %}
+    <h1>Your HD Medallion Pack</h1>
+    <p class="pack-sub">{{ purchase.days }} days. Every one of them counts.</p>
+    {% else %}
+    <h1>Almost there</h1>
+    {% endif %}
+
+    <img class="pack-preview" src="{{ preview_url }}" alt="Your {{ purchase.days }}-day medallion">
+
+    {% if purchase.status == 'paid' %}
+    <div class="pack-downloads">
+        {% for f in formats %}
+        <a class="pack-download" href="{{ f.url }}" download>
+            <span>{{ f.label }}</span> <i class="fas fa-download" aria-hidden="true"></i>
+        </a>
+        {% endfor %}
+    </div>
+    <p class="pack-note">
+        No myrecoverypal.com stamp on these versions.
+        {% if purchase.email %}We've emailed this link to {{ purchase.email }}; it's your key to the pack.{% else %}Bookmark this page; the link is your key to the pack.{% endif %}
+    </p>
+    {% elif purchase.status == 'refunded' %}
+    <div class="pack-pending">This pack was refunded, so the downloads are no longer available.</div>
+    {% else %}
+    <div class="pack-pending">
+        We're waiting for your payment to confirm. This usually takes a few seconds.
+        <a href="">Refresh this page</a>. We'll also email you the link.
+    </div>
+    {% endif %}
+
+    <p class="pack-note" style="margin-top: 1.5rem;">
+        <a href="{% url 'accounts:milestone_badge_creator' %}?days={{ purchase.days }}">Make another medallion</a>
+    </p>
+</div>
+{% endblock %}

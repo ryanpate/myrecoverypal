@@ -434,6 +434,11 @@ def handle_charge_refunded(charge):
     Keyed on the charge so partial-then-full refunds and Stripe's retries
     update one row instead of stacking duplicates.
     """
+    from .medallion_pack import revoke_for_refund
+    if revoke_for_refund(charge.get('payment_intent')):
+        logger.info(f"Medallion pack refunded: {charge.get('id')}")
+        return
+
     customer_id = charge.get('customer')
     charge_id = charge.get('id')
     amount_refunded = Decimal(str(charge.get('amount_refunded', 0))) / 100
@@ -532,6 +537,12 @@ def _subscription_period(stripe_subscription):
 
 def handle_checkout_session_completed(session):
     """Handle successful checkout session"""
+    from .medallion_pack import PACK_KIND, fulfil_checkout_session
+    if (session.get('metadata') or {}).get('kind') == PACK_KIND:
+        # One-time medallion pack: no Subscription involved (buyer may be anonymous).
+        fulfil_checkout_session(session)
+        return
+
     customer_id = session.get('customer')
     subscription_id = session.get('subscription')
 

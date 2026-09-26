@@ -5745,5 +5745,7 @@ def milestone_badge_creator(request):
         'time_formats': TIME_FORMATS,
         'free_styles': list(FREE_BADGE_STYLES),
         'is_anonymous': not user.is_authenticated,
+        'pack_included': (user.is_authenticated and hasattr(user, 'subscription')
+                          and user.subscription.is_premium()),
     }
     return render(request, 'accounts/milestone_badge_creator.html', context)

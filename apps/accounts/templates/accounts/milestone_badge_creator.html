@@ -330,6 +330,15 @@
         background: linear-gradient(135deg, var(--accent-green, #28a745), #20c997);
         color: white;
     }
+    .pack-cta-wrap { margin-top: 1.25rem; }
+    .pack-cta {
+        display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+        padding: 1rem 1.25rem; border-radius: 14px; text-align: left;
+        border: 1.5px solid #d4af37; background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(245, 215, 110, 0.06));
+    }
+    .pack-cta-text { display: flex; flex-direction: column; gap: 0.2rem; }
+    .pack-cta-text span { font-size: 0.85rem; color: var(--text-muted, #666); }
+    .pack-cta-btn { background: linear-gradient(135deg, #d4af37, #f5d76e); color: #1a2a44; font-weight: 700; }
     .btn-gallery {
         background: linear-gradient(135deg, #d4af37, #f5d76e);
         color: #1a2a44;
@@ -703,6 +712,25 @@
         </a>
         {% endif %}
     </div>
+
+    {# HD Medallion Pack — one-time $4.99, included with Premium. Paid CTA is web-only (App Store 3.1). #}
+    <form method="post" action="{% url 'accounts:medallion_pack_checkout' %}" id="pack-form"
+          class="pack-cta-wrap{% if not pack_included %} stripe-only{% endif %}" onsubmit="fillPackForm()">
+        {% csrf_token %}
+        <input type="hidden" name="days" value="{{ days_sober }}">
+        <input type="hidden" name="style"><input type="hidden" name="name">
+        <input type="hidden" name="time_format"><input type="hidden" name="font_size">
+        <input type="hidden" name="color"><input type="hidden" name="outline">
+        <div id="pack-cta" class="pack-cta">
+            <div class="pack-cta-text">
+                <strong>HD Medallion Pack</strong>
+                <span>Print-quality 2048px · story &amp; phone-wallpaper size · no site stamp</span>
+            </div>
+            <button type="submit" class="btn pack-cta-btn">
+                {% if pack_included %}Included with Premium: download{% else %}Get it for $4.99{% endif %}
+            </button>
+        </div>
+    </form>
 </div>
 
 <!-- Share Modal -->
@@ -840,6 +868,15 @@ function getParams() {
         params += '&name=' + encodeURIComponent(name);
     }
     return params;
+}
+
+function fillPackForm() {
+    // Freeze the current design into the pack purchase.
+    var form = document.getElementById('pack-form');
+    new URLSearchParams(getParams()).forEach(function(value, key) {
+        if (form.elements[key]) form.elements[key].value = value;
+    });
+    form.elements['days'].value = daysSober;
 }
 
 function scheduleUpdate() {
