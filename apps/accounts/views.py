@@ -3191,22 +3191,6 @@ def send_message_view(request, username):
         messages.error(request, 'This user has disabled messages.')
         return redirect('accounts:profile', username=username)
 
-    # Check message limit for free users
-    if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
-        from datetime import datetime
-        messages_this_month = request.user.sent_messages.filter(
-            sent_at__month=datetime.now().month,
-            sent_at__year=datetime.now().year
-        ).count()
-
-        if messages_this_month >= 10:
-            messages.warning(
-                request,
-                'You\'ve reached the free tier limit of 10 messages per month. '
-                'Upgrade to Premium for unlimited messaging!'
-            )
-            return redirect('accounts:pricing')
-
     if request.method == 'POST':
         form = SupportMessageForm(request.POST)
         if form.is_valid():

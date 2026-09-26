@@ -512,26 +512,6 @@
     font-weight: 900;
 }
 
-/* Premium/Anchor tab — gold accent for conversion */
-.native-tab.premium-tab {
-    color: #b8860b;
-}
-
-.native-tab.premium-tab i {
-    background: linear-gradient(135deg, #f0c040, #d4a017);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.native-tab.premium-tab.active {
-    color: #b8860b;
-}
-
-.native-tab.premium-tab.active::before {
-    background: linear-gradient(135deg, #f0c040, #d4a017);
-}
-
 .native-tab-badge {
     position: absolute;
     top: 2px;
@@ -583,16 +563,6 @@ body.android-native-app {
 .ios-native-app[data-theme="dark"] .native-tab.active::before,
 [data-theme="dark"] .ios-native-app .native-tab.active::before {
     background: #4db8e8;
-}
-
-.ios-native-app[data-theme="dark"] .native-tab.premium-tab,
-[data-theme="dark"] .ios-native-app .native-tab.premium-tab {
-    color: #f0c040;
-}
-
-.ios-native-app[data-theme="dark"] .native-tab.premium-tab.active::before,
-[data-theme="dark"] .ios-native-app .native-tab.premium-tab.active::before {
-    background: linear-gradient(135deg, #f0c040, #d4a017);
 }
 
 /* ========================================
@@ -1471,42 +1441,6 @@ a.btn-primary:hover {
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
 }
 
-/* Anchor AI CTA Button in Nav */
-.nav-links a.anchor-ai-cta {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff !important;
-    padding: 0.4rem 0.85rem;
-    border-radius: 25px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    position: relative;
-    animation: anchor-pulse 2s ease-in-out 3;
-}
-
-.nav-links a.anchor-ai-cta:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    color: #fff !important;
-}
-
-.nav-links a.anchor-ai-cta::after {
-    display: none;
-}
-
-.nav-links a.anchor-ai-cta.active {
-    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #667eea;
-}
-
-@keyframes anchor-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4); }
-    50% { box-shadow: 0 0 0 8px rgba(102, 126, 234, 0); }
-}
-
 /* ================================================
    COURT COMPLIANCE NAV PILL (top nav + mobile slide-out)
 ================================================ */
@@ -1551,16 +1485,6 @@ a.btn-primary:hover {
     letter-spacing: 1.2px;
     color: #888;
     padding: 0.35rem 1rem 0.25rem;
-}
-
-/* Anchor AI accent in mobile bottom nav */
-.mobile-bottom-nav a.anchor-bottom-tab {
-    color: #667eea;
-    font-weight: 600;
-}
-
-.mobile-bottom-nav a.anchor-bottom-tab.active {
-    color: #764ba2;
 }
 
 /* User Menu Styles */
@@ -1718,19 +1642,6 @@ a.cta-button:hover {
 
 [data-theme="dark"] .nav-login-link {
     color: #e0e0e0;
-}
-
-[data-theme="dark"] .nav-links a.anchor-ai-cta {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff !important;
-}
-
-[data-theme="dark"] .mobile-bottom-nav a.anchor-bottom-tab {
-    color: #8b9cf7;
-}
-
-[data-theme="dark"] .mobile-bottom-nav a.anchor-bottom-tab.active {
-    color: #a78bfa;
 }
 
 /* Mobile Menu */

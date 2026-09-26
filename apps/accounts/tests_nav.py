@@ -182,3 +182,99 @@ class MobileSlideOutReorgTest(TestCase):
         nav_html = content[nav_start:nav_end + 6] if nav_start >= 0 else ''
         self.assertNotIn('MyRecoveryCircle', nav_html)
         self.assertNotIn('>Install App<', nav_html)
+
+
+def _region(content, start_marker, end_marker):
+    """Slice the HTML from start_marker to the next end_marker."""
+    start = content.find(start_marker)
+    assert start >= 0, f'{start_marker!r} not found'
+    return content[start:content.find(end_marker, start)]
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class SimplifiedNavTest(TestCase):
+    """Nav is centred on what people actually use (2026-09-26 usage data):
+    Today, Meetings, Community, Tools. Low-use items (Shop, Anchor, Check-in,
+    Challenges) moved out of the primary slots."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='simple_nav', email='simple@example.com', password='pw'
+        )
+        self.client.login(username='simple_nav', password='pw')
+        self.content = self.client.get(reverse('accounts:progress')).content.decode()
+
+    def test_top_nav_primary_items(self):
+        top = _region(self.content, 'id="navLinks"', '</ul>\n            </div>')
+        for label, url in [('Today', reverse('accounts:progress')),
+                           ('Meetings', reverse('support_services:meeting_list')),
+                           ('Community', reverse('accounts:social_feed'))]:
+            self.assertIn(f'>{label}<', top)
+            self.assertIn(f'href="{url}"', top)
+        self.assertIn('Tools', top)
+        self.assertIn('court-cta', top)
+
+    def test_top_nav_drops_low_use_items(self):
+        top = _region(self.content, 'id="navLinks"', '</ul>\n            </div>')
+        self.assertNotIn('>Shop<', top)
+        self.assertNotIn('Try Anchor AI', top)
+        self.assertNotIn('>Check-in<', top)
+
+    def test_tools_dropdown_keeps_moved_items_reachable(self):
+        top = _region(self.content, 'id="navLinks"', '</ul>\n            </div>')
+        for url in [reverse('accounts:recovery_coach'),
+                    reverse('store:product_list'),
+                    reverse('accounts:milestone_badge_creator'),
+                    reverse('accounts:relapse_plan'),
+                    reverse('resources:list'),
+                    reverse('core:crisis')]:
+            self.assertIn(f'href="{url}"', top)
+
+    def test_challenges_removed_from_menus(self):
+        self.assertNotIn(f'href="{reverse("accounts:challenges_home")}"', self.content)
+
+    def test_web_bottom_bar(self):
+        bar = _region(self.content, 'id="mobileBottomNav"', '</nav>')
+        for label in ('Today', 'Meetings', 'Community', 'Me'):
+            self.assertIn(f'<span>{label}</span>', bar)
+        self.assertNotIn('Anchor', bar)
+
+    def test_native_tabs(self):
+        tabs = _region(self.content, 'id="nativeBottomTabs"', '</nav>')
+        for tab in ('today', 'meetings', 'community', 'notifications', 'profile'):
+            self.assertIn(f'data-tab="{tab}"', tabs)
+        self.assertNotIn('data-tab="coach"', tabs)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class SimplifiedNavLoggedOutTest(TestCase):
+
+    def test_logged_out_nav_leads_with_meetings_and_tools(self):
+        content = self.client.get(reverse('core:sobriety_calculator')).content.decode()
+        top = _region(content, 'id="navLinks"', '</ul>\n            </div>')
+        self.assertIn('>Meetings<', top)
+        self.assertIn('Tools', top)
+        self.assertIn(f'href="{reverse("core:sobriety_medallion_maker")}"', top)
+        self.assertNotIn('>Shop<', top)
+        bar = _region(content, 'id="mobileBottomNav"', '</nav>')
+        self.assertIn('<span>Meetings</span>', bar)
+        self.assertNotIn('Circle', bar)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class FreeMessagingUnlimitedTest(TestCase):
+    """Free users are not capped on direct messages (free tier = unlimited
+    social; a tiny network can't afford friction on its one social action)."""
+
+    def test_free_user_can_send_more_than_ten_messages(self):
+        from apps.accounts.models import SupportMessage
+        sender = User.objects.create_user(username='dm_a', email='a@example.com', password='pw')
+        User.objects.create_user(username='dm_b', email='b@example.com', password='pw')
+        sender.subscription.tier = 'free'
+        sender.subscription.status = 'active'
+        sender.subscription.save()
+        self.client.login(username='dm_a', password='pw')
+        url = reverse('accounts:send_message', args=['dm_b'])
+        for i in range(12):
+            self.client.post(url, {'subject': f's{i}', 'message': f'hello {i}'})
+        self.assertEqual(SupportMessage.objects.filter(sender=sender).count(), 12)

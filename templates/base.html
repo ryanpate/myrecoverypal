@@ -222,19 +222,13 @@
 
                 <ul class="nav-links" id="navLinks">
                     {% if user.is_authenticated %}
-                    <li><a href="{% url 'accounts:social_feed' %}"
-                            class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">Feed</a></li>
-                    <li><a href="{% url 'accounts:daily_checkin' %}"
-                            class="{% if request.resolver_match.url_name == 'daily_checkin' %}active{% endif %}">Check-in</a></li>
                     <li><a href="{% url 'accounts:progress' %}"
-                            class="{% if request.resolver_match.url_name == 'progress' %}active{% endif %}">Progress</a></li>
+                            class="{% if request.resolver_match.url_name == 'progress' %}active{% endif %}">Today</a></li>
+                    <li><a href="{% url 'support_services:meeting_list' %}"
+                            class="{% if 'support_services' in request.resolver_match.namespace %}active{% endif %}">Meetings</a></li>
+                    <li><a href="{% url 'accounts:social_feed' %}"
+                            class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">Community</a></li>
                     {% include 'partials/_resources_nav_dropdown.html' %}
-                    <li><a href="{% url 'store:product_list' %}"
-                            class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">Shop</a></li>
-                    <li><a href="{% url 'accounts:recovery_coach' %}"
-                            class="anchor-ai-cta {% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}">
-                            <i class="fas fa-robot" aria-hidden="true"></i> Try Anchor AI
-                        </a></li>
                     {% if is_court_user %}
                     <li><a href="{% url 'accounts:court_dashboard' %}"
                             class="court-cta {% if request.resolver_match.url_name == 'court_dashboard' %}active{% endif %}">
@@ -247,13 +241,9 @@
                         </a></li>
                     {% endif %}
                     {% else %}
+                    <li><a href="{% url 'support_services:meeting_list' %}"
+                            class="{% if 'support_services' in request.resolver_match.namespace %}active{% endif %}">Meetings</a></li>
                     {% include 'partials/_resources_nav_dropdown.html' %}
-                    <li><a href="{% url 'store:product_list' %}"
-                            class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">Shop</a></li>
-                    <li><a href="{% url 'core:ai_recovery_coach' %}"
-                            class="anchor-ai-cta {% if request.resolver_match.url_name == 'ai_recovery_coach' %}active{% endif %}">
-                            <i class="fas fa-robot" aria-hidden="true"></i> Try Anchor AI
-                        </a></li>
                     <li><a href="{% url 'core:court_ordered_meeting_tracker' %}"
                             class="court-cta {% if request.resolver_match.url_name == 'court_ordered_meeting_tracker' %}active{% endif %}">
                             <i class="fas fa-gavel" aria-hidden="true"></i> Court Compliance
@@ -322,18 +312,6 @@
                                 </a>
                                 <a href="{% url 'accounts:supporter_manage' %}" style="color: #52b788;">
                                     <i class="fas fa-hand-holding-heart"></i> My Support Circle
-                                </a>
-                                <a href="{% url 'accounts:challenges_home' %}">
-                                    <i class="fas fa-trophy"></i> Challenges
-                                    {% if user_active_challenges_count > 0 %}
-                                    <span class="message-count-badge">{{ user_active_challenges_count }}</span>
-                                    {% endif %}
-                                </a>
-                                <a href="{% url 'blog:post_list' %}">
-                                    <i class="fas fa-newspaper"></i> Blog
-                                </a>
-                                <a href="{% url 'resources:list' %}">
-                                    <i class="fas fa-book-open"></i> Resources
                                 </a>
                             </div>
 
@@ -483,59 +461,51 @@
                     style="color: #52b788;">
                     <i class="fas fa-hand-holding-heart" style="margin-right: 0.5rem;"></i> My Support Circle
                 </a>
-                <a href="{% url 'accounts:challenges_home' %}"
-                    class="{% if 'challenge' in request.resolver_match.url_name %}active{% endif %}">
-                    <i class="fas fa-trophy" style="margin-right: 0.5rem;"></i> Challenges
+            </div>
+
+            <div class="mobile-menu-section">
+                <div class="mobile-menu-label">Quick Actions</div>
+                <a href="{% url 'accounts:progress' %}"
+                    class="{% if request.resolver_match.url_name == 'progress' %}active{% endif %}">
+                    <i class="fas fa-sun" style="margin-right: 0.5rem;"></i> Today
+                </a>
+                <a href="{% url 'support_services:meeting_list' %}"
+                    class="{% if 'support_services' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-location-dot" style="margin-right: 0.5rem;"></i> Meetings
+                </a>
+                <a href="{% url 'accounts:social_feed' %}"
+                    class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">
+                    <i class="fas fa-circle-nodes" style="margin-right: 0.5rem;"></i> Community Feed
                 </a>
             </div>
 
             <div class="mobile-menu-section">
-                <div class="mobile-menu-label">Resources</div>
-                <a href="{% url 'resources:list' %}"
-                    class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
-                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Recovery Resources
-                </a>
-                <a href="{% url 'resources:educational_resources' %}">
-                    <i class="fas fa-graduation-cap" style="margin-right: 0.5rem;"></i> Educational Resources
-                </a>
-                <a href="{% url 'support_services:meeting_list' %}">
-                    <i class="fas fa-location-dot" style="margin-right: 0.5rem;"></i> Meeting Finder
+                <div class="mobile-menu-label">Tools</div>
+                <a href="{% url 'accounts:milestone_badge_creator' %}">
+                    <i class="fas fa-medal" style="margin-right: 0.5rem;"></i> Medallion Maker
                 </a>
                 <a href="{% url 'accounts:relapse_plan' %}">
                     <i class="fas fa-clipboard-list" style="margin-right: 0.5rem;"></i> Relapse Prevention Plan
+                </a>
+                <a href="{% url 'accounts:recovery_coach' %}"
+                    class="{% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}">
+                    <i class="fas fa-robot" style="margin-right: 0.5rem;"></i> Anchor AI Coach
+                </a>
+                <a href="{% url 'resources:list' %}"
+                    class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Recovery Resources
                 </a>
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-newspaper" style="margin-right: 0.5rem;"></i> Blog
                 </a>
-                <a href="{% url 'core:crisis' %}"
-                    class="{% if request.resolver_match.url_name == 'crisis' %}active{% endif %}">
-                    <i class="fas fa-heart" style="margin-right: 0.5rem;"></i> Crisis Help
-                </a>
-            </div>
-
-            <div class="mobile-menu-section">
-                <div class="mobile-menu-label">Quick Actions</div>
-                <a href="{% url 'accounts:social_feed' %}"
-                    class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">
-                    <i class="fas fa-circle-nodes" style="margin-right: 0.5rem;"></i> Feed
-                </a>
-                <a href="{% url 'accounts:daily_checkin' %}"
-                    class="{% if request.resolver_match.url_name == 'daily_checkin' %}active{% endif %}">
-                    <i class="fas fa-circle-check" style="margin-right: 0.5rem;"></i> Check-in
-                </a>
-                <a href="{% url 'accounts:progress' %}"
-                    class="{% if request.resolver_match.url_name == 'progress' %}active{% endif %}">
-                    <i class="fas fa-chart-line" style="margin-right: 0.5rem;"></i> Progress
-                </a>
-                <a href="{% url 'accounts:recovery_coach' %}"
-                    class="{% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}"
-                    style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15)); border-left: 3px solid #667eea; font-weight: 600;">
-                    <i class="fas fa-robot" style="margin-right: 0.5rem;"></i> Anchor AI Coach
-                </a>
                 <a href="{% url 'store:product_list' %}"
                     class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-bag-shopping" style="margin-right: 0.5rem;"></i> Recovery Shop
+                </a>
+                <a href="{% url 'core:crisis' %}"
+                    class="{% if request.resolver_match.url_name == 'crisis' %}active{% endif %}">
+                    <i class="fas fa-heart" style="margin-right: 0.5rem;"></i> Crisis Help
                 </a>
             </div>
 
@@ -576,27 +546,37 @@
                     class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
                     <i class="fas fa-home" style="margin-right: 0.5rem;"></i> Home
                 </a>
-                <a href="{% url 'store:product_list' %}"
-                    class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
-                    <i class="fas fa-bag-shopping" style="margin-right: 0.5rem;"></i> Recovery Shop
+                <a href="{% url 'support_services:meeting_list' %}"
+                    class="{% if 'support_services' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-location-dot" style="margin-right: 0.5rem;"></i> Meetings
                 </a>
             </div>
 
             <div class="mobile-menu-section">
-                <div class="mobile-menu-label">Resources</div>
+                <div class="mobile-menu-label">Tools</div>
+                <a href="{% url 'core:sobriety_calculator' %}">
+                    <i class="fas fa-calendar-check" style="margin-right: 0.5rem;"></i> Sobriety Calculator
+                </a>
+                <a href="{% url 'core:sobriety_medallion_maker' %}">
+                    <i class="fas fa-medal" style="margin-right: 0.5rem;"></i> Medallion Maker
+                </a>
+                <a href="{% url 'core:relapse_prevention_plan' %}">
+                    <i class="fas fa-clipboard-list" style="margin-right: 0.5rem;"></i> Relapse Prevention Plan
+                </a>
+                <a href="{% url 'core:ai_recovery_coach' %}">
+                    <i class="fas fa-robot" style="margin-right: 0.5rem;"></i> Anchor AI Coach
+                </a>
                 <a href="{% url 'resources:list' %}"
                     class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Recovery Resources
                 </a>
-                <a href="{% url 'resources:educational_resources' %}">
-                    <i class="fas fa-graduation-cap" style="margin-right: 0.5rem;"></i> Educational Resources
-                </a>
-                <a href="{% url 'support_services:meeting_list' %}">
-                    <i class="fas fa-location-dot" style="margin-right: 0.5rem;"></i> Meeting Finder
-                </a>
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
                     <i class="fas fa-newspaper" style="margin-right: 0.5rem;"></i> Blog
+                </a>
+                <a href="{% url 'store:product_list' %}"
+                    class="{% if 'store' in request.resolver_match.namespace %}active{% endif %}">
+                    <i class="fas fa-bag-shopping" style="margin-right: 0.5rem;"></i> Recovery Shop
                 </a>
                 <a href="{% url 'core:crisis' %}"
                     class="{% if request.resolver_match.url_name == 'crisis' %}active{% endif %}">
@@ -631,18 +611,17 @@
     <!-- Mobile Bottom Navigation Bar -->
     {% if user.is_authenticated %}
     <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <a href="{% url 'accounts:progress' %}" class="{% if request.resolver_match.url_name == 'progress' %}active{% endif %}">
+            <span>Today</span>
+        </a>
+        <a href="{% url 'support_services:meeting_list' %}" class="{% if 'support_services' in request.resolver_match.namespace %}active{% endif %}">
+            <span>Meetings</span>
+        </a>
         <a href="{% url 'accounts:social_feed' %}" class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">
-            <span>Feed</span>
-        </a>
-        <a href="{% url 'accounts:daily_checkin' %}" class="{% if request.resolver_match.url_name == 'daily_checkin' %}active{% endif %}">
-            <span>Check-in</span>
-        </a>
-        <a href="{% url 'accounts:recovery_coach' %}"
-            class="anchor-bottom-tab {% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}">
-            <span>Anchor AI</span>
+            <span>Community</span>
         </a>
         <a href="{% url 'accounts:profile' username=user.username %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
-            <span>Profile</span>
+            <span>Me</span>
         </a>
     </nav>
     {% else %}
@@ -650,12 +629,11 @@
         <a href="{% url 'core:index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
             <span>Home</span>
         </a>
-        <a href="{% url 'accounts:social_feed' %}" class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">
-            <span>Circle</span>
+        <a href="{% url 'support_services:meeting_list' %}" class="{% if 'support_services' in request.resolver_match.namespace %}active{% endif %}">
+            <span>Meetings</span>
         </a>
-        <a href="{% url 'core:ai_recovery_coach' %}"
-            class="{% if request.resolver_match.url_name == 'ai_recovery_coach' %}active{% endif %}">
-            <span>Anchor</span>
+        <a href="{% url 'core:sobriety_calculator' %}" class="{% if request.resolver_match.url_name == 'sobriety_calculator' %}active{% endif %}">
+            <span>Counter</span>
         </a>
         <a href="{% url 'accounts:login' %}">
             <span>Login</span>
@@ -666,17 +644,17 @@
     <!-- Native Bottom Tab Bar (iOS/Android — hidden on web) -->
     {% if user.is_authenticated %}
     <nav class="native-bottom-tabs" id="nativeBottomTabs">
-        <a href="{% url 'accounts:social_feed' %}" class="native-tab {% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}" data-tab="feed">
+        <a href="{% url 'accounts:progress' %}" class="native-tab {% if request.resolver_match.url_name == 'progress' %}active{% endif %}" data-tab="today">
             <i class="fas fa-house" aria-hidden="true"></i>
-            <span>Feed</span>
+            <span>Today</span>
         </a>
-        <a href="{% url 'accounts:progress' %}" class="native-tab {% if request.resolver_match.url_name == 'progress' %}active{% endif %}" data-tab="progress">
-            <i class="fas fa-chart-line" aria-hidden="true"></i>
-            <span>Progress</span>
+        <a href="{% url 'support_services:meeting_list' %}" class="native-tab {% if 'support_services' in request.resolver_match.namespace %}active{% endif %}" data-tab="meetings">
+            <i class="fas fa-location-dot" aria-hidden="true"></i>
+            <span>Meetings</span>
         </a>
-        <a href="{% url 'accounts:recovery_coach' %}" class="native-tab premium-tab {% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}" data-tab="coach">
-            <i class="fas fa-robot" aria-hidden="true"></i>
-            <span>Anchor</span>
+        <a href="{% url 'accounts:social_feed' %}" class="native-tab {% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}" data-tab="community">
+            <i class="fas fa-circle-nodes" aria-hidden="true"></i>
+            <span>Community</span>
         </a>
         <a href="{% url 'accounts:notifications' %}" class="native-tab {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}" data-tab="notifications">
             <i class="fas fa-bell" aria-hidden="true"></i>
