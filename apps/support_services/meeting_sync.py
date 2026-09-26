@@ -95,8 +95,6 @@ FEED_SOURCES = [
     # Added 2026-09-26 from a probe of 45 intergroups: metros with GA4 traffic
     # or coverage-gap searches and a public feed. Feeds answering 401 have
     # deliberately switched sharing off and are respected, not worked around.
-    # Also public but not yet added: indyaa.org, aadesmoines.org,
-    # aatucson.org, aarichmond.org.
     {
         "key": "denver",
         "url": "https://daccaa.org/wp-admin/admin-ajax.php?action=meetings",
@@ -145,6 +143,26 @@ FEED_SOURCES = [
     {
         "key": "cincinnati",
         "url": "https://aacincinnati.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/New_York",
+    },
+    {
+        "key": "indianapolis",
+        "url": "https://indyaa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Indiana/Indianapolis",
+    },
+    {
+        "key": "desmoines",
+        "url": "https://aadesmoines.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Chicago",
+    },
+    {
+        "key": "tucson",
+        "url": "https://aatucson.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Phoenix",  # Arizona: no DST (the feed omits zones)
+    },
+    {
+        "key": "richmond",
+        "url": "https://aarichmond.org/wp-admin/admin-ajax.php?action=meetings",
         "timezone": "America/New_York",
     },
     # Chicago (chicagoaa.org) and Los Angeles (lacoaa.org) both sit behind a
