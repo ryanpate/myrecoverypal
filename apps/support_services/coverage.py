@@ -17,12 +17,36 @@ MAX_QUERY_LEN = 120
 
 _ZIP_RE = re.compile(r'\b(\d{5})(?:-\d{4})?\b')
 
+# Place names and meeting names use letters, digits, spaces and a little
+# punctuation ("o'fallon mo", "omaha,ne", "10:10 meeting", "st. louis").
+# Anything else, and any SQL fragment, is a vulnerability scanner: they made
+# up 93 of the table's first 113 rows. (The ORM parameterises the search, so
+# the probes are harmless; this just keeps them out of the demand ranking.)
+_ALLOWED_RE = re.compile(r"^[\w\s,.'’#&/:-]+$")
+_SQL_RE = re.compile(
+    r"(--|/\*|\b(select|union|insert|update|delete|drop|sleep|benchmark|extractvalue|"
+    r"updatexml|concat|waitfor|information_schema|order\s+by|null)\b)",
+    re.IGNORECASE)
+
+
+def is_plausible_query(query):
+    """True if `query` could be a real place or meeting search."""
+    normalised = (query or '').strip().lower()
+    if not normalised or not _ALLOWED_RE.match(normalised) or _SQL_RE.search(normalised):
+        return False
+    compact = normalised.replace(' ', '').replace('-', '')
+    if compact.isdigit() and len(compact) not in (5, 9):  # ZIP, ZIP+4 or a Zoom ID
+        return False
+    return True
+
 
 def record_coverage_gap(query):
     """Note that `query` returned no meetings. Never raises."""
     try:
         normalised = (query or '').strip().lower()
         if not (MIN_QUERY_LEN <= len(normalised) <= MAX_QUERY_LEN):
+            return
+        if not is_plausible_query(normalised):
             return
 
         from apps.support_services.models import CoverageRequest

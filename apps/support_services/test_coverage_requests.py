@@ -132,3 +132,52 @@ class CoverageAdminTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         body = resp.content.decode()
         self.assertLess(body.index('60614'), body.index('62704'))
+
+
+# Real searches seen in production (2026-09-26) and the scanner probes that
+# made up 93 of the table's 113 rows.
+REAL_SEARCHES = [
+    'sequestered girls', '40353', '62704', 'omaha,ne', '10:10 meeting omaha,ne',
+    'milwaukee wisconsin', 'louisville ky', '254 838 134', '254838134',
+    'rising in recovery', 'dutchess county ny', '5:30pm meeting', 'northboro, ma',
+    "o'fallon mo", 'st. louis', 'winston-salem nc', 'coeur d’alene',
+]
+SCANNER_PROBES = [
+    "' union all select null,'jcynozlijmyqxklnhagwbuhrpiguxbfc',null--",
+    "union all select 'jcynozlijmyqxklnhagwbuhrpiguxbfc',null,null-- emztwz",
+    "%')) and extractvalue(1924,concat(0x7e,((select (elt(1924=1924,1)))),0x7e))-- -",
+    'order by 1-- -', ") and (113983570=113983570'", '1; drop table x', '<script>',
+    '12345678',  # digits that aren't a ZIP or ZIP+4
+]
+
+
+class PlausibleQueryTests(TestCase):
+
+    def test_real_searches_are_recorded(self):
+        from apps.support_services.coverage import is_plausible_query
+        for q in REAL_SEARCHES:
+            self.assertTrue(is_plausible_query(q), q)
+
+    def test_scanner_probes_are_not(self):
+        from apps.support_services.coverage import is_plausible_query
+        for q in SCANNER_PROBES:
+            self.assertFalse(is_plausible_query(q), q)
+
+    def test_probes_never_reach_the_table(self):
+        for q in SCANNER_PROBES:
+            record_coverage_gap(q)
+        self.assertFalse(CoverageRequest.objects.exists())
+
+
+class PurgeJunkMigrationTests(TestCase):
+
+    def test_purge_removes_probes_and_keeps_real_searches(self):
+        import importlib
+        from django.apps import apps as global_apps
+        for q in REAL_SEARCHES + SCANNER_PROBES:
+            CoverageRequest.objects.create(query=q)
+        mod = importlib.import_module(
+            'apps.support_services.migrations.0006_purge_junk_coverage_requests')
+        mod.purge(global_apps, None)
+        self.assertEqual(set(CoverageRequest.objects.values_list('query', flat=True)),
+                         set(REAL_SEARCHES))
