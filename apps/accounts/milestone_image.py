@@ -28,6 +28,15 @@ BADGE_STYLES = {
     'anchor': {'file': 'badge-anchor.png', 'label': 'Anchor'},
     'dove': {'file': 'badge-dove.png', 'label': 'Dove'},
     'mountain': {'file': 'badge-mountain.png', 'label': 'Mountain'},
+    # Added 2026-09-26 (Nano Banana Pro, from the classic layout).
+    'rosegold': {'file': 'badge-rosegold.png', 'label': 'Rose Gold'},
+    'emerald': {'file': 'badge-emerald.png', 'label': 'Emerald'},
+    'artdeco': {'file': 'badge-artdeco.png', 'label': 'Art Deco'},
+    'stainedglass': {'file': 'badge-stainedglass.png', 'label': 'Stained Glass'},
+    'sunrise': {'file': 'badge-sunrise.png', 'label': 'Sunrise'},
+    'sapphire': {'file': 'badge-sapphire.png', 'label': 'Sapphire'},
+    'onyx': {'file': 'badge-onyx.png', 'label': 'Onyx'},
+    'olive': {'file': 'badge-olive.png', 'label': 'Olive Branch'},
 }
 
 # Styles available to anonymous (non-signed-in) visitors. The rest are gated
@@ -171,7 +180,7 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
               f'{name.strip()[:30] if name else ""}')
     if size != 1080 or not watermark:
         params += f'_{size}_{int(watermark)}'
-    cache_key = f'milestone_v9_{hashlib.md5(params.encode()).hexdigest()}'
+    cache_key = f'milestone_v10_{hashlib.md5(params.encode()).hexdigest()}'
     cached = cache.get(cache_key)
     if cached:
         return cached

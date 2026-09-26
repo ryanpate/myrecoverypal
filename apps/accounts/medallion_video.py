@@ -32,7 +32,7 @@ def _ease_out(t):
 def generate_story_video(days, **badge_kwargs):
     """Return MP4 bytes for this medallion (cached; a render takes a few seconds)."""
     key_src = f'{days}_' + '_'.join(f'{k}={badge_kwargs[k]}' for k in sorted(badge_kwargs))
-    cache_key = f'medallion_video_v1_{hashlib.md5(key_src.encode()).hexdigest()}'
+    cache_key = f'medallion_video_v2_{hashlib.md5(key_src.encode()).hexdigest()}'
     cached = cache.get(cache_key)
     if cached:
         return cached
