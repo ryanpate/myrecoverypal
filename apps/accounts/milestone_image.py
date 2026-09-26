@@ -1,6 +1,7 @@
 """Generate shareable milestone badge images using badge PNG templates."""
 import hashlib
 import os
+from functools import lru_cache
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 from django.conf import settings
@@ -125,6 +126,7 @@ def _draw_outlined_text(draw, x, y, text, font, fill, outline_width):
     draw.text((x, y), text, fill=fill, font=font)
 
 
+@lru_cache(maxsize=256)
 def _load_font(size):
     try:
         return ImageFont.truetype(FONT_PATH, size)
@@ -165,22 +167,8 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
             so the HD pack (2048) looks identical, just sharper.
         watermark: Burn in the site URL. Only the paid HD pack turns it off.
     """
-    if style not in BADGE_STYLES:
-        style = 'classic'
-    if time_format not in TIME_FORMATS:
-        time_format = 'auto'
-    text_y = max(0, min(100, int(text_y)))
-    font_size = max(24, min(160, int(font_size)))
-
-    safe_name = name.strip()[:30] if name else ''
-
-    if color.startswith('#'):
-        rgb = _hex_to_rgb(color)
-    else:
-        rgb = TEXT_COLORS.get(color, TEXT_COLORS['white'])
-    fill = (*rgb, 255)
-
-    params = f'{days}_{style}_{time_format}_{text_y}_{font_size}_{color}_{int(outline)}_{safe_name}'
+    params = (f'{days}_{style}_{time_format}_{text_y}_{font_size}_{color}_{int(outline)}_'
+              f'{name.strip()[:30] if name else ""}')
     if size != 1080 or not watermark:
         params += f'_{size}_{int(watermark)}'
     cache_key = f'milestone_v9_{hashlib.md5(params.encode()).hexdigest()}'
@@ -188,12 +176,47 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
     if cached:
         return cached
 
-    config = BADGE_STYLES[style]
-    badge_path = os.path.join(BADGE_DIR, config['file'])
+    final = milestone_badge_image(days, style, name, time_format, text_y, font_size,
+                                  color, outline, size, watermark)
+    buffer = BytesIO()
+    final.save(buffer, 'PNG', optimize=True)
+    img_bytes = buffer.getvalue()
 
-    badge = Image.open(badge_path).convert('RGBA')
+    cache.set(cache_key, img_bytes, 86400)
+    return img_bytes
+
+
+def milestone_badge_image(days, style='classic', name='', time_format='auto',
+                          text_y=50, font_size=110, color='white', outline=True,
+                          size=1080, watermark=True):
+    """Validate the badge options and return the rendered badge as an RGB PIL image."""
+    if style not in BADGE_STYLES:
+        style = 'classic'
+    if time_format not in TIME_FORMATS:
+        time_format = 'auto'
+    text_y = max(0, min(100, int(text_y)))
+    font_size = max(24, min(160, int(font_size)))
+    safe_name = name.strip()[:30] if name else ''
+    if color.startswith('#'):
+        rgb = _hex_to_rgb(color)
+    else:
+        rgb = TEXT_COLORS.get(color, TEXT_COLORS['white'])
+    return render_badge(days, style, safe_name, time_format, text_y, font_size, (*rgb, 255),
+                        outline, size, watermark)
+
+
+@lru_cache(maxsize=8)
+def _load_template(style, size):
+    """Badge artwork resized to `size` — cached, since the source PNGs are 2048px."""
+    path = os.path.join(BADGE_DIR, BADGE_STYLES[style]['file'])
+    return Image.open(path).convert('RGBA').resize((size, size), Image.LANCZOS)
+
+
+def render_badge(days, style, safe_name, time_format, text_y, font_size, fill,
+                 outline, size, watermark):
+    """Draw the badge and return it as an RGB PIL image (inputs already validated)."""
+    badge = _load_template(style, size)
     target = size
-    badge = badge.resize((target, target), Image.LANCZOS)
     # Every pixel measurement below is tuned for a 1080px badge; scale them.
     scale = target / 1080
     font_size = round(font_size * scale)
@@ -278,15 +301,7 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
         _draw_outlined_text(draw, wm_x, wm_y, WATERMARK_TEXT, wm_font, (255, 255, 255, 210),
                             max(1, round(2 * scale)))
 
-    result = Image.alpha_composite(badge, overlay)
-    final = result.convert('RGB')
-
-    buffer = BytesIO()
-    final.save(buffer, 'PNG', optimize=True)
-    img_bytes = buffer.getvalue()
-
-    cache.set(cache_key, img_bytes, 86400)
-    return img_bytes
+    return Image.alpha_composite(badge, overlay).convert('RGB')
 
 
 def generate_story_image(days, **badge_kwargs):

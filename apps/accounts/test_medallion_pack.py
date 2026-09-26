@@ -23,6 +23,35 @@ def _img(data):
     return Image.open(BytesIO(data))
 
 
+class PackVideoTest(TestCase):
+    """The animated story video: real render, checked with ffmpeg metadata."""
+
+    def setUp(self):
+        cache.clear()
+
+    def test_story_video_is_portrait_mp4_about_five_seconds(self):
+        import tempfile
+        import imageio_ffmpeg
+        from apps.accounts.medallion_video import generate_story_video
+        data = generate_story_video(90, style='classic', name='Sam', color='gold')
+        self.assertEqual(data[4:8], b'ftyp')
+        with tempfile.NamedTemporaryFile(suffix='.mp4') as f:
+            f.write(data)
+            f.flush()
+            reader = imageio_ffmpeg.read_frames(f.name)
+            meta = next(reader)
+            reader.close()
+        self.assertEqual(tuple(meta['size']), (1080, 1920))
+        self.assertAlmostEqual(meta['duration'], 5.0, delta=0.2)
+
+    def test_story_video_is_cached(self):
+        from apps.accounts import medallion_video
+        with patch.object(medallion_video, '_render_video', return_value=b'mp4') as render:
+            medallion_video.generate_story_video(30, style='classic')
+            medallion_video.generate_story_video(30, style='classic')
+        self.assertEqual(render.call_count, 1)
+
+
 class PackImageTest(TestCase):
 
     def setUp(self):
@@ -138,11 +167,20 @@ class PackDownloadTest(TestCase):
             self.assertIn('attachment', resp['Content-Disposition'])
             self.assertEqual(_img(resp.content).size, size, fmt)
 
+    @patch('apps.accounts.medallion_pack_views.generate_story_video', return_value=b'mp4-bytes')
+    def test_paid_pack_serves_video(self, render):
+        p = _purchase()
+        resp = self.client.get(reverse('accounts:medallion_pack_file', args=[p.token, 'video']))
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp['Content-Type'], 'video/mp4')
+        self.assertIn('.mp4', resp['Content-Disposition'])
+        self.assertEqual(resp.content, b'mp4-bytes')
+
     def test_pack_page_lists_downloads(self):
         p = _purchase()
         resp = self.client.get(reverse('accounts:medallion_pack', args=[p.token]))
         self.assertEqual(resp.status_code, 200)
-        for fmt in ('hd', 'square', 'story'):
+        for fmt in ('hd', 'square', 'story', 'video'):
             self.assertContains(resp, reverse('accounts:medallion_pack_file', args=[p.token, fmt]))
 
     def test_unpaid_or_refunded_pack_is_not_downloadable(self):

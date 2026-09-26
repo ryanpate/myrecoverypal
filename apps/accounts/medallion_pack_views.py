@@ -14,6 +14,7 @@ from apps.core.analytics import queue_ga_event
 
 from .medallion_models import MedallionPackPurchase
 from .medallion_pack import PACK_KIND, PACK_PRICE_CENTS, fulfil_checkout_session
+from .medallion_video import generate_story_video
 from .milestone_image import (
     BADGE_STYLES, TEXT_COLORS, TIME_FORMATS, generate_milestone_image, generate_story_image,
 )
@@ -22,14 +23,16 @@ logger = logging.getLogger(__name__)
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-# format key -> (label, filename suffix, renderer)
+# format key -> (label, filename suffix + extension, content type, renderer)
 PACK_FORMATS = {
-    'hd': ('HD print quality (2048 × 2048)', 'hd',
+    'hd': ('HD print quality (2048 × 2048)', 'hd.png', 'image/png',
            lambda p: generate_milestone_image(p.days, size=2048, watermark=False, **p.badge_kwargs())),
-    'square': ('Square for posting (1080 × 1080)', 'square',
+    'square': ('Square for posting (1080 × 1080)', 'square.png', 'image/png',
                lambda p: generate_milestone_image(p.days, watermark=False, **p.badge_kwargs())),
-    'story': ('Story & phone wallpaper (1080 × 1920)', 'story',
+    'story': ('Story & phone wallpaper (1080 × 1920)', 'story.png', 'image/png',
               lambda p: generate_story_image(p.days, **p.badge_kwargs())),
+    'video': ('Animated video for Reels & TikTok (MP4)', 'animated.mp4', 'video/mp4',
+              lambda p: generate_story_video(p.days, **p.badge_kwargs())),
 }
 
 
@@ -89,8 +92,8 @@ def medallion_pack_checkout(request):
                 'product_data': {
                     'name': f'HD Medallion Pack — {fields["days"]} days '
                             f'({BADGE_STYLES[fields["style"]]["label"]})',
-                    'description': 'HD print-quality medallion, square post and '
-                                   'story/phone-wallpaper versions.',
+                    'description': 'HD print-quality medallion, square post, '
+                                   'story/phone-wallpaper and animated video versions.',
                 },
             },
         }],
@@ -143,7 +146,7 @@ def medallion_pack(request, token):
     formats = [
         {'key': key, 'label': label,
          'url': reverse('accounts:medallion_pack_file', args=[token, key])}
-        for key, (label, _suffix, _render) in PACK_FORMATS.items()
+        for key, (label, _filename, _content_type, _render) in PACK_FORMATS.items()
     ]
     if purchase.status == 'paid':  # show buyers the clean version they paid for
         preview_url = reverse('accounts:medallion_pack_file', args=[token, 'square'])
@@ -161,9 +164,9 @@ def medallion_pack_file(request, token, fmt):
     purchase = get_object_or_404(MedallionPackPurchase, token=token, status='paid')
     if fmt not in PACK_FORMATS:
         raise Http404
-    _label, suffix, render_format = PACK_FORMATS[fmt]
-    response = HttpResponse(render_format(purchase), content_type='image/png')
+    _label, filename, content_type, render_format = PACK_FORMATS[fmt]
+    response = HttpResponse(render_format(purchase), content_type=content_type)
     response['Content-Disposition'] = (
-        f'attachment; filename="myrecoverypal-medallion-{purchase.days}-days-{suffix}.png"')
+        f'attachment; filename="myrecoverypal-medallion-{purchase.days}-days-{filename}"')
     response['Cache-Control'] = 'private, max-age=3600'
     return response
