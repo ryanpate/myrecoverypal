@@ -435,8 +435,12 @@ def handle_charge_refunded(charge):
     update one row instead of stacking duplicates.
     """
     from .medallion_pack import revoke_for_refund
+    from .keepsakes import refund_keepsake
     if revoke_for_refund(charge.get('payment_intent')):
         logger.info(f"Medallion pack refunded: {charge.get('id')}")
+        return
+    if refund_keepsake(charge.get('payment_intent')):
+        logger.info(f"Keepsake refunded: {charge.get('id')}")
         return
 
     customer_id = charge.get('customer')
@@ -538,9 +542,14 @@ def _subscription_period(stripe_subscription):
 def handle_checkout_session_completed(session):
     """Handle successful checkout session"""
     from .medallion_pack import PACK_KIND, fulfil_checkout_session
-    if (session.get('metadata') or {}).get('kind') == PACK_KIND:
+    from . import keepsakes
+    kind = (session.get('metadata') or {}).get('kind')
+    if kind == PACK_KIND:
         # One-time medallion pack: no Subscription involved (buyer may be anonymous).
         fulfil_checkout_session(session)
+        return
+    if kind == keepsakes.KEEPSAKE_KIND:
+        keepsakes.fulfil_keepsake_session(session)
         return
 
     customer_id = session.get('customer')

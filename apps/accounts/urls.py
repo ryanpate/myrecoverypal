@@ -15,6 +15,7 @@ from apps.accounts.court_views import (
 from apps.accounts import supporter_views
 from apps.accounts import plan_views
 from apps.accounts import medallion_pack_views
+from apps.accounts import keepsake_views
 from .facility_views import (
     facility_join, facility_leave, facility_dashboard, facility_roster,
     facility_member_detail, facility_generate_invite, facility_revoke_member,
@@ -248,6 +249,12 @@ urlpatterns = [
     path('medallion-pack/success/', medallion_pack_views.medallion_pack_success, name='medallion_pack_success'),
     path('medallion-pack/<str:token>/', medallion_pack_views.medallion_pack, name='medallion_pack'),
     path('medallion-pack/<str:token>/<str:fmt>/', medallion_pack_views.medallion_pack_file, name='medallion_pack_file'),
+    # Printify keepsakes (mug, sticker) — auto-fulfilled
+    path('keepsake/checkout/', keepsake_views.keepsake_checkout, name='keepsake_checkout'),
+    path('keepsake/success/', keepsake_views.keepsake_success, name='keepsake_success'),
+    path('keepsake/webhook/printify/', keepsake_views.printify_webhook, name='printify_webhook'),
+    path('keepsake/<str:token>/', keepsake_views.keepsake_order, name='keepsake_order'),
+    path('keepsake/<str:token>/print.png', keepsake_views.keepsake_print_file, name='keepsake_print_file'),
 
     # Relapse / slip tracking
     path('log-slip/', views.log_slip_view, name='log_slip'),

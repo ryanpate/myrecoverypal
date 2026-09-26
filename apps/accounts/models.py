@@ -2067,4 +2067,4 @@ from apps.accounts.supporter_models import SupporterLink  # noqa: E402, F401
 from apps.accounts.plan_models import RelapsePreventionPlan  # noqa: E402, F401
 
 # Re-export the one-time medallion pack model so Django discovers it at app load
-from apps.accounts.medallion_models import MedallionPackPurchase  # noqa: E402, F401
+from apps.accounts.medallion_models import KeepsakeOrder, MedallionPackPurchase  # noqa: E402, F401

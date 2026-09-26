@@ -896,6 +896,11 @@ STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
 
+# Printify (medallion keepsakes, auto-fulfilled)
+PRINTIFY_API_KEY = os.environ.get('PRINTIFY_API_KEY', '')
+PRINTIFY_SHOP_ID = int(os.environ.get('PRINTIFY_SHOP_ID', '27555231'))  # "MyRecoveryPal" shop
+PRINTIFY_WEBHOOK_SECRET = os.environ.get('PRINTIFY_WEBHOOK_SECRET', '')
+
 # AI Recovery Coach
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 

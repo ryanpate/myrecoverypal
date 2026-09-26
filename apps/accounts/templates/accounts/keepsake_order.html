@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Your Medallion Keepsake — MyRecoveryPal{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<style>
+    .keep-page { max-width: 640px; margin: 2rem auto; padding: 0 1rem; text-align: center; }
+    .keep-page h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.35rem; }
+    .keep-sub { color: var(--text-muted, #666); margin-bottom: 1.5rem; }
+    .keep-preview { width: 100%; max-width: 300px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); }
+    .keep-steps { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin: 1.75rem 0 1rem; }
+    .keep-step { padding: 0.45rem 0.9rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600;
+                 background: rgba(127, 127, 127, 0.15); color: var(--text-muted, #666); }
+    .keep-step.done { background: #e3f4ec; color: #2f7a55; }
+    .keep-box { margin: 1rem auto; max-width: 460px; padding: 1rem 1.25rem; border-radius: 12px; }
+    .keep-box.info { background: rgba(77, 184, 232, 0.12); }
+    .keep-box.warn { background: #fff7e0; color: #7a5a00; }
+    .keep-page a.keep-track { display: inline-block; margin-top: 0.5rem; padding: 0.7rem 1.2rem; border-radius: 10px;
+                              background: #1e4d8b; color: #fff; font-weight: 700; text-decoration: none; }
+</style>
+
+<div class="keep-page">
+    <h1>{{ product.label }}</h1>
+    <p class="keep-sub">Celebrating {{ order.days }} days{% if order.name %}, {{ order.name }}{% endif %}.</p>
+
+    <img class="keep-preview" src="{{ preview_url }}" alt="Your {{ order.days }}-day medallion">
+
+    {% if order.status == 'refunded' %}
+    <div class="keep-box warn">This order was refunded.</div>
+    {% elif order.status == 'pending' %}
+    <div class="keep-box warn">
+        We're waiting for your payment to confirm. This usually takes a few seconds.
+        <a href="">Refresh this page</a>.
+    </div>
+    {% else %}
+    <div class="keep-steps">
+        <span class="keep-step done">Paid</span>
+        <span class="keep-step {% if order.status in 'submitted in_production shipped' %}done{% endif %}">Sent to printer</span>
+        <span class="keep-step {% if order.status in 'in_production shipped' %}done{% endif %}">Printing</span>
+        <span class="keep-step {% if order.status == 'shipped' %}done{% endif %}">Shipped</span>
+    </div>
+    {% if order.status == 'shipped' %}
+    <div class="keep-box info">
+        It's on the way{% if order.carrier %} via {{ order.carrier }}{% endif %}!
+        {% if order.tracking_url %}<br><a class="keep-track" href="{{ order.tracking_url }}" target="_blank" rel="noopener">Track your package</a>{% endif %}
+    </div>
+    {% elif order.status == 'failed' %}
+    <div class="keep-box warn">
+        We hit a snag sending this to the printer and have been alerted. We'll sort it out
+        and email you. Questions? <a href="mailto:{{ SUPPORT_EMAIL|default:'support@myrecoverypal.com' }}">Contact us</a>.
+    </div>
+    {% else %}
+    <div class="keep-box info">
+        Printed-to-order keepsakes usually ship within 2–5 business days.
+        {% if order.email %}We'll email {{ order.email }} with tracking.{% endif %}
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <p class="keep-sub" style="margin-top: 1.5rem; font-size: 0.85rem;">
+        Bookmark this page to check on your order.
+        <a href="{% url 'accounts:milestone_badge_creator' %}?days={{ order.days }}">Make another medallion</a>
+    </p>
+</div>
+{% endblock %}

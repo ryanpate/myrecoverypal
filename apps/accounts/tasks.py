@@ -1483,3 +1483,10 @@ def send_court_monthly_po_reports():
 
     logger.info(f'Court monthly PO reports sent: {sent}')
     return sent
+
+
+# Keepsake fulfilment tasks live with their service code; import them here so
+# Celery's autodiscover_tasks() (which only imports tasks.py) registers them.
+from apps.accounts.keepsakes import (  # noqa: E402, F401
+    send_keepsake_to_production, submit_keepsake_order,
+)
