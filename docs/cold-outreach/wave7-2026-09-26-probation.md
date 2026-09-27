@@ -863,7 +863,7 @@ Prefer not to hear from us? Unsubscribe here:
 https://www.myrecoverypal.com/email/cold-outreach-unsubscribe/?email=gkempf@lawrencecounty.in.gov
 ```
 
-## Wave 8 (next batch, 18 counties, not drafted)
+## Wave 8 (18 counties, drafted 2026-09-26; see wave8-2026-09-26-probation.md)
 
 - DeKalb — Ryan Hull — RHull@co.dekalb.in.us
 - Fulton — Andrew Holland — aholland@co.fulton.in.us
