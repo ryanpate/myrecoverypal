@@ -364,8 +364,11 @@ WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = DEBUG
 # Don't fail if a referenced static file is missing (warn instead)
 WHITENOISE_MANIFEST_STRICT = False
-# Long-lived cache for hashed files (1 year) - browsers won't re-request
-WHITENOISE_MAX_AGE = 31536000  # 1 year for hashed files
+# Cache lifetime for files WITHOUT a content hash in their name (robots.txt
+# and the other root_files, unhashed /static/ paths). Hashed files are always
+# served "immutable" by WhiteNoise regardless of this setting. Keep it short:
+# at one year, an edited robots.txt stayed cached at Cloudflare for days.
+WHITENOISE_MAX_AGE = 3600
 
 # Only set WHITENOISE_ROOT if the directory exists
 if os.path.exists(BASE_DIR / 'root_files'):
