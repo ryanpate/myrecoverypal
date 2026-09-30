@@ -201,6 +201,7 @@ INSTAGRAM_HANDLE = "@myrecoverypal"
 MIDDLEWARE = [
     'apps.accounts.middleware.HealthCheckMiddleware',  # Railway deploy health check (must be first)
     'django.middleware.security.SecurityMiddleware',
+    'apps.accounts.middleware.ContentSecurityPolicyMiddleware',  # Content-Security-Policy header
     'apps.accounts.middleware.DatabaseConnectionMiddleware',  # Fix stale DB connections
     'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static files
     'django.middleware.gzip.GZipMiddleware',  # Compress HTML/JSON responses (reduces egress ~70%)
@@ -713,11 +714,12 @@ if not DEBUG:
     SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
     SECURE_REFERRER_POLICY = 'same-origin'
 
-# Content Security Policy (CSP) for enhanced security
-# Enabled in production for better security
+# Content Security Policy: the header is built by
+# apps.accounts.middleware.ContentSecurityPolicyMiddleware. Set
+# CSP_REPORT_ONLY=true to stop enforcing (report-only) without a deploy.
+CSP_REPORT_ONLY = os.environ.get('CSP_REPORT_ONLY', 'False').lower() == 'true'
+
 if not DEBUG:
-    # Basic CSP - adjust as needed for your third-party integrations
-    # Note: Some features may require additional CSP directives
     SECURE_CONTENT_TYPE_OPTIONS_HEADER = True  # X-Content-Type-Options: nosniff
     SECURE_BROWSER_XSS_FILTER = True  # X-XSS-Protection: 1; mode=block
     X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking

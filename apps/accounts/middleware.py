@@ -1,6 +1,7 @@
 import logging
 import time
 from django.utils import timezone
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.db import close_old_connections, connection, connections, OperationalError, InterfaceError
@@ -39,6 +40,92 @@ class HealthCheckMiddleware:
         if request.path == '/healthz/':
             return HttpResponse('ok', content_type='text/plain')
         return self.get_response(request)
+
+
+class ContentSecurityPolicyMiddleware:
+    """Send a Content-Security-Policy header on every response.
+
+    What it buys: scripts, styles, frames, fonts and XHR/fetch targets are
+    limited to this site plus the third parties listed below; plugins
+    (<object>/<embed>) and <base> hijacking are off; pages can't be framed;
+    forms can only post here or on to Stripe.
+
+    What it does NOT buy: protection against injected inline script. The
+    templates rely on ~120 inline <script> blocks and ~190 inline on*=
+    handlers, so script-src has to keep 'unsafe-inline'. Dropping it means
+    moving those handlers into JS files and adding nonces — until then,
+    output escaping remains the XSS defence and this header is a second layer.
+
+    When a page starts loading something from a new host it must be added
+    here, or browsers will block it (look for "Refused to load" in the
+    console). CSP_REPORT_ONLY=true switches to report-only without a deploy.
+    """
+
+    DIRECTIVES = {
+        'default-src': ["'self'"],
+        'script-src': [
+            "'self'", "'unsafe-inline'",
+            'https://www.googletagmanager.com',           # Google Analytics (gtag.js)
+            'https://cdn.jsdelivr.net',                   # Bootstrap bundle, Chart.js
+            'https://cdnjs.cloudflare.com',               # CodeMirror in the Summernote editor
+            'https://js.stripe.com',                      # Stripe.js on the pricing page
+        ],
+        'style-src': [
+            "'self'", "'unsafe-inline'",
+            'https://cdn.jsdelivr.net', 'https://cdnjs.cloudflare.com',
+            'https://fonts.googleapis.com',
+        ],
+        'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com', 'https://cdnjs.cloudflare.com'],
+        # Link-preview cards show images from arbitrary sites; uploads preview as blob:
+        'img-src': ["'self'", 'data:', 'blob:', 'https:', 'capacitor://localhost'],
+        'media-src': ["'self'", 'blob:', 'https://res.cloudinary.com'],
+        'connect-src': [
+            "'self'", 'capacitor://localhost',
+            'https://*.google-analytics.com', 'https://*.analytics.google.com',
+            'https://*.googletagmanager.com', 'https://*.g.doubleclick.net',
+            'https://*.google.com',
+            'https://api.stripe.com',
+        ],
+        'frame-src': ["'self'", 'https://js.stripe.com', 'https://hooks.stripe.com'],
+        'worker-src': ["'self'"],
+        'manifest-src': ["'self'"],
+        'object-src': ["'none'"],
+        'base-uri': ["'self'"],
+        # Checkout and billing-portal views answer a form POST with a redirect
+        # to Stripe, and browsers apply form-action to that redirect.
+        'form-action': ["'self'", 'https://checkout.stripe.com', 'https://billing.stripe.com'],
+        'frame-ancestors': ["'none'"],
+    }
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+        self.policy = self._build(self.DIRECTIVES)
+        # The Summernote editor is an iframe embedded in our own blog/admin
+        # forms, and django-summernote loads jQuery and Bootstrap 3 from CDNs
+        # inside it. Those hosts are allowed for the editor pages only.
+        editor_cdns = ['https://code.jquery.com', 'https://stackpath.bootstrapcdn.com']
+        self.summernote_policy = self._build({
+            **self.DIRECTIVES,
+            'script-src': self.DIRECTIVES['script-src'] + editor_cdns,
+            'style-src': self.DIRECTIVES['style-src'] + editor_cdns,
+            'font-src': self.DIRECTIVES['font-src'] + editor_cdns,
+            'frame-ancestors': ["'self'"],
+        })
+
+    @staticmethod
+    def _build(directives):
+        return '; '.join(f"{name} {' '.join(values)}" for name, values in directives.items())
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        header = ('Content-Security-Policy-Report-Only'
+                  if getattr(settings, 'CSP_REPORT_ONLY', False)
+                  else 'Content-Security-Policy')
+        if header not in response:
+            response[header] = (self.summernote_policy
+                                if request.path.startswith('/summernote/')
+                                else self.policy)
+        return response
 
 
 class DatabaseConnectionMiddleware:
