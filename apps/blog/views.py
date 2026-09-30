@@ -301,18 +301,11 @@ def backfill_blog_push(request, slug):
     Admin-only view to re-run push notification fan-out for a blog post
     whose enqueue failed at publish time (e.g. transient Redis blip).
 
-    Access: /blog/admin/backfill-push/<slug>/?key=<ADMIN_SECRET_KEY>
+    Access: /blog/admin/backfill-push/<slug>/ (superuser login)
     Runs the fan-out synchronously in the web process (no Celery required),
     so it works even if the broker is still flaky.
     """
-    import os
-    secret_key = request.GET.get('key', '')
-    admin_secret = os.environ.get('ADMIN_SECRET_KEY', '')
-    is_authorized = (
-        (request.user.is_authenticated and request.user.is_superuser) or
-        (admin_secret and secret_key == admin_secret)
-    )
-    if not is_authorized:
+    if not (request.user.is_authenticated and request.user.is_superuser):
         return HttpResponse("Unauthorized.", status=403)
 
     post = Post.objects.filter(slug=slug).first()
@@ -338,22 +331,10 @@ def create_seo_posts(request):
     """
     Admin-only view to create SEO blog posts.
     Access at: /blog/admin/create-seo-posts/
-    Can be authenticated via:
-    1. Superuser login
-    2. Secret key query param matching ADMIN_SECRET_KEY env var
+    Superuser login required.
     """
-    import os
-    secret_key = request.GET.get('key', '')
-    admin_secret = os.environ.get('ADMIN_SECRET_KEY', '')
-
-    # Allow access if superuser OR valid secret key
-    is_authorized = (
-        (request.user.is_authenticated and request.user.is_superuser) or
-        (admin_secret and secret_key == admin_secret)
-    )
-
-    if not is_authorized:
-        return HttpResponse("Unauthorized. Superuser login or valid key required.", status=403)
+    if not (request.user.is_authenticated and request.user.is_superuser):
+        return HttpResponse("Unauthorized. Superuser login required.", status=403)
 
     # Force publish existing SEO posts that might be in draft
     seo_slugs = [

@@ -381,7 +381,7 @@ User (extends AbstractUser):
     avatar = ImageField()
 
     # Privacy
-    is_profile_public = BooleanField(default=True)
+    is_profile_public = BooleanField(default=False)  # opt-in; most members are non-public
     show_sobriety_date = BooleanField(default=True)
     allow_messages = BooleanField(default=True)
 

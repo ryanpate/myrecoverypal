@@ -331,9 +331,9 @@
                             <h4>{{ current_pal.get_full_name|default:current_pal.username }}</h4>
                             <p class="text-muted mb-2">@{{ current_pal.username }}</p>
                             <span class="status-badge status-active">Active Pal</span>
-                            {% if current_pal.get_days_sober > 0 %}
+                            {% if current_pal.get_public_days_sober > 0 %}
                             <div class="mt-2">
-                                <small class="text-muted">{{ current_pal.get_days_sober }} days sober</small>
+                                <small class="text-muted">{{ current_pal.get_public_days_sober }} days sober</small>
                             </div>
                             {% endif %}
                         </div>

@@ -160,9 +160,9 @@
                     <p class="text-muted">@{{ sponsor.username }}</p>
 
                     <div class="sponsor-stats">
-                        {% if sponsor.get_days_sober > 0 %}
+                        {% if sponsor.get_public_days_sober > 0 %}
                         <div class="stat-item">
-                            <div class="stat-number">{{ sponsor.get_days_sober }}</div>
+                            <div class="stat-number">{{ sponsor.get_public_days_sober }}</div>
                             <div>Days Sober</div>
                         </div>
                         {% endif %}

@@ -414,9 +414,9 @@
                         <div class="member-stat-number">{{ member.following_count|default:0 }}</div>
                         <div>Following</div>
                     </div>
-                    {% if member.get_days_sober > 0 %}
+                    {% if member.get_public_days_sober > 0 %}
                     <div class="member-stat">
-                        <div class="member-stat-number">{{ member.get_days_sober }}</div>
+                        <div class="member-stat-number">{{ member.get_public_days_sober }}</div>
                         <div>Days</div>
                     </div>
                     {% endif %}
@@ -428,9 +428,9 @@
                         <i class="fas fa-award"></i> Sponsor
                     </span>
                     {% endif %}
-                    {% if member.get_days_sober > 30 %}
+                    {% if member.get_public_days_sober > 30 %}
                     <span class="recovery-badge">
-                        <i class="fas fa-calendar-check"></i> {{ member.get_days_sober }} Days
+                        <i class="fas fa-calendar-check"></i> {{ member.get_public_days_sober }} Days
                     </span>
                     {% endif %}
                 </div>
@@ -444,11 +444,11 @@
                 {% if user.is_authenticated and user != member %}
                 <div class="member-actions">
                     {% if member.is_followed %}
-                    <button class="follow-btn following" onclick="followUser('{{ member.username }}')">
+                    <button class="follow-btn following" onclick="followUser('{{ member.username|escapejs }}')">
                         <i class="fas fa-check"></i> Following
                     </button>
                     {% else %}
-                    <button class="follow-btn follow" onclick="followUser('{{ member.username }}')">
+                    <button class="follow-btn follow" onclick="followUser('{{ member.username|escapejs }}')">
                         <i class="fas fa-user-plus"></i> Follow
                     </button>
                     {% endif %}

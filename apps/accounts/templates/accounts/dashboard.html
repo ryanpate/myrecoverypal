@@ -980,7 +980,7 @@
                         </div>
                         <div class="suggestion-reason">Similar interests</div>
                     </div>
-                    <button class="follow-suggestion-btn" onclick="followUser('{{ suggested_user.username }}')">
+                    <button class="follow-suggestion-btn" onclick="followUser('{{ suggested_user.username|escapejs }}')">
                         Follow
                     </button>
                 </div>

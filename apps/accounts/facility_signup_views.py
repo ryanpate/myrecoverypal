@@ -1,4 +1,5 @@
 """Self-serve facility onboarding: public signup + email verification."""
+import re
 import secrets
 
 from django.conf import settings
@@ -28,7 +29,9 @@ def _unique_facility_slug(name):
 
 
 def _unique_username(email):
-    base = email.split('@')[0] or 'staff'
+    # Keep only characters that are safe in URLs and inline JS — the raw
+    # local part of an email may contain quotes, slashes, etc.
+    base = re.sub(r'[^A-Za-z0-9_.-]', '', email.split('@')[0]) or 'staff'
     username, i = base, 1
     while User.objects.filter(username=username).exists():
         username = f'{base}{i}'

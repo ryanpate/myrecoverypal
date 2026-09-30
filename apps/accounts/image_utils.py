@@ -71,6 +71,15 @@ def validate_image(image_file):
     if content_type not in ALLOWED_IMAGE_TYPES:
         return False, "Invalid image format. Allowed: JPEG, PNG, GIF, WebP"
 
+    # The MIME type is whatever the client claims — confirm the bytes
+    # really are an image.
+    try:
+        Image.open(image_file).verify()
+    except Exception:
+        return False, "Invalid image format. Allowed: JPEG, PNG, GIF, WebP"
+    finally:
+        image_file.seek(0)
+
     return True, None
 
 

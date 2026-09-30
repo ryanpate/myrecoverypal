@@ -309,7 +309,10 @@ def onboarding_view(request):
             if pledge_reason:
                 user.pledge_reason = pledge_reason[:120]
             if request.FILES.get('pledge_photo'):
-                user.pledge_photo = request.FILES['pledge_photo']
+                from .image_utils import validate_image
+                is_valid, _ = validate_image(request.FILES['pledge_photo'])
+                if is_valid:
+                    user.pledge_photo = request.FILES['pledge_photo']
             user.has_completed_onboarding = True
             user.save()
             ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding')
@@ -2929,7 +2932,17 @@ class ProfileView(DetailView):
     context_object_name = 'profile_user'
     slug_field = 'username'
     slug_url_kwarg = 'username'
-    
+
+    def get(self, request, *args, **kwargs):
+        # Members who have not made their profile public are only visible to
+        # other logged-in members — never to the open internet.
+        if not request.user.is_authenticated:
+            profile_user = get_object_or_404(User, username=kwargs['username'])
+            if not profile_user.is_profile_public:
+                from django.contrib.auth.views import redirect_to_login
+                return redirect_to_login(request.get_full_path())
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile_user = self.get_object()
@@ -2937,7 +2950,10 @@ class ProfileView(DetailView):
         # Only show certain information if profile is public or it's the user's own profile
         if profile_user == self.request.user or profile_user.is_profile_public:
             context['show_full_profile'] = True
-            context['milestones'] = profile_user.milestones.all()[:10]
+            # Milestones are dated and counted from the sobriety date, so
+            # they follow the same privacy switch.
+            if profile_user == self.request.user or profile_user.show_sobriety_date:
+                context['milestones'] = profile_user.milestones.all()[:10]
             context['recent_posts'] = profile_user.blog_posts.filter(
                 status='published'
             )[:5] if hasattr(profile_user, 'blog_posts') else []
@@ -3982,12 +3998,13 @@ def leave_challenge(request, challenge_id):
 @login_required
 def notifications_api(request):
     """API endpoint to get user's notifications"""
-    notifications = request.user.notifications.all()[:20]
+    notifications = request.user.notifications.all()
 
     # Filter by read status if requested
     filter_unread = request.GET.get('unread_only', 'false').lower() == 'true'
     if filter_unread:
         notifications = notifications.filter(is_read=False)
+    notifications = notifications[:20]
 
     # Prepare notification data
     notification_data = []
@@ -4385,7 +4402,7 @@ def social_feed_posts_api(request):
             visible_posts = list(SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
                 'reactions',
                 'comments__author'
-            ).filter(visibility='public').order_by('-created_at'))
+            ).filter(visibility='public').order_by('-created_at')[:3])
 
         # Paginate
         paginator = Paginator(visible_posts, 15)
@@ -5218,17 +5235,10 @@ def delete_account(request):
 
 
 def fix_avatar_urls_view(request):
-    """Fix avatar fields with full Cloudinary URLs. Staff-only or secret key."""
-    import os
+    """Fix avatar fields with full Cloudinary URLs. Staff-only."""
     import re
 
-    admin_secret = os.environ.get('ADMIN_SECRET_KEY', '')
-    secret_key = request.GET.get('key', '')
-    is_authorized = (
-        (request.user.is_authenticated and request.user.is_staff) or
-        (admin_secret and secret_key == admin_secret)
-    )
-    if not is_authorized:
+    if not (request.user.is_authenticated and request.user.is_staff):
         return JsonResponse({'error': 'Unauthorized'}, status=403)
 
     dry_run = request.GET.get('dry_run', '1') == '1'
@@ -5258,18 +5268,11 @@ def fix_avatar_urls_view(request):
 
 
 def setup_review_account_view(request):
-    """Run setup_review_account management command via HTTP. Staff-only or secret key."""
-    import os
+    """Run setup_review_account management command via HTTP. Staff-only."""
     from django.core.management import call_command
     from io import StringIO
 
-    admin_secret = os.environ.get('ADMIN_SECRET_KEY', '')
-    secret_key = request.GET.get('key', '')
-    is_authorized = (
-        (request.user.is_authenticated and request.user.is_staff) or
-        (admin_secret and secret_key == admin_secret)
-    )
-    if not is_authorized:
+    if not (request.user.is_authenticated and request.user.is_staff):
         return JsonResponse({'error': 'Unauthorized'}, status=403)
 
     out = StringIO()
@@ -5349,7 +5352,8 @@ def link_preview_api(request):
             'User-Agent': 'Mozilla/5.0 (compatible; MyRecoveryPal/1.0; +https://www.myrecoverypal.com)',
             'Accept': 'text/html',
         })
-        with urllib.request.urlopen(req, timeout=5) as resp:
+        from .safe_fetch import open_public_url
+        with open_public_url(req, timeout=5) as resp:
             # Only parse HTML responses
             content_type = resp.headers.get('Content-Type', '')
             if 'text/html' not in content_type:

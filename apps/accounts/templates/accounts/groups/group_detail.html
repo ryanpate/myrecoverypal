@@ -817,8 +817,8 @@
                         <div>
                             <strong>{{ member.get_full_name|default:member.username|truncatewords:2 }}</strong>
                             <small class="text-muted d-block">@{{ member.username }}</small>
-                            {% if member.get_days_sober > 0 %}
-                            <small class="text-success">{{ member.get_days_sober }} days</small>
+                            {% if member.get_public_days_sober > 0 %}
+                            <small class="text-success">{{ member.get_public_days_sober }} days</small>
                             {% endif %}
                         </div>
                     </div>
@@ -1060,10 +1060,9 @@
         const toast = document.createElement('div');
         toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible`;
         toast.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
-        toast.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
+        toast.textContent = message;
+        toast.insertAdjacentHTML('beforeend',
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>');
 
         document.body.appendChild(toast);
 

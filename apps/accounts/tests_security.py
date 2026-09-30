@@ -245,7 +245,7 @@ class LinkPreviewImageTests(TestCase):
         resp_obj.read.return_value = html.encode()
         resp_obj.__enter__.return_value = resp_obj
         self.client.force_login(_user('viewer'))
-        with patch('urllib.request.urlopen', return_value=resp_obj):
+        with patch('apps.accounts.safe_fetch.open_public_url', return_value=resp_obj):
             return self.client.get(
                 reverse('accounts:link_preview_api'), {'url': 'https://evil.example/p'}).json()
 

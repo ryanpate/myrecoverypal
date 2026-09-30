@@ -179,6 +179,11 @@ class User(AbstractUser):
             return (timezone.now().date() - self.sobriety_date).days
         return 0
 
+    def get_public_days_sober(self):
+        """Days sober as other members may see it — 0 when the user has
+        chosen to hide their sobriety date."""
+        return self.get_days_sober() if self.show_sobriety_date else 0
+
     def get_sobriety_milestone(self):
         days = self.get_days_sober()
         if days >= 365 and self.sobriety_date:

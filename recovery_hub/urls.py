@@ -57,8 +57,9 @@ urlpatterns = [
     path('email/unsubscribe/<str:token>/', unsubscribe_marketing, name='unsubscribe_marketing'),
     path('email/cold-outreach-unsubscribe/', cold_outreach_unsubscribe, name='cold_outreach_unsubscribe'),
     path('ads.txt', ads_txt_view, name='ads'),
-    # Add allauth URLs if using django-allauth
-    path('accounts/', include('allauth.urls')),
+    # django-allauth's own views (login, signup, password reset, email
+    # management) are intentionally NOT mounted: the app uses the views in
+    # apps.accounts, and the allauth copies were an unthrottled second way in.
 ]
 
 # Debug toolbar URLs (only in development)

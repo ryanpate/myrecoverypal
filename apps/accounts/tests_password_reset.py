@@ -9,6 +9,7 @@ project only registers as 'accounts:password_reset_confirm' -> NoReverseMatch
 """
 from django.contrib.auth import get_user_model
 from django.core import mail
+from django.core.cache import caches
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -23,6 +24,8 @@ TEST_PW = 'a' * 12  # noqa: ggignore
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class PasswordResetEmailTests(TestCase):
     def setUp(self):
+        # Reset requests are rate limited per address; start each test clean.
+        caches['rate_limiting'].clear()
         self.user = User.objects.create_user(
             username='resetter', email='resetter@example.com', password=TEST_PW
         )

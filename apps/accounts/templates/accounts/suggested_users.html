@@ -124,7 +124,7 @@
                 {% else %}
                 <p class="user-bio text-muted"><i class="fas fa-info-circle"></i> No bio available</p>
                 {% endif %}
-                <button class="btn btn-follow" onclick="followUser('{{ user.username }}', this)">
+                <button class="btn btn-follow" onclick="followUser('{{ user.username|escapejs }}', this)">
                     <i class="fas fa-user-plus"></i> Follow
                 </button>
             </div>

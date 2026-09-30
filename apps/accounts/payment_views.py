@@ -246,11 +246,19 @@ def payment_success(request):
             # Retrieve the session from Stripe
             session = stripe.checkout.Session.retrieve(session_id)
 
+            # The session id arrives in the URL, so it can be shared: only
+            # apply it to the account whose Stripe customer paid for it.
+            subscription = request.user.subscription
+            if (not subscription.stripe_customer_id
+                    or session.customer != subscription.stripe_customer_id):
+                logger.warning(
+                    f'payment_success: session {session_id} does not belong to user {request.user.id}')
+                return redirect('accounts:pricing')
+
             # Get subscription details
             stripe_subscription = stripe.Subscription.retrieve(session.subscription)
 
             # Update local subscription
-            subscription = request.user.subscription
             price_id = stripe_subscription['items']['data'][0]['price']['id']
 
             # Determine tier from SubscriptionPlan by matching Stripe price ID
