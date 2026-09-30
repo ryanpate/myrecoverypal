@@ -311,7 +311,12 @@ def journal_stats(request):
     
     context = {
         'total_entries': total_entries,
-        'mood_trend': list(mood_trend),
+        # JSON-serialisable for the chart (rendered with |json_script)
+        'mood_trend': [
+            {'date': row['created_at__date'].isoformat(),
+             'avg_mood': round(float(row['avg_mood']), 2)}
+            for row in mood_trend
+        ],
         'top_tags': top_tags,
         'craving_stats': craving_stats,
         'writing_patterns': writing_patterns,

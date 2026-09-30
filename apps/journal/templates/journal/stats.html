@@ -210,19 +210,36 @@
     </div>
 </div>
 
+{% if mood_trend %}
+{{ mood_trend|json_script:"mood-trend-data" }}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    {% if mood_trend %}
     // Mood trend chart
     const ctx = document.getElementById('moodChart').getContext('2d');
-    const moodData = {{ mood_trend| safe }};
+    const moodData = JSON.parse(document.getElementById('mood-trend-data').textContent);
 
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: moodData.map(d => new Date(d.created_at__date).toLocaleDateString()),
+            // 'T00:00:00' keeps the label on the entry's own calendar day
+            labels: moodData.map(d => new Date(d.date + 'T00:00:00').toLocaleDateString()),
             datasets: [{
                 label: 'Average Mood',
                 data: moodData.map(d => d.avg_mood),
                 borderColor: '#667eea',
-                backgroundColor: 'rgba(102, 126,
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { min: 1, max: 10, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}
