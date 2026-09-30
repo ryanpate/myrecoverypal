@@ -460,6 +460,8 @@ REVENUECAT_IOS_API_KEY=<revenuecat-ios-api-key>
 
 ### Railway Services (Project: responsible-education)
 
+**Config lives in `.railway/railway.ts`** (Railway Infrastructure as Code; `railway.json` was removed 2026-09-30). It manages only `web` and `celery-worker` — both build from `Dockerfile.railway`. After editing it: `railway config plan`, review, then `railway config apply --yes`. Never add Postgres/Redis to that file or apply a full `railway config pull` import: it proposed changing the production Postgres image.
+
 | Service | Purpose | Start Command |
 |---------|---------|---------------|
 | **web** | Django app | `gunicorn recovery_hub.wsgi:application` (via start.sh) |

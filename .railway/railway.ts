@@ -17,10 +17,9 @@ const build = {
   watchPatterns: ["**", "!/docs/**", "!/ios/**", "!/android/**", "!/AppIcons/**", "!/*.md"],
 };
 
-const restart = {
-  restartPolicyType: "ON_FAILURE" as const,
-  restartPolicyMaxRetries: 10,
-};
+// railway.json also set restartPolicyType ON_FAILURE / 10 retries. That is
+// Railway's default, so it is not declared here (declaring it shows up as
+// permanent drift in `railway config plan`).
 
 export default defineRailway(() => {
   const myrecoverypal = github("ryanpate/myrecoverypal", { checkSuites: false });
@@ -29,7 +28,6 @@ export default defineRailway(() => {
   const web = service("web", {
     source: myrecoverypal,
     build,
-    deploy: restart,
     // Answered by HealthCheckMiddleware; start.sh runs migrations first, hence the long timeout.
     healthcheck: "/healthz/",
     healthcheckTimeout: 300,
@@ -83,7 +81,6 @@ export default defineRailway(() => {
   const celeryWorker = service("celery-worker", {
     source: myrecoverypal,
     build,
-    deploy: restart,
     start: "celery -A recovery_hub worker -l info -B --pool=solo",
     replicas: { "us-east4-eqdc4a": 1 },
     env: {
