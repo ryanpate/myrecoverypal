@@ -75,6 +75,10 @@ class Subscription(models.Model):
     stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)
     stripe_price_id = models.CharField(max_length=255, blank=True, null=True)
 
+    # RevenueCat customer (original_app_user_id) whose entitlement backs an
+    # Apple-sourced subscription — one purchase may upgrade one account only.
+    revenuecat_app_user_id = models.CharField(max_length=255, blank=True, null=True)
+
     # Billing dates
     current_period_start = models.DateTimeField(null=True, blank=True)
     current_period_end = models.DateTimeField(null=True, blank=True)

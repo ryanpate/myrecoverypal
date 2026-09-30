@@ -932,21 +932,47 @@ def reactivate_subscription(request):
     return redirect('accounts:subscription_management')
 
 
+def _fetch_revenuecat_subscriber(app_user_id):
+    """Return RevenueCat's `subscriber` object for an app user id, or None if
+    RevenueCat could not be reached."""
+    import requests
+    from urllib.parse import quote
+    api_key = (getattr(settings, 'REVENUECAT_SECRET_API_KEY', '')
+               or settings.REVENUECAT_IOS_API_KEY)
+    try:
+        resp = requests.get(
+            f'https://api.revenuecat.com/v1/subscribers/{quote(app_user_id, safe="")}',
+            headers={'Authorization': f'Bearer {api_key}'},
+            timeout=10,
+        )
+        resp.raise_for_status()
+        return resp.json()['subscriber']
+    except (requests.exceptions.RequestException, ValueError, KeyError) as e:
+        logger.error(f'RevenueCat verification failed: {e}')
+        return None
+
+
 @login_required
 @require_POST
 def ios_subscription_sync(request):
     """
     Sync iOS in-app purchase subscription state from RevenueCat.
     Called by capacitor-iap.js after purchase/restore.
+
+    The client only tells us *which* RevenueCat customer it is; whether that
+    customer holds the premium entitlement, for which product and until when,
+    is read from RevenueCat server-side. Nothing in the request body can
+    grant a tier on its own.
     """
+    from dateutil.parser import parse as parse_date
+
     try:
         data = json.loads(request.body)
     except (json.JSONDecodeError, ValueError):
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
-    is_premium = data.get('is_premium', False)
-    product_id = data.get('product_id')
-    expires_date = data.get('expires_date')
+    is_premium = bool(data.get('is_premium', False))
+    app_user_id = data.get('app_user_id')
 
     # Get or create subscription record
     subscription, created = Subscription.objects.get_or_create(
@@ -963,23 +989,44 @@ def ios_subscription_sync(request):
         return JsonResponse({'status': 'skipped', 'reason': 'active_stripe_subscription'})
 
     if is_premium:
+        if not app_user_id or not isinstance(app_user_id, str):
+            return JsonResponse({'error': 'app_user_id required'}, status=400)
+
+        subscriber = _fetch_revenuecat_subscriber(app_user_id)
+        if subscriber is None:
+            # Couldn't verify — leave the subscription untouched so the app
+            # can retry (Restore Purchases).
+            return JsonResponse({'error': 'verification_unavailable'}, status=503)
+
+        entitlement = (subscriber.get('entitlements') or {}).get('premium')
+        expires = None
+        if entitlement and entitlement.get('expires_date'):
+            expires = parse_date(entitlement['expires_date'])
+        is_premium = bool(entitlement) and (expires is None or expires > timezone.now())
+
+    if is_premium:
+        rc_id = subscriber.get('original_app_user_id') or app_user_id
+        if Subscription.objects.filter(
+                revenuecat_app_user_id=rc_id, subscription_source='apple',
+        ).exclude(user=request.user).exclude(tier='free').exists():
+            logger.warning(f'iOS sync rejected for user {request.user.id} — purchase already linked to another account')
+            return JsonResponse({'error': 'purchase_linked_to_another_account'}, status=409)
+
         # Derive tier from the purchased product rather than assuming
         # premium — only premium is sold via IAP today, but a future court/
         # supporter product must not silently grant the wrong tier.
+        product_id = entitlement.get('product_identifier') or ''
         tier = 'premium'
-        if product_id and 'court' in product_id:
+        if 'court' in product_id:
             tier = 'court'
-        elif product_id and 'supporter' in product_id:
+        elif 'supporter' in product_id:
             tier = 'supporter'
         subscription.tier = tier
         subscription.status = 'active'
         subscription.subscription_source = 'apple'
-        if expires_date:
-            try:
-                from dateutil.parser import parse as parse_date
-                subscription.current_period_end = parse_date(expires_date)
-            except (ValueError, ImportError):
-                pass
+        subscription.revenuecat_app_user_id = rc_id
+        if expires:
+            subscription.current_period_end = expires
         subscription.save()
         logger.info(f'iOS subscription activated for user {request.user.id}')
     else:

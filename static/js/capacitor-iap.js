@@ -163,6 +163,9 @@
                 credentials: 'same-origin',
                 body: JSON.stringify({
                     is_premium: isPremium,
+                    // The server verifies the entitlement with RevenueCat
+                    // for this customer; it does not trust is_premium.
+                    app_user_id: customerInfo ? customerInfo.originalAppUserId : null,
                     product_id: premiumInfo ? premiumInfo.productIdentifier : null,
                     expires_date: premiumInfo ? premiumInfo.expirationDate : null,
                     original_purchase_date: premiumInfo ? premiumInfo.originalPurchaseDate : null

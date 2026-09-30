@@ -22,6 +22,9 @@ django-cloudinary-storage==0.3.0
 # Rich text editor
 django-summernote==0.8.20.0
 
+# HTML sanitizer for user-authored blog post bodies
+nh3==0.3.7
+
 # Forms & UI
 django-crispy-forms==2.1
 crispy-bootstrap5==2024.2

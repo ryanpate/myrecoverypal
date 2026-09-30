@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static blog_extras %}
 
 {% block title %}{{ post.title }} | MyRecoveryPal Recovery Stories{% endblock %}
 
@@ -645,7 +645,7 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
         {% endif %}
 
         <div class="post-content-wrapper">
-            {{ post.content|safe }}
+            {{ post.content|sanitize_html }}
         </div>
 
         <div class="post-tags">

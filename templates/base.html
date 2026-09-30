@@ -1144,6 +1144,14 @@
             }
         }
 
+        // Notification text carries user-controlled strings (names, group
+        // and post titles) — escape everything before it goes into innerHTML.
+        function escapeNotificationText(value) {
+            return String(value == null ? '' : value)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
         function renderNotifications(notifications) {
             const listElement = document.getElementById('notificationList');
 
@@ -1158,23 +1166,22 @@
             }
 
             listElement.innerHTML = notifications.map(notification => {
-                const link = notification.link || '';
-                const escapedLink = link.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const esc = escapeNotificationText;
                 return `
                 <div class="notification-item ${notification.is_read ? '' : 'unread'}"
-                     data-id="${notification.id}"
-                     data-link="${escapedLink}"
+                     data-id="${esc(notification.id)}"
+                     data-link="${esc(notification.link)}"
                      onclick="handleNotificationClick(event, this)">
                     <div class="notification-avatar">
                         ${notification.sender_avatar ?
-                    `<img src="${notification.sender_avatar}" alt="${notification.sender_name}">` :
-                    `<i class="fas ${notification.icon}"></i>`
+                    `<img src="${esc(notification.sender_avatar)}" alt="${esc(notification.sender_name)}">` :
+                    `<i class="fas ${esc(notification.icon)}"></i>`
                 }
                     </div>
                     <div class="notification-content">
-                        <div class="notification-title">${notification.title}</div>
-                        <div class="notification-message">${notification.message}</div>
-                        <div class="notification-time">${notification.time_ago}</div>
+                        <div class="notification-title">${esc(notification.title)}</div>
+                        <div class="notification-message">${esc(notification.message)}</div>
+                        <div class="notification-time">${esc(notification.time_ago)}</div>
                     </div>
                 </div>
             `;}).join('');

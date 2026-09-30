@@ -638,13 +638,12 @@ def dashboard_view(request):
     # Get unread messages count
     unread_messages = user.received_messages.filter(is_read=False).count()
 
-    # Activity Feed - Show activities from users this user follows + own activities
+    # Activity Feed - Show public activities from users this user follows,
+    # plus all of their own (including private check-ins/slips)
     following_users = list(user.get_following().values_list('id', flat=True))
-    following_users.append(user.id)  # Include own activities
 
     recent_activities = ActivityFeed.objects.filter(
-        user_id__in=following_users,
-        is_public=True
+        Q(user_id__in=following_users, is_public=True) | Q(user=user)
     ).select_related('user').prefetch_related(
         'comments__user', 'likes'
     ).order_by('-created_at')[:15]
@@ -848,7 +847,8 @@ def daily_checkin_view(request):
                     title=f"Daily Check-in: {checkin.get_mood_display_with_emoji()}",
                     description=f"Feeling {checkin.get_mood_display().lower()}" +
                     (f" - {gratitude[:100]}..." if gratitude else ""),
-                    content_object=checkin
+                    content_object=checkin,
+                    is_public=False,
                 )
 
             # Create pledge activity for social proof
@@ -1136,7 +1136,8 @@ def quick_checkin(request):
             activity_type='check_in_posted',
             title=f"Daily Check-in: {checkin.get_mood_display()}",
             description=description,
-            content_object=checkin
+            content_object=checkin,
+            is_public=False,
         )
 
     return JsonResponse({
@@ -1445,7 +1446,8 @@ def progress_view(request):
 @require_POST
 def like_activity(request, activity_id):
     """AJAX endpoint to like/unlike an activity"""
-    activity = get_object_or_404(ActivityFeed, id=activity_id)
+    activity = get_object_or_404(
+        ActivityFeed, Q(is_public=True) | Q(user=request.user), id=activity_id)
 
     if request.user in activity.likes.all():
         activity.likes.remove(request.user)
@@ -1465,7 +1467,8 @@ def like_activity(request, activity_id):
 @require_POST
 def comment_on_activity(request, activity_id):
     """AJAX endpoint to comment on an activity"""
-    activity = get_object_or_404(ActivityFeed, id=activity_id)
+    activity = get_object_or_404(
+        ActivityFeed, Q(is_public=True) | Q(user=request.user), id=activity_id)
     content = request.POST.get('comment', '').strip()
 
     if content:
@@ -1975,6 +1978,14 @@ class RecoveryGroupListView(LoginRequiredMixin, ListView):
                 memberships__status='active'))
         ).select_related('creator')
 
+        # Secret groups are invitation-only: only their members see them
+        my_group_ids = GroupMembership.objects.filter(
+            user=self.request.user,
+            status__in=['active', 'moderator', 'admin']
+        ).values('group_id')
+        queryset = queryset.exclude(
+            Q(privacy_level='secret') & ~Q(id__in=my_group_ids))
+
         # Filter by group type
         group_type = self.request.GET.get('type')
         if group_type:
@@ -2011,6 +2022,15 @@ class RecoveryGroupDetailView(LoginRequiredMixin, DetailView):
     model = RecoveryGroup
     template_name = 'accounts/groups/group_detail.html'
     context_object_name = 'group'
+
+    def get_queryset(self):
+        # Secret groups are invitation-only: non-members get a 404
+        my_group_ids = GroupMembership.objects.filter(
+            user=self.request.user,
+            status__in=['active', 'moderator', 'admin']
+        ).values('group_id')
+        return RecoveryGroup.objects.exclude(
+            Q(privacy_level='secret') & ~Q(id__in=my_group_ids))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -2169,6 +2189,13 @@ def join_group(request, group_id):
             return JsonResponse({
                 'success': False,
                 'message': 'You are already a member of this group.'
+            })
+
+        # Secret groups can only be joined through an invite link
+        if group.privacy_level == 'secret':
+            return JsonResponse({
+                'success': False,
+                'message': 'This group is invitation only.'
             })
 
         # Check if group is full
@@ -5336,6 +5363,10 @@ def link_preview_api(request):
         title = parser.og.get('og:title', parser.title or '').strip()
         description = parser.og.get('og:description', '').strip()
         image = parser.og.get('og:image', '').strip()
+        # og:image is attacker-controlled and ends up in an <img src> on the
+        # feed — only pass through a plain http(s) URL.
+        if not re.match(r'^https?://[^\s"\'<>`]+$', image):
+            image = ''
         site_name = parser.og.get('og:site_name', '').strip()
 
         if not title and not description:
@@ -5455,6 +5486,7 @@ def log_slip_view(request):
             activity_type='check_in_posted',
             title='Logged a slip',
             description='Continuing the recovery journey.',
+            is_public=False,
         )
 
         messages.success(

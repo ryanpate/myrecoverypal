@@ -2789,7 +2789,9 @@ document.getElementById('editPostModal').addEventListener('click', function(e) {
     function escapeHtml(str) {
         var div = document.createElement('div');
         div.textContent = str;
-        return div.innerHTML;
+        // innerHTML leaves quotes alone; escape them so the result is also
+        // safe inside an attribute (the preview image src).
+        return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
     function processPostContent(el) {
