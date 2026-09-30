@@ -49,6 +49,13 @@ class ContentSecurityPolicyTests(TestCase):
                      'https://cdn.jsdelivr.net', 'https://js.stripe.com'):
             self.assertIn(host, scripts)
 
+    def test_cloudflare_web_analytics_beacon_is_allowed(self):
+        """Cloudflare injects this script at the edge in production — it is
+        not in any template, so it never shows up in local testing."""
+        policy = self._policy()
+        self.assertIn('https://static.cloudflareinsights.com', policy['script-src'])
+        self.assertIn('https://cloudflareinsights.com', policy['connect-src'])
+
     def test_forms_may_post_to_stripe_checkout_redirects(self):
         """The checkout/portal views answer a form POST with a redirect to
         Stripe; browsers apply form-action to that redirect."""

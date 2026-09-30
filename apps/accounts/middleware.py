@@ -69,6 +69,9 @@ class ContentSecurityPolicyMiddleware:
             'https://cdn.jsdelivr.net',                   # Bootstrap bundle, Chart.js
             'https://cdnjs.cloudflare.com',               # CodeMirror in the Summernote editor
             'https://js.stripe.com',                      # Stripe.js on the pricing page
+            # Cloudflare Web Analytics beacon. Injected at Cloudflare's edge,
+            # so it is in no template and only appears in production.
+            'https://static.cloudflareinsights.com',
         ],
         'style-src': [
             "'self'", "'unsafe-inline'",
@@ -85,6 +88,7 @@ class ContentSecurityPolicyMiddleware:
             'https://*.googletagmanager.com', 'https://*.g.doubleclick.net',
             'https://*.google.com',
             'https://api.stripe.com',
+            'https://cloudflareinsights.com',             # Cloudflare Web Analytics reports
         ],
         'frame-src': ["'self'", 'https://js.stripe.com', 'https://hooks.stripe.com'],
         'worker-src': ["'self'"],
