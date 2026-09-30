@@ -199,6 +199,7 @@ FACEBOOK_PAGE = "https://www.facebook.com/myrecoverypal"
 INSTAGRAM_HANDLE = "@myrecoverypal"
 
 MIDDLEWARE = [
+    'apps.accounts.middleware.HealthCheckMiddleware',  # Railway deploy health check (must be first)
     'django.middleware.security.SecurityMiddleware',
     'apps.accounts.middleware.DatabaseConnectionMiddleware',  # Fix stale DB connections
     'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static files

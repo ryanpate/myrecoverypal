@@ -45,6 +45,8 @@ Disallow: /accounts/court/
 Disallow: /journal/
 Disallow: /admin/
 Disallow: /api/
+# POST-only form endpoint on every meeting page; crawlers GET it and get 405s
+Disallow: /support/meetings/*/remind/
 
 # Note: /accounts/login/?next= and /accounts/register/?next= variants are
 # intentionally NOT disallowed here. SEONoIndexMiddleware serves them with

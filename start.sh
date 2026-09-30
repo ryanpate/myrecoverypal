@@ -19,8 +19,10 @@ python manage.py populate_resource_content 2>/dev/null || true
 python manage.py populate_category_resources 2>/dev/null || true
 
 echo "Starting gunicorn..."
+# 2 worker processes x 4 threads: 8 concurrent requests for about half the
+# memory of 4 single-threaded workers (memory is ~85% of the Railway bill).
 # Access log format: the default logs %(h)s, which behind Railway's proxy is
 # always 100.64.0.x and tells us nothing about who is calling. Log the real
 # client (cf-connecting-ip via Cloudflare, x-forwarded-for otherwise) and the
 # request duration %(L)s, so a traffic spike can be attributed and timed.
-exec gunicorn recovery_hub.wsgi:application -c /app/gunicorn.conf.py --bind 0.0.0.0:$PORT --timeout 120 --workers 4 --preload --max-requests 1000 --max-requests-jitter 100 --access-logfile - --error-logfile - --access-logformat '%({cf-connecting-ip}i)s %({x-forwarded-for}i)s %(t)s "%(r)s" %(s)s %(b)s %(L)s "%(f)s" "%(a)s"'
+exec gunicorn recovery_hub.wsgi:application -c /app/gunicorn.conf.py --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --threads 4 --preload --max-requests 1000 --max-requests-jitter 100 --access-logfile - --error-logfile - --access-logformat '%({cf-connecting-ip}i)s %({x-forwarded-for}i)s %(t)s "%(r)s" %(s)s %(b)s %(L)s "%(f)s" "%(a)s"'

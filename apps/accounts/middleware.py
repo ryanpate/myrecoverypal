@@ -2,6 +2,7 @@ import logging
 import time
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from django.http import HttpResponse
 from django.db import close_old_connections, connection, connections, OperationalError, InterfaceError
 
 User = get_user_model()
@@ -21,6 +22,23 @@ except ImportError:  # sqlite (local dev / build phase)
     pass
 else:
     DB_CONNECTION_ERRORS += (psycopg2.OperationalError, psycopg2.InterfaceError)
+
+
+class HealthCheckMiddleware:
+    """Answer Railway's deploy health check (GET /healthz/) before anything
+    else runs. The probe is plain HTTP with Host: healthcheck.railway.app, so
+    it has to bypass the HTTPS/www redirects and host validation. Without a
+    health check Railway switches traffic to a new container as soon as it
+    starts — while start.sh is still running migrations — and visitors get
+    502s until gunicorn is up."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.path == '/healthz/':
+            return HttpResponse('ok', content_type='text/plain')
+        return self.get_response(request)
 
 
 class DatabaseConnectionMiddleware:
