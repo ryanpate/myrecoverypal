@@ -18,7 +18,10 @@ User = get_user_model()
 _TEST_SETTINGS = {
     'PREPEND_WWW': False,
     'SECURE_SSL_REDIRECT': False,
-    'STATICFILES_STORAGE': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    'STORAGES': {
+        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+    },
 }
 
 

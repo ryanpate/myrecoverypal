@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-03-03
 **Project:** MyRecoveryPal - Social Recovery Platform
-**Tech Stack:** Django 5.0.10, PostgreSQL, Redis, Celery, Capacitor Mobile
+**Tech Stack:** Django 5.2 LTS, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
 **Current Users:** 18 registered, ~58 monthly active visitors
 
@@ -273,10 +273,10 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 ## Tech Stack
 
 ### Backend
-- **Django 5.0.10** - Framework
+- **Django 5.2 LTS** - Framework
 - **PostgreSQL** - Database (via `DATABASE_URL`)
 - **Redis 5.0.1** - Cache + Celery broker
-- **Gunicorn 21.2.0** - WSGI server
+- **Gunicorn 23.0.0** - WSGI server
 - **Celery 5.3.4** - Background tasks
 
 ### Integrations

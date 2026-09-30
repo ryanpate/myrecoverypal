@@ -319,11 +319,10 @@ LOGIN_REDIRECT_URL = 'accounts:progress'
 LOGOUT_REDIRECT_URL = 'core:index'
 
 # Django-allauth settings
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 # SECURITY: Email verification mandatory for production
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory' if not DEBUG else 'optional'
-ACCOUNT_USERNAME_REQUIRED = False
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
@@ -352,7 +351,12 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 # (e.g. base-inline.abc123.css) for automatic cache busting on deploy.
 # MANIFEST_STRICT=False treats missing references as warnings (DRF CSS
 # references font variants that may not exist) rather than build failures.
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# (STORAGES replaces STATICFILES_STORAGE / DEFAULT_FILE_STORAGE, which
+# Django 5.1 removed — left in place they are silently ignored.)
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'},
+}
 
 # WhiteNoise settings
 WHITENOISE_USE_FINDERS = True
@@ -479,7 +483,7 @@ SUMMERNOTE_CONFIG = {
 
 # Only use Cloudinary if credentials are provided
 if os.environ.get('CLOUDINARY_CLOUD_NAME'):
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    STORAGES['default'] = {'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage'}
 
     # Simplified configuration to avoid signature errors
     CLOUDINARY_STORAGE.update({

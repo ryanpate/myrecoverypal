@@ -3024,7 +3024,7 @@ def edit_profile_view(request):
 
                 try:
                     # If using Cloudinary
-                    if hasattr(settings, 'DEFAULT_FILE_STORAGE') and 'cloudinary' in settings.DEFAULT_FILE_STORAGE:
+                    if 'cloudinary' in settings.STORAGES['default']['BACKEND']:
                         # Delete old avatar from Cloudinary if exists
                         if user.avatar:
                             # Extract public_id from URL

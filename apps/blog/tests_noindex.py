@@ -10,7 +10,7 @@ from apps.blog.models import Category, Post, Tag
 User = get_user_model()
 
 
-# Override STATICFILES_STORAGE during tests because the production
+# Override the staticfiles storage during tests because the production
 # CompressedManifestStaticFilesStorage requires `collectstatic` to have
 # run first (it builds a manifest mapping). Tests don't run collectstatic,
 # so any `{% static %}` reference to a file the manifest hasn't seen will
@@ -18,7 +18,10 @@ User = get_user_model()
 _TEST_STORAGE = {
     'PREPEND_WWW': False,
     'SECURE_SSL_REDIRECT': False,
-    'STATICFILES_STORAGE': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    'STORAGES': {
+        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+    },
 }
 
 
