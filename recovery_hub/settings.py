@@ -478,7 +478,9 @@ SUMMERNOTE_CONFIG = {
             'badTags': ['script', 'applet'],
             'badAttributes': ['onclick', 'onerror'],
         },
-    }
+    },
+    # Image uploads from the editor go to Cloudinary — members only.
+    'attachment_require_authentication': True,
 }
 
 # Only use Cloudinary if credentials are provided
@@ -765,12 +767,26 @@ else:
         }
     }
 
-# Rate limiting cache - always use local memory to avoid Redis dependency
-# This ensures rate limiting works even if Redis is unavailable
-CACHES['rate_limiting'] = {
-    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    'LOCATION': 'rate-limiting-cache',
-}
+# Rate limiting cache. With Redis the counters are shared by all gunicorn
+# workers; per-process memory would multiply every limit by the worker count
+# and forget it whenever a worker is recycled. If Redis is down the limiter
+# fails open (IGNORE_EXCEPTIONS) — logins are down then anyway, since
+# sessions live in Redis too.
+if REDIS_URL:
+    CACHES['rate_limiting'] = {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_URL,
+        'KEY_PREFIX': 'ratelimit',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'IGNORE_EXCEPTIONS': True,
+        }
+    }
+else:
+    CACHES['rate_limiting'] = {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'rate-limiting-cache',
+    }
 
 # Use Redis for sessions to reduce DB traffic (Redis is already running for Celery)
 if REDIS_URL:
