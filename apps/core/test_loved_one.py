@@ -1,6 +1,7 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.core.cache import caches
 from django.utils import timezone
 from datetime import timedelta
 from apps.accounts.payment_models import Promo, Subscription, PromoRedemption
@@ -60,6 +61,8 @@ class LovedOnePostTests(TestCase):
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class LovedOneEndToEndTests(TestCase):
     def setUp(self):
+        # Registration attempts are rate limited per address; start clean.
+        caches['rate_limiting'].clear()
         Promo.objects.update_or_create(
             code='LOVEDONE60',
             defaults={'trial_days': 60, 'active': True},
@@ -77,14 +80,12 @@ class LovedOneEndToEndTests(TestCase):
         self.assertEqual(self.client.session.get('journal_promo'), 'LOVEDONE60')
 
         register_resp = self.client.post(reverse('accounts:register'), {
-            'username': 'newuser',
             'email': 'newuser@example.com',
-            'password1': 'StrongPass123!@',
-            'password2': 'StrongPass123!@',
+            'password': 'StrongPass123!@',
         })
         self.assertEqual(register_resp.status_code, 302)
 
-        user = User.objects.get(username='newuser')
+        user = User.objects.get(email='newuser@example.com')
         sub = Subscription.objects.get(user=user)
         self.assertEqual(sub.tier, 'premium')
         self.assertEqual(sub.status, 'trialing')

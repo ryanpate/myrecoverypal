@@ -1,6 +1,7 @@
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.core.cache import caches
 from django.utils import timezone
 from datetime import timedelta
 from apps.accounts.payment_models import Promo, Subscription, PromoRedemption
@@ -92,6 +93,8 @@ class JournalBonusPostTests(TestCase):
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class JournalBonusEndToEndTests(TestCase):
     def setUp(self):
+        # Registration attempts are rate limited per address; start clean.
+        caches['rate_limiting'].clear()
         Promo.objects.update_or_create(
             code='PAL90',
             defaults={'trial_days': 60, 'active': True},
@@ -112,15 +115,13 @@ class JournalBonusEndToEndTests(TestCase):
 
         # Step 2: complete registration via the standard form
         register_resp = self.client.post(reverse('accounts:register'), {
-            'username': 'newuser',
             'email': 'newuser@example.com',
-            'password1': 'StrongPass123!@',
-            'password2': 'StrongPass123!@',
+            'password': 'StrongPass123!@',
         })
         self.assertEqual(register_resp.status_code, 302)
 
         # Step 3: verify the new user has a 60-day Premium trial
-        user = User.objects.get(username='newuser')
+        user = User.objects.get(email='newuser@example.com')
         sub = Subscription.objects.get(user=user)
         self.assertEqual(sub.tier, 'premium')
         self.assertEqual(sub.status, 'trialing')
@@ -139,14 +140,12 @@ class JournalBonusEndToEndTests(TestCase):
     def test_register_without_promo_in_session_unchanged(self):
         # No funnel POST first — promo not in session.
         register_resp = self.client.post(reverse('accounts:register'), {
-            'username': 'plainuser',
             'email': 'plain@example.com',
-            'password1': 'StrongPass123!@',
-            'password2': 'StrongPass123!@',
+            'password': 'StrongPass123!@',
         })
         self.assertEqual(register_resp.status_code, 302)
 
-        user = User.objects.get(username='plainuser')
+        user = User.objects.get(email='plain@example.com')
         sub = Subscription.objects.get(user=user)
         # No promo applied → subscription_source stays at default ('stripe')
         self.assertNotEqual(sub.subscription_source, 'manual')
