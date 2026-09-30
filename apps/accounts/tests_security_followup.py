@@ -288,3 +288,28 @@ class FeedAndNotificationApiTests(TestCase):
         self.client.force_login(_user('notified'))
         resp = self.client.get(reverse('accounts:notifications_api'), {'unread_only': 'true'})
         self.assertEqual(resp.status_code, 200)
+
+
+@override_settings(**_TEST_SETTINGS)
+class ProfileVisibilityWordingTests(TestCase):
+    """The "public profile" switch governs the full profile and logged-out
+    access. It does not remove a member from the community directory, and the
+    copy must say so."""
+
+    def test_setting_explains_the_directory_still_lists_you(self):
+        from apps.accounts.forms import UserProfileForm
+        field = UserProfileForm().fields['is_profile_public']
+        self.assertEqual(field.label, 'Make my full profile public')
+        self.assertIn('community directory', field.help_text)
+        self.assertNotIn('Allow other members to view your profile', field.help_text)
+
+    def test_limited_profile_does_not_claim_the_member_chose_privacy(self):
+        _user('quietmember', is_profile_public=False)
+        self.client.force_login(_user('viewer2'))
+        resp = self.client.get(reverse('accounts:profile', args=['quietmember']))
+        self.assertNotContains(resp, 'has chosen to keep their profile private')
+        self.assertContains(resp, 'full profile')
+
+    def test_privacy_policy_describes_the_directory(self):
+        resp = self.client.get(reverse('core:privacy'))
+        self.assertContains(resp, 'Community directory')

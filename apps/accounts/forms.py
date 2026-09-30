@@ -263,6 +263,9 @@ class UserProfileForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
             'recovery_goals': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
         }
+        labels = {
+            'is_profile_public': 'Make my full profile public',
+        }
         help_texts = {
             'bio': 'Tell the community about yourself (max 500 characters)',
             'location': 'City, State or Country',
@@ -270,8 +273,12 @@ class UserProfileForm(forms.ModelForm):
             'recovery_goals': 'What are you working towards in your recovery?',
             'pledge_reason': "Shown on your daily pledge, e.g. 'my daughter'.",
             'is_sponsor': 'Check this if you\'re available to sponsor others',
-            'is_profile_public': 'Allow other members to view your profile',
-            'show_sobriety_date': 'Display your sobriety date on your public profile',
+            'is_profile_public': (
+                'Shows your bio, milestones, posts and activity to other members, '
+                'and lets people who are not logged in see your profile. When this '
+                'is off, members can still find you in the community directory by '
+                'name, photo and location.'),
+            'show_sobriety_date': 'Display your sobriety date and day count to other members',
             'allow_messages': 'Allow other members to send you private messages',
             'email_notifications': 'Receive email notifications for messages and milestones',
             'newsletter_subscriber': 'Receive our weekly recovery newsletter',

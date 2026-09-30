@@ -820,7 +820,7 @@
                     {% if profile_user.is_profile_public %}
                     <span class="badge badge-public"><i class="fas fa-globe"></i> Public</span>
                     {% else %}
-                    <span class="badge badge-private"><i class="fas fa-lock"></i> Private</span>
+                    <span class="badge badge-private"><i class="fas fa-lock"></i> Limited</span>
                     {% endif %}
                 </span>
             </div>
@@ -881,8 +881,8 @@
     {% else %}
     <div class="profile-info private-profile">
         <i class="fas fa-lock"></i>
-        <h3>This Profile is Private</h3>
-        <p>{{ profile_user.get_full_name|default:profile_user.username }} has chosen to keep their profile private.</p>
+        <h3>Full Profile Not Shared</h3>
+        <p>{{ profile_user.get_full_name|default:profile_user.username }} hasn't made their full profile public.</p>
         {% if not request.user.is_authenticated %}
         <p style="margin-top: 1rem;">
             <a href="{% url 'accounts:login' %}?next={{ request.path }}" style="color: #1e4d8b;">Login</a> to view more
