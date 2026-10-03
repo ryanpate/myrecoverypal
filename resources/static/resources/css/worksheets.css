@@ -228,3 +228,18 @@ a.pg-cohort:hover { background: rgba(82,183,136,0.15); color: inherit; }
 .au-player audio { width: 100%; }
 .au-transcript { margin: 1rem 0; }
 .au-transcript summary { cursor: pointer; font-weight: 600; }
+
+/* Program: last free day completed (resources/programs/_free_days_done.html) */
+.ws-wrap .pg-milestone { text-align: center; border-radius: 18px; padding: 1.8rem 1.4rem 1.4rem; margin: 0 0 1.5rem;
+    background: linear-gradient(135deg, rgba(124,58,237,0.10), rgba(77,184,232,0.12)); border: 1px solid rgba(124,58,237,0.25); }
+.ws-wrap .pg-milestone-emoji { font-size: 2.2rem; line-height: 1; }
+.ws-wrap .pg-milestone h2 { font-size: 1.35rem; margin: 0.5rem 0 0.4rem; }
+.ws-wrap .pg-milestone > p { margin: 0 auto 1rem; max-width: 460px; opacity: 0.85; }
+.ws-wrap .pg-milestone-next { display: flex; width: fit-content; max-width: 100%; margin: 0 auto 1.1rem; flex-direction: column; gap: 0.15rem; padding: 0.8rem 1.2rem;
+    border-radius: 12px; background: rgba(255,255,255,0.75); border: 1px solid rgba(128,128,128,0.2); }
+[data-theme="dark"] .ws-wrap .pg-milestone-next { background: rgba(15,23,42,0.45); }
+.ws-wrap .pg-milestone-next span { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.7; }
+.ws-wrap .pg-milestone-next small { opacity: 0.7; }
+.ws-wrap .pg-milestone-btn { display: inline-block; }
+.ws-wrap .pg-milestone-note { font-size: 0.88rem; opacity: 0.75; margin: 0.6rem 0 0.2rem; }
+.ws-wrap .pg-milestone-later { font-size: 0.9rem; }

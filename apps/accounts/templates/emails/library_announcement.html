@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>We built you a recovery toolkit</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+               line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f4f4; }
+        .email-container { background: #ffffff; border-radius: 15px; padding: 36px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 20px; }
+        .logo { font-size: 30px; font-weight: 700; color: #1e4d8b; }
+        h1 { font-size: 24px; color: #1e4d8b; margin: 8px 0 16px; }
+        p { font-size: 16px; margin: 0 0 16px; }
+        .gift { background: #f0f7f3; border-left: 4px solid #52b788; border-radius: 0 10px 10px 0; padding: 16px 18px; margin: 20px 0; }
+        .gift p { margin: 0 0 8px; font-size: 15px; }
+        .gift p:last-child { margin-bottom: 0; }
+        .gift a { color: #2d6a4f; font-weight: 600; }
+        .item { margin: 0 0 18px; }
+        .item strong { display: block; font-size: 16px; color: #1e4d8b; }
+        .item span { font-size: 15px; color: #555; }
+        .item a { color: #1e4d8b; font-weight: 600; font-size: 15px; }
+        .cta-wrap { text-align: center; margin: 28px 0 18px; }
+        .cta-button { display: inline-block; background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%); color: #ffffff !important;
+                      text-decoration: none; font-weight: 600; font-size: 17px; padding: 14px 34px; border-radius: 30px; }
+        .premium { text-align: center; font-size: 15px; color: #555; margin: 0 0 8px; }
+        .premium a { color: #764ba2; font-weight: 600; }
+        .footer { margin-top: 28px; padding-top: 18px; border-top: 1px solid #eee; font-size: 12px; color: #999; text-align: center; }
+        .footer a { color: #999; }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header"><div class="logo">MyRecoveryPal</div></div>
+
+        <h1>We built you a recovery toolkit</h1>
+        <p>Hi {{ first_name }},</p>
+        <p>We've been quietly building something for the hard moments and the everyday ones. It's live now, and a lot of it is free.</p>
+
+        <div class="gift">
+            <p>🎧 <strong>When a craving hits, press play.</strong></p>
+            <p>Short guided audio that talks you through it: urge surfing, breathing, grounding, a plan before a party, and help after a slip. Free for everyone, always.</p>
+            <p><a href="{{ urls.audio }}">Listen now &rarr;</a></p>
+        </div>
+
+        <div class="item">
+            <strong>🌱 Day-by-day programs</strong>
+            <span>A five-minute lesson and one small action a day. First 30 Days, plus two-week tracks for alcohol, opioids, stimulants, cannabis and gambling. The first week is free.</span><br>
+            <a href="{{ urls.programs }}">See the programs &rarr;</a>
+        </div>
+        <div class="item">
+            <strong>☀️ A daily reflection</strong>
+            <span>A short reading and a question to sit with, every day, for any path to recovery. Now read aloud, too.</span><br>
+            <a href="{{ urls.reflections }}">Read today's &rarr;</a>
+        </div>
+        <div class="item">
+            <strong>📝 Recovery worksheets</strong>
+            <span>Cost-benefit analysis, thought records, trigger maps and more. Fill them in and print them, free.</span><br>
+            <a href="{{ urls.worksheets }}">Open a worksheet &rarr;</a>
+        </div>
+        <div class="item">
+            <strong>💛 A course for your family</strong>
+            <span>Fourteen days for the people who love you: how to talk so you're heard, boundaries, and looking after themselves. Forward this to someone who'd want it.</span><br>
+            <a href="{{ urls.family }}">See the course &rarr;</a>
+        </div>
+
+        <div class="cta-wrap">
+            <a href="{{ urls.library }}" class="cta-button">Explore the toolkit</a>
+        </div>
+
+        {% if is_premium %}
+        <p class="premium">All of it is already included in your Premium. Thank you for supporting MyRecoveryPal.</p>
+        {% elif trial_eligible %}
+        <p class="premium">Want every program, the full audio library and all 30 reflections? <a href="{{ urls.pricing }}">Try Premium free for 7 days</a>.</p>
+        {% else %}
+        <p class="premium">Want every program, the full audio library and all 30 reflections? <a href="{{ urls.pricing }}">See Premium</a>.</p>
+        {% endif %}
+
+        <p>&mdash; The MyRecoveryPal team</p>
+
+        <div class="footer">
+            If you're struggling right now, call or text 988 (Suicide &amp; Crisis Lifeline), any time.<br><br>
+            You're receiving this because you have a MyRecoveryPal account.<br>
+            <a href="{{ unsubscribe_url }}">Unsubscribe from product updates</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -171,6 +171,7 @@ def program_day(request, slug, day):
         messages.info(request, f'Nice work today. Day {day} opens tomorrow.')
         return redirect('resources:program_detail', slug=slug)
 
+    just_completed = request.GET.get('done') == '1' and status == 'done'
     return render(request, 'resources/programs/day.html', {
         'program': program,
         'lesson': lesson,
@@ -178,7 +179,12 @@ def program_day(request, slug, day):
         'status': status,
         'week_title': program.week_title(day),
         'next_lesson': program.lesson(day + 1),
-        'just_completed': request.GET.get('done') == '1' and status == 'done',
+        'just_completed': just_completed,
+        # The highest-intent upgrade moment: the last free lesson, just done,
+        # and the next one waits on Premium (or a Supporter seat).
+        'free_days_done': (just_completed and day == program.free_days
+                           and progress.next_status == 'premium'),
+        'lessons_left': program.length - progress.done_count,
         'free_days': program.free_days,
         **_cohort_context(request.user, enrollment),
     })

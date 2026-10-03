@@ -1,0 +1,38 @@
+{% comment %}
+Shown once, right after someone completes a program's last free day. It
+celebrates first and sells second: what they've done, what's next (the
+real title of the next lesson), and one button. Family courses unlock with
+a Supporter seat. The button goes to pricing / supporter pages, which show
+the Apple purchase flow inside the iOS app, so no web price appears here.
+{% endcomment %}
+<section class="pg-milestone" role="status" aria-labelledby="pgMilestoneTitle">
+    <div class="pg-milestone-emoji" aria-hidden="true">🎉</div>
+    <h2 id="pgMilestoneTitle">You finished the free {% if free_days == 7 %}week{% else %}{{ free_days }} days{% endif %} of {{ program.title }}</h2>
+    <p>That's {{ free_days }} day{{ free_days|pluralize }} of showing up for yourself. Keep the momentum going.</p>
+    {% if next_lesson %}
+    <div class="pg-milestone-next">
+        <span>Up next &middot; Day {{ next_lesson.day }}</span>
+        <strong>{{ next_lesson.title }}</strong>
+        <small>{{ lessons_left }} lesson{{ lessons_left|pluralize }} left to finish the program</small>
+    </div>
+    {% endif %}
+    {% if program.access == 'family' %}
+    <a class="ws-btn pg-milestone-btn" href="{% url 'accounts:supporter_renew' %}" data-promo="program_free_days_done_family">Keep going with a Supporter seat</a>
+    <p class="pg-milestone-note">Already included if your loved one has Premium and invites you.</p>
+    {% else %}
+    <a class="ws-btn pg-milestone-btn" href="{% url 'accounts:pricing' %}" data-promo="program_free_days_done">{% if user_subscription.card_trial_eligible %}Keep going: try Premium free for 7 days{% else %}Keep going with Premium{% endif %}</a>
+    <p class="pg-milestone-note">Premium also opens every other program, the full audio and reflection library, and Anchor.</p>
+    {% endif %}
+    <a class="pg-milestone-later" href="{% url 'resources:program_detail' program.slug %}">Not now, see my progress</a>
+</section>
+<script>
+(function () {
+    if (typeof gtag !== 'function') return;
+    gtag('event', 'view_promotion', { promotion_id: 'program_free_days_done', creative_slot: '{{ program.slug|escapejs }}' });
+    document.querySelectorAll('.pg-milestone [data-promo]').forEach(function (a) {
+        a.addEventListener('click', function () {
+            gtag('event', 'select_promotion', { promotion_id: a.dataset.promo, creative_slot: '{{ program.slug|escapejs }}' });
+        });
+    });
+})();
+</script>

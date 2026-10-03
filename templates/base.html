@@ -238,6 +238,7 @@
                             class="{% if 'support_services' in request.resolver_match.namespace %}active{% endif %}">Meetings</a></li>
                     <li><a href="{% url 'accounts:social_feed' %}"
                             class="{% if request.resolver_match.url_name == 'social_feed' %}active{% endif %}">Community</a></li>
+                    {% include 'partials/_library_nav_link.html' %}
                     {% include 'partials/_resources_nav_dropdown.html' %}
                     {% if is_court_user %}
                     <li><a href="{% url 'accounts:court_dashboard' %}"
@@ -253,6 +254,7 @@
                     {% else %}
                     <li><a href="{% url 'support_services:meeting_list' %}"
                             class="{% if 'support_services' in request.resolver_match.namespace %}active{% endif %}">Meetings</a></li>
+                    {% include 'partials/_library_nav_link.html' %}
                     {% include 'partials/_resources_nav_dropdown.html' %}
                     <li><a href="{% url 'core:court_ordered_meeting_tracker' %}"
                             class="court-cta {% if request.resolver_match.url_name == 'court_ordered_meeting_tracker' %}active{% endif %}">
@@ -491,6 +493,9 @@
 
             <div class="mobile-menu-section">
                 <div class="mobile-menu-label">Tools</div>
+                <a href="{% url 'resources:list' %}" class="nav-library {% if request.resolver_match.namespace == 'resources' %}active{% endif %}">
+                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Library<span class="nav-new-dot" hidden aria-hidden="true"></span>
+                </a>
                 <a href="{% url 'accounts:milestone_badge_creator' %}">
                     <i class="fas fa-medal" style="margin-right: 0.5rem;"></i> Medallion Maker
                 </a>
@@ -564,6 +569,9 @@
 
             <div class="mobile-menu-section">
                 <div class="mobile-menu-label">Tools</div>
+                <a href="{% url 'resources:list' %}" class="nav-library {% if request.resolver_match.namespace == 'resources' %}active{% endif %}">
+                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Library<span class="nav-new-dot" hidden aria-hidden="true"></span>
+                </a>
                 <a href="{% url 'core:sobriety_calculator' %}">
                     <i class="fas fa-calendar-check" style="margin-right: 0.5rem;"></i> Sobriety Calculator
                 </a>
@@ -1324,6 +1332,17 @@
 
     <!-- Additional Scripts -->
     {% include 'partials/_whats_new.html' %}
+    <script>
+    // "New" dot on the Library nav link until this browser opens the library.
+    (function () {
+        var KEY = 'mrp_library_seen';
+        try {
+            if (location.pathname.indexOf('/resources/') === 0) { localStorage.setItem(KEY, '1'); return; }
+            if (localStorage.getItem(KEY)) return;
+        } catch (e) { return; }
+        document.querySelectorAll('.nav-new-dot').forEach(function (d) { d.hidden = false; });
+    })();
+    </script>
     {% block extra_js %}{% endblock %}
 
     {% if not user.is_authenticated %}

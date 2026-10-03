@@ -1,0 +1,5 @@
+{% comment %}Top-level "Library" link (resources hub: programs, audio, reflections,
+worksheets). The "New" dot shows until this browser first opens the library;
+see the script at the end of base.html.{% endcomment %}
+<li><a href="{% url 'resources:list' %}"
+        class="nav-library {% if request.resolver_match.namespace == 'resources' %}active{% endif %}">Library<span class="nav-new-dot" hidden aria-hidden="true"></span></a></li>
