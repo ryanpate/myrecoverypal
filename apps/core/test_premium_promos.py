@@ -117,3 +117,41 @@ class UpsellCardTests(TestCase):
         resp = self.client.get(reverse('accounts:progress'))
         self.assertContains(resp, 'Every guided program, the full audio')
         self.assertNotContains(resp, 'unlimited Anchor')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class IOSWebPriceTests(TestCase):
+    """App Store Guideline 3.1: no web prices inside the iOS app. Every web
+    price on an in-app surface sits in a `.stripe-only` element, and the
+    native class is set in <head> so prices never flash before hiding."""
+
+    def price_is_stripe_only(self, html, price_text):
+        i = html.index(price_text)
+        opening = html.rfind('<', 0, html.rfind('class=', 0, i))
+        self.assertIn('stripe-only', html[opening:i], price_text)
+
+    def test_native_class_set_in_head(self):
+        html = self.client.get(reverse('core:index')).content.decode()
+        head = html[:html.index('</head>')]
+        self.assertIn("classList.add(C.getPlatform() + '-native-app')", head)
+
+    def test_trial_banner_price_hidden_in_app(self):
+        user = member()
+        sub = user.subscription
+        sub.tier, sub.status = 'premium', 'trialing'
+        sub.trial_end = timezone.now() + timedelta(days=1)
+        sub.stripe_subscription_id = ''
+        sub.save()
+        self.client.force_login(user)
+        html = self.client.get(reverse('accounts:progress')).content.decode()
+        self.assertIn('Keep Premium', html)
+        self.price_is_stripe_only(html, '$9.99/mo')
+
+    def test_progress_analytics_gate_price_hidden_in_app(self):
+        from apps.accounts.models import DailyCheckIn
+        user = member()
+        make_free(user)
+        DailyCheckIn.objects.create(user=user, mood=3, energy_level=3)
+        self.client.force_login(user)
+        html = self.client.get(reverse('accounts:progress')).content.decode()
+        self.price_is_stripe_only(html, 'From $5/month')

@@ -4,6 +4,10 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-03:** iOS App Store Guideline 3.1: no web prices inside the app.
+  - The trial-ending banner's "$9.99/mo", the progress analytics gate's "From $5/month" and the blog Anchor CTA's "($9.99/mo)" are now wrapped in `.stripe-only`. Their buttons still go to the pricing page, which shows the Apple purchase flow in the app.
+  - An inline `<head>` script now marks `<html>` with `ios-native-app` before first paint. Before this, `capacitor-native.js` set the class at the end of the page, so web prices flashed briefly.
+  - Regression tests: `IOSWebPriceTests`.
 - **2026-10-03:** Spotlight the new library and Premium. Plan and ideas: `docs/plans/2026-10-03-premium-awareness.md`.
   - **Landing page:**
     - A "New" tag in the hero.
