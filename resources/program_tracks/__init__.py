@@ -1,4 +1,5 @@
-"""Substance-specific program tracks: short companions to First 30 Days.
+"""Program tracks: substance-specific companions to First 30 Days, plus the
+family-and-friends course (kind='family', for loved ones of someone using).
 
 One module per track, each defining TRACK. They import A, L and Program
 from resources.program_types.
@@ -6,9 +7,10 @@ from resources.program_types.
 Content rules (reviewed in PRs like all program copy): original writing
 only; no medical advice, drug names or doses ("talk to a doctor" instead);
 no statistics; the only phone numbers are the track's helplines (988,
-SAMHSA 1-800-662-4357, 1-800-GAMBLER) and 911.
+SAMHSA 1-800-662-4357, 1-800-GAMBLER, and for the family course the
+National Domestic Violence Hotline 1-800-799-7233) and 911.
 """
-TRACK_MODULES = ('alcohol', 'opioids', 'stimulants', 'cannabis', 'gambling')
+TRACK_MODULES = ('alcohol', 'opioids', 'stimulants', 'cannabis', 'gambling', 'family')
 
 
 def _load():

@@ -1,0 +1,39 @@
+{% comment %}
+Upgrade copy for a program's paid days. Family courses unlock with a
+Supporter seat (or Premium); everything else with Premium.
+Context: program, free_days, style ('upsell' card or 'lock' panel).
+{% endcomment %}
+{% if program.access == 'family' %}
+    {% if style == 'lock' %}
+    <h2 style="font-size: 1.15rem; margin: 0.4rem 0;">Keep going with a Supporter seat</h2>
+    <p style="opacity: 0.8;">You've finished the free days. A Supporter seat opens days {{ free_days|add:1 }}&ndash;{{ program.length }}
+        and lets you follow your loved one's progress, with their consent. If they have Premium, one seat is already included for you.</p>
+    <a class="ws-btn" href="{% url 'accounts:supporter_renew' %}">Become a Supporter</a>
+    {% else %}
+    <div class="ws-upsell">
+        <h3>Finish all {{ program.length }} days with a Supporter seat</h3>
+        <ul>
+            <li>The first {{ free_days }} days are free for everyone</li>
+            <li>A Supporter seat unlocks days {{ free_days|add:1 }}&ndash;{{ program.length }} and the Support Circle: follow your loved one's progress and send encouragement, with their consent</li>
+            <li>Already included if your loved one has Premium and invites you</li>
+        </ul>
+        <a class="ws-upsell-btn" href="{% url 'accounts:supporter_renew' %}">Become a Supporter</a>
+    </div>
+    {% endif %}
+{% else %}
+    {% if style == 'lock' %}
+    <h2 style="font-size: 1.15rem; margin: 0.4rem 0;">Continue with Premium</h2>
+    <p style="opacity: 0.8;">You've finished the free days. Premium opens days {{ free_days|add:1 }}&ndash;{{ program.length }},
+        plus saved worksheets, Anchor and the full reflection library.</p>
+    <a class="ws-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
+    {% else %}
+    <div class="ws-upsell">
+        <h3>Finish all {{ program.length }} days with Premium</h3>
+        <ul>
+            <li>The first {{ free_days }} days are free for everyone</li>
+            <li>Premium unlocks days {{ free_days|add:1 }}&ndash;{{ program.length }}, plus saved worksheets, Anchor and the full reflection library</li>
+        </ul>
+        <a class="ws-upsell-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
+    </div>
+    {% endif %}
+{% endif %}

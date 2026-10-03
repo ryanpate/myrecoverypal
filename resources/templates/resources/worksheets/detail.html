@@ -37,8 +37,13 @@
         Saved entry from <strong>{{ entry.created_at|date:"F j, Y" }}</strong>{% if entry.updated_at|date:"YmdHi" != entry.created_at|date:"YmdHi" %}, last edited {{ entry.updated_at|date:"F j, Y" }}{% endif %}.
         Private. Only you can see it.
         {% if not has_premium %}
+        {% if worksheet.audience == 'family' %}
+        <br>Your Supporter or Premium access has ended, so this entry is read-only. You can still read or delete it.
+        <a href="{% url 'accounts:supporter_renew' %}">Renew your Supporter seat</a> to edit or export it.
+        {% else %}
         <br>Your Premium access has ended, so this entry is read-only. You can still read or delete it.
         <a href="{% url 'accounts:pricing' %}">Renew Premium</a> to edit it, export it, or discuss it with Anchor.
+        {% endif %}
         {% endif %}
     </div>
     {% else %}
@@ -78,18 +83,26 @@
             {% if entry %}
             <a class="ws-btn-secondary" href="{% url 'resources:worksheet_entry_pdf' entry.pk %}">
                 <i class="fas fa-file-pdf" aria-hidden="true"></i> Export PDF</a>
+            {% if worksheet.audience != 'family' %}
             <form method="post" action="{% url 'resources:worksheet_entry_coach' entry.pk %}" class="ws-inline-form">
                 {% csrf_token %}
                 <button type="submit" class="ws-btn-secondary">⚓ Discuss with Anchor</button>
             </form>
             {% endif %}
+            {% endif %}
         {% else %}
             {% if entry %}
             {% elif user.is_authenticated %}
             {# New tab so the answers typed so far aren't lost. #}
+            {% if worksheet.audience == 'family' %}
+            <a class="ws-btn-locked" href="{% url 'accounts:supporter_renew' %}" target="_blank" rel="noopener"
+               title="Saving needs a Supporter seat or Premium">
+                <i class="fas fa-lock" aria-hidden="true"></i> Save my answers (Supporter seat)</a>
+            {% else %}
             <a class="ws-btn-locked" href="{% url 'accounts:pricing' %}" target="_blank" rel="noopener"
                title="Saving worksheets is a Premium feature">
                 <i class="fas fa-lock" aria-hidden="true"></i> Save my answers (Premium)</a>
+            {% endif %}
             {% else %}
             <a class="ws-btn" href="{% url 'accounts:register' %}?next={{ request.path|urlencode }}">
                 Create an account to save</a>
@@ -110,7 +123,17 @@
         {% endif %}
     </div>
 
-    {% if not has_premium and not entry %}
+    {% if not has_premium and not entry and worksheet.audience == 'family' %}
+    <div class="ws-upsell ws-no-print">
+        <h3>Keep your answers with a Supporter seat</h3>
+        <ul>
+            <li>Save this worksheet privately and come back to it as things change</li>
+            <li>Unlock the full Supporting Someone You Love course</li>
+            <li>Follow your loved one's progress and send encouragement, with their consent</li>
+        </ul>
+        <a class="ws-upsell-btn" href="{% url 'accounts:supporter_renew' %}">Become a Supporter</a>
+    </div>
+    {% elif not has_premium and not entry %}
     <div class="ws-upsell ws-no-print">
         <h3>Keep your answers with Premium</h3>
         <ul>

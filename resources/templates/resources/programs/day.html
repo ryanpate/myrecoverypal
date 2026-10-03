@@ -40,10 +40,7 @@
     {% if status == 'premium' %}
     <div class="locked-resource-panel" style="text-align: center; border: 1px dashed rgba(128,128,128,0.45); border-radius: 14px; padding: 1.6rem 1.2rem;">
         <div style="font-size: 1.8rem;" aria-hidden="true">🔒</div>
-        <h2 style="font-size: 1.15rem; margin: 0.4rem 0;">Continue with Premium</h2>
-        <p style="opacity: 0.8;">You've finished the free days. Premium opens days {{ free_days|add:1 }}&ndash;{{ program.length }},
-            plus saved worksheets, Anchor and the full reflection library.</p>
-        <a class="ws-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
+        {% include 'resources/programs/_unlock.html' with style='lock' %}
     </div>
     {% else %}
     <div class="rf-body" id="pg-body">

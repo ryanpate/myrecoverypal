@@ -38,6 +38,14 @@
     </div>
     {% endif %}
 
+    {% if family_cards %}
+    <h2 class="pg-section-title">For family &amp; friends</h2>
+    <p class="pg-section-sub">Worried about someone you love? A two-week course for you: looking after yourself, talking so you're heard, boundaries and safety.</p>
+    <div class="pg-tracks">
+        {% for card in family_cards %}{% include 'resources/programs/_program_card.html' %}{% endfor %}
+    </div>
+    {% endif %}
+
     <p class="ws-crisis">
         Programs support recovery. They don't replace professional care or medical advice. If you're in crisis, call or text
         <strong>988</strong> (Suicide &amp; Crisis Lifeline) or see <a href="{% url 'core:crisis' %}">crisis resources</a>.

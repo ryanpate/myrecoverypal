@@ -11,10 +11,10 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from .access import user_has_premium
+from .access import has_program_access, user_has_premium
 from .models import ProgramEnrollment
 from .program_service import complete_day, get_progress
-from .programs import CORE_PROGRAMS, TRACK_PROGRAMS, get_program
+from .programs import CORE_PROGRAMS, FAMILY_PROGRAMS, TRACK_PROGRAMS, get_program
 
 
 def _program_or_404(slug):
@@ -67,6 +67,7 @@ def program_index(request):
     return render(request, 'resources/programs/index.html', {
         'core_cards': cards(CORE_PROGRAMS),
         'track_cards': cards(TRACK_PROGRAMS),
+        'family_cards': cards(FAMILY_PROGRAMS),
         'has_premium': user_has_premium(request.user),
     })
 
@@ -81,6 +82,7 @@ def program_detail(request, slug):
         'weeks': _weeks(program, progress),
         'free_days': program.free_days,
         'has_premium': user_has_premium(request.user),
+        'has_access': has_program_access(request.user, program),
         **_cohort_context(request.user, enrollment),
     })
 
@@ -191,7 +193,8 @@ def program_complete(request, slug, day):
         return bounce
     if not complete_day(enrollment, request.user, day):
         if progress.status(day) == 'premium':
-            return redirect('accounts:pricing')
+            return redirect('accounts:supporter_renew' if program.access == 'family'
+                            else 'accounts:pricing')
         messages.info(request, 'That lesson isn\'t open yet.')
         return redirect('resources:program_detail', slug=slug)
     return redirect(reverse('resources:program_day', args=[slug, day]) + '?done=1')

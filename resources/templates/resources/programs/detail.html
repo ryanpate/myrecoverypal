@@ -46,7 +46,11 @@
             {% elif progress.next_status == 'waiting' %}
             <span class="ws-btn-locked">✓ Done for today. Day {{ progress.next_day }} opens tomorrow.</span>
             {% elif progress.next_status == 'premium' %}
+            {% if program.access == 'family' %}
+            <a class="ws-btn-locked" href="{% url 'accounts:supporter_renew' %}"><i class="fas fa-lock" aria-hidden="true"></i> Continue with a Supporter seat</a>
+            {% else %}
             <a class="ws-btn-locked" href="{% url 'accounts:pricing' %}"><i class="fas fa-lock" aria-hidden="true"></i> Continue with Premium</a>
+            {% endif %}
             {% endif %}
         </div>
     </section>
@@ -89,7 +93,7 @@
                 <span class="pg-tag">
                     {% if status == 'current' %}Today
                     {% elif status == 'waiting' %}Tomorrow
-                    {% elif status == 'premium' or status == 'premium-preview' %}🔒 Premium
+                    {% elif status == 'premium' or status == 'premium-preview' %}🔒 {% if program.access == 'family' %}Supporter{% else %}Premium{% endif %}
                     {% elif status == 'free' %}Free{% endif %}
                 </span>
             {% if status == 'done' or status == 'current' %}</a>{% else %}</div>{% endif %}
@@ -98,16 +102,7 @@
     </ol>
     {% endfor %}
 
-    {% if not has_premium %}
-    <div class="ws-upsell">
-        <h3>Finish all {{ program.length }} days with Premium</h3>
-        <ul>
-            <li>The first {{ free_days }} days are free for everyone</li>
-            <li>Premium unlocks days {{ free_days|add:1 }}&ndash;{{ program.length }}, plus saved worksheets, Anchor and the full reflection library</li>
-        </ul>
-        <a class="ws-upsell-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
-    </div>
-    {% endif %}
+    {% if not has_access %}{% include 'resources/programs/_unlock.html' with style='upsell' %}{% endif %}
 
     {% if progress and not progress.finished %}
     <form method="post" action="{% url 'resources:program_reminders' program.slug %}" class="ws-banner" style="display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; justify-content: space-between; margin-top: 1.5rem;">

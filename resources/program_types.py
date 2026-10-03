@@ -44,6 +44,9 @@ class Program:
     substance: str = ''
     # ((label, number), ...) shown on the overview and lesson pages.
     helplines: Tuple[Tuple[str, str], ...] = field(default=())
+    # Who gets the lessons after the free days (resources/access.py):
+    # 'premium', or 'family' (Premium, or a Supporter seat).
+    access: str = 'premium'
 
     def __post_init__(self):
         numbered = tuple(

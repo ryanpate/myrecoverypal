@@ -340,6 +340,7 @@ PROGRAMS = [FIRST_30_DAYS, *TRACKS]
 PROGRAMS_BY_SLUG = {p.slug: p for p in PROGRAMS}
 CORE_PROGRAMS = [p for p in PROGRAMS if p.kind == 'core']
 TRACK_PROGRAMS = [p for p in PROGRAMS if p.kind == 'track']
+FAMILY_PROGRAMS = [p for p in PROGRAMS if p.kind == 'family']
 
 
 def get_program(slug):
