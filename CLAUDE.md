@@ -463,6 +463,10 @@ ELEVENLABS_VOICE_ID=<voice id from the ElevenLabs voice library>
 ELEVENLABS_MODEL_ID=eleven_multilingual_v2   # optional
 ELEVENLABS_OUTPUT_FORMAT=mp3_44100_64        # optional; must be mp3_44100_*
 
+# Founding-member offer (apps/accounts/founding_offer.py); web/Stripe only
+FOUNDING_OFFER_ENDS=2026-10-31     # last day, ISO date
+FOUNDING_OFFER_PERCENT=40          # % off the first year of annual Premium
+
 # iOS In-App Purchases
 REVENUECAT_IOS_API_KEY=<revenuecat-ios-api-key>
 ```

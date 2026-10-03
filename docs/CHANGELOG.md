@@ -4,6 +4,17 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-03:** Founding-member offer (`apps/accounts/founding_offer.py`): a percentage off the first year of annual Premium for anyone who's a member by the end date.
+  - **Defaults:** 40% off ($59.99 → $35.99) until 2026-10-31. Set with the env vars `FOUNDING_OFFER_ENDS` and `FOUNDING_OFFER_PERCENT`.
+  - **Eligibility:** members not already paying for Premium through Stripe or Apple. A no-card legacy trial can claim it.
+  - **Stripe coupon:** `founding<pct>_first_year` is created on first use. It's `repeating` for 11 months, so it covers the first paid annual invoice, including after a 7-day card trial, but not the renewal. `redeem_by` is set to the deadline.
+  - **Claim link:** `/accounts/founding/` goes straight to Stripe Checkout for annual Premium with the coupon. Ineligible or expired members are sent to pricing with a note.
+  - **Where it shows** (each placement is `.stripe-only`, so never in the iOS app):
+    - a banner on the pricing page;
+    - a "Join free to claim it" banner on the landing page for visitors;
+    - on the progress-home Premium card, which has its own dismissal so a previously dismissed card shows the offer once.
+  - **GA4:** `view_promotion` and `select_promotion` events with `founding_offer`.
+  - **Email:** `send_founding_offer` (dry run by default, `--test`, `--commit`) only emails eligible, opted-in members, once each. `--reminder` sends the "last few days" version under its own key, skipping anyone who has since claimed it.
 - **2026-10-03:** Shareable reflection cards, and free guided audio after a struggling check-in.
   - **Cards** (`resources/reflection_cards.py`, Pillow and DejaVu fonts):
     - Each card shows the reading's title and opening line. The opening line is already public, so a card never leaks Premium text or the prompt.

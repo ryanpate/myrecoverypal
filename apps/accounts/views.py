@@ -1429,6 +1429,11 @@ def progress_view(request):
     is_premium = bool(sub and sub.is_premium())
     context['is_premium'] = is_premium
     context['show_premium_cta'] = not is_premium and not (sub and sub.is_supporter())
+    if context['show_premium_cta']:
+        from apps.accounts.founding_offer import context_for
+        from apps.accounts.payment_models import SubscriptionPlan
+        context.update(context_for(request.user, SubscriptionPlan.objects.filter(
+            tier='premium', billing_period='yearly', is_active=True).first()))
 
     # Supporter invite card — promotes the $7.99 Supporter tier (a loved one pays
     # to follow this user's recovery). Shown when we're NOT showing the Premium
