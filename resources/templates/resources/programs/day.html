@@ -19,7 +19,9 @@
     <div class="alert alert-{{ message.tags }}" style="margin-bottom: 1rem;">{{ message }}</div>
     {% endfor %}{% endif %}
 
-    {% if just_completed %}
+    {% if free_days_done %}
+    {% include 'resources/programs/_free_days_done.html' %}
+    {% elif just_completed %}
     <div class="pg-celebrate" role="status">
         {% if progress.finished %}
         🎉 <strong>You finished all {{ program.length }} days.</strong> That's a real achievement.

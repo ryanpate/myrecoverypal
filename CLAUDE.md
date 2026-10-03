@@ -153,6 +153,10 @@ python manage.py test_email recipient@example.com --resend-api
 
 `/resources/audio/`. Scripts live in `resources/audio_scripts.py`, and narrations of the 30 daily reflections are generated from `resources/reflections.py`. After editing a script, run `python manage.py generate_audio --dry-run` and then `python manage.py generate_audio` in a Railway shell. Only changed tracks are re-voiced. Craving and calm sessions are always free; see `resources/audio_views.py::can_listen`.
 
+### Announcement Emails
+
+`python manage.py send_feature_announcement` sends the one-off "recovery toolkit" email. Run it in a Railway shell. It's a dry run unless you pass `--commit`; `--test you@x.com` sends a single copy and `--segment all` reaches everyone opted in. Deliveries are recorded in `AnnouncementDelivery(user, key)`, so re-running never sends twice. For a new announcement, copy the command and change `KEY`, `SUBJECT` and `TEMPLATE`.
+
 ### Push Notification System
 
 **Service:** `apps/accounts/push_notifications.py`

@@ -3259,3 +3259,17 @@ select:focus {
 }
 .ios-native-app .sos-pill,
 .android-native-app .sos-pill { display: inline-flex !important; }
+
+/* "New" dot on the Library nav link (hidden once the library is opened) */
+.nav-library { position: relative; }
+.nav-new-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-left: 5px;
+    vertical-align: super;
+    border-radius: 50%;
+    background: #52b788;
+    box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.22);
+}
+.nav-new-dot[hidden] { display: none; }
