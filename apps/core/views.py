@@ -30,6 +30,8 @@ class IndexView(TemplateView):
         plans = SubscriptionPlan.objects.filter(is_active=True, tier='premium')
         context['premium_monthly_plan'] = plans.filter(billing_period='monthly').first()
         context['premium_yearly_plan'] = plans.filter(billing_period='yearly').first()
+        from apps.accounts.founding_offer import context_for
+        context.update(context_for(self.request.user, context['premium_yearly_plan']))
         return context
 class AboutView(TemplateView):
     template_name = 'core/about.html'

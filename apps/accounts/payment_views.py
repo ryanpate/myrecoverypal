@@ -63,6 +63,8 @@ def pricing(request):
         'card_trial_eligible': bool(user_subscription and user_subscription.card_trial_eligible()),
         'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
     }
+    from .founding_offer import context_for
+    context.update(context_for(request.user, premium_yearly_plan))
     return render(request, 'accounts/pricing.html', context)
 
 
@@ -152,6 +154,32 @@ def _get_winback_coupon():
     except Exception as e:
         logger.error(f'winback coupon retrieve failed: {e}')
         return None
+
+
+@login_required
+def founding_offer(request):
+    """Claim the founding-member offer: annual Premium with the first year
+    discounted (apps/accounts/founding_offer.py). GET so it works from an
+    email button. Ineligible or expired -> pricing page with a note; Stripe
+    trouble -> pricing page too, never a dead end."""
+    from . import founding_offer as offer
+    if not offer.is_eligible(request.user):
+        if not offer.is_active():
+            messages.info(request, 'The founding-member offer has ended. Thank you for being here early.')
+        else:
+            messages.info(request, 'The founding-member offer is for members who aren\'t already on Premium.')
+        return redirect('accounts:pricing')
+    plan = SubscriptionPlan.objects.filter(tier='premium', billing_period='yearly', is_active=True).first()
+    if not plan:
+        return redirect('accounts:pricing')
+    try:
+        coupon = offer.get_coupon()
+        checkout_session = _build_checkout_session(request, plan, coupon=coupon)
+        return redirect(checkout_session.url)
+    except Exception as e:
+        logger.error(f'founding offer checkout error for user {request.user.id}: {e}')
+        messages.warning(request, "Let's get you set up. Choose your plan below.")
+        return redirect('accounts:pricing')
 
 
 @login_required

@@ -47,8 +47,8 @@ class LandingPageTests(TestCase):
         self.assertContains(resp, '$59.99')
         self.assertContains(resp, 'or $9.99 monthly')
         html = resp.content.decode()
-        price = html.index('$59.99')
-        self.assertIn('stripe-only', html[html.rfind('<div', 0, price):price])
+        plan_price = html.index('class="ml-plan-price stripe-only"')
+        self.assertIn('$59.99', html[plan_price:plan_price + 200])
 
     def test_no_prices_without_plans(self):
         SubscriptionPlan.objects.filter(tier='premium').update(is_active=False)

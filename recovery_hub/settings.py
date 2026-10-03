@@ -935,6 +935,11 @@ CELERY_TASK_RESULT_EXPIRES = 3600  # Expire results after 1 hour instead of defa
 # Payment Processing
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
+
+# Founding-member offer (apps/accounts/founding_offer.py): % off the first
+# year of annual Premium, for members who join by the end date. Web only.
+FOUNDING_OFFER_ENDS = os.environ.get('FOUNDING_OFFER_ENDS', '2026-10-31')
+FOUNDING_OFFER_PERCENT = os.environ.get('FOUNDING_OFFER_PERCENT', '40')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
 
 # Printify (medallion keepsakes, auto-fulfilled)
