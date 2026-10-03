@@ -76,10 +76,21 @@ class AudioScriptTests(TestCase):
 
     def test_craving_tools_are_free(self):
         free = {s.slug for s in SESSIONS if s.free}
-        self.assertTrue({'urge-surfing', 'breathing-4-7-8', 'grounding-5-4-3-2-1', 'craving-reset'} <= free)
+        self.assertTrue({'urge-surfing', 'breathing-4-7-8', 'grounding-5-4-3-2-1', 'craving-reset',
+                         'social-event-prep', 'after-a-slip'} <= free)
         for s in SESSIONS:
             if s.category == 'cravings':
                 self.assertTrue(s.free, s.slug)
+
+    def test_after_a_slip_covers_safety(self):
+        from resources.audio_scripts import SESSIONS_BY_SLUG
+        text = transcript(SESSIONS_BY_SLUG['after-a-slip'].parts)
+        for phrase in ("don't use alone", '9 1 1', '9 8 8'):
+            self.assertIn(phrase, text)
+
+    def test_descriptions_state_a_length(self):
+        for s in SESSIONS:
+            self.assertRegex(s.description, r'(About|Under) \d+ minutes\.$', s.slug)
 
     def test_every_reflection_has_a_narration(self):
         narrated = {s[6] for s in all_scripts() if s[6]}

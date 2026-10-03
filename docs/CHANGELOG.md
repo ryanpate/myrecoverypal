@@ -4,6 +4,13 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-03:** Five new audio sessions in `resources/audio_scripts.py`, about 7,700 characters to voice.
+  - **Free (safety tools):**
+    - *Before a social event*: decide a drink, an answer and an exit, and pick a person to text.
+    - *After a slip*: a reduced-tolerance warning, don't use alone, and 911 if someone is hard to wake; separates shame from guilt; one next step and one person to tell.
+  - **Premium:** *Self-compassion for a hard day*, *Evening check-out* and *Awake in the night*.
+  - **Descriptions:** six existing descriptions overstated their length (body scan and sleep wind-down said 10 minutes and run about 6 and 5), so they're corrected. Descriptions aren't part of the audio hash, so this syncs as metadata without re-voicing.
+  - **Tests:** the after-a-slip safety lines and a stated length in every description are now tested.
 - **2026-10-03:** `generate_audio` now allows only one run at a time. It takes a Postgres advisory lock, so a second run (from another SSH session or container) stops before it calls ElevenLabs. The lock is taken before planning, so the plan always reflects the tracks a previous run saved, and it is released automatically if a run dies. Each save also re-reads its row, so an `AudioTrack` created mid-run is updated rather than raising a duplicate-slug error. The first production run hit that error.
 - **2026-10-03:** Audio library at `/resources/audio/`, voiced with ElevenLabs.
   - **Content:** 7 guided sessions plus all 30 daily reflections read aloud. Scripts are written in code (`resources/audio_scripts.py`) so the words are reviewed in PRs. A script is spoken lines plus `P(seconds)` pauses.
