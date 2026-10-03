@@ -264,3 +264,50 @@ class AudioViewTests(TestCase):
         body = resp.content.decode()
         self.assertIn(reverse('resources:audio_detail', args=[self.free.slug]), body)
         self.assertNotIn(self.today_track.slug, body)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class GenerateAudioConcurrencyTests(TestCase):
+    def setUp(self):
+        self.media = tempfile.mkdtemp()
+        self.override = override_settings(MEDIA_ROOT=self.media)
+        self.override.enable()
+        self.env = patch.dict('os.environ', {'ELEVENLABS_API_KEY': 'k', 'ELEVENLABS_VOICE_ID': 'v'})
+        self.env.start()
+
+    def tearDown(self):
+        self.env.stop()
+        self.override.disable()
+        shutil.rmtree(self.media, ignore_errors=True)
+
+    def test_second_run_refuses_without_calling_elevenlabs(self):
+        with patch('resources.management.commands.generate_audio.try_lock', return_value=False), \
+                patch('resources.management.commands.generate_audio.unlock') as unlock, \
+                patch('resources.management.commands.generate_audio.synthesize') as synth:
+            with self.assertRaisesMessage(CommandError, 'already in progress'):
+                call_command('generate_audio', '--only', 'urge-surfing', stdout=StringIO())
+        synth.assert_not_called()
+        unlock.assert_not_called()  # never release a lock we didn't take
+
+    def test_dry_run_ignores_lock(self):
+        with patch('resources.management.commands.generate_audio.try_lock', return_value=False):
+            call_command('generate_audio', '--dry-run', stdout=StringIO())
+
+    def test_lock_released_after_error(self):
+        with patch('resources.management.commands.generate_audio.unlock') as unlock, \
+                patch('resources.management.commands.generate_audio.synthesize',
+                      side_effect=RuntimeError('boom')):
+            with self.assertRaises(RuntimeError):
+                call_command('generate_audio', '--only', 'urge-surfing', stdout=StringIO())
+        unlock.assert_called_once()
+
+    def test_row_created_mid_run_is_updated_not_duplicated(self):
+        def other_run_saves_first(*args, **kwargs):
+            if not AudioTrack.objects.filter(slug='urge-surfing').exists():
+                make_track('urge-surfing', free=True, category='cravings')
+            return fake_mp3(2)
+        with patch('resources.management.commands.generate_audio.synthesize',
+                   side_effect=other_run_saves_first):
+            call_command('generate_audio', '--only', 'urge-surfing', stdout=StringIO())
+        self.assertEqual(AudioTrack.objects.filter(slug='urge-surfing').count(), 1)
+        self.assertTrue(AudioTrack.objects.get(slug='urge-surfing').content_hash)

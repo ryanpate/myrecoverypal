@@ -4,6 +4,7 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-03:** `generate_audio` now allows only one run at a time. It takes a Postgres advisory lock, so a second run (from another SSH session or container) stops before it calls ElevenLabs. The lock is taken before planning, so the plan always reflects the tracks a previous run saved, and it is released automatically if a run dies. Each save also re-reads its row, so an `AudioTrack` created mid-run is updated rather than raising a duplicate-slug error. The first production run hit that error.
 - **2026-10-03:** Audio library at `/resources/audio/`, voiced with ElevenLabs.
   - **Content:** 7 guided sessions plus all 30 daily reflections read aloud. Scripts are written in code (`resources/audio_scripts.py`) so the words are reviewed in PRs. A script is spoken lines plus `P(seconds)` pauses.
   - **Generation:** `python manage.py generate_audio` (see `resources/management/commands/generate_audio.py`) voices each spoken line separately, passing the neighbouring lines as `previous_text`/`next_text` so the delivery stays consistent. It then stitches in real silent MP3 frames (`resources/audio_mp3.py`, no ffmpeg) and saves the result to `AudioTrack` (resources migration 0007) in Cloudinary. A content hash skips unchanged tracks, and tracks whose script was removed are deactivated. About 23K characters in total.
