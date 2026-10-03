@@ -1,5 +1,6 @@
 # apps/resources/views.py
 
+from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -7,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404, JsonResponse
 from django.template.loader import get_template
 from django.db.models import Count, Q
+from django.urls import reverse
 from django.utils import timezone
 import json
 
@@ -15,6 +17,18 @@ from .models import (
     ResourceBookmark, ResourceRating, ResourceUsage,
     InteractiveResourceProgress, CrisisResource
 )
+from .access import can_access_resource, user_has_premium
+
+
+def _locked_resource_redirect(request, resource):
+    """Send a user who can't open `resource` to the right next step."""
+    if not request.user.is_authenticated:
+        return redirect(f"{reverse('accounts:login')}?next={resource.get_absolute_url()}")
+    messages.info(
+        request,
+        f'"{resource.title}" is part of Premium. Upgrade to unlock it.'
+    )
+    return redirect('accounts:pricing')
 
 
 class ResourceListView(ListView):
@@ -136,6 +150,11 @@ class ResourceDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         resource = self.object
 
+        # Locked resources render a preview (title + description) and an
+        # upgrade prompt instead of the full content and download links.
+        context['has_access'] = can_access_resource(self.request.user, resource)
+        context['has_premium'] = user_has_premium(self.request.user)
+
         # Check if user has bookmarked this resource
         if self.request.user.is_authenticated:
             context['is_bookmarked'] = ResourceBookmark.objects.filter(
@@ -175,11 +194,8 @@ def interactive_resource_view(request, slug):
         is_interactive=True
     )
 
-    # Check access level
-    if resource.access_level == 'registered' and not request.user.is_authenticated:
-        return redirect('accounts:login')
-    elif resource.access_level == 'premium' and not hasattr(request.user, 'has_premium'):
-        return redirect('store:premium')
+    if not can_access_resource(request.user, resource):
+        return _locked_resource_redirect(request, resource)
 
     # Track usage
     ResourceUsage.objects.create(
@@ -225,9 +241,8 @@ def download_resource_pdf(request, slug):
         is_active=True
     )
 
-    # Check access level
-    if resource.access_level == 'premium' and not hasattr(request.user, 'has_premium'):
-        return redirect('store:premium')
+    if not can_access_resource(request.user, resource):
+        return _locked_resource_redirect(request, resource)
 
     # Track download
     resource.increment_downloads()
@@ -593,6 +608,8 @@ def save_interactive_progress(request, slug):
             is_active=True,
             is_interactive=True
         )
+        if not can_access_resource(request.user, resource):
+            return JsonResponse({'success': False}, status=403)
 
         progress, created = InteractiveResourceProgress.objects.get_or_create(
             user=request.user,

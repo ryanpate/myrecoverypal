@@ -31,6 +31,7 @@ class StaticViewSitemap(Sitemap):
             # Resources hub pages (individual resources covered by ResourceSitemap)
             ('resources:list', 0.7),
             ('resources:educational_resources', 0.6),
+            ('resources:worksheets', 0.8),  # "recovery worksheets" hub (detail pages: WorksheetSitemap)
 
             # HIGH PRIORITY: SEO Landing Pages (high-value keywords)
             ('core:sobriety_calculator', 0.95),  # Interactive tool - highest engagement
@@ -174,6 +175,26 @@ class ResourceSitemap(Sitemap):
         return obj.get_absolute_url()
 
 
+class WorksheetSitemap(Sitemap):
+    """Public worksheet pages (definitions live in resources/worksheets.py)."""
+    protocol = 'https'
+    changefreq = 'monthly'
+    priority = 0.75
+
+    def items(self):
+        from resources.worksheets import WORKSHEETS
+        return [w.slug for w in WORKSHEETS]
+
+    def location(self, slug):
+        return reverse('resources:worksheet_detail', args=[slug])
+
+    def get_urls(self, page=1, site=None, protocol=None):
+        from django.contrib.sites.models import Site
+        if site is None:
+            site = Site(domain=settings.SITE_DOMAIN, name=settings.SITE_DOMAIN)
+        return super().get_urls(page=page, site=site, protocol='https')
+
+
 class MeetingSitemap(Sitemap):
     """Sitemap for individual recovery meeting pages.
 
@@ -253,6 +274,7 @@ sitemaps = {
     'blog': BlogPostSitemap,
     'store_categories': StoreCategorySitemap,
     'resources': ResourceSitemap,
+    'worksheets': WorksheetSitemap,
     'meetings': MeetingSitemap,
     'state_hubs': StateHubSitemap,
     'city_hubs': CityHubSitemap,

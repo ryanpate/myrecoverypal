@@ -51,6 +51,18 @@
         </form>
     </div>
 
+    <!-- Worksheet library -->
+    {% if not query %}
+    <a href="{% url 'resources:worksheets' %}" class="worksheets-promo">
+        <span class="worksheets-promo-icon" aria-hidden="true">📝</span>
+        <span class="worksheets-promo-text">
+            <strong>New: Interactive Recovery Worksheets</strong>
+            <span>Cost-benefit analysis, thought records, urge logs, trigger maps and more. Free to fill in and print. Premium members can save their answers and discuss them with Anchor.</span>
+        </span>
+        <span class="worksheets-promo-cta">Open worksheets &rarr;</span>
+    </a>
+    {% endif %}
+
     <!-- Featured Resources -->
     {% if featured_resources and not query %}
     <section class="featured-section">

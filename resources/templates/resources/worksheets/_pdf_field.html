@@ -1,0 +1,14 @@
+<div class="field">
+    <div class="label">{{ field.label }}</div>
+    {% if field.help and not filled %}<div class="help">{{ field.help }}</div>{% endif %}
+    {% if field.type == 'scale' %}
+        <div class="scale" style="margin-top: 3pt;">{% for n in scale_points %}<span{% if field.value == n %} class="on"{% endif %}>{{ n }}</span>{% endfor %}</div>
+        <div class="scale-ends">0 = {{ field.low }} &nbsp;&middot;&nbsp; 10 = {{ field.high }}</div>
+    {% elif filled %}
+        {% if field.value %}<div class="answer">{{ field.value }}</div>{% else %}<div class="empty">Not answered</div>{% endif %}
+    {% elif field.type == 'text' %}
+        <div class="write-line"></div>
+    {% else %}
+        <div class="write-box" style="height: {{ field.box_height_pt }}pt;"></div>
+    {% endif %}
+</div>

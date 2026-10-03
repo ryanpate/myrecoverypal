@@ -314,6 +314,17 @@
         color: #1E40AF;
     }
     
+    .locked-resource-panel {
+        margin: 1.5rem 2rem 0;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        border: 1px dashed rgba(128,128,128,0.45);
+        border-radius: 14px;
+    }
+    .locked-resource-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .locked-resource-panel h3 { margin-bottom: 0.5rem; }
+    .locked-resource-panel p { opacity: 0.8; margin-bottom: 1.2rem; }
+    .locked-resource-login { display: block; margin-top: 0.9rem; font-size: 0.9rem; }
     .access-premium {
         background: #FEF3C7;
         color: #92400E;
@@ -413,8 +424,25 @@
             </div>
         </div>
         
+        {% if not has_access %}
+            <!-- Locked: preview only -->
+            <div class="locked-resource-panel">
+                <div class="locked-resource-icon" aria-hidden="true">🔒</div>
+                {% if resource.access_level == 'premium' %}
+                    <h3>This resource is part of Premium</h3>
+                    <p>Premium unlocks the full resource library, saved worksheets, Anchor AI coaching, and PDF exports.</p>
+                    <a href="{% url 'accounts:pricing' %}" class="cta-button">See Premium</a>
+                {% else %}
+                    <h3>Create a free account to open this resource</h3>
+                    <p>It takes under a minute, and it's free forever.</p>
+                    <a href="{% url 'accounts:register' %}" class="cta-button">Join free</a>
+                    <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="locked-resource-login">Already a member? Sign in</a>
+                {% endif %}
+            </div>
+        {% endif %}
+
         <!-- Resource Content -->
-        {% if resource.content %}
+        {% if has_access and resource.content %}
             <div class="resource-content-section">
                 <div class="resource-content">
                     {{ resource.content|safe }}
@@ -424,14 +452,15 @@
         
         <!-- Download/Access Section -->
         <div style="padding: 2rem;">
-            {% if resource.is_downloadable %}
+            {% if not has_access %}
+            {% elif resource.is_downloadable %}
                 <div class="download-section">
                     <h3 style="margin-bottom: 1rem;">Download This Resource</h3>
                     <a href="{% url 'resources:download' resource.slug %}" class="download-button">
                         <span>⬇️</span> Download {{ resource.resource_type.name }}
                     </a>
                     <p class="download-info">
-                        Free download • No registration required
+                        Free download
                     </p>
                 </div>
             {% elif resource.is_external %}
