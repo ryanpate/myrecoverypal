@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Guided Audio for Recovery: Cravings, Calm & Sleep | MyRecoveryPal{% endblock %}
+{% block meta_description %}Short guided audio for addiction recovery: urge surfing, breathing and grounding for cravings (free), plus sleep, morning and daily reflections read aloud.{% endblock %}
+{% block og_title %}Guided Audio for Recovery | MyRecoveryPal{% endblock %}
+{% block og_description %}Free guided audio for cravings, plus sleep, morning and daily reflections read aloud.{% endblock %}
+{% block twitter_title %}Guided Audio for Recovery | MyRecoveryPal{% endblock %}
+{% block twitter_description %}Free guided audio for cravings, plus sleep, morning and daily reflections read aloud.{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com{% url 'resources:audio' %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
+<link rel="stylesheet" href="{% static 'resources/css/worksheets.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="blog-header">
+    <h1>Guided Audio</h1>
+    <p>Press play and follow along. Craving tools are always free.</p>
+</div>
+
+<div class="ws-wrap">
+    <nav class="ws-crumbs" aria-label="Breadcrumb">
+        <a href="{% url 'resources:list' %}">Resources</a> &rsaquo; Guided Audio
+    </nav>
+
+    {% if not groups %}
+    <div class="ws-empty">
+        <p>The audio library is being recorded. In the meantime, the
+            <a href="{% url 'core:craving_sos' %}">Craving SOS</a> page has breathing, urge surfing and grounding tools.</p>
+    </div>
+    {% endif %}
+
+    {% for key, label, items in groups %}
+    <h2 class="rf-theme" id="{{ key }}">{{ label }}</h2>
+    <ul class="rf-list">
+        {% for track, allowed in items %}
+        <li><a href="{% url 'resources:audio_detail' track.slug %}">
+            <strong><span>{% if track.reflection_slug == today_slug %}☀ Today: {% endif %}{{ track.title }}</span>{% if not allowed %}<span class="rf-lock" title="Premium">🔒</span>{% endif %}</strong>
+            <small>{{ track.minutes }} min{% if track.is_free %} &middot; Free{% endif %}</small>
+        </a></li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+
+    {% if groups and not has_premium %}
+    <div class="ws-upsell">
+        <p><strong>Premium opens the whole library:</strong> sleep and morning sessions, the body scan, and every daily
+            reflection read aloud, any day. <a href="{% url 'accounts:pricing' %}">See Premium</a></p>
+    </div>
+    {% endif %}
+
+    <p class="ws-crisis">
+        Guided audio supports recovery. It doesn't replace professional care. If you're in crisis, call or text
+        <strong>988</strong> (Suicide &amp; Crisis Lifeline) or see <a href="{% url 'core:crisis' %}">crisis resources</a>.
+    </p>
+</div>
+{% endblock %}

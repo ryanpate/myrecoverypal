@@ -17,6 +17,7 @@ from django.views.decorators.http import require_POST
 from apps.accounts.decorators import premium_required
 
 from .access import user_has_premium
+from .audio_views import track_for_reflection
 from .models import ReflectionFavorite
 from .reflections import (
     RECENT_DAYS, THEMES, by_theme, get_reflection, reflection_for_date, todays_reflection,
@@ -49,6 +50,7 @@ def reflection_index(request):
     return render(request, 'resources/reflections/index.html', {
         'today': today,
         'todays': todays_reflection(),
+        'audio_track': track_for_reflection(todays_reflection()),
         'themes': by_theme(),
         'recent': recent,
         'has_premium': has_premium,
@@ -59,12 +61,15 @@ def reflection_index(request):
 def reflection_detail(request, slug):
     reflection = _reflection_or_404(slug)
     is_today = reflection == todays_reflection()
+    full_access = can_read_full(request.user, reflection)
     related = [r for _, _, rs in by_theme() for r in rs
                if r.theme == reflection.theme and r != reflection]
     return render(request, 'resources/reflections/detail.html', {
         'reflection': reflection,
         'is_today': is_today,
-        'full_access': can_read_full(request.user, reflection),
+        'full_access': full_access,
+        # Narration access matches reading access (today's, or Premium).
+        'audio_track': track_for_reflection(reflection) if full_access else None,
         'has_premium': user_has_premium(request.user),
         'is_favorite': reflection.slug in _favorite_slugs(request.user),
         'related': related,

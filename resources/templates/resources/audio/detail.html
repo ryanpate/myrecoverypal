@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ track.title }}: Guided Audio for Recovery | MyRecoveryPal{% endblock %}
+{% block meta_description %}{{ track.description|truncatechars:155 }}{% endblock %}
+{% block og_title %}{{ track.title }} | Guided Audio | MyRecoveryPal{% endblock %}
+{% block og_description %}{{ track.description|truncatechars:155 }}{% endblock %}
+{% block twitter_title %}{{ track.title }} | Guided Audio | MyRecoveryPal{% endblock %}
+{% block twitter_description %}{{ track.description|truncatechars:155 }}{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com{% url 'resources:audio_detail' track.slug %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
+<link rel="stylesheet" href="{% static 'resources/css/worksheets.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="ws-wrap" style="max-width: 720px;">
+    <nav class="ws-crumbs" aria-label="Breadcrumb">
+        <a href="{% url 'resources:list' %}">Resources</a> &rsaquo;
+        <a href="{% url 'resources:audio' %}">Guided Audio</a> &rsaquo;
+        <a href="{% url 'resources:audio' %}#{{ track.category }}">{{ category_label }}</a>
+    </nav>
+
+    {% if messages %}{% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" style="margin-bottom: 1rem;">{{ message }}</div>
+    {% endfor %}{% endif %}
+
+    <article>
+        <div class="ws-meta">
+            <span class="rf-pill">{{ category_label }}</span>
+            <span class="rf-pill">{{ track.minutes }} min</span>
+            {% if track.is_free %}<span class="rf-pill">Free</span>{% endif %}
+            {% if is_today %}<span class="rf-pill">☀ Today's reading</span>{% endif %}
+        </div>
+        <h1 style="font-size: 1.9rem; margin: 0.3rem 0 0.6rem;">{{ track.title }}</h1>
+        <p style="opacity: 0.85;">{{ track.description }}</p>
+
+        {% if allowed %}
+        {% include 'resources/audio/_player.html' %}
+        {% if track.reflection_slug %}
+        <p><a href="{% url 'resources:reflection_detail' track.reflection_slug %}">Read this reflection and journal on it &rarr;</a></p>
+        {% endif %}
+        <details class="au-transcript">
+            <summary>Transcript</summary>
+            <div class="rf-body">{{ track.transcript|linebreaks }}</div>
+        </details>
+        {% else %}
+        <div class="locked-resource-panel" style="margin: 1rem 0 0; text-align: center; border: 1px dashed rgba(128,128,128,0.45); border-radius: 14px; padding: 1.6rem 1.2rem;">
+            <div style="font-size: 1.8rem;" aria-hidden="true">🔒</div>
+            <h2 style="font-size: 1.15rem; margin: 0.4rem 0;">Listen with Premium</h2>
+            <p style="opacity: 0.8;">Premium opens the whole audio library: sleep and morning sessions, the body scan,
+                and every daily reflection read aloud. The craving tools are always free.</p>
+            <div class="ws-actions" style="justify-content: center;">
+                {% if user.is_authenticated %}
+                <a class="ws-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
+                {% else %}
+                <a class="ws-btn" href="{% url 'accounts:register' %}">Join free</a>
+                {% endif %}
+                <a class="ws-btn-secondary" href="{% url 'resources:audio' %}">Browse free sessions</a>
+            </div>
+        </div>
+        {% endif %}
+    </article>
+
+    {% if related %}
+    <div class="ws-history">
+        <h3>More {{ category_label|lower }}</h3>
+        <ul>
+            {% for t in related %}
+            <li><a href="{% url 'resources:audio_detail' t.slug %}">{{ t.title }}</a> &middot; {{ t.minutes }} min</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <p class="ws-crisis">
+        Guided audio supports recovery. It doesn't replace professional care. If you're in crisis, call or text
+        <strong>988</strong> (Suicide &amp; Crisis Lifeline) or see <a href="{% url 'core:crisis' %}">crisis resources</a>.
+    </p>
+</div>
+{% endblock %}

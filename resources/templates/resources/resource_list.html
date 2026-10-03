@@ -77,6 +77,16 @@
         </span>
         <span class="worksheets-promo-cta">Read today's &rarr;</span>
     </a>
+    {% if has_audio %}
+    <a href="{% url 'resources:audio' %}" class="worksheets-promo audio-promo">
+        <span class="worksheets-promo-icon" aria-hidden="true">🎧</span>
+        <span class="worksheets-promo-text">
+            <strong>New: Guided Audio</strong>
+            <span>Press play for urge surfing, breathing and grounding when a craving hits, free for everyone. Premium adds sleep, morning sessions and every reflection read aloud.</span>
+        </span>
+        <span class="worksheets-promo-cta">Listen &rarr;</span>
+    </a>
+    {% endif %}
     {% endif %}
 
     <!-- Featured Resources -->

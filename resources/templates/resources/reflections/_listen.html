@@ -1,7 +1,28 @@
 {% comment %}
-"Listen" button: reads the element with id `target` aloud using the
-browser's built-in speech synthesis. Hidden where the browser lacks it.
+"Listen" button. When the reading has a recorded narration (`audio_track`,
+an AudioTrack the user may play), it plays that; otherwise it reads the
+element with id `target` aloud using the browser's built-in speech
+synthesis, and is hidden where the browser lacks it.
 {% endcomment %}
+{% if audio_track %}
+<button type="button" class="ws-btn-secondary rf-listen" data-src="{% url 'resources:audio_play' audio_track.slug %}">
+    <i class="fas fa-volume-high" aria-hidden="true"></i> <span>Listen</span></button>
+<script>
+(function () {
+    var btn = document.currentScript.previousElementSibling;
+    var label = btn.querySelector('span');
+    var audio = null;
+    btn.addEventListener('click', function () {
+        if (!audio) {
+            audio = new Audio(btn.dataset.src);
+            audio.onended = function () { label.textContent = 'Listen'; };
+        }
+        if (audio.paused) { audio.play(); label.textContent = 'Pause'; }
+        else { audio.pause(); label.textContent = 'Listen'; }
+    });
+})();
+</script>
+{% else %}
 <button type="button" class="ws-btn-secondary rf-listen" data-target="{{ target }}" hidden>
     <i class="fas fa-volume-high" aria-hidden="true"></i> <span>Listen</span></button>
 <script>
@@ -23,3 +44,4 @@ browser's built-in speech synthesis. Hidden where the browser lacks it.
     });
 })();
 </script>
+{% endif %}

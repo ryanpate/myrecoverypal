@@ -162,6 +162,9 @@ class CravingSOSView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['soon_meetings'] = starting_soon(hours=3, limit=6)
+        from resources.audio_views import active_tracks
+        context['sos_audio'] = list(active_tracks().filter(
+            is_free=True, category__in=('cravings', 'calm')))
         if self.request.user.is_authenticated:
             from apps.accounts.plan_models import RelapsePreventionPlan
             plan = RelapsePreventionPlan.objects.filter(

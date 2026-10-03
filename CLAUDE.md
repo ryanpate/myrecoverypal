@@ -149,6 +149,10 @@ python manage.py test_email recipient@example.com --resend-api
 - `welcome_email_1_sent`, `welcome_email_2_sent`, `welcome_email_3_sent`
 - `last_checkin_reminder_sent`, `last_weekly_digest_sent`
 
+### Audio Library
+
+`/resources/audio/`. Scripts live in `resources/audio_scripts.py`, and narrations of the 30 daily reflections are generated from `resources/reflections.py`. After editing a script, run `python manage.py generate_audio --dry-run` and then `python manage.py generate_audio` in a Railway shell. Only changed tracks are re-voiced. Craving and calm sessions are always free; see `resources/audio_views.py::can_listen`.
+
 ### Push Notification System
 
 **Service:** `apps/accounts/push_notifications.py`
@@ -448,6 +452,12 @@ APNS_KEY_ID=<10-char key ID>
 APNS_TEAM_ID=<Apple team ID>
 APNS_KEY_PATH=/app/apns-auth-key.p8
 APNS_USE_SANDBOX=false
+
+# Audio library (only where `manage.py generate_audio` runs, e.g. a Railway shell)
+ELEVENLABS_API_KEY=<elevenlabs-api-key>
+ELEVENLABS_VOICE_ID=<voice id from the ElevenLabs voice library>
+ELEVENLABS_MODEL_ID=eleven_multilingual_v2   # optional
+ELEVENLABS_OUTPUT_FORMAT=mp3_44100_64        # optional; must be mp3_44100_*
 
 # iOS In-App Purchases
 REVENUECAT_IOS_API_KEY=<revenuecat-ios-api-key>
