@@ -776,6 +776,14 @@
 
         <!-- Sidebar -->
         <div class="col-md-4">
+            {% if group.program_cohort %}
+            <!-- Program cohort (resources/cohorts.py): no "creator" to show -->
+            <div class="info-card">
+                <h5>🌱 {{ group.program_cohort.program.title }} cohort</h5>
+                <p class="mb-2" style="font-size: 0.92rem;">Everyone here started {{ group.program_cohort.program.title }} around the same time. This group is private: only cohort members can see it.</p>
+                <a href="{% url 'resources:program_detail' group.program_cohort.program_slug %}">Go to the program &rarr;</a>
+            </div>
+            {% else %}
             <!-- Group Creator -->
             <div class="info-card">
                 <h5>Group Creator</h5>
@@ -793,6 +801,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
 
             <!-- Members -->
             <div class="info-card">

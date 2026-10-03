@@ -203,3 +203,15 @@
     background: linear-gradient(135deg, #2d6a4f, #52b788);
 }
 .pg-celebrate a { color: #fff; font-weight: 700; }
+
+/* Program cohorts */
+.pg-cohort {
+    display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; margin: 1.2rem 0;
+    border: 1px solid rgba(45,106,79,0.35); background: rgba(82,183,136,0.08);
+    border-radius: 14px; padding: 0.9rem 1.1rem; text-decoration: none; color: inherit;
+}
+a.pg-cohort:hover { background: rgba(82,183,136,0.15); color: inherit; }
+.pg-cohort-icon { font-size: 1.7rem; line-height: 1; }
+.pg-cohort-text { flex: 1 1 220px; display: flex; flex-direction: column; gap: 0.15rem; }
+.pg-cohort-text span { opacity: 0.8; font-size: 0.9rem; line-height: 1.4; }
+.pg-cohort-cta { font-weight: 700; white-space: nowrap; }

@@ -66,6 +66,7 @@
     {% endif %}
 
     <p class="rf-prompt">{{ lesson.prompt }}</p>
+    {% include 'resources/programs/_cohort_card.html' with compact=True %}
     <div class="ws-actions">
         <a class="ws-btn-secondary" href="{% url 'resources:program_journal' program.slug lesson.day %}">
             <i class="fas fa-pen" aria-hidden="true"></i> Answer in your journal</a>
