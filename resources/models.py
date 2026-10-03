@@ -476,3 +476,55 @@ class ProgramDayCompletion(models.Model):
 
     def __str__(self):
         return f"{self.enrollment_id} day {self.day}"
+
+
+def _audio_storage():
+    """Audio uploads to Cloudinary as resource_type 'video' (which covers
+    audio), like SocialPost videos; default storage when Cloudinary isn't
+    configured (local development)."""
+    from apps.accounts.image_utils import is_cloudinary_enabled
+    if is_cloudinary_enabled():
+        from cloudinary_storage.storage import VideoMediaCloudinaryStorage
+        return VideoMediaCloudinaryStorage()
+    from django.core.files.storage import default_storage
+    return default_storage
+
+
+def _audio_upload_to(instance, filename):
+    import secrets
+    # Unguessable name: the file URL is only handed out after an access check.
+    return f'audio/{instance.slug}-{secrets.token_hex(8)}.mp3'
+
+
+class AudioTrack(models.Model):
+    """A generated audio session or reflection narration.
+
+    Scripts live in resources/audio_scripts.py; `manage.py generate_audio`
+    voices them with ElevenLabs and stores the MP3 here. `content_hash`
+    covers the script, voice and model, so unchanged tracks are skipped.
+    """
+    slug = models.SlugField(max_length=80, unique=True)
+    title = models.CharField(max_length=200)
+    category = models.CharField(max_length=30)
+    description = models.TextField(blank=True)
+    is_free = models.BooleanField(default=False)
+    # Set for narrations of a daily reflection (resources/reflections.py).
+    reflection_slug = models.SlugField(max_length=60, blank=True)
+    transcript = models.TextField(blank=True)
+    audio = models.FileField(upload_to=_audio_upload_to, storage=_audio_storage)
+    duration_seconds = models.FloatField(default=0)
+    content_hash = models.CharField(max_length=64, blank=True)
+    voice_id = models.CharField(max_length=64, blank=True)
+    model_id = models.CharField(max_length=64, blank=True)
+    is_active = models.BooleanField(default=True)
+    generated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['category', 'title']
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def minutes(self):
+        return max(1, round(self.duration_seconds / 60))

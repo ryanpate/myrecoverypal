@@ -1,5 +1,5 @@
 from django.urls import path
-from . import program_views, reflection_views, views, worksheet_views
+from . import audio_views, program_views, reflection_views, views, worksheet_views
 
 app_name = 'resources'
 
@@ -37,6 +37,10 @@ urlpatterns = [
          name='reflection_favorite'),
     path('reflections/<slug:slug>/journal/', reflection_views.reflection_journal,
          name='reflection_journal'),
+    # Audio library (guided sessions + reflections read aloud)
+    path('audio/', audio_views.audio_index, name='audio'),
+    path('audio/<slug:slug>/', audio_views.audio_detail, name='audio_detail'),
+    path('audio/<slug:slug>/play/', audio_views.audio_play, name='audio_play'),
     path('workbook/', worksheet_views.workbook_builder, name='workbook'),
     path('workbook/pdf/', worksheet_views.workbook_pdf, name='workbook_pdf'),
     path('worksheets/<slug:slug>/', worksheet_views.worksheet_detail,

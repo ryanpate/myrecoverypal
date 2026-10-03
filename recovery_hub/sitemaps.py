@@ -218,6 +218,30 @@ class ReflectionSitemap(Sitemap):
         return super().get_urls(page=page, site=site, protocol='https')
 
 
+class AudioSitemap(Sitemap):
+    """Audio library pages that have a recorded track. Reflection narrations
+    are left out: the reading pages already cover that content."""
+    protocol = 'https'
+    changefreq = 'monthly'
+    priority = 0.6
+
+    def items(self):
+        from resources.audio_views import active_tracks
+        slugs = list(active_tracks().filter(reflection_slug='').values_list('slug', flat=True))
+        return ([None] + slugs) if slugs else []
+
+    def location(self, slug):
+        if slug is None:
+            return reverse('resources:audio')
+        return reverse('resources:audio_detail', args=[slug])
+
+    def get_urls(self, page=1, site=None, protocol=None):
+        from django.contrib.sites.models import Site
+        if site is None:
+            site = Site(domain=settings.SITE_DOMAIN, name=settings.SITE_DOMAIN)
+        return super().get_urls(page=page, site=site, protocol='https')
+
+
 class ProgramSitemap(Sitemap):
     """Public program overview pages (lessons themselves need an account)."""
     protocol = 'https'
@@ -320,6 +344,7 @@ sitemaps = {
     'worksheets': WorksheetSitemap,
     'reflections': ReflectionSitemap,
     'programs': ProgramSitemap,
+    'audio': AudioSitemap,
     'meetings': MeetingSitemap,
     'state_hubs': StateHubSitemap,
     'city_hubs': CityHubSitemap,

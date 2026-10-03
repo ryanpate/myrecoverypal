@@ -4,6 +4,14 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-03:** Audio library at `/resources/audio/`, voiced with ElevenLabs.
+  - **Content:** 7 guided sessions plus all 30 daily reflections read aloud. Scripts are written in code (`resources/audio_scripts.py`) so the words are reviewed in PRs. A script is spoken lines plus `P(seconds)` pauses.
+  - **Generation:** `python manage.py generate_audio` (see `resources/management/commands/generate_audio.py`) voices each spoken line separately, passing the neighbouring lines as `previous_text`/`next_text` so the delivery stays consistent. It then stitches in real silent MP3 frames (`resources/audio_mp3.py`, no ffmpeg) and saves the result to `AudioTrack` (resources migration 0007) in Cloudinary. A content hash skips unchanged tracks, and tracks whose script was removed are deactivated. About 23K characters in total.
+  - **Access:** the craving and calm tools (urge surfing, 4-7-8 breathing, 5-4-3-2-1 grounding, craving reset) are free for everyone, including logged-out visitors. A reflection narration is free on the day it's today's reflection. Everything else is Premium.
+  - **Playback:** the player points at `/resources/audio/<slug>/play/`, which checks access and then redirects to the unguessable storage URL. The player resumes where you left off and sets Media Session metadata for the lock screen.
+  - **Where it appears:** a promo on the hub and a "Guided audio" card on Craving SOS. The reflections Listen button plays the recording when one exists and otherwise falls back to the browser's speech synthesis. Each of these appears only once tracks exist.
+  - **iOS:** `UIBackgroundModes` now includes `audio`, and `AppDelegate` sets `AVAudioSession` to `.playback`/`.spokenAudio`, so sessions keep playing with the screen locked. This needs a new App Store build.
+  - **Tests:** `resources/test_audio.py`.
 - **2026-10-03:** Family & friends companion course, "Supporting Someone You Love: 14 Days" (`resources/program_tracks/family.py`, `kind='family'`). It is written for the loved one, not the person using.
   - **Lessons:** self-care, understanding ambivalence, talking so you're heard, planning one hard conversation, noticing the good, stepping back from rescuing, boundaries, encouraging help without forcing it, supporting someone in recovery, slips, getting your own support, and the long view. No branded methods are named, and interventions and ultimatums are never suggested (a test enforces this).
   - **Safety lesson is free:** day 3 covers leaving and calling 911, the National Domestic Violence Hotline (1-800-799-7233), overdose signs, naloxone and 988. It sits inside the free days because safety is never paywalled, and a test guards that.

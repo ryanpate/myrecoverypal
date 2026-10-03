@@ -1,0 +1,57 @@
+{% load static %}
+{% comment %}
+Audio player for an AudioTrack the user may listen to (`track`).
+The src is the access-checked play URL, never the storage URL. Remembers
+the position per track in localStorage so a long session can be resumed,
+and sets Media Session metadata for the lock screen / Control Center.
+{% endcomment %}
+<div class="au-player" data-slug="{{ track.slug }}" data-title="{{ track.title }}"
+     data-artwork="{% static 'images/favicon_512.png' %}">
+    <audio controls preload="metadata" src="{% url 'resources:audio_play' track.slug %}"></audio>
+    <button type="button" class="ws-btn-secondary au-resume" hidden></button>
+</div>
+<script>
+(function () {
+    var box = document.currentScript.previousElementSibling;
+    var audio = box.querySelector('audio');
+    var resume = box.querySelector('.au-resume');
+    var key = 'mrp-audio-pos:' + box.dataset.slug;
+    function load() { try { return parseFloat(localStorage.getItem(key)) || 0; } catch (e) { return 0; } }
+    function save(v) { try { v ? localStorage.setItem(key, String(v)) : localStorage.removeItem(key); } catch (e) {} }
+    function fmt(s) { s = Math.floor(s); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
+
+    audio.addEventListener('loadedmetadata', function () {
+        var pos = load();
+        if (pos > 10 && (!audio.duration || pos < audio.duration - 10)) {
+            resume.textContent = 'Resume from ' + fmt(pos);
+            resume.hidden = false;
+        }
+    });
+    resume.addEventListener('click', function () {
+        audio.currentTime = load();
+        resume.hidden = true;
+        audio.play();
+    });
+    var last = 0;
+    audio.addEventListener('timeupdate', function () {
+        if (Math.abs(audio.currentTime - last) >= 5) { last = audio.currentTime; save(last); }
+    });
+    audio.addEventListener('ended', function () { save(0); });
+    audio.addEventListener('play', function () {
+        resume.hidden = true;
+        if (!('mediaSession' in navigator) || !window.MediaMetadata) return;
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: box.dataset.title, artist: 'MyRecoveryPal',
+            artwork: [{ src: box.dataset.artwork, sizes: '512x512', type: 'image/png' }]
+        });
+        try {
+            navigator.mediaSession.setActionHandler('seekbackward', function () {
+                audio.currentTime = Math.max(0, audio.currentTime - 15);
+            });
+            navigator.mediaSession.setActionHandler('seekforward', function () {
+                audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 15);
+            });
+        } catch (e) {}
+    });
+})();
+</script>

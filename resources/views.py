@@ -71,6 +71,9 @@ class ResourceListView(ListView):
                 featured=True
             ).select_related('category', 'resource_type')[:3]
 
+            from .audio_views import active_tracks
+            context['has_audio'] = active_tracks().exists()
+
         # Always show crisis resources
         context['crisis_resources'] = CrisisResource.objects.filter(
             is_active=True

@@ -1,4 +1,5 @@
 import UIKit
+import AVFoundation
 import Capacitor
 import WidgetKit
 
@@ -9,6 +10,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        // Guided audio (resources/audio) keeps playing with the screen locked
+        // or the app in the background, and ignores the silent switch.
+        // Pairs with the "audio" UIBackgroundModes entry in Info.plist.
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
+        } catch {
+            print("AVAudioSession setup failed: \(error)")
+        }
         return true
     }
 
