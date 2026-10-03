@@ -11,11 +11,18 @@ land in Cloudinary):
 Needs ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID (see resources/elevenlabs.py).
 A track is only re-voiced when its script, voice, model or format changed,
 so re-running is cheap. Tracks whose script was removed are deactivated.
+
+Only one run at a time: a second run started while one is going (say, from
+another SSH session) stops straight away instead of paying to voice the same
+tracks twice. The lock is a Postgres advisory lock, so it covers every
+container and is released automatically if a run dies.
 """
 import hashlib
 import json
+from contextlib import contextmanager
 
 from django.core.files.base import ContentFile
+from django.db import connection
 from django.core.management.base import BaseCommand, CommandError
 
 from resources.audio_mp3 import stitch
@@ -31,6 +38,40 @@ def content_hash(parts, config):
         'format': config.output_format, 'settings': VOICE_SETTINGS,
     }, sort_keys=True)
     return hashlib.sha256(payload.encode()).hexdigest()
+
+
+# Arbitrary app-wide key for pg_try_advisory_lock ("audi").
+LOCK_KEY = 0x61756469
+
+
+def try_lock():
+    """Take the run lock without waiting. True if taken. Without Postgres
+    (local SQLite) there is nothing shared to lock, so always True."""
+    if connection.vendor != 'postgresql':
+        return True
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT pg_try_advisory_lock(%s)', [LOCK_KEY])
+        return bool(cursor.fetchone()[0])
+
+
+def unlock():
+    if connection.vendor == 'postgresql':
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT pg_advisory_unlock(%s)', [LOCK_KEY])
+
+
+@contextmanager
+def single_run():
+    if not try_lock():
+        raise CommandError(
+            'Another generate_audio run is already in progress, so this one stopped '
+            'without voicing anything. Let it finish (check with: python manage.py shell '
+            '-c "from resources.models import AudioTrack; print(AudioTrack.objects.count())"), '
+            'then re-run to pick up anything left.')
+    try:
+        yield
+    finally:
+        unlock()
 
 
 def render(parts, config, client=None):
@@ -65,7 +106,13 @@ class Command(BaseCommand):
         dry = opts['dry_run']
         if not dry and config.missing():
             raise CommandError(f"Set {', '.join(config.missing())} first.")
+        if dry:
+            return self._run(config, dry, opts)
+        # Lock before planning, so the plan sees every track a previous run saved.
+        with single_run():
+            return self._run(config, dry, opts)
 
+    def _run(self, config, dry, opts):
         scripts = all_scripts()
         live_slugs = {s[0] for s in scripts}
         if opts['only']:
@@ -107,6 +154,9 @@ class Command(BaseCommand):
                 self.stdout.write(f'  generating  {slug} ...', ending='')
                 self.stdout.flush()
                 mp3, seconds = render(parts, config, client=client)
+                # Re-read: the row may have been created since the plan was
+                # made, so update it rather than insert a duplicate slug.
+                track = AudioTrack.objects.filter(slug=slug).first()
                 old_name = track.audio.name if track and track.audio else ''
                 track = track or AudioTrack(slug=slug)
                 for k, v in fields.items():
