@@ -54,7 +54,9 @@
     {% else %}
     <p class="ws-intro">{{ program.intro }}</p>
     <p class="ws-when"><strong>Who it's for:</strong> {{ program.audience }}</p>
+    {% if program.kind == 'track' %}<p class="ws-when">Works on its own or alongside <a href="{% url 'resources:program_detail' 'first-30-days' %}">First 30 Days</a>.</p>{% endif %}
     <div class="ws-meta">
+        {% if program.substance %}<span class="ws-chip">{{ program.substance }}</span>{% endif %}
         <span class="ws-chip">{{ program.length }} days</span>
         <span class="ws-chip">About 5 minutes a day</span>
         <span class="ws-chip">First {{ free_days }} days free</span>
@@ -129,6 +131,8 @@
         <button type="submit" class="ws-btn-danger" style="padding-left: 0;">Start over from Day 1</button>
     </form>
     {% endif %}
+
+    {% include 'resources/programs/_helplines.html' %}
 
     <p class="ws-crisis">
         Programs support recovery. They don't replace professional care or medical advice. If you're in crisis, call or text

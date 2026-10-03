@@ -4,6 +4,18 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-03:** Substance-specific program tracks: five 14-day tracks in `resources/program_tracks/` (Alcohol, Opioids, Stimulants, Cannabis, Gambling), one module per track. They are companions to First 30 Days and can be done alone or alongside it.
+  - **Per-program settings:** each program now has `free_days` (tracks 3, First 30 Days 7), `kind` (core or track), `substance` and `helplines`.
+  - **Safety content per track:**
+    - Alcohol: withdrawal can include seizures; talk to a doctor; medical detox.
+    - Opioids: tolerance drops after a break, fentanyl, naloxone, never use alone, 911; medication-assisted treatment framed as legitimate, with no drug names.
+    - Stimulants: the crash, 988, emergency signs.
+    - Gambling: self-exclusion, blocking gambling at the bank, 1-800-GAMBLER.
+  - **Content tests** (`resources/test_program_tracks.py`) enforce that every action link resolves, that the only phone numbers are 988, 911, SAMHSA 1-800-662-4357 and 1-800-GAMBLER, that there are no statistics, and that each track's key safety terms are present.
+  - **Helplines:** shown on track overview and lesson pages; keypad letters become digits in `tel:` links.
+  - **Index:** the programs index now shows "Start here" and "Tracks by substance".
+  - **Reminders:** a member enrolled in several programs gets at most one lesson reminder per local day.
+  - **Refactor:** the program building blocks moved to `resources/program_types.py` to avoid a circular import; `resources/programs.py` re-exports them.
 - **2026-10-03:** Program cohorts (`resources/cohorts.py`). Opt-in, free groups of members who started a program around the same time. Each `ProgramCohort` (resources migration 0006) is backed by a **secret** `RecoveryGroup`: hidden from the group list, 404 for non-members, and joinable only through `POST /resources/programs/<slug>/cohort/`. Posts, comments, likes, anonymous posting and moderation come from the groups system.
   - **Rolling rule:** a new member joins the newest cohort if it has fewer than 30 members and either opened within 7 days, or opened within 21 days with fewer than 5 members. Otherwise a new cohort opens. This keeps a quiet week from stranding anyone alone.
   - **Leaving and bans:** leaving and rejoining puts the member back in the same cohort, and a moderator's ban is never undone.

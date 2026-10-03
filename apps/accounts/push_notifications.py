@@ -458,7 +458,7 @@ class PushNotificationService:
             'icon': '/static/images/favicon_192.png',
         },
         'program_premium': {
-            'title': 'You finished week one',
+            'title': 'You finished the free days',
             'body': 'Keep going with the rest of your program.',
             'icon': '/static/images/favicon_192.png',
         },

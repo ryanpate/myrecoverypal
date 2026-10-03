@@ -215,3 +215,10 @@ a.pg-cohort:hover { background: rgba(82,183,136,0.15); color: inherit; }
 .pg-cohort-text { flex: 1 1 220px; display: flex; flex-direction: column; gap: 0.15rem; }
 .pg-cohort-text span { opacity: 0.8; font-size: 0.9rem; line-height: 1.4; }
 .pg-cohort-cta { font-weight: 700; white-space: nowrap; }
+
+/* Program tracks */
+.pg-helplines { border: 1px solid rgba(220,38,38,0.35); background: rgba(220,38,38,0.06); border-radius: 12px; padding: 0.8rem 1rem; margin: 1.2rem 0; font-size: 0.95rem; }
+.pg-helplines ul { margin: 0.4rem 0 0 1.1rem; padding: 0; line-height: 1.7; }
+.pg-tracks { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin: 0.8rem 0 1.5rem; }
+.pg-section-title { font-size: 1.3rem; margin: 1.8rem 0 0.2rem; }
+.pg-section-sub { opacity: 0.8; margin: 0 0 0.6rem; }

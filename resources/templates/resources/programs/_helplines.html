@@ -1,0 +1,11 @@
+{% if program.helplines %}
+<div class="pg-helplines">
+    <strong>Free, confidential help, any time:</strong>
+    <ul>
+        {% for label, number, tel in program.helpline_rows %}
+        <li>{{ label }}: <a href="tel:{{ tel }}"><strong>{{ number }}</strong></a></li>
+        {% endfor %}
+        <li>In an emergency, call <a href="tel:911"><strong>911</strong></a>.</li>
+    </ul>
+</div>
+{% endif %}

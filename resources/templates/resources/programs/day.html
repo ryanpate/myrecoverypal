@@ -41,7 +41,7 @@
     <div class="locked-resource-panel" style="text-align: center; border: 1px dashed rgba(128,128,128,0.45); border-radius: 14px; padding: 1.6rem 1.2rem;">
         <div style="font-size: 1.8rem;" aria-hidden="true">🔒</div>
         <h2 style="font-size: 1.15rem; margin: 0.4rem 0;">Continue with Premium</h2>
-        <p style="opacity: 0.8;">You've finished the free first week. Premium opens days {{ free_days|add:1 }}&ndash;{{ program.length }},
+        <p style="opacity: 0.8;">You've finished the free days. Premium opens days {{ free_days|add:1 }}&ndash;{{ program.length }},
             plus saved worksheets, Anchor and the full reflection library.</p>
         <a class="ws-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
     </div>
@@ -80,6 +80,8 @@
         {% endif %}
     </div>
     {% endif %}
+
+    {% include 'resources/programs/_helplines.html' %}
 
     <p class="ws-crisis">
         Programs support recovery. They don't replace professional care or medical advice. If you're in crisis, call or text

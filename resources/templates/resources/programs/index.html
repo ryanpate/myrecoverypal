@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}Guided Recovery Programs: Day-by-Day | MyRecoveryPal{% endblock %}
-{% block meta_description %}Guided day-by-day recovery programs: one five-minute lesson and one small action a day. Start the First 30 Days program free.{% endblock %}
+{% block meta_description %}Guided day-by-day recovery programs: First 30 Days plus two-week tracks for alcohol, opioids, stimulants, cannabis and gambling. Start free.{% endblock %}
 {% block og_title %}Guided Recovery Programs | MyRecoveryPal{% endblock %}
 {% block og_description %}One five-minute lesson and one small action a day. Start the First 30 Days program free.{% endblock %}
 {% block twitter_title %}Guided Recovery Programs | MyRecoveryPal{% endblock %}
@@ -25,21 +25,18 @@
         <a href="{% url 'resources:list' %}">Resources</a> &rsaquo; Programs
     </nav>
 
-    <div class="ws-cards" style="grid-template-columns: 1fr;">
-        {% for card in cards %}
-        <a class="ws-card" href="{% url 'resources:program_detail' card.program.slug %}">
-            <span class="ws-card-icon" aria-hidden="true">{{ card.program.icon }}</span>
-            <h2>{{ card.program.title }}</h2>
-            <p>{{ card.program.summary }}</p>
-            {% if card.progress %}
-            <div class="pg-bar"><span style="width: {{ card.progress.percent }}%"></span></div>
-            <div class="ws-card-foot"><span>{% if card.progress.finished %}Completed 🎉{% else %}Day {{ card.progress.next_day }} of {{ card.program.length }}{% endif %}</span><span>Continue &rarr;</span></div>
-            {% else %}
-            <div class="ws-card-foot"><span>{{ card.program.length }} days &middot; first {{ free_days }} free</span><span>Start &rarr;</span></div>
-            {% endif %}
-        </a>
-        {% endfor %}
+    <h2 class="pg-section-title">Start here</h2>
+    <div class="ws-cards" style="grid-template-columns: 1fr; margin-top: 0.6rem;">
+        {% for card in core_cards %}{% include 'resources/programs/_program_card.html' %}{% endfor %}
     </div>
+
+    {% if track_cards %}
+    <h2 class="pg-section-title">Tracks by substance</h2>
+    <p class="pg-section-sub">Two-week companions for what you're quitting. Do one on its own, or alongside First 30 Days.</p>
+    <div class="pg-tracks">
+        {% for card in track_cards %}{% include 'resources/programs/_program_card.html' %}{% endfor %}
+    </div>
+    {% endif %}
 
     <p class="ws-crisis">
         Programs support recovery. They don't replace professional care or medical advice. If you're in crisis, call or text

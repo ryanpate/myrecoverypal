@@ -1,7 +1,7 @@
 """Views for guided day-by-day programs.
 
 Overviews are public (and indexable). Lessons need an account and an
-enrollment. The first FREE_DAYS lessons are free; later ones need Premium.
+enrollment. The first `program.free_days` lessons are free; later ones need Premium.
 Completed lessons stay readable after Premium lapses.
 """
 from django.contrib import messages
@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST
 from .access import user_has_premium
 from .models import ProgramEnrollment
 from .program_service import complete_day, get_progress
-from .programs import FREE_DAYS, PROGRAMS, get_program
+from .programs import CORE_PROGRAMS, TRACK_PROGRAMS, get_program
 
 
 def _program_or_404(slug):
@@ -48,7 +48,7 @@ def _weeks(program, progress):
     for lesson in program.lessons:
         title = program.week_title(lesson.day)
         status = progress.status(lesson.day) if progress else (
-            'free' if lesson.day <= FREE_DAYS else 'premium-preview')
+            'free' if lesson.day <= program.free_days else 'premium-preview')
         if not weeks or weeks[-1][0] != title:
             weeks.append((title, []))
         weeks[-1][1].append((lesson, status))
@@ -56,14 +56,17 @@ def _weeks(program, progress):
 
 
 def program_index(request):
-    cards = []
-    for program in PROGRAMS:
-        enrollment = _enrollment(request.user, program)
-        progress = get_progress(enrollment, request.user) if enrollment else None
-        cards.append({'program': program, 'progress': progress})
+    def cards(programs):
+        out = []
+        for program in programs:
+            enrollment = _enrollment(request.user, program)
+            progress = get_progress(enrollment, request.user) if enrollment else None
+            out.append({'program': program, 'progress': progress})
+        return out
+
     return render(request, 'resources/programs/index.html', {
-        'cards': cards,
-        'free_days': FREE_DAYS,
+        'core_cards': cards(CORE_PROGRAMS),
+        'track_cards': cards(TRACK_PROGRAMS),
         'has_premium': user_has_premium(request.user),
     })
 
@@ -76,7 +79,7 @@ def program_detail(request, slug):
         'program': program,
         'progress': progress,
         'weeks': _weeks(program, progress),
-        'free_days': FREE_DAYS,
+        'free_days': program.free_days,
         'has_premium': user_has_premium(request.user),
         **_cohort_context(request.user, enrollment),
     })
@@ -174,7 +177,7 @@ def program_day(request, slug, day):
         'week_title': program.week_title(day),
         'next_lesson': program.lesson(day + 1),
         'just_completed': request.GET.get('done') == '1' and status == 'done',
-        'free_days': FREE_DAYS,
+        'free_days': program.free_days,
         **_cohort_context(request.user, enrollment),
     })
 
