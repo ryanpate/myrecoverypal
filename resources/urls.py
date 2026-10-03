@@ -15,6 +15,8 @@ urlpatterns = [
          name='worksheet_entry_coach'),
     path('worksheets/entry/<int:pk>/delete/', worksheet_views.worksheet_entry_delete,
          name='worksheet_entry_delete'),
+    path('workbook/', worksheet_views.workbook_builder, name='workbook'),
+    path('workbook/pdf/', worksheet_views.workbook_pdf, name='workbook_pdf'),
     path('worksheets/<slug:slug>/', worksheet_views.worksheet_detail,
          name='worksheet_detail'),
     path('worksheets/<slug:slug>/pdf/', worksheet_views.worksheet_blank_pdf,

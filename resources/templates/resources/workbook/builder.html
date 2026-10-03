@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Recovery Workbook | MyRecoveryPal{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/worksheets.css' %}">
+<style>
+    .wb-option { display: flex; gap: 0.8rem; align-items: flex-start; padding: 0.85rem 0;
+                 border-bottom: 1px solid rgba(128,128,128,0.2); cursor: pointer; }
+    .wb-option:last-child { border-bottom: 0; }
+    .wb-option input { margin-top: 0.3rem; width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
+    .wb-option strong { display: block; }
+    .wb-option small { display: block; opacity: 0.75; line-height: 1.4; }
+    .wb-count { margin-left: auto; font-size: 0.82rem; opacity: 0.7; white-space: nowrap; padding-left: 0.5rem; }
+    .wb-ranges { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .wb-ranges label { position: relative; }
+    .wb-ranges input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .wb-ranges span { display: inline-block; padding: 0.45rem 1rem; border-radius: 999px; cursor: pointer;
+                      border: 1px solid rgba(128,128,128,0.45); font-weight: 600; font-size: 0.92rem; }
+    .wb-ranges input:checked + span { background: var(--primary-color, #1e4d8b); border-color: var(--primary-color, #1e4d8b); color: #fff; }
+    .wb-ranges input:focus-visible + span { outline: 2px solid var(--accent-color, #52b788); outline-offset: 2px; }
+    [data-theme="dark"] .wb-ranges input:checked + span { color: #0f172a; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ws-wrap">
+    <nav class="ws-crumbs" aria-label="Breadcrumb">
+        <a href="{% url 'resources:list' %}">Resources</a> &rsaquo;
+        <a href="{% url 'resources:worksheets' %}">Worksheets</a> &rsaquo; My Recovery Workbook
+    </nav>
+    <h1 style="font-size: 1.7rem; margin-bottom: 0.3rem;">📘 My Recovery Workbook</h1>
+    <p class="ws-intro">One PDF of your recovery work: check-in trends, your relapse prevention plan, saved worksheets and milestones.
+        Bring it to a therapist, counselor, sponsor or treatment program so they can see what you've been working on.</p>
+    <p class="ws-when">You choose what goes in. Your journal is never included.</p>
+
+    {% if messages %}{% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" style="margin-bottom: 1rem;">{{ message }}</div>
+    {% endfor %}{% endif %}
+
+    <form method="get" action="{% url 'resources:workbook_pdf' %}" id="wb-form">
+        <section class="ws-section">
+            <h2>What to include</h2>
+            {% for s in sections %}
+            <label class="wb-option">
+                <input type="checkbox" name="section" value="{{ s.key }}" {% if s.checked %}checked{% endif %} {% if not has_premium %}disabled{% endif %}>
+                <span><strong>{{ s.label }}</strong><small>{{ s.description }}</small></span>
+                <span class="wb-count">
+                    {% if s.key == 'checkins' %}{{ s.count }} check-in{{ s.count|pluralize }}
+                    {% elif s.key == 'plan' %}{{ s.count }} of 7 sections
+                    {% elif s.key == 'worksheets' %}{{ s.count }} saved
+                    {% elif s.key == 'milestones' %}{{ s.count }} recorded
+                    {% elif s.key == 'slips' %}{{ s.count }} logged
+                    {% elif s.key == 'reasons' %}{% if s.count %}Filled in{% else %}Not set{% endif %}{% endif %}
+                </span>
+            </label>
+            {% endfor %}
+        </section>
+
+        <section class="ws-section">
+            <h2>Time period</h2>
+            <p class="ws-section-intro">Applies to check-ins, pledges, worksheets, milestones and slips. Your plan and reasons are always the current version.</p>
+            <div class="wb-ranges">
+                {% for key, label in ranges %}
+                <label><input type="radio" name="range" value="{{ key }}" {% if key == default_range %}checked{% endif %} {% if not has_premium %}disabled{% endif %}><span>{{ label }}</span></label>
+                {% endfor %}
+            </div>
+        </section>
+
+        <div class="ws-actions">
+            {% if has_premium %}
+            <button type="submit" class="ws-btn"><i class="fas fa-file-pdf" aria-hidden="true"></i> Download my workbook</button>
+            {% else %}
+            <a class="ws-btn-locked" href="{% url 'accounts:pricing' %}"><i class="fas fa-lock" aria-hidden="true"></i> Download my workbook (Premium)</a>
+            {% endif %}
+        </div>
+    </form>
+
+    {% if not has_premium %}
+    <div class="ws-upsell">
+        <h3>The workbook is part of Premium</h3>
+        <ul>
+            <li>A professional PDF of your recovery work, ready to share</li>
+            <li>Weekly mood and craving charts from your check-ins</li>
+            <li>Your saved worksheets and relapse prevention plan in one place</li>
+        </ul>
+        <a class="ws-upsell-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
+    </div>
+    {% endif %}
+
+    <p class="ws-crisis">
+        The workbook is private. It's only created when you download it, and only you can download yours.
+        If you're in crisis, call or text <strong>988</strong> or see <a href="{% url 'core:crisis' %}">crisis resources</a>.
+    </p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    // Keep at least one section ticked so the button never produces an empty file.
+    var form = document.getElementById('wb-form');
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+        if (!form.querySelector('input[name="section"]:checked')) {
+            e.preventDefault();
+            alert('Choose at least one section to include.');
+        }
+    });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    @page { size: letter; margin: 1.6cm 1.6cm 1.9cm;
+            @bottom-left { content: "My Recovery Workbook · myrecoverypal.com"; font-family: Helvetica, Arial, sans-serif; font-size: 7.5pt; color: #889; }
+            @bottom-right { content: "Page " counter(page) " of " counter(pages); font-family: Helvetica, Arial, sans-serif; font-size: 7.5pt; color: #889; } }
+    @page :first { @bottom-left { content: none; } @bottom-right { content: none; } }
+    body { font-family: Helvetica, Arial, sans-serif; color: #1a2733; font-size: 10.5pt; }
+    .cover { text-align: center; padding-top: 5.5cm; page-break-after: always; }
+    .cover h1 { font-size: 30pt; color: #1e4d8b; margin: 0 0 8pt; }
+    .cover .who { font-size: 15pt; margin-bottom: 4pt; }
+    .cover .when { color: #667; font-size: 10.5pt; }
+    .cover .days { margin: 26pt auto 0; display: inline-block; border: 1.5pt solid #cfe0f5;
+                   border-radius: 10pt; padding: 12pt 26pt; }
+    .cover .days strong { display: block; font-size: 28pt; color: #2d6a4f; }
+    .cover .private { margin-top: 3.5cm; font-size: 9pt; color: #667; line-height: 1.5; }
+    h2.part { font-size: 17pt; color: #1e4d8b; border-bottom: 2pt solid #cfe0f5; padding-bottom: 4pt;
+              margin: 0 0 10pt; page-break-before: always; }
+    h2.part.first { page-break-before: auto; }
+    h3 { font-size: 12pt; color: #1e4d8b; margin: 14pt 0 5pt; }
+    p { line-height: 1.45; margin: 0 0 6pt; }
+    .muted { color: #667; }
+    .empty { color: #99a; font-style: italic; }
+    .body-text { white-space: pre-wrap; line-height: 1.45; }
+    .stats { width: 100%; border-collapse: separate; border-spacing: 6pt 0; margin: 0 -6pt 10pt; }
+    .stats td { border: 0.75pt solid #cfe0f5; border-radius: 6pt; padding: 7pt; text-align: center; width: 20%; }
+    .stats strong { display: block; font-size: 16pt; color: #1e4d8b; }
+    .stats span { font-size: 8pt; color: #667; }
+    table.list { width: 100%; border-collapse: collapse; margin-top: 4pt; }
+    table.list th, table.list td { text-align: left; padding: 4pt 6pt; border-bottom: 0.75pt solid #dde5ee;
+                                   font-size: 9.5pt; vertical-align: top; }
+    table.list th { color: #556; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.06em; }
+    .chart { margin: 4pt 0 10pt; }
+    .ws { page-break-inside: auto; margin-bottom: 14pt; }
+    .ws h3 { border-bottom: 0.75pt solid #dde5ee; padding-bottom: 3pt; }
+    .ws h4 { font-size: 10pt; color: #334; margin: 8pt 0 2pt; text-transform: uppercase; letter-spacing: 0.04em; }
+    .field { margin: 4pt 0 7pt; page-break-inside: avoid; }
+    .label { font-weight: bold; }
+    .answer { white-space: pre-wrap; line-height: 1.4; margin-top: 1pt; }
+    .scale span { display: inline-block; width: 13pt; height: 13pt; line-height: 13pt; text-align: center;
+                  border: 0.75pt solid #9fb1c6; border-radius: 50%; font-size: 7pt; margin-right: 2pt; }
+    .scale span.on { background: #1e4d8b; color: #fff; border-color: #1e4d8b; }
+    .scale-ends { font-size: 7pt; color: #778; margin-top: 1pt; }
+    table.grid { width: 100%; border-collapse: separate; border-spacing: 8pt 0; margin: 0 -8pt; }
+    table.grid td { width: 50%; vertical-align: top; }
+    .crisis { margin-top: 18pt; padding-top: 8pt; border-top: 1.5pt solid #cfe0f5; font-size: 9pt; color: #556; }
+    .crisis strong { color: #b02a37; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+    <h1>My Recovery Workbook</h1>
+    <div class="who">{{ owner.get_full_name|default:owner.username }}</div>
+    <div class="when">{{ range_label }}{% if start %} · {{ start|date:"F j, Y" }} to {{ today|date:"F j, Y" }}{% else %} · through {{ today|date:"F j, Y" }}{% endif %}</div>
+    {% if days_sober is not None %}
+    <div class="days"><strong>{{ days_sober }}</strong>day{{ days_sober|pluralize }} since {{ owner.sobriety_date|date:"F j, Y" }}</div>
+    {% endif %}
+    <div class="private">
+        Private and confidential. Created on MyRecoveryPal on {{ generated|date:"F j, Y" }}<br>
+        to share with the people supporting my recovery.
+    </div>
+</div>
+
+{% for key in sections %}
+
+{% if key == 'reasons' %}
+<h2 class="part{% if forloop.first %} first{% endif %}">My reasons &amp; goals</h2>
+<h3>Why I'm staying sober</h3>
+{% if owner.pledge_reason %}<p class="body-text">{{ owner.pledge_reason }}</p>{% else %}<p class="empty">Not filled in yet</p>{% endif %}
+<h3>My recovery goals</h3>
+{% if owner.recovery_goals %}<p class="body-text">{{ owner.recovery_goals }}</p>{% else %}<p class="empty">Not filled in yet</p>{% endif %}
+<h3>Daily pledge</h3>
+<p>{{ pledge_count }} pledge{{ pledge_count|pluralize }} taken in this period. Current pledge streak: {{ pledge_streak }} day{{ pledge_streak|pluralize }}.</p>
+{% endif %}
+
+{% if key == 'checkins' %}
+<h2 class="part{% if forloop.first %} first{% endif %}">Check-in trends</h2>
+{% if checkins.stats.count %}
+<table class="stats"><tr>
+    <td><strong>{{ checkins.stats.count }}</strong><span>check-ins</span></td>
+    <td><strong>{{ checkins.stats.avg_mood|floatformat:1 }}</strong><span>avg mood (1&ndash;6)</span></td>
+    <td><strong>{{ checkins.stats.avg_craving|floatformat:1 }}</strong><span>avg craving (0&ndash;4)</span></td>
+    <td><strong>{{ checkins.stats.avg_energy|floatformat:1 }}</strong><span>avg energy (1&ndash;5)</span></td>
+    <td><strong>{{ checkins.stats.tough_days }}</strong><span>tough days*</span></td>
+</tr></table>
+<p class="muted" style="font-size: 8.5pt;">* Days with a mood of "Down" or lower, or cravings of "Strong" or higher. Current check-in streak: {{ checkins.streak }} day{{ checkins.streak|pluralize }}.</p>
+
+{% if checkins.charts %}
+<h3>Mood by week</h3>
+<div class="chart">{{ checkins.charts.mood|safe }}</div>
+<h3>Cravings by week</h3>
+<div class="chart">{{ checkins.charts.craving|safe }}</div>
+{% endif %}
+
+<h3>Weekly averages</h3>
+<table class="list">
+    <tr><th>Week of</th><th>Mood</th><th>Craving</th><th>Energy</th></tr>
+    {% for week in checkins.weekly %}
+    <tr><td>{{ week.0|date:"M j, Y" }}</td><td>{{ week.1|floatformat:1 }}</td><td>{{ week.2|floatformat:1 }}</td><td>{{ week.3|floatformat:1 }}</td></tr>
+    {% endfor %}
+</table>
+
+{% if checkins.gratitude %}
+<h3>Gratitude highlights</h3>
+<table class="list">
+    {% for g in checkins.gratitude %}
+    <tr><td style="width: 22%; white-space: nowrap;">{{ g.date|date:"M j, Y" }}</td><td class="body-text">{{ g.gratitude }}</td></tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% else %}
+<p class="empty">No check-ins in this period.</p>
+{% endif %}
+{% endif %}
+
+{% if key == 'plan' %}
+<h2 class="part{% if forloop.first %} first{% endif %}">Relapse prevention plan</h2>
+{% if plan and plan.filled_section_count %}
+<h3>My triggers</h3>
+<div class="body-text">{% if plan.triggers %}{{ plan.triggers }}{% else %}<span class="empty">Not filled in yet</span>{% endif %}</div>
+<h3>My early warning signs</h3>
+<div class="body-text">{% if plan.warning_signs %}{{ plan.warning_signs }}{% else %}<span class="empty">Not filled in yet</span>{% endif %}</div>
+<h3>Coping strategies that work for me</h3>
+<div class="body-text">{% if plan.coping_strategies %}{{ plan.coping_strategies }}{% else %}<span class="empty">Not filled in yet</span>{% endif %}</div>
+<h3>My support contacts</h3>
+{% if plan.support_contacts %}
+<table class="list">
+    <tr><th>Name</th><th>Phone</th><th>Relationship</th></tr>
+    {% for c in plan.support_contacts %}<tr><td>{{ c.name }}</td><td>{{ c.phone }}</td><td>{{ c.relationship }}</td></tr>{% endfor %}
+</table>
+{% else %}<span class="empty">Not filled in yet</span>{% endif %}
+<h3>My reasons for recovery</h3>
+<div class="body-text">{% if plan.reasons %}{{ plan.reasons }}{% else %}<span class="empty">Not filled in yet</span>{% endif %}</div>
+<h3>HALT self-check</h3>
+<div class="body-text">{% if plan.halt_notes %}{{ plan.halt_notes }}{% else %}<span class="empty">Not filled in yet</span>{% endif %}</div>
+<h3>If a slip happens: my emergency steps</h3>
+<div class="body-text">{% if plan.emergency_steps %}{{ plan.emergency_steps }}{% else %}<span class="empty">Not filled in yet</span>{% endif %}</div>
+{% else %}
+<p class="empty">No relapse prevention plan yet. Build one at myrecoverypal.com/accounts/plan/</p>
+{% endif %}
+{% endif %}
+
+{% if key == 'worksheets' %}
+<h2 class="part{% if forloop.first %} first{% endif %}">Worksheets</h2>
+{% for item in worksheet_entries %}
+<div class="ws">
+    <h3>{{ item.worksheet.title }} <span class="muted" style="font-size: 9pt; font-weight: normal;">&middot; {{ item.entry.created_at|date:"M j, Y" }}</span></h3>
+    {% for section in item.sections %}
+    <h4>{{ section.title }}</h4>
+    {% if section.columns == 2 %}
+    <table class="grid"><tr>
+        {% for field in section.fields %}
+        <td>{% include 'resources/worksheets/_pdf_field.html' %}</td>
+        {% if forloop.counter|divisibleby:2 and not forloop.last %}</tr><tr>{% endif %}
+        {% endfor %}
+    </tr></table>
+    {% else %}
+        {% for field in section.fields %}{% include 'resources/worksheets/_pdf_field.html' %}{% endfor %}
+    {% endif %}
+    {% endfor %}
+</div>
+{% empty %}
+<p class="empty">No saved worksheets in this period.</p>
+{% endfor %}
+{% endif %}
+
+{% if key == 'milestones' %}
+<h2 class="part{% if forloop.first %} first{% endif %}">Milestones</h2>
+{% if milestones %}
+<table class="list">
+    <tr><th>Date</th><th>Milestone</th><th>Notes</th></tr>
+    {% for m in milestones %}
+    <tr><td style="white-space: nowrap;">{{ m.date_achieved|date:"M j, Y" }}</td><td><strong>{{ m.title }}</strong><br><span class="muted">{{ m.display_milestone_type }}</span></td><td class="body-text">{{ m.description }}</td></tr>
+    {% endfor %}
+</table>
+{% else %}
+<p class="empty">No milestones recorded in this period.</p>
+{% endif %}
+{% endif %}
+
+{% if key == 'slips' %}
+<h2 class="part{% if forloop.first %} first{% endif %}">Slips</h2>
+<p class="muted">A slip is an event, not an identity. Recording them honestly is part of the work.</p>
+{% if slips %}
+<table class="list">
+    <tr><th>Date</th><th>Substance</th><th>Trigger</th><th>Notes</th></tr>
+    {% for s in slips %}
+    <tr><td style="white-space: nowrap;">{{ s.relapse_date|date:"M j, Y" }}</td><td>{{ s.substance }}</td><td>{{ s.trigger }}</td><td class="body-text">{{ s.notes }}</td></tr>
+    {% endfor %}
+</table>
+{% else %}
+<p class="empty">No slips logged in this period.</p>
+{% endif %}
+{% endif %}
+
+{% endfor %}
+
+<div class="crisis">
+    In crisis or thinking about harming yourself? Call or text <strong>988</strong> (Suicide &amp; Crisis Lifeline) or 911.
+    This workbook is a record of personal recovery work, not a medical record or a professional assessment.
+</div>
+</body>
+</html>
