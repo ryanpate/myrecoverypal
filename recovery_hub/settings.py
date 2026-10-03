@@ -246,6 +246,7 @@ TEMPLATES = [
                 # SEO defaults for better search engine visibility
                 'apps.core.context_processors.seo_defaults',
                 'apps.core.context_processors.ga_events',
+                'apps.core.context_processors.whats_new',
                 # Add PWA context processor if using django-pwa
                 # 'pwa.context_processors.pwa',
             ],

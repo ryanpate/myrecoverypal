@@ -11,10 +11,10 @@ Dismiss hides it for 7 days via localStorage so it never nags.
         <div class="premium-upsell-icon" aria-hidden="true">⚓</div>
         <div>
             <div class="premium-upsell-title">Go deeper in your recovery</div>
-            <div class="premium-upsell-text">Unlock 90-day mood &amp; craving trends, unlimited Anchor coaching, and journal export.</div>
+            <div class="premium-upsell-text">Every guided program, the full audio &amp; reflection library, your Recovery Workbook, and 20 Anchor messages a day.{% if user_subscription.card_trial_eligible %} Try it free for 7 days.{% endif %}</div>
         </div>
     </div>
-    <a href="{% url 'accounts:pricing' %}" class="premium-upsell-btn">See Premium</a>
+    <a href="{% url 'accounts:pricing' %}" class="premium-upsell-btn" onclick="if(typeof gtag==='function')gtag('event','select_promotion',{promotion_id:'progress_upsell_card',creative_slot:'progress'});">See Premium</a>
 </div>
 <style>
     .premium-upsell-card {

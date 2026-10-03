@@ -1313,6 +1313,7 @@
     {% endif %}
 
     <!-- Additional Scripts -->
+    {% include 'partials/_whats_new.html' %}
     {% block extra_js %}{% endblock %}
 
     {% if not user.is_authenticated %}

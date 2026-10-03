@@ -4,6 +4,20 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-03:** Spotlight the new library and Premium. Plan and ideas: `docs/plans/2026-10-03-premium-awareness.md`.
+  - **Landing page:**
+    - A "New" tag in the hero.
+    - A **Your recovery toolkit** section: six cards with honest Free / Premium labels.
+    - A **Free vs Premium** section with live `SubscriptionPlan` prices, marked `stripe-only` so the iOS app hides them.
+    - The FAQ JSON-LD now mentions the library.
+  - **Pricing page:** both feature lists include the library.
+  - **Progress-home upsell card:** new copy. It no longer claims "unlimited Anchor", and the trial line shows only to members eligible for a trial.
+  - **"What's new" popup:** a one-time native `<dialog>` (`templates/partials/_whats_new.html`, decided by `apps.core.context_processors.whats_new`).
+    - Shown only to logged-in members, only on the progress home, the feed and the resources hub. Never on crisis, SOS, coach or auth pages.
+    - Not shown in a member's first day, and not shown to supporters.
+    - Shown once per `WHATS_NEW_VERSION`. Premium members get a version with no upsell.
+  - **GA4:** `view_promotion` and `select_promotion` events with a `promotion_id`.
+  - **Tests:** `apps/core/test_premium_promos.py`.
 - **2026-10-03:** Five new audio sessions in `resources/audio_scripts.py`, about 7,700 characters to voice.
   - **Free (safety tools):**
     - *Before a social event*: decide a drink, an answer and an exit, and pick a person to text.
