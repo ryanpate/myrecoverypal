@@ -17,7 +17,7 @@
     <span class="pg-home-text">
         {% if progress %}
         <strong>{{ program.title }}: Day {{ progress.next_day }} of {{ program.length }}</strong>
-        <span>{% if progress.next_status == 'current' %}Today's lesson is ready. About 5 minutes.{% elif progress.next_status == 'waiting' %}Done for today. Your next lesson opens tomorrow.{% elif progress.next_status == 'premium' %}You finished the free first week. Continue with Premium.{% endif %}</span>
+        <span>{% if progress.next_status == 'current' %}Today's lesson is ready. About 5 minutes.{% elif progress.next_status == 'waiting' %}Done for today. Your next lesson opens tomorrow.{% elif progress.next_status == 'premium' %}You finished the free days. Continue with Premium.{% endif %}</span>
         <span class="pg-home-bar"><span style="width: {{ progress.percent }}%"></span></span>
         {% else %}
         <strong>New: the First 30 Days program</strong>

@@ -1,0 +1,11 @@
+<a class="ws-card" href="{% url 'resources:program_detail' card.program.slug %}">
+    <span class="ws-card-icon" aria-hidden="true">{{ card.program.icon }}</span>
+    <h2>{{ card.program.title }}</h2>
+    <p>{{ card.program.summary }}</p>
+    {% if card.progress %}
+    <div class="pg-bar"><span style="width: {{ card.progress.percent }}%"></span></div>
+    <div class="ws-card-foot"><span>{% if card.progress.finished %}Completed 🎉{% else %}Day {{ card.progress.next_day }} of {{ card.program.length }}{% endif %}</span><span>Continue &rarr;</span></div>
+    {% else %}
+    <div class="ws-card-foot"><span>{{ card.program.length }} days &middot; first {{ card.program.free_days }} free</span><span>Start &rarr;</span></div>
+    {% endif %}
+</a>

@@ -10,76 +10,20 @@ opens once the previous day is complete and that completion was on an
 earlier local date. Missed days don't count against you; you pick up
 where you left off.
 
-Access (see program_views.py): the first FREE_DAYS lessons of every program
-are free. Later lessons are Premium. Lessons a member has already completed
-stay readable if their Premium lapses.
+Access (see program_views.py): the first `free_days` lessons of each program
+are free (FREE_DAYS unless the program sets its own). Later lessons are
+Premium. Lessons a member has already completed stay readable if their
+Premium lapses.
+
+Kinds: the one 'core' program (First 30 Days) is for anyone. 'track'
+programs are shorter, substance-specific companions; they live one per
+file in resources/program_tracks/.
 
 All lesson text is original to MyRecoveryPal and works for any path to
 recovery. It never gives medical advice; anything touching withdrawal or
 medication points to a doctor.
 """
-from dataclasses import dataclass, field
-from typing import Optional, Tuple
-
-FREE_DAYS = 7
-
-
-@dataclass(frozen=True)
-class Action:
-    label: str
-    url_name: str
-    args: Tuple = ()
-    # Shown under the button: what to actually do there.
-    detail: str = ''
-
-
-@dataclass(frozen=True)
-class Lesson:
-    title: str
-    paragraphs: Tuple[str, ...]
-    action: Optional[Action]
-    prompt: str
-    # Filled in by Program.__post_init__.
-    day: int = 0
-
-
-@dataclass(frozen=True)
-class Program:
-    slug: str
-    title: str
-    icon: str
-    summary: str
-    intro: str
-    audience: str
-    meta_description: str
-    lessons: Tuple[Lesson, ...]
-    weeks: Tuple[str, ...] = field(default=())
-
-    def __post_init__(self):
-        numbered = tuple(
-            Lesson(l.title, l.paragraphs, l.action, l.prompt, day=i)
-            for i, l in enumerate(self.lessons, start=1))
-        object.__setattr__(self, 'lessons', numbered)
-
-    @property
-    def length(self):
-        return len(self.lessons)
-
-    def lesson(self, day):
-        if 1 <= day <= len(self.lessons):
-            return self.lessons[day - 1]
-        return None
-
-    def week_title(self, day):
-        index = (day - 1) // 7
-        return self.weeks[index] if index < len(self.weeks) else 'Moving forward'
-
-
-def L(title, paragraphs, action, prompt):
-    return Lesson(title=title, paragraphs=tuple(paragraphs), action=action, prompt=prompt)
-
-
-A = Action
+from .program_types import FREE_DAYS, A, Action, L, Lesson, Program  # noqa: F401
 
 FIRST_30_DAYS = Program(
     slug='first-30-days',
@@ -390,8 +334,12 @@ FIRST_30_DAYS = Program(
     ),
 )
 
-PROGRAMS = [FIRST_30_DAYS]
+from .program_tracks import TRACKS  # noqa: E402
+
+PROGRAMS = [FIRST_30_DAYS, *TRACKS]
 PROGRAMS_BY_SLUG = {p.slug: p for p in PROGRAMS}
+CORE_PROGRAMS = [p for p in PROGRAMS if p.kind == 'core']
+TRACK_PROGRAMS = [p for p in PROGRAMS if p.kind == 'track']
 
 
 def get_program(slug):

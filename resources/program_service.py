@@ -5,7 +5,7 @@ Day statuses:
     current  the next lesson, open now
     waiting  the next lesson, but the previous one was finished today; it
              opens tomorrow (member's local date)
-    premium  the next lesson, waiting only on Premium (day > FREE_DAYS)
+    premium  the next lesson, waiting only on Premium (day > program.free_days)
     locked   further ahead
 """
 from dataclasses import dataclass
@@ -15,7 +15,6 @@ from django.utils import timezone
 
 from .access import user_has_premium
 from .models import ProgramDayCompletion, ProgramEnrollment
-from .programs import FREE_DAYS
 
 
 @dataclass
@@ -58,7 +57,7 @@ def get_progress(enrollment, user, today=None):
 
     if next_day > program.length:
         next_status = 'finished'
-    elif next_day > FREE_DAYS and not user_has_premium(user):
+    elif next_day > program.free_days and not user_has_premium(user):
         next_status = 'premium'
     elif next_day > 1 and completed.get(next_day - 1) and completed[next_day - 1] >= today:
         next_status = 'waiting'

@@ -9,8 +9,10 @@ day:
     only once a lesson has been open EMAIL_AFTER_DAYS_OPEN days, then at most
     every EMAIL_EVERY_DAYS days. Everything stops after GIVE_UP_DAYS_OPEN
     days; the member can come back any time and reminders resume.
-  * A free member who finished the free days: one in-app notification plus
-    push pointing to Premium, ever. Never repeated.
+  * A free member who finished the program's free days: one in-app
+    notification plus push pointing to Premium, ever. Never repeated.
+  * Members in several programs get at most one reminder per local day in
+    total; whichever enrollment the hourly run reaches first wins.
   * Waiting for tomorrow, finished, or unknown program: nothing.
 
 Skipped entirely: reminders turned off for that enrollment, notifications
@@ -102,8 +104,8 @@ def remind_enrollment(enrollment, now=None):
     a subset of {'push', 'email', 'premium'}."""
     from apps.accounts.email_sequences import is_crisis_suppressed
 
+    from .models import ProgramEnrollment
     from .program_service import get_progress
-    from .programs import FREE_DAYS
 
     user = enrollment.user
     program = enrollment.program
@@ -117,6 +119,10 @@ def remind_enrollment(enrollment, now=None):
         local_now = timezone.localtime(now or timezone.now())
         today = local_now.date()
         if local_now.hour != REMINDER_LOCAL_HOUR or enrollment.last_reminder_on == today:
+            return sent
+        # Members in more than one program get one reminder a day in total.
+        if ProgramEnrollment.objects.filter(user=user, last_reminder_on=today).exclude(
+                pk=enrollment.pk).exists():
             return sent
 
         progress = get_progress(enrollment, user, today)
@@ -144,8 +150,8 @@ def remind_enrollment(enrollment, now=None):
         elif progress.next_status == 'premium' and not enrollment.premium_nudge_sent:
             link = reverse('resources:program_detail', args=[program.slug])
             _notify(user, 'program_reminder', 'program_premium',
-                    f'You finished week one of {program.title}',
-                    f'That\'s {FREE_DAYS} days of showing up. Premium opens the rest of the program.',
+                    f'You finished the free days of {program.title}',
+                    f'That\'s {program.free_days} days of showing up. Premium opens the rest of the program.',
                     link)
             enrollment.premium_nudge_sent = True
             sent.add('premium')
