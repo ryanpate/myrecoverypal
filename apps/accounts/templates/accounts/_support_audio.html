@@ -1,0 +1,26 @@
+{% comment %}
+After a struggling / high-craving check-in: one-tap free guided audio, next
+to the Anchor offer (resources/audio_views.py::support_audio_for). Always a
+free session, so it plays for everyone. Context: `track` (AudioTrack).
+{% endcomment %}
+<div class="support-audio" data-slug="{{ track.slug }}">
+    <p class="support-audio-or">Or press play and let a voice talk you through it:</p>
+    <p class="support-audio-title"><i class="fas fa-headphones" aria-hidden="true"></i>
+        <strong>{{ track.title }}</strong> &middot; {{ track.minutes }} min &middot; free</p>
+    <audio controls preload="none" src="{% url 'resources:audio_play' track.slug %}"></audio>
+</div>
+<script>
+(function () {
+    var box = document.currentScript.previousElementSibling, audio = box.querySelector('audio');
+    audio.addEventListener('play', function once() {
+        audio.removeEventListener('play', once);
+        if (typeof gtag === 'function') gtag('event', 'support_audio_play', { track: box.dataset.slug, source: 'checkin' });
+    });
+})();
+</script>
+<style>
+    .support-audio { margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid rgba(30, 77, 139, 0.18); text-align: center; }
+    .support-audio-or { font-size: 0.9rem; margin: 0 0 0.35rem; opacity: 0.85; }
+    .support-audio-title { margin: 0 0 0.6rem; font-size: 0.95rem; }
+    .support-audio audio { width: 100%; }
+</style>

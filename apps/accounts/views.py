@@ -1151,6 +1151,7 @@ def quick_checkin(request):
         'shared_to_feed': share_to_feed,
         'needs_support': checkin.needs_support(),
         'coach_url': reverse('accounts:coach_start_from_checkin', args=[checkin.id]),
+        'support_audio': _support_audio_payload(checkin),
         'current_streak': request.user.get_checkin_streak(),
     })
 
@@ -1187,7 +1188,16 @@ def checkin_confirmation(request):
                 id=int(checkin_id), user=request.user).first()
         except (ValueError, TypeError):
             checkin = None
-    return render(request, 'accounts/checkin_confirmation.html', {'checkin': checkin})
+    from resources.audio_views import support_audio_for
+    return render(request, 'accounts/checkin_confirmation.html', {
+        'checkin': checkin,
+        'support_audio': support_audio_for(checkin),
+    })
+
+
+def _support_audio_payload(checkin):
+    from resources.audio_views import support_audio_payload
+    return support_audio_payload(checkin)
 
 
 @login_required

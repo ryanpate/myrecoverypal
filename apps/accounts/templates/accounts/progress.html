@@ -1781,6 +1781,12 @@
         <a id="homeAnchorLink" href="#" style="background:#1e4d8b; color:#fff; padding:9px 18px; border-radius:8px; text-decoration:none; font-weight:600; display:inline-block;">
             Talk it through with Anchor
         </a>
+        <div id="homeSupportAudio" class="support-audio" style="display:none; margin-top:12px; padding-top:10px; border-top:1px solid rgba(30,77,139,0.18);">
+            <p class="support-audio-or" style="font-size:0.9rem; margin:0 0 0.35rem; color:#1e4d8b;">Or press play and let a voice talk you through it:</p>
+            <p style="margin:0 0 0.6rem; font-size:0.95rem; color:#1e4d8b;"><i class="fas fa-headphones" aria-hidden="true"></i>
+                <strong id="homeSupportAudioTitle"></strong> &middot; <span id="homeSupportAudioMins"></span> min &middot; free</p>
+            <audio id="homeSupportAudioPlayer" controls preload="none" style="width:100%;"></audio>
+        </div>
     </div>
 
     <div class="progress-container">
@@ -2701,6 +2707,18 @@
                     if (link && prompt) {
                         link.href = data.coach_url;
                         prompt.style.display = 'block';
+                    }
+                    var sa = data.support_audio, saBox = document.getElementById('homeSupportAudio');
+                    if (sa && saBox) {
+                        document.getElementById('homeSupportAudioTitle').textContent = sa.title;
+                        document.getElementById('homeSupportAudioMins').textContent = sa.minutes;
+                        var player = document.getElementById('homeSupportAudioPlayer');
+                        player.src = sa.play_url;
+                        player.addEventListener('play', function once() {
+                            player.removeEventListener('play', once);
+                            if (typeof gtag === 'function') gtag('event', 'support_audio_play', { track: sa.slug, source: 'progress_checkin' });
+                        });
+                        saBox.style.display = '';
                     }
                 }
             } else {

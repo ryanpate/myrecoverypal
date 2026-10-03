@@ -1,0 +1,60 @@
+{% comment %}
+Share a reading as an image card (resources/reflection_cards.py).
+Where the browser can share files (phones), "Share" opens the system share
+sheet with the 1080x1350 card attached, ready for Instagram, Messages,
+WhatsApp and so on. Elsewhere it opens a small menu: download the post or
+story image, or copy the link. Context: `r` (the Reflection).
+{% endcomment %}
+<div class="rf-share">
+    <button type="button" class="ws-btn-secondary rf-share-btn"
+            data-slug="{{ r.slug }}" data-title="{{ r.title }}"
+            data-url="https://www.myrecoverypal.com{% url 'resources:reflection_detail' r.slug %}"
+            data-card="{% url 'resources:reflection_card' r.slug %}?format=post"
+            aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-share-nodes" aria-hidden="true"></i> Share</button>
+    <div class="rf-share-menu" hidden>
+        <a href="{% url 'resources:reflection_card' r.slug %}?format=post&amp;download=1" data-share="download_post">
+            <i class="fas fa-image" aria-hidden="true"></i> Image for a post</a>
+        <a href="{% url 'resources:reflection_card' r.slug %}?format=story&amp;download=1" data-share="download_story">
+            <i class="fas fa-mobile-screen" aria-hidden="true"></i> Image for a story</a>
+        <button type="button" data-share="copy_link"><i class="fas fa-link" aria-hidden="true"></i> <span>Copy link</span></button>
+    </div>
+</div>
+<script>
+(function () {
+    var box = document.currentScript.previousElementSibling;
+    var btn = box.querySelector('.rf-share-btn'), menu = box.querySelector('.rf-share-menu');
+    function track(method) {
+        if (typeof gtag === 'function') gtag('event', 'share', { method: method, content_type: 'reflection_card', item_id: btn.dataset.slug });
+    }
+    function toggle(open) { menu.hidden = !open; btn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+    btn.addEventListener('click', function () {
+        if (!menu.hidden) { toggle(false); return; }
+        if (navigator.canShare && window.File) {
+            fetch(btn.dataset.card).then(function (r) { return r.blob(); }).then(function (blob) {
+                var file = new File([blob], 'myrecoverypal-' + btn.dataset.slug + '.png', { type: 'image/png' });
+                var data = { files: [file], title: btn.dataset.title, text: btn.dataset.title + ' — ' + btn.dataset.url };
+                if (!navigator.canShare(data)) throw new Error('no file share');
+                return navigator.share(data).then(function () { track('share_sheet'); });
+            }).catch(function (err) {
+                if (err && err.name === 'AbortError') return;  // they closed the share sheet
+                toggle(true);
+            });
+        } else {
+            toggle(true);
+        }
+    });
+    menu.addEventListener('click', function (e) {
+        var el = e.target.closest('[data-share]');
+        if (!el) return;
+        track(el.dataset.share);
+        if (el.dataset.share === 'copy_link') {
+            var label = el.querySelector('span');
+            (navigator.clipboard ? navigator.clipboard.writeText(btn.dataset.url) : Promise.reject())
+                .then(function () { label.textContent = 'Link copied'; })
+                .catch(function () { window.prompt('Copy this link:', btn.dataset.url); });
+        }
+    });
+    document.addEventListener('click', function (e) { if (!box.contains(e.target)) toggle(false); });
+})();
+</script>

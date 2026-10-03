@@ -100,3 +100,34 @@ def audio_play(request, slug):
         messages.info(request, 'The full audio library is part of Premium.')
         return redirect('accounts:pricing')
     return redirect(track.audio.url)
+
+
+# Struggling check-in -> one-tap guided audio (always a FREE session: someone
+# mid-craving is never shown a paywall). Craving -> urge surfing; low mood
+# without a craving -> grounding.
+SUPPORT_AUDIO_CRAVING = 'urge-surfing'
+SUPPORT_AUDIO_LOW_MOOD = 'grounding-5-4-3-2-1'
+
+
+def support_audio_for(checkin):
+    """A free AudioTrack to offer after `checkin`, or None."""
+    if checkin is None or not checkin.needs_support():
+        return None
+    slug = SUPPORT_AUDIO_CRAVING if checkin.craving_level >= 3 else SUPPORT_AUDIO_LOW_MOOD
+    return active_tracks().filter(slug=slug, is_free=True).first()
+
+
+def support_audio_payload(checkin):
+    """JSON-ready version of support_audio_for, for the AJAX check-in."""
+    track = support_audio_for(checkin)
+    if track is None:
+        return None
+    return {
+        'slug': track.slug,
+        'title': track.title,
+        'minutes': track.minutes,
+        'play_url': reverse('resources:audio_play', args=[track.slug]),
+        'detail_url': reverse('resources:audio_detail', args=[track.slug]),
+        'reason': 'craving' if checkin.craving_level >= 3 else 'low_mood',
+    }
+

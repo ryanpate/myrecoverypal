@@ -9,7 +9,8 @@ from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import Http404, JsonResponse
+from django.core.cache import cache
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -126,3 +127,34 @@ def reflection_favorites(request):
         'favorites': favorites,
         'has_premium': user_has_premium(request.user),
     })
+
+
+CARD_VERSION = 'v1'
+
+
+def reflection_card(request, slug):
+    """Shareable PNG of a reading (title + public opening line).
+
+    ?format=post (1080x1350, default) | story (1080x1920) | og (1200x630).
+    ?download=1 sends it as an attachment. Cached: cards only change when
+    a reading's wording does (bump CARD_VERSION when the design changes).
+    """
+    from .reflection_cards import FORMATS, render_card
+    reflection = _reflection_or_404(slug)
+    fmt = request.GET.get('format', 'post')
+    if fmt not in FORMATS:
+        fmt = 'post'
+    import hashlib
+    words = hashlib.md5((reflection.title + reflection.paragraphs[0]).encode()).hexdigest()[:10]
+    key = f'reflection-card:{CARD_VERSION}:{slug}:{fmt}:{words}'
+    png = cache.get(key)
+    if png is None:
+        png = render_card(reflection, fmt)
+        cache.set(key, png, 60 * 60 * 24 * 7)
+    resp = HttpResponse(png, content_type='image/png')
+    resp['Cache-Control'] = 'public, max-age=86400'
+    if request.GET.get('download'):
+        resp['Content-Disposition'] = f'attachment; filename="myrecoverypal-{slug}-{fmt}.png"'
+    return resp
+
+

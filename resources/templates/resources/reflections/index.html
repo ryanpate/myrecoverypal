@@ -7,6 +7,8 @@
 {% block og_description %}A short daily reading and journal prompt for addiction recovery, for any path.{% endblock %}
 {% block twitter_title %}Daily Reflections for Recovery | MyRecoveryPal{% endblock %}
 {% block twitter_description %}A short daily reading and journal prompt for addiction recovery, for any path.{% endblock %}
+{% block og_image %}https://www.myrecoverypal.com{% url 'resources:reflection_card' todays.slug %}?format=og{% endblock %}
+{% block twitter_image %}https://www.myrecoverypal.com{% url 'resources:reflection_card' todays.slug %}?format=og{% endblock %}
 {% block canonical_url %}https://www.myrecoverypal.com{% url 'resources:reflections' %}{% endblock %}
 
 {% block extra_css %}
@@ -41,8 +43,7 @@
                 <i class="fas fa-pen" aria-hidden="true"></i> Join free to journal on it</a>
             {% endif %}
             {% include 'resources/reflections/_listen.html' with target='rf-today-body' %}
-            <a class="ws-btn-secondary" href="{% url 'resources:reflection_detail' todays.slug %}">
-                <i class="fas fa-link" aria-hidden="true"></i> Share</a>
+            {% include 'resources/reflections/_share.html' with r=todays %}
         </div>
     </article>
 
