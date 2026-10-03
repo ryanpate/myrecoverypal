@@ -7,6 +7,8 @@
 {% block og_description %}{{ reflection.preview|truncatechars:155 }}{% endblock %}
 {% block twitter_title %}{{ reflection.title }} | Daily Reflections | MyRecoveryPal{% endblock %}
 {% block twitter_description %}{{ reflection.preview|truncatechars:155 }}{% endblock %}
+{% block og_image %}https://www.myrecoverypal.com{% url 'resources:reflection_card' reflection.slug %}?format=og{% endblock %}
+{% block twitter_image %}https://www.myrecoverypal.com{% url 'resources:reflection_card' reflection.slug %}?format=og{% endblock %}
 {% block canonical_url %}https://www.myrecoverypal.com{% url 'resources:reflection_detail' reflection.slug %}{% endblock %}
 
 {% block extra_css %}
@@ -46,6 +48,7 @@
             <a class="ws-btn" href="{% url 'accounts:register' %}">Join free to journal on it</a>
             {% endif %}
             {% include 'resources/reflections/_listen.html' with target='rf-body' %}
+            {% include 'resources/reflections/_share.html' with r=reflection %}
             {% if has_premium %}
             <form method="post" action="{% url 'resources:reflection_favorite' reflection.slug %}" class="ws-inline-form">
                 {% csrf_token %}

@@ -70,6 +70,7 @@
         text-decoration: none;
         font-weight: 600;
     }
+    .ckdone-support a:hover, .ckdone-support a:focus { color: #fff; filter: brightness(1.12); }
 </style>
 {% endblock %}
 
@@ -91,6 +92,9 @@
             <p class="heavy">Today sounds heavy.</p>
             <p style="font-size:0.9rem;color:var(--text-muted);">Want to talk it through with Anchor? It's here whenever you need it.</p>
             <a href="{% url 'accounts:coach_start_from_checkin' checkin.id %}">Talk it through with Anchor</a>
+            {% if support_audio %}
+            {% include 'accounts/_support_audio.html' with track=support_audio %}
+            {% endif %}
         </div>
         {% endif %}
 

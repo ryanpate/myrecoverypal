@@ -4,6 +4,18 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-03:** Shareable reflection cards, and free guided audio after a struggling check-in.
+  - **Cards** (`resources/reflection_cards.py`, Pillow and DejaVu fonts):
+    - Each card shows the reading's title and opening line. The opening line is already public, so a card never leaks Premium text or the prompt.
+    - Sizes: `og` 1200×630, `post` 1080×1350, `story` 1080×1920. Story text stays inside the safe zone.
+    - Served at `/resources/reflections/<slug>/card.png?format=…` (`&download=1` downloads it). Cached for 7 days per wording (`CARD_VERSION`).
+    - The reflections index and reading pages now use the card as their `og:image`/`twitter:image`, so shared links preview with the card.
+    - A new **Share** button (`reflections/_share.html`) shares the image through the phone's share sheet (Web Share with files). Where that isn't available, it falls back to a menu: download the post or story image, or copy the link. GA4 fires a `share` event.
+  - **Check-in audio:** when a check-in `needs_support()`, the confirmation page and the progress-home check-in offer a free session to play right there, next to Anchor.
+    - A craving of 3 or more gets urge surfing; otherwise grounding.
+    - Only free tracks are ever offered (`resources/audio_views.py::support_audio_for`). `quick_checkin` returns them as `support_audio`.
+    - GA4 fires a `support_audio_play` event.
+  - **Fix:** on the check-in confirmation page, the "Talk it through with Anchor" text turned invisible on hover. The site-wide `a:hover` color matched the button.
 - **2026-10-03:** Premium audio previews, and a push announcing the free audio.
   - **Previews:** a locked Premium session (body scan, sleep, morning, self-compassion and so on) now plays its opening for free.
     - `resources/audio_mp3.py::preview` cuts at the first pause of at least 0.8s after 40s, so a preview never stops mid-sentence. The hard limit is 75s.

@@ -33,6 +33,8 @@ urlpatterns = [
          name='reflection_favorites'),
     path('reflections/<slug:slug>/', reflection_views.reflection_detail,
          name='reflection_detail'),
+    path('reflections/<slug:slug>/card.png', reflection_views.reflection_card,
+         name='reflection_card'),
     path('reflections/<slug:slug>/favorite/', reflection_views.reflection_favorite,
          name='reflection_favorite'),
     path('reflections/<slug:slug>/journal/', reflection_views.reflection_journal,
