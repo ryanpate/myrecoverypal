@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Day {{ lesson.day }}: {{ lesson.title }} | {{ program.title }} | MyRecoveryPal{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/worksheets.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="ws-wrap" style="max-width: 720px;">
+    <nav class="ws-crumbs" aria-label="Breadcrumb">
+        <a href="{% url 'resources:programs' %}">Programs</a> &rsaquo;
+        <a href="{% url 'resources:program_detail' program.slug %}">{{ program.title }}</a> &rsaquo; Day {{ lesson.day }}
+    </nav>
+
+    {% if messages %}{% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" style="margin-bottom: 1rem;">{{ message }}</div>
+    {% endfor %}{% endif %}
+
+    {% if just_completed %}
+    <div class="pg-celebrate" role="status">
+        {% if progress.finished %}
+        🎉 <strong>You finished all {{ program.length }} days.</strong> That's a real achievement.
+        {% else %}
+        ✓ <strong>Day {{ lesson.day }} complete.</strong>
+        {% if next_lesson %}Day {{ next_lesson.day }}, "{{ next_lesson.title }}", opens tomorrow.{% endif %}
+        {% endif %}
+        <a href="{% url 'resources:program_detail' program.slug %}">See your progress &rarr;</a>
+    </div>
+    {% endif %}
+
+    <div class="ws-meta">
+        <span class="rf-pill">{{ week_title }}</span>
+        <span class="rf-pill">Day {{ lesson.day }} of {{ program.length }}</span>
+    </div>
+    <h1 style="font-size: 1.9rem; margin: 0.3rem 0 1rem;">{{ lesson.title }}</h1>
+
+    {% if status == 'premium' %}
+    <div class="locked-resource-panel" style="text-align: center; border: 1px dashed rgba(128,128,128,0.45); border-radius: 14px; padding: 1.6rem 1.2rem;">
+        <div style="font-size: 1.8rem;" aria-hidden="true">🔒</div>
+        <h2 style="font-size: 1.15rem; margin: 0.4rem 0;">Continue with Premium</h2>
+        <p style="opacity: 0.8;">You've finished the free first week. Premium opens days {{ free_days|add:1 }}&ndash;{{ program.length }},
+            plus saved worksheets, Anchor and the full reflection library.</p>
+        <a class="ws-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
+    </div>
+    {% else %}
+    <div class="rf-body" id="pg-body">
+        {% for p in lesson.paragraphs %}<p>{{ p }}</p>{% endfor %}
+    </div>
+    <div class="ws-actions" style="margin-top: 0;">
+        {% include 'resources/reflections/_listen.html' with target='pg-body' %}
+    </div>
+
+    {% if lesson.action %}
+    <section class="pg-action">
+        <h2>Today's action</h2>
+        {% if lesson.action.detail %}<p>{{ lesson.action.detail }}</p>{% endif %}
+        {% if lesson.action.args %}
+        <a class="ws-btn" href="{% url lesson.action.url_name lesson.action.args.0 %}">{{ lesson.action.label }} &rarr;</a>
+        {% else %}
+        <a class="ws-btn" href="{% url lesson.action.url_name %}">{{ lesson.action.label }} &rarr;</a>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <p class="rf-prompt">{{ lesson.prompt }}</p>
+    <div class="ws-actions">
+        <a class="ws-btn-secondary" href="{% url 'resources:program_journal' program.slug lesson.day %}">
+            <i class="fas fa-pen" aria-hidden="true"></i> Answer in your journal</a>
+        {% if status == 'current' %}
+        <form method="post" action="{% url 'resources:program_complete' program.slug lesson.day %}" class="ws-inline-form">
+            {% csrf_token %}
+            <button type="submit" class="ws-btn">✓ Mark Day {{ lesson.day }} complete</button>
+        </form>
+        {% elif status == 'done' and not just_completed %}
+        <span class="ws-chip">✓ Completed</span>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <p class="ws-crisis">
+        Programs support recovery. They don't replace professional care or medical advice. If you're in crisis, call or text
+        <strong>988</strong> (Suicide &amp; Crisis Lifeline) or see <a href="{% url 'core:crisis' %}">crisis resources</a>.
+    </p>
+</div>
+{% endblock %}

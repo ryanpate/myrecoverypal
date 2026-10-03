@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Guided Recovery Programs: Day-by-Day | MyRecoveryPal{% endblock %}
+{% block meta_description %}Guided day-by-day recovery programs: one five-minute lesson and one small action a day. Start the First 30 Days program free.{% endblock %}
+{% block og_title %}Guided Recovery Programs | MyRecoveryPal{% endblock %}
+{% block og_description %}One five-minute lesson and one small action a day. Start the First 30 Days program free.{% endblock %}
+{% block twitter_title %}Guided Recovery Programs | MyRecoveryPal{% endblock %}
+{% block twitter_description %}One five-minute lesson and one small action a day. Start the First 30 Days program free.{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com{% url 'resources:programs' %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
+<link rel="stylesheet" href="{% static 'resources/css/worksheets.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="blog-header">
+    <h1>Guided Programs</h1>
+    <p>One short lesson and one small action a day. Pick up where you left off, any time.</p>
+</div>
+
+<div class="ws-wrap">
+    <nav class="ws-crumbs" aria-label="Breadcrumb">
+        <a href="{% url 'resources:list' %}">Resources</a> &rsaquo; Programs
+    </nav>
+
+    <div class="ws-cards" style="grid-template-columns: 1fr;">
+        {% for card in cards %}
+        <a class="ws-card" href="{% url 'resources:program_detail' card.program.slug %}">
+            <span class="ws-card-icon" aria-hidden="true">{{ card.program.icon }}</span>
+            <h2>{{ card.program.title }}</h2>
+            <p>{{ card.program.summary }}</p>
+            {% if card.progress %}
+            <div class="pg-bar"><span style="width: {{ card.progress.percent }}%"></span></div>
+            <div class="ws-card-foot"><span>{% if card.progress.finished %}Completed 🎉{% else %}Day {{ card.progress.next_day }} of {{ card.program.length }}{% endif %}</span><span>Continue &rarr;</span></div>
+            {% else %}
+            <div class="ws-card-foot"><span>{{ card.program.length }} days &middot; first {{ free_days }} free</span><span>Start &rarr;</span></div>
+            {% endif %}
+        </a>
+        {% endfor %}
+    </div>
+
+    <p class="ws-crisis">
+        Programs support recovery. They don't replace professional care or medical advice. If you're in crisis, call or text
+        <strong>988</strong> (Suicide &amp; Crisis Lifeline) or see <a href="{% url 'core:crisis' %}">crisis resources</a>.
+    </p>
+</div>
+{% endblock %}

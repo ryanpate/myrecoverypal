@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static resources_programs %}
 
 {% block title %}My Progress - MyRecoveryPal{% endblock %}
 
@@ -1637,6 +1637,7 @@
 {% if not user.sobriety_date %}{% include 'accounts/partials/_sobriety_date_prompt.html' %}{% endif %}
 {# Same width constraint as .pledge-card below so the two cards align #}
 <div style="max-width: 1000px; margin: 1.5rem auto 0; padding: 0 1rem;">
+    {% program_progress_card %}
     {% include 'accounts/partials/_daily_thought.html' %}
 </div>
 <!-- ===== Daily Pledge Card ===== -->
