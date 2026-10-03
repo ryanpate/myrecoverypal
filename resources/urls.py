@@ -1,9 +1,27 @@
 from django.urls import path
-from . import views
+from . import views, worksheet_views
 
 app_name = 'resources'
 
 urlpatterns = [
+    # Interactive worksheet library
+    path('worksheets/', worksheet_views.worksheet_index, name='worksheets'),
+    path('worksheets/mine/', worksheet_views.my_worksheets, name='my_worksheets'),
+    path('worksheets/entry/<int:pk>/', worksheet_views.worksheet_entry,
+         name='worksheet_entry'),
+    path('worksheets/entry/<int:pk>/pdf/', worksheet_views.worksheet_entry_pdf,
+         name='worksheet_entry_pdf'),
+    path('worksheets/entry/<int:pk>/anchor/', worksheet_views.worksheet_entry_coach,
+         name='worksheet_entry_coach'),
+    path('worksheets/entry/<int:pk>/delete/', worksheet_views.worksheet_entry_delete,
+         name='worksheet_entry_delete'),
+    path('worksheets/<slug:slug>/', worksheet_views.worksheet_detail,
+         name='worksheet_detail'),
+    path('worksheets/<slug:slug>/pdf/', worksheet_views.worksheet_blank_pdf,
+         name='worksheet_blank_pdf'),
+    path('worksheets/<slug:slug>/save/', worksheet_views.worksheet_save,
+         name='worksheet_save'),
+
     # Class-based views
     path('', views.ResourceListView.as_view(), name='list'),
     path('category/<slug:slug>/',

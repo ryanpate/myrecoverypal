@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Worksheets | MyRecoveryPal{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/worksheets.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="ws-wrap">
+    <nav class="ws-crumbs" aria-label="Breadcrumb">
+        <a href="{% url 'resources:list' %}">Resources</a> &rsaquo;
+        <a href="{% url 'resources:worksheets' %}">Worksheets</a> &rsaquo; Mine
+    </nav>
+    <h1 style="font-size: 1.7rem;">My Worksheets</h1>
+    <p style="opacity: 0.8;">Private, like your journal. Only you can see these.</p>
+
+    {% if messages %}{% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" style="margin-bottom: 1rem;">{{ message }}</div>
+    {% endfor %}{% endif %}
+
+    {% if entries %}
+    <div class="ws-history">
+        <ul>
+            {% for e in entries %}
+            <li>
+                <a href="{{ e.get_absolute_url }}">{{ e.worksheet.icon }} {{ e.worksheet.title }}: {{ e.label }}</a>
+                <time datetime="{{ e.updated_at|date:'c' }}">{{ e.updated_at|date:"M j, Y" }}</time>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% else %}
+    <div class="ws-banner">
+        You haven't saved any worksheets yet.
+        <a href="{% url 'resources:worksheets' %}">Browse worksheets &rarr;</a>
+    </div>
+    {% endif %}
+
+    {% if not has_premium %}
+    <div class="ws-upsell">
+        <h3>Save new worksheets with Premium</h3>
+        <ul>
+            <li>Save and edit your answers privately</li>
+            <li>Discuss any worksheet with Anchor</li>
+            <li>Export filled-in PDFs</li>
+        </ul>
+        <a class="ws-upsell-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

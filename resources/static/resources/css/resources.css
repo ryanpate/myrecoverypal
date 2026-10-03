@@ -455,3 +455,16 @@
         padding: 1rem;
     }
 }
+/* Worksheet library promo on the resources hub */
+.worksheets-promo {
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    max-width: 1200px; margin: 1.5rem auto; padding: 1.2rem 1.4rem;
+    border-radius: 14px; text-decoration: none; color: #fff;
+    background: linear-gradient(135deg, #2d6a4f, #52b788);
+    box-shadow: 0 6px 18px rgba(45,106,79,0.25);
+}
+.worksheets-promo:hover { color: #fff; transform: translateY(-1px); }
+.worksheets-promo-icon { font-size: 2rem; line-height: 1; }
+.worksheets-promo-text { flex: 1 1 280px; display: flex; flex-direction: column; gap: 0.25rem; }
+.worksheets-promo-text span { opacity: 0.92; font-size: 0.95rem; line-height: 1.4; }
+.worksheets-promo-cta { font-weight: 700; white-space: nowrap; }

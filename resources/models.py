@@ -342,3 +342,45 @@ class CrisisResource(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class WorksheetEntry(models.Model):
+    """One saved, filled-in worksheet (Premium).
+
+    Worksheet definitions live in resources/worksheets.py and are referenced
+    by slug. Entries are private, like journal entries: only the owner ever
+    sees them, and they're deliberately not registered in the admin.
+    """
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='worksheet_entries')
+    worksheet_slug = models.SlugField(max_length=60)
+    data = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-updated_at']
+        indexes = [models.Index(fields=['user', 'worksheet_slug'])]
+        verbose_name_plural = 'Worksheet entries'
+
+    def __str__(self):
+        return f"{self.user_id} - {self.worksheet_slug} ({self.created_at:%Y-%m-%d})"
+
+    @property
+    def worksheet(self):
+        from .worksheets import get_worksheet
+        return get_worksheet(self.worksheet_slug)
+
+    @property
+    def label(self):
+        """Short name for lists: the worksheet's title field, or the date."""
+        ws = self.worksheet
+        if ws and ws.title_field and self.data.get(ws.title_field):
+            text = str(self.data[ws.title_field])
+            return text if len(text) <= 60 else text[:57] + '...'
+        from django.utils import timezone
+        from django.utils.dateformat import format as date_format
+        return date_format(timezone.localtime(self.created_at), 'M j, Y')
+
+    def get_absolute_url(self):
+        return reverse('resources:worksheet_entry', kwargs={'pk': self.pk})

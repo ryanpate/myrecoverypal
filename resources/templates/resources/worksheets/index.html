@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Free Recovery Worksheets: CBT, Triggers, Urge Log &amp; More | MyRecoveryPal{% endblock %}
+{% block meta_description %}Free interactive addiction recovery worksheets: cost-benefit analysis, ABC thought record, urge log, trigger map, values and nightly review. Fill in online or print the PDF.{% endblock %}
+{% block og_title %}Free Recovery Worksheets | MyRecoveryPal{% endblock %}
+{% block og_description %}Interactive addiction recovery worksheets you can fill in online or print: cost-benefit analysis, thought records, urge logs, trigger maps and more.{% endblock %}
+{% block twitter_title %}Free Recovery Worksheets | MyRecoveryPal{% endblock %}
+{% block twitter_description %}Interactive addiction recovery worksheets you can fill in online or print: cost-benefit analysis, thought records, urge logs, trigger maps and more.{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com{% url 'resources:worksheets' %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
+<link rel="stylesheet" href="{% static 'resources/css/worksheets.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="blog-header">
+    <h1>Recovery Worksheets</h1>
+    <p>Proven exercises from cognitive behavioral therapy and recovery practice. Fill them in online or print them.</p>
+</div>
+
+<div class="ws-wrap" style="max-width: 1100px;">
+    <nav class="ws-crumbs" aria-label="Breadcrumb">
+        <a href="{% url 'resources:list' %}">Resources</a> &rsaquo; Worksheets
+    </nav>
+
+    {% if user.is_authenticated and total_saved %}
+    <div class="ws-banner">
+        You have <strong>{{ total_saved }}</strong> saved worksheet{{ total_saved|pluralize }}.
+        <a href="{% url 'resources:my_worksheets' %}">Open my worksheets &rarr;</a>
+    </div>
+    {% endif %}
+
+    <div class="ws-cards">
+        {% for card in cards %}
+        <a class="ws-card" href="{% url 'resources:worksheet_detail' card.worksheet.slug %}">
+            <span class="ws-card-icon" aria-hidden="true">{{ card.worksheet.icon }}</span>
+            <h2>{{ card.worksheet.title }}</h2>
+            <p>{{ card.worksheet.summary }}</p>
+            <div class="ws-card-foot">
+                <span>⏱ {{ card.worksheet.time }}</span>
+                {% if card.saved_count %}<span>{{ card.saved_count }} saved</span>{% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <h2 style="font-size: 1.3rem;">Free vs. Premium</h2>
+    <div class="ws-compare">
+        <div>
+            <h3>Free, for everyone</h3>
+            <ul>
+                <li>Every worksheet, with instructions</li>
+                <li>Fill it in on screen and print it</li>
+                <li>Download a blank PDF</li>
+            </ul>
+        </div>
+        <div>
+            <h3>⭐ Premium</h3>
+            <ul>
+                <li>Save your answers privately and edit them later</li>
+                <li>Build a history of urge logs and nightly reviews</li>
+                <li>Discuss any worksheet with Anchor, your AI coach</li>
+                <li>Export filled-in PDFs for your therapist or sponsor</li>
+            </ul>
+            {% if not has_premium %}
+            <p style="margin-top: 0.8rem;"><a href="{% url 'accounts:pricing' %}" class="ws-btn" style="display:inline-flex;">See Premium</a></p>
+            {% endif %}
+        </div>
+    </div>
+
+    <p class="ws-crisis">
+        Worksheets support recovery. They don't replace professional care. If you're in crisis, call or text
+        <strong>988</strong> (Suicide &amp; Crisis Lifeline) or see <a href="{% url 'core:crisis' %}">crisis resources</a>.
+    </p>
+</div>
+{% endblock %}

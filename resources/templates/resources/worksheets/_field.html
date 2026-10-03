@@ -1,0 +1,43 @@
+{% comment %}
+One worksheet field. Context: field (dict from build_sections), editable,
+scale_points (range 0-10).
+{% endcomment %}
+<div class="ws-field">
+    {% if field.type == 'scale' %}
+        <fieldset class="ws-scale">
+            <legend class="ws-label">{{ field.label }}</legend>
+            {% if field.help %}<span class="ws-help">{{ field.help }}</span>{% endif %}
+            {% if editable %}
+                <div class="ws-scale-points">
+                    {% for n in scale_points %}
+                    <label>
+                        <input type="radio" name="{{ field.key }}" value="{{ n }}" {% if field.value == n %}checked{% endif %}>
+                        <span>{{ n }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <div class="ws-scale-ends"><span>0 &middot; {{ field.low }}</span><span>{{ field.high }} &middot; 10</span></div>
+            {% elif field.value != '' %}
+                <div class="ws-answer"><strong>{{ field.value }}</strong>/10 <span class="ws-help" style="display:inline">({{ field.low }} &rarr; {{ field.high }})</span></div>
+            {% else %}
+                <div class="ws-empty">Not answered</div>
+            {% endif %}
+        </fieldset>
+    {% else %}
+        <label class="ws-label" for="ws-{{ field.key }}">{{ field.label }}</label>
+        {% if field.help %}<span class="ws-help">{{ field.help }}</span>{% endif %}
+        {% if editable %}
+            {% if field.type == 'text' %}
+                <input type="text" id="ws-{{ field.key }}" name="{{ field.key }}" maxlength="300"
+                       value="{{ field.value }}" placeholder="{{ field.placeholder }}">
+            {% else %}
+                <textarea id="ws-{{ field.key }}" name="{{ field.key }}" rows="{{ field.rows }}" maxlength="5000"
+                          placeholder="{{ field.placeholder }}">{{ field.value }}</textarea>
+            {% endif %}
+        {% elif field.value %}
+            <div class="ws-answer" id="ws-{{ field.key }}">{{ field.value }}</div>
+        {% else %}
+            <div class="ws-empty" id="ws-{{ field.key }}">Not answered</div>
+        {% endif %}
+    {% endif %}
+</div>

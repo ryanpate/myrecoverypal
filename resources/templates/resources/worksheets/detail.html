@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if entry %}{{ worksheet.title }} - {{ entry.label }}{% else %}{{ worksheet.title }} Worksheet for Recovery (Free){% endif %} | MyRecoveryPal{% endblock %}
+{% block meta_description %}{{ worksheet.meta_description }}{% endblock %}
+{% block og_title %}{{ worksheet.title }} Worksheet for Recovery | MyRecoveryPal{% endblock %}
+{% block og_description %}{{ worksheet.meta_description }}{% endblock %}
+{% block twitter_title %}{{ worksheet.title }} Worksheet for Recovery | MyRecoveryPal{% endblock %}
+{% block twitter_description %}{{ worksheet.meta_description }}{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com{% url 'resources:worksheet_detail' worksheet.slug %}{% endblock %}
+{% block meta_robots %}{% if entry %}noindex, nofollow{% else %}{{ block.super }}{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
+<link rel="stylesheet" href="{% static 'resources/css/worksheets.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="blog-header ws-no-print">
+    <h1>{{ worksheet.icon }} {{ worksheet.title }}</h1>
+    <p>{{ worksheet.summary }}</p>
+</div>
+
+<div class="ws-wrap">
+    <nav class="ws-crumbs ws-no-print" aria-label="Breadcrumb">
+        <a href="{% url 'resources:list' %}">Resources</a> &rsaquo;
+        <a href="{% url 'resources:worksheets' %}">Worksheets</a> &rsaquo;
+        {% if entry %}<a href="{% url 'resources:worksheet_detail' worksheet.slug %}">{{ worksheet.title }}</a> &rsaquo; {{ entry.label }}{% else %}{{ worksheet.title }}{% endif %}
+    </nav>
+
+    {% if messages %}{% for message in messages %}
+    <div class="alert alert-{{ message.tags }} ws-no-print" style="margin-bottom: 1rem;">{{ message }}</div>
+    {% endfor %}{% endif %}
+
+    {% if entry %}
+    <div class="ws-banner ws-no-print">
+        Saved entry from <strong>{{ entry.created_at|date:"F j, Y" }}</strong>{% if entry.updated_at|date:"YmdHi" != entry.created_at|date:"YmdHi" %}, last edited {{ entry.updated_at|date:"F j, Y" }}{% endif %}.
+        Private. Only you can see it.
+        {% if not has_premium %}
+        <br>Your Premium access has ended, so this entry is read-only. You can still read or delete it.
+        <a href="{% url 'accounts:pricing' %}">Renew Premium</a> to edit it, export it, or discuss it with Anchor.
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="ws-meta ws-no-print">
+        <span class="ws-chip">⏱ {{ worksheet.time }}</span>
+        <span class="ws-chip">Free to fill in &amp; print</span>
+    </div>
+    <p class="ws-intro">{{ worksheet.intro }}</p>
+    <p class="ws-when"><strong>When to use it:</strong> {{ worksheet.when_to_use }}</p>
+    {% endif %}
+
+    <div class="ws-print-area">
+        <form id="ws-form" autocomplete="off"
+              {% if has_premium and editable %}method="post" action="{% url 'resources:worksheet_save' worksheet.slug %}"{% else %}onsubmit="return false;"{% endif %}>
+            {% if has_premium and editable %}
+                {% csrf_token %}
+                {% if entry %}<input type="hidden" name="entry_id" value="{{ entry.pk }}">{% endif %}
+            {% endif %}
+            {% for section in sections %}
+            <section class="ws-section">
+                <h2>{{ section.title }}</h2>
+                {% if section.intro %}<p class="ws-section-intro">{{ section.intro }}</p>{% endif %}
+                <div class="ws-grid{% if section.columns == 2 %} cols-2{% endif %}">
+                    {% for field in section.fields %}
+                        {% include 'resources/worksheets/_field.html' %}
+                    {% endfor %}
+                </div>
+            </section>
+            {% endfor %}
+        </form>
+    </div>
+
+    <div class="ws-actions ws-no-print">
+        {% if has_premium and editable %}
+            <button type="submit" form="ws-form" class="ws-btn">
+                <i class="fas fa-floppy-disk" aria-hidden="true"></i> {% if entry %}Save changes{% else %}Save my answers{% endif %}</button>
+            {% if entry %}
+            <a class="ws-btn-secondary" href="{% url 'resources:worksheet_entry_pdf' entry.pk %}">
+                <i class="fas fa-file-pdf" aria-hidden="true"></i> Export PDF</a>
+            <form method="post" action="{% url 'resources:worksheet_entry_coach' entry.pk %}" class="ws-inline-form">
+                {% csrf_token %}
+                <button type="submit" class="ws-btn-secondary">⚓ Discuss with Anchor</button>
+            </form>
+            {% endif %}
+        {% else %}
+            {% if entry %}
+            {% elif user.is_authenticated %}
+            {# New tab so the answers typed so far aren't lost. #}
+            <a class="ws-btn-locked" href="{% url 'accounts:pricing' %}" target="_blank" rel="noopener"
+               title="Saving worksheets is a Premium feature">
+                <i class="fas fa-lock" aria-hidden="true"></i> Save my answers (Premium)</a>
+            {% else %}
+            <a class="ws-btn" href="{% url 'accounts:register' %}?next={{ request.path|urlencode }}">
+                Create an account to save</a>
+            {% endif %}
+        {% endif %}
+        {% if not entry %}
+        <button type="button" class="ws-btn-secondary" onclick="window.print()">
+            <i class="fas fa-print" aria-hidden="true"></i> Print</button>
+        <a class="ws-btn-secondary" href="{% url 'resources:worksheet_blank_pdf' worksheet.slug %}">
+            <i class="fas fa-download" aria-hidden="true"></i> Blank PDF</a>
+        {% endif %}
+        {% if entry %}
+        <form method="post" action="{% url 'resources:worksheet_entry_delete' entry.pk %}" class="ws-inline-form"
+              onsubmit="return confirm('Delete this entry? This cannot be undone.');">
+            {% csrf_token %}
+            <button type="submit" class="ws-btn-danger">Delete</button>
+        </form>
+        {% endif %}
+    </div>
+
+    {% if not has_premium and not entry %}
+    <div class="ws-upsell ws-no-print">
+        <h3>Keep your answers with Premium</h3>
+        <ul>
+            <li>Save every worksheet privately and come back to it anytime</li>
+            <li>Track your urge logs and nightly reviews over weeks and months</li>
+            <li>Discuss any worksheet with Anchor, your AI recovery coach</li>
+            <li>Export filled-in PDFs to share with a therapist or sponsor</li>
+        </ul>
+        <a class="ws-upsell-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
+    </div>
+    {% endif %}
+
+    {% if worksheet.tip and not entry %}
+    <p class="ws-tip ws-no-print">💡 {{ worksheet.tip }}{% if worksheet.slug == 'urge-log' %} <a href="{% url 'core:craving_sos' %}">Open Craving SOS</a>{% endif %}</p>
+    {% endif %}
+
+    {% if recent_entries %}
+    <div class="ws-history ws-no-print">
+        <h3>{% if entry %}Your other {{ worksheet.title }} entries{% else %}Your saved entries{% endif %}</h3>
+        <ul>
+            {% for e in recent_entries %}
+            <li><a href="{{ e.get_absolute_url }}">{{ e.label }}</a><time datetime="{{ e.updated_at|date:'c' }}">{{ e.updated_at|date:"M j, Y" }}</time></li>
+            {% endfor %}
+        </ul>
+        <p style="margin-top: 0.8rem;"><a href="{% url 'resources:my_worksheets' %}">All my worksheets &rarr;</a></p>
+    </div>
+    {% endif %}
+
+    <p class="ws-crisis ws-no-print">
+        Worksheets support recovery. They don't replace professional care. If you're in crisis, call or text
+        <strong>988</strong> (Suicide &amp; Crisis Lifeline) or see <a href="{% url 'core:crisis' %}">crisis resources</a>.
+    </p>
+</div>
+{% endblock %}
