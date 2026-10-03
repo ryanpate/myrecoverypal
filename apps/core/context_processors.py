@@ -63,3 +63,33 @@ def ga_events(request):
     """
     from apps.core.analytics import pop_ga_events
     return {'ga_events': pop_ga_events(request)}
+
+
+# Bump when there's something new to announce: everyone who dismissed the
+# previous version sees the new one once (localStorage key in _whats_new.html).
+WHATS_NEW_VERSION = '2026-10-library'
+# Calm "home" pages only. Never on crisis, SOS, Anchor, check-in, checkout,
+# onboarding or auth pages, where an interruption would get in the way.
+WHATS_NEW_PAGES = {'accounts:progress', 'accounts:social_feed', 'resources:list'}
+
+
+def whats_new(request):
+    """Decide whether base.html may offer the one-time "What's new" popup.
+
+    Only logged-in members, only on WHATS_NEW_PAGES, and not in someone's
+    first day (onboarding already introduces everything). Whether this
+    browser has already seen this version is checked client-side.
+    """
+    user = getattr(request, 'user', None)
+    match = getattr(request, 'resolver_match', None)
+    if not (user and user.is_authenticated and match and match.view_name in WHATS_NEW_PAGES):
+        return {}
+    from datetime import timedelta
+    from django.utils import timezone
+    joined = getattr(user, 'date_joined', None)
+    if joined and timezone.now() - joined < timedelta(days=1):
+        return {}
+    sub = getattr(user, 'subscription', None)
+    if sub and sub.is_supporter():
+        return {}  # family members: these are tools for the person in recovery
+    return {'show_whats_new': True, 'whats_new_version': WHATS_NEW_VERSION}

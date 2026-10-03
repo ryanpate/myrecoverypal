@@ -79,7 +79,7 @@
       "name": "Is MyRecoveryPal free to use?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "MyRecoveryPal is free to join with core features like the social feed, groups, challenges, daily check-ins, and journaling. We also offer MyRecoveryPal Premium for $9.99/month with advanced features like the AI Recovery Coach, detailed analytics, and more. We believe recovery support should be accessible to everyone."
+        "text": "MyRecoveryPal is free to join with core features like the social feed, groups, challenges, daily check-ins, and journaling. Free members also get Craving SOS, free guided audio for cravings, today's daily reflection, the first week of every guided program, and printable worksheets. MyRecoveryPal Premium adds every guided program, the full audio and reflection library, saved worksheets and a personal workbook PDF, the AI Recovery Coach, and detailed analytics, with a 7-day free trial. We believe recovery support should be accessible to everyone."
       }
     },
     {
@@ -103,7 +103,7 @@
       "name": "What features does MyRecoveryPal offer?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "MyRecoveryPal offers a 24/7 AI Recovery Coach for personalized support and coping strategies, sobriety tracking with milestone celebrations, a social community for sharing your story, private journaling and daily check-ins, recovery challenges and support groups, connections with sponsors and recovery pals, and mobile-friendly access anywhere."
+        "text": "MyRecoveryPal offers a 24/7 AI Recovery Coach for personalized support and coping strategies, guided day-by-day recovery programs, guided audio for cravings, calm and sleep, daily reflections, interactive recovery worksheets, sobriety tracking with milestone celebrations, a social community for sharing your story, private journaling and daily check-ins, recovery challenges and support groups, connections with sponsors and recovery pals, and mobile-friendly access anywhere."
       }
     },
     {
@@ -111,7 +111,7 @@
       "name": "What is the AI Recovery Coach?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The AI Recovery Coach (called Anchor) is a 24/7 AI-powered companion that provides personalized recovery support, evidence-based coping strategies informed by CBT and mindfulness, and encouragement. Free users can try it with 3 messages, while Premium members get 20 messages per day. Anchor is not a replacement for professional medical or mental health treatment."
+        "text": "The AI Recovery Coach (called Anchor) is a 24/7 AI-powered companion that provides personalized recovery support, evidence-based coping strategies informed by CBT and mindfulness, and encouragement. Free users get 3 messages a day, while Premium members get 20 messages per day. Anchor is not a replacement for professional medical or mental health treatment."
       }
     },
     {
@@ -274,6 +274,32 @@
 .ml-final-cta { display:flex; gap:.85rem; justify-content:center; flex-wrap:wrap; }
 
 /* ---- Responsive ---- */
+/* ---- New toolkit + plans ---- */
+.ml-eyebrow--new { text-decoration:none; color:var(--ml-text-body); transition:background var(--ml-trans); }
+.ml-eyebrow--new:hover { background:#e9edf3; color:var(--ml-text-strong); }
+.ml-new-tag { background:var(--ml-accent); color:#fff; border-radius:var(--ml-radius-pill); padding:.1rem .55rem; font-size:.72rem; font-weight:800; letter-spacing:.04em; text-transform:uppercase; }
+.ml-toolkit { background:var(--ml-surface-card); }
+.ml-tool-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:1.5rem; }
+.ml-tool { display:flex; flex-direction:column; text-decoration:none; color:inherit; }
+.ml-tool:hover { color:inherit; }
+.ml-tool p { flex:1; }
+.ml-tier { font-size:.78rem; font-weight:700; color:var(--ml-text-muted); display:inline-flex; align-items:center; gap:.35rem; text-align:right; }
+.ml-tool-cta { margin-top:1.1rem; font-weight:700; color:var(--ml-primary); display:inline-flex; align-items:center; gap:.4rem; }
+.ml-tool:hover .ml-tool-cta i { transform:translateX(3px); }
+.ml-tool-cta i { transition:transform var(--ml-trans); }
+.ml-plan-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:1.5rem; max-width:900px; margin:0 auto; }
+.ml-plan { display:flex; flex-direction:column; }
+.ml-plan h3 { display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; font-size:1.35rem; }
+.ml-plan-price { font-size:2.1rem; font-weight:800; color:var(--ml-text-strong); margin:.3rem 0 .1rem; }
+.ml-plan-price small { font-size:.95rem; font-weight:600; color:var(--ml-text-muted); }
+.ml-plan-note { font-size:.9rem; color:var(--ml-text-muted); }
+.ml-plan ul { list-style:none; margin:1.1rem 0 1.5rem; padding:0; display:flex; flex-direction:column; gap:.6rem; flex:1; }
+.ml-plan li { display:flex; gap:.6rem; align-items:flex-start; line-height:1.45; color:var(--ml-text-body); }
+.ml-plan li i { color:var(--ml-accent); margin-top:4px; }
+.ml-plan--premium { border:2px solid var(--ml-premium-from); box-shadow:0 10px 30px rgba(102,126,234,.18); }
+.ml-plan--premium li i { color:var(--ml-premium-from); }
+.ml-plan .ml-btn { align-self:stretch; }
+.ml-plan-more { display:block; text-align:center; margin-top:.8rem; font-weight:600; color:var(--ml-primary); }
 @media (max-width:860px) {
   .ml-hero-inner { grid-template-columns:1fr; gap:2.5rem; padding:3rem var(--ml-gutter) 3.5rem; }
   .ml-hero-media { order:-1; }
@@ -305,7 +331,7 @@
     <div class="ml-blob ml-blob--green" aria-hidden="true"></div>
     <div class="ml-container ml-hero-inner">
       <div class="ml-hero-text">
-        <span class="ml-eyebrow"><span class="dot"></span> Now welcoming founding members</span>
+        <a class="ml-eyebrow ml-eyebrow--new" href="#ml-toolkit" data-promo="landing_hero_new"><span class="ml-new-tag">New</span> Guided audio, 30-day programs &amp; daily reflections <i class="fas fa-arrow-down" aria-hidden="true"></i></a>
         <h1 class="ml-h1">Recovery is hard.<br>Doing it <span class="ml-grad-text">together</span> isn&rsquo;t.</h1>
         <p class="ml-lead">Join a community that actually gets it. Track your days, hit milestones, and find people who show up &mdash; whether you&rsquo;re 1 day or 10 years in.</p>
         <div class="ml-cta-row">
@@ -392,6 +418,73 @@
     </div>
   </section>
 
+  <!-- TOOLKIT: the resources library (new features), with clear Free / Premium labels -->
+  <section id="ml-toolkit" class="ml-toolkit">
+    <div class="ml-container ml-section" style="padding-top:0;">
+      <div class="ml-section-head">
+        <span class="ml-eyebrow-label">New in MyRecoveryPal</span>
+        <h2 class="ml-h2">Your recovery toolkit</h2>
+        <p>Guided help for the hard moments and the everyday ones. Start free; Premium opens all of it.</p>
+      </div>
+      <div class="ml-tool-grid">
+        <a class="ml-card ml-card--hover ml-tool" href="{% url 'resources:audio' %}" data-promo="landing_toolkit_audio">
+          <div class="ml-feature-top">
+            <span class="ml-feature-icon" style="background:rgba(15,118,110,.12);"><i class="fas fa-headphones" style="color:#0f766e;" aria-hidden="true"></i></span>
+            <span class="ml-tier">Free + <span class="ml-badge ml-badge--premium">Premium</span></span>
+          </div>
+          <h3>Guided audio</h3>
+          <p>Press play when a craving hits: urge surfing, breathing, grounding, a social-event plan and help after a slip, all free. Premium adds sleep, morning and body-scan sessions, plus every reflection read aloud.</p>
+          <span class="ml-tool-cta">Listen now <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+        </a>
+        <a class="ml-card ml-card--hover ml-tool" href="{% url 'resources:programs' %}" data-promo="landing_toolkit_programs">
+          <div class="ml-feature-top">
+            <span class="ml-feature-icon" style="background:rgba(124,58,237,.12);"><i class="fas fa-seedling" style="color:#7c3aed;" aria-hidden="true"></i></span>
+            <span class="ml-tier">First week free</span>
+          </div>
+          <h3>Day-by-day programs</h3>
+          <p>A five-minute lesson and one small action a day. First 30 Days, plus two-week tracks for alcohol, opioids, stimulants, cannabis and gambling, with daily reminders and a cohort that started when you did.</p>
+          <span class="ml-tool-cta">See the programs <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+        </a>
+        <a class="ml-card ml-card--hover ml-tool" href="{% url 'resources:reflections' %}" data-promo="landing_toolkit_reflections">
+          <div class="ml-feature-top">
+            <span class="ml-feature-icon" style="background:rgba(77,184,232,.14);"><i class="fas fa-sun" style="color:#1e4d8b;" aria-hidden="true"></i></span>
+            <span class="ml-tier">Today's is free</span>
+          </div>
+          <h3>Daily reflections</h3>
+          <p>A short reading and a question to sit with, every day, for any path to recovery. Premium opens all 30 readings, favorites, and journaling on any of them.</p>
+          <span class="ml-tool-cta">Read today's <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+        </a>
+        <a class="ml-card ml-card--hover ml-tool" href="{% url 'resources:worksheets' %}" data-promo="landing_toolkit_worksheets">
+          <div class="ml-feature-top">
+            <span class="ml-feature-icon" style="background:rgba(82,183,136,.14);"><i class="fas fa-pen-to-square" style="color:var(--ml-accent);" aria-hidden="true"></i></span>
+            <span class="ml-tier">Free to fill &amp; print</span>
+          </div>
+          <h3>Recovery worksheets</h3>
+          <p>Cost-benefit analysis, thought records, trigger maps and more. Premium saves your answers, talks them through with Anchor, and builds your personal <em>My Recovery Workbook</em> PDF.</p>
+          <span class="ml-tool-cta">Open a worksheet <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+        </a>
+        <a class="ml-card ml-card--hover ml-tool" href="{% url 'resources:program_detail' 'family-and-friends' %}" data-promo="landing_toolkit_family">
+          <div class="ml-feature-top">
+            <span class="ml-feature-icon" style="background:rgba(245,166,35,.14);"><i class="fas fa-heart" style="color:var(--ml-gold-accent);" aria-hidden="true"></i></span>
+            <span class="ml-tier">For loved ones</span>
+          </div>
+          <h3>Family &amp; friends course</h3>
+          <p>Fourteen days for the people who love someone in recovery: talking so you're heard, boundaries, and looking after yourself. Included with a Premium member's Supporter seat.</p>
+          <span class="ml-tool-cta">See the course <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+        </a>
+        <a class="ml-card ml-card--hover ml-tool" href="{% url 'core:craving_sos' %}" data-promo="landing_toolkit_sos">
+          <div class="ml-feature-top">
+            <span class="ml-feature-icon" style="background:rgba(220,53,69,.10);"><i class="fas fa-life-ring" style="color:#c0392b;" aria-hidden="true"></i></span>
+            <span class="ml-tier">Always free</span>
+          </div>
+          <h3>Craving SOS</h3>
+          <p>One tap to breathing, urge surfing, grounding, guided audio, online meetings starting soon, and the 988 crisis line. No account needed.</p>
+          <span class="ml-tool-cta">Open SOS <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- ANCHOR -->
   <section id="ml-anchor" class="ml-anchor">
     <div class="ml-anchor-card">
@@ -428,6 +521,50 @@
     </div>
   </section>
 
+  <!-- FREE vs PREMIUM -->
+  <section id="ml-plans" class="ml-container ml-section">
+    <div class="ml-section-head" style="margin-left:auto;margin-right:auto;text-align:center;">
+      <span class="ml-eyebrow-label">Free forever, or go further</span>
+      <h2 class="ml-h2">Start free. Upgrade when you&rsquo;re ready.</h2>
+      <p>The community, your counter and every safety tool stay free. Premium adds the full library and a coach.</p>
+    </div>
+    <div class="ml-plan-grid">
+      <div class="ml-card ml-plan">
+        <h3>Free</h3>
+        <div class="ml-plan-price">$0 <small>forever</small></div>
+        <ul>
+          <li><i class="fas fa-check" aria-hidden="true"></i> Community feed, groups, messaging &amp; challenges</li>
+          <li><i class="fas fa-check" aria-hidden="true"></i> Sobriety counter, daily check-in &amp; pledge</li>
+          <li><i class="fas fa-check" aria-hidden="true"></i> Craving SOS and free guided audio</li>
+          <li><i class="fas fa-check" aria-hidden="true"></i> Today&rsquo;s reflection &amp; the first week of every program</li>
+          <li><i class="fas fa-check" aria-hidden="true"></i> Worksheets to fill in and print</li>
+          <li><i class="fas fa-check" aria-hidden="true"></i> 3 Anchor messages a day</li>
+        </ul>
+        <a class="ml-btn ml-btn--outline" href="{% url 'accounts:register' %}" data-promo="landing_plans_free">Join free</a>
+      </div>
+      <div class="ml-card ml-plan ml-plan--premium">
+        <h3>Premium <span class="ml-badge ml-badge--premium">7-day free trial</span></h3>
+        {% if premium_yearly_plan or premium_monthly_plan %}
+        <div class="ml-plan-price stripe-only">
+          {% if premium_yearly_plan %}${{ premium_yearly_plan.price|floatformat:2 }} <small>/ year</small>{% else %}${{ premium_monthly_plan.price|floatformat:2 }} <small>/ month</small>{% endif %}
+        </div>
+        {% if premium_yearly_plan and premium_monthly_plan %}<div class="ml-plan-note stripe-only">or ${{ premium_monthly_plan.price|floatformat:2 }} monthly. Cancel anytime.</div>{% endif %}
+        {% endif %}
+        <ul>
+          <li><i class="fas fa-check" aria-hidden="true"></i> <span><strong>Everything in Free</strong>, plus:</span></li>
+          <li><i class="fas fa-check" aria-hidden="true"></i> Every guided program, start to finish</li>
+          <li><i class="fas fa-check" aria-hidden="true"></i> The full audio library: sleep, morning, body scan &amp; reflections read aloud</li>
+          <li><i class="fas fa-check" aria-hidden="true"></i> All 30 daily reflections, favorites &amp; journaling</li>
+          <li><i class="fas fa-check" aria-hidden="true"></i> Saved worksheets + your Recovery Workbook PDF</li>
+          <li><i class="fas fa-check" aria-hidden="true"></i> Anchor AI coach, 20 messages a day</li>
+          <li><i class="fas fa-check" aria-hidden="true"></i> Mood &amp; craving trends, milestone medallions, and a free Supporter seat for a loved one</li>
+        </ul>
+        <a class="ml-btn ml-btn--premium" href="{% url 'accounts:pricing' %}" data-promo="landing_plans_premium">Start your free trial</a>
+        <a class="ml-plan-more" href="{% url 'accounts:pricing' %}" data-promo="landing_plans_compare">Compare all plans</a>
+      </div>
+    </div>
+  </section>
+
   <!-- FINAL CTA -->
   <section class="ml-final">
     <div class="ml-final-panel">
@@ -442,4 +579,13 @@
   </section>
 
 </div>
+<script>
+// GA4: which landing promos people click (select_promotion).
+document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('[data-promo]');
+  if (a && typeof gtag === 'function') {
+    gtag('event', 'select_promotion', { promotion_id: a.dataset.promo, creative_slot: 'landing' });
+  }
+});
+</script>
 {% endblock %}

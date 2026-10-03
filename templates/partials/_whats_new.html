@@ -1,0 +1,113 @@
+{% comment %}
+One-time "What's new" popup for logged-in members (context processor
+apps/core/context_processors.py::whats_new decides the page and audience).
+
+  * Shown once per browser per WHATS_NEW_VERSION (localStorage), a moment
+    after the page settles, as a native <dialog>: Esc, the close button and
+    a backdrop click all dismiss it, and focus is handled by the browser.
+  * Premium members get a "here's what's included" version with no upsell.
+  * The Premium button goes to the pricing page, which shows the Apple
+    purchase flow inside the iOS app, so no web price appears here.
+  * GA4: view_promotion when shown, select_promotion on any link.
+{% endcomment %}
+{% if show_whats_new %}
+<dialog class="wn" id="whatsNew" aria-labelledby="whatsNewTitle" data-version="{{ whats_new_version }}">
+    <button type="button" class="wn-close" data-wn-close aria-label="Close">&times;</button>
+    <div class="wn-eyebrow"><span class="wn-tag">New</span> in MyRecoveryPal</div>
+    <h2 id="whatsNewTitle">{% if is_premium_user %}More is included in your Premium{% else %}Your recovery toolkit just grew{% endif %}</h2>
+    <ul class="wn-list">
+        <li><a href="{% url 'resources:audio' %}" data-promo="whats_new_audio">
+            <span class="wn-icon" style="background:#ccfbf1;" aria-hidden="true">🎧</span>
+            <span><strong>Guided audio</strong><small>Press play when a craving hits: urge surfing, breathing, grounding. Plus sleep and morning sessions.</small></span></a></li>
+        <li><a href="{% url 'resources:programs' %}" data-promo="whats_new_programs">
+            <span class="wn-icon" style="background:#ede9fe;" aria-hidden="true">🌱</span>
+            <span><strong>Day-by-day programs</strong><small>First 30 Days, and two-week tracks for alcohol, opioids, stimulants, cannabis and gambling.</small></span></a></li>
+        <li><a href="{% url 'resources:reflections' %}" data-promo="whats_new_reflections">
+            <span class="wn-icon" style="background:#e0f2fe;" aria-hidden="true">☀️</span>
+            <span><strong>Daily reflections</strong><small>A short reading and a question to sit with, every day. Now read aloud, too.</small></span></a></li>
+        <li><a href="{% url 'resources:worksheets' %}" data-promo="whats_new_worksheets">
+            <span class="wn-icon" style="background:#dcfce7;" aria-hidden="true">📝</span>
+            <span><strong>Worksheets &amp; your Recovery Workbook</strong><small>Fill them in, save your answers, and turn them into a personal PDF.</small></span></a></li>
+        <li><a href="{% url 'resources:program_detail' 'family-and-friends' %}" data-promo="whats_new_family">
+            <span class="wn-icon" style="background:#fef3c7;" aria-hidden="true">💛</span>
+            <span><strong>A course for your family</strong><small>Fourteen days for the people who love you{% if not is_premium_user %}. Included with Premium's Supporter seat{% endif %}.</small></span></a></li>
+    </ul>
+    <div class="wn-actions">
+        {% if is_premium_user %}
+        <a class="wn-btn" href="{% url 'resources:list' %}" data-promo="whats_new_explore">Explore the library</a>
+        {% else %}
+        <a class="wn-btn" href="{% url 'accounts:pricing' %}" data-promo="whats_new_premium">{% if user_subscription.card_trial_eligible %}Try Premium free for 7 days{% else %}See Premium{% endif %}</a>
+        <a class="wn-btn wn-btn--ghost" href="{% url 'resources:list' %}" data-promo="whats_new_explore">Explore the free tools</a>
+        {% endif %}
+    </div>
+</dialog>
+<style>
+    .wn { margin: auto; border: none; border-radius: 20px; padding: 1.6rem 1.5rem 1.4rem; width: min(480px, calc(100vw - 32px));
+          max-height: calc(100vh - 48px); overflow: auto; background: #fff; color: #2c3e50;
+          box-shadow: 0 24px 60px rgba(15, 45, 86, 0.3); }
+    .wn::backdrop { background: rgba(15, 23, 42, 0.55); }
+    .wn[open] { animation: wn-in .25s ease-out; }
+    @keyframes wn-in { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .wn[open] { animation: none; } }
+    .wn-close { position: absolute; top: 10px; right: 12px; background: none; border: none; font-size: 1.6rem;
+                line-height: 1; color: #6b7280; cursor: pointer; padding: 4px 8px; border-radius: 8px; }
+    .wn-close:hover, .wn-close:focus-visible { background: #f3f4f6; color: #111827; }
+    .wn-close:focus-visible { outline: 2px solid #4db8e8; outline-offset: 1px; }
+    .wn-eyebrow { font-size: .82rem; font-weight: 700; color: #6b7280; display: flex; align-items: center; gap: .45rem; }
+    .wn-tag { background: #52b788; color: #fff; border-radius: 50px; padding: .1rem .55rem; font-size: .7rem;
+              letter-spacing: .04em; text-transform: uppercase; }
+    .wn h2 { font-size: 1.45rem; font-weight: 800; margin: .45rem 2rem 1rem 0; color: #1e4d8b; line-height: 1.2; }
+    .wn-list { list-style: none; margin: 0 0 1.25rem; padding: 0; display: flex; flex-direction: column; gap: .35rem; }
+    .wn-list a { display: flex; gap: .8rem; align-items: flex-start; padding: .6rem .55rem; border-radius: 12px;
+                 text-decoration: none; color: inherit; }
+    .wn-list a:hover, .wn-list a:focus-visible { background: #f3f6fa; }
+    .wn-icon { flex: 0 0 40px; height: 40px; border-radius: 10px; display: inline-flex; align-items: center;
+               justify-content: center; font-size: 1.25rem; }
+    .wn-list strong { display: block; font-size: .98rem; }
+    .wn-list small { display: block; color: #6b7280; font-size: .85rem; line-height: 1.4; margin-top: 2px; }
+    .wn-actions { display: flex; flex-direction: column; gap: .5rem; }
+    .wn-btn { display: block; text-align: center; padding: .8rem 1rem; border-radius: 50px; font-weight: 700;
+              text-decoration: none; color: #fff; background: linear-gradient(135deg, #667eea, #764ba2); }
+    .wn-btn:hover { color: #fff; filter: brightness(1.05); }
+    .wn a.wn-btn:not(.wn-btn--ghost), [data-theme="dark"] .wn a.wn-btn:not(.wn-btn--ghost) { color: #fff; }
+    .wn-btn--ghost { background: transparent; color: #1e4d8b; border: 2px solid #dbe3ee; }
+    .wn-btn--ghost:hover { color: #1e4d8b; background: #f3f6fa; }
+    [data-theme="dark"] .wn { background: #1f2937; color: #e5e7eb; }
+    [data-theme="dark"] .wn h2 { color: #93c5fd; }
+    [data-theme="dark"] .wn-list small, [data-theme="dark"] .wn-eyebrow { color: #9ca3af; }
+    [data-theme="dark"] .wn-list a:hover, [data-theme="dark"] .wn-list a:focus-visible { background: #273244; }
+    [data-theme="dark"] .wn-close { color: #9ca3af; }
+    [data-theme="dark"] .wn-close:hover, [data-theme="dark"] .wn-close:focus-visible { background: #273244; color: #fff; }
+    [data-theme="dark"] .wn-list a { color: #e5e7eb; }
+    [data-theme="dark"] .wn-btn--ghost { color: #93c5fd; border-color: #374151; }
+    [data-theme="dark"] .wn-btn--ghost:hover { background: #273244; }
+</style>
+<script>
+(function () {
+    var dlg = document.getElementById('whatsNew');
+    if (!dlg || typeof dlg.showModal !== 'function') return;
+    var KEY = 'mrp_whats_new_seen';
+    var version = dlg.dataset.version;
+    try { if (localStorage.getItem(KEY) === version) return; } catch (e) { return; }
+    function track(name, params) { if (typeof gtag === 'function') gtag('event', name, params); }
+    function close() { if (dlg.open) dlg.close(); }
+
+    dlg.addEventListener('click', function (e) {
+        if (e.target === dlg) { close(); return; }            // backdrop
+        if (e.target.closest('[data-wn-close]')) { close(); return; }
+        var a = e.target.closest('[data-promo]');
+        if (a) track('select_promotion', { promotion_id: a.dataset.promo, creative_slot: 'whats_new' });
+    });
+
+    setTimeout(function () {
+        // Don't stack on top of another open dialog or while someone is typing.
+        if (document.querySelector('dialog[open]')) return;
+        var el = document.activeElement;
+        if (el && (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT' || el.isContentEditable)) return;
+        try { localStorage.setItem(KEY, version); } catch (e) { return; }
+        dlg.showModal();
+        track('view_promotion', { promotion_id: 'whats_new_' + version, creative_slot: 'whats_new' });
+    }, 1800);
+})();
+</script>
+{% endif %}

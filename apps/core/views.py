@@ -21,6 +21,16 @@ class IndexView(TemplateView):
             return redirect('accounts:progress')
         # Otherwise, show the home page
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Live prices for the Free vs Premium section, so copy never drifts
+        # from Stripe (setup commands keep SubscriptionPlan rows in sync).
+        from apps.accounts.payment_models import SubscriptionPlan
+        plans = SubscriptionPlan.objects.filter(is_active=True, tier='premium')
+        context['premium_monthly_plan'] = plans.filter(billing_period='monthly').first()
+        context['premium_yearly_plan'] = plans.filter(billing_period='yearly').first()
+        return context
 class AboutView(TemplateView):
     template_name = 'core/about.html'
 
