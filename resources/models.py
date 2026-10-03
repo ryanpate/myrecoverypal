@@ -404,6 +404,30 @@ class ReflectionFavorite(models.Model):
         return f"{self.user_id} - {self.reflection_slug}"
 
 
+class ProgramCohort(models.Model):
+    """A group of members who started a program at about the same time.
+
+    Each cohort is backed by a secret RecoveryGroup, so it gets posts,
+    comments, likes and moderation from the groups system. Joining goes
+    through resources/cohorts.py; see that module for the rolling rule.
+    """
+    program_slug = models.SlugField(max_length=60)
+    group = models.OneToOneField(
+        'accounts.RecoveryGroup', on_delete=models.CASCADE, related_name='program_cohort')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.group.name
+
+    @property
+    def program(self):
+        from .programs import get_program
+        return get_program(self.program_slug)
+
+
 class ProgramEnrollment(models.Model):
     """A member's place in a guided program (resources/programs.py)."""
     user = models.ForeignKey(
@@ -418,6 +442,11 @@ class ProgramEnrollment(models.Model):
     last_reminder_on = models.DateField(null=True, blank=True)
     last_email_on = models.DateField(null=True, blank=True)
     premium_nudge_sent = models.BooleanField(default=False)
+
+    # The cohort this member chose to join, if any (opt-in).
+    cohort = models.ForeignKey(
+        ProgramCohort, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='enrollments')
 
     class Meta:
         ordering = ['-started_at']

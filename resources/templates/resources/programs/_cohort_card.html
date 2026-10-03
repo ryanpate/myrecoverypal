@@ -1,0 +1,22 @@
+{% comment %}Cohort card for an enrolled member. Context: program, cohort, cohort_size, cohort_blocked, compact.{% endcomment %}
+{% if cohort_blocked %}
+{% elif cohort %}
+<a class="pg-cohort pg-cohort-in" href="{% url 'accounts:group_detail' cohort.group_id %}">
+    <span class="pg-cohort-icon" aria-hidden="true">👥</span>
+    <span class="pg-cohort-text">
+        <strong>{% if compact %}Talk about today's lesson with your cohort{% else %}Your cohort: {{ cohort_size }} member{{ cohort_size|pluralize }}{% endif %}</strong>
+        <span>{% if compact %}Share how it went, or read how others are doing.{% else %}People who started {{ program.title }} around the same time as you.{% endif %}</span>
+    </span>
+    <span class="pg-cohort-cta">Open &rarr;</span>
+</a>
+{% else %}
+<form method="post" action="{% url 'resources:program_cohort_join' program.slug %}" class="pg-cohort">
+    {% csrf_token %}
+    <span class="pg-cohort-icon" aria-hidden="true">👥</span>
+    <span class="pg-cohort-text">
+        <strong>Do it together: join your cohort</strong>
+        <span>A small private group of people who started {{ program.title }} around the same time. Free, and you can leave any time.</span>
+    </span>
+    <button type="submit" class="ws-btn">Join cohort</button>
+</form>
+{% endif %}

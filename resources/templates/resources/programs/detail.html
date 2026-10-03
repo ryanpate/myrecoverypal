@@ -50,6 +50,7 @@
             {% endif %}
         </div>
     </section>
+    {% if not progress.finished %}{% include 'resources/programs/_cohort_card.html' %}{% endif %}
     {% else %}
     <p class="ws-intro">{{ program.intro }}</p>
     <p class="ws-when"><strong>Who it's for:</strong> {{ program.audience }}</p>

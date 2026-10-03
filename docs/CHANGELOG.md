@@ -4,6 +4,12 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-03:** Program cohorts (`resources/cohorts.py`). Opt-in, free groups of members who started a program around the same time. Each `ProgramCohort` (resources migration 0006) is backed by a **secret** `RecoveryGroup`: hidden from the group list, 404 for non-members, and joinable only through `POST /resources/programs/<slug>/cohort/`. Posts, comments, likes, anonymous posting and moderation come from the groups system.
+  - **Rolling rule:** a new member joins the newest cohort if it has fewer than 30 members and either opened within 7 days, or opened within 21 days with fewer than 5 members. Otherwise a new cohort opens. This keeps a quiet week from stranding anyone alone.
+  - **Leaving and bans:** leaving and rejoining puts the member back in the same cohort, and a moderator's ban is never undone.
+  - **Notifications:** existing members get an in-app notification when someone joins.
+  - **Where it appears:** a "Join cohort" card on the program overview and lesson pages, which becomes "Talk about today's lesson with your cohort" once joined. On the group page, a cohort card replaces the "Group Creator" card; the required `creator` field holds the founding member but isn't shown.
+  - **Tests:** `resources/test_cohorts.py`.
 - **2026-10-03:** Daily lesson reminders for guided programs. `resources.tasks.send_program_reminders` runs hourly (Beat `send-program-reminders`, minute 5) and handles each enrollment at 9 AM in the member's time zone, falling back to America/Chicago when the browser hasn't reported one. At most one reminder per local day.
   - **Lesson open:** an in-app notification plus push (new notification type `program_reminder`, accounts migration 0072) for the first 7 days a lesson sits unread.
   - **Email nudge:** `emails/program_nudge.html`, sent once a lesson has been open 2+ days, then at most every 3 days. Needs `marketing_emails_enabled` and carries the marketing unsubscribe link.

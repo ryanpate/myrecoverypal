@@ -30,6 +30,18 @@ def _enrollment(user, program):
     return ProgramEnrollment.objects.filter(user=user, program_slug=program.slug).first()
 
 
+def _cohort_context(user, enrollment):
+    """{'cohort', 'cohort_size'} for an enrolled member who is in their cohort."""
+    from .cohorts import ACTIVE_STATUSES, is_active_member
+
+    cohort = enrollment.cohort if enrollment else None
+    if not is_active_member(user, cohort):
+        blocked = bool(cohort and cohort.group.memberships.filter(user=user, status='banned').exists())
+        return {'cohort': None, 'cohort_size': 0, 'cohort_blocked': blocked}
+    size = cohort.group.memberships.filter(status__in=ACTIVE_STATUSES).count()
+    return {'cohort': cohort, 'cohort_size': size, 'cohort_blocked': False}
+
+
 def _weeks(program, progress):
     """[(week_title, [(lesson, status)])] for the overview."""
     weeks = []
@@ -66,6 +78,7 @@ def program_detail(request, slug):
         'weeks': _weeks(program, progress),
         'free_days': FREE_DAYS,
         'has_premium': user_has_premium(request.user),
+        **_cohort_context(request.user, enrollment),
     })
 
 
@@ -75,6 +88,25 @@ def program_enroll(request, slug):
     program = _program_or_404(slug)
     ProgramEnrollment.objects.get_or_create(user=request.user, program_slug=program.slug)
     return redirect('resources:program_day', slug=slug, day=1)
+
+
+@login_required
+@require_POST
+def program_cohort_join(request, slug):
+    """Opt in to this program's cohort group (free)."""
+    from .cohorts import join_cohort
+
+    program = _program_or_404(slug)
+    enrollment = _enrollment(request.user, program)
+    if enrollment is None:
+        messages.info(request, f'Start {program.title} first, then join a cohort.')
+        return redirect('resources:program_detail', slug=slug)
+    cohort = join_cohort(enrollment)
+    if cohort is None:
+        messages.error(request, 'You can\'t rejoin this cohort.')
+        return redirect('resources:program_detail', slug=slug)
+    messages.success(request, f'Welcome to your cohort. Say hello to the people starting {program.title} with you!')
+    return redirect('accounts:group_detail', pk=cohort.group_id)
 
 
 @login_required
@@ -143,6 +175,7 @@ def program_day(request, slug, day):
         'next_lesson': program.lesson(day + 1),
         'just_completed': request.GET.get('done') == '1' and status == 'done',
         'free_days': FREE_DAYS,
+        **_cohort_context(request.user, enrollment),
     })
 
 
