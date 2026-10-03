@@ -41,6 +41,7 @@ urlpatterns = [
     path('audio/', audio_views.audio_index, name='audio'),
     path('audio/<slug:slug>/', audio_views.audio_detail, name='audio_detail'),
     path('audio/<slug:slug>/play/', audio_views.audio_play, name='audio_play'),
+    path('audio/<slug:slug>/preview/', audio_views.audio_preview, name='audio_preview'),
     path('workbook/', worksheet_views.workbook_builder, name='workbook'),
     path('workbook/pdf/', worksheet_views.workbook_pdf, name='workbook_pdf'),
     path('worksheets/<slug:slug>/', worksheet_views.worksheet_detail,

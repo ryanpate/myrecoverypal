@@ -83,6 +83,15 @@ def audio_detail(request, slug):
 
 
 @never_cache
+def audio_preview(request, slug):
+    """The free opening of a Premium session. Public, like the description."""
+    track = _track_or_404(slug)
+    if not track.preview:
+        raise Http404('No preview for this session')
+    return redirect(track.preview.url)
+
+
+@never_cache
 def audio_play(request, slug):
     track = _track_or_404(slug)
     if not can_listen(request.user, track):

@@ -38,7 +38,7 @@
         {% for track, allowed in items %}
         <li><a href="{% url 'resources:audio_detail' track.slug %}">
             <strong><span>{% if track.reflection_slug == today_slug %}☀ Today: {% endif %}{{ track.title }}</span>{% if not allowed %}<span class="rf-lock" title="Premium">🔒</span>{% endif %}</strong>
-            <small>{{ track.minutes }} min{% if track.is_free %} &middot; Free{% endif %}</small>
+            <small>{{ track.minutes }} min{% if track.is_free %} &middot; Free{% elif not allowed and track.preview %} &middot; Free preview{% endif %}</small>
         </a></li>
         {% endfor %}
     </ul>

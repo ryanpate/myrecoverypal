@@ -322,3 +322,101 @@ class GenerateAudioConcurrencyTests(TestCase):
             call_command('generate_audio', '--only', 'urge-surfing', stdout=StringIO())
         self.assertEqual(AudioTrack.objects.filter(slug='urge-surfing').count(), 1)
         self.assertTrue(AudioTrack.objects.get(slug='urge-surfing').content_hash)
+
+
+class PreviewCutTests(TestCase):
+    def test_cuts_at_first_pause_after_min(self):
+        fs = 1152 / 44100
+        speech = lambda s: fake_mp3(round(s / fs), id3=False)
+        mp3, _ = audio_mp3.stitch([speech(30), 2.0, speech(20), 3.0, speech(30)])
+        data, seconds = audio_mp3.preview(mp3)
+        self.assertAlmostEqual(seconds, 53, delta=0.2)  # pause at 52s + 1s tail
+        self.assertEqual(len(data) % FRAME_LEN, 0)
+
+    def test_hard_cut_without_pause(self):
+        data, seconds = audio_mp3.preview(fake_mp3(round(100 * 44100 / 1152)))
+        self.assertAlmostEqual(seconds, 76, delta=0.2)
+
+    def test_short_track_kept_whole(self):
+        data, seconds = audio_mp3.preview(fake_mp3(100))
+        self.assertAlmostEqual(seconds, (100 * 1152 / 44100) + 1, delta=0.05)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class PreviewGenerationTests(TestCase):
+    def setUp(self):
+        self.media = tempfile.mkdtemp()
+        self.override = override_settings(MEDIA_ROOT=self.media)
+        self.override.enable()
+        self.env = patch.dict('os.environ', {'ELEVENLABS_API_KEY': 'k', 'ELEVENLABS_VOICE_ID': 'v'})
+        self.env.start()
+
+    def tearDown(self):
+        self.env.stop()
+        self.override.disable()
+        shutil.rmtree(self.media, ignore_errors=True)
+
+    def gen(self, *slugs):
+        with patch('resources.management.commands.generate_audio.synthesize', return_value=fake_mp3(40)):
+            call_command('generate_audio', '--only', *slugs, stdout=StringIO())
+
+    def test_premium_session_gets_preview_free_and_reflection_dont(self):
+        r = REFLECTIONS[0]
+        self.gen('body-scan', 'urge-surfing', REFLECTION_SLUG_PREFIX + r.slug)
+        body = AudioTrack.objects.get(slug='body-scan')
+        self.assertTrue(body.preview.name.startswith('audio/previews/body-scan-'))
+        self.assertGreater(body.preview_seconds, 30)
+        self.assertLess(body.preview_seconds, 80)
+        self.assertFalse(AudioTrack.objects.get(slug='urge-surfing').preview)
+        self.assertFalse(AudioTrack.objects.get(slug=REFLECTION_SLUG_PREFIX + r.slug).preview)
+
+    def test_backfill_previews_without_elevenlabs(self):
+        t = make_track('sleep-wind-down', category='sleep')
+        t.audio.save('x.mp3', ContentFile(audio_mp3.stitch([fake_mp3(4000, id3=False)])[0]))
+        with patch('resources.management.commands.generate_audio.synthesize') as synth:
+            call_command('generate_audio', '--previews', stdout=StringIO())
+        synth.assert_not_called()
+        t.refresh_from_db()
+        self.assertTrue(t.preview)
+        self.assertAlmostEqual(t.preview_seconds, 76, delta=0.5)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class PreviewViewTests(TestCase):
+    def setUp(self):
+        self.media = tempfile.mkdtemp()
+        self.override = override_settings(MEDIA_ROOT=self.media)
+        self.override.enable()
+        self.paid = make_track('body-scan')
+        self.paid.preview.save('p.mp3', ContentFile(fake_mp3(2)), save=False)
+        self.paid.preview_seconds = 55
+        self.paid.save()
+        self.free = make_track('urge-surfing', free=True, category='cravings')
+
+    def tearDown(self):
+        self.override.disable()
+        shutil.rmtree(self.media, ignore_errors=True)
+
+    def test_preview_public_for_locked_session(self):
+        resp = self.client.get(reverse('resources:audio_preview', args=['body-scan']))
+        self.assertEqual(resp.status_code, 302)
+        self.assertIn('/audio/previews/', resp['Location'])
+        detail = self.client.get(reverse('resources:audio_detail', args=['body-scan']))
+        self.assertContains(detail, reverse('resources:audio_preview', args=['body-scan']))
+        self.assertContains(detail, 'Listen to a short preview')
+        self.assertContains(detail, 'Keep listening with Premium')
+        self.assertNotContains(detail, reverse('resources:audio_play', args=['body-scan']))
+        index = self.client.get(reverse('resources:audio'))
+        self.assertContains(index, 'Free preview')
+
+    def test_no_preview_404(self):
+        resp = self.client.get(reverse('resources:audio_preview', args=['urge-surfing']))
+        self.assertEqual(resp.status_code, 404)
+
+    def test_premium_member_gets_full_player_not_preview(self):
+        user = User.objects.create_user('pv', 'pv@example.com', 'pw12345!')
+        make_premium(user)
+        self.client.force_login(user)
+        detail = self.client.get(reverse('resources:audio_detail', args=['body-scan']))
+        self.assertContains(detail, reverse('resources:audio_play', args=['body-scan']))
+        self.assertNotContains(detail, 'id="auPreview"')

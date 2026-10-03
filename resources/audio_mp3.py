@@ -142,3 +142,37 @@ def stitch(parts):
             frame_count += len(chunk) // len(silent_frame(template))
     duration = frame_count * SAMPLES_PER_FRAME / template['sample_rate']
     return bytes(out), duration
+
+
+def preview(data, min_seconds=40.0, max_seconds=75.0, min_gap=0.8, tail=1.0):
+    """The opening of a stitched session, for a free preview.
+
+    Cuts at the first pause (a run of at least `min_gap` seconds of our own
+    silent frames) that starts after `min_seconds`, so the preview never stops
+    mid-sentence; falls back to a hard cut at `max_seconds`. Adds `tail`
+    seconds of silence. Returns (mp3_bytes, duration_seconds).
+    """
+    frames = audio_frames(data)
+    if not frames:
+        raise MP3Error('No MPEG-1 Layer III audio frames found')
+    template = frames[0][0]
+    frame_s = SAMPLES_PER_FRAME / template['sample_rate']
+    silent = silent_frame(template)
+    gap_frames = max(1, round(min_gap / frame_s))
+    min_i, max_i = round(min_seconds / frame_s), round(max_seconds / frame_s)
+
+    cut = min(len(frames), max_i)
+    run_start, run = None, 0
+    for i, (_, frame) in enumerate(frames[:max_i]):
+        if frame == silent:
+            if run == 0:
+                run_start = i
+            run += 1
+            if run >= gap_frames and run_start >= min_i:
+                cut = run_start
+                break
+        else:
+            run = 0
+    out = b''.join(f for _, f in frames[:cut]) + silence(template, tail)
+    count = cut + round(tail / frame_s)
+    return out, count * frame_s
