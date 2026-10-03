@@ -4,6 +4,13 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-03:** Family & friends companion course, "Supporting Someone You Love: 14 Days" (`resources/program_tracks/family.py`, `kind='family'`). It is written for the loved one, not the person using.
+  - **Lessons:** self-care, understanding ambivalence, talking so you're heard, planning one hard conversation, noticing the good, stepping back from rescuing, boundaries, encouraging help without forcing it, supporting someone in recovery, slips, getting your own support, and the long view. No branded methods are named, and interventions and ultimatums are never suggested (a test enforces this).
+  - **Safety lesson is free:** day 3 covers leaving and calling 911, the National Domestic Violence Hotline (1-800-799-7233), overdose signs, naloxone and 988. It sits inside the free days because safety is never paywalled, and a test guards that.
+  - **Access:** programs gained an `access` field. The family course unlocks with Premium, a paid Supporter subscription, or the Supporter seat included with a loved one's Premium (`resources/access.py::user_has_supporter_access`, `has_program_access`). Free days are 3. The upsell, lock and progress-card copy point to `accounts:supporter_renew` ("Become a Supporter").
+  - **Two family worksheets** (`audience='family'`): Boundaries Plan and Conversation Planner. A Supporter seat can save and export them. Anchor isn't offered on them, since it's built around the member's own recovery data.
+  - **Entry points:** a "For family & friends" section on the programs and worksheets indexes, and a course promo on `/support-a-loved-one-in-recovery/` and the supporter dashboard.
+  - **Tests:** `resources/test_family_course.py`.
 - **2026-10-03:** Substance-specific program tracks: five 14-day tracks in `resources/program_tracks/` (Alcohol, Opioids, Stimulants, Cannabis, Gambling), one module per track. They are companions to First 30 Days and can be done alone or alongside it.
   - **Per-program settings:** each program now has `free_days` (tracks 3, First 30 Days 7), `kind` (core or track), `substance` and `helplines`.
   - **Safety content per track:**

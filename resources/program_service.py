@@ -13,7 +13,7 @@ from typing import Dict, List
 
 from django.utils import timezone
 
-from .access import user_has_premium
+from .access import has_program_access
 from .models import ProgramDayCompletion, ProgramEnrollment
 
 
@@ -57,7 +57,7 @@ def get_progress(enrollment, user, today=None):
 
     if next_day > program.length:
         next_status = 'finished'
-    elif next_day > program.free_days and not user_has_premium(user):
+    elif next_day > program.free_days and not has_program_access(user, program):
         next_status = 'premium'
     elif next_day > 1 and completed.get(next_day - 1) and completed[next_day - 1] >= today:
         next_status = 'waiting'

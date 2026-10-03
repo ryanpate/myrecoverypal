@@ -63,6 +63,9 @@ class Worksheet:
     # Field whose answer names a saved entry in lists ("Urge log - Friday").
     title_field: Optional[str] = None
     tip: str = ''
+    # 'family' worksheets are written for loved ones of someone using, and
+    # are listed in their own section of the index.
+    audience: str = ''
     fields_by_key: dict = field(default_factory=dict, compare=False, repr=False)
 
     def __post_init__(self):
@@ -355,6 +358,102 @@ WORKSHEETS = [
     ),
 ]
 
+FAMILY_WORKSHEETS = [
+    Worksheet(
+        slug='boundaries-plan',
+        title='Boundaries Plan',
+        icon='🛡️',
+        audience='family',
+        summary='For family and friends: decide what you will and won\'t do, and how you\'ll follow through, before the hard moment arrives.',
+        intro=(
+            'A boundary isn\'t a rule you set for someone else. It\'s a decision about what you '
+            'will do to protect yourself, your home and your relationship. Deciding calmly, in '
+            'advance, makes it far easier to follow through kindly when emotions are running high.'
+        ),
+        time='15-20 minutes',
+        when_to_use='When you keep finding yourself in the same painful situation, or before a conversation about changes at home.',
+        meta_description=(
+            'Free boundaries worksheet for families of someone with an addiction. Decide what '
+            'you will and won\'t do, and how to follow through. Fill in online or print.'
+        ),
+        title_field='situation',
+        tip='Start with one boundary you are confident you can keep. Follow-through matters more than how many you set.',
+        sections=[
+            Section('What keeps happening', [
+                Field('situation', 'Describe one situation that keeps hurting you or your household', type='text',
+                      placeholder='e.g. Being asked for money "just this once"'),
+                Field('impact', 'How does it affect you, and anyone else at home?', rows=3),
+            ]),
+            Section('Your boundary', intro='Write it about your own actions: "I will..." or "I won\'t...".', fields=[
+                Field('boundary', 'My boundary', rows=3,
+                      placeholder="e.g. I won't give cash. I will help pay for a treatment appointment."),
+                Field('why', 'Why this matters to me', rows=3),
+            ]),
+            Section('Following through', [
+                Field('say', 'What I\'ll say, briefly and calmly', rows=3,
+                      placeholder='e.g. "I love you, and I\'m not able to give money. I\'d gladly help you call the clinic."'),
+                Field('if_crossed', 'What I\'ll do if the boundary is crossed', rows=3),
+                Field('support', 'Who can back me up or talk it through with me?', type='text'),
+                _scale('confidence', 'How confident are you that you can keep this boundary?',
+                       'Not confident', 'Completely confident'),
+            ]),
+            Section('Safety check', [
+                Field('safety', 'Is there any risk to your safety, or anyone else\'s, in setting this boundary? '
+                                'If so, what is your safety plan?',
+                      help='If you or anyone at home is in danger, leave and call 911. The National Domestic '
+                           'Violence Hotline is 1-800-799-7233.', rows=3),
+            ]),
+        ],
+    ),
+    Worksheet(
+        slug='conversation-planner',
+        title='Conversation Planner',
+        icon='💬',
+        audience='family',
+        summary='For family and friends: plan one hard conversation about drinking, drug use or gambling so it\'s more likely to be heard.',
+        intro=(
+            'How and when you raise a hard subject can matter as much as what you say. A short, '
+            'calm conversation at a good moment, focused on your feelings and on what you\'d like, '
+            'is more likely to be heard than a long list of past wrongs. Planning helps you stay on '
+            'track when emotions rise.'
+        ),
+        time='10-15 minutes',
+        when_to_use='Before a conversation you\'ve been putting off, or after one that went badly and you want to try again.',
+        meta_description=(
+            'Free worksheet for families: plan a calm, caring conversation with a loved one about '
+            'their drinking, drug use or gambling. Fill in online or print.'
+        ),
+        title_field='goal',
+        tip='Avoid times when they\'re intoxicated, hungover or in a rush. Calm and sober moments work best.',
+        sections=[
+            Section('Before you start', [
+                Field('goal', 'What is the one thing you\'d like from this conversation?', type='text',
+                      placeholder='e.g. For them to know I\'m worried and I\'ll help them find support'),
+                Field('when_where', 'When and where will you talk?', type='text',
+                      help='Pick a calm, private moment when they are sober and not rushed.'),
+            ]),
+            Section('What you\'ll say', intro='Keep it short, specific and kind. Speak about your own feelings.', fields=[
+                Field('positive', 'Start with something genuine you appreciate about them', rows=2),
+                Field('i_statement', 'Your feelings, as an "I" statement',
+                      placeholder='e.g. "I feel scared when you drive home after drinking."', rows=3),
+                Field('request', 'One specific, doable request or offer', rows=2,
+                      placeholder='e.g. "Would you come with me to talk to a counselor?"'),
+            ]),
+            Section('If it gets hard', [
+                Field('their_side', 'What might they say or feel? How could you show you understand?', rows=3),
+                Field('pause', 'How will you pause if it starts to escalate?', type='text',
+                      placeholder='e.g. "Let\'s take a break and talk tomorrow."'),
+            ]),
+            Section('Afterwards', [
+                Field('went', 'How did it go? What will you keep or change next time?', rows=3),
+                _scale('calm', 'How calm did you stay?', 'Not at all', 'Very calm'),
+            ]),
+        ],
+    ),
+]
+
+WORKSHEETS = WORKSHEETS + FAMILY_WORKSHEETS
+MEMBER_WORKSHEETS = [w for w in WORKSHEETS if w.audience != 'family']
 WORKSHEETS_BY_SLUG = {w.slug: w for w in WORKSHEETS}
 
 

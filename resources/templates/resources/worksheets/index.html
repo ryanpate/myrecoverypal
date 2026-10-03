@@ -46,6 +46,25 @@
         {% endfor %}
     </div>
 
+    {% if family_cards %}
+    <h2 style="font-size: 1.3rem;">For family &amp; friends</h2>
+    <p style="opacity: 0.8;">Worried about someone you love? These are for you. They go with the
+        <a href="{% url 'resources:program_detail' 'family-and-friends' %}">Supporting Someone You Love</a> course.</p>
+    <div class="ws-cards">
+        {% for card in family_cards %}
+        <a class="ws-card" href="{% url 'resources:worksheet_detail' card.worksheet.slug %}">
+            <span class="ws-card-icon" aria-hidden="true">{{ card.worksheet.icon }}</span>
+            <h2>{{ card.worksheet.title }}</h2>
+            <p>{{ card.worksheet.summary }}</p>
+            <div class="ws-card-foot">
+                <span>⏱ {{ card.worksheet.time }}</span>
+                {% if card.saved_count %}<span>{{ card.saved_count }} saved</span>{% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <h2 style="font-size: 1.3rem;">Free vs. Premium</h2>
     <div class="ws-compare">
         <div>

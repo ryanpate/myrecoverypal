@@ -18,7 +18,7 @@ from django.views.decorators.http import require_POST
 
 from apps.accounts.decorators import premium_required
 
-from .access import user_has_premium
+from .access import user_has_premium, user_has_supporter_access
 from .models import WorksheetEntry
 from .worksheet_service import render_blank_pdf, render_entry_pdf, start_coach_session
 from .worksheets import WORKSHEETS, build_sections, clean_answers, get_worksheet
@@ -29,6 +29,19 @@ def _worksheet_or_404(slug):
     if worksheet is None:
         raise Http404('No such worksheet')
     return worksheet
+
+
+def can_save(user, worksheet):
+    """Premium saves any worksheet; a Supporter seat also saves family ones."""
+    if user_has_premium(user):
+        return True
+    return worksheet.audience == 'family' and user_has_supporter_access(user)
+
+
+def _upgrade_redirect(worksheet):
+    if worksheet.audience == 'family':
+        return redirect('accounts:supporter_renew')
+    return redirect('accounts:pricing')
 
 
 def _pdf_response(pdf_bytes, filename):
@@ -45,9 +58,13 @@ def worksheet_index(request):
             .values_list('worksheet_slug')
             .annotate(n=Count('id'))
         )
-    cards = [{'worksheet': w, 'saved_count': counts.get(w.slug, 0)} for w in WORKSHEETS]
+    cards = [{'worksheet': w, 'saved_count': counts.get(w.slug, 0)}
+             for w in WORKSHEETS if w.audience != 'family']
+    family_cards = [{'worksheet': w, 'saved_count': counts.get(w.slug, 0)}
+                    for w in WORKSHEETS if w.audience == 'family']
     return render(request, 'resources/worksheets/index.html', {
         'cards': cards,
+        'family_cards': family_cards,
         'has_premium': user_has_premium(request.user),
         'total_saved': sum(counts.values()),
     })
@@ -62,7 +79,8 @@ def worksheet_detail(request, slug):
     return render(request, 'resources/worksheets/detail.html', {
         'worksheet': worksheet,
         'sections': build_sections(worksheet),
-        'has_premium': user_has_premium(request.user),
+        # Template name kept from before family worksheets: "can save".
+        'has_premium': can_save(request.user, worksheet),
         'recent_entries': recent_entries,
         'entry': None,
         'editable': True,
@@ -76,10 +94,13 @@ def worksheet_blank_pdf(request, slug):
 
 
 @login_required
-@premium_required
 @require_POST
 def worksheet_save(request, slug):
     worksheet = _worksheet_or_404(slug)
+    if not can_save(request.user, worksheet):
+        messages.warning(request, 'Saving worksheets needs Premium'
+                         + (' or a Supporter seat.' if worksheet.audience == 'family' else '.'))
+        return _upgrade_redirect(worksheet)
     data = clean_answers(worksheet, request.POST)
 
     entry_id = request.POST.get('entry_id')
@@ -111,7 +132,7 @@ def worksheet_entry(request, pk):
     worksheet = entry.worksheet
     if worksheet is None:
         raise Http404('This worksheet is no longer available')
-    has_premium = user_has_premium(request.user)
+    has_premium = can_save(request.user, worksheet)
     return render(request, 'resources/worksheets/detail.html', {
         'worksheet': worksheet,
         'sections': build_sections(worksheet, entry.data),
@@ -126,11 +147,12 @@ def worksheet_entry(request, pk):
 
 
 @login_required
-@premium_required
 def worksheet_entry_pdf(request, pk):
     entry = get_object_or_404(WorksheetEntry, pk=pk, user=request.user)
     if entry.worksheet is None:
         raise Http404('This worksheet is no longer available')
+    if not can_save(request.user, entry.worksheet):
+        return _upgrade_redirect(entry.worksheet)
     return _pdf_response(render_entry_pdf(entry), f'{entry.worksheet_slug}.pdf')
 
 
@@ -139,7 +161,9 @@ def worksheet_entry_pdf(request, pk):
 @require_POST
 def worksheet_entry_coach(request, pk):
     entry = get_object_or_404(WorksheetEntry, pk=pk, user=request.user)
-    if entry.worksheet is None:
+    # Anchor is built around the member's own recovery data, so it isn't
+    # offered for the family worksheets.
+    if entry.worksheet is None or entry.worksheet.audience == 'family':
         raise Http404('This worksheet is no longer available')
     start_coach_session(entry)
     return redirect('accounts:recovery_coach')
