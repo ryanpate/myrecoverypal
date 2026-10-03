@@ -3,6 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
+    <script>
+        // Mark the native app before first paint so `.stripe-only` web prices
+        // never flash inside the iOS app (App Store Guideline 3.1). Capacitor
+        // injects its bridge at document start, ahead of this script.
+        // capacitor-native.js still adds the same class to <body> later.
+        (function () { try { var C = window.Capacitor;
+            if (C && C.isNativePlatform && C.isNativePlatform()) {
+                document.documentElement.classList.add(C.getPlatform() + '-native-app'); }
+        } catch (e) {} })();
+    </script>
 
     <!-- Preconnect hints for faster loading -->
     <!-- jsdelivr preconnect removed: Bootstrap self-hosted -->
@@ -186,7 +196,7 @@
         {% else %}
         Your Premium trial ends in {{ trial_days_left }} days.
         {% endif %}
-        <a href="{% url 'accounts:pricing' %}" style="color: white; font-weight: 700; text-decoration: underline; margin-left: 8px;">Keep Premium &mdash; $9.99/mo</a>
+        <a href="{% url 'accounts:pricing' %}" style="color: white; font-weight: 700; text-decoration: underline; margin-left: 8px;">Keep Premium<span class="stripe-only" style="display:inline;"> &mdash; $9.99/mo</span></a>
         <button onclick="document.getElementById('trialBanner').style.display='none'" style="background: none; border: none; color: white; opacity: 0.7; cursor: pointer; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;" aria-label="Dismiss">&times;</button>
     </div>
     {% endif %}
