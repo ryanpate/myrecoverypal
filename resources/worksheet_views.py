@@ -164,3 +164,32 @@ def my_worksheets(request):
         'entries': [e for e in entries if e.worksheet is not None],
         'has_premium': user_has_premium(request.user),
     })
+
+
+@login_required
+def workbook_builder(request):
+    """Pick sections and a date range for the "My Recovery Workbook" PDF."""
+    from .workbook import DEFAULT_RANGE, RANGES, SECTIONS, section_counts
+
+    counts = section_counts(request.user)
+    sections = [
+        {'key': key, 'label': label, 'description': desc, 'checked': on,
+         'count': counts.get(key, 0)}
+        for key, (label, desc, on) in SECTIONS.items()
+    ]
+    return render(request, 'resources/workbook/builder.html', {
+        'sections': sections,
+        'ranges': [(k, v[0]) for k, v in RANGES.items()],
+        'default_range': DEFAULT_RANGE,
+        'has_premium': user_has_premium(request.user),
+    })
+
+
+@login_required
+@premium_required
+def workbook_pdf(request):
+    from .workbook import parse_options, render_workbook_pdf
+
+    sections, range_key = parse_options(request.GET)
+    pdf_bytes = render_workbook_pdf(request.user, sections, range_key)
+    return _pdf_response(pdf_bytes, 'my-recovery-workbook.pdf')

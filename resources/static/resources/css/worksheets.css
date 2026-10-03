@@ -10,6 +10,7 @@
     color: #e4e4e7;
 }
 [data-theme="dark"] .ws-scale-points input:checked + span { color: #0f172a; }
+[data-theme="dark"] .ws-wrap .ws-btn, [data-theme="dark"] .ws-wrap .ws-btn:hover { color: #0f172a; }
 
 .ws-wrap { max-width: 880px; margin: 1.5rem auto 3rem; padding: 0 1rem; }
 .ws-crumbs { font-size: 0.9rem; opacity: 0.8; margin-bottom: 1rem; }

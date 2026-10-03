@@ -119,6 +119,10 @@
                 title="PDF export is a Premium feature">
                 <i class="fas fa-lock" aria-hidden="true"></i> Export PDF (Premium)</a>
             {% endif %}
+            {% url 'resources:workbook' as workbook_url %}
+            {% if workbook_url %}
+            <a href="{{ workbook_url }}" style="font-weight: 600;">Include it in My Recovery Workbook &rarr;</a>
+            {% endif %}
         </div>
     </form>
 </div>
