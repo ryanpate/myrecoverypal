@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Daily Reflections for Recovery: Today's Reading | MyRecoveryPal{% endblock %}
+{% block meta_description %}A short daily reflection for addiction recovery, for any path: 12-step, SMART, secular or faith-based. Today's reading and journal prompt, free. Browse 30 readings by theme.{% endblock %}
+{% block og_title %}Daily Reflections for Recovery | MyRecoveryPal{% endblock %}
+{% block og_description %}A short daily reading and journal prompt for addiction recovery, for any path.{% endblock %}
+{% block twitter_title %}Daily Reflections for Recovery | MyRecoveryPal{% endblock %}
+{% block twitter_description %}A short daily reading and journal prompt for addiction recovery, for any path.{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com{% url 'resources:reflections' %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
+<link rel="stylesheet" href="{% static 'resources/css/worksheets.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="blog-header">
+    <h1>Daily Reflections</h1>
+    <p>A short reading and a question to sit with, every day. For any path to recovery.</p>
+</div>
+
+<div class="ws-wrap">
+    <nav class="ws-crumbs" aria-label="Breadcrumb">
+        <a href="{% url 'resources:list' %}">Resources</a> &rsaquo; Daily Reflections
+    </nav>
+
+    <article class="rf-today">
+        <div class="rf-eyebrow"><i class="fas fa-sun" aria-hidden="true"></i> Today &middot; {{ today|date:"l, F j" }}</div>
+        <h2>{{ todays.title }}</h2>
+        <div class="rf-body" id="rf-today-body">
+            {% for p in todays.paragraphs %}<p>{{ p }}</p>{% endfor %}
+            <p class="rf-prompt">{{ todays.prompt }}</p>
+        </div>
+        <div class="rf-tools">
+            {% if user.is_authenticated %}
+            <a class="ws-btn-secondary" href="{% url 'resources:reflection_journal' todays.slug %}">
+                <i class="fas fa-pen" aria-hidden="true"></i> Reflect in journal</a>
+            {% else %}
+            <a class="ws-btn-secondary" href="{% url 'accounts:register' %}">
+                <i class="fas fa-pen" aria-hidden="true"></i> Join free to journal on it</a>
+            {% endif %}
+            {% include 'resources/reflections/_listen.html' with target='rf-today-body' %}
+            <a class="ws-btn-secondary" href="{% url 'resources:reflection_detail' todays.slug %}">
+                <i class="fas fa-link" aria-hidden="true"></i> Share</a>
+        </div>
+    </article>
+
+    {% if user.is_authenticated %}
+    <p><a href="{% url 'resources:reflection_favorites' %}">♥ My favorite readings</a></p>
+    {% endif %}
+
+    <h2 class="rf-theme">This past week</h2>
+    <ul class="rf-list">
+        {% for day, r in recent %}
+        <li><a href="{% url 'resources:reflection_detail' r.slug %}">
+            <strong><span>{{ r.title }}</span>{% if not has_premium %}<span class="rf-lock" title="Premium">🔒</span>{% endif %}</strong>
+            <small>{{ day|date:"l, M j" }} &middot; {{ r.theme_label }}</small>
+        </a></li>
+        {% endfor %}
+    </ul>
+
+    {% if not has_premium %}
+    <div class="ws-upsell">
+        <h3>Open the whole library with Premium</h3>
+        <ul>
+            <li>Read any of the 30 reflections, any day, and catch up on ones you missed</li>
+            <li>Save favorites to come back to on hard days</li>
+            <li>Journal on any reading with its prompt ready to go</li>
+        </ul>
+        <a class="ws-upsell-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
+    </div>
+    {% endif %}
+
+    <h2 style="font-size: 1.35rem; margin-top: 2rem;">Browse by theme</h2>
+    {% for key, label, items in themes %}
+    <h3 class="rf-theme" id="{{ key }}">{{ label }}</h3>
+    <ul class="rf-list">
+        {% for r in items %}
+        <li><a href="{% url 'resources:reflection_detail' r.slug %}">
+            <strong><span>{% if r.slug in favorite_slugs %}♥ {% endif %}{{ r.title }}</span>
+                {% if not has_premium and r != todays %}<span class="rf-lock" title="Premium">🔒</span>{% endif %}</strong>
+            <small>{{ r.preview|truncatechars:110 }}</small>
+        </a></li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+
+    <p class="ws-crisis">
+        Reflections support recovery. They don't replace professional care. If you're in crisis, call or text
+        <strong>988</strong> (Suicide &amp; Crisis Lifeline) or see <a href="{% url 'core:crisis' %}">crisis resources</a>.
+    </p>
+</div>
+{% endblock %}

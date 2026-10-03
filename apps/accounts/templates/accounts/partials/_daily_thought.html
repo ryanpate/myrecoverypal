@@ -73,6 +73,11 @@ style block. Design tokens (--gradient-accent etc.) are global (main.css).
             <a href="{{ daily_reading.get_absolute_url }}">
                 <i class="fas fa-book" aria-hidden="true"></i> Today's reading: {{ daily_reading.title|truncatechars:48 }}</a>
             {% endif %}
+            {% url 'resources:reflections' as reflections_url %}
+            {% if reflections_url %}
+            <a href="{{ reflections_url }}">
+                <i class="fas fa-sun" aria-hidden="true"></i> Today's reflection</a>
+            {% endif %}
         </div>
     </div>
 </div>

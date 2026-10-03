@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Favorite Readings | MyRecoveryPal{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/worksheets.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="ws-wrap">
+    <nav class="ws-crumbs" aria-label="Breadcrumb">
+        <a href="{% url 'resources:list' %}">Resources</a> &rsaquo;
+        <a href="{% url 'resources:reflections' %}">Daily Reflections</a> &rsaquo; Favorites
+    </nav>
+    <h1 style="font-size: 1.7rem;">♥ My Favorite Readings</h1>
+    <p style="opacity: 0.8;">The readings you saved, ready for the days you need them.</p>
+
+    {% if favorites %}
+    <ul class="rf-list">
+        {% for r in favorites %}
+        <li><a href="{% url 'resources:reflection_detail' r.slug %}">
+            <strong><span>{{ r.title }}</span></strong>
+            <small>{{ r.theme_label }} &middot; {{ r.preview|truncatechars:100 }}</small>
+        </a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class="ws-banner">
+        No favorites yet. {% if has_premium %}Tap "Save to favorites" on any reading.{% endif %}
+        <a href="{% url 'resources:reflections' %}">Browse reflections &rarr;</a>
+    </div>
+    {% endif %}
+
+    {% if not has_premium %}
+    <div class="ws-upsell">
+        <h3>Save favorites with Premium</h3>
+        <ul>
+            <li>Read all 30 reflections, any day</li>
+            <li>Save the ones that speak to you</li>
+            <li>Journal on any reading</li>
+        </ul>
+        <a class="ws-upsell-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

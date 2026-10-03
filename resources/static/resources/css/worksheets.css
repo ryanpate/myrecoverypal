@@ -132,3 +132,42 @@
     .ws-no-print { display: none !important; }
     .ws-section { break-inside: avoid; }
 }
+
+/* Daily reflection library */
+.rf-today {
+    border-radius: 16px; padding: 1.6rem 1.6rem 1.4rem; margin-bottom: 1.5rem; color: #fff;
+    background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+}
+.rf-today .rf-eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.9; }
+.rf-today h2 { color: #fff; font-size: 1.5rem; margin: 0.4rem 0 0.8rem; }
+.rf-today .rf-body p { color: #fff; }
+.rf-body p { font-size: 1.08rem; line-height: 1.7; margin: 0 0 0.9rem; }
+.rf-prompt {
+    border-left: 4px solid var(--accent-color, #52b788); padding: 0.6rem 1rem; margin: 1rem 0;
+    font-weight: 600; font-style: italic;
+}
+.rf-today .rf-prompt { border-color: rgba(255,255,255,0.8); }
+.rf-tools { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin-top: 0.4rem; }
+.rf-today .ws-btn-secondary, .rf-today .ws-btn-secondary:hover { color: #fff; border-color: rgba(255,255,255,0.6); }
+.rf-pill {
+    display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 700;
+    border-radius: 999px; padding: 0.2rem 0.75rem; background: rgba(82,183,136,0.15); color: #2f7d56;
+}
+[data-theme="dark"] .rf-pill { color: #74c69d; }
+.rf-theme { margin: 1.6rem 0 0.4rem; font-size: 1.15rem; }
+.rf-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr; gap: 0.6rem; }
+@media (min-width: 700px) { .rf-list { grid-template-columns: 1fr 1fr; } }
+.rf-list a {
+    display: block; height: 100%; box-sizing: border-box; border: 1px solid rgba(128,128,128,0.25);
+    border-radius: 12px; padding: 0.8rem 1rem; text-decoration: none; color: inherit;
+}
+.rf-list a:hover { box-shadow: 0 6px 14px rgba(0,0,0,0.1); color: inherit; }
+.rf-list strong { display: flex; justify-content: space-between; gap: 0.5rem; }
+.rf-list small { display: block; opacity: 0.75; margin-top: 0.25rem; line-height: 1.4; }
+.rf-lock { opacity: 0.6; font-size: 0.85rem; white-space: nowrap; }
+.rf-locked-fade { position: relative; }
+.rf-locked-fade::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2.5rem;
+    background: linear-gradient(to bottom, transparent, var(--bg-lighter, #f8f9fa));
+}
+.rf-fav-btn[aria-pressed="true"] { border-color: #e11d48; color: #e11d48; }
