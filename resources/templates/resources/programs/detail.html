@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ program.title }}: A Free Day-by-Day Recovery Program | MyRecoveryPal{% endblock %}
+{% block meta_description %}{{ program.meta_description }}{% endblock %}
+{% block og_title %}{{ program.title }} Recovery Program | MyRecoveryPal{% endblock %}
+{% block og_description %}{{ program.meta_description }}{% endblock %}
+{% block twitter_title %}{{ program.title }} Recovery Program | MyRecoveryPal{% endblock %}
+{% block twitter_description %}{{ program.meta_description }}{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com{% url 'resources:program_detail' program.slug %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
+<link rel="stylesheet" href="{% static 'resources/css/worksheets.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="blog-header">
+    <h1>{{ program.icon }} {{ program.title }}</h1>
+    <p>{{ program.summary }}</p>
+</div>
+
+<div class="ws-wrap">
+    <nav class="ws-crumbs" aria-label="Breadcrumb">
+        <a href="{% url 'resources:list' %}">Resources</a> &rsaquo;
+        <a href="{% url 'resources:programs' %}">Programs</a> &rsaquo; {{ program.title }}
+    </nav>
+
+    {% if messages %}{% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" style="margin-bottom: 1rem;">{{ message }}</div>
+    {% endfor %}{% endif %}
+
+    {% if progress %}
+    <section class="ws-section">
+        {% if progress.finished %}
+        <h2>🎉 You finished {{ program.title }}</h2>
+        <p>Every lesson stays here for whenever you need it.</p>
+        {% else %}
+        <h2>Day {{ progress.next_day }} of {{ program.length }}</h2>
+        {% endif %}
+        <div class="pg-bar" role="progressbar" aria-valuenow="{{ progress.percent }}" aria-valuemin="0" aria-valuemax="100"><span style="width: {{ progress.percent }}%"></span></div>
+        <p class="ws-help">{{ progress.done_count }} of {{ program.length }} lessons complete</p>
+        <div class="ws-actions" style="margin-bottom: 0;">
+            {% if progress.next_status == 'current' %}
+            <a class="ws-btn" href="{% url 'resources:program_day' program.slug progress.next_day %}">Start Day {{ progress.next_day }} &rarr;</a>
+            {% elif progress.next_status == 'waiting' %}
+            <span class="ws-btn-locked">✓ Done for today. Day {{ progress.next_day }} opens tomorrow.</span>
+            {% elif progress.next_status == 'premium' %}
+            <a class="ws-btn-locked" href="{% url 'accounts:pricing' %}"><i class="fas fa-lock" aria-hidden="true"></i> Continue with Premium</a>
+            {% endif %}
+        </div>
+    </section>
+    {% else %}
+    <p class="ws-intro">{{ program.intro }}</p>
+    <p class="ws-when"><strong>Who it's for:</strong> {{ program.audience }}</p>
+    <div class="ws-meta">
+        <span class="ws-chip">{{ program.length }} days</span>
+        <span class="ws-chip">About 5 minutes a day</span>
+        <span class="ws-chip">First {{ free_days }} days free</span>
+    </div>
+    <div class="ws-actions">
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'resources:program_enroll' program.slug %}" class="ws-inline-form">
+            {% csrf_token %}
+            <button type="submit" class="ws-btn">Start Day 1</button>
+        </form>
+        {% else %}
+        <a class="ws-btn" href="{% url 'accounts:register' %}">Join free to start</a>
+        <a class="ws-btn-secondary" href="{% url 'accounts:login' %}?next={{ request.path|urlencode }}">Sign in</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% for week_title, days in weeks %}
+    <h2 class="pg-week">{{ week_title }}</h2>
+    <ol class="pg-days">
+        {% for lesson, status in days %}
+        <li class="is-{{ status }}">
+            {% if status == 'done' or status == 'current' %}
+            <a href="{% url 'resources:program_day' program.slug lesson.day %}">
+            {% else %}
+            <div class="pg-row">
+            {% endif %}
+                <span class="pg-num">{% if status == 'done' %}✓{% else %}{{ lesson.day }}{% endif %}</span>
+                <span class="pg-title">{{ lesson.title }}</span>
+                <span class="pg-tag">
+                    {% if status == 'current' %}Today
+                    {% elif status == 'waiting' %}Tomorrow
+                    {% elif status == 'premium' or status == 'premium-preview' %}🔒 Premium
+                    {% elif status == 'free' %}Free{% endif %}
+                </span>
+            {% if status == 'done' or status == 'current' %}</a>{% else %}</div>{% endif %}
+        </li>
+        {% endfor %}
+    </ol>
+    {% endfor %}
+
+    {% if not has_premium %}
+    <div class="ws-upsell">
+        <h3>Finish all {{ program.length }} days with Premium</h3>
+        <ul>
+            <li>The first {{ free_days }} days are free for everyone</li>
+            <li>Premium unlocks days {{ free_days|add:1 }}&ndash;{{ program.length }}, plus saved worksheets, Anchor and the full reflection library</li>
+        </ul>
+        <a class="ws-upsell-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
+    </div>
+    {% endif %}
+
+    {% if progress and progress.done_count %}
+    <form method="post" action="{% url 'resources:program_restart' program.slug %}" style="margin-top: 1.5rem;"
+          onsubmit="return confirm('Start {{ program.title|escapejs }} over from Day 1? Your progress will be reset.');">
+        {% csrf_token %}
+        <button type="submit" class="ws-btn-danger" style="padding-left: 0;">Start over from Day 1</button>
+    </form>
+    {% endif %}
+
+    <p class="ws-crisis">
+        Programs support recovery. They don't replace professional care or medical advice. If you're in crisis, call or text
+        <strong>988</strong> (Suicide &amp; Crisis Lifeline) or see <a href="{% url 'core:crisis' %}">crisis resources</a>.
+    </p>
+</div>
+{% endblock %}

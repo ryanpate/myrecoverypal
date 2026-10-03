@@ -1,0 +1,29 @@
+{% if show and program %}
+<style>
+    .pg-home-card { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; border-radius: 16px;
+        padding: 1rem 1.2rem; margin-bottom: 1.25rem; text-decoration: none; color: #fff;
+        background: linear-gradient(135deg, #2d6a4f, #52b788); box-shadow: 0 6px 18px rgba(45,106,79,0.22); }
+    .pg-home-card:hover { color: #fff; transform: translateY(-1px); }
+    .pg-home-icon { font-size: 1.9rem; line-height: 1; }
+    .pg-home-text { flex: 1 1 200px; }
+    .pg-home-text strong { display: block; font-size: 1.02rem; }
+    .pg-home-text span { font-size: 0.88rem; opacity: 0.92; }
+    .pg-home-bar { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.3); margin-top: 0.45rem; overflow: hidden; }
+    .pg-home-bar > span { display: block; height: 100%; background: #fff; border-radius: 999px; }
+    .pg-home-cta { font-weight: 700; white-space: nowrap; }
+</style>
+<a class="pg-home-card" href="{% if progress and progress.next_status == 'current' %}{% url 'resources:program_day' program.slug progress.next_day %}{% else %}{% url 'resources:program_detail' program.slug %}{% endif %}">
+    <span class="pg-home-icon" aria-hidden="true">{{ program.icon }}</span>
+    <span class="pg-home-text">
+        {% if progress %}
+        <strong>{{ program.title }}: Day {{ progress.next_day }} of {{ program.length }}</strong>
+        <span>{% if progress.next_status == 'current' %}Today's lesson is ready. About 5 minutes.{% elif progress.next_status == 'waiting' %}Done for today. Your next lesson opens tomorrow.{% elif progress.next_status == 'premium' %}You finished the free first week. Continue with Premium.{% endif %}</span>
+        <span class="pg-home-bar"><span style="width: {{ progress.percent }}%"></span></span>
+        {% else %}
+        <strong>New: the First 30 Days program</strong>
+        <span>One five-minute lesson and one small action a day. The first week is free.</span>
+        {% endif %}
+    </span>
+    <span class="pg-home-cta">{% if progress and progress.next_status == 'current' %}Start Day {{ progress.next_day }} &rarr;{% elif progress %}View &rarr;{% else %}Start &rarr;{% endif %}</span>
+</a>
+{% endif %}

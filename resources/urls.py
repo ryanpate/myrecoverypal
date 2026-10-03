@@ -1,5 +1,5 @@
 from django.urls import path
-from . import reflection_views, views, worksheet_views
+from . import program_views, reflection_views, views, worksheet_views
 
 app_name = 'resources'
 
@@ -15,6 +15,16 @@ urlpatterns = [
          name='worksheet_entry_coach'),
     path('worksheets/entry/<int:pk>/delete/', worksheet_views.worksheet_entry_delete,
          name='worksheet_entry_delete'),
+    # Guided day-by-day programs
+    path('programs/', program_views.program_index, name='programs'),
+    path('programs/<slug:slug>/', program_views.program_detail, name='program_detail'),
+    path('programs/<slug:slug>/start/', program_views.program_enroll, name='program_enroll'),
+    path('programs/<slug:slug>/restart/', program_views.program_restart, name='program_restart'),
+    path('programs/<slug:slug>/day/<int:day>/', program_views.program_day, name='program_day'),
+    path('programs/<slug:slug>/day/<int:day>/complete/', program_views.program_complete,
+         name='program_complete'),
+    path('programs/<slug:slug>/day/<int:day>/journal/', program_views.program_journal,
+         name='program_journal'),
     # Daily reflection library
     path('reflections/', reflection_views.reflection_index, name='reflections'),
     path('reflections/favorites/', reflection_views.reflection_favorites,

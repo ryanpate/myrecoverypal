@@ -402,3 +402,41 @@ class ReflectionFavorite(models.Model):
 
     def __str__(self):
         return f"{self.user_id} - {self.reflection_slug}"
+
+
+class ProgramEnrollment(models.Model):
+    """A member's place in a guided program (resources/programs.py)."""
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='program_enrollments')
+    program_slug = models.SlugField(max_length=60)
+    started_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-started_at']
+        unique_together = ['user', 'program_slug']
+
+    def __str__(self):
+        return f"{self.user_id} - {self.program_slug}"
+
+    @property
+    def program(self):
+        from .programs import get_program
+        return get_program(self.program_slug)
+
+
+class ProgramDayCompletion(models.Model):
+    """One finished lesson. `completed_on` is the member's local date, used
+    for the one-lesson-a-day pacing."""
+    enrollment = models.ForeignKey(
+        ProgramEnrollment, on_delete=models.CASCADE, related_name='completions')
+    day = models.PositiveSmallIntegerField()
+    completed_on = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['day']
+        unique_together = ['enrollment', 'day']
+
+    def __str__(self):
+        return f"{self.enrollment_id} day {self.day}"

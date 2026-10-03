@@ -468,4 +468,5 @@
 .worksheets-promo-text { flex: 1 1 280px; display: flex; flex-direction: column; gap: 0.25rem; }
 .worksheets-promo-text span { opacity: 0.92; font-size: 0.95rem; line-height: 1.4; }
 .worksheets-promo-cta { font-weight: 700; white-space: nowrap; }
+.programs-promo { background: linear-gradient(135deg, #7c3aed, #4db8e8); box-shadow: 0 6px 18px rgba(124,58,237,0.22); }
 .reflections-promo { background: linear-gradient(135deg, #1e4d8b, #4db8e8); box-shadow: 0 6px 18px rgba(30,77,139,0.25); }
