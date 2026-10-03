@@ -1,0 +1,12 @@
+{% extends 'emails/sequence_base.html' %}
+{% block title %}Day {{ lesson.day }} of {{ program.title }} is waiting{% endblock %}
+{% block content %}
+<p>Hi {{ user.first_name|default:user.username }},</p>
+<p>Day {{ lesson.day }} of <strong>{{ program.title }}</strong>, "{{ lesson.title }}", has been waiting for you for {{ days_open }} days.</p>
+<p>No pressure, and nothing is lost. Missed days don't count against you; you pick up right where you left off. It takes about five minutes.</p>
+<div class="cta-wrap"><a class="cta" href="{{ lesson_url }}">Read Day {{ lesson.day }}</a></div>
+<p style="font-size: 13px; color: #888;">If today is a hard day, the Craving SOS tools are always free, and you can call or text 988 any time.</p>
+{% endblock %}
+{% block postscript %}
+<p style="font-size: 12px; color: #999; margin-top: 18px;">Don't want lesson reminders? <a href="{{ program_url }}" style="color: #999;">Turn them off on the program page</a>.</p>
+{% endblock %}

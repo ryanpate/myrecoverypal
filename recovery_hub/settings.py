@@ -848,6 +848,12 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_trial_ending_notifications',
         'schedule': crontab(hour=10, minute=0),  # Daily at 10 AM
     },
+    # Guided program lesson reminders. Hourly; each member is handled at
+    # 9 AM in their own time zone (resources/tasks.py).
+    'send-program-reminders': {
+        'task': 'resources.tasks.send_program_reminders',
+        'schedule': crontab(minute=5),
+    },
     # Daily recovery thought — ensures a quote exists for today's feed
     'publish-daily-thought': {
         'task': 'apps.accounts.tasks.publish_daily_thought',

@@ -412,6 +412,13 @@ class ProgramEnrollment(models.Model):
     started_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
 
+    # Daily lesson reminders (resources/tasks.py::send_program_reminders).
+    # Dates are the member's local dates.
+    reminders_enabled = models.BooleanField(default=True)
+    last_reminder_on = models.DateField(null=True, blank=True)
+    last_email_on = models.DateField(null=True, blank=True)
+    premium_nudge_sent = models.BooleanField(default=False)
+
     class Meta:
         ordering = ['-started_at']
         unique_together = ['user', 'program_slug']

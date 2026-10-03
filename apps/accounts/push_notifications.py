@@ -452,6 +452,16 @@ class PushNotificationService:
             'body': 'Take a moment to check in with yourself today',
             'icon': '/static/images/favicon_192.png',
         },
+        'program_reminder': {
+            'title': "Today's lesson is ready",
+            'body': 'About 5 minutes. Tap to read it.',
+            'icon': '/static/images/favicon_192.png',
+        },
+        'program_premium': {
+            'title': 'You finished week one',
+            'body': 'Keep going with the rest of your program.',
+            'icon': '/static/images/favicon_192.png',
+        },
     }
 
     @classmethod

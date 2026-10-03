@@ -1701,6 +1701,7 @@ class Notification(models.Model):
         ('supporter_encouragement', 'Encouragement from Supporter'),
         ('member_support_request', 'Member Asked for Support'),
         ('member_inactive', 'Member Inactivity Alert'),
+        ('program_reminder', 'Program Lesson Reminder'),
     )
 
     recipient = models.ForeignKey(
@@ -1762,6 +1763,7 @@ class Notification(models.Model):
             'new_blog_post': 'fa-newspaper',
             'checkin_reminder': 'fa-circle-check',
             'meeting_reminder': 'fa-calendar-check',
+            'program_reminder': 'fa-seedling',
             'pal_nudge': 'fa-hand-holding-heart',
             'group_post': 'fa-users',
             'group_comment': 'fa-comment-dots',

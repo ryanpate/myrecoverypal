@@ -79,12 +79,29 @@ def program_enroll(request, slug):
 
 @login_required
 @require_POST
+def program_reminders(request, slug):
+    """Turn daily lesson reminders on or off for this enrollment."""
+    program = _program_or_404(slug)
+    enrollment = _enrollment(request.user, program)
+    if enrollment is None:
+        raise Http404('Not enrolled')
+    enrollment.reminders_enabled = request.POST.get('enabled') == '1'
+    enrollment.save(update_fields=['reminders_enabled'])
+    messages.success(request, 'Daily lesson reminders are on.' if enrollment.reminders_enabled
+                     else 'Daily lesson reminders are off. You can turn them back on any time.')
+    return redirect('resources:program_detail', slug=slug)
+
+
+@login_required
+@require_POST
 def program_restart(request, slug):
     program = _program_or_404(slug)
     enrollment = _enrollment(request.user, program)
     if enrollment:
         enrollment.delete()
-    ProgramEnrollment.objects.create(user=request.user, program_slug=program.slug)
+    ProgramEnrollment.objects.create(
+        user=request.user, program_slug=program.slug,
+        reminders_enabled=enrollment.reminders_enabled if enrollment else True)
     messages.success(request, f'{program.title} restarted. Day 1 is ready when you are.')
     return redirect('resources:program_day', slug=slug, day=1)
 

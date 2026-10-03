@@ -20,6 +20,7 @@ urlpatterns = [
     path('programs/<slug:slug>/', program_views.program_detail, name='program_detail'),
     path('programs/<slug:slug>/start/', program_views.program_enroll, name='program_enroll'),
     path('programs/<slug:slug>/restart/', program_views.program_restart, name='program_restart'),
+    path('programs/<slug:slug>/reminders/', program_views.program_reminders, name='program_reminders'),
     path('programs/<slug:slug>/day/<int:day>/', program_views.program_day, name='program_day'),
     path('programs/<slug:slug>/day/<int:day>/complete/', program_views.program_complete,
          name='program_complete'),
