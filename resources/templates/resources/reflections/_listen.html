@@ -1,0 +1,25 @@
+{% comment %}
+"Listen" button: reads the element with id `target` aloud using the
+browser's built-in speech synthesis. Hidden where the browser lacks it.
+{% endcomment %}
+<button type="button" class="ws-btn-secondary rf-listen" data-target="{{ target }}" hidden>
+    <i class="fas fa-volume-high" aria-hidden="true"></i> <span>Listen</span></button>
+<script>
+(function () {
+    var btn = document.currentScript.previousElementSibling;
+    if (!('speechSynthesis' in window) || !btn) return;
+    btn.hidden = false;
+    var label = btn.querySelector('span');
+    btn.addEventListener('click', function () {
+        var synth = window.speechSynthesis;
+        if (synth.speaking) { synth.cancel(); label.textContent = 'Listen'; return; }
+        var el = document.getElementById(btn.dataset.target);
+        if (!el) return;
+        var u = new SpeechSynthesisUtterance(el.innerText);
+        u.rate = 0.92;
+        u.onend = u.onerror = function () { label.textContent = 'Listen'; };
+        label.textContent = 'Stop';
+        synth.speak(u);
+    });
+})();
+</script>

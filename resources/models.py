@@ -384,3 +384,21 @@ class WorksheetEntry(models.Model):
 
     def get_absolute_url(self):
         return reverse('resources:worksheet_entry', kwargs={'pk': self.pk})
+
+
+class ReflectionFavorite(models.Model):
+    """A member's saved reading from the reflection library (Premium).
+
+    Readings are defined in resources/reflections.py and referenced by slug.
+    """
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='reflection_favorites')
+    reflection_slug = models.SlugField(max_length=60)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        unique_together = ['user', 'reflection_slug']
+
+    def __str__(self):
+        return f"{self.user_id} - {self.reflection_slug}"
