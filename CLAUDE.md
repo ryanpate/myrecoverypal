@@ -151,11 +151,11 @@ python manage.py test_email recipient@example.com --resend-api
 
 ### Audio Library
 
-`/resources/audio/`. Scripts live in `resources/audio_scripts.py`, and narrations of the 30 daily reflections are generated from `resources/reflections.py`. After editing a script, run `python manage.py generate_audio --dry-run` and then `python manage.py generate_audio` in a Railway shell. Only changed tracks are re-voiced. Craving and calm sessions are always free; see `resources/audio_views.py::can_listen`.
+`/resources/audio/`. Scripts live in `resources/audio_scripts.py`, and narrations of the 30 daily reflections are generated from `resources/reflections.py`. After editing a script, run `python manage.py generate_audio --dry-run` and then `python manage.py generate_audio` in a Railway shell. Only changed tracks are re-voiced. Craving and calm sessions are always free; see `resources/audio_views.py::can_listen`. Locked Premium sessions play a free preview (the opening, cut at a natural pause). `generate_audio` builds previews automatically, and `generate_audio --previews` rebuilds them from the stored MP3s without calling ElevenLabs.
 
 ### Announcement Emails
 
-`python manage.py send_feature_announcement` sends the one-off "recovery toolkit" email. Run it in a Railway shell. It's a dry run unless you pass `--commit`; `--test you@x.com` sends a single copy and `--segment all` reaches everyone opted in. Deliveries are recorded in `AnnouncementDelivery(user, key)`, so re-running never sends twice. For a new announcement, copy the command and change `KEY`, `SUBJECT` and `TEMPLATE`.
+`python manage.py send_feature_announcement` sends the one-off "recovery toolkit" email. Run it in a Railway shell. It's a dry run unless you pass `--commit`; `--test you@x.com` sends a single copy and `--segment all` reaches everyone opted in. Deliveries are recorded in `AnnouncementDelivery(user, key)`, so re-running never sends twice. For a new announcement, copy the command and change `KEY`, `SUBJECT` and `TEMPLATE`. `send_feature_push` is the push equivalent. It only sends between 9 AM and 8 PM in each member's local time, so re-run it during the day to reach everyone.
 
 ### Push Notification System
 

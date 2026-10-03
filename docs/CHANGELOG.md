@@ -4,6 +4,17 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-03:** Premium audio previews, and a push announcing the free audio.
+  - **Previews:** a locked Premium session (body scan, sleep, morning, self-compassion and so on) now plays its opening for free.
+    - `resources/audio_mp3.py::preview` cuts at the first pause of at least 0.8s after 40s, so a preview never stops mid-sentence. The hard limit is 75s.
+    - Previews are stored in `AudioTrack.preview` (resources migration 0008) and served by the public `/resources/audio/<slug>/preview/`.
+    - When a preview ends, the Premium box highlights with "Keep listening with Premium". GA4 events: `audio_preview_play`, `audio_preview_complete`, and `select_promotion` with `audio_preview_*`.
+    - The library list labels locked sessions "Free preview". Free sessions and reflection narrations get no preview.
+    - `generate_audio` builds previews automatically. `generate_audio --previews` backfills them from the existing MP3s without calling ElevenLabs.
+  - **Push:** `python manage.py send_feature_push` sends "Guided audio is here 🎧 When a craving hits, press play…", and tapping it opens `/resources/audio/`.
+    - It's a dry run by default; `--test USERNAME` and `--commit` send for real.
+    - It only goes to members with the app who allow notifications, and only between 9 AM and 8 PM in each member's own time zone. Re-run it later in the day to reach the rest.
+    - It's sent once per member (`AnnouncementDelivery`). A member is only recorded when a device actually received it, so failures are retried.
 - **2026-10-03:** Premium-awareness ideas, round 1. See `docs/plans/2026-10-03-premium-awareness.md`.
   - **"Library" in the main nav:**
     - It's a top-level link in the desktop nav and the first item under Tools in the mobile menu (`templates/partials/_library_nav_link.html`).

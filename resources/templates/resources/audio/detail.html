@@ -46,20 +46,51 @@
             <div class="rf-body">{{ track.transcript|linebreaks }}</div>
         </details>
         {% else %}
-        <div class="locked-resource-panel" style="margin: 1rem 0 0; text-align: center; border: 1px dashed rgba(128,128,128,0.45); border-radius: 14px; padding: 1.6rem 1.2rem;">
+        {% if track.preview %}
+        <div class="au-preview" id="auPreview" data-slug="{{ track.slug }}">
+            <p class="au-preview-label"><i class="fas fa-headphones" aria-hidden="true"></i>
+                Listen to a {% if track.preview_seconds < 60 %}short{% else %}1-minute{% endif %} preview</p>
+            <audio controls preload="none" src="{% url 'resources:audio_preview' track.slug %}"></audio>
+        </div>
+        {% endif %}
+        <div class="locked-resource-panel{% if track.preview %} au-after-preview{% endif %}" id="auLocked" style="margin: 1rem 0 0; text-align: center; border: 1px dashed rgba(128,128,128,0.45); border-radius: 14px; padding: 1.6rem 1.2rem;">
             <div style="font-size: 1.8rem;" aria-hidden="true">🔒</div>
-            <h2 style="font-size: 1.15rem; margin: 0.4rem 0;">Listen with Premium</h2>
+            <h2 style="font-size: 1.15rem; margin: 0.4rem 0;"><span class="au-ended-only">That's the end of the preview. </span>{% if track.preview %}Keep listening{% else %}Listen{% endif %} with Premium</h2>
             <p style="opacity: 0.8;">Premium opens the whole audio library: sleep and morning sessions, the body scan,
                 and every daily reflection read aloud. The craving tools are always free.</p>
             <div class="ws-actions" style="justify-content: center;">
                 {% if user.is_authenticated %}
-                <a class="ws-btn" href="{% url 'accounts:pricing' %}">See Premium</a>
+                <a class="ws-btn" href="{% url 'accounts:pricing' %}" data-promo="audio_preview_upgrade">{% if user_subscription.card_trial_eligible %}Try Premium free for 7 days{% else %}See Premium{% endif %}</a>
                 {% else %}
-                <a class="ws-btn" href="{% url 'accounts:register' %}">Join free</a>
+                <a class="ws-btn" href="{% url 'accounts:register' %}" data-promo="audio_preview_join">Join free</a>
                 {% endif %}
                 <a class="ws-btn-secondary" href="{% url 'resources:audio' %}">Browse free sessions</a>
             </div>
         </div>
+        {% if track.preview %}
+        <script>
+        (function () {
+            var box = document.getElementById('auPreview'), locked = document.getElementById('auLocked');
+            if (!box || !locked) return;
+            var audio = box.querySelector('audio'), slug = box.dataset.slug;
+            function track(name, params) { if (typeof gtag === 'function') gtag('event', name, params); }
+            audio.addEventListener('play', function once() {
+                audio.removeEventListener('play', once);
+                track('audio_preview_play', { track: slug });
+            });
+            audio.addEventListener('ended', function () {
+                locked.classList.add('is-ended');
+                locked.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                track('audio_preview_complete', { track: slug });
+                track('view_promotion', { promotion_id: 'audio_preview_end', creative_slot: slug });
+            });
+            locked.addEventListener('click', function (e) {
+                var a = e.target.closest('[data-promo]');
+                if (a) track('select_promotion', { promotion_id: a.dataset.promo, creative_slot: slug });
+            });
+        })();
+        </script>
+        {% endif %}
         {% endif %}
     </article>
 

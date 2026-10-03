@@ -7,6 +7,7 @@ land in Cloudinary):
     python manage.py generate_audio                  # generate new or changed tracks
     python manage.py generate_audio --only urge-surfing --force
     python manage.py generate_audio --sessions-only  # skip the 30 reflection narrations
+    python manage.py generate_audio --previews       # (re)build Premium previews only; no ElevenLabs
 
 Needs ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID (see resources/elevenlabs.py).
 A track is only re-voiced when its script, voice, model or format changed,
@@ -25,7 +26,7 @@ from django.core.files.base import ContentFile
 from django.db import connection
 from django.core.management.base import BaseCommand, CommandError
 
-from resources.audio_mp3 import stitch
+from resources.audio_mp3 import preview as cut_preview, stitch
 from resources.audio_scripts import all_scripts, spoken_characters, transcript
 from resources.elevenlabs import VOICE_SETTINGS, ElevenLabsConfig, synthesize
 from resources.models import AudioTrack
@@ -74,6 +75,42 @@ def single_run():
         unlock()
 
 
+def wants_preview(track):
+    """Premium guided sessions get a free preview. Free sessions don't need
+    one, and reflection narrations are about a minute long already."""
+    return not track.is_free and not track.reflection_slug
+
+
+def save_preview(track, mp3):
+    """Cut and store the preview for `track` from its full MP3 (or clear it)."""
+    old = track.preview.name if track.preview else ''
+    if wants_preview(track):
+        data, seconds = cut_preview(mp3)
+        track.preview.save(f'{track.slug}-preview.mp3', ContentFile(data), save=False)
+        track.preview_seconds = round(seconds, 2)
+    else:
+        track.preview = ''
+        track.preview_seconds = 0
+    track.save(update_fields=['preview', 'preview_seconds'])
+    if old and old != track.preview.name:
+        try:
+            track.preview.storage.delete(old)
+        except Exception:  # best effort; a stale file is harmless
+            pass
+
+
+def read_audio(track, client=None):
+    """Bytes of a stored track (Cloudinary URL or local file)."""
+    url = track.audio.url
+    if url.startswith('http'):
+        import httpx
+        resp = (client or httpx).get(url, timeout=120, follow_redirects=True)
+        resp.raise_for_status()
+        return resp.content
+    with track.audio.open('rb') as f:
+        return f.read()
+
+
 def render(parts, config, client=None):
     """Synthesize each spoken part and stitch in the pauses. Returns (mp3, seconds)."""
     spoken = [i for i, p in enumerate(parts) if isinstance(p, str)]
@@ -100,8 +137,12 @@ class Command(BaseCommand):
         group = parser.add_mutually_exclusive_group()
         group.add_argument('--sessions-only', action='store_true')
         group.add_argument('--reflections-only', action='store_true')
+        parser.add_argument('--previews', action='store_true',
+                            help='Only (re)build Premium previews from existing audio. No ElevenLabs calls.')
 
     def handle(self, *args, **opts):
+        if opts['previews']:
+            return self._previews(opts)
         config = ElevenLabsConfig()
         dry = opts['dry_run']
         if not dry and config.missing():
@@ -167,6 +208,7 @@ class Command(BaseCommand):
                 track.duration_seconds = round(seconds, 2)
                 track.audio.save(f'{slug}.mp3', ContentFile(mp3), save=False)
                 track.save()
+                save_preview(track, mp3)
                 if old_name and old_name != track.audio.name:
                     try:
                         track.audio.storage.delete(old_name)
@@ -179,3 +221,21 @@ class Command(BaseCommand):
             count = stale.update(is_active=False)
             self.stdout.write(f'Deactivated {count} track(s) whose script was removed.')
         self.stdout.write(self.style.SUCCESS('Done.'))
+
+    def _previews(self, opts):
+        tracks = AudioTrack.objects.filter(is_active=True).exclude(audio='')
+        if opts['only']:
+            tracks = tracks.filter(slug__in=opts['only'])
+        todo = [t for t in tracks if wants_preview(t) or t.preview]
+        self.stdout.write(f'{len(todo)} track(s) to check for previews.')
+        if opts['dry_run']:
+            for t in todo:
+                self.stdout.write(f"  would {'build' if wants_preview(t) else 'clear'} preview  {t.slug}")
+            return
+        import httpx
+        with httpx.Client() as client:
+            for t in todo:
+                save_preview(t, read_audio(t, client) if wants_preview(t) else b'')
+                self.stdout.write(f'  preview  {t.slug}  {t.preview_seconds:.0f}s')
+        self.stdout.write(self.style.SUCCESS('Done.'))
+

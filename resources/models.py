@@ -496,6 +496,11 @@ def _audio_upload_to(instance, filename):
     return f'audio/{instance.slug}-{secrets.token_hex(8)}.mp3'
 
 
+def _preview_upload_to(instance, filename):
+    import secrets
+    return f'audio/previews/{instance.slug}-{secrets.token_hex(8)}.mp3'
+
+
 class AudioTrack(models.Model):
     """A generated audio session or reflection narration.
 
@@ -513,6 +518,10 @@ class AudioTrack(models.Model):
     transcript = models.TextField(blank=True)
     audio = models.FileField(upload_to=_audio_upload_to, storage=_audio_storage)
     duration_seconds = models.FloatField(default=0)
+    # Free opening of a Premium session (resources/audio_mp3.py::preview),
+    # cut at a natural pause. Empty for free sessions and reflections.
+    preview = models.FileField(upload_to=_preview_upload_to, storage=_audio_storage, blank=True)
+    preview_seconds = models.FloatField(default=0)
     content_hash = models.CharField(max_length=64, blank=True)
     voice_id = models.CharField(max_length=64, blank=True)
     model_id = models.CharField(max_length=64, blank=True)
