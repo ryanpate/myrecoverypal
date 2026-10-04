@@ -137,6 +137,7 @@ python manage.py test_email recipient@example.com --resend-api
 - `send_checkin_reminders`: Daily at 5:00 PM
 - `send_weekly_digests`: Sundays at 10:30 AM
 - `resources.tasks.send_program_reminders`: hourly at :05; each member handled at 9 AM in their own time zone (guided program lessons)
+- `resources.tasks.send_audio_reminders`: hourly at :10; opt-in daily push to play a guided session (morning intention, evening check-out, sleep wind-down) at the member's chosen local hour
 
 **Email Templates:** `apps/accounts/templates/emails/`
 - `welcome_day_1.html` - Welcome + getting started

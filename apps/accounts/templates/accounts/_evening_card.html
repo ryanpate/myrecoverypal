@@ -1,0 +1,44 @@
+{% comment %}
+Evening check-out offer on the progress home, from 6 PM local time
+(views._evening_session). Dismissed for the evening via localStorage.
+{% endcomment %}
+{% if evening_session %}
+<div class="evening-card" id="eveningCard" style="display:none;" data-day="{% now 'Y-m-d' %}">
+    <button type="button" class="evening-card-dismiss" aria-label="Dismiss">&times;</button>
+    <div class="evening-card-moon" aria-hidden="true">🌙</div>
+    <div class="evening-card-body">
+        <div class="evening-card-title">Close the day</div>
+        <div class="evening-card-text">{{ evening_session.track.title }}: what went well, what was hard, one thing for tomorrow. {{ evening_session.track.minutes }} minutes.</div>
+        {% if not evening_session.has_reminder %}<a class="evening-card-remind" href="{% url 'resources:audio_detail' evening_session.track.slug %}#auReminderTitle">Remind me every evening</a>{% endif %}
+    </div>
+    <a class="evening-card-btn" href="{% url 'resources:audio_detail' evening_session.track.slug %}">▶ Play</a>
+</div>
+<style>
+    .evening-card { position: relative; display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; margin: 0 0 1.25rem;
+        padding: 1rem 1.2rem; border-radius: 16px; color: #e8eefc; background: linear-gradient(135deg, #0f2d56, #2a3f7a);
+        box-shadow: 0 6px 18px rgba(15,45,86,0.25); }
+    .evening-card-moon { font-size: 1.8rem; line-height: 1; }
+    .evening-card-body { flex: 1 1 220px; }
+    .evening-card-title { font-weight: 700; font-size: 1.05rem; color: #fff; }
+    .evening-card-text { font-size: 0.9rem; opacity: 0.9; line-height: 1.4; }
+    .evening-card-remind { font-size: 0.85rem; color: #b9d4ff; }
+    .evening-card-btn { background: #fff; color: #0f2d56 !important; font-weight: 700; padding: 0.55rem 1.2rem; border-radius: 50px; text-decoration: none; }
+    .evening-card-dismiss { position: absolute; top: 4px; right: 10px; background: none; border: none; color: rgba(255,255,255,0.7); font-size: 1.3rem; cursor: pointer; }
+</style>
+<script>
+(function () {
+    var card = document.getElementById('eveningCard');
+    if (!card) return;
+    var KEY = 'mrp_evening_card_dismissed', day = card.dataset.day;
+    try { if (localStorage.getItem(KEY) === day) return; } catch (e) {}
+    card.style.display = '';
+    card.querySelector('.evening-card-dismiss').addEventListener('click', function () {
+        try { localStorage.setItem(KEY, day); } catch (e) {}
+        card.style.display = 'none';
+    });
+    card.querySelector('.evening-card-btn').addEventListener('click', function () {
+        if (typeof gtag === 'function') gtag('event', 'select_promotion', { promotion_id: 'evening_card', creative_slot: 'progress' });
+    });
+})();
+</script>
+{% endif %}

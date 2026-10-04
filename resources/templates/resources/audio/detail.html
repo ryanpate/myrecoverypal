@@ -94,6 +94,28 @@
         {% endif %}
     </article>
 
+    {% if reminder %}
+    <section class="au-reminder" aria-labelledby="auReminderTitle">
+        <h2 id="auReminderTitle"><i class="fas fa-bell" aria-hidden="true"></i> Make it a habit</h2>
+        {% if reminder.on %}
+        <p>We'll remind you every day at <strong>{{ reminder.label }}</strong>, your time.</p>
+        {% else %}
+        <p>Get a gentle reminder to press play at the same time each day.</p>
+        {% endif %}
+        <form method="post" action="{% url 'resources:audio_reminder' track.slug %}" class="au-reminder-form">
+            {% csrf_token %}
+            <select name="hour" id="auReminderHour" aria-label="Reminder time">
+                {% for h, label in reminder.hours %}<option value="{{ h }}"{% if h == reminder.hour %} selected{% endif %}>{{ label }}</option>{% endfor %}
+            </select>
+            <button type="submit" class="ws-btn">{% if reminder.on %}Update time{% else %}Remind me daily{% endif %}</button>
+            {% if reminder.on %}<button type="submit" name="action" value="off" class="ws-btn-secondary">Turn off</button>{% endif %}
+        </form>
+        {% if not reminder.has_app %}
+        <p class="au-reminder-note">Reminders arrive as notifications in the MyRecoveryPal app. <a href="{% url 'core:get_app' %}">Get the app</a> to receive them.</p>
+        {% endif %}
+    </section>
+    {% endif %}
+
     {% if related %}
     <div class="ws-history">
         <h3>More {{ category_label|lower }}</h3>
