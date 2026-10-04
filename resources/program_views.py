@@ -55,14 +55,23 @@ def _weeks(program, progress):
     return weeks
 
 
+def program_cards(user, programs):
+    """[{'program', 'progress'}] for program cards (progress is None until enrolled)."""
+    enrollments = {}
+    if user.is_authenticated:
+        enrollments = {e.program_slug: e for e in ProgramEnrollment.objects.filter(
+            user=user, program_slug__in=[p.slug for p in programs])}
+    out = []
+    for program in programs:
+        enrollment = enrollments.get(program.slug)
+        progress = get_progress(enrollment, user) if enrollment else None
+        out.append({'program': program, 'progress': progress})
+    return out
+
+
 def program_index(request):
     def cards(programs):
-        out = []
-        for program in programs:
-            enrollment = _enrollment(request.user, program)
-            progress = get_progress(enrollment, request.user) if enrollment else None
-            out.append({'program': program, 'progress': progress})
-        return out
+        return program_cards(request.user, programs)
 
     return render(request, 'resources/programs/index.html', {
         'core_cards': cards(CORE_PROGRAMS),

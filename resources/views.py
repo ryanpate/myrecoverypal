@@ -72,7 +72,10 @@ class ResourceListView(ListView):
             ).select_related('category', 'resource_type')[:3]
 
             from .audio_views import active_tracks
+            from .program_views import program_cards
+            from .programs import PROGRAMS
             context['has_audio'] = active_tracks().exists()
+            context['program_cards'] = program_cards(self.request.user, PROGRAMS)
 
         # Always show crisis resources
         context['crisis_resources'] = CrisisResource.objects.filter(

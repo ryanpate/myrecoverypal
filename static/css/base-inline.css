@@ -1441,6 +1441,48 @@ a.btn-primary:hover {
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
 }
 
+/* Grouped Tools menu: Library / Premium Tools / Free Tools columns */
+.nav-dropdown-group {
+    list-style: none;
+    padding: 0.25rem 0;
+}
+.nav-dropdown-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 1.1rem 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+    color: #888;
+}
+.nav-dropdown-group--premium .nav-dropdown-label,
+.nav-dropdown-group--premium .nav-dropdown-label i,
+.nav-dropdown-group--premium a i {
+    color: #d4910f;
+}
+.nav-dropdown-menu a.nav-dropdown-upgrade {
+    margin: 0.35rem 1.1rem 0.2rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: 8px;
+    justify-content: center;
+    font-weight: 700;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.18), rgba(255, 165, 0, 0.18));
+}
+@media (min-width: 1025px) {
+    .nav-dropdown:hover .nav-dropdown-menu--grouped,
+    .nav-dropdown:focus-within .nav-dropdown-menu--grouped {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(225px, auto));
+    }
+    .nav-dropdown-group--premium {
+        background: rgba(245, 166, 35, 0.07);
+        border-radius: 10px;
+    }
+}
+[data-theme="dark"] .nav-dropdown-label { color: #9aa7b2; }
+
 /* ================================================
    COURT COMPLIANCE NAV PILL (top nav + mobile slide-out)
 ================================================ */

@@ -11,6 +11,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
+<link rel="stylesheet" href="{% static 'resources/css/worksheets.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -51,42 +52,9 @@
         </form>
     </div>
 
-    <!-- Worksheet library -->
+    <!-- Toolkit: library features, Premium tools and every program -->
     {% if not query %}
-    <a href="{% url 'resources:worksheets' %}" class="worksheets-promo">
-        <span class="worksheets-promo-icon" aria-hidden="true">📝</span>
-        <span class="worksheets-promo-text">
-            <strong>New: Interactive Recovery Worksheets</strong>
-            <span>Cost-benefit analysis, thought records, urge logs, trigger maps and more. Free to fill in and print. Premium members can save their answers and discuss them with Anchor.</span>
-        </span>
-        <span class="worksheets-promo-cta">Open worksheets &rarr;</span>
-    </a>
-    <a href="{% url 'resources:programs' %}" class="worksheets-promo programs-promo">
-        <span class="worksheets-promo-icon" aria-hidden="true">🌱</span>
-        <span class="worksheets-promo-text">
-            <strong>New: First 30 Days program</strong>
-            <span>One five-minute lesson and one small action a day through your first month. The first week is free.</span>
-        </span>
-        <span class="worksheets-promo-cta">Start &rarr;</span>
-    </a>
-    <a href="{% url 'resources:reflections' %}" class="worksheets-promo reflections-promo">
-        <span class="worksheets-promo-icon" aria-hidden="true">☀️</span>
-        <span class="worksheets-promo-text">
-            <strong>New: Daily Reflections</strong>
-            <span>A short reading and a question to sit with, every day, for any path to recovery. Today's is free; Premium opens the whole library.</span>
-        </span>
-        <span class="worksheets-promo-cta">Read today's &rarr;</span>
-    </a>
-    {% if has_audio %}
-    <a href="{% url 'resources:audio' %}" class="worksheets-promo audio-promo">
-        <span class="worksheets-promo-icon" aria-hidden="true">🎧</span>
-        <span class="worksheets-promo-text">
-            <strong>New: Guided Audio</strong>
-            <span>Press play for urge surfing, breathing and grounding when a craving hits, free for everyone. Premium adds sleep, morning sessions and every reflection read aloud.</span>
-        </span>
-        <span class="worksheets-promo-cta">Listen &rarr;</span>
-    </a>
-    {% endif %}
+    {% include 'resources/_toolkit.html' %}
     {% endif %}
 
     <!-- Featured Resources -->

@@ -278,3 +278,45 @@ class FreeMessagingUnlimitedTest(TestCase):
         for i in range(12):
             self.client.post(url, {'subject': f's{i}', 'message': f'hello {i}'})
         self.assertEqual(SupportMessage.objects.filter(sender=sender).count(), 12)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class LibraryToolsNavTest(TestCase):
+    """The library features (programs/classes, audio, reflections, worksheets)
+    and the Premium tools are reachable from every nav surface and the hub."""
+
+    LIBRARY = ['resources:programs', 'resources:audio', 'resources:reflections',
+               'resources:worksheets']
+    PREMIUM = ['accounts:recovery_coach', 'resources:workbook',
+               'resources:my_worksheets', 'resources:reflection_favorites']
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='lib_nav', email='lib@example.com', password='pw')
+        self.client.login(username='lib_nav', password='pw')
+        self.content = self.client.get(reverse('accounts:progress')).content.decode()
+
+    def test_tools_dropdown_has_library_and_premium_groups(self):
+        top = _region(self.content, 'id="navLinks"', '</ul>\n            </div>')
+        self.assertIn('Premium Tools', top)
+        for name in self.LIBRARY + self.PREMIUM:
+            self.assertIn(f'href="{reverse(name)}"', top, name)
+        self.assertIn(f'href="{reverse("accounts:pricing")}"', top)
+
+    def test_mobile_menu_has_library_and_premium_sections(self):
+        menu = _region(self.content, 'id="mobileSlideMenu"', 'mobile-menu-footer')
+        self.assertIn('Premium Tools', menu)
+        for name in self.LIBRARY + self.PREMIUM:
+            self.assertIn(f'href="{reverse(name)}"', menu, name)
+
+    def test_user_dropdown_has_premium_section(self):
+        dropdown = _region(self.content, 'id="userDropdown"', 'notification-dropdown')
+        self.assertIn('Premium Tools', dropdown)
+        self.assertIn(f'href="{reverse("resources:workbook")}"', dropdown)
+
+    def test_hub_lists_toolkit_premium_tools_and_every_program(self):
+        from resources.programs import PROGRAMS
+        resp = self.client.get(reverse('resources:list'))
+        self.assertContains(resp, 'id="premium-tools"')
+        for program in PROGRAMS:
+            self.assertContains(resp, reverse('resources:program_detail', args=[program.slug]))

@@ -327,6 +327,28 @@
                                 </a>
                             </div>
 
+                            <div class="user-dropdown-section user-dropdown-section--premium">
+                                <div class="user-dropdown-section-label"><i class="fas fa-crown" style="color: #f5a623;"></i> {% if is_premium_user %}Your Premium Tools{% else %}Premium Tools{% endif %}</div>
+                                <a href="{% url 'accounts:recovery_coach' %}">
+                                    <i class="fas fa-robot"></i> Anchor AI Coach
+                                </a>
+                                <a href="{% url 'resources:programs' %}">
+                                    <i class="fas fa-seedling"></i> Programs &amp; Classes
+                                </a>
+                                <a href="{% url 'resources:audio' %}">
+                                    <i class="fas fa-headphones"></i> Guided Audio
+                                </a>
+                                <a href="{% url 'resources:workbook' %}">
+                                    <i class="fas fa-file-pdf"></i> My Recovery Workbook
+                                </a>
+                                <a href="{% url 'resources:my_worksheets' %}">
+                                    <i class="fas fa-folder-open"></i> My Saved Worksheets
+                                </a>
+                                <a href="{% url 'resources:reflection_favorites' %}">
+                                    <i class="fas fa-bookmark"></i> Saved Reflections
+                                </a>
+                            </div>
+
                             <div class="user-dropdown-section">
                                 <div class="user-dropdown-section-label">Account</div>
                                 <a href="{% url 'accounts:subscription_management' %}" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)); border-left: 3px solid #f5a623; font-weight: 600;">
@@ -492,23 +514,61 @@
             </div>
 
             <div class="mobile-menu-section">
-                <div class="mobile-menu-label">Tools</div>
-                <a href="{% url 'resources:list' %}" class="nav-library {% if request.resolver_match.namespace == 'resources' %}active{% endif %}">
-                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Library<span class="nav-new-dot" hidden aria-hidden="true"></span>
+                <div class="mobile-menu-label">Library</div>
+                <a href="{% url 'resources:list' %}" class="nav-library {% if request.resolver_match.namespace == 'resources' and request.resolver_match.url_name == 'list' %}active{% endif %}">
+                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Library Home<span class="nav-new-dot" hidden aria-hidden="true"></span>
+                </a>
+                <a href="{% url 'resources:programs' %}" class="{% if request.resolver_match.namespace == 'resources' and 'program' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-seedling" style="margin-right: 0.5rem;"></i> Programs &amp; Classes
+                </a>
+                <a href="{% url 'resources:audio' %}" class="{% if request.resolver_match.namespace == 'resources' and 'audio' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-headphones" style="margin-right: 0.5rem;"></i> Guided Audio
+                </a>
+                <a href="{% url 'resources:reflections' %}" class="{% if request.resolver_match.namespace == 'resources' and 'reflection' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-sun" style="margin-right: 0.5rem;"></i> Daily Reflections
+                </a>
+                <a href="{% url 'resources:worksheets' %}" class="{% if request.resolver_match.namespace == 'resources' and request.resolver_match.url_name == 'worksheets' or request.resolver_match.url_name == 'worksheet_detail' %}active{% endif %}">
+                    <i class="fas fa-pen-to-square" style="margin-right: 0.5rem;"></i> Worksheets
+                </a>
+                <a href="{% url 'resources:program_detail' 'family-and-friends' %}">
+                    <i class="fas fa-people-roof" style="margin-right: 0.5rem;"></i> Family &amp; Friends Course
+                </a>
+            </div>
+
+            <div class="mobile-menu-section mobile-menu-section--premium">
+                <div class="mobile-menu-label"><i class="fas fa-crown" style="color: #f5a623;"></i> {% if is_premium_user %}Your Premium Tools{% else %}Premium Tools{% endif %}</div>
+                <a href="{% url 'accounts:recovery_coach' %}" class="{% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}">
+                    <i class="fas fa-robot" style="margin-right: 0.5rem;"></i> Anchor AI Coach
+                </a>
+                <a href="{% url 'resources:workbook' %}" class="{% if request.resolver_match.url_name == 'workbook' %}active{% endif %}">
+                    <i class="fas fa-file-pdf" style="margin-right: 0.5rem;"></i> My Recovery Workbook
+                </a>
+                <a href="{% url 'resources:my_worksheets' %}" class="{% if request.resolver_match.url_name == 'my_worksheets' %}active{% endif %}">
+                    <i class="fas fa-folder-open" style="margin-right: 0.5rem;"></i> My Saved Worksheets
+                </a>
+                <a href="{% url 'resources:reflection_favorites' %}" class="{% if request.resolver_match.url_name == 'reflection_favorites' %}active{% endif %}">
+                    <i class="fas fa-bookmark" style="margin-right: 0.5rem;"></i> Saved Reflections
+                </a>
+                <a href="{% url 'accounts:progress' %}#analytics">
+                    <i class="fas fa-chart-line" style="margin-right: 0.5rem;"></i> 90-Day Insights
+                </a>
+                {% if not is_premium_user %}
+                <a href="{% url 'accounts:pricing' %}" style="color: #d4910f; font-weight: 700;">
+                    <i class="fas fa-crown" style="margin-right: 0.5rem;"></i> Unlock Premium
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="mobile-menu-section">
+                <div class="mobile-menu-label">Free Tools</div>
+                <a href="{% url 'core:craving_sos' %}">
+                    <i class="fas fa-life-ring" style="margin-right: 0.5rem;"></i> Craving SOS
                 </a>
                 <a href="{% url 'accounts:milestone_badge_creator' %}">
                     <i class="fas fa-medal" style="margin-right: 0.5rem;"></i> Medallion Maker
                 </a>
                 <a href="{% url 'accounts:relapse_plan' %}">
                     <i class="fas fa-clipboard-list" style="margin-right: 0.5rem;"></i> Relapse Prevention Plan
-                </a>
-                <a href="{% url 'accounts:recovery_coach' %}"
-                    class="{% if request.resolver_match.url_name == 'recovery_coach' %}active{% endif %}">
-                    <i class="fas fa-robot" style="margin-right: 0.5rem;"></i> Anchor AI Coach
-                </a>
-                <a href="{% url 'resources:list' %}"
-                    class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
-                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Recovery Resources
                 </a>
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
@@ -568,9 +628,50 @@
             </div>
 
             <div class="mobile-menu-section">
-                <div class="mobile-menu-label">Tools</div>
-                <a href="{% url 'resources:list' %}" class="nav-library {% if request.resolver_match.namespace == 'resources' %}active{% endif %}">
-                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Library<span class="nav-new-dot" hidden aria-hidden="true"></span>
+                <div class="mobile-menu-label">Library</div>
+                <a href="{% url 'resources:list' %}" class="nav-library {% if request.resolver_match.namespace == 'resources' and request.resolver_match.url_name == 'list' %}active{% endif %}">
+                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Library Home<span class="nav-new-dot" hidden aria-hidden="true"></span>
+                </a>
+                <a href="{% url 'resources:programs' %}" class="{% if request.resolver_match.namespace == 'resources' and 'program' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-seedling" style="margin-right: 0.5rem;"></i> Programs &amp; Classes
+                </a>
+                <a href="{% url 'resources:audio' %}" class="{% if request.resolver_match.namespace == 'resources' and 'audio' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-headphones" style="margin-right: 0.5rem;"></i> Guided Audio
+                </a>
+                <a href="{% url 'resources:reflections' %}" class="{% if request.resolver_match.namespace == 'resources' and 'reflection' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-sun" style="margin-right: 0.5rem;"></i> Daily Reflections
+                </a>
+                <a href="{% url 'resources:worksheets' %}" class="{% if request.resolver_match.namespace == 'resources' and request.resolver_match.url_name == 'worksheets' or request.resolver_match.url_name == 'worksheet_detail' %}active{% endif %}">
+                    <i class="fas fa-pen-to-square" style="margin-right: 0.5rem;"></i> Worksheets
+                </a>
+                <a href="{% url 'resources:program_detail' 'family-and-friends' %}">
+                    <i class="fas fa-people-roof" style="margin-right: 0.5rem;"></i> Family &amp; Friends Course
+                </a>
+            </div>
+
+            <div class="mobile-menu-section mobile-menu-section--premium">
+                <div class="mobile-menu-label"><i class="fas fa-crown" style="color: #f5a623;"></i> Premium Tools</div>
+                <a href="{% url 'core:ai_recovery_coach' %}">
+                    <i class="fas fa-robot" style="margin-right: 0.5rem;"></i> Anchor AI Coach
+                </a>
+                <a href="{% url 'resources:programs' %}">
+                    <i class="fas fa-seedling" style="margin-right: 0.5rem;"></i> Full Programs
+                </a>
+                <a href="{% url 'resources:audio' %}">
+                    <i class="fas fa-moon" style="margin-right: 0.5rem;"></i> Sleep &amp; Morning Audio
+                </a>
+                <a href="{% url 'resources:worksheets' %}">
+                    <i class="fas fa-file-pdf" style="margin-right: 0.5rem;"></i> Recovery Workbook
+                </a>
+                <a href="{% url 'accounts:pricing' %}" style="color: #d4910f; font-weight: 700;">
+                    <i class="fas fa-crown" style="margin-right: 0.5rem;"></i> See Premium
+                </a>
+            </div>
+
+            <div class="mobile-menu-section">
+                <div class="mobile-menu-label">Free Tools</div>
+                <a href="{% url 'core:craving_sos' %}">
+                    <i class="fas fa-life-ring" style="margin-right: 0.5rem;"></i> Craving SOS
                 </a>
                 <a href="{% url 'core:sobriety_calculator' %}">
                     <i class="fas fa-calendar-check" style="margin-right: 0.5rem;"></i> Sobriety Calculator
@@ -580,13 +681,6 @@
                 </a>
                 <a href="{% url 'core:relapse_prevention_plan' %}">
                     <i class="fas fa-clipboard-list" style="margin-right: 0.5rem;"></i> Relapse Prevention Plan
-                </a>
-                <a href="{% url 'core:ai_recovery_coach' %}">
-                    <i class="fas fa-robot" style="margin-right: 0.5rem;"></i> Anchor AI Coach
-                </a>
-                <a href="{% url 'resources:list' %}"
-                    class="{% if 'resources' in request.resolver_match.namespace %}active{% endif %}">
-                    <i class="fas fa-book-open" style="margin-right: 0.5rem;"></i> Recovery Resources
                 </a>
                 <a href="{% url 'blog:post_list' %}"
                     class="{% if 'blog' in request.resolver_match.namespace %}active{% endif %}">
