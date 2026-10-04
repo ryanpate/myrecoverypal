@@ -4,6 +4,10 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-04:** The library features are now easy to find from every menu and the Library hub.
+  - **Tools menu (desktop):** three columns: **Library** (Programs & Classes, Guided Audio, Daily Reflections, Worksheets, Family & Friends Course, All Resources), **Premium Tools** (Anchor, My Recovery Workbook, My Saved Worksheets, Saved Reflections, 90-Day Insights, plus an upgrade link for free members), and **Free Tools** (Craving SOS, Medallion Maker, Relapse Prevention Plan, Blog, Shop, Crisis Help).
+  - **Mobile slide-out menu:** the same Library / Premium Tools / Free Tools sections. The **account dropdown** also has a Premium Tools section.
+  - **Library hub (`/resources/`):** the four "New:" banners are replaced by a toolkit card grid, a Premium tools panel, and a card for every program (First 30 Days, the substance tracks and the family course) with the member's progress (`resources/_toolkit.html`; `program_views.program_cards` now batches enrollments).
 - **2026-10-04:** A journal entry now suggests a related worksheet (`resources/journal_suggest.py`; premium-awareness idea #10).
   - **How it matches:** simple keyword rules on the entry's own title, text and tags, run on the server when the author opens the entry. For example, craving → Urge Log, resentment or anger → Thought Record, an argument → Trigger Map, boredom or loneliness → Balance Wheel. If nothing matches, it falls back to the craving checkbox, then low mood, then the Nightly Review.
   - **Privacy:** only the author sees it. Nothing about the match is stored, logged or sent to analytics, and the card never quotes the entry.

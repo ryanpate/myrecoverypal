@@ -1,0 +1,100 @@
+{% comment %}Library hub (resources:list): every tool as a card, the Premium tools
+grouped together, and every program/class listed so none of them is more than
+one tap from the hub. Expects program_cards, has_audio, plus the subscription
+context (is_premium_user).{% endcomment %}
+<section class="tk-section" id="toolkit">
+    <h2 class="tk-title">Your recovery toolkit</h2>
+    <p class="tk-sub">Everything in the library, one tap away.</p>
+    <div class="tk-grid">
+        <a class="tk-card" href="{% url 'resources:programs' %}" data-promo="hub_toolkit_programs">
+            <span class="tk-icon" aria-hidden="true">🌱</span>
+            <span class="tk-name">Programs &amp; Classes</span>
+            <span class="tk-desc">Day-by-day lessons with a small action each day, plus weekly cohort groups.</span>
+            <span class="tk-tag">Free to start</span>
+        </a>
+        {% if has_audio %}
+        <a class="tk-card" href="{% url 'resources:audio' %}" data-promo="hub_toolkit_audio">
+            <span class="tk-icon" aria-hidden="true">🎧</span>
+            <span class="tk-name">Guided Audio</span>
+            <span class="tk-desc">Urge surfing, breathing and grounding when a craving hits.</span>
+            <span class="tk-tag">Craving sessions free</span>
+        </a>
+        {% endif %}
+        <a class="tk-card" href="{% url 'resources:reflections' %}" data-promo="hub_toolkit_reflections">
+            <span class="tk-icon" aria-hidden="true">☀️</span>
+            <span class="tk-name">Daily Reflections</span>
+            <span class="tk-desc">A short reading and a question to sit with, every day.</span>
+            <span class="tk-tag">Today's is free</span>
+        </a>
+        <a class="tk-card" href="{% url 'resources:worksheets' %}" data-promo="hub_toolkit_worksheets">
+            <span class="tk-icon" aria-hidden="true">📝</span>
+            <span class="tk-name">Worksheets</span>
+            <span class="tk-desc">Thought records, urge logs, trigger maps and more. Fill in and print.</span>
+            <span class="tk-tag">Free</span>
+        </a>
+        <a class="tk-card" href="{% url 'core:craving_sos' %}" data-promo="hub_toolkit_sos">
+            <span class="tk-icon" aria-hidden="true">🛟</span>
+            <span class="tk-name">Craving SOS</span>
+            <span class="tk-desc">Get through the next ten minutes, right now.</span>
+            <span class="tk-tag">Free</span>
+        </a>
+        <a class="tk-card" href="{% if user.is_authenticated %}{% url 'accounts:relapse_plan' %}{% else %}{% url 'core:relapse_prevention_plan' %}{% endif %}" data-promo="hub_toolkit_relapse_plan">
+            <span class="tk-icon" aria-hidden="true">📋</span>
+            <span class="tk-name">Relapse Prevention Plan</span>
+            <span class="tk-desc">Your triggers, warning signs and who to call, in one place.</span>
+            <span class="tk-tag">Free</span>
+        </a>
+    </div>
+</section>
+
+<section class="tk-section tk-premium" id="premium-tools">
+    <h2 class="tk-title"><span aria-hidden="true">👑</span> {% if is_premium_user %}Your Premium tools{% else %}Premium tools{% endif %}</h2>
+    <p class="tk-sub">{% if is_premium_user %}Everything your membership unlocks.{% else %}What a Premium membership adds.{% endif %}</p>
+    <div class="tk-grid">
+        <a class="tk-card" href="{% if user.is_authenticated %}{% url 'accounts:recovery_coach' %}{% else %}{% url 'core:ai_recovery_coach' %}{% endif %}" data-promo="hub_premium_anchor">
+            <span class="tk-icon" aria-hidden="true">⚓</span>
+            <span class="tk-name">Anchor AI Coach</span>
+            <span class="tk-desc">Talk it through any time, 20 messages a day.</span>
+        </a>
+        <a class="tk-card" href="{% url 'resources:workbook' %}" data-promo="hub_premium_workbook">
+            <span class="tk-icon" aria-hidden="true">📘</span>
+            <span class="tk-name">My Recovery Workbook</span>
+            <span class="tk-desc">Your check-in trends, plan and worksheets in one PDF to bring to a counselor or sponsor.</span>
+        </a>
+        <a class="tk-card" href="{% url 'resources:my_worksheets' %}" data-promo="hub_premium_my_worksheets">
+            <span class="tk-icon" aria-hidden="true">🗂️</span>
+            <span class="tk-name">My Saved Worksheets</span>
+            <span class="tk-desc">Save your answers and go over them with Anchor.</span>
+        </a>
+        <a class="tk-card" href="{% url 'resources:reflection_favorites' %}" data-promo="hub_premium_reflections">
+            <span class="tk-icon" aria-hidden="true">🔖</span>
+            <span class="tk-name">Full Reflection Library</span>
+            <span class="tk-desc">Every reading, read aloud, with your favorites saved.</span>
+        </a>
+        {% if has_audio %}
+        <a class="tk-card" href="{% url 'resources:audio' %}" data-promo="hub_premium_audio">
+            <span class="tk-icon" aria-hidden="true">🌙</span>
+            <span class="tk-name">Sleep &amp; Morning Audio</span>
+            <span class="tk-desc">Wind-down, morning intention and evening check-out sessions.</span>
+        </a>
+        {% endif %}
+        <a class="tk-card" href="{% url 'resources:programs' %}" data-promo="hub_premium_programs">
+            <span class="tk-icon" aria-hidden="true">🎓</span>
+            <span class="tk-name">Every Program, Every Day</span>
+            <span class="tk-desc">All lessons in all programs and tracks, past the free days.</span>
+        </a>
+    </div>
+    {% if not is_premium_user %}
+    <a class="tk-upgrade" href="{% url 'accounts:pricing' %}" data-promo="hub_premium_cta">See Premium &rarr;</a>
+    {% endif %}
+</section>
+
+{% if program_cards %}
+<section class="tk-section" id="programs">
+    <h2 class="tk-title">Programs &amp; Classes</h2>
+    <p class="tk-sub">One five-minute lesson and one small action a day. <a href="{% url 'resources:programs' %}">See all programs &rarr;</a></p>
+    <div class="pg-tracks">
+        {% for card in program_cards %}{% include 'resources/programs/_program_card.html' %}{% endfor %}
+    </div>
+</section>
+{% endif %}

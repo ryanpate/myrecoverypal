@@ -455,19 +455,32 @@
         padding: 1rem;
     }
 }
-/* Worksheet library promo on the resources hub */
-.worksheets-promo {
-    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-    max-width: 1200px; margin: 1.5rem auto; padding: 1.2rem 1.4rem;
-    border-radius: 14px; text-decoration: none; color: #fff;
-    background: linear-gradient(135deg, #2d6a4f, #52b788);
-    box-shadow: 0 6px 18px rgba(45,106,79,0.25);
+/* Library hub toolkit: tool cards, Premium tools, every program */
+.tk-section { max-width: 1200px; margin: 1.75rem auto; }
+.tk-title { font-size: 1.4rem; margin: 0 0 0.2rem; display: flex; align-items: center; gap: 0.4rem; }
+.tk-sub { margin: 0 0 0.9rem; opacity: 0.8; }
+.tk-sub a { font-weight: 600; }
+.tk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.9rem; }
+.tk-card {
+    display: flex; flex-direction: column; gap: 0.3rem;
+    padding: 1.05rem 1.1rem; border-radius: 14px; text-decoration: none; color: inherit;
+    border: 1px solid rgba(128, 128, 128, 0.25); background: rgba(82, 183, 136, 0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-.worksheets-promo:hover { color: #fff; transform: translateY(-1px); }
-.worksheets-promo-icon { font-size: 2rem; line-height: 1; }
-.worksheets-promo-text { flex: 1 1 280px; display: flex; flex-direction: column; gap: 0.25rem; }
-.worksheets-promo-text span { opacity: 0.92; font-size: 0.95rem; line-height: 1.4; }
-.worksheets-promo-cta { font-weight: 700; white-space: nowrap; }
-.programs-promo { background: linear-gradient(135deg, #7c3aed, #4db8e8); box-shadow: 0 6px 18px rgba(124,58,237,0.22); }
-.reflections-promo { background: linear-gradient(135deg, #1e4d8b, #4db8e8); box-shadow: 0 6px 18px rgba(30,77,139,0.25); }
-.audio-promo { background: linear-gradient(135deg, #0f766e, #4db8e8); box-shadow: 0 6px 18px rgba(15,118,110,0.25); }
+.tk-card:hover { color: inherit; transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12); }
+.tk-icon { font-size: 1.7rem; line-height: 1; }
+.tk-name { font-weight: 700; font-size: 1.02rem; }
+.tk-desc { font-size: 0.9rem; line-height: 1.4; opacity: 0.82; flex: 1; }
+.tk-tag {
+    align-self: flex-start; margin-top: 0.35rem; padding: 0.15rem 0.55rem; border-radius: 999px;
+    font-size: 0.75rem; font-weight: 700; color: #2d6a4f; background: rgba(82, 183, 136, 0.18);
+}
+.tk-premium { padding: 1.2rem; border-radius: 16px; background: rgba(245, 166, 35, 0.08); border: 1px solid rgba(245, 166, 35, 0.35); }
+.tk-premium .tk-card { background: rgba(255, 255, 255, 0.55); border-color: rgba(245, 166, 35, 0.35); }
+.tk-upgrade {
+    display: inline-block; margin-top: 1rem; padding: 0.6rem 1.2rem; border-radius: 10px;
+    font-weight: 700; text-decoration: none; color: #1f2937; background: linear-gradient(135deg, #ffd700, #f5a623);
+}
+.tk-upgrade:hover { color: #1f2937; filter: brightness(1.05); }
+[data-theme="dark"] .tk-tag { color: #95d5b2; }
+[data-theme="dark"] .tk-premium .tk-card { background: rgba(255, 255, 255, 0.04); }
