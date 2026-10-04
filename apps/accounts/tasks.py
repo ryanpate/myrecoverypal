@@ -436,6 +436,11 @@ def _build_premium_recap(user, today):
     }
 
 
+# Members with a quiet week still get the digest (for its library section)
+# if they've logged in this recently.
+LIBRARY_DIGEST_ACTIVE_DAYS = 90
+
+
 @shared_task(bind=True, max_retries=3)
 def send_weekly_digests(self):
     """
@@ -494,9 +499,18 @@ def send_weekly_digests(self):
             # Premium subscribers get a personal week-in-review recap
             premium_recap = _build_premium_recap(user, timezone.now().date())
 
-            # If no activity and no recap, skip sending
-            if (not new_followers.exists() and unread_notifications == 0
-                    and not popular_posts.exists() and premium_recap is None):
+            # The library section (this week's reflection, a guided session,
+            # their open program lesson) is always there, so members with a
+            # quiet week still hear from us, but only if they've logged in
+            # within LIBRARY_DIGEST_ACTIVE_DAYS. Weekly mail to long-dormant
+            # accounts would hurt deliverability.
+            from resources.digest import library_block
+            library = library_block(user, site_url)
+            quiet = (not new_followers.exists() and unread_notifications == 0
+                     and not popular_posts.exists() and premium_recap is None)
+            recently_active = bool(user.last_login and
+                                   user.last_login >= timezone.now() - timedelta(days=LIBRARY_DIGEST_ACTIVE_DAYS))
+            if quiet and not recently_active:
                 skipped_count += 1
                 continue
 
@@ -509,6 +523,7 @@ def send_weekly_digests(self):
                 'popular_posts': popular_posts,
                 'days_sober': user.get_days_sober(),
                 'premium_recap': premium_recap,
+                'library': library,
                 'current_year': timezone.now().year,
             })
             plain_message = strip_tags(html_message)

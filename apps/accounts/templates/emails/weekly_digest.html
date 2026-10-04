@@ -222,6 +222,31 @@
         </div>
         {% endif %}
 
+        {% if library %}
+        {% if library.program %}
+        <div class="section" style="background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 12px; padding: 18px;">
+            <h3 class="section-title" style="margin-top: 0;">&#127793; Your program</h3>
+            <p style="margin: 0 0 6px; color: #333;">{{ library.program.title }}: Day {{ library.program.day }} of {{ library.program.length }}{% if library.program.lesson %}, <strong>{{ library.program.lesson }}</strong>{% endif %}, is waiting for you.</p>
+            <a href="{{ library.program.url }}" style="color: #6d28d9; font-weight: 600;">Pick up where you left off &rarr;</a>
+        </div>
+        {% endif %}
+
+        <div class="section">
+            <h3 class="section-title">&#9728;&#65039; This week's reflection</h3>
+            <a href="{{ library.reflection.url }}"><img src="{{ library.reflection.card_url }}" alt="{{ library.reflection.title }}: {{ library.reflection.preview|truncatechars:160 }}" width="520" style="width: 100%; max-width: 520px; height: auto; border-radius: 12px; display: block; margin: 0 0 10px;"></a>
+            <a href="{{ library.reflection.url }}" style="color: #1e4d8b; font-weight: 600;">Read it and sit with today's question &rarr;</a>
+        </div>
+
+        {% if library.session %}
+        <div class="section">
+            <h3 class="section-title">&#127911; A session for your week</h3>
+            <p style="margin: 0 0 4px; color: #333;"><strong>{{ library.session.title }}</strong> &middot; {{ library.session.minutes }} min{% if library.session.locked %} &middot; Premium{% else %} &middot; free{% endif %}</p>
+            <p style="margin: 0 0 6px; color: #555; font-size: 15px;">{{ library.session.description }}</p>
+            <a href="{{ library.session.url }}" style="color: #1e4d8b; font-weight: 600;">{% if library.session.preview %}Listen to a free preview{% else %}Press play{% endif %} &rarr;</a>
+        </div>
+        {% endif %}
+        {% endif %}
+
         <div style="text-align: center; margin: 30px 0;">
             <a href="{{ site_url }}{% url 'accounts:social_feed' %}" class="cta-button">
                 See Your Feed
