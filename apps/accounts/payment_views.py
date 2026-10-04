@@ -211,14 +211,36 @@ def keep_premium(request):
         return redirect('accounts:pricing')
 
 
+def winback_eligible(user):
+    """May claim the win-back coupon: Premium isn't active now, and they had it
+    before. That's a Stripe subscription that has ended, or the legacy no-card
+    signup trial that expire_ended_trials marked 'expired' (the audience of
+    send_winback_offers). Members who never had Premium, and anyone with a live
+    subscription (which checkout would duplicate), are not eligible.
+    """
+    sub = getattr(user, 'subscription', None)
+    if sub is None or sub.is_premium():
+        return False
+    if sub.stripe_subscription_id:
+        return sub.status in ('canceled', 'expired', 'unpaid')
+    return sub.status == 'expired' and sub.trial_end is not None
+
+
 @login_required
 def winback(request):
     """One-click win-back link from the 50%-off re-engagement email.
 
     Same as keep_premium but applies the win-back coupon (50% off 3 months).
-    Defaults to yearly; ?period=monthly to override. Falls back to pricing on
-    any failure so the user is never dead-ended.
+    Defaults to yearly; ?period=monthly to override. Ineligible members and
+    any failure fall back to pricing so the user is never dead-ended.
     """
+    if not winback_eligible(request.user):
+        sub = getattr(request.user, 'subscription', None)
+        if sub and sub.is_premium():
+            messages.info(request, "You're already on Premium, so there's nothing to claim. Thanks for being here.")
+        else:
+            messages.info(request, "The welcome-back discount is for members returning to Premium. Here are our plans.")
+        return redirect('accounts:pricing')
     period = 'monthly' if request.GET.get('period') == 'monthly' else 'yearly'
     plan = (SubscriptionPlan.objects.filter(tier='premium', billing_period=period, is_active=True).first()
             or SubscriptionPlan.objects.filter(tier='premium', is_active=True).order_by('-price').first())
