@@ -4,6 +4,11 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-04:** A journal entry now suggests a related worksheet (`resources/journal_suggest.py`; premium-awareness idea #10).
+  - **How it matches:** simple keyword rules on the entry's own title, text and tags, run on the server when the author opens the entry. For example, craving → Urge Log, resentment or anger → Thought Record, an argument → Trigger Map, boredom or loneliness → Balance Wheel. If nothing matches, it falls back to the craving checkbox, then low mood, then the Nightly Review.
+  - **Privacy:** only the author sees it. Nothing about the match is stored, logged or sent to analytics, and the card never quotes the entry.
+  - **Safety:** crisis language (suicide, self-harm, overdose) shows 988 (call or text) and Craving SOS instead of a worksheet, every time the entry is opened. Worksheet suggestions show only in the first 30 minutes after writing.
+  - **Fix:** the entry detail page rendered blank. `JournalEntryDetailView` had no `context_object_name`, so the template's `entry` was empty. It is now set to `entry`.
 - **2026-10-04:** The weekly digest now has a library section (`resources/digest.py::library_block`; premium-awareness idea #8).
   - **Contents:**
     - **Your program:** the next open lesson, if the member is partway through a program.
