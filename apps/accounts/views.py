@@ -1200,6 +1200,22 @@ def _support_audio_payload(checkin):
     return support_audio_payload(checkin)
 
 
+def _evening_session(user):
+    """From 6 PM in the member's own time zone, offer the evening check-out
+    (resources/audio). Free members get its free preview on the session page."""
+    if timezone.localtime().hour < 18:
+        return None
+    from resources.audio_views import active_tracks
+    from resources.models import AudioReminder
+    track = active_tracks().filter(slug='evening-check-out').first()
+    if track is None:
+        return None
+    return {
+        'track': track,
+        'has_reminder': AudioReminder.objects.filter(user=user, track_slug=track.slug, enabled=True).exists(),
+    }
+
+
 @login_required
 def progress_view(request):
     """Display progress visualizations for mood, craving, and energy trends"""
@@ -1429,6 +1445,7 @@ def progress_view(request):
     is_premium = bool(sub and sub.is_premium())
     context['is_premium'] = is_premium
     context['show_premium_cta'] = not is_premium and not (sub and sub.is_supporter())
+    context['evening_session'] = _evening_session(request.user)
     if context['show_premium_cta']:
         from apps.accounts.founding_offer import context_for
         from apps.accounts.payment_models import SubscriptionPlan

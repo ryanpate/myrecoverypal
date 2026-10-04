@@ -13,10 +13,12 @@ tradeoff for short meditations (signed URLs would break iOS background
 playback when they expire mid-session).
 """
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_POST
 
 from .access import user_has_premium
 from .audio_scripts import CATEGORIES
@@ -67,6 +69,54 @@ def audio_index(request):
     })
 
 
+def hour_label(h):
+    return f"{(h % 12) or 12} {'AM' if h < 12 else 'PM'}"
+
+
+def _reminder_context(user, track):
+    """Context for the "Make it a habit" card on remindable sessions."""
+    from .tasks import AUDIO_REMINDERS, REMINDER_HOURS
+    if not user.is_authenticated or track.slug not in AUDIO_REMINDERS:
+        return {}
+    from apps.accounts.models import DeviceToken
+    from .models import AudioReminder
+    reminder = AudioReminder.objects.filter(user=user, track_slug=track.slug).first()
+    hour = reminder.hour if reminder else AUDIO_REMINDERS[track.slug]['hour']
+    return {'reminder': {
+        'on': bool(reminder and reminder.enabled),
+        'hour': hour,
+        'label': hour_label(hour),
+        'hours': [(h, hour_label(h)) for h in REMINDER_HOURS],
+        'has_app': DeviceToken.objects.filter(user=user, active=True).exists(),
+    }}
+
+
+@login_required
+@require_POST
+def audio_reminder(request, slug):
+    """Turn the daily reminder for a session on (at an hour) or off."""
+    from .models import AudioReminder
+    from .tasks import AUDIO_REMINDERS, REMINDER_HOURS
+    track = _track_or_404(slug)
+    if slug not in AUDIO_REMINDERS:
+        raise Http404('No reminders for this session')
+    if request.POST.get('action') == 'off':
+        AudioReminder.objects.filter(user=request.user, track_slug=slug).update(enabled=False)
+        messages.info(request, 'Reminder turned off.')
+    else:
+        try:
+            hour = int(request.POST.get('hour', AUDIO_REMINDERS[slug]['hour']))
+        except (TypeError, ValueError):
+            hour = AUDIO_REMINDERS[slug]['hour']
+        if hour not in REMINDER_HOURS:
+            hour = AUDIO_REMINDERS[slug]['hour']
+        AudioReminder.objects.update_or_create(
+            user=request.user, track_slug=slug,
+            defaults={'hour': hour, 'enabled': True, 'last_sent_on': None})
+        messages.success(request, f'Done. We\'ll remind you every day at {hour_label(hour)}, your time.')
+    return redirect('resources:audio_detail', slug=track.slug)
+
+
 def audio_detail(request, slug):
     track = _track_or_404(slug)
     allowed = can_listen(request.user, track)
@@ -79,6 +129,7 @@ def audio_detail(request, slug):
         'has_premium': user_has_premium(request.user),
         'related': related,
         'is_today': bool(track.reflection_slug) and track.reflection_slug == todays_reflection().slug,
+        **_reminder_context(request.user, track),
     })
 
 

@@ -537,3 +537,20 @@ class AudioTrack(models.Model):
     @property
     def minutes(self):
         return max(1, round(self.duration_seconds / 60))
+
+
+class AudioReminder(models.Model):
+    """A member's opt-in daily push reminder to play a guided session at a
+    local hour (resources/tasks.py::send_audio_reminders). One per session."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='audio_reminders')
+    track_slug = models.SlugField(max_length=80)
+    hour = models.PositiveSmallIntegerField()  # 0-23, member's local time
+    enabled = models.BooleanField(default=True)
+    last_sent_on = models.DateField(null=True, blank=True)  # member's local date
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user', 'track_slug']
+
+    def __str__(self):
+        return f'{self.user_id} {self.track_slug} @ {self.hour}:00'

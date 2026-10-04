@@ -4,6 +4,14 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-04:** Daily guided-audio reminders and an evening card (premium-awareness idea #7).
+  - **Reminders:** a "Make it a habit" card on the morning intention (default 8 AM), evening check-out (9 PM) and sleep wind-down (10 PM) pages.
+    - Members choose an hour and get a push at that hour in their own time zone, at most once per local day.
+    - Stored in the new `AudioReminder` model (resources migration 0009) and sent by `resources.tasks.send_audio_reminders`, hourly at :10.
+    - Push only. Members with notifications off or no app are skipped, and only a delivered push counts as sent.
+    - The card says reminders need the app when the member has no device.
+    - Free members land on the session page, which plays the free preview.
+  - **Evening card:** from 6 PM local, the progress home shows a "Close the day" card for the evening check-out (`accounts/_evening_card.html`), with a "Remind me every evening" link. It can be dismissed for the evening, and clicks fire a GA4 `select_promotion` event with `evening_card`.
 - **2026-10-04:** A/B test of the Premium trial type, card trial vs. no-card trial (`apps/accounts/trial_experiment.py`, test `premium_trial_type`). It is off until `python manage.py init_trial_test` is run.
   - **Variants:** while the test runs, new signups split 50/50.
     - `card_trial` (control) is today's flow: members start on Free, and the 7-day trial starts at Stripe Checkout with a card.

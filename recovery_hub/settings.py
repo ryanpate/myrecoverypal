@@ -855,6 +855,12 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'resources.tasks.send_program_reminders',
         'schedule': crontab(minute=5),
     },
+    # Opt-in guided audio reminders (morning intention, evening check-out,
+    # sleep wind-down), each at the member's chosen local hour.
+    'send-audio-reminders': {
+        'task': 'resources.tasks.send_audio_reminders',
+        'schedule': crontab(minute=10),
+    },
     # Daily recovery thought — ensures a quote exists for today's feed
     'publish-daily-thought': {
         'task': 'apps.accounts.tasks.publish_daily_thought',
