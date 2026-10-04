@@ -128,7 +128,11 @@ def _build_checkout_session(request, plan, coupon=None):
     )
     if coupon:
         session_kwargs['discounts'] = [{'coupon': coupon}]
-    return stripe.checkout.Session.create(**session_kwargs)
+    checkout_session = stripe.checkout.Session.create(**session_kwargs)
+    if plan.tier == 'premium':
+        from . import trial_experiment as trial_ab
+        trial_ab.track(request.user, trial_ab.BEGAN_CHECKOUT, {'period': plan.billing_period})
+    return checkout_session
 
 
 # Stripe coupon for win-back offers: 50% off for the first 3 months. Stable id
@@ -653,6 +657,12 @@ def handle_checkout_session_completed(session):
                 subscription.current_period_end = period_end
             subscription.save()
 
+            if subscription.tier == 'premium':
+                from . import trial_experiment as trial_ab
+                if stripe_subscription.status == 'trialing':
+                    trial_ab.track(subscription.user, trial_ab.STARTED_TRIAL, {'kind': 'card'})
+                trial_ab.track(subscription.user, trial_ab.SUBSCRIBED, {'source': 'stripe'})
+
         logger.info(f'Checkout completed for subscription {subscription.id}')
 
     except Subscription.DoesNotExist:
@@ -710,6 +720,10 @@ def handle_invoice_paid(invoice):
         # Update subscription status
         subscription.status = 'active'
         subscription.save()
+
+        if amount_paid > 0 and subscription.tier in ('premium', 'court'):
+            from . import trial_experiment as trial_ab
+            trial_ab.track(subscription.user, trial_ab.CONVERTED_PAID, {'amount': str(amount_paid)})
 
         logger.info(f'Invoice paid for subscription {subscription.id}')
 
@@ -1082,6 +1096,9 @@ def ios_subscription_sync(request):
         if expires:
             subscription.current_period_end = expires
         subscription.save()
+        if tier == 'premium':
+            from . import trial_experiment as trial_ab
+            trial_ab.track(request.user, trial_ab.SUBSCRIBED, {'source': 'apple'})
         logger.info(f'iOS subscription activated for user {request.user.id}')
     else:
         # Only downgrade if the subscription was Apple-sourced

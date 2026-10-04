@@ -908,10 +908,36 @@ def send_premium_trial_nudge(self):
     return {'sent': sent_count, 'failed': failed_count}
 
 
+def _trial_ending_email(user, sub, site_url):
+    """(html, plain) for the day-before trial-ending email: what they used
+    during the trial, what Premium keeps, and the founding-member price
+    while that offer runs."""
+    from django.template.loader import render_to_string
+    from django.utils.html import strip_tags
+    from . import founding_offer, trial_experiment
+    from .payment_models import SubscriptionPlan
+
+    trial_days = trial_experiment.NO_CARD_TRIAL_DAYS if trial_experiment.is_no_card_trial(user) else 14
+    usage = trial_experiment.usage_summary(user, sub.trial_end - timedelta(days=trial_days))
+    yearly = SubscriptionPlan.objects.filter(tier='premium', billing_period='yearly', is_active=True).first()
+    founding = founding_offer.context_for(user, yearly).get('founding_offer')
+    html = render_to_string('emails/trial_ending.html', {
+        'first_name': user.first_name or user.username,
+        'trial_days': trial_days,
+        'usage': usage,
+        'used_any': any(usage.values()),
+        'founding': founding if founding and founding.get('eligible') else None,
+        'founding_url': f"{site_url}/accounts/founding/",
+        'keep_url': f"{site_url}/accounts/keep-premium/",
+    })
+    return html, strip_tags(html)
+
+
 @shared_task(bind=True, max_retries=3)
 def send_trial_ending_notifications(self):
     """
-    Notify users whose 14-day Premium trial ends tomorrow.
+    Notify users whose no-card Premium trial ends tomorrow (the trial A/B
+    test's no-card variant, or a legacy signup trial).
     Sends email + creates in-app notification.
     Runs daily at 10:00 AM.
     """
@@ -958,7 +984,7 @@ def send_trial_ending_notifications(self):
                 sender=user,
                 notification_type='milestone',
                 title='Trial Ending Soon',
-                message='Your Premium trial ends tomorrow. Keep unlimited AI Coach, groups, and analytics.',
+                message='Your Premium trial ends tomorrow. Keep every program, the full audio library and Anchor.',
                 link='/accounts/keep-premium/',
             )
         except Exception as e:
@@ -967,42 +993,7 @@ def send_trial_ending_notifications(self):
         # Send email
         try:
             subject = f"Your Premium trial ends tomorrow, {user.first_name or user.username}"
-            plain_message = (
-                f"Hi {user.first_name or user.username},\n\n"
-                f"Your 14-day Premium trial on MyRecoveryPal ends tomorrow.\n\n"
-                f"With Premium, you keep:\n"
-                f"- AI Recovery Coach (20 messages/day)\n"
-                f"- Unlimited recovery groups\n"
-                f"- 90-day progress analytics\n"
-                f"- Journal export\n\n"
-                f"Continue for just $9.99/month:\n"
-                f"{site_url}/accounts/keep-premium/\n\n"
-                f"Your recovery journey matters. We're here for you.\n"
-                f"- The MyRecoveryPal Team"
-            )
-
-            html_message = f"""
-            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
-                <div style="background: linear-gradient(135deg, #1e4d8b, #4db8e8); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
-                    <h1 style="color: white; margin: 0; font-size: 24px;">Your Premium Trial Ends Tomorrow</h1>
-                </div>
-                <div style="padding: 30px; background: white;">
-                    <p style="color: #333; font-size: 16px;">Hi {user.first_name or user.username},</p>
-                    <p style="color: #555; font-size: 15px; line-height: 1.6;">Your 14-day Premium trial ends tomorrow. After that, you'll still have your free account, but you'll lose access to:</p>
-                    <ul style="color: #555; font-size: 15px; line-height: 1.8;">
-                        <li><strong>AI Recovery Coach Anchor</strong> — 20 messages/day (drops to 10 lifetime)</li>
-                        <li><strong>Unlimited recovery groups</strong> (drops to 5)</li>
-                        <li><strong>90-day progress analytics</strong> (drops to 7-day)</li>
-                        <li><strong>Journal export</strong></li>
-                    </ul>
-                    <div style="text-align: center; margin: 30px 0;">
-                        <a href="{site_url}/accounts/keep-premium/" style="display: inline-block; background: linear-gradient(135deg, #52b788, #40916c); color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px;">Keep Premium — $9.99/month</a>
-                    </div>
-                    <p style="color: #888; font-size: 13px; text-align: center;">Cancel anytime. No questions asked.</p>
-                </div>
-            </div>
-            """
-
+            html_message, plain_message = _trial_ending_email(user, sub, site_url)
             success = send_email(
                 subject=subject,
                 plain_message=plain_message,
@@ -1065,13 +1056,13 @@ def expire_ended_trials(self):
             subject = f"Your Premium trial has ended, {name}"
             plain_message = (
                 f"Hi {name},\n\n"
-                f"Your 14-day Premium trial on MyRecoveryPal has ended, so your "
+                f"Your Premium trial on MyRecoveryPal has ended, so your "
                 f"account is now on the free plan.\n\n"
-                f"Upgrade to Premium ($9.99/month) to get back:\n"
-                f"- AI Recovery Coach Anchor (20 messages/day)\n"
-                f"- Unlimited recovery groups\n"
-                f"- 90-day progress analytics\n"
-                f"- Journal export\n\n"
+                f"Upgrade to Premium to get back:\n"
+                f"- Every guided program, start to finish\n"
+                f"- The full audio library and all 30 daily reflections\n"
+                f"- Your saved worksheets and Recovery Workbook\n"
+                f"- Anchor, your AI coach (20 messages/day)\n\n"
                 f"Upgrade here: {site_url}/accounts/pricing/\n\n"
                 f"Your recovery journey matters. We're here for you.\n"
                 f"- The MyRecoveryPal Team"
@@ -1083,12 +1074,12 @@ def expire_ended_trials(self):
                 </div>
                 <div style="padding: 30px; background: white;">
                     <p style="color: #333; font-size: 16px;">Hi {name},</p>
-                    <p style="color: #555; font-size: 15px; line-height: 1.6;">Your 14-day Premium trial has ended and your account is now on the free plan. Upgrade any time to get back:</p>
+                    <p style="color: #555; font-size: 15px; line-height: 1.6;">Your Premium trial has ended and your account is now on the free plan. Your counter, journal, community and the craving tools stay free. Upgrade any time to get back:</p>
                     <ul style="color: #555; font-size: 15px; line-height: 1.8;">
-                        <li><strong>AI Recovery Coach Anchor</strong> — 20 messages/day</li>
-                        <li><strong>Unlimited recovery groups</strong></li>
-                        <li><strong>90-day progress analytics</strong></li>
-                        <li><strong>Journal export</strong></li>
+                        <li><strong>Every guided program</strong>, start to finish</li>
+                        <li><strong>The full audio library</strong> and all 30 daily reflections</li>
+                        <li><strong>Your saved worksheets</strong> and Recovery Workbook</li>
+                        <li><strong>Anchor</strong>, your AI coach: 20 messages/day</li>
                     </ul>
                     <p style="text-align: center; margin: 28px 0;">
                         <a href="{site_url}/accounts/pricing/" style="background: #1e4d8b; color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600;">Upgrade to Premium</a>

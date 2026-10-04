@@ -259,6 +259,7 @@ def engagement_dashboard(request):
 
 @staff_member_required
 def ab_test_results(request):
+    from apps.accounts import trial_experiment
     """A/B Testing results dashboard"""
 
     # Get all tests with their results
@@ -267,10 +268,14 @@ def ab_test_results(request):
 
     for test in tests:
         results = ABTestingService.get_test_results(test.name)
+        summary = None
+        if test.name == trial_experiment.TEST_NAME:
+            summary = trial_experiment.report()
         test_results.append({
             'test': test,
             'results': results,
             'is_running': test.is_running(),
+            'trial_summary': summary,
         })
 
     context = {

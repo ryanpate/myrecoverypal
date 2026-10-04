@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Premium trial ends tomorrow</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333;
+               max-width: 600px; margin: 0 auto; padding: 20px; background: #f4f4f4; }
+        .box { background: #fff; border-radius: 15px; padding: 34px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo { text-align: center; font-size: 28px; font-weight: 700; color: #1e4d8b; margin-bottom: 18px; }
+        h1 { font-size: 23px; color: #1e4d8b; margin: 6px 0 14px; }
+        p { font-size: 16px; margin: 0 0 15px; }
+        .used { background: #f0f7f3; border-left: 4px solid #52b788; border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 18px 0; }
+        .used p { margin: 0 0 6px; font-size: 15px; }
+        .used p:last-child { margin: 0; }
+        ul { padding-left: 20px; margin: 0 0 16px; }
+        li { font-size: 15px; margin: 0 0 5px; }
+        .cta { text-align: center; margin: 26px 0 10px; }
+        .cta a { display: inline-block; background: #1e4d8b; color: #fff !important; text-decoration: none; font-weight: 600;
+                 font-size: 17px; padding: 14px 32px; border-radius: 30px; }
+        .note { font-size: 13px; color: #777; text-align: center; }
+        .footer { margin-top: 26px; padding-top: 16px; border-top: 1px solid #eee; font-size: 12px; color: #999; text-align: center; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <div class="logo">MyRecoveryPal</div>
+    <h1>Your Premium trial ends tomorrow</h1>
+    <p>Hi {{ first_name }},</p>
+    <p>Your {{ trial_days }}-day Premium trial ends tomorrow. Your account, your counter, your journal and the community stay yours, free, either way.</p>
+
+    {% if used_any %}
+    <div class="used">
+        <p><strong>Your trial so far:</strong></p>
+        {% if usage.lessons %}<p>🌱 You finished {{ usage.lessons }} program lesson{{ usage.lessons|pluralize }}.</p>{% endif %}
+        {% if usage.anchor_messages %}<p>⚓ You talked with Anchor {{ usage.anchor_messages }} time{{ usage.anchor_messages|pluralize }}.</p>{% endif %}
+        {% if usage.worksheets %}<p>📝 You saved {{ usage.worksheets }} worksheet{{ usage.worksheets|pluralize }}.</p>{% endif %}
+        {% if usage.favorites %}<p>☀️ You saved {{ usage.favorites }} favorite reading{{ usage.favorites|pluralize }}.</p>{% endif %}
+    </div>
+    {% endif %}
+
+    <p>With Premium you keep:</p>
+    <ul>
+        <li>Every guided program, start to finish</li>
+        <li>The full audio library: sleep, morning, body scan and every reflection read aloud</li>
+        <li>All 30 daily reflections, favorites and journaling</li>
+        <li>Your saved worksheets and Recovery Workbook PDF</li>
+        <li>Anchor, your AI coach, 20 messages a day (Free gets 3)</li>
+    </ul>
+
+    <div class="cta">
+        {% if founding %}
+        <a href="{{ founding_url }}">Keep Premium: ${{ founding.price }} for your first year</a>
+        {% else %}
+        <a href="{{ keep_url }}">Keep Premium</a>
+        {% endif %}
+    </div>
+    <p class="note">{% if founding %}Founding-member price, {{ founding.percent }}% off, until {{ founding.ends|date:"F j" }}. {% endif %}Cancel any time. The craving tools and Craving SOS are always free.</p>
+
+    <div class="footer">If you're struggling right now, call or text 988 (Suicide &amp; Crisis Lifeline), any time.</div>
+</div>
+</body>
+</html>
