@@ -32,10 +32,15 @@ def create_user_subscription(sender, instance, created, **kwargs):
     Subscription.card_trial_eligible() and _build_checkout_session().
     """
     if created:
-        Subscription.objects.get_or_create(
+        subscription, _ = Subscription.objects.get_or_create(
             user=instance,
             defaults={'tier': 'free', 'status': 'active'},
         )
+        # A/B test (apps/accounts/trial_experiment.py): while it runs, half of
+        # new members get a 7-day no-card Premium trial instead. No-op when the
+        # test isn't running; never raises.
+        from .trial_experiment import assign_at_signup
+        assign_at_signup(instance, subscription)
 
 
 @receiver(post_save, sender=User)

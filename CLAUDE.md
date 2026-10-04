@@ -233,6 +233,8 @@ Tracks onboarding flow experiments with these variants:
 
 **Initialize test:** `python manage.py init_ab_tests`
 
+**Trial-type test** (`apps/accounts/trial_experiment.py`): card-required 7-day trial at checkout (control) vs. a 7-day no-card Premium trial at signup. Start it with `python manage.py init_trial_test` and stop it with `--stop`. Read results with `python manage.py trial_test_report`. Only members who sign up while it runs are assigned. Judge on paid conversion plus week-2 retention.
+
 **Key conversions tracked:**
 - started_onboarding, completed_step_1-5, completed_onboarding
 - followed_user, first_post, first_checkin

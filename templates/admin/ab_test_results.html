@@ -245,6 +245,21 @@
                 {% else %}
                 <p style="text-align: center; color: #999;">No variants configured for this test.</p>
                 {% endif %}
+
+                {% if item.trial_summary %}
+                {% with s=item.trial_summary %}
+                <div style="margin-top: 16px; padding: 14px 16px; background: #f8f9fa; border-radius: 10px; font-size: 0.92em;">
+                    <strong>Active in week 2</strong> (members who joined 14+ days ago):
+                    card trial {% if s.rows.card_trial.week2_eligible %}{{ s.rows.card_trial.week2_retained }}/{{ s.rows.card_trial.week2_eligible }}{% else %}n/a yet{% endif %},
+                    no-card trial {% if s.rows.no_card_trial.week2_eligible %}{{ s.rows.no_card_trial.week2_retained }}/{{ s.rows.no_card_trial.week2_eligible }}{% else %}n/a yet{% endif %}.<br>
+                    <strong>Paid conversion:</strong>
+                    {% if not s.enough_data %}too early to call (needs 100+ members in each group).
+                    {% elif s.significant %}significant difference (p={{ s.p_paid|floatformat:3 }}). Check week-2 retention before switching everyone.
+                    {% else %}no significant difference yet{% if s.p_paid is not None %} (p={{ s.p_paid|floatformat:2 }}){% endif %}.{% endif %}
+                    <br><span style="color:#777;">Apple purchases count as "Subscribed"; "First real payment" counts Stripe payments only.</span>
+                </div>
+                {% endwith %}
+                {% endif %}
             </div>
         </div>
         {% endfor %}

@@ -4,6 +4,16 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-04:** A/B test of the Premium trial type, card trial vs. no-card trial (`apps/accounts/trial_experiment.py`, test `premium_trial_type`). It is off until `python manage.py init_trial_test` is run.
+  - **Variants:** while the test runs, new signups split 50/50.
+    - `card_trial` (control) is today's flow: members start on Free, and the 7-day trial starts at Stripe Checkout with a card.
+    - `no_card_trial` gives 7 days of Premium at signup with no card. The variant reuses the existing no-card trial funnel (countdown banners, day-before email, expiry to Free, 50% win-back).
+  - **Scope:** members who signed up before the test are untouched, and assignment can never break signup.
+  - **Funnel events:** `started_trial`, `began_checkout`, `subscribed` (Stripe checkout, or an Apple purchase) and `converted_paid` (first non-zero Stripe invoice). These are recorded in `_build_checkout_session`, `handle_checkout_session_completed`, `handle_invoice_paid` and `ios_subscription_sync`.
+  - **Results:** `python manage.py trial_test_report` and `/admin/dashboard/ab-tests/` show the funnel, week-2 retention (activity on days 8–14) and a two-proportion significance test on paid conversion. The dashboard now shows only each test's own events.
+  - **Background:** the old 14-day no-card trial converted 1 in 411 signups, so judge on paid conversion and retention, not trial starts.
+  - **Trial-ending email:** now a template (`emails/trial_ending.html`) with the real trial length and what the member used (lessons, Anchor messages, worksheets, favorites; counts only, never content). It describes the current Premium features and offers the founding-member price while that runs. The trial-expired email no longer says "14-day" and lists the current features.
+  - **Fix:** `ABTestingService.track_conversion` no longer relies on a failed INSERT for duplicates. With `ATOMIC_REQUESTS`, a repeat event, such as a renewal recording `converted_paid` again, would have broken the caller's transaction.
 - **2026-10-04:** The win-back link (`/accounts/winback/`, 50% off Premium for 3 months) now only works for members who were sent the win-back email (`Subscription.winback_sent_at`, set by `tasks.send_winback_offers`) and aren't on Premium now (`payment_views.winback_eligible`). Before this, any logged-in member who found the URL got the discount, including brand-new members and people already paying, which could create a second subscription. Anyone else is sent to the pricing page with a note.
 - **2026-10-03:** Founding-member offer (`apps/accounts/founding_offer.py`): a percentage off the first year of annual Premium for anyone who's a member by the end date.
   - **Defaults:** 40% off ($59.99 → $35.99) until 2026-10-31. Set with the env vars `FOUNDING_OFFER_ENDS` and `FOUNDING_OFFER_PERCENT`.
