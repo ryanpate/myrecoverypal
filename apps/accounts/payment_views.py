@@ -247,9 +247,16 @@ def winback_eligible(user):
     """Only members who were actually sent the win-back email
     (tasks.send_winback_offers sets winback_sent_at) and aren't on Premium now.
     Without this, anyone logged in who found /accounts/winback/ got 50% off,
-    including brand-new members and people already paying."""
+    including brand-new members and people already paying.
+
+    A member with a live Stripe subscription that isn't Premium (Supporter, or
+    a past_due payment) is also excluded: checkout would open a second one."""
     sub = getattr(user, 'subscription', None)
-    return bool(sub and sub.winback_sent_at and not sub.is_premium())
+    if not (sub and sub.winback_sent_at and not sub.is_premium()):
+        return False
+    if sub.stripe_subscription_id:
+        return sub.status in ('canceled', 'expired', 'unpaid')
+    return True
 
 
 @login_required

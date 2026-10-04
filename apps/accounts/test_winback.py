@@ -65,6 +65,28 @@ class WinbackViewTests(TestCase):
         mock_build.assert_not_called()
         self.assertEqual(resp['Location'], reverse('accounts:pricing'))
 
+    def test_eligibility_rules(self):
+        sent = timezone.now() - timedelta(days=1)
+        cases = [
+            # (fields, eligible)
+            (dict(tier='free', status='expired', winback_sent_at=sent), True),
+            (dict(tier='free', status='canceled', stripe_subscription_id='sub_1', winback_sent_at=sent), True),
+            (dict(tier='free', status='expired', winback_sent_at=None), False),
+            (dict(tier='free', status='canceled', stripe_subscription_id='sub_1', winback_sent_at=None), False),
+            (dict(tier='premium', status='active', stripe_subscription_id='sub_1', winback_sent_at=sent), False),
+            (dict(tier='premium', status='past_due', stripe_subscription_id='sub_1', winback_sent_at=sent), False),
+            (dict(tier='supporter', status='active', stripe_subscription_id='sub_1', winback_sent_at=sent), False),
+        ]
+        for fields, eligible in cases:
+            with self.subTest(**{k: str(v) for k, v in fields.items()}):
+                sub = Subscription.objects.get(user=self.user)
+                sub.stripe_subscription_id = None
+                for k, v in fields.items():
+                    setattr(sub, k, v)
+                sub.save()
+                self.user.refresh_from_db()
+                self.assertEqual(payment_views.winback_eligible(self.user), eligible)
+
     def test_login_required(self):
         self.client.logout()
         resp = self.client.get(reverse('accounts:winback'))
