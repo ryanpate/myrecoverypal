@@ -4,6 +4,13 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-04:** The weekly digest now has a library section (`resources/digest.py::library_block`; premium-awareness idea #8).
+  - **Contents:**
+    - **Your program:** the next open lesson, if the member is partway through a program.
+    - **This week's reflection:** its share card image (og format), linking to the reading.
+    - **A session for your week:** rotates weekly through the guided sessions. Locked Premium sessions link to their free preview.
+  - Links carry `utm_campaign=weekly_library`.
+  - **Who gets it:** members with a quiet week (no followers, notifications, posts or Premium recap) used to be skipped. They now get the digest for its library section if they've logged in within `LIBRARY_DIGEST_ACTIVE_DAYS` (90). Dormant accounts and anyone with email notifications off still get nothing.
 - **2026-10-04:** Daily guided-audio reminders and an evening card (premium-awareness idea #7).
   - **Reminders:** a "Make it a habit" card on the morning intention (default 8 AM), evening check-out (9 PM) and sleep wind-down (10 PM) pages.
     - Members choose an hour and get a push at that hour in their own time zone, at most once per local day.
