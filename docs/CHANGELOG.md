@@ -4,6 +4,7 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-04:** The win-back link (`/accounts/winback/`, 50% off Premium for 3 months) now only works for members who were sent the win-back email (`Subscription.winback_sent_at`, set by `tasks.send_winback_offers`) and aren't on Premium now (`payment_views.winback_eligible`). Before this, any logged-in member who found the URL got the discount, including brand-new members and people already paying, which could create a second subscription. Anyone else is sent to the pricing page with a note.
 - **2026-10-03:** Founding-member offer (`apps/accounts/founding_offer.py`): a percentage off the first year of annual Premium for anyone who's a member by the end date.
   - **Defaults:** 40% off ($59.99 → $35.99) until 2026-10-31. Set with the env vars `FOUNDING_OFFER_ENDS` and `FOUNDING_OFFER_PERCENT`.
   - **Eligibility:** members not already paying for Premium through Stripe or Apple. A no-card legacy trial can claim it.
