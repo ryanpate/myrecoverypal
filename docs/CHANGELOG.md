@@ -4,6 +4,48 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-10-04:** A journal entry now suggests a related worksheet (`resources/journal_suggest.py`; premium-awareness idea #10).
+  - **How it matches:** simple keyword rules on the entry's own title, text and tags, run on the server when the author opens the entry. For example, craving → Urge Log, resentment or anger → Thought Record, an argument → Trigger Map, boredom or loneliness → Balance Wheel. If nothing matches, it falls back to the craving checkbox, then low mood, then the Nightly Review.
+  - **Privacy:** only the author sees it. Nothing about the match is stored, logged or sent to analytics, and the card never quotes the entry.
+  - **Safety:** crisis language (suicide, self-harm, overdose) shows 988 (call or text) and Craving SOS instead of a worksheet, every time the entry is opened. Worksheet suggestions show only in the first 30 minutes after writing.
+  - **Fix:** the entry detail page rendered blank. `JournalEntryDetailView` had no `context_object_name`, so the template's `entry` was empty. It is now set to `entry`.
+- **2026-10-04:** The weekly digest now has a library section (`resources/digest.py::library_block`; premium-awareness idea #8).
+  - **Contents:**
+    - **Your program:** the next open lesson, if the member is partway through a program.
+    - **This week's reflection:** its share card image (og format), linking to the reading.
+    - **A session for your week:** rotates weekly through the guided sessions. Locked Premium sessions link to their free preview.
+  - Links carry `utm_campaign=weekly_library`.
+  - **Who gets it:** members with a quiet week (no followers, notifications, posts or Premium recap) used to be skipped. They now get the digest for its library section if they've logged in within `LIBRARY_DIGEST_ACTIVE_DAYS` (90). Dormant accounts and anyone with email notifications off still get nothing.
+- **2026-10-04:** Daily guided-audio reminders and an evening card (premium-awareness idea #7).
+  - **Reminders:** a "Make it a habit" card on the morning intention (default 8 AM), evening check-out (9 PM) and sleep wind-down (10 PM) pages.
+    - Members choose an hour and get a push at that hour in their own time zone, at most once per local day.
+    - Stored in the new `AudioReminder` model (resources migration 0009) and sent by `resources.tasks.send_audio_reminders`, hourly at :10.
+    - Push only. Members with notifications off or no app are skipped, and only a delivered push counts as sent.
+    - The card says reminders need the app when the member has no device.
+    - Free members land on the session page, which plays the free preview.
+  - **Evening card:** from 6 PM local, the progress home shows a "Close the day" card for the evening check-out (`accounts/_evening_card.html`), with a "Remind me every evening" link. It can be dismissed for the evening, and clicks fire a GA4 `select_promotion` event with `evening_card`.
+- **2026-10-04:** A/B test of the Premium trial type, card trial vs. no-card trial (`apps/accounts/trial_experiment.py`, test `premium_trial_type`). It is off until `python manage.py init_trial_test` is run.
+  - **Variants:** while the test runs, new signups split 50/50.
+    - `card_trial` (control) is today's flow: members start on Free, and the 7-day trial starts at Stripe Checkout with a card.
+    - `no_card_trial` gives 7 days of Premium at signup with no card. The variant reuses the existing no-card trial funnel (countdown banners, day-before email, expiry to Free, 50% win-back).
+  - **Scope:** members who signed up before the test are untouched, and assignment can never break signup.
+  - **Funnel events:** `started_trial`, `began_checkout`, `subscribed` (Stripe checkout, or an Apple purchase) and `converted_paid` (first non-zero Stripe invoice). These are recorded in `_build_checkout_session`, `handle_checkout_session_completed`, `handle_invoice_paid` and `ios_subscription_sync`.
+  - **Results:** `python manage.py trial_test_report` and `/admin/dashboard/ab-tests/` show the funnel, week-2 retention (activity on days 8–14) and a two-proportion significance test on paid conversion. The dashboard now shows only each test's own events.
+  - **Background:** the old 14-day no-card trial converted 1 in 411 signups, so judge on paid conversion and retention, not trial starts.
+  - **Trial-ending email:** now a template (`emails/trial_ending.html`) with the real trial length and what the member used (lessons, Anchor messages, worksheets, favorites; counts only, never content). It describes the current Premium features and offers the founding-member price while that runs. The trial-expired email no longer says "14-day" and lists the current features.
+  - **Fix:** `ABTestingService.track_conversion` no longer relies on a failed INSERT for duplicates. With `ATOMIC_REQUESTS`, a repeat event, such as a renewal recording `converted_paid` again, would have broken the caller's transaction.
+- **2026-10-04:** The win-back link (`/accounts/winback/`, 50% off Premium for 3 months) now only works for members who were sent the win-back email (`Subscription.winback_sent_at`, set by `tasks.send_winback_offers`) and aren't on Premium now (`payment_views.winback_eligible`). Before this, any logged-in member who found the URL got the discount, including brand-new members and people already paying, which could create a second subscription. Anyone else is sent to the pricing page with a note.
+- **2026-10-03:** Founding-member offer (`apps/accounts/founding_offer.py`): a percentage off the first year of annual Premium for anyone who's a member by the end date.
+  - **Defaults:** 40% off ($59.99 → $35.99) until 2026-10-31. Set with the env vars `FOUNDING_OFFER_ENDS` and `FOUNDING_OFFER_PERCENT`.
+  - **Eligibility:** members not already paying for Premium through Stripe or Apple. A no-card legacy trial can claim it.
+  - **Stripe coupon:** `founding<pct>_first_year` is created on first use. It's `repeating` for 11 months, so it covers the first paid annual invoice, including after a 7-day card trial, but not the renewal. `redeem_by` is set to the deadline.
+  - **Claim link:** `/accounts/founding/` goes straight to Stripe Checkout for annual Premium with the coupon. Ineligible or expired members are sent to pricing with a note.
+  - **Where it shows** (each placement is `.stripe-only`, so never in the iOS app):
+    - a banner on the pricing page;
+    - a "Join free to claim it" banner on the landing page for visitors;
+    - on the progress-home Premium card, which has its own dismissal so a previously dismissed card shows the offer once.
+  - **GA4:** `view_promotion` and `select_promotion` events with `founding_offer`.
+  - **Email:** `send_founding_offer` (dry run by default, `--test`, `--commit`) only emails eligible, opted-in members, once each. `--reminder` sends the "last few days" version under its own key, skipping anyone who has since claimed it.
 - **2026-10-03:** Shareable reflection cards, and free guided audio after a struggling check-in.
   - **Cards** (`resources/reflection_cards.py`, Pillow and DejaVu fonts):
     - Each card shows the reading's title and opening line. The opening line is already public, so a card never leaks Premium text or the prompt.

@@ -855,6 +855,12 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'resources.tasks.send_program_reminders',
         'schedule': crontab(minute=5),
     },
+    # Opt-in guided audio reminders (morning intention, evening check-out,
+    # sleep wind-down), each at the member's chosen local hour.
+    'send-audio-reminders': {
+        'task': 'resources.tasks.send_audio_reminders',
+        'schedule': crontab(minute=10),
+    },
     # Daily recovery thought — ensures a quote exists for today's feed
     'publish-daily-thought': {
         'task': 'apps.accounts.tasks.publish_daily_thought',
@@ -935,6 +941,11 @@ CELERY_TASK_RESULT_EXPIRES = 3600  # Expire results after 1 hour instead of defa
 # Payment Processing
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
+
+# Founding-member offer (apps/accounts/founding_offer.py): % off the first
+# year of annual Premium, for members who join by the end date. Web only.
+FOUNDING_OFFER_ENDS = os.environ.get('FOUNDING_OFFER_ENDS', '2026-10-31')
+FOUNDING_OFFER_PERCENT = os.environ.get('FOUNDING_OFFER_PERCENT', '40')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
 
 # Printify (medallion keepsakes, auto-fulfilled)

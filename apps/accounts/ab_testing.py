@@ -17,7 +17,7 @@ Usage:
     results = ABTestingService.get_test_results('onboarding_flow')
 """
 
-from django.db import models
+from django.db import IntegrityError, models, transaction
 from django.conf import settings
 from django.utils import timezone
 from django.db.models import Count, Q
@@ -120,7 +120,21 @@ class ABTestConversion(models.Model):
         ('first_checkin', 'First Check-in'),
         ('day_1_return', 'Returned Day 1'),
         ('day_7_return', 'Returned Day 7'),
+        # premium_trial_type (apps/accounts/trial_experiment.py)
+        ('started_trial', 'Started a Premium trial'),
+        ('began_checkout', 'Opened Premium checkout'),
+        ('subscribed', 'Subscribed (card on file or Apple)'),
+        ('converted_paid', 'First real payment'),
     ]
+
+    # Which events each test reports (the dashboard shows only these).
+    # A test not listed here reports every type.
+    TEST_CONVERSIONS = {
+        'premium_trial_type': ['started_trial', 'began_checkout', 'subscribed', 'converted_paid'],
+        'onboarding_flow': ['started_onboarding', 'completed_step_1', 'completed_step_2', 'completed_step_3',
+                            'completed_step_4', 'completed_step_5', 'completed_onboarding', 'followed_user',
+                            'first_post', 'first_checkin', 'day_1_return', 'day_7_return'],
+    }
 
     assignment = models.ForeignKey(
         ABTestAssignment,
@@ -239,17 +253,22 @@ class ABTestingService:
         except ABTestAssignment.DoesNotExist:
             return False
 
-        # Create conversion (ignore if already exists)
-        try:
-            ABTestConversion.objects.create(
-                assignment=assignment,
-                conversion_type=conversion_type,
-                metadata=metadata or {}
-            )
-            return True
-        except Exception:
-            # Already converted
+        # Each conversion counts once. Check first, and insert inside a
+        # savepoint: with ATOMIC_REQUESTS a failed INSERT would otherwise
+        # break the caller's whole transaction (e.g. a Stripe webhook that
+        # records a second "converted_paid" on a renewal).
+        if ABTestConversion.objects.filter(assignment=assignment, conversion_type=conversion_type).exists():
             return False
+        try:
+            with transaction.atomic():
+                ABTestConversion.objects.create(
+                    assignment=assignment,
+                    conversion_type=conversion_type,
+                    metadata=metadata or {}
+                )
+            return True
+        except IntegrityError:
+            return False  # recorded concurrently
 
     @classmethod
     def get_test_results(cls, test_name):
@@ -279,7 +298,10 @@ class ABTestingService:
             total_users = assignments.count()
 
             conversions = {}
+            wanted = ABTestConversion.TEST_CONVERSIONS.get(test_name)
             for conv_type, conv_label in ABTestConversion.CONVERSION_TYPES:
+                if wanted and conv_type not in wanted:
+                    continue
                 count = ABTestConversion.objects.filter(
                     assignment__variant=variant,
                     conversion_type=conv_type

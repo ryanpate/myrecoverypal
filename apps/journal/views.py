@@ -109,10 +109,18 @@ class JournalEntryListView(LoginRequiredMixin, ListView):
 class JournalEntryDetailView(LoginRequiredMixin, DetailView):
     model = JournalEntry
     template_name = 'journal/entry_detail.html'
+    context_object_name = 'entry'  # the template reads `entry`
     
     def get_queryset(self):
         # Only allow users to view their own entries
         return JournalEntry.objects.filter(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        from resources.journal_suggest import suggestion_for
+        context = super().get_context_data(**kwargs)
+        # Computed here, for the author only; never stored or tracked.
+        context['suggestion'] = suggestion_for(self.object)
+        return context
 
 @login_required
 def create_entry(request):

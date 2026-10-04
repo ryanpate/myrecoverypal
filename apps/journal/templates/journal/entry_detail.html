@@ -100,6 +100,14 @@
         justify-content: center;
         margin-top: 2rem;
     }
+    .entry-suggest { margin: 1.5rem 0; padding: 1.1rem 1.25rem; border-radius: 12px;
+        background: #eef6f1; border: 1px solid #b7dfc8; color: #1f3b2d; }
+    .entry-suggest.crisis { background: #fdf0ee; border-color: #f2c4bc; color: #5a1f16; }
+    .entry-suggest p { margin: 0 0 .75rem; line-height: 1.5; }
+    .entry-suggest .suggest-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .entry-suggest .suggest-meta { font-size: .85rem; opacity: .8; margin-top: .6rem; }
+    [data-theme="dark"] .entry-suggest { background: #16291f; border-color: #2c5a41; color: #d6eee0; }
+    [data-theme="dark"] .entry-suggest.crisis { background: #2e1714; border-color: #6b2c22; color: #f5d9d4; }
 </style>
 {% endblock %}
 
@@ -162,6 +170,25 @@
         {% endif %}
     </div>
     
+    {% if suggestion.kind == 'crisis' %}
+    <div class="entry-suggest crisis" role="note">
+        <p><strong>You don't have to carry this alone.</strong> If you're thinking about harming yourself, call or text <a href="tel:988"><strong>988</strong></a> (Suicide &amp; Crisis Lifeline, 24/7). In an emergency, call 911.</p>
+        <div class="suggest-actions">
+            <a href="tel:988" class="btn btn-primary">Call 988</a>
+            <a href="sms:988" class="btn btn-secondary">Text 988</a>
+            <a href="{% url 'core:craving_sos' %}" class="btn btn-secondary">Open Craving SOS</a>
+        </div>
+    </div>
+    {% elif suggestion.kind == 'worksheet' and suggestion.worksheet %}
+    <div class="entry-suggest" role="note">
+        <p>{{ suggestion.reason }}</p>
+        <div class="suggest-actions">
+            <a href="{% url 'resources:worksheet_detail' suggestion.worksheet.slug %}" class="btn btn-primary">{{ suggestion.worksheet.icon }} Open the {{ suggestion.worksheet.title }}</a>
+        </div>
+        <div class="suggest-meta">{{ suggestion.worksheet.time }} · Only you can see this suggestion.</div>
+    </div>
+    {% endif %}
+
     <div class="entry-actions">
         <a href="{% url 'journal:dashboard' %}" class="btn btn-secondary">Back to Journal</a>
         <a href="{% url 'journal:create_entry' %}" class="btn btn-primary">Write New Entry</a>

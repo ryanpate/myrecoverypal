@@ -188,6 +188,8 @@
         <p style="color: #888; font-size: 0.85rem; margin: 0.5rem 0 0;">Cancel anytime. No questions asked.</p>
     </div>
 
+    {% include 'accounts/_founding_offer_banner.html' with slot='pricing' %}
+
     <!-- Trial Status Alert -->
     {% if user_subscription and user_subscription.status == 'trialing' %}
     <div class="alert alert-info text-center mb-4" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white;">

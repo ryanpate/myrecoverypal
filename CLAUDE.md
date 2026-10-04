@@ -137,6 +137,7 @@ python manage.py test_email recipient@example.com --resend-api
 - `send_checkin_reminders`: Daily at 5:00 PM
 - `send_weekly_digests`: Sundays at 10:30 AM
 - `resources.tasks.send_program_reminders`: hourly at :05; each member handled at 9 AM in their own time zone (guided program lessons)
+- `resources.tasks.send_audio_reminders`: hourly at :10; opt-in daily push to play a guided session (morning intention, evening check-out, sleep wind-down) at the member's chosen local hour
 
 **Email Templates:** `apps/accounts/templates/emails/`
 - `welcome_day_1.html` - Welcome + getting started
@@ -232,6 +233,8 @@ Tracks onboarding flow experiments with these variants:
 - `progressive` - 5-step with skip option
 
 **Initialize test:** `python manage.py init_ab_tests`
+
+**Trial-type test** (`apps/accounts/trial_experiment.py`): card-required 7-day trial at checkout (control) vs. a 7-day no-card Premium trial at signup. Start it with `python manage.py init_trial_test` and stop it with `--stop`. Read results with `python manage.py trial_test_report`. Only members who sign up while it runs are assigned. Judge on paid conversion plus week-2 retention.
 
 **Key conversions tracked:**
 - started_onboarding, completed_step_1-5, completed_onboarding
@@ -462,6 +465,10 @@ ELEVENLABS_API_KEY=<elevenlabs-api-key>
 ELEVENLABS_VOICE_ID=<voice id from the ElevenLabs voice library>
 ELEVENLABS_MODEL_ID=eleven_multilingual_v2   # optional
 ELEVENLABS_OUTPUT_FORMAT=mp3_44100_64        # optional; must be mp3_44100_*
+
+# Founding-member offer (apps/accounts/founding_offer.py); web/Stripe only
+FOUNDING_OFFER_ENDS=2026-10-31     # last day, ISO date
+FOUNDING_OFFER_PERCENT=40          # % off the first year of annual Premium
 
 # iOS In-App Purchases
 REVENUECAT_IOS_API_KEY=<revenuecat-ios-api-key>

@@ -63,6 +63,8 @@ def pricing(request):
         'card_trial_eligible': bool(user_subscription and user_subscription.card_trial_eligible()),
         'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
     }
+    from .founding_offer import context_for
+    context.update(context_for(request.user, premium_yearly_plan))
     return render(request, 'accounts/pricing.html', context)
 
 
@@ -126,7 +128,11 @@ def _build_checkout_session(request, plan, coupon=None):
     )
     if coupon:
         session_kwargs['discounts'] = [{'coupon': coupon}]
-    return stripe.checkout.Session.create(**session_kwargs)
+    checkout_session = stripe.checkout.Session.create(**session_kwargs)
+    if plan.tier == 'premium':
+        from . import trial_experiment as trial_ab
+        trial_ab.track(request.user, trial_ab.BEGAN_CHECKOUT, {'period': plan.billing_period})
+    return checkout_session
 
 
 # Stripe coupon for win-back offers: 50% off for the first 3 months. Stable id
@@ -152,6 +158,32 @@ def _get_winback_coupon():
     except Exception as e:
         logger.error(f'winback coupon retrieve failed: {e}')
         return None
+
+
+@login_required
+def founding_offer(request):
+    """Claim the founding-member offer: annual Premium with the first year
+    discounted (apps/accounts/founding_offer.py). GET so it works from an
+    email button. Ineligible or expired -> pricing page with a note; Stripe
+    trouble -> pricing page too, never a dead end."""
+    from . import founding_offer as offer
+    if not offer.is_eligible(request.user):
+        if not offer.is_active():
+            messages.info(request, 'The founding-member offer has ended. Thank you for being here early.')
+        else:
+            messages.info(request, 'The founding-member offer is for members who aren\'t already on Premium.')
+        return redirect('accounts:pricing')
+    plan = SubscriptionPlan.objects.filter(tier='premium', billing_period='yearly', is_active=True).first()
+    if not plan:
+        return redirect('accounts:pricing')
+    try:
+        coupon = offer.get_coupon()
+        checkout_session = _build_checkout_session(request, plan, coupon=coupon)
+        return redirect(checkout_session.url)
+    except Exception as e:
+        logger.error(f'founding offer checkout error for user {request.user.id}: {e}')
+        messages.warning(request, "Let's get you set up. Choose your plan below.")
+        return redirect('accounts:pricing')
 
 
 @login_required
@@ -212,34 +244,37 @@ def keep_premium(request):
 
 
 def winback_eligible(user):
-    """May claim the win-back coupon: Premium isn't active now, and they had it
-    before. That's a Stripe subscription that has ended, or the legacy no-card
-    signup trial that expire_ended_trials marked 'expired' (the audience of
-    send_winback_offers). Members who never had Premium, and anyone with a live
-    subscription (which checkout would duplicate), are not eligible.
-    """
+    """Only members who were actually sent the win-back email
+    (tasks.send_winback_offers sets winback_sent_at) and aren't on Premium now.
+    Without this, anyone logged in who found /accounts/winback/ got 50% off,
+    including brand-new members and people already paying.
+
+    A member with a live Stripe subscription that isn't Premium (Supporter, or
+    a past_due payment) is also excluded: checkout would open a second one."""
     sub = getattr(user, 'subscription', None)
-    if sub is None or sub.is_premium():
+    if not (sub and sub.winback_sent_at and not sub.is_premium()):
         return False
     if sub.stripe_subscription_id:
         return sub.status in ('canceled', 'expired', 'unpaid')
-    return sub.status == 'expired' and sub.trial_end is not None
+    return True
 
 
 @login_required
 def winback(request):
     """One-click win-back link from the 50%-off re-engagement email.
 
-    Same as keep_premium but applies the win-back coupon (50% off 3 months).
-    Defaults to yearly; ?period=monthly to override. Ineligible members and
-    any failure fall back to pricing so the user is never dead-ended.
+    Same as keep_premium but applies the win-back coupon (50% off 3 months),
+    for members who were sent that offer (winback_eligible). Anyone else goes
+    to the pricing page with a note. Defaults to yearly; ?period=monthly to
+    override. Falls back to pricing on any failure so the user is never
+    dead-ended.
     """
     if not winback_eligible(request.user):
         sub = getattr(request.user, 'subscription', None)
         if sub and sub.is_premium():
-            messages.info(request, "You're already on Premium, so there's nothing to claim. Thanks for being here.")
+            messages.info(request, "You're already on Premium. Thank you!")
         else:
-            messages.info(request, "The welcome-back discount is for members returning to Premium. Here are our plans.")
+            messages.info(request, "That offer is for members who were sent it by email. Here are our current plans.")
         return redirect('accounts:pricing')
     period = 'monthly' if request.GET.get('period') == 'monthly' else 'yearly'
     plan = (SubscriptionPlan.objects.filter(tier='premium', billing_period=period, is_active=True).first()
@@ -629,6 +664,12 @@ def handle_checkout_session_completed(session):
                 subscription.current_period_end = period_end
             subscription.save()
 
+            if subscription.tier == 'premium':
+                from . import trial_experiment as trial_ab
+                if stripe_subscription.status == 'trialing':
+                    trial_ab.track(subscription.user, trial_ab.STARTED_TRIAL, {'kind': 'card'})
+                trial_ab.track(subscription.user, trial_ab.SUBSCRIBED, {'source': 'stripe'})
+
         logger.info(f'Checkout completed for subscription {subscription.id}')
 
     except Subscription.DoesNotExist:
@@ -686,6 +727,10 @@ def handle_invoice_paid(invoice):
         # Update subscription status
         subscription.status = 'active'
         subscription.save()
+
+        if amount_paid > 0 and subscription.tier in ('premium', 'court'):
+            from . import trial_experiment as trial_ab
+            trial_ab.track(subscription.user, trial_ab.CONVERTED_PAID, {'amount': str(amount_paid)})
 
         logger.info(f'Invoice paid for subscription {subscription.id}')
 
@@ -1058,6 +1103,9 @@ def ios_subscription_sync(request):
         if expires:
             subscription.current_period_end = expires
         subscription.save()
+        if tier == 'premium':
+            from . import trial_experiment as trial_ab
+            trial_ab.track(request.user, trial_ab.SUBSCRIBED, {'source': 'apple'})
         logger.info(f'iOS subscription activated for user {request.user.id}')
     else:
         # Only downgrade if the subscription was Apple-sourced

@@ -1,0 +1,45 @@
+{% comment %}
+Founding-member offer banner (apps/accounts/founding_offer.py::context_for).
+Web only: .stripe-only hides it inside the iOS app (App Store Guideline 3.1).
+Context: founding_offer (dict) and optional `slot` for analytics.
+{% endcomment %}
+{% if founding_offer %}
+<div class="founding-offer stripe-only" role="note" data-slot="{{ slot|default:'unknown' }}">
+    <div class="founding-offer-badge">Founding member offer</div>
+    <div class="founding-offer-main">
+        <strong>{{ founding_offer.percent }}% off your first year of Premium:</strong>
+        ${{ founding_offer.price }} instead of ${{ founding_offer.full_price }} for the year{% if user_subscription.card_trial_eligible %}, after a 7-day free trial{% endif %}.
+        <span class="founding-offer-ends">{% if founding_offer.days_left == 0 %}Ends today.{% elif founding_offer.days_left <= 7 %}Ends {{ founding_offer.ends|date:"F j" }}: {{ founding_offer.days_left }} day{{ founding_offer.days_left|pluralize }} left.{% else %}Until {{ founding_offer.ends|date:"F j" }}, for everyone who joins by then.{% endif %}</span>
+    </div>
+    {% if founding_offer.eligible %}
+    <a class="founding-offer-btn" href="{% url 'accounts:founding_offer' %}" data-promo="founding_offer">Claim founding price</a>
+    {% else %}
+    <a class="founding-offer-btn" href="{% url 'accounts:register' %}?next={% url 'accounts:founding_offer' %}" data-promo="founding_offer_join">Join free to claim it</a>
+    {% endif %}
+</div>
+<style>
+    .founding-offer { display: flex; align-items: center; gap: 0.9rem 1.2rem; flex-wrap: wrap; margin: 0 auto 1.5rem; max-width: 960px;
+        padding: 1rem 1.25rem; border-radius: 16px; color: #3b2a05; text-align: left;
+        background: linear-gradient(135deg, #fff7e0, #fde9b5); border: 1px solid #f0c040; box-shadow: 0 6px 18px rgba(212,160,23,0.18); }
+    .founding-offer-badge { background: linear-gradient(135deg, #f0c040, #d4a017); color: #3b2a05; font-weight: 800; font-size: 0.72rem;
+        letter-spacing: 0.05em; text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 50px; white-space: nowrap; }
+    .founding-offer-main { flex: 1 1 320px; line-height: 1.45; font-size: 0.97rem; }
+    .founding-offer-ends { display: block; font-size: 0.86rem; opacity: 0.8; margin-top: 2px; }
+    .founding-offer-btn { background: #1e4d8b; color: #fff !important; font-weight: 700; padding: 0.65rem 1.3rem; border-radius: 50px;
+        text-decoration: none; white-space: nowrap; }
+    .founding-offer-btn:hover { filter: brightness(1.1); }
+    [data-theme="dark"] .founding-offer { background: linear-gradient(135deg, #3a2f12, #4a3a10); color: #fdf3d6; border-color: #a07a10; }
+    [data-theme="dark"] .founding-offer-badge { color: #2a1f04; }
+</style>
+<script>
+(function () {
+    var box = document.currentScript.previousElementSibling.previousElementSibling;
+    if (!box || typeof gtag !== 'function') return;
+    if (document.documentElement.classList.contains('ios-native-app')) return;
+    gtag('event', 'view_promotion', { promotion_id: 'founding_offer', creative_slot: box.dataset.slot });
+    box.querySelector('[data-promo]').addEventListener('click', function (e) {
+        gtag('event', 'select_promotion', { promotion_id: e.currentTarget.dataset.promo, creative_slot: box.dataset.slot });
+    });
+})();
+</script>
+{% endif %}

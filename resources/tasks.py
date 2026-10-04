@@ -179,3 +179,63 @@ def send_program_reminders():
             logger.error(f'Program reminder failed for enrollment {enrollment.id}: {err}')
     logger.info(f'Program reminders sent: {counts}')
     return counts
+
+
+# ---------------------------------------------------------------------------
+# Guided audio reminders (opt-in, push only)
+# ---------------------------------------------------------------------------
+
+# Sessions you can be reminded about, with their default hour and the push
+# copy. Morning and evening rituals only: a reminder to play "Awake in the
+# night" or a craving tool on a timer would make no sense.
+AUDIO_REMINDERS = {
+    'morning-intention': {'hour': 8, 'title': 'Good morning ☀️',
+                          'body': 'Your morning intention is ready: {minutes} minutes to start the day on purpose.'},
+    'evening-check-out': {'hour': 21, 'title': 'Ready to close the day? 🌙',
+                          'body': 'Your {minutes}-minute evening check-out is ready when you are.'},
+    'sleep-wind-down': {'hour': 22, 'title': 'Time to wind down 🌙',
+                        'body': 'A {minutes}-minute sleep wind-down, whenever you are ready.'},
+}
+REMINDER_HOURS = list(range(5, 24))  # choices offered on the session page
+
+
+@shared_task
+def send_audio_reminders(now=None):
+    """Hourly: push each enabled reminder at its local hour, once per local day.
+
+    Push only (no email, no in-app bell): it's a ritual the member asked for,
+    and a daily email or bell item would be noise. Members with notifications
+    off, or with no app installed, are skipped (and not marked sent, so a
+    newly installed app starts receiving them). Free members land on the
+    session page, which plays the free preview of Premium sessions.
+    """
+    from apps.accounts.models import DeviceToken
+    from apps.accounts.push_notifications import send_push_to_user
+    from .models import AudioReminder, AudioTrack
+
+    now = now or timezone.now()
+    with_device = set(DeviceToken.objects.filter(active=True).values_list('user_id', flat=True))
+    tracks = {t.slug: t for t in AudioTrack.objects.filter(is_active=True, slug__in=AUDIO_REMINDERS)}
+    sent = 0
+    for reminder in (AudioReminder.objects.filter(enabled=True, track_slug__in=list(tracks))
+                     .select_related('user')):
+        user = reminder.user
+        if not user.is_active or not getattr(user, 'email_notifications', True) or user.id not in with_device:
+            continue
+        local = now.astimezone(_member_zone(user))
+        if local.hour != reminder.hour or reminder.last_sent_on == local.date():
+            continue
+        track, copy = tracks[reminder.track_slug], AUDIO_REMINDERS[reminder.track_slug]
+        link = reverse('resources:audio_detail', args=[track.slug]) + '?utm_source=push&utm_medium=reminder'
+        try:
+            results = send_push_to_user(user, copy['title'], copy['body'].format(minutes=track.minutes),
+                                        {'url': link, 'type': 'audio_reminder'})
+        except Exception as err:
+            logger.warning(f'Audio reminder push failed for user {user.id}: {err}')
+            continue
+        if sum(r['sent'] for r in results.values()):
+            reminder.last_sent_on = local.date()
+            reminder.save(update_fields=['last_sent_on'])
+            sent += 1
+    logger.info(f'send_audio_reminders: sent={sent}')
+    return {'sent': sent}

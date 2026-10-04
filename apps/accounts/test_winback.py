@@ -17,19 +17,17 @@ User = get_user_model()
 class WinbackViewTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user('w', 'w@example.com', 'pw')
-        self._set_sub(self.user, tier='free', status='canceled', stripe_subscription_id='sub_old')
+        # Was sent the win-back email after their trial lapsed.
+        sub = Subscription.objects.get(user=self.user)
+        sub.tier, sub.status = 'free', 'expired'
+        sub.winback_sent_at = timezone.now() - timedelta(days=1)
+        sub.save()
         self.client.force_login(self.user)
         SubscriptionPlan.objects.filter(tier='premium').delete()
         self.yearly = SubscriptionPlan.objects.create(
             tier='premium', billing_period='yearly', name='Premium (Yearly)',
             price='59.99', is_active=True, stripe_price_id='price_year',
         )
-
-    def _set_sub(self, user, **fields):
-        sub = Subscription.objects.get(user=user)
-        for k, v in fields.items():
-            setattr(sub, k, v)
-        sub.save()
 
     @patch('apps.accounts.payment_views._get_winback_coupon', return_value='winback50_3mo')
     @patch('apps.accounts.payment_views._build_checkout_session')
@@ -49,51 +47,50 @@ class WinbackViewTests(TestCase):
         self.assertEqual(resp['Location'], reverse('accounts:pricing'))
 
 
-    @patch('apps.accounts.payment_views._get_winback_coupon', return_value='winback50_3mo')
     @patch('apps.accounts.payment_views._build_checkout_session')
-    def test_lapsed_trial_from_the_email_reaches_checkout(self, mock_build, mock_coupon):
-        # The audience of send_winback_offers: a legacy no-card trial that expired.
-        self._set_sub(self.user, status='expired', stripe_subscription_id=None,
-                      trial_end=timezone.now() - timedelta(days=2))
-        mock_build.return_value = MagicMock(url='https://checkout/winback')
-        resp = self.client.get(reverse('accounts:winback'))
-        self.assertEqual(resp['Location'], 'https://checkout/winback')
-        self.assertEqual(mock_build.call_args.kwargs['coupon'], 'winback50_3mo')
-
-    def _assert_sent_to_pricing(self, mock_build):
+    def test_member_never_sent_the_offer_gets_pricing(self, mock_build):
+        stranger = User.objects.create_user('w2', 'w2@example.com', 'pw')
+        self.client.force_login(stranger)
         resp = self.client.get(reverse('accounts:winback'), follow=True)
-        self.assertRedirects(resp, reverse('accounts:pricing'))
-        self.assertTrue(list(resp.context['messages']))
         mock_build.assert_not_called()
+        self.assertRedirects(resp, reverse('accounts:pricing'))
+        self.assertContains(resp, 'members who were sent it by email')
 
     @patch('apps.accounts.payment_views._build_checkout_session')
-    def test_never_paid_free_member_goes_to_pricing(self, mock_build):
-        self._set_sub(self.user, tier='free', status='active', stripe_subscription_id=None, trial_end=None)
-        self._assert_sent_to_pricing(mock_build)
-
-    @patch('apps.accounts.payment_views._build_checkout_session')
-    def test_paying_member_goes_to_pricing(self, mock_build):
-        self._set_sub(self.user, tier='premium', status='active', stripe_subscription_id='sub_live')
-        self._assert_sent_to_pricing(mock_build)
+    def test_member_already_on_premium_gets_pricing(self, mock_build):
+        sub = Subscription.objects.get(user=self.user)
+        sub.tier, sub.status, sub.stripe_subscription_id = 'premium', 'active', 'sub_paid'
+        sub.save()
+        resp = self.client.get(reverse('accounts:winback'))
+        mock_build.assert_not_called()
+        self.assertEqual(resp['Location'], reverse('accounts:pricing'))
 
     def test_eligibility_rules(self):
+        sent = timezone.now() - timedelta(days=1)
         cases = [
             # (fields, eligible)
-            (dict(tier='free', status='canceled', stripe_subscription_id='sub_1'), True),
-            (dict(tier='premium', status='unpaid', stripe_subscription_id='sub_1'), True),
-            (dict(tier='free', status='expired', stripe_subscription_id=None,
-                  trial_end=timezone.now() - timedelta(days=3)), True),
-            (dict(tier='free', status='active', stripe_subscription_id=None, trial_end=None), False),
-            (dict(tier='premium', status='active', stripe_subscription_id='sub_1'), False),
-            (dict(tier='premium', status='active', stripe_subscription_id=None), False),  # Apple
-            (dict(tier='premium', status='past_due', stripe_subscription_id='sub_1'), False),
-            (dict(tier='supporter', status='active', stripe_subscription_id='sub_1'), False),
+            (dict(tier='free', status='expired', winback_sent_at=sent), True),
+            (dict(tier='free', status='canceled', stripe_subscription_id='sub_1', winback_sent_at=sent), True),
+            (dict(tier='free', status='expired', winback_sent_at=None), False),
+            (dict(tier='free', status='canceled', stripe_subscription_id='sub_1', winback_sent_at=None), False),
+            (dict(tier='premium', status='active', stripe_subscription_id='sub_1', winback_sent_at=sent), False),
+            (dict(tier='premium', status='past_due', stripe_subscription_id='sub_1', winback_sent_at=sent), False),
+            (dict(tier='supporter', status='active', stripe_subscription_id='sub_1', winback_sent_at=sent), False),
         ]
         for fields, eligible in cases:
             with self.subTest(**{k: str(v) for k, v in fields.items()}):
-                self._set_sub(self.user, **{'trial_end': None, **fields})
+                sub = Subscription.objects.get(user=self.user)
+                sub.stripe_subscription_id = None
+                for k, v in fields.items():
+                    setattr(sub, k, v)
+                sub.save()
                 self.user.refresh_from_db()
                 self.assertEqual(payment_views.winback_eligible(self.user), eligible)
+
+    def test_login_required(self):
+        self.client.logout()
+        resp = self.client.get(reverse('accounts:winback'))
+        self.assertIn(reverse('accounts:login'), resp['Location'])
 
 
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)

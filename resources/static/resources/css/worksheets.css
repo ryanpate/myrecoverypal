@@ -265,3 +265,11 @@ a.pg-cohort:hover { background: rgba(82,183,136,0.15); color: inherit; }
 [data-theme="dark"] .rf-share-menu { background: #1f2937; border-color: #374151; }
 [data-theme="dark"] .rf-share-menu a, [data-theme="dark"] .rf-share-menu button { color: #e5e7eb; }
 [data-theme="dark"] .rf-share-menu a:hover, [data-theme="dark"] .rf-share-menu button:hover { background: #273244; }
+
+/* Daily audio reminder card (resources/audio/detail.html) */
+.au-reminder { margin: 1.5rem 0; padding: 1.1rem 1.2rem; border-radius: 14px; border: 1px solid rgba(30,77,139,0.22); background: rgba(30,77,139,0.05); }
+.au-reminder h2 { font-size: 1.1rem; margin: 0 0 0.4rem; }
+.au-reminder p { margin: 0 0 0.7rem; }
+.au-reminder-form { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.au-reminder-form select { padding: 0.5rem 0.7rem; border-radius: 10px; border: 1px solid rgba(128,128,128,0.4); font: inherit; background: inherit; color: inherit; }
+.au-reminder-note { font-size: 0.88rem; opacity: 0.8; margin: 0.7rem 0 0 !important; }

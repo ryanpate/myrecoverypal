@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Founding-member offer</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+               line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f4f4; }
+        .email-container { background: #ffffff; border-radius: 15px; padding: 36px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo { text-align: center; font-size: 30px; font-weight: 700; color: #1e4d8b; margin-bottom: 20px; }
+        h1 { font-size: 24px; color: #1e4d8b; margin: 8px 0 16px; }
+        p { font-size: 16px; margin: 0 0 16px; }
+        .offer { text-align: center; background: linear-gradient(135deg, #fff7e0, #fde9b5); border: 1px solid #f0c040; border-radius: 14px; padding: 20px; margin: 22px 0; }
+        .offer .badge { display: inline-block; background: #d4a017; color: #3b2a05; font-weight: 800; font-size: 12px; letter-spacing: 0.05em;
+                        text-transform: uppercase; padding: 4px 12px; border-radius: 50px; }
+        .offer .price { font-size: 34px; font-weight: 800; color: #3b2a05; margin: 10px 0 0; }
+        .offer .was { font-size: 15px; color: #6b5a2a; }
+        ul { padding-left: 20px; margin: 0 0 18px; }
+        li { margin: 0 0 6px; font-size: 15px; }
+        .cta-wrap { text-align: center; margin: 26px 0 10px; }
+        .cta-button { display: inline-block; background: #1e4d8b; color: #ffffff !important; text-decoration: none; font-weight: 600;
+                      font-size: 17px; padding: 14px 34px; border-radius: 30px; }
+        .small { font-size: 13px; color: #777; text-align: center; }
+        .footer { margin-top: 28px; padding-top: 18px; border-top: 1px solid #eee; font-size: 12px; color: #999; text-align: center; }
+        .footer a { color: #999; }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="logo">MyRecoveryPal</div>
+
+        {% if reminder %}
+        <h1>Your founding-member price ends {{ ends|date:"F j" }}</h1>
+        <p>Hi {{ first_name }},</p>
+        <p>A quick heads-up: the founding-member price for Premium closes on {{ ends|date:"l, F j" }}. After that, annual Premium goes back to ${{ full_price }}.</p>
+        {% else %}
+        <h1>A thank-you for being here early</h1>
+        <p>Hi {{ first_name }},</p>
+        <p>MyRecoveryPal is still small, and the people who joined early are the reason it exists. So for our founding members, here's Premium at a founding price, for a short time.</p>
+        {% endif %}
+
+        <div class="offer">
+            <span class="badge">Founding member offer</span>
+            <div class="price">${{ price }} for your first year</div>
+            <div class="was">instead of ${{ full_price }} &middot; {{ percent }}% off &middot; until {{ ends|date:"F j" }}</div>
+        </div>
+
+        <p><strong>What Premium opens up:</strong></p>
+        <ul>
+            <li>Every guided program, start to finish: First 30 Days and the two-week tracks</li>
+            <li>The full audio library: sleep, morning, body scan, self-compassion, and every reflection read aloud</li>
+            <li>All 30 daily reflections, favorites, and journaling on any of them</li>
+            <li>Your saved worksheets and personal Recovery Workbook PDF</li>
+            <li>Anchor, your AI coach, 20 messages a day</li>
+            <li>A free Supporter seat for someone who loves you</li>
+        </ul>
+
+        <div class="cta-wrap">
+            <a href="{{ claim_url }}" class="cta-button">Claim my founding price</a>
+        </div>
+        <p class="small">{% if trial %}Starts with a 7-day free trial. {% endif %}The discount covers your first year; it renews at the regular annual price, and you can cancel any time. The craving tools, Craving SOS and the community stay free, always.</p>
+
+        <p>Not ready? No pressure at all. <a href="{{ library_url }}">The free toolkit</a> is yours either way.</p>
+        <p>&mdash; The MyRecoveryPal team</p>
+
+        <div class="footer">
+            If you're struggling right now, call or text 988 (Suicide &amp; Crisis Lifeline), any time.<br><br>
+            You're receiving this because you have a MyRecoveryPal account.<br>
+            <a href="{{ unsubscribe_url }}">Unsubscribe from product updates</a>
+        </div>
+    </div>
+</body>
+</html>

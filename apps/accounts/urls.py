@@ -212,6 +212,7 @@ urlpatterns = [
     path('checkout/create-session/', payment_views.create_checkout_session, name='create_checkout_session'),
     path('keep-premium/', payment_views.keep_premium, name='keep_premium'),
     path('winback/', payment_views.winback, name='winback'),
+    path('founding/', payment_views.founding_offer, name='founding_offer'),
     path('payment/success/', payment_views.payment_success, name='payment_success'),
     path('payment/canceled/', payment_views.payment_canceled, name='payment_canceled'),
     path('subscription/', payment_views.subscription_management, name='subscription_management'),
