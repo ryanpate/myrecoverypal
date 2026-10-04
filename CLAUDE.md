@@ -1,6 +1,6 @@
 # CLAUDE.md - MyRecoveryPal Development Guide
 
-**Last Updated:** 2026-03-03
+**Last Updated:** 2026-10-04
 **Project:** MyRecoveryPal - Social Recovery Platform
 **Tech Stack:** Django 5.2 LTS, PostgreSQL, Redis, Celery, Capacitor Mobile
 **Stage:** Beta Testing - User Acquisition Critical
@@ -372,9 +372,34 @@ Email campaigns - underutilized for retention.
 /accounts/delete-account/      → Account deletion (required by app stores)
 /blog/                         → Community blog
 /journal/                      → Private journal
-/resources/                    → Resource library
+/resources/                    → Library hub (toolkit cards, Premium tools, every program)
+/resources/programs/           → Guided programs ("classes"): First 30 Days, substance tracks, family course
+/resources/audio/              → Guided audio
+/resources/reflections/        → Daily reflections
+/resources/worksheets/         → Interactive worksheets
+/resources/workbook/           → My Recovery Workbook PDF (Premium)
 /support/meetings/             → Meeting finder
 ```
+
+---
+
+## Navigation
+
+Every new member-facing feature needs a link in **all** of these surfaces. `apps/accounts/tests_nav.py` guards them (`LibraryToolsNavTest`, `SimplifiedNavTest`).
+
+| Surface | File | Contents |
+|---------|------|----------|
+| Top nav (desktop) | `templates/base.html` (`#navLinks`) | Logged in: Today, Meetings, Community, Library, Tools ▾, Court Compliance pill. Logged out: Meetings, Library, Tools ▾, Court Compliance |
+| Tools dropdown | `templates/partials/_resources_nav_dropdown.html` | Three columns: **Library** (Programs & Classes, Guided Audio, Daily Reflections, Worksheets, Family & Friends Course, All Resources) · **Premium Tools** (Anchor, My Recovery Workbook, My Saved Worksheets, Saved Reflections, 90-Day Insights → `progress#analytics`; "Unlock Premium" for free users; a preview + "See Premium" when logged out) · **Free Tools** (Craving SOS, Medallion Maker, Relapse Prevention Plan, Blog, Shop, Crisis Help) |
+| Account (avatar) dropdown | `templates/base.html` (`#userDropdown`) | My Recovery · Community · **Premium Tools** · Account |
+| Mobile slide-out | `templates/base.html` (`#mobileSlideMenu`) | Logged in: My Recovery · Community · Quick Actions · Library · Premium Tools · Free Tools · Account. Logged out: Explore · Library · Premium Tools · Free Tools |
+| Web bottom bar | `templates/base.html` (`#mobileBottomNav`) | Today, Meetings, Community, Me |
+| Library hub | `resources/templates/resources/_toolkit.html` | Toolkit card grid, Premium tools panel, a card per program (via `program_views.program_cards`) |
+
+- The Premium headings read "Your Premium Tools" when `is_premium_user` (from `apps/accounts/context_processors.py`), otherwise "Premium Tools".
+- Upgrade links point to `accounts:pricing`, which hides prices inside the iOS app (Guideline 3.1). Never put prices in nav links.
+- On desktop (≥1025px) the dropdown is a 3-column grid (`.nav-dropdown-menu--grouped` in `static/css/base-inline.css`). Below that it renders inline in the mobile `.nav-links` overlay.
+- Pages linked for logged-out users must use the public variants: `core:ai_recovery_coach`, `core:relapse_prevention_plan` and `core:sobriety_medallion_maker`, not the `accounts:` views.
 
 ---
 
