@@ -239,14 +239,32 @@ def keep_premium(request):
         return redirect('accounts:pricing')
 
 
+def winback_eligible(user):
+    """Only members who were actually sent the win-back email
+    (tasks.send_winback_offers sets winback_sent_at) and aren't on Premium now.
+    Without this, anyone logged in who found /accounts/winback/ got 50% off,
+    including brand-new members and people already paying."""
+    sub = getattr(user, 'subscription', None)
+    return bool(sub and sub.winback_sent_at and not sub.is_premium())
+
+
 @login_required
 def winback(request):
     """One-click win-back link from the 50%-off re-engagement email.
 
-    Same as keep_premium but applies the win-back coupon (50% off 3 months).
-    Defaults to yearly; ?period=monthly to override. Falls back to pricing on
-    any failure so the user is never dead-ended.
+    Same as keep_premium but applies the win-back coupon (50% off 3 months),
+    for members who were sent that offer (winback_eligible). Anyone else goes
+    to the pricing page with a note. Defaults to yearly; ?period=monthly to
+    override. Falls back to pricing on any failure so the user is never
+    dead-ended.
     """
+    if not winback_eligible(request.user):
+        sub = getattr(request.user, 'subscription', None)
+        if sub and sub.is_premium():
+            messages.info(request, "You're already on Premium. Thank you!")
+        else:
+            messages.info(request, "That offer is for members who were sent it by email. Here are our current plans.")
+        return redirect('accounts:pricing')
     period = 'monthly' if request.GET.get('period') == 'monthly' else 'yearly'
     plan = (SubscriptionPlan.objects.filter(tier='premium', billing_period=period, is_active=True).first()
             or SubscriptionPlan.objects.filter(tier='premium', is_active=True).order_by('-price').first())

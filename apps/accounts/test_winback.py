@@ -17,6 +17,11 @@ User = get_user_model()
 class WinbackViewTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user('w', 'w@example.com', 'pw')
+        # Was sent the win-back email after their trial lapsed.
+        sub = Subscription.objects.get(user=self.user)
+        sub.tier, sub.status = 'free', 'expired'
+        sub.winback_sent_at = timezone.now() - timedelta(days=1)
+        sub.save()
         self.client.force_login(self.user)
         SubscriptionPlan.objects.filter(tier='premium').delete()
         self.yearly = SubscriptionPlan.objects.create(
@@ -40,6 +45,30 @@ class WinbackViewTests(TestCase):
         resp = self.client.get(reverse('accounts:winback'))
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp['Location'], reverse('accounts:pricing'))
+
+
+    @patch('apps.accounts.payment_views._build_checkout_session')
+    def test_member_never_sent_the_offer_gets_pricing(self, mock_build):
+        stranger = User.objects.create_user('w2', 'w2@example.com', 'pw')
+        self.client.force_login(stranger)
+        resp = self.client.get(reverse('accounts:winback'), follow=True)
+        mock_build.assert_not_called()
+        self.assertRedirects(resp, reverse('accounts:pricing'))
+        self.assertContains(resp, 'members who were sent it by email')
+
+    @patch('apps.accounts.payment_views._build_checkout_session')
+    def test_member_already_on_premium_gets_pricing(self, mock_build):
+        sub = Subscription.objects.get(user=self.user)
+        sub.tier, sub.status, sub.stripe_subscription_id = 'premium', 'active', 'sub_paid'
+        sub.save()
+        resp = self.client.get(reverse('accounts:winback'))
+        mock_build.assert_not_called()
+        self.assertEqual(resp['Location'], reverse('accounts:pricing'))
+
+    def test_login_required(self):
+        self.client.logout()
+        resp = self.client.get(reverse('accounts:winback'))
+        self.assertIn(reverse('accounts:login'), resp['Location'])
 
 
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
