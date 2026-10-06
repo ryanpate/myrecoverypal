@@ -396,6 +396,7 @@ Every new member-facing feature needs a link in **all** of these surfaces. `apps
 | Web bottom bar | `templates/base.html` (`#mobileBottomNav`) | Today, Meetings, Community, Me |
 | Library hub | `resources/templates/resources/_toolkit.html` | Toolkit card grid, Premium tools panel, a card per program (via `program_views.program_cards`) |
 
+- "Community" always means the social feed (`accounts:social_feed`): top nav, bottom bar, and "Community Feed" in the mobile Quick Actions. The member directory (`accounts:community`, with Members/Groups tabs) is labelled **Members & Groups** in the account dropdown and mobile menu. Never label both "Community" (`CommunityLabelsTest`).
 - The Premium headings read "Your Premium Tools" when `is_premium_user` (from `apps/accounts/context_processors.py`), otherwise "Premium Tools".
 - Upgrade links point to `accounts:pricing`, which hides prices inside the iOS app (Guideline 3.1). Never put prices in nav links.
 - On desktop (≥1025px) the dropdown is a 3-column grid (`.nav-dropdown-menu--grouped` in `static/css/base-inline.css`). Below that it renders inline in the mobile `.nav-links` overlay.

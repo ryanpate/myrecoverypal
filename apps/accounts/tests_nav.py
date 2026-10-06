@@ -320,3 +320,30 @@ class LibraryToolsNavTest(TestCase):
         self.assertContains(resp, 'id="premium-tools"')
         for program in PROGRAMS:
             self.assertContains(resp, reverse('resources:program_detail', args=[program.slug]))
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CommunityLabelsTest(TestCase):
+    """"Community" always means the social feed. The member directory
+    (accounts:community) is labelled "Members & Groups" so the two never
+    share a name."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='labels', email='labels@example.com', password='pw')
+        self.client.login(username='labels', password='pw')
+        self.content = self.client.get(reverse('accounts:progress')).content.decode()
+
+    def test_directory_links_are_labelled_members_and_groups(self):
+        directory = f'href="{reverse("accounts:community")}"'
+        for region in (_region(self.content, 'id="userDropdown"', 'notification-dropdown'),
+                       _region(self.content, 'id="mobileSlideMenu"', 'mobile-menu-footer')):
+            link = region[region.index(directory):]
+            link = link[:link.index('</a>')]
+            self.assertIn('Members &amp; Groups', link)
+            self.assertNotIn('> Community', link)
+
+    def test_top_nav_community_is_the_feed(self):
+        top = _region(self.content, 'id="navLinks"', '</ul>\n            </div>')
+        self.assertIn(f'href="{reverse("accounts:social_feed")}"', top)
+        self.assertNotIn(f'href="{reverse("accounts:community")}"', top)
