@@ -483,7 +483,7 @@ class PushNotificationService:
             notification_type=notification_type,
             content_object=content_object,
             message=message or '',
-            url=url or '',
+            link=url or '',
         )
 
     @classmethod
@@ -784,11 +784,12 @@ class PushNotificationService:
             recipient=user,
             sender=None,
             notification_type='meeting_reminder',
+            title='Meeting Reminder',
             message=f"{meeting_name} starts in 30 minutes",
-            url=f"/support/meetings/{meeting.slug}/"
+            link=f"/support/meetings/{meeting.slug}/"
         )
 
-        # Send push with custom template
+        # Send push with custom template (_send_push can't fill {meeting_name})
         if cls._should_send_push(user):
             template = cls.NOTIFICATION_TEMPLATES.get('meeting_reminder', {})
             title = template.get('title', 'Meeting Reminder')
@@ -796,6 +797,10 @@ class PushNotificationService:
 
             logger.info(f"[PUSH] To: {user.email} | Type: meeting_reminder | "
                        f"Title: {title} | Body: {body}")
+            send_push_to_user(user, title, body, {
+                'notification_type': 'meeting_reminder',
+                'link': notification.link,
+            })
 
         return notification
 
