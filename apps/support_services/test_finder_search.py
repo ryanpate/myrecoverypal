@@ -93,3 +93,23 @@ class TemplateCommentTests(TestCase):
         html = self.client.get('/support/meetings/tx/league-city/').content.decode()
         self.assertNotIn('{#', html)
         self.assertNotIn('#}', html)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class FinderDayFilterTests(TestCase):
+    """A non-numeric ?day= (scanner SQLi probes) raised ValueError -> 500."""
+
+    def setUp(self):
+        make_meeting()
+        self.url = reverse('support_services:meeting_list')
+
+    def test_valid_day_filters(self):
+        self.assertEqual(len(self.client.get(self.url, {'day': '1'}).context['meetings']), 1)
+        self.assertEqual(len(self.client.get(self.url, {'day': '2'}).context['meetings']), 0)
+
+    def test_garbage_day_is_ignored(self):
+        for bad in ['1 AND EXTRACTVALUE(1,CONCAT(0x7e,1))', 'abc', '9', '-1']:
+            response = self.client.get(self.url, {'day': bad})
+            self.assertEqual(response.status_code, 200, bad)
+            self.assertEqual(len(response.context['meetings']), 1, bad)
+            self.assertEqual(response.context['selected_day'], '', bad)

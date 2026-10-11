@@ -69,6 +69,11 @@ def meeting_list(request):
     attendance = request.GET.get('attendance', '')
     meeting_type = request.GET.get('type', '')
 
+    # Only 0-6 is a real day; anything else (scanner probes) would raise
+    # ValueError in the integer lookup, so drop it.
+    if day not in {'0', '1', '2', '3', '4', '5', '6'}:
+        day = ''
+
     if search_query:
         # Location fields matter as much as the name: people search a ZIP
         # or a city, not a group name. Without these a ZIP returned nothing
