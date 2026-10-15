@@ -6,8 +6,11 @@
 FROM python:3.11-slim
 
 # Set environment variables
+# MALLOC_ARENA_MAX=2: glibc otherwise gives each thread its own malloc arena,
+# so threaded gunicorn's RSS creeps up from fragmentation (memory is billed).
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
+    MALLOC_ARENA_MAX=2 \
     PORT=8000
 
 # Set work directory
