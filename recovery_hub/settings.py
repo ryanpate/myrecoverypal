@@ -734,13 +734,31 @@ REDIS_URL = os.environ.get('REDIS_URL')
 if REDIS_URL:
     CELERY_BROKER_URL = REDIS_URL
     CELERY_RESULT_BACKEND = REDIS_URL
+
+    from redis.backoff import ExponentialBackoff
+    from redis.exceptions import ConnectionError as RedisConnectionError
+    from redis.exceptions import TimeoutError as RedisTimeoutError
+    from redis.retry import Retry
+
+    # Pooled connections can go stale while idle (Railway's private network
+    # drops them), surfacing as "Error while reading from socket: (11,
+    # 'Resource temporarily unavailable')". Ping connections idle for 30s
+    # before reuse, and reconnect + retry a command that hits a dead socket
+    # instead of failing it on the first try.
+    REDIS_POOL_KWARGS = {
+        'health_check_interval': 30,
+        'socket_keepalive': True,
+        'retry': Retry(ExponentialBackoff(cap=0.5, base=0.05), 3),
+        'retry_on_error': [RedisConnectionError, RedisTimeoutError],
+    }
+
     CACHES = {
         'default': {
             'BACKEND': 'django_redis.cache.RedisCache',
             'LOCATION': REDIS_URL,
             'OPTIONS': {
                 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-                'CONNECTION_POOL_KWARGS': {'max_connections': 50},
+                'CONNECTION_POOL_KWARGS': {'max_connections': 50, **REDIS_POOL_KWARGS},
                 # Degrade to a cache miss (return None) on transient Redis
                 # failures like "Connection reset by peer" instead of 500ing.
                 'IGNORE_EXCEPTIONS': True,
@@ -755,6 +773,7 @@ if REDIS_URL:
         'KEY_PREFIX': 'pwa',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'CONNECTION_POOL_KWARGS': REDIS_POOL_KWARGS,
             'IGNORE_EXCEPTIONS': True,
         }
     }
@@ -786,6 +805,7 @@ if REDIS_URL:
         'KEY_PREFIX': 'ratelimit',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'CONNECTION_POOL_KWARGS': REDIS_POOL_KWARGS,
             'IGNORE_EXCEPTIONS': True,
         }
     }
