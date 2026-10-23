@@ -65,6 +65,7 @@
 
     <!-- RevenueCat API Key for iOS IAP (set via settings) -->
     {% if REVENUECAT_IOS_API_KEY %}<meta name="revenuecat-api-key" content="{{ REVENUECAT_IOS_API_KEY }}">{% endif %}
+    {% if user.is_authenticated %}<meta name="mrp-premium" content="{% if is_premium_user %}1{% else %}0{% endif %}">{% endif %}
 
     <!-- Sobriety date for iOS widget (App Group UserDefaults sync) -->
     {% if user.is_authenticated and user.sobriety_date %}

@@ -233,6 +233,29 @@ class IosSyncVerificationTests(TestCase):
 
 
 @override_settings(**_TEST_SETTINGS)
+class IosPremiumMetaTests(TestCase):
+    """capacitor-iap.js re-syncs a RevenueCat purchase when the page says the
+    server still has the member on Free; base.html must render that flag."""
+
+    def setUp(self):
+        self.user = _user('metauser')
+        self.client.force_login(self.user)
+
+    def _meta(self):
+        html = self.client.get(reverse('accounts:pricing')).content.decode()
+        return 'name="mrp-premium" content="1"' in html, 'name="mrp-premium" content="0"' in html
+
+    def test_free_member_renders_zero(self):
+        self.assertEqual(self._meta(), (False, True))
+
+    def test_premium_member_renders_one(self):
+        sub = self.user.subscription
+        sub.tier, sub.status = 'premium', 'active'
+        sub.save()
+        self.assertEqual(self._meta(), (True, False))
+
+
+@override_settings(**_TEST_SETTINGS)
 class LinkPreviewImageTests(TestCase):
     """og:image comes from an attacker-controlled page and is placed in an
     <img src>; only plain http(s) URLs may be returned."""

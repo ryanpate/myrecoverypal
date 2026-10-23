@@ -78,7 +78,10 @@
                 Purchases.configure({ apiKey: apiKey });
                 MRPIAP.initialized = true;
                 console.log('[IAP] RevenueCat initialized');
-                return MRPIAP.checkEntitlements();
+                return MRPIAP.checkEntitlements().then(function(info) {
+                    MRPIAP._healIfOutOfSync();
+                    return info;
+                });
             } catch (err) {
                 console.error('[IAP] Init error:', err);
                 showIAPToast('Could not connect to App Store. Please try again.', 'error');
@@ -105,9 +108,11 @@
             }).then(function(result) {
                 MRPIAP.customerInfo = result.customerInfo;
                 MRPIAP.isPremium = MRPIAP._checkPremium(result.customerInfo);
-                // Sync with backend
-                MRPIAP.syncWithServer(result.customerInfo);
-                return result;
+                // Sync with backend before resolving — callers reload the
+                // page next, and a reload cancels an in-flight fetch.
+                return MRPIAP.syncWithServer(result.customerInfo).then(function() {
+                    return result;
+                });
             });
         },
 
@@ -118,8 +123,9 @@
             return Purchases.restorePurchases().then(function(result) {
                 MRPIAP.customerInfo = result.customerInfo;
                 MRPIAP.isPremium = MRPIAP._checkPremium(result.customerInfo);
-                MRPIAP.syncWithServer(result.customerInfo);
-                return result;
+                return MRPIAP.syncWithServer(result.customerInfo).then(function() {
+                    return result;
+                });
             });
         },
 
@@ -145,16 +151,33 @@
         },
 
         /**
-         * Sync subscription state with Django backend
+         * Premium in RevenueCat but not on the server — a purchase whose sync
+         * never landed. Sync once per session and reload if it took.
+         */
+        _healIfOutOfSync: function() {
+            var meta = document.querySelector('meta[name="mrp-premium"]');
+            if (!MRPIAP.isPremium || !meta || meta.getAttribute('content') !== '0') return;
+            try {
+                if (window.sessionStorage.getItem('mrpIapHealed')) return;
+                window.sessionStorage.setItem('mrpIapHealed', '1');
+            } catch (e) {}
+            MRPIAP.syncWithServer(MRPIAP.customerInfo).then(function(data) {
+                if (data && data.is_premium) window.location.reload();
+            });
+        },
+
+        /**
+         * Sync subscription state with Django backend. Resolves with the
+         * server's JSON (or null) once the request has finished.
          */
         syncWithServer: function(customerInfo) {
             var csrfToken = getCSRFToken();
-            if (!csrfToken) return;
+            if (!csrfToken) return Promise.resolve(null);
 
             var isPremium = MRPIAP._checkPremium(customerInfo);
             var premiumInfo = isPremium ? customerInfo.entitlements.active.premium : null;
 
-            fetch('/accounts/api/ios-subscription/sync/', {
+            return fetch('/accounts/api/ios-subscription/sync/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -173,9 +196,13 @@
             }).then(function(response) {
                 if (response.ok) {
                     console.log('[IAP] Subscription synced with server');
+                    return response.json();
                 }
+                console.error('[IAP] Sync failed with status', response.status);
+                return null;
             }).catch(function(err) {
                 console.error('[IAP] Sync error:', err);
+                return null;
             });
         },
 
