@@ -224,7 +224,7 @@
 
     <!-- Navigation -->
     <nav id="siteNav">
-        <div class="nav-container">
+        <div class="nav-container{% if not user.is_authenticated %} nav-container--guest{% endif %}">
             <div class="nav-left">
                 <a href="{% url 'core:index' %}" class="logo-container">
                     <img src="{% static 'images/logo.svg' %}" alt="MyRecoveryPal Logo" class="logo-img">
