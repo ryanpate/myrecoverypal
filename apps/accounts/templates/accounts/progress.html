@@ -1394,6 +1394,14 @@
         color: #1e4d8b;
     }
 
+    .pledge-shield { margin: -0.4rem 0 0.85rem; font-size: 0.85rem; color: #1e4d8b; }
+    .streak-saved-card { display: flex; flex-direction: column; gap: 0.2rem; margin: 0 0 1rem;
+        padding: 0.75rem 0.9rem; border-radius: 12px; background: #fff7ed; border: 1px solid #fed7aa;
+        font-size: 0.9rem; color: #7c2d12; text-align: left; }
+    .streak-saved-link { font-weight: 700; color: #c2410c; margin-top: 0.2rem; }
+    [data-theme="dark"] .pledge-shield { color: #93c5fd; }
+    [data-theme="dark"] .streak-saved-card { background: #431407; border-color: #9a3412; color: #fed7aa; }
+    [data-theme="dark"] .streak-saved-link { color: #fdba74; }
     .pledge-streak {
         display: inline-block;
         margin: 0 0 0.85rem;
@@ -1656,6 +1664,16 @@
         <p class="pledge-streak" {% if pledge_streak == 0 %}hidden{% endif %}>
             🔥 <span id="pledgeStreakCount">{{ pledge_streak }}</span>-day pledge streak
         </p>
+        {% if streak_protected %}
+        <p class="pledge-shield">🛡️ Premium streak protection covered a missed day, so your streak is still going.</p>
+        {% endif %}
+        {% if streak_saved_by_premium %}
+        <div class="streak-saved-card">
+            <strong>Your {{ streak_saved_by_premium }}-day streak ended on one missed day.</strong>
+            <span>Premium protects one missed day a week, so it would still be going.</span>
+            <a href="{% url 'accounts:pricing' %}?from=streak" class="streak-saved-link">Protect my next streak</a>
+        </div>
+        {% endif %}
         <button type="button" class="btn btn-primary btn-lg" id="pledgeTodayBtn"
                 {% if pledged_today %}hidden{% endif %}>I pledge to stay sober today</button>
         <div class="pledge-done" id="pledgeDone" {% if not pledged_today %}hidden{% endif %}>
@@ -1935,7 +1953,7 @@
                         <li class="premium-gate-feature" style="padding: 0.4rem 0; font-size: 0.9rem;"><i class="fas fa-check-circle" style="color: #52b788; margin-right: 0.5rem;" aria-hidden="true"></i> Mood, craving & energy charts</li>
                         <li class="premium-gate-feature" style="padding: 0.4rem 0; font-size: 0.9rem;"><i class="fas fa-check-circle" style="color: #52b788; margin-right: 0.5rem;" aria-hidden="true"></i> Weekly comparison & insights</li>
                         <li class="premium-gate-feature" style="padding: 0.4rem 0; font-size: 0.9rem;"><i class="fas fa-check-circle" style="color: #52b788; margin-right: 0.5rem;" aria-hidden="true"></i> 90-day check-in heatmap</li>
-                        <li class="premium-gate-feature" style="padding: 0.4rem 0; font-size: 0.9rem;"><i class="fas fa-check-circle" style="color: #52b788; margin-right: 0.5rem;" aria-hidden="true"></i> AI Recovery Coach (20 msgs/day)</li>
+                        <li class="premium-gate-feature" style="padding: 0.4rem 0; font-size: 0.9rem;"><i class="fas fa-check-circle" style="color: #52b788; margin-right: 0.5rem;" aria-hidden="true"></i> Streak protection: one missed day a week won't break your streak</li>
                     </ul>
                     <a href="{% url 'accounts:pricing' %}" style="display: block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 0.85rem 1.5rem; border-radius: 12px; font-weight: 600; font-size: 1rem; text-decoration: none; margin-bottom: 0.75rem; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(102,126,234,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
                         Upgrade to Premium

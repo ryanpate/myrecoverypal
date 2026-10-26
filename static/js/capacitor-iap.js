@@ -312,7 +312,7 @@
             var html = '<div class="iap-modal">' +
                 '<button class="iap-modal-close" aria-label="Close">&times;</button>' +
                 '<h2>MyRecoveryPal Premium</h2>' +
-                '<p class="iap-subtitle">AI Coach, unlimited groups, advanced analytics & more</p>' +
+                '<p class="iap-subtitle">Streak protection, mood insights, your AI coach &amp; more</p>' +
                 '<div class="iap-packages">';
 
             for (var i = 0; i < packages.length; i++) {

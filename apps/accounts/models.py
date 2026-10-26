@@ -56,6 +56,39 @@ INTEREST_CATEGORIES = {
 }
 
 
+def streak_from_dates(dates, today, protect=False):
+    """Length of the run of days ending today (or yesterday, since today isn't
+    over yet) in which the member pledged/checked in.
+
+    With protect=True (Premium), a single missed day is bridged, at most once
+    in any 7-day window; two missed days in a row always end the streak. The
+    bridged day counts toward the streak, so it reads as unbroken calendar days.
+    In prod (2026-10) about half of all broken streaks were one missed day.
+    """
+    from datetime import timedelta
+    one = timedelta(days=1)
+    if today in dates:
+        current, streak, last_bridge = today, 0, None
+    elif today - one in dates:
+        current, streak, last_bridge = today - one, 0, None
+    elif protect and today - 2 * one in dates:
+        # Yesterday was missed; bridge it while today can still be logged.
+        current, streak, last_bridge = today - 2 * one, 1, today - one
+    else:
+        return 0
+    while True:
+        if current in dates:
+            streak += 1
+            current -= one
+        elif (protect and current - one in dates
+              and (last_bridge is None or (last_bridge - current).days >= 7)):
+            streak += 1
+            last_bridge = current
+            current -= one
+        else:
+            return streak
+
+
 class User(AbstractUser):
     # Additional fields for recovery
     email = models.EmailField(unique=True)
@@ -200,60 +233,44 @@ class User(AbstractUser):
         else:
             return f"{days} day{'s' if days != 1 else ''}"
 
-    def get_checkin_streak(self):
-        """Calculate consecutive days of check-ins ending today or yesterday"""
-        from datetime import timedelta
-        today = timezone.localdate()
+    def has_streak_protection(self):
+        """Premium perk: one missed day per 7 doesn't break a streak."""
+        sub = getattr(self, 'subscription', None)
+        return bool(sub and sub.is_premium())
 
-        # Get all check-in dates for this user, ordered by date descending
-        checkin_dates = set(
-            self.daily_checkins.values_list('date', flat=True)
-        )
+    def get_checkin_streak(self, protect=None):
+        """Consecutive check-in days ending today or yesterday (see streak_from_dates)."""
+        if protect is None:
+            protect = self.has_streak_protection()
+        dates = set(self.daily_checkins.values_list('date', flat=True))
+        return streak_from_dates(dates, timezone.localdate(), protect)
 
-        if not checkin_dates:
+    def get_pledge_streak(self, protect=None):
+        """Consecutive DailyPledge days ending today or yesterday (see streak_from_dates)."""
+        if protect is None:
+            protect = self.has_streak_protection()
+        dates = set(self.daily_pledges.values_list('date', flat=True))
+        return streak_from_dates(dates, timezone.localdate(), protect)
+
+    def streak_premium_would_save(self):
+        """For a free member whose streak just broke on a single missed day:
+        the streak Premium's protection would have kept, else 0.
+
+        Drives the "Premium would have saved your streak" moment on the
+        progress home. Only for streaks worth mourning (3+ days).
+        """
+        if self.has_streak_protection():
             return 0
-
-        # Start counting from today or yesterday
-        streak = 0
-        current_date = today
-
-        # Check if they checked in today
-        if today in checkin_dates:
-            streak = 1
-            current_date = today - timedelta(days=1)
-        elif (today - timedelta(days=1)) in checkin_dates:
-            # Started yesterday, still counts as active streak
-            streak = 1
-            current_date = today - timedelta(days=2)
-        else:
-            return 0
-
-        # Count consecutive days backwards
-        while current_date in checkin_dates:
-            streak += 1
-            current_date -= timedelta(days=1)
-
-        return streak
-
-    def get_pledge_streak(self):
-        """Consecutive days with a DailyPledge ending today or yesterday."""
-        from datetime import timedelta
-        today = timezone.localdate()
-        pledge_dates = set(
-            self.daily_pledges.values_list('date', flat=True)
-        )
-        if not pledge_dates:
-            return 0
-        if today in pledge_dates:
-            streak, current_date = 1, today - timedelta(days=1)
-        elif (today - timedelta(days=1)) in pledge_dates:
-            streak, current_date = 1, today - timedelta(days=2)
-        else:
-            return 0
-        while current_date in pledge_dates:
-            streak += 1
-            current_date -= timedelta(days=1)
-        return streak
+        best = 0
+        for related in ('daily_pledges', 'daily_checkins'):
+            dates = set(getattr(self, related).values_list('date', flat=True))
+            today = timezone.localdate()
+            saved = streak_from_dates(dates, today, protect=True)
+            # Unprotected 0 or 1: the break was yesterday (and maybe they've
+            # already restarted today), so the loss is fresh, not weeks old.
+            if saved >= 3 and streak_from_dates(dates, today, protect=False) <= 1:
+                best = max(best, saved)
+        return best
 
     def get_milestone_to_celebrate(self):
         """Check if user just hit a sobriety milestone today"""

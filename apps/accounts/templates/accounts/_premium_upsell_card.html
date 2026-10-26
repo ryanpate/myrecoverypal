@@ -12,11 +12,11 @@ Dismiss hides it for 7 days via localStorage so it never nags.
         <div>
             {% if founding_offer.eligible %}
             <div class="premium-upsell-title stripe-only">Founding member offer: {{ founding_offer.percent }}% off your first year</div>
-            <div class="premium-upsell-text stripe-only">Annual Premium for ${{ founding_offer.price }} instead of ${{ founding_offer.full_price }}: every program, the full audio &amp; reflection library, your Workbook and Anchor. Until {{ founding_offer.ends|date:"F j" }}.</div>
+            <div class="premium-upsell-text stripe-only">Annual Premium for ${{ founding_offer.price }} instead of ${{ founding_offer.full_price }}: streak protection, your mood &amp; craving insights, Anchor and every program. Until {{ founding_offer.ends|date:"F j" }}.</div>
             <div class="iap-only">
             {% endif %}
-            <div class="premium-upsell-title">Go deeper in your recovery</div>
-            <div class="premium-upsell-text">Every guided program, the full audio &amp; reflection library, your Recovery Workbook, and 20 Anchor messages a day.{% if user_subscription.card_trial_eligible %} Try it free for 7 days.{% endif %}</div>
+            <div class="premium-upsell-title">Never lose your streak to one bad day</div>
+            <div class="premium-upsell-text">Premium protects one missed day a week, shows your mood &amp; craving patterns with a weekly recap, and adds Anchor (20 messages a day) and every program.{% if user_subscription.card_trial_eligible %} Try it free for 7 days.{% endif %}</div>
             {% if founding_offer.eligible %}</div>{% endif %}
         </div>
     </div>

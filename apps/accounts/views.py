@@ -1446,6 +1446,14 @@ def progress_view(request):
     context['is_premium'] = is_premium
     context['show_premium_cta'] = not is_premium and not (sub and sub.is_supporter())
     context['evening_session'] = _evening_session(request.user)
+    # Streak protection: make the perk visible when it worked, and show free
+    # members the streak it would have saved at the moment they lose it.
+    if is_premium:
+        context['streak_protected'] = (
+            context['pledge_streak'] != request.user.get_pledge_streak(protect=False)
+            or context['current_streak'] != request.user.get_checkin_streak(protect=False))
+    elif context['show_premium_cta']:
+        context['streak_saved_by_premium'] = request.user.streak_premium_would_save()
     if context['show_premium_cta']:
         from apps.accounts.founding_offer import context_for
         from apps.accounts.payment_models import SubscriptionPlan

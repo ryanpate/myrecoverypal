@@ -66,7 +66,7 @@ class PricingCopyTests(TestCase):
         set_plan('monthly', '9.99')
         resp = self.client.get(reverse('accounts:pricing'))
         for text in ('Every guided program in full', 'The full guided audio library',
-                     'All 30 daily reflections', 'free guided audio', 'first week of every guided program'):
+                     'all 30 daily reflections', 'free guided audio', 'first week of every guided program'):
             self.assertContains(resp, text)
 
 
@@ -115,7 +115,10 @@ class UpsellCardTests(TestCase):
         make_free(user)
         self.client.force_login(user)
         resp = self.client.get(reverse('accounts:progress'))
-        self.assertContains(resp, 'Every guided program, the full audio')
+        # 2026-10-26 re-pitch: the card leads with streak protection, then
+        # insights, Anchor and the programs.
+        self.assertContains(resp, 'Premium protects one missed day a week')
+        self.assertContains(resp, 'every program')
         self.assertNotContains(resp, 'unlimited Anchor')
 
 
