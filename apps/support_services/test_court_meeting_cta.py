@@ -49,6 +49,21 @@ class CourtMeetingCtaTests(TestCase):
         self.assertContains(resp, 'Court-ordered to attend meetings?')
         self.assertContains(resp, reverse('core:court_ordered_meeting_tracker'))
 
+    def test_anonymous_visitor_goes_straight_to_signup_with_meeting_prefilled(self):
+        nxt = f"{reverse('accounts:court_attendance_create')}?meeting=grateful-hearts"
+        resp = self._get()
+        self.assertContains(resp, 'Log this meeting free')
+        self.assertContains(
+            resp, f"{reverse('accounts:register')}?next=%2Faccounts%2Fcourt%2F")
+        # And signup actually lands on the prefilled log form.
+        from urllib.parse import quote
+        from apps.accounts.invite_models import SystemSettings
+        settings = SystemSettings.get_settings()  # defaults to invite-only; prod is public
+        settings.invite_only_mode = False
+        settings.save()
+        self.client.get(f"{reverse('accounts:register')}?next={quote(nxt, safe='')}")
+        self.assertEqual(self.client.session['register_next'], nxt)
+
     def test_logged_in_non_court_user_sees_the_pitch(self):
         self.client.force_login(self.user)
         self.assertContains(self._get(), 'Court-ordered to attend meetings?')

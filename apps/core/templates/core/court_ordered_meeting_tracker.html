@@ -2,11 +2,11 @@
 {% load static %}
 
 {% block title %}Court-Ordered AA/NA Meeting Tracker &mdash; Court-Acceptable PDF Reports{% endblock %}
-{% block meta_description %}Track court-ordered AA, NA, or SMART Recovery meeting attendance and generate tamper-evident PDF reports you can email to your probation officer. ${% firstof court_monthly_plan.price|floatformat:2 '29.99' %}/mo.{% endblock %}
+{% block meta_description %}Log court-ordered AA, NA or SMART meetings free, get each one confirmed by the meeting chair's QR scan, and send your probation officer a tamper-evident PDF report for ${{ single_report_price|floatformat:2 }}.{% endblock %}
 {% block og_title %}Court-Ordered AA/NA Meeting Tracker &mdash; Court-Acceptable PDF Reports{% endblock %}
-{% block og_description %}Track court-ordered AA, NA, or SMART Recovery meeting attendance and generate tamper-evident PDF reports you can email to your probation officer. ${% firstof court_monthly_plan.price|floatformat:2 '29.99' %}/mo.{% endblock %}
+{% block og_description %}Log court-ordered AA, NA or SMART meetings free, get each one confirmed by the meeting chair's QR scan, and send your probation officer a tamper-evident PDF report for ${{ single_report_price|floatformat:2 }}.{% endblock %}
 {% block twitter_title %}Court-Ordered AA/NA Meeting Tracker &mdash; Court-Acceptable PDF Reports{% endblock %}
-{% block twitter_description %}Track court-ordered AA, NA, or SMART Recovery meeting attendance and generate tamper-evident PDF reports you can email to your probation officer. ${% firstof court_monthly_plan.price|floatformat:2 '29.99' %}/mo.{% endblock %}
+{% block twitter_description %}Log court-ordered AA, NA or SMART meetings free, get each one confirmed by the meeting chair's QR scan, and send your probation officer a tamper-evident PDF report for ${{ single_report_price|floatformat:2 }}.{% endblock %}
 
 {% block canonical_url %}https://www.myrecoverypal.com/court-ordered-meeting-tracker/{% endblock %}
 
@@ -18,12 +18,17 @@
   "name": "MyRecoveryPal Court Compliance",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web Browser, iOS, Android",
-  "offers": {
-    "@type": "Offer",
-    "price": "{% firstof court_monthly_plan.price|floatformat:2 '29.99' %}",
-    "priceCurrency": "USD",
-    "priceSpecification": {"@type": "UnitPriceSpecification", "billingDuration": "P1M"}
-  },
+  "offers": [
+    {"@type": "Offer", "name": "Meeting logging", "price": "0", "priceCurrency": "USD"},
+    {"@type": "Offer", "name": "Verified attendance report", "price": "{{ single_report_price|floatformat:2 }}", "priceCurrency": "USD"},
+    {
+      "@type": "Offer",
+      "name": "Court Compliance",
+      "price": "{% firstof court_monthly_plan.price|floatformat:2 '29.99' %}",
+      "priceCurrency": "USD",
+      "priceSpecification": {"@type": "UnitPriceSpecification", "billingDuration": "P1M"}
+    }
+  ],
   "description": "Track court-ordered recovery meeting attendance and generate tamper-evident PDF reports."
 }
 </script>
@@ -61,7 +66,7 @@
       "name": "What if my court requires meeting chair signatures?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Phase 1 supports typed-name chair signatures with a timestamp. If your court requires a physical signature from the meeting secretary, continue using a paper attendance card alongside this, and use MyRecoveryPal for the cumulative report and verification."
+        "text": "At the meeting, you show a one-time QR code and the chair or secretary confirms it on their own phone. The report marks that meeting Chair-confirmed with their name and the time. If your court specifically requires an ink signature, keep a paper card alongside this and use MyRecoveryPal for the cumulative, verifiable report."
       }
     },
     {
@@ -88,16 +93,15 @@
 {% block content %}
 <section style="background:linear-gradient(135deg,#0f2d56,#1e4d8b); color:white; padding:5rem 1rem 4rem; text-align:center;">
     <div style="max-width:900px; margin:auto;">
-        <h1 style="font-size:2.6rem; font-weight:800; margin:0 0 1rem;">Court-Ordered Meeting Tracker</h1>
+        <h1 style="font-size:2.6rem; font-weight:800; margin:0 0 1rem; color:#fff;">Court-Ordered Meeting Tracker</h1>
         <p style="font-size:1.25rem; opacity:.93; line-height:1.5; max-width:700px; margin:0 auto 2rem;">
             Log AA, NA, SMART Recovery, and secular recovery meeting attendance. Generate court-acceptable PDF reports with tamper-evident fingerprints. Email them straight to your probation officer.
         </p>
-        <a href="{% url 'accounts:pricing' %}" style="display:inline-block; padding:1rem 2.5rem; background:#52b788; color:white; text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem;">Start for ${% firstof court_monthly_plan.price|floatformat:2 '29.99' %}/mo &rarr;</a>
+        <a href="{% if user.is_authenticated %}{% url 'accounts:court_attendance_create' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:court_attendance_create' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:#52b788; color:white; text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem;">Start logging meetings free &rarr;</a>
         <p style="margin-top:1rem; font-size:0.95rem;">
-            Or <a href="{% if user.is_authenticated %}{% url 'accounts:court_attendance_create' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:court_attendance_create' %}{% endif %}">start logging meetings free</a>
-            and pay $9.99 only when you need a report.
+            Pay ${{ single_report_price|floatformat:2 }} only when you need a report for your PO. No subscription required.
         </p>
-        <p style="font-size:0.9rem; opacity:.8; margin-top:1rem;">No long-term contract &middot; Cancel anytime &middot; Works on web, iPhone, and Android</p>
+        <p style="font-size:0.9rem; opacity:.8; margin-top:1rem;">No card to start &middot; Works on web, iPhone, and Android</p>
     </div>
 </section>
 
@@ -134,11 +138,35 @@
     <div style="max-width:800px; margin:auto;">
         <h2 style="text-align:center; color:#1e4d8b;">How it works</h2>
         <ol style="font-size:1.05rem; line-height:1.7;">
-            <li><strong>Set up your court profile.</strong> Enter your case number, court, and probation officer's email &mdash; once.</li>
-            <li><strong>Log each meeting.</strong> After every AA, NA, SMART, or other recovery meeting, tap "Log Meeting" and enter the name, date, time, and address. Takes ~20 seconds.</li>
-            <li><strong>Generate a report.</strong> Pick a period (last month, since sentencing, custom range). The PDF is built in seconds.</li>
-            <li><strong>Email to your PO.</strong> One tap. Includes the verification URL so your PO can confirm the document is authentic.</li>
+            <li><strong>Log each meeting, free.</strong> After every AA, NA, SMART, or other recovery meeting, tap "Log Meeting" and enter the name, date, time, and address. Takes ~20 seconds.</li>
+            <li><strong>Get it chair-confirmed.</strong> Show a one-time QR code at the meeting. The chair or secretary scans it on their own phone, and the report marks that meeting "Chair-confirmed" with their name and the time.</li>
+            <li><strong>Generate a report when your PO asks.</strong> Pick a period (last month, since sentencing, custom range). Enter your case number and court once. The PDF is built in seconds.</li>
+            <li><strong>Email it to your PO.</strong> One tap. Includes the verification link so your PO can confirm the document is authentic.</li>
         </ol>
+    </div>
+</section>
+
+<section style="padding:4rem 1rem; background:#f7f9fc;">
+    <div style="max-width:960px; margin:auto;">
+        <h2 style="text-align:center; color:#1e4d8b; margin-bottom:2rem;">Pay only for what your court needs</h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.25rem;">
+            <div style="background:white; border:1px solid #e3eaf3; border-radius:14px; padding:1.5rem;">
+                <h3 style="margin:0; color:#1e4d8b;">Log meetings</h3>
+                <p style="font-size:2rem; font-weight:800; margin:.5rem 0; color:#1a2a44;">Free</p>
+                <p style="margin:0; color:#555;">Unlimited meeting logs and chair QR confirmations. Your weekly pace at a glance.</p>
+            </div>
+            <div style="background:white; border:2px solid #52b788; border-radius:14px; padding:1.5rem;">
+                <h3 style="margin:0; color:#1e4d8b;">One verified report</h3>
+                <p style="font-size:2rem; font-weight:800; margin:.5rem 0; color:#1a2a44;">${{ single_report_price|floatformat:2 }}</p>
+                <p style="margin:0; color:#555;">A tamper-evident PDF for any date range, emailed to your PO in one tap. One-time payment.</p>
+            </div>
+            <div style="background:white; border:1px solid #e3eaf3; border-radius:14px; padding:1.5rem;">
+                <h3 style="margin:0; color:#1e4d8b;">Court Compliance</h3>
+                <p style="font-size:2rem; font-weight:800; margin:.5rem 0; color:#1a2a44;">${% firstof court_monthly_plan.price|floatformat:2 '29.99' %}<span style="font-size:1rem; font-weight:600;">/mo</span></p>
+                <p style="margin:0 0 .75rem; color:#555;">Unlimited reports, automatic monthly report to your PO, behind-pace reminders, plus everything in Premium.</p>
+                <a href="{% url 'accounts:pricing' %}" style="color:#1e4d8b; font-weight:700;">See the plan &rarr;</a>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -193,7 +221,7 @@
 
         <details style="background:white; padding:1rem 1.25rem; border-radius:10px; margin-bottom:.75rem;">
             <summary style="font-weight:600; cursor:pointer;">What if my court requires meeting chair signatures?</summary>
-            <p style="margin-top:.75rem;">Phase 1 supports typed-name chair signatures with a timestamp. If your court requires a physical signature from the meeting secretary, we recommend continuing to use a paper attendance card alongside this for now &mdash; and use MyRecoveryPal for the cumulative report and verification. Cryptographic chair signatures and QR check-in are on the roadmap.</p>
+            <p style="margin-top:.75rem;">At the meeting, you show a one-time QR code and the chair or secretary confirms it on their own phone. The report marks that meeting &ldquo;Chair-confirmed&rdquo; with their name and the time; everything else is labeled &ldquo;Self-reported&rdquo;. You can&rsquo;t confirm your own attendance, and editing an entry afterwards removes its confirmation. If your court specifically requires an ink signature, keep a paper card alongside this and use MyRecoveryPal for the cumulative, verifiable report.</p>
         </details>
 
         <details style="background:white; padding:1rem 1.25rem; border-radius:10px; margin-bottom:.75rem;">
@@ -215,8 +243,8 @@
 
 <section style="padding:4rem 1rem; text-align:center; background:linear-gradient(135deg,#0f2d56,#1e4d8b); color:white;">
     <h2 style="font-size:2rem; margin-bottom:1rem;">Start Tracking Court-Ordered Meetings Today</h2>
-    <p style="font-size:1.1rem; opacity:.9; margin-bottom:2rem; max-width:600px; margin-left:auto; margin-right:auto;">${% firstof court_monthly_plan.price|floatformat:2 '29.99' %}/month. Includes everything in Premium. Cancel any time.</p>
-    <a href="{% url 'accounts:pricing' %}" style="display:inline-block; padding:1rem 2.5rem; background:#52b788; color:white; text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem;">Start Court Compliance &rarr;</a>
+    <p style="font-size:1.1rem; opacity:.9; margin-bottom:2rem; max-width:600px; margin-left:auto; margin-right:auto;">Logging is free. Pay ${{ single_report_price|floatformat:2 }} when you need a report.</p>
+    <a href="{% if user.is_authenticated %}{% url 'accounts:court_attendance_create' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:court_attendance_create' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:#52b788; color:white; text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem;">Log your first meeting free &rarr;</a>
     <p style="margin-top:1.25rem; font-size:0.95rem;"><a href="{% url 'core:for_probation_officers' %}" style="color:rgba(255,255,255,0.85);">Are you a probation officer or court coordinator? Read the verification guide &rarr;</a></p>
 </section>
 {% endblock %}

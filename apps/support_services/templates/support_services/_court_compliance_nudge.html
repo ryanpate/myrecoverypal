@@ -13,7 +13,7 @@ Contextual Court Compliance nudge for the meeting finder — the highest-intent
 {% if not is_court_user %}
 <div class="court-nudge stripe-only" id="courtNudge" style="display:none;" role="complementary" aria-label="Court Compliance">
     <span class="court-nudge-icon" aria-hidden="true"><i class="fas fa-gavel"></i></span>
-    <span class="court-nudge-text"><strong>Court-ordered to attend meetings?</strong> Get hash-verified, court-ready proof of attendance you can send straight to your PO.</span>
+    <span class="court-nudge-text"><strong>Court-ordered to attend meetings?</strong> Log them free, get each one chair-confirmed, and send your PO a verified report when you need one.</span>
     <a href="{% url 'core:court_ordered_meeting_tracker' %}" class="court-nudge-btn">Learn more</a>
     <button class="court-nudge-dismiss" id="courtNudgeDismiss" type="button" aria-label="Dismiss">&times;</button>
 </div>

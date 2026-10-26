@@ -140,6 +140,26 @@ class CourtMonthlyPoReportTests(TestCase):
         self.assertEqual(send_court_monthly_po_reports(), 0)
         mock_send.assert_not_called()
 
+    @patch('apps.accounts.tasks.send_email', return_value=(True, None))
+    @patch('apps.accounts.email_service.send_email', return_value=(True, None))
+    def test_empty_month_is_not_sent_to_po_and_member_is_told(self, po_send, member_send):
+        # A zero-meeting report in a PO's inbox reads as non-compliance.
+        user, profile = make_court_user('emptypo', auto_email=True)
+        self.assertEqual(send_court_monthly_po_reports(), 0)
+        po_send.assert_not_called()
+        self.assertFalse(CourtReport.objects.filter(user=user).exists())
+
+        member_send.assert_called_once()
+        self.assertEqual(member_send.call_args.kwargs['recipient_email'], user.email)
+        note = Notification.objects.get(recipient=user)
+        self.assertIn('not sent', note.title)
+
+        # Once per month: a rerun doesn't nag again.
+        profile.refresh_from_db()
+        self.assertIsNotNone(profile.last_auto_po_email_sent)
+        send_court_monthly_po_reports()
+        member_send.assert_called_once()
+
     @patch('apps.accounts.email_service.send_email', return_value=(False, 'smtp down'))
     def test_failed_send_notifies_user_and_does_not_mark_sent(self, mock_send):
         user, profile = make_court_user('failpo', auto_email=True)

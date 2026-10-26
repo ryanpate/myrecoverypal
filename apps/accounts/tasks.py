@@ -1435,7 +1435,7 @@ def send_court_monthly_po_reports():
     way — silence about a compliance document is never acceptable.
     """
     from datetime import date
-    from .court_models import CourtReportProfile
+    from .court_models import CourtReportProfile, MeetingAttendance
     from .court_service import email_report_to_po, generate_court_report
     from .models import Notification
 
@@ -1457,6 +1457,41 @@ def send_court_monthly_po_reports():
         # Once per calendar month, even if the task reruns
         if (profile.last_auto_po_email_sent
                 and profile.last_auto_po_email_sent >= today.replace(day=1)):
+            continue
+
+        # Never auto-send an empty report: a 0-meeting PDF in a PO's inbox
+        # reads as non-compliance. Tell the member instead, so they can log
+        # meetings they attended and send it themselves.
+        if not MeetingAttendance.objects.filter(
+                user=user,
+                meeting_date__date__gte=period_start,
+                meeting_date__date__lte=period_end).exists():
+            profile.last_auto_po_email_sent = today
+            profile.save(update_fields=['last_auto_po_email_sent'])
+            reports_url = settings.SITE_URL.rstrip('/') + '/accounts/court/reports/'
+            message = (
+                f'You have no meetings logged for {period_start:%B}, so we did not '
+                f'send an empty report to your probation officer. If you attended '
+                f'meetings, log them and send the report from your reports page.'
+            )
+            try:
+                send_email(
+                    subject=f'Your {period_start:%B} court report was not sent',
+                    plain_message=f'{message}\n\n{reports_url}',
+                    html_message=f'<p>{message}</p><p><a href="{reports_url}">Open your reports</a></p>',
+                    recipient_email=user.email,
+                )
+            except Exception as e:
+                logger.error(f'Empty-month court notice email failed for {user.email}: {e}')
+            try:
+                Notification.objects.create(
+                    recipient=user, sender=user,
+                    notification_type='meeting_reminder',
+                    title=f'{period_start:%B} report not sent: no meetings logged',
+                    message=message, link='/accounts/court/reports/',
+                )
+            except Exception as e:
+                logger.error(f'Empty-month court notification failed for {user.email}: {e}')
             continue
 
         try:

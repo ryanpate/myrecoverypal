@@ -223,6 +223,8 @@ class CourtOrderedMeetingTrackerView(TemplateView):
             tier='court', billing_period='monthly', is_active=True).first()
         context['court_yearly_plan'] = SubscriptionPlan.objects.filter(
             tier='court', billing_period='yearly', is_active=True).first()
+        from apps.accounts.court_purchase import SINGLE_REPORT_PRICE_CENTS
+        context['single_report_price'] = SINGLE_REPORT_PRICE_CENTS / 100
         return context
 
 

@@ -37,14 +37,17 @@ Court Compliance CTA for a single meeting page.
             Log this meeting free
         </a>
     {% else %}
+        {# Straight to signup with this meeting prefilled: one step, not two. #}
         <span class="court-meeting-cta-text">
             <strong>Court-ordered to attend meetings?</strong>
-            Track attendance at this meeting and generate a tamper-evident PDF
-            your probation officer can verify.
+            Log this meeting free, have the chair confirm it, and get a verified
+            PDF for your probation officer when you need one.
+            <a href="{% url 'core:court_ordered_meeting_tracker' %}" style="color:#fff;">How it works</a>
         </span>
+        {% url 'accounts:court_attendance_create' as attendance_url %}
         <a class="court-meeting-cta-btn"
-           href="{% url 'core:court_ordered_meeting_tracker' %}">
-            See how it works
+           href="{% url 'accounts:register' %}?next={{ attendance_url|add:'?meeting='|add:meeting.slug|urlencode:'' }}">
+            Log this meeting free
         </a>
     {% endif %}
 </div>
