@@ -457,6 +457,26 @@ def stripe_webhook(request):
     return HttpResponse(status=200)
 
 
+def _log_not_found(message, metadata):
+    """Log a webhook object we couldn't match to a Subscription.
+
+    This Stripe account is shared with other products (InvoiceKits), so Stripe
+    sends us their events too. Everything MyRecoveryPal creates carries
+    `user_id` metadata; without it the object isn't ours and isn't an error.
+    """
+    if (metadata or {}).get('user_id'):
+        logger.error(message)
+    else:
+        logger.info(f'{message} (not a MyRecoveryPal object; ignoring)')
+
+
+def _invoice_metadata(invoice):
+    """Subscription metadata on an invoice: Basil nests it under `parent`."""
+    details = (invoice.get('parent') or {}).get('subscription_details') \
+        or invoice.get('subscription_details') or {}
+    return details.get('metadata')
+
+
 def handle_payment_action_required(invoice):
     """Handle an invoice that needs the customer to authenticate (3D Secure).
 
@@ -471,7 +491,8 @@ def handle_payment_action_required(invoice):
     try:
         subscription = Subscription.objects.get(stripe_customer_id=customer_id)
     except Subscription.DoesNotExist:
-        logger.error(f'Subscription not found for customer {customer_id}')
+        _log_not_found(f'Subscription not found for customer {customer_id}',
+                       _invoice_metadata(invoice))
         return
 
     logger.warning(f'Payment action required for subscription {subscription.id}')
@@ -673,7 +694,8 @@ def handle_checkout_session_completed(session):
         logger.info(f'Checkout completed for subscription {subscription.id}')
 
     except Subscription.DoesNotExist:
-        logger.error(f'Subscription not found for customer {customer_id}')
+        _log_not_found(f'Subscription not found for customer {customer_id}',
+                       session.get('metadata'))
 
 
 def _invoice_payment_ids(invoice):
@@ -735,7 +757,8 @@ def handle_invoice_paid(invoice):
         logger.info(f'Invoice paid for subscription {subscription.id}')
 
     except Subscription.DoesNotExist:
-        logger.error(f'Subscription not found for customer {customer_id}')
+        _log_not_found(f'Subscription not found for customer {customer_id}',
+                       _invoice_metadata(invoice))
 
 
 def handle_invoice_payment_failed(invoice):
@@ -791,7 +814,8 @@ def handle_invoice_payment_failed(invoice):
             logger.error(f'Failed to send payment failure email: {email_err}')
 
     except Subscription.DoesNotExist:
-        logger.error(f'Subscription not found for customer {customer_id}')
+        _log_not_found(f'Subscription not found for customer {customer_id}',
+                       _invoice_metadata(invoice))
 
 
 def handle_subscription_updated(stripe_subscription):
@@ -821,7 +845,8 @@ def handle_subscription_updated(stripe_subscription):
         logger.info(f'Subscription updated: {subscription.id}')
 
     except Subscription.DoesNotExist:
-        logger.error(f'Subscription not found: {subscription_id}')
+        _log_not_found(f'Subscription not found: {subscription_id}',
+                       stripe_subscription.get('metadata'))
 
 
 def handle_subscription_deleted(stripe_subscription):
@@ -865,7 +890,8 @@ def handle_subscription_deleted(stripe_subscription):
             logger.error(f'Failed to send cancellation email: {email_err}')
 
     except Subscription.DoesNotExist:
-        logger.error(f'Subscription not found: {subscription_id}')
+        _log_not_found(f'Subscription not found: {subscription_id}',
+                       stripe_subscription.get('metadata'))
 
 
 def handle_trial_will_end(stripe_subscription):
@@ -905,7 +931,8 @@ def handle_trial_will_end(stripe_subscription):
             logger.error(f'Failed to send trial ending email: {email_err}')
 
     except Subscription.DoesNotExist:
-        logger.error(f'Subscription not found: {subscription_id}')
+        _log_not_found(f'Subscription not found: {subscription_id}',
+                       stripe_subscription.get('metadata'))
 
 
 @login_required

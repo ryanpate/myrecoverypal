@@ -388,3 +388,46 @@ class CancelSubscriptionTest(TestCase):
 
         self.user.subscription.refresh_from_db()
         self.assertIsNotNone(self.user.subscription.canceled_at)
+
+
+class ForeignStripeObjectTest(TestCase):
+    """The Stripe account is shared with other products (InvoiceKits), so the
+    webhook also receives their events. Those must not log errors to Sentry,
+    while an unmatched object that we created still must."""
+
+    def _assert_logged(self, level, fn, payload):
+        with self.assertLogs('apps.accounts.payment_views', level='INFO') as logs:
+            fn(payload)
+        levels = {r.levelname for r in logs.records}
+        self.assertIn(level, levels)
+        if level == 'INFO':
+            self.assertNotIn('ERROR', levels)
+
+    def test_foreign_subscription_events_are_not_errors(self):
+        payload = {'id': 'sub_other_app', 'status': 'active', 'metadata': {}}
+        for fn in (handle_subscription_updated,
+                   payment_views.handle_subscription_deleted,
+                   payment_views.handle_trial_will_end):
+            self._assert_logged('INFO', fn, payload)
+
+    def test_our_unmatched_subscription_is_still_an_error(self):
+        payload = {'id': 'sub_ours_missing', 'status': 'active',
+                   'metadata': {'user_id': '42', 'tier': 'premium'}}
+        self._assert_logged('ERROR', handle_subscription_updated, payload)
+
+    def test_foreign_invoice_events_are_not_errors(self):
+        invoice = {'id': 'in_other', 'customer': 'cus_other_app', 'amount_paid': 1200,
+                   'parent': {'subscription_details': {'metadata': {}}}}
+        for fn in (handle_invoice_paid,
+                   payment_views.handle_invoice_payment_failed,
+                   handle_payment_action_required):
+            self._assert_logged('INFO', fn, invoice)
+
+    def test_our_unmatched_invoice_is_still_an_error(self):
+        invoice = {'id': 'in_ours', 'customer': 'cus_missing', 'amount_paid': 499,
+                   'parent': {'subscription_details': {'metadata': {'user_id': '42'}}}}
+        self._assert_logged('ERROR', handle_invoice_paid, invoice)
+
+    def test_foreign_checkout_session_is_not_an_error(self):
+        session = {'customer': 'cus_other_app', 'subscription': 'sub_x', 'metadata': {}}
+        self._assert_logged('INFO', handle_checkout_session_completed, session)
