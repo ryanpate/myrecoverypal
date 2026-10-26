@@ -524,19 +524,25 @@
 
         <!-- Action buttons in header -->
         <div class="header-action-buttons">
+{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
             <a href="{% url 'accounts:groups_list' %}" class="header-btn">
                 <i class="fas fa-users"></i> Browse Groups
             </a>
+{% endif %}
             {% if user.is_authenticated %}
+{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
             <a href="{% url 'accounts:create_group' %}" class="header-btn">
                 <i class="fas fa-plus-circle"></i> Create Group
             </a>
+{% endif %}
             <a href="{% url 'accounts:suggested_users' %}" class="header-btn">
                 <i class="fas fa-user-plus"></i> Find Connections
             </a>
+{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
             <a href="{% url 'accounts:sponsor_dashboard' %}" class="header-btn">
                 <i class="fas fa-star"></i> Sponsor Hub
             </a>
+{% endif %}
             <a href="{% url 'accounts:pal_dashboard' %}" class="header-btn">
                 <i class="fas fa-handshake"></i> Pal Hub
             </a>
@@ -740,12 +746,14 @@
                         <i class="fas fa-envelope"></i>
                     </a>
 
+{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
                     {% if member.is_sponsor and not user.get_active_sponsor %}
                     <a href="{% url 'accounts:request_sponsor' member.username %}" class="action-btn"
                         title="Request as Sponsor">
                         <i class="fas fa-star"></i>
                     </a>
                     {% endif %}
+{% endif %}
 
                     {% if not member.get_recovery_pal and not user.get_recovery_pal %}
                     <a href="{% url 'accounts:request_pal' member.username %}" class="action-btn"
@@ -811,12 +819,15 @@
             <i class="fas fa-plus"></i>
         </button>
         <ul class="dropdown-menu dropdown-menu-end">
+{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
             <li><a class="dropdown-item" href="{% url 'accounts:create_group' %}">
                     <i class="fas fa-plus-circle"></i> Create Group</a>
             </li>
+{% endif %}
             <li><a class="dropdown-item" href="{% url 'accounts:suggested_users' %}">
                     <i class="fas fa-lightbulb"></i> Find Connections</a>
             </li>
+{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
             <li><a class="dropdown-item" href="{% url 'accounts:groups_list' %}">
                     <i class="fas fa-users"></i> Browse Groups</a>
             </li>
@@ -826,6 +837,7 @@
             <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">
                     <i class="fas fa-star"></i> Sponsor Hub</a>
             </li>
+{% endif %}
             <li><a class="dropdown-item" href="{% url 'accounts:pal_dashboard' %}">
                     <i class="fas fa-handshake"></i> Pal Hub</a>
             </li>

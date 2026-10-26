@@ -270,13 +270,17 @@
 
         <!-- Action buttons in header -->
         <div class="header-action-buttons">
+{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
             <a href="{% url 'accounts:groups_list' %}" class="header-btn">
                 <i class="fas fa-users"></i> Browse Groups
             </a>
+{% endif %}
             {% if user.is_authenticated %}
+{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
             <a href="{% url 'accounts:create_group' %}" class="header-btn">
                 <i class="fas fa-plus-circle"></i> Create Group
             </a>
+{% endif %}
             <a href="{% url 'accounts:suggested_users' %}" class="header-btn">
                 <i class="fas fa-user-plus"></i> Find Connections
             </a>

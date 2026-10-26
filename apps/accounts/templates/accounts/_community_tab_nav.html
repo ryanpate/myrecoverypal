@@ -1,4 +1,5 @@
 {% load static %}
+{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
 <nav class="community-tab-nav" aria-label="Community">
   <a href="{% url 'accounts:community' %}"
      class="community-tab-nav__link{% if request.resolver_match.url_name == 'community' %} community-tab-nav__link--active{% endif %}">
@@ -11,6 +12,7 @@
     Groups
   </a>
 </nav>
+{% endif %}
 <style>
 .community-tab-nav {
     display: inline-flex;

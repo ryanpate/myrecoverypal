@@ -546,6 +546,7 @@
                 <li>
                     <hr class="dropdown-divider">
                 </li>
+{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
                 <li><a class="dropdown-item" href="{% url 'accounts:groups_list' %}">
                         <i class="fas fa-users"></i> Browse Groups
                     </a></li>
@@ -555,6 +556,7 @@
                 <li><a class="dropdown-item" href="{% url 'accounts:sponsor_dashboard' %}">
                         <i class="fas fa-star"></i> Sponsor Hub
                     </a></li>
+{% endif %}
             </ul>
         </div>
     </div>

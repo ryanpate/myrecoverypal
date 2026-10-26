@@ -40,7 +40,8 @@ class MedallionsTabNavTest(TestCase):
         self.assertIn('My Medallions', nearby)
 
 
-@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False,
+                   SHOW_GROUPS_CHALLENGES_SPONSORS=True)  # tab nav only exists when groups are shown
 class CommunityTabNavTest(TestCase):
     """Both community and groups pages render the same tab navigation."""
 
@@ -325,8 +326,8 @@ class LibraryToolsNavTest(TestCase):
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class CommunityLabelsTest(TestCase):
     """"Community" always means the social feed. The member directory
-    (accounts:community) is labelled "Members & Groups" so the two never
-    share a name."""
+    (accounts:community) is labelled "Members" ("Members & Groups" while
+    SHOW_GROUPS_CHALLENGES_SPONSORS is on) so the two never share a name."""
 
     def setUp(self):
         self.user = User.objects.create_user(
@@ -334,13 +335,14 @@ class CommunityLabelsTest(TestCase):
         self.client.login(username='labels', password='pw')
         self.content = self.client.get(reverse('accounts:progress')).content.decode()
 
-    def test_directory_links_are_labelled_members_and_groups(self):
+    def test_directory_links_are_labelled_members(self):
         directory = f'href="{reverse("accounts:community")}"'
         for region in (_region(self.content, 'id="userDropdown"', 'notification-dropdown'),
                        _region(self.content, 'id="mobileSlideMenu"', 'mobile-menu-footer')):
             link = region[region.index(directory):]
             link = link[:link.index('</a>')]
-            self.assertIn('Members &amp; Groups', link)
+            self.assertIn('Members', link)
+            self.assertNotIn('Groups', link)
             self.assertNotIn('> Community', link)
 
     def test_top_nav_community_is_the_feed(self):

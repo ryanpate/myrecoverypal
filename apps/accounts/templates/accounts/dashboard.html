@@ -947,9 +947,11 @@
                 {% endif %}
 
                 <div class="quick-actions">
+{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
                     <a href="{% url 'accounts:sponsor_dashboard' %}" class="action-btn">
                         <i class="fas fa-star"></i> Sponsors
                     </a>
+{% endif %}
                     <a href="{% url 'accounts:pal_dashboard' %}" class="action-btn">
                         <i class="fas fa-handshake"></i> Pals
                     </a>
@@ -1063,9 +1065,11 @@
                     <a href="{% url 'resources:list' %}" class="action-btn">
                         <i class="fas fa-book-open"></i> Resources
                     </a>
+{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
                     <a href="{% url 'accounts:groups_list' %}" class="action-btn">
                         <i class="fas fa-plus-circle"></i> Create Group
                     </a>
+{% endif %}
                 </div>
             </div>
 

@@ -633,6 +633,13 @@ SERVER_EMAIL = os.environ.get('SERVER_EMAIL', DEFAULT_FROM_EMAIL)  # ✅ From en
 # catch-all) on to the real inbox; see the zone's email routing rules.
 SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'support@myrecoverypal.com')
 
+# Groups, challenges and sponsor matching had near-zero use at our size (2026-10:
+# 0 challenge participants and 0 sponsor pairings ever, 1 group post), and empty
+# rooms make the app feel deserted. Their entry points are hidden while this is
+# False; the pages still work, so existing members and program cohorts are fine.
+# Flip to True when the community is big enough to fill them.
+SHOW_GROUPS_CHALLENGES_SPONSORS = False
+
 # Django mails unhandled 500s here (belt and braces alongside Sentry).
 ADMINS = [('MyRecoveryPal', SUPPORT_EMAIL)]
 MANAGERS = ADMINS
