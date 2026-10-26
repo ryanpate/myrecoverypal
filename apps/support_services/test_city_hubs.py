@@ -1,5 +1,5 @@
 """City/state hub aggregation."""
-from datetime import time
+from datetime import datetime, time, timezone as dt_timezone
 
 from django.test import TestCase
 
@@ -136,6 +136,13 @@ class CityHubViewTests(TestCase):
     def test_title_targets_the_local_query(self):
         html = self.client.get(self.url).content.decode()
         self.assertIn('<title>AA Meetings in Houston, TX', html)
+
+    def test_title_carries_the_last_sync_month(self):
+        Meeting.objects.filter(city='Houston').update(
+            updated_at=datetime(2026, 3, 9, 12, tzinfo=dt_timezone.utc))
+        html = self.client.get(self.url).content.decode()
+        self.assertIn('Houston, TX (Mar 2026): 5 Times &amp; Locations', html)
+        self.assertIn('checked Mar 9 against', html)
 
     def test_description_is_specific_not_boilerplate(self):
         html = self.client.get(self.url).content.decode()

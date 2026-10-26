@@ -593,6 +593,10 @@ def city_hub(request, state, city_slug):
     state_name = US_STATES.get(state, state)
     total = len(meetings)
     online = sum(1 for m in meetings if m.attendance_option != 'in_person')
+    # The weekly sync stamps updated_at on every row it sees, so this is
+    # the real refresh date. A dated title out-pulls undated listings.
+    updated = max(m.updated_at for m in meetings)
+    mix = f'{total - online} in person, {online} online or hybrid' if online else 'all in person'
 
     return render(request, 'support_services/city_hub.html', {
         'city': city,
@@ -603,11 +607,12 @@ def city_hub(request, state, city_slug):
         'total': total,
         'online_count': online,
         'in_person_count': total - online,
-        'seo_title': f'AA Meetings in {city}, {state} \u2014 {total} Local Meeting Times',
+        'seo_title': (f'AA Meetings in {city}, {state} ({updated:%b %Y}): '
+                      f'{total} Times & Locations'),
         'seo_description': (
-            f'{total} AA meetings in {city}, {state}. Browse by day with '
-            f'times, addresses and online options \u2014 free, no signup, '
-            f'updated weekly from the local AA intergroup.'
+            f'{total} AA meetings in {city}, {state} ({mix}). Times and '
+            f'addresses by day, checked {updated:%b} {updated.day} against '
+            f'the local AA intergroup. Free, no signup.'
         ),
         'seo_keywords': (
             f'aa meetings {city.lower()}, aa meetings in {city.lower()} {state.lower()}, '
