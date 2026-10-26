@@ -275,8 +275,9 @@ class MeetingSitemap(Sitemap):
     priority = 0.6
 
     def items(self):
+        # One URL per group: other weekly slots canonicalize to the primary.
         return Meeting.objects.filter(
-            is_approved=True, is_active=True
+            is_approved=True, is_active=True, is_group_primary=True,
         ).order_by('pk')
 
     def lastmod(self, obj):

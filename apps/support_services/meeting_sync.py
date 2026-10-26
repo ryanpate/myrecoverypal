@@ -27,6 +27,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.text import slugify
 
+from apps.support_services.grouping import assign_primaries, group_key
 from apps.support_services.models import Meeting
 
 logger = logging.getLogger(__name__)
@@ -255,6 +256,7 @@ def sync_source(key, source, approve=True, limit=None,
 
     created = updated = skipped = 0
     seen = []
+    touched_groups = set()
     known_slugs = _existing_import_slugs(key)
     for m in incoming:
         defaults = _map(m, approve, default_tz)
@@ -262,6 +264,12 @@ def sync_source(key, source, approve=True, limit=None,
             skipped += 1
             continue
         slug = _resolve_slug(key, m, known_slugs)
+        defaults["group_key"] = group_key(
+            slug, defaults["name"], defaults["attendance_option"],
+            defaults.get("formatted_address", ""), defaults.get("address", ""),
+            defaults.get("location", ""), defaults.get("city", ""),
+            defaults.get("state", ""), defaults.get("conference_url", ""), feed=key)
+        touched_groups.add(defaults["group_key"])
         # known_slugs already tells us whether the row exists, so branch
         # instead of paying update_or_create's SELECT + savepoint round
         # trips on every meeting (~6 queries/row on 6,500 rows).
@@ -290,12 +298,16 @@ def sync_source(key, source, approve=True, limit=None,
         return {"created": created, "updated": updated,
                 "skipped": skipped, "deactivated": 0}
 
-    deactivated = (
+    vanished = (
         Meeting.objects
         .filter(_import_slug_filter(key), submitted_by__isnull=True, is_active=True)
         .exclude(slug__in=seen)
-        .update(is_active=False)
     )
+    touched_groups.update(vanished.values_list("group_key", flat=True))
+    deactivated = vanished.update(is_active=False)
+    # Re-pick each touched group's primary page (a group whose primary slot
+    # vanished, or whose slots moved address, gets a new one).
+    assign_primaries(Meeting, touched_groups)
     return {
         "created": created,
         "updated": updated,
@@ -340,6 +352,9 @@ def sync_all(sources=None):
     if failures == 0:
         results["legacy_deactivated"] = _deactivate_legacy_rows(
             [s["key"] for s in sources])
+    # Full pass: catches a group left without a primary when its slot moved
+    # address (and so changed group) or was deactivated as a legacy row.
+    assign_primaries(Meeting)
     return results
 
 

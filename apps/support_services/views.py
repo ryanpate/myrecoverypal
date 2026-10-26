@@ -3,6 +3,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from apps.support_services.hubs import hub_cities, hub_states, resolve_city
+from apps.support_services.grouping import group_seo
 from apps.support_services.coverage import record_coverage_gap
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -16,7 +17,7 @@ from django.utils.text import slugify
 from django.conf import settings
 import json
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time as dt_time
 import logging
 
 from .models import Meeting, SupportService, ServiceSubmission, UserBookmark
@@ -183,10 +184,30 @@ def meeting_detail(request, slug):
         Meeting, slug=slug, is_approved=True, is_active=True)
 
     # Get nearby meetings (same city or within 10 miles if coordinates available)
+    # Every weekly slot of this group. All slot pages show the same schedule
+    # and point rel=canonical at the group's primary slot, so Google indexes
+    # one page per group instead of one per time slot.
+    siblings = list(
+        Meeting.objects
+        .filter(group_key=meeting.group_key, is_approved=True, is_active=True)
+        .order_by('day', 'time', 'pk')
+    ) if meeting.group_key else [meeting]
+    primary = next((m for m in siblings if m.is_group_primary), meeting)
+    schedule, seen_slots = [], set()
+    # Feeds sometimes list the same slot twice; show it once, as this page
+    # when it is one of the duplicates.
+    for m in sorted(siblings, key=lambda m: m.pk != meeting.pk):
+        if (m.day, m.time) not in seen_slots:
+            seen_slots.add((m.day, m.time))
+            schedule.append(m)
+    schedule.sort(key=lambda m: (m.day is None, m.day or 0, m.time is None, m.time or dt_time.min))
+
     nearby_meetings = Meeting.objects.filter(
         is_approved=True,
         is_active=True
     ).exclude(id=meeting.id)
+    if meeting.group_key:
+        nearby_meetings = nearby_meetings.exclude(group_key=meeting.group_key)
 
     if meeting.city:
         nearby_meetings = nearby_meetings.filter(
@@ -207,7 +228,11 @@ def meeting_detail(request, slug):
         # "Crawled - currently not indexed".
         'seo_title': meeting.seo_title,
         'seo_description': meeting.seo_description,
+        'schedule': schedule,
+        'seo_url': request.build_absolute_uri(primary.get_absolute_url()),
     }
+    if len(schedule) > 1:
+        context['seo_title'], context['seo_description'] = group_seo(primary, schedule)
 
     if request.user.is_authenticated:
         context['is_bookmarked'] = UserBookmark.objects.filter(

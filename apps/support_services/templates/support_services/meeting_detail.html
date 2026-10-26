@@ -72,6 +72,20 @@
         font-size: 0.85rem;
     }
 
+    .meeting-schedule { list-style: none; padding: 0; margin: 0; }
+    .meeting-schedule-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.75rem;
+        padding: 0.5rem 0.6rem; border-bottom: 1px solid #F3F4F6; border-radius: 6px; font-size: 0.92rem; }
+    .meeting-schedule-row.is-current { background: #F5F3FF; }
+    .meeting-schedule-day { font-weight: 600; min-width: 6.5rem; color: #1F2937; }
+    .meeting-schedule-time { min-width: 4.5rem; color: #1F2937; }
+    .meeting-schedule-meta { flex: 1 1 10rem; color: #6B7280; font-size: 0.85rem; }
+    .meeting-schedule-here { font-size: 0.8rem; color: #7C3AED; font-weight: 600; }
+    .meeting-schedule-link { font-size: 0.8rem; color: #7C3AED; }
+    .meeting-schedule-more summary { cursor: pointer; color: #7C3AED; font-size: 0.9rem; padding: 0.5rem 0.6rem; }
+    [data-theme="dark"] .meeting-schedule-row { border-color: #374151; }
+    [data-theme="dark"] .meeting-schedule-row.is-current { background: #2e1065; }
+    [data-theme="dark"] .meeting-schedule-day, [data-theme="dark"] .meeting-schedule-time { color: #E5E7EB; }
+    [data-theme="dark"] .meeting-schedule-meta { color: #9CA3AF; }
     .nearby-meeting {
         display: block;
         padding: 12px 0;
@@ -107,6 +121,7 @@
                     {{ meeting.get_attendance_option_display }}
                 </span>
 
+
                 {% if meeting.attendance_option != 'in_person' and meeting.conference_url %}
                 <div class="meeting-detail-section">
                     <h3>Join Online</h3>
@@ -139,6 +154,52 @@
                     </div>
                 </div>
                 {% endif %}
+                {% endif %}
+
+                {% if schedule|length > 1 %}
+                {% comment %}Every slot page of a group shows the same full schedule, which is what
+                   lets Google treat them as one page (rel=canonical -> the primary slot).
+                   Rows past the 7th are collapsed but still in the HTML.{% endcomment %}
+                <div class="meeting-detail-section">
+                    <h3>Weekly schedule</h3>
+                    <ul class="meeting-schedule">
+                        {% for slot in schedule|slice:":7" %}
+                        <li class="meeting-schedule-row{% if slot.pk == meeting.pk %} is-current{% endif %}">
+                            <span class="meeting-schedule-day">{% if slot.day is not None %}{{ slot.get_day_display }}{% else %}Varies{% endif %}</span>
+                            <span class="meeting-schedule-time">{% if slot.time %}{{ slot.time|time:"g:i A" }}{% endif %}</span>
+                            <span class="meeting-schedule-meta">
+                                {{ slot.get_attendance_option_display }}{% if slot.types %} &middot; {{ slot.types|join:", " }}{% endif %}
+                            </span>
+                            {% if slot.pk == meeting.pk %}
+                                <span class="meeting-schedule-here">This page</span>
+                            {% else %}
+                                <a href="{{ slot.get_absolute_url }}" class="meeting-schedule-link">Reminders &amp; details</a>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% if schedule|length > 7 %}
+                    <details class="meeting-schedule-more">
+                        <summary>Show all {{ schedule|length }} meeting times</summary>
+                        <ul class="meeting-schedule">
+                            {% for slot in schedule|slice:"7:" %}
+                        <li class="meeting-schedule-row{% if slot.pk == meeting.pk %} is-current{% endif %}">
+                            <span class="meeting-schedule-day">{% if slot.day is not None %}{{ slot.get_day_display }}{% else %}Varies{% endif %}</span>
+                            <span class="meeting-schedule-time">{% if slot.time %}{{ slot.time|time:"g:i A" }}{% endif %}</span>
+                            <span class="meeting-schedule-meta">
+                                {{ slot.get_attendance_option_display }}{% if slot.types %} &middot; {{ slot.types|join:", " }}{% endif %}
+                            </span>
+                            {% if slot.pk == meeting.pk %}
+                                <span class="meeting-schedule-here">This page</span>
+                            {% else %}
+                                <a href="{{ slot.get_absolute_url }}" class="meeting-schedule-link">Reminders &amp; details</a>
+                            {% endif %}
+                        </li>
+                            {% endfor %}
+                        </ul>
+                    </details>
+                    {% endif %}
+                </div>
                 {% endif %}
 
                 {% if meeting.group %}

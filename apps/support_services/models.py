@@ -141,6 +141,10 @@ class Meeting(models.Model):
     # Status fields
     is_approved = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    # Weekly slots of one group share a group_key; the primary slot is the
+    # group's indexable page (see support_services/grouping.py).
+    group_key = models.CharField(max_length=100, blank=True, db_index=True)
+    is_group_primary = models.BooleanField(default=False, db_index=True)
     submitted_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -204,6 +208,17 @@ class Meeting(models.Model):
                     data[field] = value
 
         return data
+
+    def save(self, *args, **kwargs):
+        # Rows saved outside the feed sync (community submissions, admin
+        # edits of a new row) still need a group, or they'd drop out of the
+        # sitemap, which lists primaries only. A singleton is its own primary.
+        if not self.group_key:
+            from apps.support_services.grouping import meeting_group_key
+            self.group_key = meeting_group_key(self)
+            if self.group_key.startswith('single-'):
+                self.is_group_primary = True
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         from django.urls import reverse
