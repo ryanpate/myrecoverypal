@@ -866,11 +866,15 @@ def daily_checkin_view(request):
 
             messages.success(request, 'Daily check-in completed!')
             if not (hasattr(request.user, 'subscription') and request.user.subscription.is_premium()):
-                messages.info(
-                    request,
-                    '<a href="/accounts/progress/" style="color: #667eea; text-decoration: underline;">See your mood trends over time</a> with Premium analytics.',
-                    extra_tags='safe'
-                )
+                streak = request.user.get_checkin_streak()
+                if streak >= 2:
+                    pitch = (f'<a href="/accounts/pricing/?from=checkin" style="color: #667eea; '
+                             f'text-decoration: underline;">Protect your {streak}-day streak</a> with '
+                             'Premium: one missed day a week won\'t reset it.')
+                else:
+                    pitch = ('<a href="/accounts/progress/" style="color: #667eea; text-decoration: '
+                             'underline;">See your mood trends over time</a> with Premium insights.')
+                messages.info(request, pitch, extra_tags='safe')
             return redirect(
                 f"{reverse('accounts:checkin_confirmation')}?checkin={checkin.id}")
 
