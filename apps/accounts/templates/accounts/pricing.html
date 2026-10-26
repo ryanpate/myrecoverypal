@@ -11,6 +11,20 @@
 
 {% block extra_css %}
 <style>
+    .habit-value { max-width: 860px; margin: 0 auto 2rem; }
+    .habit-value-title { font-size: 1.35rem; font-weight: 800; color: #1e4d8b; margin-bottom: 1.25rem; }
+    .habit-value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: left; }
+    .habit-value-item { display: flex; flex-direction: column; gap: 0.3rem; background: #fff;
+        border: 1px solid #e3eaf3; border-radius: 12px; padding: 1rem 1.1rem; }
+    .habit-value-item strong { color: #1a2a44; }
+    .habit-value-item span { color: #555; font-size: 0.9rem; line-height: 1.45; }
+    .habit-value-icon { font-size: 1.5rem; }
+    .habit-value-note { color: #888; font-size: 0.85rem; margin: 1rem 0 0; }
+    @media (max-width: 700px) { .habit-value-grid { grid-template-columns: 1fr; } }
+    [data-theme="dark"] .habit-value-title { color: #8ab4f8; }
+    [data-theme="dark"] .habit-value-item { background: #1e2430; border-color: #2e3949; }
+    [data-theme="dark"] .habit-value-item strong { color: #e8eef7; }
+    [data-theme="dark"] .habit-value-item span { color: #aab4c3; }
     /* Two-tier width standard — grid/browse tier */
     .container { max-width: 1200px; }
 
@@ -171,21 +185,31 @@
 </div>
 
 <div class="container py-5">
-    <!-- Value Comparison -->
-    <div class="text-center mb-4" style="max-width: 700px; margin: 0 auto 2rem;">
-        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
-            <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 1rem 1.5rem; text-align: center; flex: 1; min-width: 150px;">
-                <div style="font-size: 1.5rem; font-weight: 700; color: #dc3545;">$150-300</div>
-                <div style="font-size: 0.85rem; color: #666;">per therapy session</div>
+    <!-- What Premium adds to the daily habit (pledge + check-in). No price here:
+         prices live in the plan cards, which handle the iOS rules. -->
+    <div class="habit-value text-center">
+        <h2 class="habit-value-title">
+            {% if own_streak and own_streak >= 2 %}Your {{ own_streak }}-day streak deserves a safety net
+            {% else %}Premium is built around the two minutes you spend here each day{% endif %}
+        </h2>
+        <div class="habit-value-grid">
+            <div class="habit-value-item">
+                <div class="habit-value-icon" aria-hidden="true">🛡️</div>
+                <strong>Miss a day, keep your streak</strong>
+                <span>One missed day a week won't reset your pledge or check-in streak.</span>
             </div>
-            <div style="display: flex; align-items: center; font-size: 1.5rem; color: #999;">vs</div>
-            <div style="background: linear-gradient(135deg, #f0f9ff, #f0fdfa); border: 2px solid #52b788; border-radius: 10px; padding: 1rem 1.5rem; text-align: center; flex: 1; min-width: 150px;">
-                <div style="font-size: 1.5rem; font-weight: 700; color: #52b788;">$9.99</div>
-                <div style="font-size: 0.85rem; color: #666;">per month with Premium</div>
+            <div class="habit-value-item">
+                <div class="habit-value-icon" aria-hidden="true">📈</div>
+                <strong>See what your check-ins say</strong>
+                <span>Mood, craving and energy trends over 90 days, plus a weekly recap.</span>
+            </div>
+            <div class="habit-value-item">
+                <div class="habit-value-icon" aria-hidden="true">⚓</div>
+                <strong>Talk it through</strong>
+                <span>Anchor, your AI recovery coach, 20 messages a day when a day gets hard.</span>
             </div>
         </div>
-        <p style="color: #666; font-size: 0.95rem; margin: 0;">20 AI Coach messages/day = ~600/month of personalized recovery support.</p>
-        <p style="color: #888; font-size: 0.85rem; margin: 0.5rem 0 0;">Cancel anytime. No questions asked.</p>
+        <p class="habit-value-note">Cancel anytime. No questions asked.</p>
     </div>
 
     {% include 'accounts/_founding_offer_banner.html' with slot='pricing' %}

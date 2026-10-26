@@ -65,6 +65,10 @@ def pricing(request):
     }
     from .founding_offer import context_for
     context.update(context_for(request.user, premium_yearly_plan))
+    # Personalize the top of the page around the member's own streak.
+    user = request.user
+    if user.is_authenticated and not user.has_streak_protection():
+        context['own_streak'] = max(user.get_pledge_streak(), user.get_checkin_streak())
     return render(request, 'accounts/pricing.html', context)
 
 

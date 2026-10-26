@@ -114,3 +114,28 @@ class PricingLeadsWithTheHabitTests(TestCase):
         premium = html[html.index('Everything in Free, plus:'):]
         self.assertLess(premium.index('Streak protection'), premium.index('Anchor, your AI recovery coach'))
         self.assertIn('mood, craving &amp; energy insights', premium)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class PricingTopTests(TestCase):
+    """The top of the pricing page sells the daily habit, not a therapy comparison."""
+
+    def test_no_therapy_comparison(self):
+        html = self.client.get(reverse('accounts:pricing')).content.decode()
+        self.assertNotIn('therapy session', html)
+        self.assertIn('Miss a day, keep your streak', html)
+
+    def test_free_member_with_a_streak_gets_a_personal_heading(self):
+        user = _user('streaky')
+        _pledges(user, 0, 1, 2, 3)
+        self.client.force_login(user)
+        self.assertContains(self.client.get(reverse('accounts:pricing')),
+                            'Your 4-day streak deserves a safety net')
+
+    def test_premium_member_gets_the_general_heading(self):
+        user = _user('premtop', tier='premium')
+        _pledges(user, 0, 1, 2, 3)
+        self.client.force_login(user)
+        resp = self.client.get(reverse('accounts:pricing'))
+        self.assertNotContains(resp, 'deserves a safety net')
+        self.assertContains(resp, 'Premium is built around the two minutes')
