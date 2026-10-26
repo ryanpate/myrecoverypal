@@ -243,6 +243,13 @@ class CreatorPackCtaTest(TestCase):
         resp = self.client.get(reverse('accounts:milestone_badge_creator'))
         self.assertContains(resp, 'Included with Premium')
         self.assertNotContains(resp, '$4.99')
+        self.assertNotContains(resp, 'id="pack-offer"')
+
+    def test_download_opens_the_pack_offer_hidden_on_ios(self):
+        resp = self.client.get(reverse('accounts:milestone_badge_creator'))
+        self.assertContains(resp, 'onclick="persistBadge(); offerPack()"')
+        self.assertContains(resp, 'class="share-modal-overlay stripe-only" id="pack-offer"')
+        self.assertContains(resp, 'videos/medallion-pack-preview')
 
 
 class PackVideoPrerenderTest(TestCase):

@@ -397,6 +397,17 @@
         justify-content: center;
     }
     .share-modal-close:hover { background: #f5f5f5; }
+    /* Post-download HD pack offer */
+    .pack-offer-video { display: block; width: 168px; height: 299px; margin: 0 auto 1rem; border-radius: 14px;
+        background: #111; object-fit: cover; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); }
+    .pack-offer-list { list-style: none; padding: 0; margin: 0 0 1.25rem; text-align: left; font-size: 0.88rem;
+        color: var(--text-primary, #1a1a1a); }
+    .pack-offer-list li { padding: 0.2rem 0; }
+    .pack-offer-list i { color: #b8902a; width: 1.25rem; }
+    .pack-offer-buy { width: 100%; justify-content: center; }
+    .pack-offer-skip { background: none; border: none; color: var(--text-muted, #666); font-size: 0.85rem;
+        margin-top: 0.75rem; cursor: pointer; text-decoration: underline; }
+    [data-theme="dark"] .pack-offer-list { color: #e5e5e5; }
     /* Primary "Post to Feed" block */
     .share-feed-primary {
         background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
@@ -701,7 +712,7 @@
 
     <!-- Actions -->
     <div class="badge-actions">
-        <a id="btn-download" class="btn btn-download" href="#" download="myrecoverypal-milestone.png" onclick="persistBadge()">
+        <a id="btn-download" class="btn btn-download" href="#" download="myrecoverypal-milestone.png" onclick="persistBadge(); offerPack()">
             <i class="fas fa-download" aria-hidden="true"></i> Save Badge
         </a>
         <button class="btn btn-share" onclick="openShareModal()">
@@ -755,6 +766,30 @@
 </div>
 
 <!-- Share Modal -->
+{% if not pack_included %}
+{# Shown once per session right after a free download: the moment the visitor
+   has just shown they want the medallion. Web only (App Store 3.1). #}
+<div class="share-modal-overlay stripe-only" id="pack-offer" onclick="if(event.target===this)closePackOffer()">
+    <div class="share-modal" role="dialog" aria-modal="true" aria-labelledby="pack-offer-title">
+        <button class="share-modal-close" onclick="closePackOffer()" aria-label="Close">&times;</button>
+        <h3 id="pack-offer-title">Saved! Want it to move?</h3>
+        <p>The HD Pack turns your medallion into a video for Reels, TikTok and Stories.</p>
+        <video class="pack-offer-video" id="pack-offer-video" muted loop playsinline preload="none"
+               poster="{% static 'images/badges/medallion-pack-preview-poster.jpg' %}"
+               data-src="{% static 'videos/medallion-pack-preview.mp4' %}"></video>
+        <ul class="pack-offer-list">
+            <li><i class="fas fa-film" aria-hidden="true"></i> Animated count-up video, your design</li>
+            <li><i class="fas fa-expand" aria-hidden="true"></i> Print-quality 2048px, no site stamp</li>
+            <li><i class="fas fa-mobile-screen" aria-hidden="true"></i> Story and phone wallpaper sizes</li>
+        </ul>
+        <button type="button" class="btn pack-cta-btn pack-offer-buy" onclick="buyPackFromOffer()">
+            Get the HD Pack: $4.99
+        </button>
+        <br><button type="button" class="pack-offer-skip" onclick="closePackOffer()">No thanks, the free one is fine</button>
+    </div>
+</div>
+{% endif %}
+
 <div class="share-modal-overlay" id="share-modal" onclick="if(event.target===this)closeShareModal()">
     <div class="share-modal">
         <button class="share-modal-close" onclick="closeShareModal()" aria-label="Close">&times;</button>
@@ -1074,9 +1109,45 @@ function postToFeed(btn) {
     });
 }
 
+function offerPack() {
+    var modal = document.getElementById('pack-offer');
+    if (!modal || document.documentElement.classList.contains('ios-native-app')) return;
+    try {
+        if (sessionStorage.getItem('mrpPackOfferShown')) return;
+        sessionStorage.setItem('mrpPackOfferShown', '1');
+    } catch (e) {}
+    // Let the download start before the dialog covers the page.
+    setTimeout(function() {
+        var video = document.getElementById('pack-offer-video');
+        if (!video.src) video.src = video.dataset.src;
+        modal.classList.add('active');
+        video.play().catch(function() {});
+        if (window.gtag) gtag('event', 'pack_offer_shown', { days: daysSober, style: currentStyle });
+    }, 700);
+}
+
+function closePackOffer() {
+    var modal = document.getElementById('pack-offer');
+    if (!modal) return;
+    modal.classList.remove('active');
+    document.getElementById('pack-offer-video').pause();
+}
+
+function buyPackFromOffer() {
+    if (window.gtag) gtag('event', 'pack_offer_click', { days: daysSober, style: currentStyle });
+    var form = document.getElementById('pack-form');
+    // requestSubmit runs the form's onsubmit, which freezes the current design in.
+    if (form.requestSubmit) { form.requestSubmit(); } else { fillDesignForm(form); form.submit(); }
+}
+
+// The download link is otherwise only set by updatePreview(), so a visitor who
+// saves the default design without touching anything got href="#" (the page itself).
+document.getElementById('btn-download').href =
+    '/accounts/milestone-image/' + daysSober + '/?' + getParams() + '&download=1';
+
 // Close modal on Escape
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeShareModal();
+    if (e.key === 'Escape') { closeShareModal(); closePackOffer(); }
 });
 </script>
 {% endblock %}
