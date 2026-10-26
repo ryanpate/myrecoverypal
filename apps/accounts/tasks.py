@@ -290,28 +290,34 @@ def send_reengagement_emails(self):
 # Daily Check-in Reminder
 # ========================================
 
+
+# Check-in reminders go out at 5 PM in each member's own time zone. Members
+# whose browser hasn't reported a zone get US Central (most members are US).
+CHECKIN_REMINDER_LOCAL_HOUR = 17
+CHECKIN_REMINDER_FALLBACK_TZ = 'America/Chicago'
+
+
 @shared_task(bind=True, max_retries=3)
 def send_checkin_reminders(self):
     """
-    Send check-in reminders to users who haven't checked in today.
-    Only sends to users who have checked in before (engaged users).
+    Remind engaged members (they've checked in before) who haven't checked in
+    today. Runs hourly and handles each member at CHECKIN_REMINDER_LOCAL_HOUR
+    in their own time zone; "today" is their local date. It used to run once
+    at 17:00 UTC with the UTC date: 1 PM Eastern, ~4 AM in Australia, and a
+    day ahead in Asia, so people who had checked in still got reminded.
     """
-    from .models import User, DailyCheckIn
+    from .models import User
 
-    today = timezone.now().date()
-    yesterday = today - timedelta(days=1)
-    last_reminder_cutoff = timezone.now() - timedelta(hours=20)
+    now = timezone.now()
+    last_reminder_cutoff = now - timedelta(hours=20)
 
     # Users who:
     # - Have email notifications enabled
     # - Have checked in at least once before
-    # - Haven't checked in today
     # - Haven't received a reminder in the last 20 hours
-    users_with_prior_checkins = User.objects.filter(
+    candidates = User.objects.filter(
         email_notifications=True,
         daily_checkins__isnull=False,
-    ).exclude(
-        daily_checkins__date=today
     ).exclude(
         last_checkin_reminder_sent__gte=last_reminder_cutoff
     ).distinct()
@@ -322,10 +328,22 @@ def send_checkin_reminders(self):
 
     from .push_notifications import PushNotificationService
 
-    for user in users_with_prior_checkins:
+    due = []
+    for user in candidates:
+        zone = _user_zoneinfo(user, fallback=CHECKIN_REMINDER_FALLBACK_TZ)
+        local_now = now.astimezone(zone)
+        if local_now.hour != CHECKIN_REMINDER_LOCAL_HOUR:
+            continue
+        if user.daily_checkins.filter(date=local_now.date()).exists():
+            continue
+        due.append((user, zone))
+
+    for user, zone in due:
         try:
-            # Get their streak info
-            streak = user.get_checkin_streak()
+            # Streak and day count are relative to the member's local today.
+            with timezone.override(zone):
+                streak = user.get_checkin_streak()
+                days_sober = user.get_days_sober()
             last_checkin = user.daily_checkins.order_by('-date').first()
 
             html_message = render_to_string('emails/checkin_reminder.html', {
@@ -333,7 +351,7 @@ def send_checkin_reminders(self):
                 'site_url': site_url,
                 'streak': streak,
                 'last_checkin_date': last_checkin.date if last_checkin else None,
-                'days_sober': user.get_days_sober(),
+                'days_sober': days_sober,
                 'current_year': timezone.now().year,
             })
             plain_message = strip_tags(html_message)
@@ -1335,14 +1353,13 @@ def send_facility_risk_digest():
 # Court Compliance engagement (Phase 3 retention)
 # ========================================
 
-def _user_zoneinfo(user):
-    """ZoneInfo for the user's stored IANA timezone, falling back to UTC."""
+def _user_zoneinfo(user, fallback='UTC'):
+    """ZoneInfo for the user's stored IANA timezone, else `fallback`."""
     from zoneinfo import ZoneInfo
     try:
-        return ZoneInfo(user.timezone) if getattr(user, 'timezone', '') else ZoneInfo('UTC')
+        return ZoneInfo(user.timezone) if getattr(user, 'timezone', '') else ZoneInfo(fallback)
     except Exception:
-        from zoneinfo import ZoneInfo
-        return ZoneInfo('UTC')
+        return ZoneInfo(fallback)
 
 
 @shared_task

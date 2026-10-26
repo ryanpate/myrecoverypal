@@ -846,10 +846,11 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_reengagement_emails',
         'schedule': crontab(hour=10, minute=45),  # Daily at 10:45 AM
     },
-    # Daily check-in reminders - afternoon to catch evening check-ins
+    # Daily check-in reminders: hourly, each member handled at 5 PM in their
+    # own time zone (CHECKIN_REMINDER_LOCAL_HOUR in apps/accounts/tasks.py).
     'send-checkin-reminders': {
         'task': 'apps.accounts.tasks.send_checkin_reminders',
-        'schedule': crontab(hour=17, minute=0),  # Daily at 5 PM
+        'schedule': crontab(minute=0),
     },
     # Weekly digest - Sundays at 10 AM
     'send-weekly-digests': {

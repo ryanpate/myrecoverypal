@@ -134,7 +134,7 @@ python manage.py test_email recipient@example.com --resend-api
 **Celery Beat Schedule:**
 - `send_welcome_emails_day_3`: Daily at 10:00 AM
 - `send_welcome_emails_day_7`: Daily at 10:15 AM
-- `send_checkin_reminders`: Daily at 5:00 PM
+- `send_checkin_reminders`: hourly; each member is reminded at 5 PM in their own time zone (US Central if unknown)
 - `send_weekly_digests`: Sundays at 10:30 AM
 - `resources.tasks.send_program_reminders`: hourly at :05; each member handled at 9 AM in their own time zone (guided program lessons)
 - `resources.tasks.send_audio_reminders`: hourly at :10; opt-in daily push to play a guided session (morning intention, evening check-out, sleep wind-down) at the member's chosen local hour

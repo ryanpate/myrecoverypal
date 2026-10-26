@@ -22,7 +22,11 @@ def subscription_context(request):
                 'user_subscription': subscription,
                 'is_premium_user': subscription.is_premium(),
                 'is_court_user': subscription.is_court(),
-                'is_free_user': subscription.tier == 'free',
+                # Free = no active paid plan. Checking tier == 'free' let a
+                # lapsed Premium/Court member (tier unchanged, status expired)
+                # keep Premium-only content such as the progress analytics.
+                # Active Supporters keep their current (ungated) experience.
+                'is_free_user': not (subscription.is_premium() or subscription.is_supporter()),
             })
     except Exception:
         # Handle case where subscription doesn't exist
