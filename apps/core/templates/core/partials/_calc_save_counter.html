@@ -1,0 +1,75 @@
+{% comment %}
+"Save my counter" CTA shared by the sobriety and clean-time calculators.
+
+Usage: {% include 'core/partials/_calc_save_counter.html' with kind='sober' date_noun='sobriety date' [milestone_noun='key tag'] %}
+The page calls window.mrpCalcResult(date, totalDays, next) whenever it shows a
+date the visitor entered (never the 90-day demo); next is {label, days} or null.
+That personalizes the CTA around the visitor's own count and next milestone,
+and remembers the date so a returning visitor sees their counter, not the demo.
+{% endcomment %}
+<div class="calc-cta" id="calc-save-counter">
+    {% if user.is_authenticated and user.sobriety_date %}
+        <h3>Your counter is saved</h3>
+        <p>Check in, keep your streak and see your next milestone on your home screen.</p>
+        <a href="{% url 'accounts:progress' %}" class="cta-button">Open my counter</a>
+    {% else %}
+        <h3 id="calc-save-title">Save your {{ date_noun }}</h3>
+        <p id="calc-save-text">Create a free account and your counter keeps counting every day, with milestone reminders and people who get it.</p>
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'accounts:set_sobriety_date' %}" style="margin:0;">
+                {% csrf_token %}
+                <input type="hidden" name="sobriety_date" id="calc-save-date">
+                <button type="submit" class="cta-button" id="calc-save-btn"
+                        style="cursor:pointer; font-family:inherit;">Save this date to my counter</button>
+            </form>
+        {% else %}
+            <a href="{% url 'accounts:register' %}" class="cta-button js-carry-date" id="calc-save-btn">Save my counter: free</a>
+        {% endif %}
+        <div class="benefits-list">
+            <span><i class="fas fa-check"></i> Free, no card</span>
+            <span><i class="fas fa-check"></i> Counts up every day</span>
+            <span><i class="fas fa-check"></i> Milestone reminders</span>
+        </div>
+    {% endif %}
+</div>
+<script>
+(function () {
+    var KEY = 'mrpCalcDate';
+    var kind = '{{ kind }}';
+    window.mrpCalcSavedDate = function () {
+        try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; }
+    };
+    window.mrpCalcResult = function (date, totalDays, next) {
+        try { localStorage.setItem(KEY, date); } catch (e) {}
+        var hidden = document.getElementById('calc-save-date');
+        if (hidden) hidden.value = date;
+        var title = document.getElementById('calc-save-title');
+        var text = document.getElementById('calc-save-text');
+        if (!title || totalDays < 0) return;
+        title.textContent = "You're " + totalDays.toLocaleString() + (totalDays === 1 ? ' day ' : ' days ') + kind + '.';
+        if (next) {
+            var on = new Date(date + 'T00:00:00');
+            on.setDate(on.getDate() + next.days);
+            var opts = { month: 'long', day: 'numeric' };
+            if (on.getFullYear() !== new Date().getFullYear()) opts.year = 'numeric';
+            text.textContent = 'Your ' + next.label + ' {{ milestone_noun|default:"milestone" }} is ' + on.toLocaleDateString(undefined, opts)
+                + '. Save your counter free and it counts up every day, so you never have to work it out again.';
+        } else {
+            text.textContent = 'Save your counter free and it counts up every day, so you never have to work it out again.';
+        }
+        if (window.gtag) gtag('event', 'calculator_date_entered', { kind: kind, days: totalDays });
+    };
+    var btn = document.getElementById('calc-save-btn');
+    if (btn) btn.addEventListener('click', function (e) {
+        var hidden = document.getElementById('calc-save-date');
+        if (hidden && !hidden.value) {
+            // Signed-in, but no date entered yet: point them at the input.
+            e.preventDefault();
+            var input = document.querySelector('input[type="date"]');
+            if (input) { input.scrollIntoView({ block: 'center' }); input.focus(); }
+            return;
+        }
+        if (window.gtag) gtag('event', 'calculator_save_click', { kind: kind });
+    });
+})();
+</script>
