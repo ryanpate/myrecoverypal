@@ -3302,6 +3302,50 @@ select:focus {
 .ios-native-app .sos-pill,
 .android-native-app .sos-pill { display: inline-flex !important; }
 
+/* Logged-out header on phones: SOS + Sign Up + hamburger must fit beside
+   the logo. "Log in" and the theme toggle are both in the slide-out menu. */
+@media (max-width: 600px) {
+    .nav-container--guest .nav-login-link,
+    .nav-container--guest .theme-toggle {
+        display: none;
+    }
+    .nav-container--guest .nav-right {
+        gap: 0.4rem;
+        margin-left: 0.4rem !important;
+    }
+    .nav-container--guest .logo-container {
+        gap: 0.4rem;
+        min-width: 0;
+    }
+    .nav-container--guest .logo-img {
+        height: 30px;
+        flex-shrink: 0;
+    }
+    .nav-container--guest .logo-text {
+        font-size: 0.9rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .nav-container--guest .sos-pill {
+        margin-right: 0;
+        padding: 0.45rem 0.8rem;
+    }
+    .nav-container--guest .cta-button {
+        min-height: 0;
+        padding: 0.5rem 0.9rem;
+        font-size: 0.85rem;
+    }
+}
+/* The logo image already spells the name; drop the text rather than truncate it. */
+@media (max-width: 409px) {
+    .nav-container--guest .logo-text {
+        display: none;
+    }
+    .nav-container--guest .logo-img {
+        height: 40px;
+    }
+}
+
 /* "New" dot on the Library nav link (hidden once the library is opened) */
 .nav-library { position: relative; }
 .nav-new-dot {
