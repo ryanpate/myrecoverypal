@@ -61,7 +61,7 @@ def is_crisis_suppressed(user):
     from .models import RecoveryCoachSession
     cutoff = timezone.now() - timedelta(hours=CRISIS_SUPPRESSION_HOURS)
     return RecoveryCoachSession.objects.filter(
-        user=user, trigger='checkin_support', updated_at__gte=cutoff,
+        user=user, trigger__in=('checkin_support', 'followup'), updated_at__gte=cutoff,
     ).exists()
 
 

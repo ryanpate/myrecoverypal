@@ -457,6 +457,11 @@ class PushNotificationService:
             'body': 'About 5 minutes. Tap to read it.',
             'icon': '/static/images/favicon_192.png',
         },
+        'coach_followup': {
+            'title': 'Anchor checked in on you',
+            'body': 'How are you doing today?',
+            'icon': '/static/images/favicon_192.png',
+        },
         'program_premium': {
             'title': 'You finished the free days',
             'body': 'Keep going with the rest of your program.',

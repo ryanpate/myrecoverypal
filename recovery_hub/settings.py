@@ -852,6 +852,11 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_checkin_reminders',
         'schedule': crontab(minute=0),
     },
+    # Anchor reaches out the morning after a hard check-in (10 AM local)
+    'send-coach-followups': {
+        'task': 'apps.accounts.tasks.send_coach_followups',
+        'schedule': crontab(minute=15),
+    },
     # Weekly digest - Sundays at 10 AM
     'send-weekly-digests': {
         'task': 'apps.accounts.tasks.send_weekly_digests',

@@ -135,6 +135,7 @@ python manage.py test_email recipient@example.com --resend-api
 - `send_welcome_emails_day_3`: Daily at 10:00 AM
 - `send_welcome_emails_day_7`: Daily at 10:15 AM
 - `send_checkin_reminders`: hourly; each member is reminded at 5 PM in their own time zone (US Central if unknown)
+- `send_coach_followups`: hourly at :15; the morning after a hard check-in (`needs_support()`), Anchor reaches out at 10 AM member-local time (new `followup` session + in-app notification + generic push)
 - `send_weekly_digests`: Sundays at 10:30 AM
 - `resources.tasks.send_program_reminders`: hourly at :05; each member handled at 9 AM in their own time zone (guided program lessons)
 - `resources.tasks.send_audio_reminders`: hourly at :10; opt-in daily push to play a guided session (morning intention, evening check-out, sleep wind-down) at the member's chosen local hour
@@ -186,6 +187,10 @@ AI-powered conversational coach for recovery support, powered by Claude Haiku vi
   struggling/high-craving check-in (`trigger='checkin_support'`) is never
   limited and its messages don't count toward the daily total, so a user is
   never paywalled mid-struggle.
+- **Next-day follow-up** (`tasks.send_coach_followups`): Anchor messages first
+  the morning after a hard check-in (`trigger='followup'`, free for everyone,
+  also rate-limit exempt). Unanswered follow-ups show as a card on the progress
+  home; push text stays generic so nothing personal shows on a lock screen.
 
 **System Prompt Includes User Context:**
 - Sobriety date and days sober

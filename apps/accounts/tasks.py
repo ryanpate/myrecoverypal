@@ -387,6 +387,70 @@ def send_checkin_reminders(self):
     return sent_count
 
 
+COACH_FOLLOWUP_LOCAL_HOUR = 10
+
+
+@shared_task
+def send_coach_followups():
+    """
+    The morning after a hard check-in (DailyCheckIn.needs_support), Anchor
+    reaches out first: a 'followup' coach session with a personal message,
+    plus an in-app notification and push. Runs hourly and handles each member
+    at COACH_FOLLOWUP_LOCAL_HOUR in their own time zone. Free for everyone and
+    exempt from the coach's message limit: it follows a struggling day, and a
+    member is never paywalled mid-struggle. Push text stays generic so nothing
+    personal shows on a lock screen.
+    """
+    from django.db.models import Q
+    from .coach_service import generate_followup_message
+    from .models import CoachMessage, DailyCheckIn, Notification, RecoveryCoachSession
+    from .push_notifications import PushNotificationService
+
+    now = timezone.now()
+    hard_checkins = DailyCheckIn.objects.filter(
+        Q(mood__lte=2) | Q(craving_level__gte=3),
+        date__gte=(now - timedelta(days=2)).date(),
+        user__is_active=True,
+    ).exclude(
+        coach_sessions__trigger='followup',
+    ).select_related('user')
+
+    sent = 0
+    for checkin in hard_checkins:
+        user = checkin.user
+        zone = _user_zoneinfo(user, fallback=CHECKIN_REMINDER_FALLBACK_TZ)
+        local_now = now.astimezone(zone)
+        if local_now.hour != COACH_FOLLOWUP_LOCAL_HOUR:
+            continue
+        if checkin.date != local_now.date() - timedelta(days=1):
+            continue
+        try:
+            today_checkin = user.daily_checkins.filter(date=local_now.date()).first()
+            with timezone.override(zone):
+                text = generate_followup_message(user, checkin, today_checkin)
+            session = RecoveryCoachSession.objects.create(
+                user=user, trigger='followup', triggering_checkin=checkin,
+                is_active=False, title='Anchor checked in',
+            )
+            CoachMessage.objects.create(session=session, role='assistant', content=text)
+            link = f'/accounts/recovery-coach/session/{session.id}/'
+            Notification.objects.create(
+                recipient=user, sender=None, notification_type='coach_followup',
+                title='Anchor checked in on you', message='How are you doing today?',
+                link=link,
+            )
+            PushNotificationService._send_push(
+                recipient=user, notification_type='coach_followup',
+                data={'type': 'coach_followup', 'link': link},
+            )
+            sent += 1
+        except Exception as e:
+            logger.error(f"Anchor follow-up failed for user {user.id}: {e}")
+
+    logger.info(f"Anchor follow-ups sent: {sent}")
+    return sent
+
+
 # ========================================
 # Weekly Digest Email
 # ========================================

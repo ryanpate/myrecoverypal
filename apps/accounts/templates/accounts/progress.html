@@ -1399,6 +1399,12 @@
         padding: 0.75rem 0.9rem; border-radius: 12px; background: #fff7ed; border: 1px solid #fed7aa;
         font-size: 0.9rem; color: #7c2d12; text-align: left; }
     .streak-saved-link { font-weight: 700; color: #c2410c; margin-top: 0.2rem; }
+    .anchor-followup-card { margin: 0 0 1rem; padding: 0.9rem 1rem; border-radius: 12px;
+        background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a5f; font-size: 0.95rem; }
+    .anchor-followup-card p { margin: 0.35rem 0 0.5rem; }
+    .anchor-followup-link { font-weight: 700; color: #1e4d8b; }
+    [data-theme="dark"] .anchor-followup-card { background: #172554; border-color: #1e40af; color: #dbeafe; }
+    [data-theme="dark"] .anchor-followup-link { color: #93c5fd; }
     [data-theme="dark"] .pledge-shield { color: #93c5fd; }
     [data-theme="dark"] .streak-saved-card { background: #431407; border-color: #9a3412; color: #fed7aa; }
     [data-theme="dark"] .streak-saved-link { color: #fdba74; }
@@ -1645,6 +1651,13 @@
 {% if not user.sobriety_date %}{% include 'accounts/partials/_sobriety_date_prompt.html' %}{% endif %}
 {# Same width constraint as .pledge-card below so the two cards align #}
 <div style="max-width: 1000px; margin: 1.5rem auto 0; padding: 0 1rem;">
+    {% if anchor_followup %}
+    <div class="anchor-followup-card">
+        <strong>⚓ Anchor checked in on you</strong>
+        <p>{{ anchor_followup.messages.all.0.content|truncatechars:220 }}</p>
+        <a href="{% url 'accounts:coach_load_session' anchor_followup.id %}" class="anchor-followup-link">Reply to Anchor</a>
+    </div>
+    {% endif %}
     {% program_progress_card %}
     {% include 'accounts/partials/_daily_thought.html' %}
 </div>

@@ -1458,6 +1458,12 @@ def progress_view(request):
             or context['current_streak'] != request.user.get_checkin_streak(protect=False))
     elif context['show_premium_cta']:
         context['streak_saved_by_premium'] = request.user.streak_premium_would_save()
+    # Anchor's unanswered next-day follow-up after a hard check-in
+    from apps.accounts.models import RecoveryCoachSession
+    context['anchor_followup'] = RecoveryCoachSession.objects.filter(
+        user=request.user, trigger='followup',
+        created_at__gte=timezone.now() - timedelta(hours=36),
+    ).exclude(messages__role='user').prefetch_related('messages').first()
     if context['show_premium_cta']:
         from apps.accounts.founding_offer import context_for
         from apps.accounts.payment_models import SubscriptionPlan

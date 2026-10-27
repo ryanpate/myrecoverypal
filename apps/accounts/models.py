@@ -1719,6 +1719,7 @@ class Notification(models.Model):
         ('member_support_request', 'Member Asked for Support'),
         ('member_inactive', 'Member Inactivity Alert'),
         ('program_reminder', 'Program Lesson Reminder'),
+        ('coach_followup', 'Anchor Follow-up'),
     )
 
     recipient = models.ForeignKey(
@@ -2043,6 +2044,7 @@ class RecoveryCoachSession(models.Model):
         ('manual', 'Manual'),
         ('checkin_support', 'Check-in support'),
         ('sos', 'Craving SOS'),
+        ('followup', 'Check-in follow-up'),
     ]
     trigger = models.CharField(
         max_length=20, choices=TRIGGER_CHOICES, default='manual')

@@ -122,16 +122,17 @@ def get_message_count_today(user):
         session__user=user,
         role='user',
         created_at__gte=today_start,
-    ).exclude(session__trigger__in=('checkin_support', 'sos')).count()
+    ).exclude(session__trigger__in=('checkin_support', 'sos', 'followup')).count()
 
 
 def can_send_message(user, session=None):
     """Check if user can send a coach message. Returns (allowed, reason).
 
-    Crisis-triggered (checkin_support, sos) sessions are never limited.
+    Crisis-triggered (checkin_support, sos) sessions and Anchor's next-day
+    follow-up after a hard check-in are never limited.
     Free users get 3 routine messages/day; premium gets 20/day.
     """
-    if session is not None and session.trigger in ('checkin_support', 'sos'):
+    if session is not None and session.trigger in ('checkin_support', 'sos', 'followup'):
         return True, None
 
     is_premium = hasattr(user, 'subscription') and user.subscription.is_premium()
@@ -268,4 +269,45 @@ def generate_checkin_opener(user, checkin):
         return response.content[0].text
     except Exception as e:
         logger.error(f"generate_checkin_opener failed: {e}")
+        return fallback
+
+
+def generate_followup_message(user, checkin, today_checkin=None):
+    """Anchor's next-day message after a hard check-in (see
+    tasks.send_coach_followups). Returns assistant text; falls back to a
+    static warm message on any error.
+    """
+    import anthropic
+
+    fallback = ("Yesterday sounded heavy, so I wanted to check in. "
+                "How are you doing today?")
+    api_key = settings.ANTHROPIC_API_KEY
+    if not api_key:
+        return fallback
+    try:
+        user_context = build_user_context(user)
+        system_prompt = RECOVERY_COACH_SYSTEM_PROMPT.format(user_context=user_context)
+        challenge = (checkin.challenge or '').strip()
+        seed = (
+            f"Yesterday the user logged a hard check-in: mood "
+            f"'{checkin.get_mood_display()}', craving level "
+            f"'{checkin.get_craving_level_display()}'."
+            + (f" They wrote their challenge was: \"{challenge}\"." if challenge else "")
+            + (f" Today they checked in again: mood '{today_checkin.get_mood_display()}', "
+               f"craving level '{today_checkin.get_craving_level_display()}'."
+               if today_checkin else "")
+            + " You are reaching out first, the next morning, without being asked. "
+              "Say you've been thinking about yesterday, ask how they are today, "
+              "and invite them to talk. 2-3 sentences, warm, no lists, no pressure."
+        )
+        client = anthropic.Anthropic(api_key=api_key)
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=300,
+            system=system_prompt,
+            messages=[{"role": "user", "content": seed}],
+        )
+        return response.content[0].text
+    except Exception as e:
+        logger.error(f"generate_followup_message failed: {e}")
         return fallback
