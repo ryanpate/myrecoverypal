@@ -180,7 +180,7 @@ def generate_milestone_image(days, style='classic', name='', time_format='auto',
               f'{name.strip()[:30] if name else ""}')
     if size != 1080 or not watermark:
         params += f'_{size}_{int(watermark)}'
-    cache_key = f'milestone_v10_{hashlib.md5(params.encode()).hexdigest()}'
+    cache_key = f'milestone_v11_{hashlib.md5(params.encode()).hexdigest()}'
     cached = cache.get(cache_key)
     if cached:
         return cached
@@ -253,7 +253,7 @@ def render_badge(days, style, safe_name, time_format, text_y, font_size, fill,
         ubbox = draw.textbbox((0, 0), unit_text, font=unit_font)
         unit_w = ubbox[2] - ubbox[0]
         unit_h = ubbox[3] - ubbox[1]
-        unit_gap = max(round(4 * scale), int(fitted_size * 0.08))
+        unit_gap = max(round(10 * scale), int(fitted_size * 0.16))
 
     name_max_size = max(round(20 * scale), fitted_size - round(24 * scale))
     font_name = _load_font(name_max_size)
@@ -269,10 +269,19 @@ def render_badge(days, style, safe_name, time_format, text_y, font_size, fill,
     bbox = draw.textbbox((0, 0), primary_text, font=font_time)
     tw = bbox[2] - bbox[0]
     th = bbox[3] - bbox[1]
-    # Center the (primary + optional unit) stack vertically on the anchor Y.
+    # Center the (primary + optional unit + optional name) stack vertically on
+    # the anchor Y. Positions use each glyph run's visual bounds: Pillow draws
+    # text with an internal top offset (bbox[1]) that grows with font size, so
+    # stacking by draw origin alone makes the label collide with the number.
     stack_h = th + (unit_gap + unit_h if unit_text else 0)
-    time_y = pixel_y_anchor - stack_h // 2 - bbox[1]
-    x = cx - tw // 2
+    name_gap = round(24 * scale)
+    if safe_name:
+        nbbox = draw.textbbox((0, 0), safe_name, font=font_name)
+        name_h = nbbox[3] - nbbox[1]
+    total_h = stack_h + (name_gap + name_h if safe_name else 0)
+    stack_top = pixel_y_anchor - total_h // 2
+    time_y = stack_top - bbox[1]
+    x = cx - tw // 2 - bbox[0]
 
     outline_w = max(1, round(3 * scale)) if outline else 0
     if outline:
@@ -281,18 +290,17 @@ def render_badge(days, style, safe_name, time_format, text_y, font_size, fill,
         draw.text((x, time_y), primary_text, fill=fill, font=font_time)
 
     if unit_text:
-        unit_x = cx - unit_w // 2
-        unit_y = time_y + th + unit_gap
+        unit_x = cx - unit_w // 2 - ubbox[0]
+        unit_y = stack_top + th + unit_gap - ubbox[1]
         if outline:
             _draw_outlined_text(draw, unit_x, unit_y, unit_text, unit_font, fill, max(1, outline_w - 1))
         else:
             draw.text((unit_x, unit_y), unit_text, fill=fill, font=unit_font)
 
     if safe_name:
-        nbbox = draw.textbbox((0, 0), safe_name, font=font_name)
         ntw = nbbox[2] - nbbox[0]
-        nx = cx - ntw // 2
-        ny = time_y + stack_h + round(12 * scale)
+        nx = cx - ntw // 2 - nbbox[0]
+        ny = stack_top + stack_h + name_gap - nbbox[1]
 
         if outline:
             _draw_outlined_text(draw, nx, ny, safe_name, font_name, fill, max(1, outline_w - 1))
