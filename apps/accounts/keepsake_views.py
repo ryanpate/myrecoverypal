@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from apps.core.analytics import queue_ga_event
+from apps.core.analytics import queue_one_off_purchase
 
 from .keepsakes import (
     KEEPSAKE_KIND, PRODUCTS, fulfil_keepsake_session, handle_printify_event, keepsake_price_cents,
@@ -91,8 +91,8 @@ def keepsake_success(request):
         session = None
     if session and fulfil_keepsake_session(session) and not request.session.get(f'keep_ga_{order.pk}'):
         request.session[f'keep_ga_{order.pk}'] = True
-        queue_ga_event(request, 'purchase', currency='USD',
-                       value=order.amount_cents / 100, item_name=f'keepsake_{order.product}')
+        queue_one_off_purchase(request, session_id, order.amount_cents,
+                               f'keepsake_{order.product}', PRODUCTS[order.product]['label'])
     return redirect('accounts:keepsake_order', token=order.token)
 
 

@@ -54,7 +54,7 @@ from apps.accounts.court_forms import (
 )
 from apps.accounts.court_service import generate_court_report
 from apps.support_services.models import Meeting
-from apps.core.analytics import queue_ga_event
+from apps.core.analytics import queue_ga_event, queue_one_off_purchase
 from datetime import date
 
 
@@ -291,8 +291,8 @@ def court_report_success(request):
     if purchase.report_id:
         if not request.session.get(f'court_ga_{purchase.pk}'):
             request.session[f'court_ga_{purchase.pk}'] = True
-            queue_ga_event(request, 'purchase', currency='USD',
-                           value=purchase.amount_cents / 100, item_name='court_single_report')
+            queue_one_off_purchase(request, session_id, purchase.amount_cents,
+                                   'court_single_report', 'Court attendance report')
         messages.success(request, 'Payment received. Your report is ready below.')
     else:
         messages.info(request, "Payment is still confirming. Your report will appear here in a moment; refresh the page.")

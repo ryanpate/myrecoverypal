@@ -38,6 +38,19 @@ def queue_ga_event(request, name, **params):
     session[SESSION_KEY] = events
 
 
+def queue_one_off_purchase(request, transaction_id, amount_cents, item_id, item_name):
+    """Queue a GA4 `purchase` for a single one-off item.
+
+    transaction_id dedupes the purchase in GA4 and `items` fills the item
+    reports; without them a sale shows as Transaction ID "(not set)".
+    """
+    price = amount_cents / 100
+    queue_ga_event(request, 'purchase', transaction_id=transaction_id, value=price,
+                   currency='USD',
+                   items=[{'item_id': item_id, 'item_name': item_name,
+                           'price': price, 'quantity': 1}])
+
+
 def pop_ga_events(request):
     """Return and clear the queued events."""
     session = getattr(request, 'session', None)

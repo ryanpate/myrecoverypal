@@ -203,9 +203,14 @@ class SobrietyMedallionMakerView(TemplateView):
     template_name = 'core/sobriety_medallion_maker.html'
 
     def get_context_data(self, **kwargs):
+        from apps.accounts.keepsakes import keepsake_price_cents
+        from apps.accounts.medallion_pack import PACK_PRICE_CENTS
         from apps.accounts.milestone_image import BADGE_STYLES
         context = super().get_context_data(**kwargs)
         context['badge_styles'] = BADGE_STYLES
+        context['pack_price'] = PACK_PRICE_CENTS / 100
+        context['mug_price'] = keepsake_price_cents('mug', self.request.user) / 100
+        context['sticker_price'] = keepsake_price_cents('sticker', self.request.user) / 100
         return context
 
 

@@ -310,6 +310,15 @@ class MilestoneCelebrationSendTest(TestCase):
         mock_send.assert_called_once()
 
     @patch('apps.store.email_service.send_email')
+    def test_email_leads_with_their_medallion(self, mock_send):
+        mock_send.return_value = (True, None)
+        from apps.store.email_service import send_milestone_celebration_email
+        send_milestone_celebration_email(self.user, 30)
+        html = mock_send.call_args.kwargs['html_message']
+        self.assertIn('/accounts/milestone-image/30/', html)
+        self.assertIn('/accounts/milestone-badge/?days=30&amp;utm_source=email', html)
+
+    @patch('apps.store.email_service.send_email')
     def test_does_not_send_when_send_email_fails(self, mock_send):
         mock_send.return_value = (False, 'SMTP fail')
         from apps.store.email_service import send_milestone_celebration_email
