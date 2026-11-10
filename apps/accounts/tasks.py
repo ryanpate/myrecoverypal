@@ -1417,6 +1417,17 @@ def send_facility_risk_digest():
 # Court Compliance engagement (Phase 3 retention)
 # ========================================
 
+@shared_task
+def send_dry_january_emails():
+    """Hourly: the Dec 31 "starts tomorrow" and Jan 15 "halfway" emails, each
+    at 9 AM in the member's own time zone (apps/accounts/dry_january.py)."""
+    from .dry_january import send_emails
+    sent = send_emails()
+    if sent:
+        logger.info('Dry January emails sent: %d', sent)
+    return sent
+
+
 def _user_zoneinfo(user, fallback='UTC'):
     """ZoneInfo for the user's stored IANA timezone, else `fallback`."""
     from zoneinfo import ZoneInfo

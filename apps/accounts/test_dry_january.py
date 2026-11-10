@@ -111,3 +111,57 @@ class CreatorDaysOverrideTests(TestCase):
         self.assertEqual(resp.context['days_sober'], 31)
         resp = self.client.get(reverse('accounts:milestone_badge_creator'))
         self.assertGreater(resp.context['days_sober'], 31)
+
+
+class EmailTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user('mail', 'mail@example.com', 'pw', first_name='Sam')
+        self.user.timezone = 'America/New_York'
+        self.user.save()
+        self.entry = DryJanuaryEntry.objects.create(user=self.user, year=2027)
+
+    def _run(self, y, mo, d, hour_utc):
+        from datetime import datetime, timezone as dt_tz
+        from apps.accounts.dry_january import send_emails
+        with patch('apps.accounts.email_service.send_email', return_value=(True, None)) as send:
+            sent = send_emails(now=datetime(y, mo, d, hour_utc, 20, tzinfo=dt_tz.utc))
+        return sent, send
+
+    def test_start_email_goes_out_dec_31_at_9am_local_once(self):
+        # 13:20 UTC = 8:20 AM in New York: too early.
+        self.assertEqual(self._run(2026, 12, 31, 13)[0], 0)
+        sent, send = self._run(2026, 12, 31, 14)
+        self.assertEqual(sent, 1)
+        self.assertEqual(send.call_args.kwargs['subject'], 'Dry January starts tomorrow')
+        self.assertIn('It starts tomorrow, Sam', send.call_args.kwargs['html_message'])
+        self.assertEqual(self._run(2026, 12, 31, 15)[0], 0)
+
+    def test_local_date_decides_not_utc(self):
+        # 03:20 UTC on Jan 1 is still Dec 31 evening in New York.
+        self.assertEqual(self._run(2027, 1, 1, 3)[0], 1)
+
+    def test_midmonth_email_reports_pledged_days(self):
+        DailyPledge.objects.create(user=self.user, date=date(2027, 1, 3))
+        sent, send = self._run(2027, 1, 15, 15)
+        self.assertEqual(sent, 1)
+        self.assertEqual(send.call_args.kwargs['subject'], 'Halfway through Dry January')
+        self.assertIn('pledged <strong>1 day</strong>', send.call_args.kwargs['html_message'])
+        self.assertEqual(self._run(2027, 1, 16, 15)[0], 0)
+
+    def test_nothing_on_other_days_or_for_other_years(self):
+        self.assertEqual(self._run(2026, 12, 30, 15)[0], 0)
+        self.assertEqual(self._run(2027, 1, 14, 15)[0], 0)
+        self.assertEqual(self._run(2027, 12, 31, 15)[0], 0)
+
+    def test_respects_email_opt_out_and_retries_after_failure(self):
+        from datetime import datetime, timezone as dt_tz
+        from apps.accounts.dry_january import send_emails
+        now = datetime(2026, 12, 31, 15, 20, tzinfo=dt_tz.utc)
+        with patch('apps.accounts.email_service.send_email', return_value=(False, 'down')):
+            self.assertEqual(send_emails(now=now), 0)
+        self.entry.refresh_from_db()
+        self.assertFalse(self.entry.start_email_sent)
+        self.user.email_notifications = False
+        self.user.save()
+        self.assertEqual(self._run(2026, 12, 31, 16)[0], 0)

@@ -785,6 +785,9 @@ class DryJanuaryEntry(models.Model):
         User, on_delete=models.CASCADE, related_name='dry_january_entries')
     year = models.PositiveSmallIntegerField()
     joined_at = models.DateTimeField(auto_now_add=True)
+    # Set once each email has gone out (dry_january.send_emails).
+    start_email_sent = models.BooleanField(default=False)
+    midmonth_email_sent = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ['user', 'year']

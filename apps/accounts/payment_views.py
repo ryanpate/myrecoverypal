@@ -23,7 +23,7 @@ from .payment_models import (
     Invoice, SubscriptionPlan
 )
 from .email_service import send_email
-from apps.core.analytics import queue_ga_event
+from apps.core.analytics import queue_begin_checkout, queue_ga_event
 
 logger = logging.getLogger(__name__)
 
@@ -164,6 +164,13 @@ def _get_winback_coupon():
         return None
 
 
+def _queue_plan_checkout(request, plan):
+    """begin_checkout for the one-click links that redirect straight to Stripe."""
+    queue_begin_checkout(request, int(round(float(plan.price) * 100)),
+                         plan.stripe_price_id or plan.tier, plan.name,
+                         item_category=plan.tier, item_variant=plan.billing_period)
+
+
 @login_required
 def founding_offer(request):
     """Claim the founding-member offer: annual Premium with the first year
@@ -183,6 +190,7 @@ def founding_offer(request):
     try:
         coupon = offer.get_coupon()
         checkout_session = _build_checkout_session(request, plan, coupon=coupon)
+        _queue_plan_checkout(request, plan)
         return redirect(checkout_session.url)
     except Exception as e:
         logger.error(f'founding offer checkout error for user {request.user.id}: {e}')
@@ -240,6 +248,7 @@ def keep_premium(request):
         return redirect('accounts:pricing')
     try:
         checkout_session = _build_checkout_session(request, plan)
+        _queue_plan_checkout(request, plan)
         return redirect(checkout_session.url)
     except Exception as e:
         logger.error(f'keep_premium checkout error for user {request.user.id}: {e}')
@@ -288,6 +297,7 @@ def winback(request):
     try:
         coupon = _get_winback_coupon()
         checkout_session = _build_checkout_session(request, plan, coupon=coupon)
+        _queue_plan_checkout(request, plan)
         return redirect(checkout_session.url)
     except Exception as e:
         logger.error(f'winback checkout error for user {request.user.id}: {e}')

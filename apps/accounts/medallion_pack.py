@@ -16,6 +16,23 @@ PACK_PRICE_CENTS = 499
 PACK_KIND = 'medallion_pack'
 
 
+# Days that get a medallion card on the progress home, plus every anniversary.
+CARD_MILESTONES = (7, 30, 60, 90, 180, 365)
+# Members don't open the app every day: keep the card up this long after.
+CARD_DAYS_AFTER = 2
+
+
+def milestone_card(days_sober):
+    """The milestone a member just reached (today or in the last two days), or None."""
+    if not days_sober:
+        return None
+    for back in range(CARD_DAYS_AFTER + 1):
+        days = days_sober - back
+        if days in CARD_MILESTONES or (days > 365 and days % 365 == 0):
+            return {'days': days, 'label': _milestone_label(days), 'today': back == 0}
+    return None
+
+
 def fulfil_checkout_session(session):
     """Mark the purchase behind a paid Checkout Session as paid and email the link.
 

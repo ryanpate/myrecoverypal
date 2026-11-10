@@ -600,9 +600,19 @@
                 // GA4 funnel step. Fired here, not server-side: the next
                 // page is Stripe's, so an abandoned checkout would never
                 // render a page that could report it.
+                // Wait for GA to confirm the hit (or 800ms) before leaving,
+                // otherwise the navigation can cancel it.
+                var left = false;
+                var goToStripe = function () {
+                    if (left) return;
+                    left = true;
+                    window.location.href = data.url;
+                };
                 if (data.analytics && typeof gtag === 'function') {
                     var a = data.analytics;
+                    setTimeout(goToStripe, 800);
                     gtag('event', 'begin_checkout', {
+                        event_callback: goToStripe,
                         value: a.value,
                         currency: a.currency,
                         items: [{
@@ -614,10 +624,9 @@
                             quantity: 1
                         }]
                     });
+                } else {
+                    goToStripe();
                 }
-
-                // Redirect to Stripe Checkout
-                window.location.href = data.url;
 
             } catch (error) {
                 console.error('Error:', error);

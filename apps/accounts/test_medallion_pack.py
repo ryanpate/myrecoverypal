@@ -105,6 +105,8 @@ class PackCheckoutTest(TestCase):
         self.assertEqual(kwargs['line_items'][0]['price_data']['unit_amount'], 499)
         self.assertEqual(kwargs['metadata']['kind'], 'medallion_pack')
         self.assertEqual(kwargs['metadata']['purchase_id'], str(p.id))
+        [event] = self.client.session['ga_events']
+        self.assertEqual((event['name'], event['params']['value']), ('begin_checkout', 4.99))
 
     @patch('apps.accounts.medallion_pack_views.stripe.checkout.Session.create')
     def test_premium_user_gets_pack_free_without_stripe(self, create):
@@ -330,3 +332,54 @@ class LandingPackPromoTest(TestCase):
         """The free PNG carries a site stamp; removing it is part of the pack."""
         resp = self.client.get(reverse('core:sobriety_medallion_maker'))
         self.assertNotContains(resp, 'watermark')
+
+
+class MilestoneCardLogicTest(TestCase):
+
+    def test_card_on_the_day_and_two_days_after(self):
+        from apps.accounts.medallion_pack import milestone_card
+        self.assertEqual(milestone_card(90), {'days': 90, 'label': '90-day', 'today': True})
+        self.assertEqual(milestone_card(92), {'days': 90, 'label': '90-day', 'today': False})
+        self.assertIsNone(milestone_card(93))
+        self.assertIsNone(milestone_card(89))
+        self.assertIsNone(milestone_card(None))
+        self.assertIsNone(milestone_card(0))
+
+    def test_sixty_days_and_anniversaries_count(self):
+        from apps.accounts.medallion_pack import milestone_card
+        self.assertEqual(milestone_card(60)['days'], 60)
+        self.assertEqual(milestone_card(730)['label'], '2-year')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class MilestoneCardOnProgressTest(TestCase):
+
+    def _user(self, days):
+        from datetime import timedelta
+        from django.utils import timezone
+        user = User.objects.create_user(username=f'm{days}', email=f'm{days}@example.com', password='pw')
+        user.sobriety_date = timezone.localdate() - timedelta(days=days)
+        user.save()
+        self.client.force_login(user)
+        return user
+
+    def test_shown_on_milestone_day_with_pack_hidden_on_ios(self):
+        self._user(30)
+        resp = self.client.get(reverse('accounts:progress'))
+        self.assertContains(resp, 'id="milestoneMedallionCard"')
+        self.assertContains(resp, 'You hit 30 days today')
+        self.assertContains(resp, 'milestone-badge/?days=30')
+        self.assertContains(resp, '<span class="stripe-only">Want it as a video')
+
+    def test_not_shown_on_ordinary_days(self):
+        self._user(45)
+        self.assertNotContains(self.client.get(reverse('accounts:progress')), 'id="milestoneMedallionCard"')
+
+    def test_premium_member_sees_pack_included_not_a_price(self):
+        user = self._user(90)
+        user.subscription.tier = 'premium'
+        user.subscription.status = 'active'
+        user.subscription.save()
+        resp = self.client.get(reverse('accounts:progress'))
+        self.assertContains(resp, 'included with your Premium')
+        self.assertNotContains(resp, 'The HD Pack is $4.99')

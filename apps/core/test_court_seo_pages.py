@@ -49,3 +49,15 @@ class CourtSeoLinkingTests(TestCase):
         resp = self.client.get(reverse('core:court_ordered_meeting_tracker'))
         self.assertContains(resp, reverse('core:court_attendance_sheet'))
         self.assertContains(resp, reverse('core:online_meeting_proof'))
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class ProgramPartnerPageTests(TestCase):
+
+    def test_page_renders_and_is_linked(self):
+        resp = self.client.get(reverse('core:for_recovery_programs'))
+        self.assertContains(resp, 'Nothing for your program')
+        self.assertContains(resp, '<span class="stripe-only">A member pays $')
+        self.assertContains(self.client.get(reverse('core:court_ordered_meeting_tracker')),
+                            reverse('core:for_recovery_programs'))
+        self.assertIn('/for-sober-living-and-dui-programs/', self.client.get('/sitemap.xml').content.decode())

@@ -1494,6 +1494,8 @@ def progress_view(request):
 
     from apps.accounts.dry_january import progress_card as dry_january_card
     context['dry_january'] = dry_january_card(request.user)
+    from apps.accounts.medallion_pack import milestone_card
+    context['milestone_medallion'] = milestone_card(days_sober)
 
     return render(request, 'accounts/progress.html', context)
 
