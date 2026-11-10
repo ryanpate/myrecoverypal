@@ -6,6 +6,13 @@
         <h2 style="text-align: center; color: var(--primary-dark); margin-bottom: 0.5rem; font-size: 1.6rem;">More Recovery Tools</h2>
         <p style="text-align: center; color: #666; margin-bottom: 2rem;">Free tools to support your recovery journey</p>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+            {% if exclude != 'dry_january' %}
+            <a href="{% url 'core:dry_january' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s;">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;"><i class="fas fa-calendar-check" aria-hidden="true"></i></div>
+                <h3 style="color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 0.5rem;">Dry January Tracker</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0;">Free 31-day tracker with a daily pledge, craving tools, and a medallion when you finish.</p>
+            </a>
+            {% endif %}
             {% if exclude != 'sobriety_calculator' %}
             <a href="{% url 'core:sobriety_calculator' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s;">
                 <div style="font-size: 1.5rem; margin-bottom: 0.5rem;"><i class="fas fa-calculator" aria-hidden="true"></i></div>

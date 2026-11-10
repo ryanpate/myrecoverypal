@@ -1,0 +1,13 @@
+{% if joined %}
+    <span class="dj-joined"><i class="fas fa-check" aria-hidden="true"></i> You&rsquo;re in for Dry January {{ year }}</span>
+    <p class="dj-small"><a href="{% url 'accounts:progress' %}">Go to your tracker &rarr;</a></p>
+{% elif user.is_authenticated %}
+    <form method="post" action="{% url 'accounts:dry_january_join' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="dj-cta" data-dj-cta="join">I&rsquo;m in for Dry January {{ year }}</button>
+    </form>
+    <p class="dj-small">Free. Your tracker appears on your Today page.</p>
+{% else %}
+    <a class="dj-cta" data-dj-cta="signup" href="{% url 'accounts:register' %}?next={% url 'core:dry_january' %}">Start my free tracker</a>
+    <p class="dj-small">Free, takes a minute. <a href="{% url 'accounts:login' %}?next={% url 'core:dry_january' %}">Already a member? Log in</a></p>
+{% endif %}

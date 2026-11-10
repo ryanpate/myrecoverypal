@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Dry January {{ year }}: Free 31-Day Tracker &amp; Daily Pledge{% endblock %}
+{% block meta_description %}Doing Dry January {{ year }}? Track all 31 days free: a one-tap daily pledge, a day counter, support for cravings, and a 31-day medallion when you finish.{% endblock %}
+{% block og_title %}Dry January {{ year }}: Free 31-Day Tracker{% endblock %}
+{% block og_description %}Track all 31 days of Dry January free: a one-tap daily pledge, a day counter, craving support, and a 31-day medallion when you finish.{% endblock %}
+{% block twitter_title %}Dry January {{ year }}: Free 31-Day Tracker{% endblock %}
+{% block twitter_description %}Track all 31 days of Dry January free: a one-tap daily pledge, a day counter, craving support, and a 31-day medallion when you finish.{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/dry-january/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Dry January?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Dry January is a challenge to drink no alcohol from January 1 to January 31. People do it to reset after the holidays, to see how they feel without alcohol, or to take a first step toward drinking less for good."}
+    },
+    {
+      "@type": "Question",
+      "name": "Is it safe to stop drinking suddenly?",
+      "acceptedAnswer": {"@type": "Answer", "text": "For most people, yes. But if you drink heavily every day, stopping suddenly can cause alcohol withdrawal, which can be dangerous. If you get shaky, sweaty, anxious or sick when you go without a drink, talk to a doctor before you stop. In the US you can also call the SAMHSA helpline at 1-800-662-4357, free and confidential, 24/7."}
+    },
+    {
+      "@type": "Question",
+      "name": "What should I do if I drink during Dry January?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Don't quit the month. One drink doesn't cancel the days you've already done. Notice what led to it, plan for that moment next time, and take tomorrow's pledge."}
+    },
+    {
+      "@type": "Question",
+      "name": "Can I start Dry January late?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes. Join any day in January and pledge from that day on. You can also sign up now and the tracker will start on January 1."}
+    },
+    {
+      "@type": "Question",
+      "name": "Is this tracker free?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes. The daily pledge, day counter, check-ins, craving tools and the 31-day medallion are free."}
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dj { max-width: 900px; margin: 0 auto; padding: 0 1.25rem 4rem; line-height: 1.65; }
+    .dj-hero { text-align: center; padding: 3.5rem 0 2.5rem; }
+    .dj-hero .eyebrow { display: inline-block; background: rgba(45,125,210,0.1); color: #1e4d8b; font-weight: 700; font-size: 0.8rem;
+        letter-spacing: 0.05em; text-transform: uppercase; padding: 0.35rem 0.9rem; border-radius: 50px; }
+    .dj-hero h1 { color: #1a2a44; font-size: 2.5rem; line-height: 1.2; margin: 0.9rem 0 0.75rem; }
+    .dj-hero h1 span { color: #2d7dd2; }
+    .dj-hero .lead { font-size: 1.15rem; color: #445; max-width: 640px; margin: 0 auto 1.5rem; }
+    .dj-count { font-size: 1rem; color: #555; margin-bottom: 1.25rem; }
+    .dj-count strong { font-size: 1.6rem; color: #1e4d8b; }
+    .dj-cta { display: inline-block; background: #52b788; color: #fff; border: none; cursor: pointer; font-weight: 700; font-size: 1.1rem;
+        padding: 0.95rem 2.2rem; border-radius: 50px; text-decoration: none; }
+    .dj-cta:hover { color: #fff; background: #40a274; }
+    .dj-joined { display: inline-block; background: #eef8f1; color: #2a7a52; font-weight: 700; padding: 0.7rem 1.4rem; border-radius: 50px; }
+    .dj-small { font-size: 0.9rem; color: #666; margin-top: 0.75rem; }
+    .dj h2 { color: #1e4d8b; font-size: 1.6rem; margin: 3rem 0 1rem; }
+    .dj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+    .dj-feature { background: #f7f9fc; border-radius: 14px; padding: 1.2rem 1.25rem; }
+    .dj-feature i { color: #2d7dd2; font-size: 1.3rem; }
+    .dj-feature h3 { font-size: 1.05rem; margin: 0.5rem 0 0.3rem; color: #1a2a44; }
+    .dj-feature p { margin: 0; color: #555; font-size: 0.93rem; }
+    .dj-warn { border-left: 4px solid #d9822b; background: #fff7ee; border-radius: 10px; padding: 1rem 1.2rem; margin: 2rem 0 0; }
+    .dj-warn strong { color: #9a5310; }
+    .dj ol li, .dj ul li { margin-bottom: 0.45rem; }
+    .dj details { background: #f7f9fc; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+    .dj summary { font-weight: 600; cursor: pointer; }
+    .dj-bottom { text-align: center; background: linear-gradient(135deg, #0f2d56, #1e4d8b); color: #fff; border-radius: 18px; padding: 2.5rem 1.5rem; margin-top: 3rem; }
+    .dj-bottom h2 { color: #fff; margin-top: 0; }
+    .dj-note { font-size: 0.8rem; color: #888; margin-top: 2rem; }
+    [data-theme="dark"] .dj-hero h1, [data-theme="dark"] .dj-feature h3 { color: #f2f2f2; }
+    [data-theme="dark"] .dj h2 { color: #8ab4f8; }
+    [data-theme="dark"] .dj-bottom h2 { color: #fff; }
+    [data-theme="dark"] .dj-hero .lead, [data-theme="dark"] .dj-count, [data-theme="dark"] .dj-feature p { color: #c9d2dc; }
+    [data-theme="dark"] .dj-hero .eyebrow { color: #8fb8ee; }
+    [data-theme="dark"] .dj-count strong { color: #8fb8ee; }
+    [data-theme="dark"] .dj-feature, [data-theme="dark"] .dj details { background: #1e2430; }
+    [data-theme="dark"] .dj-warn { background: #2e2418; }
+    [data-theme="dark"] .dj-warn strong { color: #f0b46e; }
+    [data-theme="dark"] .dj-joined { background: #17291f; color: #7fd1a6; }
+    @media (max-width: 600px) { .dj-hero h1 { font-size: 1.9rem; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dj">
+    <section class="dj-hero">
+        <span class="eyebrow">Free 31-day tracker</span>
+        <h1>Dry January <span>{{ year }}</span>: track every alcohol-free day</h1>
+        <p class="lead">One tap each morning to pledge the day, a counter that climbs to 31, help when a craving hits, and a medallion to mark the finish.</p>
+        {% if not in_january %}
+        <p class="dj-count"><strong>{{ days_until }}</strong> day{{ days_until|pluralize }} until January 1</p>
+        {% endif %}
+        {% include 'core/partials/_dry_january_cta.html' %}
+    </section>
+
+    <h2>What you get, free</h2>
+    <div class="dj-grid">
+        <div class="dj-feature"><i class="fas fa-hand-holding-heart" aria-hidden="true"></i>
+            <h3>A daily pledge</h3><p>One tap each morning: &ldquo;I won&rsquo;t drink today.&rdquo; Add your reason and a photo to come back to.</p></div>
+        <div class="dj-feature"><i class="fas fa-calendar-check" aria-hidden="true"></i>
+            <h3>Day 1 to 31</h3><p>Your tracker counts the month and the days you pledged, so you can see the streak build.</p></div>
+        <div class="dj-feature"><i class="fas fa-life-ring" aria-hidden="true"></i>
+            <h3>Help with cravings</h3><p>Breathing, urge surfing and grounding tools in <a href="{% url 'core:craving_sos' %}">Craving SOS</a>, any hour, plus online meetings starting soon.</p></div>
+        <div class="dj-feature"><i class="fas fa-medal" aria-hidden="true"></i>
+            <h3>A 31-day medallion</h3><p>Finish the month and make a medallion with your name to save or share.</p></div>
+    </div>
+
+    <h2>How to make it to January 31</h2>
+    <ol>
+        <li><strong>Decide your why.</strong> Better sleep, saving money, or seeing how you feel. Write it down; you&rsquo;ll see it on your pledge each day.</li>
+        <li><strong>Clear the house</strong> before January 1, and stock something you&rsquo;ll actually enjoy drinking instead.</li>
+        <li><strong>Plan for the hard moments.</strong> Fridays, work events and bad days are when most people slip. Decide now what you&rsquo;ll do and say.</li>
+        <li><strong>Tell someone.</strong> One person who knows makes it far easier to keep going.</li>
+        <li><strong>If you slip, keep going.</strong> One drink doesn&rsquo;t cancel the days you&rsquo;ve done. Pledge again tomorrow.</li>
+    </ol>
+
+    <h2>What people notice after a month without alcohol</h2>
+    <p>
+        Everyone is different, but many people who take a month off report sleeping better, having more energy,
+        feeling clearer in the morning and spending noticeably less money. Some find it easy; some find it much harder
+        than they expected. Both are worth knowing. If you want to see your own numbers, the
+        <a href="{% url 'core:sobriety_calculator' %}">sobriety calculator</a> shows days, money saved and more.
+    </p>
+
+    <div class="dj-warn">
+        <strong>If you drink heavily every day, talk to a doctor before you stop.</strong>
+        Stopping suddenly can cause alcohol withdrawal, which can be dangerous. Signs include shaking, sweating,
+        anxiety or feeling sick when you go without a drink. In the US, the SAMHSA helpline is free and open 24/7 at
+        <a href="tel:18006624357">1-800-662-4357</a>. In a crisis, call or text <a href="tel:988">988</a>.
+    </div>
+
+    <h2>Found January harder than you expected?</h2>
+    <p>
+        That&rsquo;s useful to know, and you&rsquo;re not alone. Many people who start with Dry January keep going.
+        You can keep pledging after January 31, try an <a href="{% url 'core:online_aa_meetings' %}">online AA meeting</a>
+        today, or <a href="{% url 'support_services:meeting_list' %}">find a meeting near you</a>.
+    </p>
+
+    <h2>Frequently asked questions</h2>
+    <details><summary>What is Dry January?</summary>
+        <p>Dry January is a challenge to drink no alcohol from January 1 to January 31. People do it to reset after the holidays, to see how they feel without alcohol, or to take a first step toward drinking less for good.</p></details>
+    <details><summary>Is it safe to stop drinking suddenly?</summary>
+        <p>For most people, yes. But if you drink heavily every day, stopping suddenly can cause alcohol withdrawal, which can be dangerous. If you get shaky, sweaty, anxious or sick when you go without a drink, talk to a doctor before you stop. In the US you can also call the SAMHSA helpline at 1-800-662-4357, free and confidential, 24/7.</p></details>
+    <details><summary>What should I do if I drink during Dry January?</summary>
+        <p>Don&rsquo;t quit the month. One drink doesn&rsquo;t cancel the days you&rsquo;ve already done. Notice what led to it, plan for that moment next time, and take tomorrow&rsquo;s pledge.</p></details>
+    <details><summary>Can I start Dry January late?</summary>
+        <p>Yes. Join any day in January and pledge from that day on. You can also sign up now and the tracker will start on January 1.</p></details>
+    <details><summary>Is this tracker free?</summary>
+        <p>Yes. The daily pledge, day counter, check-ins, craving tools and the 31-day medallion are free.</p></details>
+
+    <section class="dj-bottom">
+        <h2>Ready for 31 days?</h2>
+        <p>Join free and your tracker starts on January 1.</p>
+        {% include 'core/partials/_dry_january_cta.html' %}
+    </section>
+
+    <p class="dj-note">MyRecoveryPal is not affiliated with Alcohol Change UK, which runs the official Dry January campaign.</p>
+</div>
+<script>
+document.querySelectorAll('[data-dj-cta]').forEach(function (el) {
+    el.addEventListener('click', function () {
+        if (window.gtag) gtag('event', 'dry_january_cta_click', { state: el.dataset.djCta });
+    });
+});
+</script>
+{% include 'core/partials/_related_tools.html' with exclude='dry_january' %}
+{% endblock %}
