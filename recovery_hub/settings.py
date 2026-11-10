@@ -857,6 +857,12 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_coach_followups',
         'schedule': crontab(minute=15),
     },
+    # Dry January: "starts tomorrow" (Dec 31) and "halfway" (Jan 15), 9 AM local.
+    # Does nothing the rest of the year.
+    'send-dry-january-emails': {
+        'task': 'apps.accounts.tasks.send_dry_january_emails',
+        'schedule': crontab(minute=20),
+    },
     # Weekly digest - Sundays at 10 AM
     'send-weekly-digests': {
         'task': 'apps.accounts.tasks.send_weekly_digests',

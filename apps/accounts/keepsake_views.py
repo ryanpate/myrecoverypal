@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from apps.core.analytics import queue_one_off_purchase
+from apps.core.analytics import queue_begin_checkout, queue_one_off_purchase
 
 from .keepsakes import (
     KEEPSAKE_KIND, PRODUCTS, fulfil_keepsake_session, handle_printify_event, keepsake_price_cents,
@@ -77,6 +77,8 @@ def keepsake_checkout(request):
 
     order.stripe_session_id = session.id
     order.save(update_fields=['stripe_session_id'])
+    queue_begin_checkout(request, order.amount_cents, f'keepsake_{order.product}',
+                         PRODUCTS[order.product]['label'])
     return _see_other(session.url)
 
 

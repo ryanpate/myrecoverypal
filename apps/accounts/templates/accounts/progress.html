@@ -1658,6 +1658,7 @@
         <a href="{% url 'accounts:coach_load_session' anchor_followup.id %}" class="anchor-followup-link">Reply to Anchor</a>
     </div>
     {% endif %}
+    {% if milestone_medallion %}{% include 'accounts/partials/_milestone_medallion_card.html' %}{% endif %}
     {% if dry_january %}{% include 'accounts/partials/_dry_january_card.html' %}{% endif %}
     {% program_progress_card %}
     {% include 'accounts/partials/_daily_thought.html' %}

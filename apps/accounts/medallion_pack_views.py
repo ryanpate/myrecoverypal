@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from apps.core.analytics import queue_one_off_purchase
+from apps.core.analytics import queue_begin_checkout, queue_one_off_purchase
 
 from .medallion_models import MedallionPackPurchase
 from .medallion_pack import PACK_KIND, PACK_PRICE_CENTS, fulfil_checkout_session, queue_video_prerender
@@ -115,6 +115,7 @@ def medallion_pack_checkout(request):
 
     purchase.stripe_session_id = session.id
     purchase.save(update_fields=['stripe_session_id'])
+    queue_begin_checkout(request, PACK_PRICE_CENTS, 'medallion_pack', 'HD Medallion Pack')
     return _see_other(session.url)
 
 

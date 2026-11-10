@@ -42,6 +42,16 @@ class KeepPremiumTests(TestCase):
         )
 
     @patch('apps.accounts.payment_views._build_checkout_session', return_value=_FakeSession())
+    def test_queues_begin_checkout_for_ga(self, mock_build):
+        """The link 302s straight to Stripe, so the funnel step is queued for
+        the next page the member sees."""
+        self.client.get(reverse('accounts:keep_premium'))
+        [event] = self.client.session['ga_events']
+        self.assertEqual(event['name'], 'begin_checkout')
+        self.assertEqual(event['params']['value'], 59.99)
+        self.assertEqual(event['params']['items'][0]['item_variant'], 'yearly')
+
+    @patch('apps.accounts.payment_views._build_checkout_session', return_value=_FakeSession())
     def test_default_uses_yearly_and_redirects_to_stripe(self, mock_build):
         resp = self.client.get(reverse('accounts:keep_premium'))
         self.assertEqual(resp.status_code, 302)

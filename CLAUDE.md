@@ -137,6 +137,7 @@ python manage.py test_email recipient@example.com --resend-api
 - `send_checkin_reminders`: hourly; each member is reminded at 5 PM in their own time zone (US Central if unknown)
 - `send_coach_followups`: hourly at :15; the morning after a hard check-in (`needs_support()`), Anchor reaches out at 10 AM member-local time (new `followup` session + in-app notification + generic push)
 - `send_weekly_digests`: Sundays at 10:30 AM
+- `send_dry_january_emails`: hourly at :20; "starts tomorrow" on Dec 31 and "halfway" on Jan 15, each at 9 AM member-local, only to members who joined Dry January (`apps/accounts/dry_january.py`)
 - `resources.tasks.send_program_reminders`: hourly at :05; each member handled at 9 AM in their own time zone (guided program lessons)
 - `resources.tasks.send_audio_reminders`: hourly at :10; opt-in daily push to play a guided session (morning intention, evening check-out, sleep wind-down) at the member's chosen local hour
 

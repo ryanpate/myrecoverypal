@@ -51,6 +51,19 @@ def queue_one_off_purchase(request, transaction_id, amount_cents, item_id, item_
                            'price': price, 'quantity': 1}])
 
 
+def queue_begin_checkout(request, amount_cents, item_id, item_name, **item_extra):
+    """Queue a GA4 `begin_checkout` before a server-side redirect to Stripe.
+
+    The redirect renders no page of ours, so the event fires on the next one
+    the visitor sees: the success page, or wherever they land after backing
+    out. A visitor who closes the tab on Stripe and never returns is missed.
+    """
+    price = amount_cents / 100
+    queue_ga_event(request, 'begin_checkout', value=price, currency='USD',
+                   items=[{'item_id': item_id, 'item_name': item_name,
+                           'price': price, 'quantity': 1, **item_extra}])
+
+
 def pop_ga_events(request):
     """Return and clear the queued events."""
     session = getattr(request, 'session', None)

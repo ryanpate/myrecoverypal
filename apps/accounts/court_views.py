@@ -54,7 +54,7 @@ from apps.accounts.court_forms import (
 )
 from apps.accounts.court_service import generate_court_report
 from apps.support_services.models import Meeting
-from apps.core.analytics import queue_ga_event, queue_one_off_purchase
+from apps.core.analytics import queue_begin_checkout, queue_ga_event, queue_one_off_purchase
 from datetime import date
 
 
@@ -275,6 +275,8 @@ def _single_report_checkout(request, period_start, period_end):
         return redirect('accounts:court_report_list')
     purchase.stripe_session_id = session.id
     purchase.save(update_fields=['stripe_session_id'])
+    queue_begin_checkout(request, purchase.amount_cents, 'court_single_report',
+                         'Court attendance report')
     return _see_other(session.url)
 
 

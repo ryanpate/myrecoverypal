@@ -291,6 +291,18 @@ class OnlineMeetingProofView(TemplateView):
         return context
 
 
+class ForRecoveryProgramsView(TemplateView):
+    """One-pager for sober-living homes, DUI programs and aftercare: the people
+    who refer members with a meeting requirement. Doubles as outreach collateral."""
+    template_name = 'core/for_recovery_programs.html'
+
+    def get_context_data(self, **kwargs):
+        from apps.accounts.court_purchase import SINGLE_REPORT_PRICE_CENTS
+        context = super().get_context_data(**kwargs)
+        context['single_report_price'] = SINGLE_REPORT_PRICE_CENTS / 100
+        return context
+
+
 class DryJanuaryView(TemplateView):
     """SEO landing page for Dry January: a free 31-day tracker on the progress
     home (apps/accounts/dry_january.py)."""

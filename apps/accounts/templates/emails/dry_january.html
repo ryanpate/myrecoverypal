@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dry January {{ year }}</title></head>
+<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px;background:#f4f4f4;">
+<div style="background:#fff;border-radius:15px;padding:32px;">
+  <p style="margin:0 0 4px;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#2d7dd2;">Dry January {{ year }}</p>
+  {% if kind == 'start' %}
+  <h1 style="margin:0 0 16px;font-size:26px;color:#1a2a44;">It starts tomorrow, {{ first_name }}</h1>
+  <p>Three things worth doing tonight:</p>
+  <ol style="padding-left:20px;">
+    <li><strong>Clear the house.</strong> Pour it out or put it away, and get something you'll enjoy drinking instead.</li>
+    <li><strong>Tell one person.</strong> It's much easier to keep going when someone knows.</li>
+    <li><strong>Plan your first hard moment.</strong> Tonight is New Year's Eve. Decide now what you'll say and what you'll drink.</li>
+  </ol>
+  <p>Tomorrow morning, open your tracker and take your first pledge. It takes one tap.</p>
+  <p style="text-align:center;margin:28px 0;"><a href="{{ site_url }}/accounts/progress/?utm_source=email&utm_medium=email&utm_campaign=dry_january_start" style="display:inline-block;background:#52b788;color:#fff;text-decoration:none;padding:14px 36px;border-radius:50px;font-weight:600;font-size:17px;">Open my tracker</a></p>
+  <p style="font-size:14px;color:#555;">If you drink heavily every day, talk to a doctor before you stop: stopping suddenly can be dangerous. In the US, the SAMHSA helpline is free and open 24/7 at 1-800-662-4357.</p>
+  {% else %}
+  <h1 style="margin:0 0 16px;font-size:26px;color:#1a2a44;">You're halfway, {{ first_name }}</h1>
+  <p>It's day 15 of 31. {% if pledged_days %}You've pledged <strong>{{ pledged_days }} day{{ pledged_days|pluralize }}</strong> so far this month.{% else %}You haven't taken a pledge yet this month, and today is a fine day to start.{% endif %}</p>
+  <p>The second half is where most people wobble: the novelty has worn off and the weekends keep coming. Two things that help:</p>
+  <ul style="padding-left:20px;">
+    <li><strong>Had a drink?</strong> It doesn't cancel the days you've done. Pledge again today and carry on.</li>
+    <li><strong>Craving right now?</strong> <a href="{{ site_url }}/craving-sos/?utm_source=email&utm_medium=email&utm_campaign=dry_january_mid" style="color:#1e4d8b;">Craving SOS</a> has a breathing exercise and other tools that take a few minutes.</li>
+  </ul>
+  <p style="text-align:center;margin:28px 0;"><a href="{{ site_url }}/accounts/progress/?utm_source=email&utm_medium=email&utm_campaign=dry_january_mid" style="display:inline-block;background:#52b788;color:#fff;text-decoration:none;padding:14px 36px;border-radius:50px;font-weight:600;font-size:17px;">Take today's pledge</a></p>
+  <p>Finish the month and there's a 31-day medallion waiting for you.</p>
+  {% endif %}
+  <p style="margin-top:32px;padding-top:16px;border-top:1px solid #e0e0e0;font-size:13px;color:#777;">You're getting this because you joined Dry January on MyRecoveryPal. <a href="{{ site_url }}/accounts/edit-profile/" style="color:#777;">Change your email settings</a>.</p>
+</div>
+</body>
+</html>

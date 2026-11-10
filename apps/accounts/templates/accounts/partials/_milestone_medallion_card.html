@@ -1,0 +1,40 @@
+{% comment %}
+Milestone-day medallion card on the progress home (medallion_pack.milestone_card).
+   Shown on the milestone day and the two days after. The free medallion is
+   the offer; the HD Pack line is web-only (App Store 3.1) and reads as
+   included for Premium members.
+{% endcomment %}
+{% url 'accounts:milestone_badge_creator' as creator_url %}
+<a class="mm-card" id="milestoneMedallionCard"
+   href="{{ creator_url }}?days={{ milestone_medallion.days }}&amp;utm_source=progress&amp;utm_medium=card&amp;utm_campaign=milestone_medallion">
+    <img src="{% url 'accounts:milestone_image' milestone_medallion.days %}" alt="Your {{ milestone_medallion.label }} medallion" width="84" height="84" loading="lazy">
+    <span class="mm-text">
+        <strong>{% if milestone_medallion.today %}You hit {{ milestone_medallion.days }} days today{% else %}You hit {{ milestone_medallion.days }} days{% endif %}</strong>
+        <span>Your {{ milestone_medallion.label }} medallion is ready. Add your name, then save or share it.
+            {% if is_premium %}The HD Pack with the animated video is included with your Premium.{% else %}<span class="stripe-only">Want it as a video for Reels and Stories? The HD Pack is $4.99.</span>{% endif %}</span>
+        <span class="mm-link">Make my medallion &rarr;</span>
+    </span>
+</a>
+<style>
+    .mm-card { display: flex; align-items: center; gap: 0.9rem; margin: 0 0 1rem; padding: 0.9rem 1rem; border-radius: 14px;
+        background: #fffbea; border: 2px solid #e8d48b; text-decoration: none; color: inherit; }
+    .mm-card:hover { border-color: #d4af37; color: inherit; }
+    .mm-card img { flex: 0 0 84px; width: 84px; height: 84px; border-radius: 12px; }
+    .mm-text { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.92rem; color: #4a4a4a; }
+    .mm-text strong { font-size: 1.15rem; color: #1a2a44; }
+    .mm-link { font-weight: 700; color: #1e4d8b; }
+    [data-theme="dark"] .mm-card { background: #26210f; border-color: #6b5a1e; }
+    [data-theme="dark"] .mm-text { color: #d0d0d0; }
+    [data-theme="dark"] .mm-text strong { color: #f5f5f5; }
+    [data-theme="dark"] .mm-link { color: #8fb8ee; }
+</style>
+<script>
+(function () {
+    var card = document.getElementById('milestoneMedallionCard');
+    if (!card || typeof gtag !== 'function') return;
+    gtag('event', 'view_promotion', { promotion_id: 'milestone_medallion', creative_slot: 'progress' });
+    card.addEventListener('click', function () {
+        gtag('event', 'select_promotion', { promotion_id: 'milestone_medallion', creative_slot: 'progress' });
+    });
+})();
+</script>

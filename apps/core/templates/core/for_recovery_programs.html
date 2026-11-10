@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Meeting Attendance Tracking for Sober Living Homes &amp; DUI Programs{% endblock %}
+{% block meta_description %}A free way for sober living homes, DUI programs and treatment aftercare to check residents' and clients' AA/NA meeting attendance: chair-confirmed logs and a PDF report you can verify.{% endblock %}
+{% block og_title %}Meeting Attendance Tracking for Sober Living Homes &amp; DUI Programs{% endblock %}
+{% block og_description %}Stop chasing paper sign-in sheets. Residents and clients log meetings on their phone, the chair confirms, and you get a PDF report you can verify.{% endblock %}
+{% block twitter_title %}Meeting Attendance Tracking for Sober Living Homes &amp; DUI Programs{% endblock %}
+{% block twitter_description %}Stop chasing paper sign-in sheets. Residents and clients log meetings on their phone, the chair confirms, and you get a PDF report you can verify.{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/for-sober-living-and-dui-programs/{% endblock %}
+
+{% block extra_css %}
+<style>
+    .rp-page { max-width: 780px; margin: 0 auto; padding: 3rem 1.25rem 4rem; line-height: 1.65; }
+    .rp-page h1 { color: #1e4d8b; font-size: 2rem; line-height: 1.25; margin: 0 0 0.5rem; }
+    .rp-sub { color: #555; font-size: 1.08rem; margin-bottom: 1.5rem; }
+    .rp-page h2 { color: #1e4d8b; font-size: 1.3rem; margin: 2.25rem 0 0.75rem; }
+    .rp-step { display: flex; gap: 0.9rem; margin-bottom: 0.9rem; }
+    .rp-step .num { flex: 0 0 28px; height: 28px; background: #1e4d8b; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
+    .rp-box { background: #f7f9fc; border: 1px solid #e3eaf3; border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1rem 0; }
+    .rp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+    .rp-grid .rp-box { margin: 0; }
+    .rp-grid h3 { margin: 0 0 0.3rem; font-size: 1.02rem; color: #1a2a44; }
+    .rp-grid p { margin: 0; font-size: 0.93rem; color: #555; }
+    .rp-btn { display: inline-block; background: #1e4d8b; color: #fff; border: none; padding: 0.65rem 1.4rem; border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none; }
+    .rp-btn:hover { color: #fff; }
+    .rp-btn.alt { background: #fff; color: #1e4d8b; border: 1px solid #1e4d8b; }
+    .rp-handout { border: 2px dashed #9aa8bb; border-radius: 12px; padding: 1.2rem 1.4rem; margin-top: 1rem; }
+    .rp-handout h3 { margin: 0 0 0.5rem; color: #1a2a44; }
+    .rp-url { font-family: monospace; font-weight: 700; }
+    [data-theme="dark"] .rp-page h1, [data-theme="dark"] .rp-page h2 { color: #8ab4f8; }
+    [data-theme="dark"] .rp-sub, [data-theme="dark"] .rp-grid p { color: #bbb; }
+    [data-theme="dark"] .rp-box { background: #1e2430; border-color: #2e3949; }
+    [data-theme="dark"] .rp-grid h3, [data-theme="dark"] .rp-handout h3 { color: #eee; }
+    [data-theme="dark"] .rp-btn.alt { background: transparent; color: #8ab4f8; border-color: #8ab4f8; }
+    @media print {
+        nav, footer, .rp-noprint, .mobile-menu-footer, .footer-apps-row, #mobileBottomNav { display: none !important; }
+        .rp-page { padding: 0; max-width: none; }
+        body { font-size: 12px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="rp-page">
+    <h1>Meeting attendance for sober living homes and DUI programs</h1>
+    <p class="rp-sub">If your residents or clients have to attend AA, NA or other recovery meetings, you probably collect paper sign-in sheets. They get lost, forgotten and occasionally forged. Here&rsquo;s a way to check attendance that costs your program nothing.</p>
+
+    <h2>How it works</h2>
+    <div class="rp-step"><div class="num">1</div><div><strong>They log each meeting on their phone.</strong> Name, date, time and place take about 20 seconds. Logging is free and unlimited.</div></div>
+    <div class="rp-step"><div class="num">2</div><div><strong>The meeting chair confirms it.</strong> The member shows a one-time QR code and the chair or secretary scans it on their own phone. At online meetings, they paste a link in the chat. A member can&rsquo;t confirm their own attendance.</div></div>
+    <div class="rp-step"><div class="num">3</div><div><strong>You get a PDF report.</strong> It lists every meeting for the period you asked for, marks each one Chair-confirmed or Self-reported, and totals them against the weekly requirement. They can email it to you from the app.</div></div>
+    <div class="rp-step"><div class="num">4</div><div><strong>You can check it&rsquo;s genuine.</strong> Each report carries a fingerprint code. Enter it on our public verification page and it confirms the report hasn&rsquo;t been edited. No account needed.</div></div>
+
+    <h2>Who uses it</h2>
+    <div class="rp-grid">
+        <div class="rp-box"><h3>Sober living and recovery homes</h3><p>House managers checking the weekly meeting requirement without chasing sheets on Sunday night.</p></div>
+        <div class="rp-box"><h3>DUI and DWI programs</h3><p>Clients whose program or court order includes self-help meeting attendance alongside classes.</p></div>
+        <div class="rp-box"><h3>Treatment aftercare and IOP</h3><p>Counselors who ask clients to attend outside meetings between sessions.</p></div>
+    </div>
+
+    <h2>What it costs</h2>
+    <div class="rp-box">
+        <p style="margin:0;"><strong>Nothing for your program.</strong> There&rsquo;s nothing to install and no contract. Logging meetings and chair confirmation are free for members.
+        <span class="stripe-only">A member pays ${{ single_report_price|floatformat:2 }} for a verified PDF report when they need one, or subscribes for unlimited reports and automatic monthly sending.</span>
+        If you&rsquo;d rather cover reports for your residents or clients, <a href="mailto:{{ SUPPORT_EMAIL }}?subject=Group%20arrangement">email us</a> about a group arrangement.</p>
+    </div>
+
+    <h2>What the report can and can&rsquo;t tell you</h2>
+    <ul>
+        <li><strong>Chair-confirmed</strong> entries were confirmed by someone at the meeting, on a different device, within a few hours of it. The report shows their name, role and the time.</li>
+        <li><strong>Self-reported</strong> entries are the member&rsquo;s own word and are labeled that way. Editing a confirmed entry removes its confirmation.</li>
+        <li>The chair sees only the member&rsquo;s first name and last initial, which respects meeting anonymity.</li>
+        <li>It covers AA, NA, CA, SMART Recovery, LifeRing, Refuge Recovery and other programs equally.</li>
+    </ul>
+
+    <h2>Getting started</h2>
+    <p>There&rsquo;s no signup for your program. Give residents or clients the handout below, or send them the link.</p>
+    <div class="rp-handout">
+        <h3>For residents and clients: log your meetings on your phone</h3>
+        <ol style="margin:0; padding-left:1.2rem;">
+            <li>Go to <span class="rp-url">myrecoverypal.com/court-ordered-meeting-tracker</span> and create a free account.</li>
+            <li>After each meeting, tap <strong>Log Meeting</strong>.</li>
+            <li>Show the QR code to the chair or secretary so they can confirm it on their phone.</li>
+            <li>When asked for proof, create a report and email it from the app.</li>
+        </ol>
+    </div>
+
+    <p class="rp-noprint" style="margin-top:1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
+        <button class="rp-btn" onclick="window.print()">Print this page</button>
+        <a class="rp-btn alt" href="{% url 'core:court_attendance_sheet' %}">Still on paper? Free attendance sheet</a>
+        <a class="rp-btn alt" href="{% url 'core:for_probation_officers' %}">How report verification works</a>
+    </p>
+
+    <h2>Questions</h2>
+    <p>For a walkthrough or a group arrangement, contact <a href="mailto:{{ SUPPORT_EMAIL }}">{{ SUPPORT_EMAIL }}</a>.</p>
+</div>
+{% endblock %}

@@ -251,5 +251,6 @@
     <p style="font-size:1.1rem; opacity:.9; margin-bottom:2rem; max-width:600px; margin-left:auto; margin-right:auto;">Logging is free. Pay ${{ single_report_price|floatformat:2 }} when you need a report.</p>
     <a href="{% if user.is_authenticated %}{% url 'accounts:court_attendance_create' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:court_attendance_create' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:#52b788; color:white; text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem;">Log your first meeting free &rarr;</a>
     <p style="margin-top:1.25rem; font-size:0.95rem;"><a href="{% url 'core:for_probation_officers' %}" style="color:rgba(255,255,255,0.85);">Are you a probation officer or court coordinator? Read the verification guide &rarr;</a></p>
+    <p style="margin-top:0.5rem; font-size:0.95rem;"><a href="{% url 'core:for_recovery_programs' %}" style="color:rgba(255,255,255,0.85);">Run a sober living home or DUI program? See how it works for your residents and clients &rarr;</a></p>
 </section>
 {% endblock %}

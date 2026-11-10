@@ -360,7 +360,8 @@ class RetentionEmailLinkTests(TestCase):
             html = render_to_string(template, context)
             for link in pattern.findall(html):
                 try:
-                    resolve(link)
+                    # Campaign parameters aren't part of the path.
+                    resolve(link.split('?')[0])
                 except Resolver404:
                     self.fail(f'{template} links to dead path {link}')
                 checked += 1
