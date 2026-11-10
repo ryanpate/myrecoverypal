@@ -194,6 +194,20 @@ def send_weekly_shop_digest() -> int:
     return sent
 
 
+def _medallion_links(milestone_days: int) -> dict:
+    """The member's free medallion for this milestone, and the creator to save it from.
+
+    The HD Medallion Pack is the only one-off product that has sold, and it is
+    bought from the creator, so the milestone email leads there."""
+    site_url = getattr(dj_settings, 'SITE_URL', 'https://www.myrecoverypal.com').rstrip('/')
+    creator = reverse('accounts:milestone_badge_creator')
+    return {
+        'medallion_image_url': site_url + reverse('accounts:milestone_image', args=[milestone_days]),
+        'medallion_url': (f'{site_url}{creator}?days={milestone_days}'
+                          '&utm_source=email&utm_medium=email&utm_campaign=milestone_medallion'),
+    }
+
+
 def send_milestone_celebration_email(user, milestone_days: int) -> bool:
     """Send a single milestone celebration email. Returns True on success.
 
@@ -214,6 +228,7 @@ def send_milestone_celebration_email(user, milestone_days: int) -> bool:
         'unsubscribe_url': _build_unsubscribe_url(user),
         'profile_settings_url': _profile_settings_url(),
         'shop_url': _shop_url(),
+        **_medallion_links(milestone_days),
     }
     html = render_to_string('store/emails/milestone_celebration.html', ctx)
     plain = strip_tags(html)

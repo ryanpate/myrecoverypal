@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from apps.core.analytics import queue_ga_event
+from apps.core.analytics import queue_one_off_purchase
 
 from .medallion_models import MedallionPackPurchase
 from .medallion_pack import PACK_KIND, PACK_PRICE_CENTS, fulfil_checkout_session, queue_video_prerender
@@ -136,8 +136,8 @@ def medallion_pack_success(request):
         session = None
     if session and fulfil_checkout_session(session) and not request.session.get(f'pack_ga_{purchase.pk}'):
         request.session[f'pack_ga_{purchase.pk}'] = True
-        queue_ga_event(request, 'purchase', currency='USD',
-                       value=purchase.amount_cents / 100, item_name='medallion_pack')
+        queue_one_off_purchase(request, session_id, purchase.amount_cents,
+                               'medallion_pack', 'HD Medallion Pack')
     return redirect('accounts:medallion_pack', token=purchase.token)
 
 

@@ -133,6 +133,11 @@ class PackCheckoutTest(TestCase):
         resp = self.client.get(url)
         self.assertRedirects(resp, reverse('accounts:medallion_pack', args=[p.token]),
                              fetch_redirect_response=False)
+        # GA4 needs transaction_id + items, or the sale reports as "(not set)".
+        [event] = self.client.session['ga_events']
+        self.assertEqual(event['name'], 'purchase')
+        self.assertEqual(event['params']['transaction_id'], 'cs_ok')
+        self.assertEqual(event['params']['items'][0]['item_id'], 'medallion_pack')
         self.client.get(url)  # reload must not double-email
         p.refresh_from_db()
         self.assertEqual((p.status, p.stripe_payment_intent_id, p.email),
@@ -309,3 +314,19 @@ class PackVideoPrerenderTest(TestCase):
             fulfil_checkout_session(session)
         p.refresh_from_db()
         self.assertEqual(p.status, 'paid')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class LandingPackPromoTest(TestCase):
+    """The public /sobriety-medallion-maker/ page is where most visitors arrive."""
+
+    def test_landing_promotes_pack_hidden_on_ios(self):
+        resp = self.client.get(reverse('core:sobriety_medallion_maker'))
+        self.assertContains(resp, 'class="smm-extra stripe-only" data-promo="landing_pack"')
+        self.assertContains(resp, 'HD Medallion Pack · $4.99')
+        self.assertContains(resp, 'data-promo="landing_keepsake"')
+
+    def test_landing_does_not_promise_an_unstamped_free_download(self):
+        """The free PNG carries a site stamp; removing it is part of the pack."""
+        resp = self.client.get(reverse('core:sobriety_medallion_maker'))
+        self.assertNotContains(resp, 'watermark')
