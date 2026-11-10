@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Meeting Attendance Verification Sheet</title>
+<style>
+    @page { size: letter landscape; margin: 0.45in 0.5in 0.5in; }
+    body { font-family: Helvetica, Arial, sans-serif; color: #1a2a44; font-size: 9.5pt; }
+    h1 { font-size: 16pt; margin: 0 0 2pt; color: #1e4d8b; }
+    .sub { margin: 0 0 8pt; color: #555; font-size: 9pt; }
+    .fields { width: 100%; border-collapse: collapse; margin-bottom: 8pt; }
+    .fields td { padding: 5pt 6pt 2pt 0; white-space: nowrap; }
+    .fields .line { border-bottom: 1px solid #1a2a44; width: 30%; }
+    .log { width: 100%; border-collapse: collapse; }
+    .log th { background: #1e4d8b; color: #fff; font-size: 8pt; text-align: left; padding: 4pt; border: 1px solid #1e4d8b; }
+    .log td { border: 1px solid #9aa8bb; height: 23pt; padding: 0 4pt; font-size: 8pt; color: #9aa8bb; }
+    .types { margin-top: 6pt; font-size: 8pt; color: #555; }
+    .attest { margin-top: 8pt; font-size: 8.5pt; }
+    .attest .line { display: inline-block; border-bottom: 1px solid #1a2a44; width: 2.6in; }
+    .foot { margin-top: 6pt; font-size: 7.5pt; color: #777; }
+</style>
+</head>
+<body>
+    <h1>Recovery Meeting Attendance Verification Sheet</h1>
+    <p class="sub">For court-ordered, probation, DUI/DWI and drug court meeting requirements. Have the meeting chair or secretary complete one row at each meeting.</p>
+
+    <table class="fields">
+        <tr>
+            <td>Name:</td><td class="line"></td>
+            <td>Case number:</td><td class="line"></td>
+            <td>Court:</td><td class="line"></td>
+        </tr>
+        <tr>
+            <td>Probation officer:</td><td class="line"></td>
+            <td>Required meetings:</td><td class="line"></td>
+            <td>Period:</td><td class="line"></td>
+        </tr>
+    </table>
+
+    <table class="log">
+        <thead>
+            <tr>
+                <th style="width:3%">#</th>
+                <th style="width:8%">Date</th>
+                <th style="width:6%">Time</th>
+                <th style="width:19%">Meeting name &amp; type</th>
+                <th style="width:17%">Location (or &ldquo;Online&rdquo; + platform)</th>
+                <th style="width:16%">Chair / secretary (print)</th>
+                <th style="width:17%">Signature</th>
+                <th style="width:14%">Phone or group contact</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr><td>{{ forloop.counter }}</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="types">Meeting type: AA, NA, CA, MA, GA, SMART Recovery, LifeRing, Refuge Recovery, Celebrate Recovery or other. Courts cannot require 12-step meetings only, so secular meetings count where your order allows them.</p>
+
+    <p class="attest">I certify that I attended each meeting listed above. &nbsp; Signature: <span class="line"></span> &nbsp; Date: <span class="line" style="width:1.2in"></span></p>
+
+    <p class="foot">Free from MyRecoveryPal. Paper sheets get lost: log meetings on your phone, have the chair confirm by QR code or meeting chat link, and email your probation officer a verifiable PDF report at myrecoverypal.com/court-ordered-meeting-tracker/</p>
+</body>
+</html>

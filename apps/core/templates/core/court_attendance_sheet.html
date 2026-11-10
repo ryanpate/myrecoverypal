@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Free AA Meeting Attendance Sheet for Court (Printable PDF){% endblock %}
+{% block meta_description %}Free printable AA/NA meeting attendance sheet for court, probation, DUI and drug court. 15 rows for the chair's printed name and signature. Download the PDF, no signup.{% endblock %}
+{% block og_title %}Free AA Meeting Attendance Sheet for Court (Printable PDF){% endblock %}
+{% block og_description %}Free printable AA/NA meeting attendance sheet for court, probation, DUI and drug court. Download the PDF, no signup.{% endblock %}
+{% block twitter_title %}Free AA Meeting Attendance Sheet for Court (Printable PDF){% endblock %}
+{% block twitter_description %}Free printable AA/NA meeting attendance sheet for court, probation, DUI and drug court. Download the PDF, no signup.{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/court-ordered-meeting-attendance-sheet/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Who signs an AA meeting attendance sheet?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Usually the meeting chair or secretary. Arrive a few minutes early or stay after the meeting and ask them to print their name, sign, and add a group phone number or contact. Some groups use a stamp or initials instead; your probation officer decides what they accept."}
+    },
+    {
+      "@type": "Question",
+      "name": "Will my court accept this attendance sheet?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Many courts and probation officers accept any sheet that shows the date, meeting, location and a chair's signature, but some issue their own form. Check your court order or ask your probation officer before you rely on it. If your court gave you a form, use theirs."}
+    },
+    {
+      "@type": "Question",
+      "name": "How do I get an attendance sheet signed at an online meeting?",
+      "acceptedAnswer": {"@type": "Answer", "text": "There is no one to hand a paper sheet to on Zoom. Message the host in the meeting chat after the meeting and ask them to confirm your attendance, or log the meeting in MyRecoveryPal and paste its confirmation link in the chat so the host can confirm it on their own device."}
+    },
+    {
+      "@type": "Question",
+      "name": "What if I lose my attendance sheet?",
+      "acceptedAnswer": {"@type": "Answer", "text": "A lost paper sheet usually means those meetings can't be proven. Take a photo of the sheet after every meeting, or log meetings digitally so the record can't be lost."}
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cas { max-width: 860px; margin: 0 auto; padding: 3rem 1.25rem 4rem; line-height: 1.65; }
+    .cas h1 { color: #1e4d8b; font-size: 2.1rem; line-height: 1.25; margin: 0 0 0.75rem; }
+    .cas h2 { color: #1e4d8b; font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
+    .cas-lead { font-size: 1.1rem; color: #444; margin-bottom: 1.5rem; }
+    .cas-download { display: inline-flex; align-items: center; gap: 0.5rem; background: #1e4d8b; color: #fff; font-weight: 700;
+        padding: 0.9rem 1.8rem; border-radius: 50px; text-decoration: none; font-size: 1.05rem; }
+    .cas-download:hover { color: #fff; background: #163a6b; }
+    .cas-note { font-size: 0.9rem; color: #666; margin-top: 0.6rem; }
+    .cas-preview { margin: 2rem 0 0; overflow-x: auto; border: 1px solid #dde4ee; border-radius: 12px; padding: 1rem; background: #fff; }
+    .cas-preview table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 0.78rem; }
+    .cas-preview th { background: #1e4d8b; color: #fff; text-align: left; padding: 0.35rem 0.45rem; }
+    .cas-preview td { border: 1px solid #c9d3e0; height: 1.8rem; color: #333; padding: 0 0.45rem; }
+    .cas-preview caption { caption-side: top; text-align: left; font-weight: 700; color: #1a2a44; padding-bottom: 0.5rem; }
+    .cas ol li { margin-bottom: 0.5rem; }
+    .cas-upgrade { background: linear-gradient(135deg, #0f2d56, #1e4d8b); color: #fff; border-radius: 16px; padding: 1.75rem; margin: 2.5rem 0; }
+    .cas-upgrade h2 { color: #fff; margin-top: 0; }
+    .cas-upgrade ul { padding-left: 1.2rem; margin: 0 0 1.25rem; }
+    .cas-upgrade a.btn-go { display: inline-block; background: #52b788; color: #fff; font-weight: 700; padding: 0.8rem 1.6rem;
+        border-radius: 50px; text-decoration: none; }
+    .cas-upgrade .small { font-size: 0.9rem; opacity: 0.85; margin: 0.75rem 0 0; }
+    .cas-upgrade .small a { color: #fff; }
+    .cas details { background: #f7f9fc; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+    .cas summary { font-weight: 600; cursor: pointer; }
+    [data-theme="dark"] .cas h1, [data-theme="dark"] .cas h2 { color: #8ab4f8; }
+    [data-theme="dark"] .cas-upgrade h2 { color: #fff; }
+    [data-theme="dark"] .cas-lead, [data-theme="dark"] .cas-note { color: #bbb; }
+    [data-theme="dark"] .cas-preview { background: #1e2430; border-color: #2e3949; }
+    [data-theme="dark"] .cas-preview td { border-color: #3a475a; color: #ddd; }
+    [data-theme="dark"] .cas-preview caption { color: #eee; }
+    [data-theme="dark"] .cas details { background: #1e2430; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cas">
+    <h1>Free Court-Ordered Meeting Attendance Sheet (Printable PDF)</h1>
+    <p class="cas-lead">
+        A one-page AA, NA and recovery meeting attendance sheet for probation, DUI/DWI and drug court requirements.
+        Fifteen rows, each with space for the chair or secretary to print their name, sign, and leave a contact.
+    </p>
+    <a class="cas-download" href="{% url 'core:court_attendance_sheet_pdf' %}" target="_blank" rel="noopener" id="casDownload">
+        <i class="fas fa-file-pdf" aria-hidden="true"></i> Download the free PDF
+    </a>
+    <p class="cas-note">Free, no signup. Letter size, landscape. Print a few: one sheet covers 15 meetings.</p>
+
+    <div class="cas-preview" aria-label="Preview of the attendance sheet">
+        <table>
+            <caption>What&rsquo;s on the sheet</caption>
+            <thead>
+                <tr><th>#</th><th>Date</th><th>Time</th><th>Meeting name &amp; type</th><th>Location</th><th>Chair (print)</th><th>Signature</th><th>Contact</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>11/3</td><td>7:00 PM</td><td>Monday Night Big Book (AA)</td><td>St. Mark&rsquo;s, Main St</td><td>J. Rivera</td><td><em>J. Rivera</em></td><td>Group line</td></tr>
+                <tr><td>2</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>3</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+        </table>
+        <p class="cas-note" style="margin-bottom:0;">Also has spaces for your name, case number, court, probation officer and required meeting count, plus a signed statement.</p>
+    </div>
+
+    <h2>How to use it</h2>
+    <ol>
+        <li><strong>Fill in the top</strong> with your name, case number, court and how many meetings you need (for example, 3 per week for 90 days).</li>
+        <li><strong>Bring it to every meeting.</strong> Afterwards, ask the chair or secretary to fill in one row and sign. Most groups are used to this.</li>
+        <li><strong>Photograph it after each meeting.</strong> If the sheet is lost, the photos are your backup.</li>
+        <li><strong>Turn it in</strong> the way your probation officer asks, and keep a copy.</li>
+    </ol>
+
+    <h2>What probation officers look for</h2>
+    <p>
+        An attendance record is only useful if your probation officer can trust it. They usually want to see
+        <strong>which meetings</strong> you attended (name, date, time, place), <strong>a running total</strong>
+        against what your order requires, and <strong>a confirmation</strong> from someone at the meeting.
+        Requirements differ between courts, so check your court order or ask your PO which format they accept.
+        If your court gave you its own form, use that one.
+    </p>
+
+    <div class="cas-upgrade">
+        <h2>Paper sheets get lost. Your phone doesn&rsquo;t.</h2>
+        <ul>
+            <li>Log each meeting in about 20 seconds, free, as often as you need.</li>
+            <li>The chair confirms on their own phone by scanning a QR code, or through a link you paste in the chat at online meetings.</li>
+            <li>See your weekly pace and get a reminder when you&rsquo;re behind.</li>
+            <li>Email your PO a PDF report with a tamper-evident fingerprint they can check online.</li>
+        </ul>
+        <a class="btn-go" id="casSignup" href="{% if user.is_authenticated %}{% url 'accounts:court_attendance_create' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:court_attendance_create' %}{% endif %}">Log meetings on your phone free &rarr;</a>
+        <p class="small">Logging is free. <span class="stripe-only">A verified report is ${{ single_report_price|floatformat:2 }} when you need one. </span><a href="{% url 'core:court_ordered_meeting_tracker' %}">How the tracker works</a></p>
+    </div>
+
+    <h2>Frequently asked questions</h2>
+    <details>
+        <summary>Who signs an AA meeting attendance sheet?</summary>
+        <p>Usually the meeting chair or secretary. Arrive a few minutes early or stay after the meeting and ask them to print their name, sign, and add a group phone number or contact. Some groups use a stamp or initials instead; your probation officer decides what they accept.</p>
+    </details>
+    <details>
+        <summary>Will my court accept this attendance sheet?</summary>
+        <p>Many courts and probation officers accept any sheet that shows the date, meeting, location and a chair&rsquo;s signature, but some issue their own form. Check your court order or ask your probation officer before you rely on it. If your court gave you a form, use theirs.</p>
+    </details>
+    <details>
+        <summary>How do I get an attendance sheet signed at an online meeting?</summary>
+        <p>There is no one to hand a paper sheet to on Zoom. Message the host in the meeting chat after the meeting and ask them to confirm your attendance, or log the meeting in MyRecoveryPal and paste its confirmation link in the chat so the host can confirm it on their own device. <a href="{% url 'core:online_meeting_proof' %}">More on proof of attendance for online meetings</a>.</p>
+    </details>
+    <details>
+        <summary>What if I lose my attendance sheet?</summary>
+        <p>A lost paper sheet usually means those meetings can&rsquo;t be proven. Take a photo of the sheet after every meeting, or log meetings digitally so the record can&rsquo;t be lost.</p>
+    </details>
+
+    <h2>Find a meeting</h2>
+    <p>Search <a href="{% url 'support_services:meeting_list' %}">in-person meetings near you</a> or browse <a href="{% url 'core:online_aa_meetings' %}">online AA meetings</a> happening today.</p>
+</div>
+<script>
+(function () {
+    function track(id, name) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('click', function () { if (window.gtag) gtag('event', name, { page: 'attendance_sheet' }); });
+    }
+    track('casDownload', 'attendance_sheet_download');
+    track('casSignup', 'court_signup_click');
+})();
+</script>
+{% endblock %}

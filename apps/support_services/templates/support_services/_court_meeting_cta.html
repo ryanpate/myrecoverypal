@@ -43,6 +43,7 @@ Court Compliance CTA for a single meeting page.
             Log this meeting free, have the chair confirm it, and get a verified
             PDF for your probation officer when you need one.
             <a href="{% url 'core:court_ordered_meeting_tracker' %}" style="color:#fff;">How it works</a>
+            &middot; <a href="{% url 'core:court_attendance_sheet' %}" style="color:#fff;">Free printable sheet</a>
         </span>
         {% url 'accounts:court_attendance_create' as attendance_url %}
         <a class="court-meeting-cta-btn"
