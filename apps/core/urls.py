@@ -34,6 +34,7 @@ urlpatterns = [
     path('court-ordered-meeting-attendance-sheet/', views.CourtAttendanceSheetView.as_view(), name='court_attendance_sheet'),
     path('court-ordered-meeting-attendance-sheet/print.pdf', views.court_attendance_sheet_pdf, name='court_attendance_sheet_pdf'),
     path('online-meetings-proof-of-attendance/', views.OnlineMeetingProofView.as_view(), name='online_meeting_proof'),
+    path('dry-january/', views.DryJanuaryView.as_view(), name='dry_january'),
     path('support-a-loved-one-in-recovery/', views.SupportLovedOneView.as_view(), name='support_a_loved_one'),
     path('sobriety-calculator/', views.SobrietyCalculatorView.as_view(), name='sobriety_calculator'),
     path('clean-time-calculator/', views.CleanTimeCalculatorView.as_view(), name='clean_time_calculator'),

@@ -1,0 +1,50 @@
+{% comment %}
+Dry January card on the progress home (apps/accounts/dry_january.py).
+   upcoming: countdown. active: Day N of 31 + nudge to the pledge card below.
+   finished (February): 31-day medallion, then Premium for non-members.
+{% endcomment %}
+<div class="dj-card" id="dryJanuaryCard">
+    {% if dry_january.phase == 'upcoming' %}
+        <div class="dj-eyebrow">Dry January {{ dry_january.year }}</div>
+        <strong class="dj-title">Starts in {{ dry_january.days_until }} day{{ dry_january.days_until|pluralize }}</strong>
+        <p>From January 1, take today&rsquo;s pledge here each day and watch your count climb to 31. Tip: tell one person you&rsquo;re doing it.</p>
+        <a class="dj-link" href="{% url 'core:craving_sos' %}">Plan for the tough moments &rarr;</a>
+    {% elif dry_january.phase == 'active' %}
+        <div class="dj-eyebrow">Dry January {{ dry_january.year }}</div>
+        <strong class="dj-title">Day {{ dry_january.day }} of 31</strong>
+        <div class="dj-bar" role="progressbar" aria-valuemin="0" aria-valuemax="31" aria-valuenow="{{ dry_january.day }}">
+            <span style="width: {% widthratio dry_january.day 31 100 %}%"></span>
+        </div>
+        <p>You&rsquo;ve pledged {{ dry_january.pledged_days }} day{{ dry_january.pledged_days|pluralize }} this month.
+            {% if not pledged_today %}<a class="dj-link" href="#pledgeCard">Pledge for today &darr;</a>{% endif %}</p>
+        <a class="dj-link" href="{% url 'core:craving_sos' %}">Craving right now? Open Craving SOS &rarr;</a>
+    {% else %}
+        <div class="dj-eyebrow">Dry January {{ dry_january.year }}</div>
+        <strong class="dj-title">You made it through January</strong>
+        <p>You pledged {{ dry_january.pledged_days }} of 31 days. That&rsquo;s worth marking.</p>
+        <a class="dj-btn" href="{% url 'accounts:milestone_badge_creator' %}?days=31&amp;time_format=days&amp;utm_source=progress&amp;utm_medium=card&amp;utm_campaign=dry_january">Make your 31-day medallion</a>
+        {% if show_premium_cta %}
+        <p class="dj-premium">Want to keep going? Premium protects your streak on a hard day and shows what changed across your sober days.
+            <a class="dj-link" href="{% url 'accounts:pricing' %}?from=dry_january">See Premium &rarr;</a></p>
+        {% endif %}
+    {% endif %}
+</div>
+<style>
+    .dj-card { margin: 0 0 1rem; padding: 1rem 1.1rem; border-radius: 14px; background: linear-gradient(135deg, #e8f4fd, #eef8f1);
+        border: 1px solid #cfe3f3; }
+    .dj-eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #2d7dd2; }
+    .dj-title { display: block; font-size: 1.25rem; color: #1a2a44; margin: 0.15rem 0 0.35rem; }
+    .dj-card p { margin: 0.35rem 0 0.5rem; color: #3a4a5c; }
+    .dj-bar { height: 10px; background: #d7e6f3; border-radius: 99px; overflow: hidden; margin: 0.4rem 0 0.5rem; }
+    .dj-bar span { display: block; height: 100%; background: linear-gradient(90deg, #2d7dd2, #52b788); border-radius: 99px; }
+    .dj-link { font-weight: 700; color: #1e4d8b; }
+    .dj-btn { display: inline-block; background: #1e4d8b; color: #fff; font-weight: 700; padding: 0.55rem 1.2rem; border-radius: 50px;
+        text-decoration: none; margin: 0.2rem 0 0.4rem; }
+    .dj-btn:hover { color: #fff; background: #163a6b; }
+    .dj-premium { font-size: 0.92rem; }
+    [data-theme="dark"] .dj-card { background: linear-gradient(135deg, #18263a, #17291f); border-color: #2c3e55; }
+    [data-theme="dark"] .dj-title { color: #f2f2f2; }
+    [data-theme="dark"] .dj-card p { color: #c9d2dc; }
+    [data-theme="dark"] .dj-link { color: #8fb8ee; }
+    [data-theme="dark"] .dj-bar { background: #2a3a4f; }
+</style>

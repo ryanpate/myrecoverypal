@@ -59,6 +59,7 @@ class StaticViewSitemap(Sitemap):
             ('core:for_probation_officers', 0.7),  # PO verification guide / outreach one-pager
             ('core:court_attendance_sheet', 0.85),  # "AA meeting attendance sheet" — free printable PDF, funnels to Court
             ('core:online_meeting_proof', 0.85),  # "proof of attendance online AA meetings" — funnels to Court
+            ('core:dry_january', 0.9),  # "Dry January" — seasonal spike; free 31-day tracker on the progress home
 
             # Pricing (paid tier discovery)
             ('accounts:pricing', 0.75),

@@ -291,6 +291,26 @@ class OnlineMeetingProofView(TemplateView):
         return context
 
 
+class DryJanuaryView(TemplateView):
+    """SEO landing page for Dry January: a free 31-day tracker on the progress
+    home (apps/accounts/dry_january.py)."""
+    template_name = 'core/dry_january.html'
+
+    def get_context_data(self, **kwargs):
+        from datetime import date
+        from django.utils import timezone
+        from apps.accounts.dry_january import signup_year
+        context = super().get_context_data(**kwargs)
+        today = timezone.localdate()
+        year = signup_year(today)
+        context['year'] = year
+        context['in_january'] = today.month == 1
+        context['days_until'] = (date(year, 1, 1) - today).days
+        user = self.request.user
+        context['joined'] = user.is_authenticated and user.dry_january_entries.filter(year=year).exists()
+        return context
+
+
 class SupportLovedOneView(TemplateView):
     """SEO landing page for the Supporter feature — family/friends following a
     loved one's recovery with consent. Funnels to the Supporter tier."""

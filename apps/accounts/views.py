@@ -1492,6 +1492,9 @@ def progress_view(request):
         created_at__date=timezone.localdate(),
     ).first()
 
+    from apps.accounts.dry_january import progress_card as dry_january_card
+    context['dry_january'] = dry_january_card(request.user)
+
     return render(request, 'accounts/progress.html', context)
 
 
@@ -5829,7 +5832,7 @@ def milestone_badge_creator(request):
     from apps.accounts.keepsakes import keepsake_price_cents
 
     user = request.user
-    if user.is_authenticated and user.sobriety_date:
+    if user.is_authenticated and user.sobriety_date and 'days' not in request.GET:
         days_sober = user.get_days_sober()
     else:
         try:

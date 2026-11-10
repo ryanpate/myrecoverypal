@@ -776,6 +776,23 @@ class DailyPledge(models.Model):
         return f"{self.user.username} pledged {self.date}"
 
 
+class DryJanuaryEntry(models.Model):
+    """A member who joined Dry January for a given year (apps/accounts/dry_january.py).
+
+    The challenge runs on the calendar (January 1-31 in the member's time
+    zone), not from the join date, so the row only records who's in."""
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='dry_january_entries')
+    year = models.PositiveSmallIntegerField()
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user', 'year']
+
+    def __str__(self):
+        return f"{self.user.username} Dry January {self.year}"
+
+
 class DailyRecoveryThought(models.Model):
     """Daily recovery quotes displayed at the top of the social feed."""
     quote = models.TextField()
