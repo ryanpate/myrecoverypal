@@ -1,6 +1,9 @@
 from datetime import datetime
+from functools import lru_cache
 
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from django.views.generic import TemplateView, View
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -237,6 +240,55 @@ class ForProbationOfficersView(TemplateView):
     """Print-friendly verification guide for POs / drug-court coordinators.
     Doubles as the outreach one-pager linked in emails to referral sources."""
     template_name = 'core/for_probation_officers.html'
+
+
+class CourtAttendanceSheetView(TemplateView):
+    """SEO landing page for "AA meeting attendance sheet" / "court ordered
+    attendance sheet" searches: a free printable sheet that leads into the
+    digital Court Compliance tracker."""
+    template_name = 'core/court_attendance_sheet.html'
+
+    def get_context_data(self, **kwargs):
+        from apps.accounts.court_purchase import SINGLE_REPORT_PRICE_CENTS
+        context = super().get_context_data(**kwargs)
+        context['single_report_price'] = SINGLE_REPORT_PRICE_CENTS / 100
+        return context
+
+
+ATTENDANCE_SHEET_ROWS = 15
+
+
+def court_attendance_sheet_pdf(request):
+    """The blank printable sheet. Same bytes for everyone, so render once per process."""
+    pdf = _attendance_sheet_pdf_bytes()
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="meeting-attendance-sheet.pdf"'
+    response['Cache-Control'] = 'public, max-age=86400'
+    return response
+
+
+@lru_cache(maxsize=1)
+def _attendance_sheet_pdf_bytes():
+    from io import BytesIO
+    from weasyprint import HTML
+    html = render_to_string('core/court_attendance_sheet_pdf.html',
+                            {'rows': range(ATTENDANCE_SHEET_ROWS)})
+    buf = BytesIO()
+    HTML(string=html).write_pdf(target=buf)
+    return buf.getvalue()
+
+
+class OnlineMeetingProofView(TemplateView):
+    """SEO landing page for "proof of attendance online AA meetings": court-ordered
+    members attending on Zoom have no chair to sign a paper card."""
+    template_name = 'core/online_meeting_proof_of_attendance.html'
+
+    def get_context_data(self, **kwargs):
+        from apps.support_services.models import Meeting
+        context = super().get_context_data(**kwargs)
+        context['online_count'] = Meeting.objects.filter(
+            is_active=True, is_approved=True, attendance_option='online').count()
+        return context
 
 
 class SupportLovedOneView(TemplateView):
