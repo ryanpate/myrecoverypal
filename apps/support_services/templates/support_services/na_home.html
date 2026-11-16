@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block canonical_url %}{{ seo_url }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <a href="{% url 'support_services:meeting_list' %}">Meetings</a>
+        &rsaquo; <span>NA Meetings</span>
+    </nav>
+
+    <h1>NA Meetings Near You</h1>
+    <p class="lead">
+        {{ total|intcomma }} Narcotics Anonymous meeting{{ total|pluralize }} in
+        {{ city_count }} cit{{ city_count|pluralize:"y,ies" }}{% if online_count %},
+        {{ online_count|intcomma }} of them with an online option{% endif %}.
+        Updated weekly from NA regional meeting lists.
+    </p>
+    <p>
+        <a class="btn btn-primary" href="{% url 'support_services:meeting_list' %}?program=NA">Search NA meetings</a>
+        <a class="btn btn-outline-primary" href="{% url 'support_services:meeting_list' %}?program=NA&amp;attendance=online">Online NA meetings</a>
+    </p>
+
+    {% for s in states %}
+    <section class="mb-4">
+        <h2 style="font-size:1.15rem;">
+            <a href="{{ s.url }}">NA meetings in {{ s.name }}</a>
+            <span class="text-muted" style="font-size:.9rem;">({{ s.count|intcomma }})</span>
+        </h2>
+        <div class="row">
+            {% for c in s.cities %}
+            <div class="col-md-3 col-sm-6 mb-1">
+                <a href="{{ c.url }}">{{ c.city }}</a>
+                <span class="text-muted">({{ c.count }})</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% if s.city_count > s.cities|length %}
+        <p class="mt-1 mb-0"><a href="{{ s.url }}">All {{ s.city_count }} cities in {{ s.name }} &rarr;</a></p>
+        {% endif %}
+    </section>
+    {% empty %}
+    <p>NA meetings are being added. <a href="{% url 'support_services:meeting_list' %}">Search every meeting</a> in the meantime.</p>
+    {% endfor %}
+
+    <section class="mt-4">
+        <h2 style="font-size:1.15rem;">Counting clean time?</h2>
+        <p>
+            The free <a href="{% url 'core:clean_time_calculator' %}">clean time calculator</a>
+            shows your days clean and your next key tag. Looking for Alcoholics Anonymous instead?
+            <a href="{% url 'support_services:meeting_list' %}">Browse AA meetings</a>.
+        </p>
+    </section>
+</div>
+{% endblock %}

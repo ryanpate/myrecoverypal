@@ -126,11 +126,22 @@ class MentalHealthRecoveryAppView(TemplateView):
         return redirect('core:index', permanent=True)
 
 
-class SobrietyCalculatorView(TemplateView):
+class DryJanuaryBannerMixin:
+    """Adds the seasonal Dry January banner to a page (December and January)."""
+
+    def get_context_data(self, **kwargs):
+        from django.utils import timezone
+        from apps.accounts.dry_january import banner
+        context = super().get_context_data(**kwargs)
+        context['dry_january_banner'] = banner(timezone.localdate())
+        return context
+
+
+class SobrietyCalculatorView(DryJanuaryBannerMixin, TemplateView):
     template_name = 'core/sobriety_calculator.html'
 
 
-class CleanTimeCalculatorView(TemplateView):
+class CleanTimeCalculatorView(DryJanuaryBannerMixin, TemplateView):
     """SEO landing page targeting NA / drug-recovery "clean time calculator"
     queries. The head term "sobriety calculator" is locked up by high-authority
     AA/treatment sites; "clean time calculator" is owned only by low-authority
@@ -155,7 +166,7 @@ class OnlineAAMeetingsView(TemplateView):
         context = super().get_context_data(**kwargs)
         online = Meeting.objects.filter(
             is_active=True, is_approved=True, attendance_option='online',
-        )
+        ).exclude(program='NA')  # this page is about AA; NA has /support/meetings/na/
         # Python weekday: 0=Monday; Meeting model: 0=Sunday.
         today_meeting_day = (datetime.now().weekday() + 1) % 7
         context['online_count'] = online.count()

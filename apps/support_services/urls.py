@@ -18,6 +18,13 @@ urlpatterns = [
     # Hub pages. These MUST precede meetings/<slug:slug>/ — a bare slug
     # converter would otherwise match "tx" and route /meetings/tx/ to the
     # detail view. The state pattern is pinned to exactly two letters.
+    # Narcotics Anonymous hubs. Listed before the state pattern: "na" is two
+    # letters and would otherwise be read as a state code.
+    path('meetings/na/', views.na_home, name='na_home'),
+    re_path(r'^meetings/na/(?P<state>[A-Za-z]{2})/$',
+            views.state_hub, {'program': 'NA'}, name='na_state_hub'),
+    re_path(r'^meetings/na/(?P<state>[A-Za-z]{2})/(?P<city_slug>[a-z0-9-]+)/$',
+            views.city_hub, {'program': 'NA'}, name='na_city_hub'),
     re_path(r'^meetings/(?P<state>[A-Za-z]{2})/$',
             views.state_hub, name='state_hub'),
     re_path(r'^meetings/(?P<state>[A-Za-z]{2})/(?P<city_slug>[a-z0-9-]+)/$',

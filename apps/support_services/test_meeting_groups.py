@@ -23,7 +23,7 @@ ADDRESS = '50 Perry St, New York, NY 10014, USA'
 def _slot(slug, day, at=time(19, 0), name='Perry Street Workshop', **extra):
     fields = dict(name=name, slug=slug, day=day, time=at, attendance_option='in_person',
                   formatted_address=ADDRESS, city='New York', state='NY',
-                  is_approved=True, is_active=True)
+                  is_approved=True, is_active=True, program='AA')
     fields.update(extra)
     return Meeting.objects.create(**fields)
 

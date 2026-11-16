@@ -152,6 +152,10 @@ python manage.py test_email recipient@example.com --resend-api
 - `welcome_email_1_sent`, `welcome_email_2_sent`, `welcome_email_3_sent`
 - `last_checkin_reminder_sent`, `last_weekly_digest_sent`
 
+### Meeting Directory (AA + NA)
+
+`apps/support_services/meeting_sync.py` re-imports every source weekly (`refresh_online_meetings_task`, Mondays 4 AM UTC). AA comes from intergroup feeds (`FEED_SOURCES`); NA comes from the BMLT Aggregator's public API, one 25-mile query per metro in `NA_AREAS` (add a metro by adding a row). `Meeting.program` is `AA`, `NA` or blank (community submissions). NA rows are `mtg-na-<name>-<id>` and have their own hubs under `/support/meetings/na/`; the original hub URLs list everything that is not NA. Run `python manage.py seed_online_meetings --na` in a Railway shell to import NA without waiting for Monday. Online NA meetings with no time zone are skipped on purpose.
+
 ### Audio Library
 
 `/resources/audio/`. Scripts live in `resources/audio_scripts.py`, and narrations of the 30 daily reflections are generated from `resources/reflections.py`. After editing a script, run `python manage.py generate_audio --dry-run` and then `python manage.py generate_audio` in a Railway shell. Only changed tracks are re-voiced. Craving and calm sessions are always free; see `resources/audio_views.py::can_listen`. Locked Premium sessions play a free preview (the opening, cut at a natural pause). `generate_audio` builds previews automatically, and `generate_audio --previews` rebuilds them from the stored MP3s without calling ElevenLabs.
@@ -385,6 +389,7 @@ Email campaigns - underutilized for retention.
 /resources/worksheets/         → Interactive worksheets
 /resources/workbook/           → My Recovery Workbook PDF (Premium)
 /support/meetings/             → Meeting finder
+/support/meetings/na/          → NA meetings (state + city hubs under /na/<state>/<city>/)
 ```
 
 ---

@@ -2,7 +2,10 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from apps.support_services.hubs import hub_cities, hub_states, resolve_city
+from apps.support_services.hubs import (
+    PROGRAM_NAMES, US_STATES, for_program, hub_cities, hub_program, hub_states,
+    hub_url, resolve_city,
+)
 from apps.support_services.grouping import group_seo
 from apps.support_services.coverage import record_coverage_gap
 from django.contrib.auth.decorators import login_required
@@ -69,6 +72,9 @@ def meeting_list(request):
     state = request.GET.get('state', '')
     attendance = request.GET.get('attendance', '')
     meeting_type = request.GET.get('type', '')
+    program = request.GET.get('program', '')
+    if program not in PROGRAM_NAMES:
+        program = ''
 
     # Only 0-6 is a real day; anything else (scanner probes) would raise
     # ValueError in the integer lookup, so drop it.
@@ -108,6 +114,9 @@ def meeting_list(request):
     if meeting_type:
         meetings = meetings.filter(types__contains=meeting_type)
 
+    if program:
+        meetings = meetings.filter(program=program)
+
     # Get today's day of week (0=Monday, 6=Sunday)
     today = datetime.now().weekday()
     # Convert to Meeting model format (0=Sunday, 6=Saturday)
@@ -137,6 +146,7 @@ def meeting_list(request):
         'selected_state': state,
         'selected_attendance': attendance,
         'selected_type': meeting_type,
+        'selected_program': program,
         'today_day': today_meeting_day,
         'days': Meeting.DAY_CHOICES,
         'meeting_types': Meeting.MEETING_TYPES,
@@ -158,14 +168,13 @@ def meeting_list(request):
             ).count()
             if not meetings_page.object_list else 0
         ),
-        # The directory is sourced entirely from AA intergroup feeds. The
-        # previous copy claimed NA and SMART meetings it does not carry, and
-        # "1,500+" understated the count by 4x.
+        # The directory carries AA (intergroup feeds) and NA (regional lists).
+        # Earlier copy claimed SMART meetings it does not carry.
         'seo_title': 'AA Meeting Finder — Search Local & Online AA Meetings',
         'seo_description': (
-            'Search thousands of free AA meetings by day, city, state or '
-            'online. Times, addresses and Zoom links, updated weekly from '
-            'local AA intergroups. No signup.'
+            'Search thousands of free AA meetings and NA meetings by day, '
+            'city, state or online. Times, addresses and Zoom links, updated '
+            'weekly from local AA intergroups and NA regions. No signup.'
         ),
         'seo_keywords': (
             'aa meetings near me, aa meeting finder, aa meeting directory, '
@@ -210,7 +219,7 @@ def meeting_detail(request, slug):
         nearby_meetings = nearby_meetings.exclude(group_key=meeting.group_key)
 
     if meeting.city:
-        nearby_meetings = nearby_meetings.filter(
+        nearby_meetings = for_program(nearby_meetings, hub_program(meeting.program)).filter(
             city=meeting.city,
             state=meeting.state
         )
@@ -577,37 +586,18 @@ def crisis_resources(request):
     return render(request, 'support_services/crisis_resources.html', context)
 
 
-US_STATES = {
-    'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
-    'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut',
-    'DE': 'Delaware', 'DC': 'District of Columbia', 'FL': 'Florida',
-    'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois',
-    'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas', 'KY': 'Kentucky',
-    'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
-    'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota',
-    'MS': 'Mississippi', 'MO': 'Missouri', 'MT': 'Montana',
-    'NE': 'Nebraska', 'NV': 'Nevada', 'NH': 'New Hampshire',
-    'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York',
-    'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio',
-    'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania',
-    'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota',
-    'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont',
-    'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
-    'WI': 'Wisconsin', 'WY': 'Wyoming',
-}
-
-
-def city_hub(request, state, city_slug):
+def city_hub(request, state, city_slug, program='AA'):
     """Directory of every meeting in one city — the page that answers
     "aa meetings in <city>". Detail pages cannot rank for that query."""
     state = state.upper()
-    city = resolve_city(state, city_slug)
+    city = resolve_city(state, city_slug, program)
     if not city:
         raise Http404('No meeting hub for that city')
 
     meetings = list(
-        Meeting.objects
-        .filter(is_approved=True, is_active=True, state=state, city=city)
+        for_program(
+            Meeting.objects.filter(is_approved=True, is_active=True, state=state, city=city),
+            program)
         .order_by('day', 'time', 'name')
     )
     by_day = {}
@@ -622,62 +612,99 @@ def city_hub(request, state, city_slug):
     # the real refresh date. A dated title out-pulls undated listings.
     updated = max(m.updated_at for m in meetings)
     mix = f'{total - online} in person, {online} online or hybrid' if online else 'all in person'
+    source = 'NA regional meeting list' if program == 'NA' else 'local AA intergroup'
+    fellowship = PROGRAM_NAMES[program].lower()
 
     return render(request, 'support_services/city_hub.html', {
         'city': city,
         'state': state,
         'state_name': state_name,
+        'program': program,
+        'source': source,
+        'home_url': hub_url(program),
+        'state_url': hub_url(program, state),
         'meetings': meetings,
         'by_day': by_day,
         'total': total,
         'online_count': online,
         'in_person_count': total - online,
-        'seo_title': (f'AA Meetings in {city}, {state} ({updated:%b %Y}): '
+        'seo_title': (f'{program} Meetings in {city}, {state} ({updated:%b %Y}): '
                       f'{total} Times & Locations'),
         'seo_description': (
-            f'{total} AA meetings in {city}, {state} ({mix}). Times and '
+            f'{total} {program} meetings in {city}, {state} ({mix}). Times and '
             f'addresses by day, checked {updated:%b} {updated.day} against '
-            f'the local AA intergroup. Free, no signup.'
+            f'the {source}. Free, no signup.'
         ),
         'seo_keywords': (
-            f'aa meetings {city.lower()}, aa meetings in {city.lower()} {state.lower()}, '
-            f'alcoholics anonymous {city.lower()}, aa meeting schedule {city.lower()}, '
+            f'{program.lower()} meetings {city.lower()}, {program.lower()} meetings in {city.lower()} {state.lower()}, '
+            f'{fellowship} {city.lower()}, {program.lower()} meeting schedule {city.lower()}, '
             f'{city.lower()} recovery meetings'
         ),
-        'seo_url': request.build_absolute_uri(
-            reverse('support_services:city_hub',
-                    kwargs={'state': state.lower(), 'city_slug': city_slug.lower()})),
+        'seo_url': request.build_absolute_uri(hub_url(program, state, city_slug.lower())),
     })
 
 
-def state_hub(request, state):
+def state_hub(request, state, program='AA'):
     """Index of the cities in one state that have their own hub."""
     state = state.upper()
-    cities = hub_cities(state)
+    cities = hub_cities(state, program)
     if not cities:
         raise Http404('No meeting hub for that state')
 
     state_name = US_STATES.get(state, state)
     total = sum(c['count'] for c in cities)
+    fellowship = PROGRAM_NAMES[program].lower()
 
     return render(request, 'support_services/state_hub.html', {
         'state': state,
         'state_name': state_name,
+        'program': program,
+        'source': 'NA regional meeting lists' if program == 'NA' else 'local AA intergroups',
+        'home_url': hub_url(program),
         'cities': sorted(cities, key=lambda c: c['city']),
         'cities_by_size': cities,
         'total': total,
-        'seo_title': f'AA Meetings in {state_name} \u2014 {total} Meetings in {len(cities)} Cities',
+        'seo_title': f'{program} Meetings in {state_name} \u2014 {total} Meetings in {len(cities)} Cities',
         'seo_description': (
-            f'Find AA meetings across {state_name}. {total} meetings in '
+            f'Find {program} meetings across {state_name}. {total} meetings in '
             f'{len(cities)} cities with times, addresses and online options '
             f'\u2014 free and updated weekly.'
         ),
         'seo_keywords': (
-            f'aa meetings {state_name.lower()}, alcoholics anonymous '
-            f'{state_name.lower()}, aa meeting directory {state_name.lower()}'
+            f'{program.lower()} meetings {state_name.lower()}, {fellowship} '
+            f'{state_name.lower()}, {program.lower()} meeting directory {state_name.lower()}'
         ),
-        'seo_url': request.build_absolute_uri(
-            reverse('support_services:state_hub', kwargs={'state': state.lower()})),
+        'seo_url': request.build_absolute_uri(hub_url(program, state)),
+    })
+
+
+def na_home(request):
+    """"NA meetings near me": every state and city we hold NA meetings for."""
+    states = hub_states('NA')
+    cities = hub_cities(program='NA')
+    live = Meeting.objects.filter(is_approved=True, is_active=True, program='NA')
+    total = live.count()
+    online = live.exclude(attendance_option='in_person').count()
+    for s in states:
+        s['name'] = US_STATES.get(s['state'], s['state'])
+        s['cities'] = sorted((c for c in cities if c['state'] == s['state']),
+                             key=lambda c: -c['count'])[:12]
+    return render(request, 'support_services/na_home.html', {
+        'states': sorted(states, key=lambda s: s['name']),
+        'total': total,
+        'online_count': online,
+        'city_count': len(cities),
+        'seo_title': 'NA Meetings Near Me: Find Narcotics Anonymous Meetings',
+        'seo_description': (
+            f'{total:,} Narcotics Anonymous meetings in {len(cities)} cities, in person and online. '
+            'Times, addresses and Zoom links by city, updated weekly from NA regional '
+            'meeting lists. Free, no signup.'
+        ),
+        'seo_keywords': (
+            'na meetings near me, narcotics anonymous meetings, na meeting finder, '
+            'online na meetings, na meeting schedule, find na meetings'
+        ),
+        'seo_url': request.build_absolute_uri(reverse('support_services:na_home')),
     })
 
 

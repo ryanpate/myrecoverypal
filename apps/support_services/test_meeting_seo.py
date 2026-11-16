@@ -96,7 +96,7 @@ class MeetingSeoTitleTests(TestCase):
 
     def test_feed_rows_say_aa_and_zoom(self):
         """Feed imports are all AA intergroups; searchers type "<name> aa zoom"."""
-        m = _meeting(slug='online-nyintergroup-grateful-hearts')
+        m = _meeting(slug='online-nyintergroup-grateful-hearts', program='AA')
         self.assertEqual(
             m.seo_title,
             'Grateful Hearts \u2014 Thursdays 7:00 PM Online AA Meeting on Zoom',
@@ -105,7 +105,7 @@ class MeetingSeoTitleTests(TestCase):
         self.assertIn('Get the Zoom link', m.seo_description)
 
     def test_feed_row_in_person_title_says_aa(self):
-        m = _meeting(slug='mtg-houston-grateful-hearts', attendance_option='in_person',
+        m = _meeting(slug='mtg-houston-grateful-hearts', program='AA', attendance_option='in_person',
                      conference_url='', city='Houston', state='TX')
         self.assertEqual(
             m.seo_title,

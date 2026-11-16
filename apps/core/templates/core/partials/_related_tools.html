@@ -55,6 +55,11 @@
                 <p style="color: #666; font-size: 0.9rem; margin: 0;">Browse 1,500+ free online AA meetings with join links, updated weekly.</p>
             </a>
             {% endif %}
+            <a href="{% url 'support_services:na_home' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s;">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>
+                <h3 style="color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 0.5rem;">NA Meetings Near You</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0;">Narcotics Anonymous meetings by city, in person and online, updated weekly.</p>
+            </a>
             {% if exclude != 'craving_sos' %}
             <a href="{% url 'core:craving_sos' %}" style="background: white; padding: 1.5rem; border-radius: 12px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s;">
                 <div style="font-size: 1.5rem; margin-bottom: 0.5rem;"><i class="fas fa-life-ring" aria-hidden="true"></i></div>

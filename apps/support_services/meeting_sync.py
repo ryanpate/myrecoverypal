@@ -18,7 +18,7 @@ import json
 import logging
 import re
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
 import requests
@@ -28,6 +28,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 
 from apps.support_services.grouping import assign_primaries, group_key
+from apps.support_services.hubs import US_STATES
 from apps.support_services.models import Meeting
 
 logger = logging.getLogger(__name__)
@@ -172,6 +173,165 @@ FEED_SOURCES = [
 ]
 
 
+# --- Narcotics Anonymous ----------------------------------------------------
+# NA service bodies publish their lists through BMLT; the BMLT Aggregator
+# (bmlt.app/aggregator) republishes them behind one public API. We ask it for
+# the meetings around each metro below, in its native JSON, because that is
+# the only format carrying the venue type and time zone.
+BMLT_SEARCH_URL = (
+    "https://aggregator.bmltenabled.org/main_server/client_interface/json/"
+    "?switcher=GetSearchResults&lat_val={lat}&long_val={lng}&geo_width={miles}"
+)
+NA_AREA_RADIUS_MILES = 25
+# (name, lat, lng, home time zone, state). `state` fills in rows that omit
+# theirs; it is None where the radius crosses a state line, because guessing
+# would put a meeting in the wrong state's directory.
+NA_AREAS = [
+    ("seattle", 47.6062, -122.3321, "America/Los_Angeles", "WA"),
+    ("houston", 29.7604, -95.3698, "America/Chicago", "TX"),
+    ("nyc", 40.7128, -74.0060, "America/New_York", None),
+    ("phoenix", 33.4484, -112.0740, "America/Phoenix", "AZ"),
+    ("atlanta", 33.7490, -84.3880, "America/New_York", "GA"),
+    ("denver", 39.7392, -104.9903, "America/Denver", "CO"),
+    ("sandiego", 32.7157, -117.1611, "America/Los_Angeles", "CA"),
+    ("orangecounty", 33.7455, -117.8677, "America/Los_Angeles", "CA"),
+    ("losangeles", 34.0522, -118.2437, "America/Los_Angeles", "CA"),
+    ("lasvegas", 36.1699, -115.1398, "America/Los_Angeles", "NV"),
+    ("dc", 38.9072, -77.0369, "America/New_York", None),
+    ("sanantonio", 29.4241, -98.4936, "America/Chicago", "TX"),
+    ("dallas", 32.7767, -96.7970, "America/Chicago", "TX"),
+    ("nashville", 36.1627, -86.7816, "America/Chicago", "TN"),
+    ("minneapolis", 44.9778, -93.2650, "America/Chicago", None),
+    ("stlouis", 38.6270, -90.1994, "America/Chicago", None),
+    ("chicago", 41.8781, -87.6298, "America/Chicago", None),
+    ("cincinnati", 39.1031, -84.5120, "America/New_York", None),
+    ("indianapolis", 39.7684, -86.1581, "America/Indiana/Indianapolis", "IN"),
+    ("desmoines", 41.5868, -93.6250, "America/Chicago", "IA"),
+    ("tucson", 32.2226, -110.9747, "America/Phoenix", "AZ"),
+    ("richmond", 37.5407, -77.4360, "America/New_York", "VA"),
+    ("philadelphia", 39.9526, -75.1652, "America/New_York", None),
+    ("miami", 25.7617, -80.1918, "America/New_York", "FL"),
+    ("boston", 42.3601, -71.0589, "America/New_York", "MA"),
+]
+
+# BMLT format keys we can state with confidence -> the codes the directory
+# already displays. Keys differ between NA regions, so anything else is dropped.
+BMLT_FORMATS = {
+    "O": "O", "C": "C", "WC": "X", "W": "W", "M": "M", "D": "D",
+    "ST": "ST", "ES": "S", "YP": "Y", "NS": "NS",
+}
+
+_STATE_BY_NAME = {name.upper(): code for code, name in US_STATES.items()}
+
+
+def _state_code(value):
+    """'Ohio', 'Il', 'CO,' -> 'OH', 'IL', 'CO'. Unknown values become ''."""
+    value = re.sub(r"[^A-Za-z ]", "", value or "").strip().upper()
+    if value in US_STATES:
+        return value
+    return _STATE_BY_NAME.get(value, "")
+
+
+def _from_bmlt(row, default_tz, default_state):
+    """One BMLT meeting as a Meeting Guide-shaped dict, or None to skip it.
+
+    Skipped on purpose: an online meeting with no time zone (the aggregator
+    returns worldwide virtual meetings, and a guessed zone would send someone
+    at the wrong hour) or no way to join, and an in-person meeting with no
+    street address.
+    """
+    name = (row.get("meeting_name") or "").strip()
+    meeting_id = str(row.get("id_bigint") or "").strip()
+    if not name or not meeting_id or str(row.get("published", "1")) != "1":
+        return None
+
+    street = (row.get("location_street") or "").strip()
+    venue = str(row.get("venue_type") or "")
+    tz = (row.get("time_zone") or "").strip()
+    link = (row.get("virtual_meeting_link") or "").strip()
+    phone = (row.get("phone_meeting_number") or "").strip()
+    if venue == "2":
+        if not tz or not (link or phone):
+            return None
+        attendance = "online"
+    elif not street:
+        return None
+    else:
+        attendance = "hybrid" if venue == "3" else "in_person"
+        tz = tz or default_tz
+
+    try:
+        day = int(row.get("weekday_tinyint")) - 1  # BMLT: 1 = Sunday
+    except (TypeError, ValueError):
+        day = None
+    if day not in range(7):
+        day = None
+
+    start = end = None
+    try:
+        begins = datetime.strptime(row.get("start_time") or "", "%H:%M:%S")
+        start = begins.strftime("%H:%M")
+        hours, minutes, _ = (row.get("duration_time") or "").split(":")
+        end = (begins + timedelta(hours=int(hours), minutes=int(minutes))).strftime("%H:%M")
+    except ValueError:
+        pass
+
+    city = (row.get("location_municipality") or "").strip()
+    state = _state_code(row.get("location_province")) or default_state or ""
+    postal = (row.get("location_postal_code_1") or "").strip()
+    notes = [t.strip() for t in (row.get("comments"), row.get("location_info")) if t and t.strip()]
+    join_info = (row.get("virtual_meeting_additional_info") or "").strip()
+
+    codes = {c.strip().rstrip("*").upper() for c in (row.get("formats") or "").split(",")}
+    return {
+        "slug": f"{slugify(name)[:150] or 'meeting'}-{meeting_id}",
+        "name": name,
+        "day": day,
+        "time": start,
+        "end_time": end,
+        "timezone": tz,
+        "attendance_option": attendance,
+        "conference_url": link,
+        "conference_url_notes": join_info,
+        "conference_phone": phone,
+        "types": sorted({BMLT_FORMATS[c] for c in codes if c in BMLT_FORMATS}),
+        "notes": " ".join(notes),
+        "location": (row.get("location_text") or "").strip(),
+        "formatted_address": ", ".join(filter(None, (street, city, f"{state} {postal}".strip()))),
+        "address": street,
+        "city": city,
+        "state": state,
+        "postal_code": postal,
+        "region": (row.get("service_body_name") or "").strip(),
+        "latitude": row.get("latitude"),
+        "longitude": row.get("longitude"),
+    }
+
+
+def load_na_meetings(areas=None):
+    """Every NA meeting around the configured metros, deduplicated.
+
+    Neighbouring radii overlap (Los Angeles / Orange County), so rows are
+    merged on the aggregator's meeting id. Any area failing raises, which
+    skips the whole NA sync for this run: a partial list would deactivate
+    the missing metro's meetings as "vanished".
+    """
+    merged = {}
+    for i, (_name, lat, lng, tz, state) in enumerate(areas or NA_AREAS):
+        if i:
+            time.sleep(1)  # one metro a second: a guest on a volunteer-run server
+        rows = _fetch_json(BMLT_SEARCH_URL.format(lat=lat, lng=lng, miles=NA_AREA_RADIUS_MILES))
+        for row in rows if isinstance(rows, list) else []:
+            meeting = _from_bmlt(row, tz, state)
+            if meeting:
+                merged.setdefault(meeting["slug"], meeting)
+    return list(merged.values())
+
+
+NA_SOURCE = {"key": "na", "load": load_na_meetings, "program": "NA"}
+ALL_SOURCES = FEED_SOURCES + [NA_SOURCE]
+
+
 def load_feed(source):
     """Load a TSML feed from a URL or local file path."""
     if str(source).startswith("http"):
@@ -233,13 +393,13 @@ def _describe(resp, exc):
 
 
 def sync_source(key, source, approve=True, limit=None,
-                default_tz="America/Chicago"):
+                default_tz="America/Chicago", program="AA"):
     """Sync one feed: upsert its online meetings, deactivate vanished ones.
 
     Returns {"created", "updated", "skipped", "deactivated"} counts.
     Raises on fetch/parse failure — callers decide how to isolate that.
     """
-    data = load_feed(source)
+    data = source() if callable(source) else load_feed(source)
     meetings = data if isinstance(data, list) else data.get("meetings", [])
     # Import every meeting the feed carries — in-person, hybrid and online.
     # The importer used to keep online meetings only, discarding the whole
@@ -263,6 +423,7 @@ def sync_source(key, source, approve=True, limit=None,
         if defaults is None:
             skipped += 1
             continue
+        defaults["program"] = program
         slug = _resolve_slug(key, m, known_slugs)
         defaults["group_key"] = group_key(
             slug, defaults["name"], defaults["attendance_option"],
@@ -324,7 +485,7 @@ def sync_all(sources=None):
     succeeded. Raises RuntimeError only if ALL sources failed, so the Celery
     task's autoretry kicks in for total outages but not partial ones.
     """
-    sources = sources if sources is not None else FEED_SOURCES
+    sources = sources if sources is not None else ALL_SOURCES
     if not sources:
         return {}
     results = {}
@@ -332,8 +493,9 @@ def sync_all(sources=None):
     for src in sources:
         try:
             results[src["key"]] = sync_source(
-                src["key"], src["url"],
+                src["key"], src.get("load") or src["url"],
                 default_tz=src.get("timezone", "America/Chicago"),
+                program=src.get("program", "AA"),
             )
         except FeedBlockedError as exc:
             # A warning, not an error: expected, and not something a weekly
@@ -454,6 +616,7 @@ def _map(m, approve, default_tz):
         "timezone": m.get("timezone") or default_tz,
         "attendance_option": attendance,
         "conference_url": "" if attendance == "in_person" else _safe_url(m.get("conference_url")),
+        "conference_url_notes": "" if attendance == "in_person" else (m.get("conference_url_notes") or ""),
         "conference_phone": (m.get("conference_phone") or "")[:30],
         "types": m.get("types") or [],
         "group": (m.get("group") or "")[:255],

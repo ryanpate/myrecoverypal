@@ -11,7 +11,7 @@ Usage:
 
 from django.core.management.base import BaseCommand, CommandError
 
-from apps.support_services.meeting_sync import sync_all, sync_source
+from apps.support_services.meeting_sync import NA_SOURCE, sync_all, sync_source
 
 
 class Command(BaseCommand):
@@ -31,6 +31,10 @@ class Command(BaseCommand):
             help="Maximum meetings to import (single-source mode only)",
         )
         parser.add_argument(
+            "--na", action="store_true",
+            help="Sync only the Narcotics Anonymous meetings",
+        )
+        parser.add_argument(
             "--no-approve", action="store_true",
             help="Import as unapproved (default auto-approves)",
         )
@@ -47,6 +51,8 @@ class Command(BaseCommand):
                     limit=options["limit"],
                 )
             }
+        elif options["na"]:
+            results = sync_all([NA_SOURCE])
         else:
             results = sync_all()
 

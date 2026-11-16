@@ -114,7 +114,7 @@ def group_seo(primary, schedule):
     """Title and meta description for a group page with several weekly slots."""
     days = {m.day for m in schedule if m.day is not None and 0 <= m.day <= 6}
     when = _days_summary(days) if days else 'Weekly'
-    label = 'AA' if primary.program_label == 'AA' else 'recovery'
+    label = primary.program or 'recovery'
     link = 'Zoom link' if primary.is_zoom else 'join link'
     if primary.attendance_option == 'online':
         where = 'Online on Zoom' if primary.is_zoom else 'Online'
@@ -123,7 +123,7 @@ def group_seo(primary, schedule):
         where = f'{primary.city}, {primary.state}' if primary.city and primary.state else (primary.city or '')
         kind = f'{label} meeting held in person and online' if primary.attendance_option == 'hybrid' \
             else f'{label} meeting'
-    title = (f'{primary.name} — {when} ' + ('AA ' if label == 'AA' else '') + 'Meetings'
+    title = (f'{primary.name} — {when} ' + (f'{primary.program} ' if primary.program else '') + 'Meetings'
              + (f', {where}' if where else ''))
     count = len(schedule)
     text = (f'{primary.name} is a free {kind}'

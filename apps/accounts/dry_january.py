@@ -26,6 +26,17 @@ def signup_year(today):
     return today.year if today.month == 1 else today.year + 1
 
 
+# The calculators carry a Dry January banner from December 1 (when people
+# start planning it) to the end of January.
+def banner(today):
+    """Context for the calculator banner, or None out of season."""
+    if today.month not in (12, 1):
+        return None
+    year = signup_year(today)
+    return {'year': year, 'in_january': today.month == 1,
+            'days_until': (date(year, 1, 1) - today).days}
+
+
 def card_state(entry_years, today):
     """What the progress-home card shows, or None.
 
@@ -129,13 +140,24 @@ def send_emails(now=None):
     return sent
 
 
-@login_required
-@require_POST
-def join(request):
+# Signup links carry ?join=dry-january; register_view keeps it in the session
+# under this key and joins the new member once their account exists.
+SIGNUP_JOIN_VALUE = 'dry-january'
+SIGNUP_SESSION_KEY = 'register_join'
+
+
+def join_user(request, source='page'):
+    """Enter request.user into the current Dry January (idempotent)."""
     from .models import DryJanuaryEntry
     year = signup_year(timezone.localdate())
     _, created = DryJanuaryEntry.objects.get_or_create(user=request.user, year=year)
     if created:
-        queue_ga_event(request, 'dry_january_join', year=year)
+        queue_ga_event(request, 'dry_january_join', year=year, source=source)
         messages.success(request, f"You're in for Dry January {year}. Your tracker is below.")
+
+
+@login_required
+@require_POST
+def join(request):
+    join_user(request)
     return redirect('accounts:progress')

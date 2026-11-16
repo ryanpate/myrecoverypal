@@ -306,7 +306,7 @@ class SEONoIndexMiddleware:
         if (path.startswith('/blog/') or path.startswith('/support/')) and any(
             request.GET.get(param) for param in (
                 'filter', 'page', 'type',
-                'day', 'city', 'state', 'q', 'attendance',
+                'day', 'city', 'state', 'q', 'attendance', 'program',
             )
         ):
             response['X-Robots-Tag'] = 'noindex, nofollow'

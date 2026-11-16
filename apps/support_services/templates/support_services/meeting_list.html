@@ -189,6 +189,8 @@
            href="{% url 'support_services:state_hub' state=s.state|lower %}">
             {{ s.state }} ({{ s.count }})</a>
         {% endfor %}
+        <p class="mt-2 mb-0"><a href="{% url 'support_services:na_home' %}">
+            Looking for Narcotics Anonymous? Browse NA meetings &rarr;</a></p>
     </section>
     {% endif %}
 
@@ -350,6 +352,7 @@
             <input type="hidden" name="day" id="dayFilter" value="{{ selected_day }}">
             <input type="hidden" name="attendance" id="attendanceFilter" value="{{ selected_attendance }}">
             <input type="hidden" name="type" id="typeFilter" value="{{ selected_type }}">
+            {% if selected_program %}<input type="hidden" name="program" value="{{ selected_program }}">{% endif %}
             <input type="hidden" name="source" id="sourceFilter" value="{{ selected_source }}">
         </form>
     </div>

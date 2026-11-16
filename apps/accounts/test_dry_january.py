@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 
-from apps.accounts.dry_january import card_state, signup_year
+from apps.accounts.dry_january import banner, card_state, signup_year
 from apps.accounts.models import DailyPledge, DryJanuaryEntry
 
 User = get_user_model()
@@ -39,10 +39,10 @@ class DateLogicTests(SimpleTestCase):
 @override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
 class LandingPageTests(TestCase):
 
-    def test_anonymous_gets_signup_that_returns_here(self):
+    def test_anonymous_gets_signup_that_joins_them(self):
         resp = self.client.get(reverse('core:dry_january'))
         self.assertContains(resp, '"@type": "FAQPage"')
-        self.assertContains(resp, reverse('accounts:register') + '?next=' + reverse('core:dry_january'))
+        self.assertContains(resp, reverse('accounts:register') + '?join=dry-january')
         self.assertContains(resp, 'talk to a doctor before you stop')
 
     def test_in_the_sitemap(self):
@@ -165,3 +165,70 @@ class EmailTests(TestCase):
         self.user.email_notifications = False
         self.user.save()
         self.assertEqual(self._run(2026, 12, 31, 16)[0], 0)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class SignupAutoJoinTests(TestCase):
+    """A visitor who signs up from a Dry January link is joined automatically,
+    so the tracker is on the first page they see."""
+
+    def setUp(self):
+        from django.core.cache import caches
+        from apps.accounts.invite_models import SystemSettings
+        s = SystemSettings.get_settings()
+        s.invite_only_mode = False
+        s.save()
+        for cache in caches.all():
+            cache.clear()
+
+    def _signup(self, email):
+        return self.client.post(reverse('accounts:register'),
+                                {'email': email, 'password': 'a' * 12})  # noqa: ggignore
+
+    def test_signup_from_a_dry_january_link_joins(self):
+        self.client.get(reverse('accounts:register'), {'join': 'dry-january'})
+        resp = self._signup('dj@example.com')
+        self.assertRedirects(resp, reverse('accounts:progress'), fetch_redirect_response=False)
+        user = User.objects.get(email='dj@example.com')
+        self.assertEqual(DryJanuaryEntry.objects.filter(user=user).count(), 1)
+
+    def test_ordinary_signup_does_not_join(self):
+        self.client.get(reverse('accounts:register'))
+        self._signup('plain@example.com')
+        self.assertFalse(DryJanuaryEntry.objects.exists())
+
+    def test_unknown_join_value_is_ignored(self):
+        self.client.get(reverse('accounts:register'), {'join': 'something-else'})
+        self._signup('other@example.com')
+        self.assertFalse(DryJanuaryEntry.objects.exists())
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CalculatorBannerTests(TestCase):
+
+    def test_banner_runs_december_and_january_only(self):
+        self.assertIsNone(banner(date(2026, 11, 30)))
+        self.assertEqual(banner(date(2026, 12, 26)),
+                         {'year': 2027, 'in_january': False, 'days_until': 6})
+        self.assertEqual(banner(date(2027, 1, 31))['in_january'], True)
+        self.assertIsNone(banner(date(2027, 2, 1)))
+
+    def test_both_calculators_show_it_in_season(self):
+        for name in ('core:sobriety_calculator', 'core:clean_time_calculator'):
+            with patch('django.utils.timezone.localdate', return_value=date(2026, 12, 26)):
+                html = self.client.get(reverse(name)).content.decode()
+            self.assertIn('Dry January 2027</strong>', html)
+            self.assertIn('starts in 6 days', html)
+            self.assertIn(reverse('accounts:register') + '?join=dry-january', html)
+
+    def test_hidden_out_of_season(self):
+        with patch('django.utils.timezone.localdate', return_value=date(2026, 11, 15)):
+            html = self.client.get(reverse('core:sobriety_calculator')).content.decode()
+        self.assertNotIn('data-dj-banner', html)
+
+    def test_members_are_sent_to_the_landing_page_to_join(self):
+        self.client.force_login(User.objects.create_user('m', 'm@example.com', 'pw-12345678'))
+        with patch('django.utils.timezone.localdate', return_value=date(2027, 1, 5)):
+            html = self.client.get(reverse('core:clean_time_calculator')).content.decode()
+        self.assertIn('is on. Join the free 31-day tracker', html)
+        self.assertIn(f'href="{reverse("core:dry_january")}"', html)
