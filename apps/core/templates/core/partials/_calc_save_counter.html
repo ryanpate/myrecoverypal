@@ -65,6 +65,18 @@ and remembers the date so a returning visitor sees their counter, not the demo.
     window.mrpCalcSavedDate = function () {
         try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; }
     };
+    // Remember a daily spend the visitor typed (never the default), so the
+    // pricing page can put the Premium price in their own terms.
+    var spend = document.getElementById('daily-spend');
+    if (spend) {
+        try {
+            var savedSpend = localStorage.getItem('mrpCalcSpend');
+            if (parseFloat(savedSpend) > 0) spend.value = savedSpend;
+        } catch (e) {}
+        spend.addEventListener('input', function () {
+            try { localStorage.setItem('mrpCalcSpend', spend.value); } catch (e) {}
+        });
+    }
     window.mrpCalcResult = function (date, totalDays, next) {
         try { localStorage.setItem(KEY, date); } catch (e) {}
         var hidden = document.getElementById('calc-save-date');
