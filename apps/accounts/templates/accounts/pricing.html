@@ -21,6 +21,17 @@
     .habit-value-icon { font-size: 1.5rem; }
     .habit-value-note { color: #888; font-size: 0.85rem; margin: 1rem 0 0; }
     @media (max-width: 700px) { .habit-value-grid { grid-template-columns: 1fr; } }
+    /* Phones: get to the Premium price fast. The three tiles shrink to one
+       line each (the Premium card repeats the detail) and the Premium card
+       moves ahead of Free. */
+    @media (max-width: 767px) {
+        .habit-value-grid { gap: .4rem; }
+        .habit-value-item { flex-direction: row; align-items: center; gap: .6rem; padding: .55rem .8rem; }
+        .habit-value-item span { display: none; }
+        .habit-value-icon { margin: 0; font-size: 1.1rem; }
+        .plan-col-premium { order: -1; }
+        .plan-col-premium > .card { transform: none !important; }
+    }
     [data-theme="dark"] .habit-value-title { color: #8ab4f8; }
     [data-theme="dark"] .habit-value-item { background: #1e2430; border-color: #2e3949; }
     [data-theme="dark"] .habit-value-item strong { color: #e8eef7; }
@@ -269,7 +280,7 @@
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited social feed & posts</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Daily check-in & mood tracking</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Private journal</li>
-                        <li class="mb-2"><i class="fas fa-check text-success"></i> Groups, messaging &amp; challenges</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> {% if SHOW_GROUPS_CHALLENGES_SPONSORS %}Groups, messaging &amp; challenges{% else %}Private messaging{% endif %}</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Meeting finder &amp; reminders</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> 3 AI Coach messages per day</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Craving SOS + free guided audio (urge surfing, breathing, grounding, after a slip)</li>
@@ -294,7 +305,7 @@
 
         <!-- Premium Tier — one card, monthly/annual toggle (annual default) -->
         {% if premium_monthly_plan or premium_yearly_plan %}
-        <div class="col-lg-5 col-md-6 mb-4">
+        <div class="col-lg-5 col-md-6 mb-4 plan-col-premium">
             <div class="card h-100 shadow-lg border-primary" style="transform: scale(1.05);">
                 <div class="card-header text-center bg-primary text-white" style="background-color: #1e4d8b !important;">
                     <span class="badge badge-warning mb-2">MOST POPULAR</span>

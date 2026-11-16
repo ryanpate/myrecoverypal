@@ -241,7 +241,7 @@
                     {% else %}
                         <ul class="list-unstyled">
                             <li class="mb-2"><i class="fas fa-check text-success"></i> Social feed & messaging</li>
-                            <li class="mb-2"><i class="fas fa-check text-success"></i> Groups, messaging &amp; challenges</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> {% if SHOW_GROUPS_CHALLENGES_SPONSORS %}Groups, messaging &amp; challenges{% else %}Private messaging{% endif %}</li>
                             <li class="mb-2"><i class="fas fa-check text-success"></i> 10 AI Coach messages</li>
                             <li class="mb-2"><i class="fas fa-check text-success"></i> 30-day journal</li>
                             <li class="mb-2"><i class="fas fa-check text-success"></i> Daily check-ins & streaks</li>
