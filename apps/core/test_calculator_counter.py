@@ -57,3 +57,20 @@ class CalculatorSaveCounterTests(TestCase):
                 demo = html[html.index('// Show 90-day demo'):]
                 self.assertNotIn('reportResult(', demo[:400])
                 self.assertIn("urlParams.get('date') || window.mrpCalcSavedDate()", html)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CalculatorLocalDayTests(TestCase):
+    """Day counts are the visitor's own calendar days. Parsing 'YYYY-MM-DD'
+    with new Date() and formatting with toISOString() are both UTC, which
+    made both calculators count a day ahead every evening in the US."""
+
+    def test_no_utc_date_handling_in_either_calculator(self):
+        for page in PAGES:
+            with self.subTest(page=page):
+                html = self.client.get(reverse(page)).content.decode()
+                self.assertNotIn('.toISOString()', html)
+                self.assertNotIn('new Date(sobrietyDate)', html)
+                self.assertNotIn('new Date(dateParam)', html)
+                self.assertIn('const start = parseLocalDate(sobrietyDate);', html)
+                self.assertIn('dateInput.max = localISO(today);', html)
