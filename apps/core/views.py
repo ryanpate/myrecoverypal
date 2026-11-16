@@ -155,7 +155,7 @@ class OnlineAAMeetingsView(TemplateView):
         context = super().get_context_data(**kwargs)
         online = Meeting.objects.filter(
             is_active=True, is_approved=True, attendance_option='online',
-        )
+        ).exclude(program='NA')  # this page is about AA; NA has /support/meetings/na/
         # Python weekday: 0=Monday; Meeting model: 0=Sunday.
         today_meeting_day = (datetime.now().weekday() + 1) % 7
         context['online_count'] = online.count()

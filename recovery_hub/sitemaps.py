@@ -54,6 +54,7 @@ class StaticViewSitemap(Sitemap):
             ('core:court_ordered_meeting_tracker', 0.9),  # "court ordered AA app" — Court Compliance tier landing
             ('core:online_aa_meetings', 0.9),  # "online AA meetings" — live meeting directory
             ('support_services:meeting_list', 0.9),  # Meeting directory hub (detail pages: MeetingSitemap)
+            ('support_services:na_home', 0.9),  # "na meetings near me" — NA city/state directory
             ('core:craving_sos', 0.9),  # "how to stop cravings" — interactive SOS toolbox
             ('core:relapse_prevention_plan', 0.9),  # "relapse prevention plan template" — guided builder landing
             ('core:for_probation_officers', 0.7),  # PO verification guide / outreach one-pager
@@ -306,12 +307,10 @@ class CityHubSitemap(Sitemap):
 
     def items(self):
         from apps.support_services.hubs import hub_cities
-        return hub_cities()
+        return hub_cities() + hub_cities(program='NA')
 
     def location(self, obj):
-        return reverse('support_services:city_hub',
-                       kwargs={'state': obj['state'].lower(),
-                               'city_slug': obj['slug']})
+        return obj['url']
 
     def get_urls(self, page=1, site=None, protocol=None):
         from django.contrib.sites.models import Site
@@ -327,11 +326,10 @@ class StateHubSitemap(Sitemap):
 
     def items(self):
         from apps.support_services.hubs import hub_states
-        return hub_states()
+        return hub_states() + hub_states('NA')
 
     def location(self, obj):
-        return reverse('support_services:state_hub',
-                       kwargs={'state': obj['state'].lower()})
+        return obj['url']
 
     def get_urls(self, page=1, site=None, protocol=None):
         from django.contrib.sites.models import Site

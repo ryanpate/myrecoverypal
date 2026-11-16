@@ -281,7 +281,7 @@
             {% if meeting.city_hub_url %}
             <p class="mb-3">
                 <a href="{{ meeting.city_hub_url }}">
-                    &larr; All AA meetings in {{ meeting.city }}, {{ meeting.state }}
+                    &larr; All {% if meeting.program == 'NA' %}NA{% else %}AA{% endif %} meetings in {{ meeting.city }}, {{ meeting.state }}
                 </a>
             </p>
             {% endif %}

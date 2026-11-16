@@ -6,18 +6,18 @@
 {% block content %}
 <div class="container py-4">
     <nav aria-label="breadcrumb" class="mb-3">
-        <a href="{% url 'support_services:meeting_list' %}">Meetings</a>
+        <a href="{{ home_url }}">{% if program == 'NA' %}NA {% endif %}Meetings</a>
         &rsaquo;
-        <a href="{% url 'support_services:state_hub' state=state|lower %}">{{ state_name }}</a>
+        <a href="{{ state_url }}">{{ state_name }}</a>
         &rsaquo; <span>{{ city }}</span>
     </nav>
 
-    <h1>AA Meetings in {{ city }}, {{ state }}</h1>
+    <h1>{{ program }} Meetings in {{ city }}, {{ state }}</h1>
     <p class="lead">
         {{ total }} meeting{{ total|pluralize }} in {{ city }} &mdash;
         {{ in_person_count }} in person{% if online_count %},
         {{ online_count }} with an online option{% endif %}.
-        Updated weekly from the local AA intergroup.
+        Updated weekly from the {{ source }}.
     </p>
 
     {% include 'support_services/_court_compliance_nudge.html' %}
@@ -40,7 +40,7 @@
     </section>
     {% endfor %}
 
-    <p><a href="{% url 'support_services:state_hub' state=state|lower %}">
-        All AA meetings in {{ state_name }} &rarr;</a></p>
+    <p><a href="{{ state_url }}">
+        All {{ program }} meetings in {{ state_name }} &rarr;</a></p>
 </div>
 {% endblock %}

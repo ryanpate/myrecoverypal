@@ -130,6 +130,10 @@ class Meeting(models.Model):
     # Meeting types (stored as JSON)
     types = models.JSONField(default=list, blank=True)
 
+    # Fellowship the listing belongs to: 'AA' or 'NA' for feed imports,
+    # blank for community submissions (which can be any program).
+    program = models.CharField(max_length=10, blank=True, db_index=True)
+
     # Donation options
     venmo = models.CharField(max_length=50, blank=True)
     square = models.CharField(max_length=50, blank=True)
@@ -248,14 +252,12 @@ class Meeting(models.Model):
 
     @property
     def program_label(self):
-        """'AA' for rows imported from the AA intergroup feeds, else 'Recovery'.
+        """'AA' or 'NA' for feed imports, else the neutral 'Recovery'.
 
-        Every feed in meeting_sync.FEED_SOURCES is an AA intergroup, and
-        searchers type "<group name> aa meeting". Community submissions can
+        Searchers type "<group name> aa meeting"; community submissions can
         be any program, so they keep the neutral word.
         """
-        from_feed = self.submitted_by_id is None and self.slug.startswith(('online-', 'mtg-'))
-        return 'AA' if from_feed else 'Recovery'
+        return self.program or 'Recovery'
 
     @property
     def is_zoom(self):
@@ -272,12 +274,12 @@ class Meeting(models.Model):
         if not self.city or not self.state:
             return ''
         from django.urls import reverse
-        from apps.support_services.hubs import city_slug, hub_cities
+        from apps.support_services.hubs import city_slug, hub_cities, hub_program, hub_url
         slug = city_slug(self.city)
-        if not any(c['slug'] == slug for c in hub_cities(self.state)):
+        program = hub_program(self.program)
+        if not any(c['slug'] == slug for c in hub_cities(self.state, program)):
             return ''
-        return reverse('support_services:city_hub',
-                       kwargs={'state': self.state.lower(), 'city_slug': slug})
+        return hub_url(program, self.state, slug)
 
     @property
     def seo_description(self):
@@ -289,7 +291,7 @@ class Meeting(models.Model):
         Program-neutral wording ("recovery meeting") — the directory
         carries AA, NA, SMART and secular groups alike.
         """
-        label = 'AA' if self.program_label == 'AA' else 'recovery'
+        label = self.program or 'recovery'
         if self.attendance_option == 'online':
             kind = f'free online {label} meeting'
         elif self.attendance_option == 'hybrid':
