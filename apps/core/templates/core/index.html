@@ -205,6 +205,30 @@
 .ml-trust li { display:flex; align-items:center; gap:.45rem; font-size:.92rem; color:var(--ml-text-body); font-weight:500; }
 .ml-trust i { color:var(--ml-accent); }
 
+/* ---- Hero counter: the visitor's own number, before any signup ---- */
+.ml-count { max-width:480px; margin:0 0 1.5rem; padding:1.1rem 1.2rem; background:var(--ml-surface-page);
+  border:1px solid var(--ml-border); border-radius:var(--ml-radius-lg); }
+.ml .ml-count-q { display:block; margin:0 0 .6rem; font-weight:700; font-size:1.02rem; color:var(--ml-text-strong); }
+.ml-count-row { display:flex; gap:.6rem; flex-wrap:wrap; }
+.ml .ml-count input { font:inherit; color:var(--ml-text-strong); background:var(--ml-surface-card);
+  border:1px solid var(--ml-border); border-radius:var(--ml-radius-md); padding:.6rem .75rem; }
+.ml .ml-count input:focus-visible, .ml-count-today:focus-visible { outline:2px solid var(--ml-secondary); outline-offset:2px; }
+.ml-count-row input { flex:1 1 170px; min-width:0; min-height:46px; }
+.ml-count-today { font:inherit; font-weight:600; cursor:pointer; white-space:nowrap; min-height:46px; padding:.6rem 1rem;
+  color:var(--ml-primary); background:transparent; border:1px dashed var(--ml-primary); border-radius:var(--ml-radius-md); }
+.ml-count-result { margin-top:1rem; padding-top:1rem; border-top:1px solid var(--ml-border); }
+.ml-count-num { font-size:clamp(2.6rem,7vw,3.4rem); font-weight:800; line-height:1; letter-spacing:-.03em;
+  color:var(--ml-primary); font-variant-numeric:tabular-nums; }
+.ml-count-num small { font-size:1.05rem; font-weight:700; letter-spacing:0; color:var(--ml-text-muted); }
+.ml .ml-count p { margin:.5rem 0 0; line-height:1.5; color:var(--ml-text-body); }
+.ml .ml-count-spend { display:block; margin:.9rem 0 0; font-weight:500; color:var(--ml-text-muted); }
+.ml .ml-count-spend input { width:4.2rem; padding:.3rem .4rem; text-align:center; font-weight:700; }
+.ml .ml-count p.ml-count-kept { font-weight:700; color:var(--ml-text-strong); }
+.ml .ml-count p.ml-count-premium { font-size:.95rem; color:var(--ml-text-muted); }
+.ml .ml-count-premium a { font-weight:700; color:var(--ml-premium-from); white-space:nowrap; }
+[data-theme="dark"] .ml .ml-count input { color-scheme:dark; }
+[data-theme="dark"] .ml .ml-count-premium a { color:#a5b4fc; }
+
 /* ---- Phone mockup ---- */
 .ml-phone { position:relative; width:300px; margin:0 auto; }
 .ml-phone-glow { position:absolute; inset:-14% -22%; border-radius:50%;
@@ -302,7 +326,6 @@
 .ml-plan-more { display:block; text-align:center; margin-top:.8rem; font-weight:600; color:var(--ml-primary); }
 @media (max-width:860px) {
   .ml-hero-inner { grid-template-columns:1fr; gap:2.5rem; padding:3rem var(--ml-gutter) 3.5rem; }
-  .ml-hero-media { order:-1; }
   .ml-anchor-card { grid-template-columns:1fr; }
   .ml-anchor-media { order:-1; }
   .ml-court-inner { grid-template-columns:1fr; gap:1.75rem; padding:2.25rem; }
@@ -357,8 +380,28 @@
         <a class="ml-eyebrow ml-eyebrow--new" href="#ml-toolkit" data-promo="landing_hero_new"><span class="ml-new-tag">New</span> Guided audio, 30-day programs &amp; daily reflections <i class="fas fa-arrow-down" aria-hidden="true"></i></a>
         <h1 class="ml-h1">Recovery is hard.<br>Doing it <span class="ml-grad-text">together</span> isn&rsquo;t.</h1>
         <p class="ml-lead">Join a community that actually gets it. Track your days, hit milestones, and find people who show up &mdash; whether you&rsquo;re 1 day or 10 years in.</p>
+        {# The visitor's own counter, before any signup. Nothing leaves the browser; the date rides into signup on the button below. #}
+        <div class="ml-count" id="ml-count">
+          <label class="ml-count-q" for="ml-count-date">When was your last drink or use?</label>
+          <div class="ml-count-row">
+            <input type="date" id="ml-count-date">
+            <button type="button" class="ml-count-today" id="ml-count-today">Today is day one</button>
+          </div>
+          <div class="ml-count-result" id="ml-count-result" hidden aria-live="polite">
+            <div class="ml-count-num"><span id="ml-count-days"></span> <small id="ml-count-unit"></small></div>
+            <p id="ml-count-next"></p>
+            <label class="ml-count-spend" for="ml-count-spend">I used to spend $
+              <input type="number" id="ml-count-spend" min="0" step="1" inputmode="decimal" placeholder="15"> a day</label>
+            <p class="ml-count-kept" id="ml-count-kept" hidden></p>
+            {# Implies a price, so stripe-only (hidden in the iOS app). #}
+            <p class="ml-count-premium stripe-only" id="ml-count-premium" hidden{% if premium_yearly_plan %} data-yearly="{{ premium_yearly_plan.price|floatformat:2 }}"{% endif %}>
+              <span id="ml-count-premium-text"></span>
+              <a href="{% url 'accounts:pricing' %}" data-promo="landing_hero_counter_premium">See what it adds</a>
+            </p>
+          </div>
+        </div>
         <div class="ml-cta-row">
-          <a class="ml-btn ml-btn--lg ml-btn--primary" href="{% url 'accounts:register' %}">Claim your free spot <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          <a class="ml-btn ml-btn--lg ml-btn--primary js-carry-date" href="{% url 'accounts:register' %}" id="ml-count-cta"><span id="ml-count-cta-text">Claim your free spot</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
           <a class="ml-btn ml-btn--lg ml-btn--outline" href="#ml-features"><i class="fas fa-play" aria-hidden="true"></i> See how it works</a>
         </div>
         <ul class="ml-trust">
@@ -378,8 +421,8 @@
           <div class="ml-chip ml-chip--medal">
             <span class="ml-chip-icon ml-chip-icon--gold"><i class="fas fa-medal" aria-hidden="true"></i></span>
             <div>
-              <div style="font-size:1.05rem;font-weight:800;line-height:1.05;color:var(--ml-primary);">8 years</div>
-              <div style="font-size:.72rem;color:var(--ml-text-muted);margin-top:2px;">medallion unlocked</div>
+              <div id="ml-chip-medal-label" style="font-size:1.05rem;font-weight:800;line-height:1.05;color:var(--ml-primary);">8 years</div>
+              <div id="ml-chip-medal-sub" style="font-size:.72rem;color:var(--ml-text-muted);margin-top:2px;">medallion unlocked</div>
             </div>
           </div>
           <div class="ml-chip ml-chip--anchor">
@@ -612,5 +655,119 @@ document.addEventListener('click', function (e) {
     gtag('event', 'select_promotion', { promotion_id: a.dataset.promo, creative_slot: 'landing' });
   }
 });
+</script>
+<script>
+// Hero counter. Same day math, milestones and localStorage keys as the
+// calculators, so a date or daily spend entered on either follows the visitor
+// to signup and to the pricing page.
+(function () {
+  var input = document.getElementById('ml-count-date');
+  if (!input) return;
+  var spend = document.getElementById('ml-count-spend');
+  var MILESTONES = [[1, '1 Day'], [7, '1 Week'], [14, '2 Weeks'], [30, '1 Month'], [60, '2 Months'],
+    [90, '90 Days'], [180, '6 Months'], [365, '1 Year'], [730, '2 Years'], [1825, '5 Years']];
+  function el(id) { return document.getElementById(id); }
+  function iso(d) {
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function stored(key) { try { return localStorage.getItem(key) || ''; } catch (e) { return ''; } }
+  function store(key, value) { try { localStorage.setItem(key, value); } catch (e) {} }
+  function track(name, params) { if (typeof gtag === 'function') gtag('event', name, params || {}); }
+
+  var now = new Date();
+  var todayISO = iso(now);
+  input.max = todayISO;
+
+  // Whole calendar days since the date, or -1 if it isn't a past/today date.
+  function daysSince(date) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date > todayISO) return -1;
+    var p = date.split('-');
+    return Math.round((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
+      - Date.UTC(+p[0], +p[1] - 1, +p[2])) / 86400000);
+  }
+
+  // The next milestone as {label, on}; past five years it's the next anniversary.
+  function nextMilestone(date, days) {
+    var p = date.split('-');
+    for (var i = 0; i < MILESTONES.length; i++) {
+      if (MILESTONES[i][0] > days) {
+        return { label: MILESTONES[i][1], on: new Date(+p[0], +p[1] - 1, +p[2] + MILESTONES[i][0]) };
+      }
+    }
+    var years = now.getFullYear() - (+p[0]);
+    var on = new Date(+p[0] + years, +p[1] - 1, +p[2]);
+    if (iso(on) <= todayISO) { years += 1; on = new Date(+p[0] + years, +p[1] - 1, +p[2]); }
+    return { label: years + ' Years', on: on };
+  }
+
+  function renderSpend(days) {
+    var amount = parseFloat(spend.value) || 0;
+    var kept = el('ml-count-kept');
+    kept.hidden = !(amount > 0 && days > 0);
+    if (!kept.hidden) {
+      kept.textContent = "That's about $" + Math.round(amount * days).toLocaleString() + ' you\u2019ve kept.';
+    }
+    var premium = el('ml-count-premium');
+    var price = parseFloat(premium.dataset.yearly) || 0;
+    var cover = amount > 0 && price > 0 ? Math.ceil(price / amount) : 0;
+    // Only say it when it's a small number of days; otherwise stay quiet.
+    premium.hidden = !(cover > 0 && cover <= 90);
+    if (!premium.hidden) {
+      el('ml-count-premium-text').textContent =
+        (cover === 1 ? 'One day' : cover + ' days') + ' of that covers a whole year of Premium.';
+    }
+  }
+
+  function render(date) {
+    var days = daysSince(date);
+    if (days < 0) return false;
+    var next = nextMilestone(date, days);
+    var opts = { month: 'long', day: 'numeric' };
+    if (next.on.getFullYear() !== now.getFullYear()) opts.year = 'numeric';
+    var when = days === 0 ? 'tomorrow' : next.on.toLocaleDateString(undefined, opts);
+
+    el('ml-count-days').textContent = days === 0 ? 'Day one' : days.toLocaleString();
+    el('ml-count-unit').textContent = days === 0 ? '' : (days === 1 ? 'day' : 'days');
+    el('ml-count-next').textContent = 'Your ' + next.label + ' milestone is ' + when
+      + '. Save your counter and it counts up every day.';
+    el('ml-count-result').hidden = false;
+    el('ml-count-cta-text').textContent = 'Save my counter: free';
+    el('ml-chip-medal-label').textContent = next.label;
+    el('ml-chip-medal-sub').textContent = 'your next medallion';
+    renderSpend(days);
+
+    document.querySelectorAll('a.js-carry-date').forEach(function (link) {
+      var url = new URL(link.href, window.location.origin);
+      url.searchParams.set('sobriety_date', date);
+      link.href = url.toString();
+    });
+    return true;
+  }
+
+  function entered(date, source) {
+    if (!render(date)) return;
+    store('mrpCalcDate', date);
+    track('home_counter_date_entered', { days: daysSince(date), source: source });
+  }
+
+  input.addEventListener('change', function () { entered(input.value, 'picker'); });
+  el('ml-count-today').addEventListener('click', function () {
+    input.value = todayISO;
+    entered(todayISO, 'day_one');
+  });
+  spend.addEventListener('input', function () {
+    store('mrpCalcSpend', spend.value);
+    renderSpend(daysSince(input.value));
+  });
+  el('ml-count-cta').addEventListener('click', function () {
+    track('home_counter_save_click', { has_date: daysSince(input.value) >= 0 });
+  });
+
+  // A returning visitor sees their own count, not an empty form.
+  var savedSpend = stored('mrpCalcSpend');
+  if (parseFloat(savedSpend) > 0) spend.value = savedSpend;
+  var saved = stored('mrpCalcDate');
+  if (daysSince(saved) >= 0) { input.value = saved; render(saved); }
+})();
 </script>
 {% endblock %}
