@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}A year of Premium, for you — MyRecoveryPal{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<style>
+    .giftc { max-width: 640px; margin: 2.5rem auto 3.5rem; padding: 0 1.25rem; text-align: center; }
+    .giftc h1 { font-size: 2rem; font-weight: 700; margin: 0 0 0.5rem; }
+    .giftc .giftc-sub { opacity: 0.8; margin: 0 auto 1.75rem; max-width: 30em; line-height: 1.55; }
+    .giftc-actions { display: grid; gap: 0.7rem; max-width: 380px; margin: 1.9rem auto 0; }
+    .giftc-btn {
+        display: block; width: 100%; border: 0; border-radius: 12px; padding: 0.95rem 1.2rem; cursor: pointer;
+        font-size: 1.05rem; font-weight: 700; text-decoration: none;
+        background: #16324f; box-shadow: 0 0 0 2px #b98a2f inset;
+    }
+    .giftc a.giftc-btn, .giftc a.giftc-btn:hover, .giftc button.giftc-btn { color: #f8f1e3; }
+    .giftc-btn.giftc-quiet { background: transparent; box-shadow: 0 0 0 2px currentColor inset; }
+    .giftc a.giftc-quiet, .giftc a.giftc-quiet:hover, .giftc button.giftc-quiet { color: inherit; }
+    .giftc-note { font-size: 0.88rem; opacity: 0.75; margin: 1.1rem auto 0; max-width: 32em; line-height: 1.5; }
+    .giftc-link { font-family: ui-monospace, Menlo, monospace; font-size: 0.8rem; overflow-wrap: anywhere; opacity: 0.85; }
+    .giftc-state { margin: 0 auto 1.5rem; max-width: 460px; padding: 1rem 1.25rem; border-radius: 12px; background: #fff7e0; color: #7a5a00; }
+    .giftc-print-url { display: none; }
+    @media print {
+        body * { visibility: hidden; }
+        .giftc-print, .giftc-print * { visibility: visible; }
+        .giftc-print { position: absolute; top: 1in; left: 0; right: 0; }
+        .giftc-print .gcard { filter: none; border: 1px solid #c9bfa8; }
+        .giftc-print-url { display: block; margin-top: 1.25rem; font: 12px/1.5 -apple-system, sans-serif; color: #333; text-align: center; }
+    }
+</style>
+
+<div class="giftc">
+    {% if gift.status == 'pending' %}
+        <h1>Almost there</h1>
+        <div class="giftc-state">We're still confirming your payment. Give it a moment and refresh this page.</div>
+    {% elif gift.status == 'refunded' %}
+        <h1>This gift is no longer valid</h1>
+        <p class="giftc-sub">It was refunded to the person who bought it.</p>
+    {% elif giver %}
+        <h1>Your gift is ready</h1>
+        <p class="giftc-sub">Print the card and hand it over, or send the link in your own words. We won't contact them.</p>
+    {% elif gift.redeemed_at %}
+        <h1>This gift has been opened</h1>
+        <p class="giftc-sub">The year of Premium on this card has already been added to an account.</p>
+    {% else %}
+        <h1>{% if gift.from_name %}{{ gift.from_name }} gave you a year.{% else %}Someone gave you a year.{% endif %}</h1>
+        <p class="giftc-sub">A year of MyRecoveryPal Premium, paid in full. No card, nothing to cancel, nothing that renews.</p>
+    {% endif %}
+
+    {% if gift.status != 'refunded' %}
+    <div class="giftc-print">
+        {% include 'accounts/_gift_card_art.html' with from_name=gift.from_name message=gift.message %}
+        <div class="giftc-print-url">Open your year at: {{ card_url }}</div>
+    </div>
+    {% endif %}
+
+    {% if giver %}
+        <div class="giftc-actions">
+            <button type="button" class="giftc-btn" onclick="window.print()">Print the card</button>
+            <button type="button" class="giftc-btn giftc-quiet" id="giftCopy" data-url="{{ card_url }}">Copy the gift link</button>
+        </div>
+        <p class="giftc-note giftc-link">{{ card_url }}</p>
+        <p class="giftc-note">
+            {% if gift.buyer_email %}We emailed this to {{ gift.buyer_email }} so you can come back to it. {% endif %}
+            The link works once, for whoever opens it first, and it doesn't expire.
+        </p>
+        <script>
+        document.getElementById('giftCopy').addEventListener('click', function () {
+            var btn = this;
+            navigator.clipboard.writeText(btn.dataset.url).then(function () { btn.textContent = 'Copied'; });
+        });
+        </script>
+    {% elif gift.redeemable %}
+        <div class="giftc-actions">
+            {% if blocked_reason %}
+                <div class="giftc-state" style="margin:0;">{{ blocked_reason }}</div>
+            {% elif user.is_authenticated %}
+                <form method="post" action="{% url 'core:gift_redeem' gift.token %}">
+                    {% csrf_token %}
+                    <button type="submit" class="giftc-btn">Start my year of Premium</button>
+                </form>
+            {% else %}
+                <a class="giftc-btn" href="{% url 'accounts:register' %}?next={{ card_path|urlencode }}">Create a free account to open it</a>
+                <a class="giftc-btn giftc-quiet" href="{% url 'accounts:login' %}?next={{ card_path|urlencode }}">I already have an account</a>
+            {% endif %}
+        </div>
+        <p class="giftc-note">
+            Every guided program, the full audio library, streak protection, your insights, and Anchor,
+            an AI coach you can talk to at any hour. Your counter, journal and the community are free either way.
+        </p>
+    {% endif %}
+</div>
+{% endblock %}

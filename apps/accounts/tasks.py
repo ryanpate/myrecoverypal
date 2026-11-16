@@ -1107,6 +1107,15 @@ def send_trial_ending_notifications(self):
     logger.info(f"Trial-ending notifications: sent={sent_count}")
     return {'sent': sent_count}
 
+@shared_task(ignore_result=True)
+def gifted_premium_daily():
+    """Gifted years of Premium: remind a week before the end, expire after it."""
+    from . import gifts
+    sent = gifts.send_ending_reminders()
+    expired = gifts.expire_ended()
+    logger.info(f"Gifted Premium: reminders={sent}, expired={expired}")
+
+
 @shared_task(bind=True, max_retries=3)
 def expire_ended_trials(self):
     """Downgrade trials whose 14-day window has passed to free, and email the user.

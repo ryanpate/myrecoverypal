@@ -590,3 +590,15 @@ admin.site.register(Facility)
 admin.site.register(FacilityStaff)
 admin.site.register(FacilityMembership)
 admin.site.register(FacilityInvite)
+
+
+from .gift_models import PremiumGift
+
+
+@admin.register(PremiumGift)
+class PremiumGiftAdmin(admin.ModelAdmin):
+    list_display = ('id', 'status', 'buyer_email', 'from_name', 'redeemed_by', 'paid_at', 'redeemed_at')
+    list_filter = ('status',)
+    search_fields = ('buyer_email', 'token', 'stripe_session_id', 'redeemed_by__email')
+    raw_id_fields = ('redeemed_by',)
+    readonly_fields = ('token', 'stripe_session_id', 'stripe_payment_intent_id', 'created_at')

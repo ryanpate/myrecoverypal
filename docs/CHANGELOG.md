@@ -4,6 +4,14 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-11-16:** Gift a year of Premium (`/gift/`), for family and friends buying for someone in recovery.
+  - **Buying:** no account needed. One-time Stripe Checkout at the yearly Premium price (read from the `SubscriptionPlan` row, so a reprice carries over). The buyer gets a printable card with a QR code and a private link, on screen and by email. We never contact the recipient.
+  - **Redeeming:** `/gift/<token>/` works once. New people sign up and come straight back (`register?next=`). The member's `Subscription` becomes `tier='premium'`, `status='active'`, `subscription_source='gift'`, with `current_period_end` a year out. A second gift adds a year. A member with a paid plan can't redeem; the gift stays unused.
+  - **Ending:** `tasks.gifted_premium_daily` (9:05 AM) emails a week before the end with a Keep Premium link, then moves the member to Free. Nothing renews.
+  - **Refunds:** an unredeemed gift is cancelled by the `charge.refunded` webhook. A redeemed one is left with the member.
+  - **iOS:** the buy form and every link to `/gift/` are `stripe-only` (Guideline 3.1). Redeeming works in the app.
+  - Files: `apps/accounts/gift_models.py`, `gifts.py`, `gift_views.py`, `test_premium_gift.py`, migration 0079.
+- **2026-11-16:** Fix: on the signup page in dark mode the Email and Password labels were light text on the white card, so they were invisible.
 - **2026-10-04:** The library features are now easy to find from every menu and the Library hub.
   - **Tools menu (desktop):** three columns: **Library** (Programs & Classes, Guided Audio, Daily Reflections, Worksheets, Family & Friends Course, All Resources), **Premium Tools** (Anchor, My Recovery Workbook, My Saved Worksheets, Saved Reflections, 90-Day Insights, plus an upgrade link for free members), and **Free Tools** (Craving SOS, Medallion Maker, Relapse Prevention Plan, Blog, Shop, Crisis Help).
   - **Mobile slide-out menu:** the same Library / Premium Tools / Free Tools sections. The **account dropdown** also has a Premium Tools section.

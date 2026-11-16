@@ -43,7 +43,7 @@ def apply_promo_to_user(user, code):
     if (
         sub.tier in ('premium', 'court')
         and sub.status == 'active'
-        and sub.subscription_source in ('stripe', 'apple')
+        and sub.subscription_source in ('stripe', 'apple', 'gift')
     ):
         return False, 'already premium'
 

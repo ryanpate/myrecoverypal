@@ -950,6 +950,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.expire_ended_trials',
         'schedule': crontab(hour=9, minute=0),  # Daily at 9 AM, before the 10 AM email tasks
     },
+    'gifted-premium-daily': {
+        'task': 'apps.accounts.tasks.gifted_premium_daily',
+        'schedule': crontab(hour=9, minute=5),  # Daily: week-before reminder, then expiry
+    },
     'send-winback-offers': {
         'task': 'apps.accounts.tasks.send_winback_offers',
         'schedule': crontab(hour=9, minute=30),  # Daily at 9:30 AM, after trials expire at 9
