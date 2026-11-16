@@ -167,6 +167,111 @@ FEED_SOURCES = [
         "url": "https://aarichmond.org/wp-admin/admin-ajax.php?action=meetings",
         "timezone": "America/New_York",
     },
+    # Added 2026-11-15 from a probe of 55 more intergroups (about 14,600
+    # meetings). Left out because their feed answers 401 (sharing switched
+    # off) or 403: Portland, Sacramento, Austin, Dallas, Fort Worth, Boston,
+    # Philadelphia, Miami, Orlando, Charlotte, Detroit, Cleveland, Salt Lake,
+    # Albuquerque, New Orleans, Buffalo, Rochester, Reno.
+    {
+        "key": "eastbay",
+        "url": "https://eastbayaa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Los_Angeles",
+    },
+    {
+        "key": "ventura",
+        "url": "https://aaventuracounty.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Los_Angeles",
+    },
+    {
+        "key": "inlandempire",
+        "url": "https://aainlandempire.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Los_Angeles",
+    },
+    {
+        "key": "fresno",
+        "url": "https://fresnoaa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Los_Angeles",
+    },
+    {
+        "key": "spokane",
+        "url": "https://aaspokane.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Los_Angeles",
+    },
+    {
+        "key": "honolulu",
+        "url": "https://oahuaa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "Pacific/Honolulu",
+    },
+    {
+        "key": "kansascity",
+        "url": "https://kc-aa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Chicago",
+    },
+    {
+        "key": "oklahomacity",
+        "url": "https://okcintergroup.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Chicago",
+    },
+    {
+        "key": "tulsa",
+        "url": "https://aaneok.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Chicago",
+    },
+    {
+        "key": "memphis",
+        "url": "https://memphis-aa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Chicago",
+    },
+    {
+        "key": "omaha",
+        "url": "https://omahaaa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Chicago",
+    },
+    {
+        "key": "madison",
+        "url": "https://aamadisonwi.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/Chicago",
+    },
+    {
+        "key": "columbus",
+        "url": "https://aacentralohio.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/New_York",
+    },
+    {
+        "key": "raleigh",
+        "url": "https://raleighaa.com/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/New_York",
+    },
+    {
+        "key": "jacksonville",
+        "url": "https://neflaa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/New_York",
+    },
+    {
+        "key": "palmbeach",
+        "url": "https://aa-palmbeachcounty.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/New_York",
+    },
+    {
+        "key": "nassau",
+        "url": "https://nassauny-aa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/New_York",
+    },
+    {
+        "key": "suffolk",
+        "url": "https://suffolkny-aa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/New_York",
+    },
+    {
+        "key": "connecticut",
+        "url": "https://ct-aa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/New_York",
+    },
+    {
+        "key": "rhodeisland",
+        "url": "https://rhodeisland-aa.org/wp-admin/admin-ajax.php?action=meetings",
+        "timezone": "America/New_York",
+    },
     # Chicago (chicagoaa.org) and Los Angeles (lacoaa.org) both sit behind a
     # Cloudflare bot challenge and cannot be fetched programmatically. Left
     # out deliberately rather than worked around.
