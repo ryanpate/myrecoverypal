@@ -39,6 +39,7 @@ from .forms import (
 from .payment_models import Subscription
 from .ab_testing import ABTestingService
 from apps.core.analytics import queue_ga_event
+from . import dry_january
 
 
 def register_view(request):
@@ -139,6 +140,13 @@ def register_view(request):
                     except Exception:
                         pass
 
+                # Signed up from a Dry January link: join them now, so the
+                # tracker is on the progress home they land on.
+                if request.session.pop(dry_january.SIGNUP_SESSION_KEY, '') == dry_january.SIGNUP_JOIN_VALUE:
+                    request.session.pop('register_next', '')
+                    dry_january.join_user(request, source='signup')
+                    return redirect('accounts:progress')
+
                 # Send them back to what they were doing (e.g. the court
                 # meeting log), else to the progress home.
                 next_url = request.session.pop('register_next', '')
@@ -151,6 +159,8 @@ def register_view(request):
             if next_url and url_has_allowed_host_and_scheme(
                     next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
                 request.session['register_next'] = next_url
+            if request.GET.get('join') == dry_january.SIGNUP_JOIN_VALUE:
+                request.session[dry_january.SIGNUP_SESSION_KEY] = dry_january.SIGNUP_JOIN_VALUE
             carried = CustomUserCreationForm.parse_carried_date(
                 request.GET.get('sobriety_date'))
             form = CustomUserCreationForm(
