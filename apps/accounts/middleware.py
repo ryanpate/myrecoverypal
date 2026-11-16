@@ -285,6 +285,7 @@ class SEONoIndexMiddleware:
         '/admin/',
         '/blog/tag/',         # Thin tag listing pages (24 base + 73 filter variants)
         '/blog/category/',    # Thin category listing pages (7 base + 8 filter variants)
+        '/embed/',            # Widget iframes: the full calculators are the pages to index
     )
 
     def __init__(self, get_response):

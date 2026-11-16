@@ -391,6 +391,8 @@ Email campaigns - underutilized for retention.
 /resources/workbook/           → My Recovery Workbook PDF (Premium)
 /support/meetings/             → Meeting finder
 /support/meetings/na/          → NA meetings (state + city hubs under /na/<state>/<city>/)
+/calculator-widget/            → Embeddable calculator: preview + copy-paste code for other sites
+/embed/<calculator>/           → The widget iframe itself (frameable by any site, noindex, loads nothing external)
 ```
 
 ---

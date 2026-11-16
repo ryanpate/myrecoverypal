@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="{{ page_url }}">
+<title>{{ title }} widget by MyRecoveryPal</title>
+<style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        color: #1a2a44; background: transparent; }
+    .w { max-width: 480px; margin: 0 auto; border: 1px solid #d5dde8; border-radius: 14px;
+        overflow: hidden; background: #fff; }
+    .w-head { background: linear-gradient(135deg, #1e4d8b 0%, #2d7dd2 100%); color: #fff;
+        padding: 14px 18px 16px; }
+    .w-head h1 { margin: 0 0 10px; font-size: 18px; font-weight: 700; }
+    .w-head label { display: block; font-size: 13px; margin-bottom: 4px; opacity: 0.95; }
+    .w-head input { width: 100%; font-size: 16px; padding: 9px 10px; border: 0; border-radius: 8px;
+        color: #1a2a44; background: #fff; font-family: inherit; }
+    .w-body { padding: 18px; text-align: center; min-height: 190px; }
+    .w-prompt { color: #5b6b82; font-size: 15px; margin: 46px 0 0; }
+    .w-days { font-size: 54px; font-weight: 800; line-height: 1; color: #1e4d8b; }
+    .w-unit { font-size: 16px; font-weight: 600; color: #2a7a52; margin-top: 4px; }
+    .w-split { font-size: 14px; color: #5b6b82; margin: 8px 0 0; }
+    .w-next { font-size: 14px; background: #eef8f1; color: #1f5c3d; border-radius: 10px;
+        padding: 9px 12px; margin: 14px 0 0; }
+    .w-error { color: #a33b2a; font-size: 15px; margin: 46px 0 0; }
+    .w-foot { border-top: 1px solid #e6ebf2; padding: 11px 18px; display: flex;
+        justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; }
+    .w-foot a { color: #1e4d8b; text-decoration: none; font-weight: 600; }
+    .w-foot a:hover { text-decoration: underline; }
+    .w-foot span { color: #7a879a; }
+</style>
+</head>
+<body>
+<div class="w">
+    <div class="w-head">
+        <h1>{{ title }}</h1>
+        <label for="d">My {{ date_noun }}</label>
+        <input type="date" id="d" min="1900-01-01">
+    </div>
+    <div class="w-body" id="out" aria-live="polite">
+        <p class="w-prompt">Enter your {{ date_noun }} to see how many days {{ kind }} you are.</p>
+    </div>
+    <div class="w-foot">
+        <a id="save" href="{{ page_url }}?utm_source=widget&amp;utm_medium=embed&amp;utm_campaign={{ kind }}"
+           target="_blank" rel="noopener">Save my counter free &rarr;</a>
+        <span>by <a href="https://www.myrecoverypal.com/?utm_source=widget&amp;utm_medium=embed&amp;utm_campaign={{ kind }}"
+           target="_blank" rel="noopener">MyRecoveryPal</a></span>
+    </div>
+</div>
+{{ milestones|json_script:"milestones" }}
+<script>
+(function () {
+    var KIND = '{{ kind }}';
+    var PAGE = '{{ page_url }}';
+    var MILESTONES = JSON.parse(document.getElementById('milestones').textContent);
+    var input = document.getElementById('d');
+    var out = document.getElementById('out');
+    var save = document.getElementById('save');
+
+    function iso(d) {
+        return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+    }
+    function el(tag, cls, text) {
+        var node = document.createElement(tag);
+        node.className = cls;
+        node.textContent = text;
+        return node;
+    }
+    function plural(n, word) { return n.toLocaleString() + ' ' + word + (n === 1 ? '' : 's'); }
+
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    input.max = iso(today);
+
+    // Whole calendar days in the visitor's own time zone, so the count
+    // changes at their midnight.
+    function daysBetween(a, b) {
+        return Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate())
+            - Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 86400000);
+    }
+    function split(start, end) {
+        var y = end.getFullYear() - start.getFullYear();
+        var m = end.getMonth() - start.getMonth();
+        var d = end.getDate() - start.getDate();
+        if (d < 0) { m -= 1; d += new Date(end.getFullYear(), end.getMonth(), 0).getDate(); }
+        if (m < 0) { y -= 1; m += 12; }
+        return { y: y, m: m, d: d };
+    }
+    function nextMilestone(start, days) {
+        for (var i = 0; i < MILESTONES.length; i++) {
+            if (MILESTONES[i][0] > days) {
+                var on = new Date(start);
+                on.setDate(on.getDate() + MILESTONES[i][0]);
+                return { label: MILESTONES[i][1], on: on };
+            }
+        }
+        var years = split(start, today).y + 1;   // past the list: the next anniversary
+        return { label: plural(years, 'year'), on: new Date(start.getFullYear() + years, start.getMonth(), start.getDate()) };
+    }
+
+    function show() {
+        out.textContent = '';
+        var parts = input.value.split('-');
+        if (parts.length !== 3) {
+            out.appendChild(el('p', 'w-prompt', 'Enter your {{ date_noun }} to see how many days ' + KIND + ' you are.'));
+            return;
+        }
+        var start = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+        var days = daysBetween(start, today);
+        if (isNaN(days) || days < 0) {
+            out.appendChild(el('p', 'w-error', 'That date is in the future. Pick today or earlier.'));
+            return;
+        }
+        out.appendChild(el('div', 'w-days', days.toLocaleString()));
+        out.appendChild(el('div', 'w-unit', (days === 1 ? 'day ' : 'days ') + KIND));
+        var s = split(start, today);
+        if (s.y || s.m) {
+            var bits = [];
+            if (s.y) bits.push(plural(s.y, 'year'));
+            if (s.m) bits.push(plural(s.m, 'month'));
+            if (s.d) bits.push(plural(s.d, 'day'));
+            out.appendChild(el('p', 'w-split', bits.join(', ')));
+        }
+        var next = nextMilestone(start, days);
+        var opts = { month: 'long', day: 'numeric' };
+        if (next.on.getFullYear() !== today.getFullYear()) opts.year = 'numeric';
+        out.appendChild(el('p', 'w-next', 'Next milestone: ' + next.label + ' on ' + next.on.toLocaleDateString(undefined, opts)));
+        save.href = PAGE + '?date=' + iso(start) + '&utm_source=widget&utm_medium=embed&utm_campaign=' + KIND;
+    }
+    input.addEventListener('input', show);
+    input.addEventListener('change', show);
+})();
+</script>
+</body>
+</html>

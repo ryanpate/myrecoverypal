@@ -1,7 +1,8 @@
 from datetime import datetime
 from functools import lru_cache
 
-from django.http import HttpResponse
+from django.conf import settings
+from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView, View
@@ -10,6 +11,7 @@ from django.contrib import messages
 from django.core.validators import EmailValidator
 from django.core.exceptions import ValidationError
 from django.urls import reverse
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.http import require_http_methods
 
 from apps.support_services.meeting_queries import starting_soon
@@ -124,6 +126,81 @@ class MentalHealthRecoveryAppView(TemplateView):
     """Redirects to main index - consolidated for better SEO"""
     def get(self, request, *args, **kwargs):
         return redirect('core:index', permanent=True)
+
+
+# --- Embeddable calculator widget ------------------------------------------
+# /embed/<calculator>/ is a small standalone page other sites show in an
+# iframe; /calculator-widget/ hands out the code. See WIDGETS for the two kinds.
+
+WIDGETS = {
+    'sobriety-calculator': {
+        'kind': 'sober', 'title': 'Sobriety Calculator', 'date_noun': 'sobriety date',
+        'page': 'core:sobriety_calculator',
+        'milestones': [[1, '24 hours'], [7, '1 week'], [30, '30 days'], [60, '60 days'],
+                       [90, '90 days'], [180, '6 months'], [270, '9 months'], [365, '1 year']],
+    },
+    'clean-time-calculator': {
+        'kind': 'clean', 'title': 'Clean Time Calculator', 'date_noun': 'clean date',
+        'page': 'core:clean_time_calculator',
+        'milestones': [[1, '24 hours'], [30, '30 days'], [60, '60 days'], [90, '90 days'],
+                       [180, '6 months'], [270, '9 months'], [365, '1 year'], [547, '18 months']],
+    },
+}
+WIDGET_HEIGHT = 400
+SITE_ORIGIN = 'https://www.myrecoverypal.com'
+
+# The embed runs on other people's pages, so it loads nothing: no analytics,
+# no fonts, no cookies. Only its own inline style and script are allowed, and
+# any site may frame it (the rest of the site refuses to be framed).
+EMBED_CSP = ("default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; "
+             "base-uri 'none'; form-action 'none'; frame-ancestors *")
+
+
+def widget_embed_code(slug):
+    """The HTML a site owner pastes: the iframe plus a visible credit line.
+    The credit is ordinary page text on their site, so it is theirs to keep or drop."""
+    widget = WIDGETS[slug]
+    page = SITE_ORIGIN + reverse(widget['page'])
+    return (
+        f'<iframe src="{SITE_ORIGIN}{reverse("core:embed_calculator", args=[slug])}" '
+        f'title="{widget["title"]}" width="100%" height="{WIDGET_HEIGHT}" '
+        f'style="border:0;max-width:480px;display:block;" loading="lazy"></iframe>\n'
+        f'<p style="font-size:13px;margin:6px 0 0;">{widget["title"]} by '
+        f'<a href="{page}">MyRecoveryPal</a></p>'
+    )
+
+
+@xframe_options_exempt
+def embed_calculator(request, slug):
+    widget = WIDGETS.get(slug)
+    if not widget:
+        raise Http404
+    # Rendered without the request: no context processors, so no session or
+    # cookie is touched and every visitor gets the same cacheable page.
+    html = render_to_string('core/embed_calculator.html', {
+        **widget, 'page_url': SITE_ORIGIN + reverse(widget['page']),
+    })
+    response = HttpResponse(html)
+    # ContentSecurityPolicyMiddleware keeps a header that is already set.
+    response['Content-Security-Policy-Report-Only' if settings.CSP_REPORT_ONLY
+             else 'Content-Security-Policy'] = EMBED_CSP
+    response['X-Robots-Tag'] = 'noindex'
+    return response
+
+
+class CalculatorWidgetView(TemplateView):
+    """"Sobriety calculator widget for your website": preview and copy-paste code."""
+    template_name = 'core/calculator_widget.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['widgets'] = [
+            {'slug': slug, 'title': w['title'], 'code': widget_embed_code(slug),
+             'embed_url': reverse('core:embed_calculator', args=[slug])}
+            for slug, w in WIDGETS.items()
+        ]
+        context['height'] = WIDGET_HEIGHT
+        return context
 
 
 class DryJanuaryBannerMixin:

@@ -58,6 +58,7 @@ class StaticViewSitemap(Sitemap):
             ('core:craving_sos', 0.9),  # "how to stop cravings" — interactive SOS toolbox
             ('core:relapse_prevention_plan', 0.9),  # "relapse prevention plan template" — guided builder landing
             ('core:for_probation_officers', 0.7),  # PO verification guide / outreach one-pager
+            ('core:calculator_widget', 0.6),  # embeddable calculator for treatment centers and recovery sites
             ('core:for_recovery_programs', 0.7),  # sober-living / DUI program one-pager (referral partners)
             ('core:court_attendance_sheet', 0.85),  # "AA meeting attendance sheet" — free printable PDF, funnels to Court
             ('core:online_meeting_proof', 0.85),  # "proof of attendance online AA meetings" — funnels to Court
