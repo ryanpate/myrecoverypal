@@ -62,6 +62,7 @@ class Subscription(models.Model):
         ('stripe', 'Stripe (Web)'),
         ('apple', 'Apple (iOS IAP)'),
         ('manual', 'Manual'),
+        ('gift', 'Gift (prepaid year)'),
     ]
 
     subscription_source = models.CharField(

@@ -137,6 +137,7 @@ python manage.py test_email recipient@example.com --resend-api
 - `send_checkin_reminders`: hourly; each member is reminded at 5 PM in their own time zone (US Central if unknown)
 - `send_coach_followups`: hourly at :15; the morning after a hard check-in (`needs_support()`), Anchor reaches out at 10 AM member-local time (new `followup` session + in-app notification + generic push)
 - `send_weekly_digests`: Sundays at 10:30 AM
+- `gifted_premium_daily`: daily at 9:05 AM; gifted years of Premium get a reminder a week before the end, then expire to Free (`apps/accounts/gifts.py`)
 - `send_counter_milestone_emails`: hourly at :25; milestone-day emails (7/30/60/90/180/270/365 days, then anniversaries) from 9 AM local for calculator visitors who left an email but have no account (`apps/accounts/counter_emails.py`, `CounterEmail`; double opt-in, unsubscribe deletes the row, members are skipped)
 - `send_dry_january_emails`: hourly at :20; "starts tomorrow" on Dec 31 and "halfway" on Jan 15, each at 9 AM member-local, only to members who joined Dry January (`apps/accounts/dry_january.py`)
 - `resources.tasks.send_program_reminders`: hourly at :05; each member handled at 9 AM in their own time zone (guided program lessons)
@@ -164,6 +165,10 @@ python manage.py test_email recipient@example.com --resend-api
 ### Announcement Emails
 
 `python manage.py send_feature_announcement` sends the one-off "recovery toolkit" email. Run it in a Railway shell. It's a dry run unless you pass `--commit`; `--test you@x.com` sends a single copy and `--segment all` reaches everyone opted in. Deliveries are recorded in `AnnouncementDelivery(user, key)`, so re-running never sends twice. For a new announcement, copy the command and change `KEY`, `SUBJECT` and `TEMPLATE`. `send_feature_push` is the push equivalent. It only sends between 9 AM and 8 PM in each member's local time, so re-run it during the day to reach everyone.
+
+### Gift a Year of Premium
+
+`/gift/` sells a prepaid year of Premium to anyone, no account needed (`apps/accounts/gifts.py`, `gift_views.py`, `PremiumGift`). One-time Stripe Checkout at the yearly Premium price; the buyer gets a printable card and a link (`/gift/<token>/`) that works once. Redeeming sets the member's `Subscription` to `subscription_source='gift'`, `status='active'`, with `current_period_end` a year out. Nothing renews: `gifted_premium_daily` emails a week before the end and then moves them to Free. A member with a paid plan can't redeem (the gift stays unused). Never email the recipient: the buyer hands the gift over. Keep the buy form and links to `/gift/` `stripe-only`.
 
 ### Push Notification System
 
@@ -391,6 +396,7 @@ Email campaigns - underutilized for retention.
 /resources/workbook/           → My Recovery Workbook PDF (Premium)
 /support/meetings/             → Meeting finder
 /support/meetings/na/          → NA meetings (state + city hubs under /na/<state>/<city>/)
+/gift/                         → Gift a year of Premium (buy); /gift/<token>/ is the card + redeem page
 /calculator-widget/            → Embeddable calculator: preview + copy-paste code for other sites
 /embed/<calculator>/           → The widget iframe itself (frameable by any site, noindex, loads nothing external)
 ```

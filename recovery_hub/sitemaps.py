@@ -43,6 +43,7 @@ class StaticViewSitemap(Sitemap):
             ('core:sobriety_medallion_maker', 0.95),  # "sobriety medallion"/"AA chip generator" — top click driver in GSC
             ('core:sober_grid_alternative', 0.9),  # "sober grid alternative" keyword
             ('core:support_a_loved_one', 0.9),  # "support a loved one in recovery" — Supporter tier landing
+            ('core:gift_premium', 0.8),  # "gift for someone in recovery" — prepaid year of Premium
             ('core:alcohol_recovery_app', 0.85),  # "alcohol recovery app" keyword
             ('core:drug_addiction_recovery_app', 0.85),  # "drug addiction app" keyword
             # sobriety_counter_app, free_aa_app, mental_health_recovery_app,

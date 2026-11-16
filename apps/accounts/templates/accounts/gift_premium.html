@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Gift for Someone in Recovery: A Year of Support | MyRecoveryPal{% endblock %}
+{% block meta_description %}A sobriety gift they will use every day: a year of MyRecoveryPal Premium. One payment, never renews. Print the card or send the link in minutes.{% endblock %}
+{% block meta_keywords %}gift for someone in recovery, sobriety gift, sober anniversary gift, gift for newly sober friend, recovery gift ideas{% endblock %}
+{% block og_title %}Give someone in recovery a year of backup{% endblock %}
+{% block og_description %}A year of MyRecoveryPal Premium: guided programs, sleep and craving audio, and a coach at 2am. One payment, never renews.{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com/gift/{% endblock %}
+
+{% block content %}
+<style>
+    .gift-page { max-width: 1040px; margin: 0 auto; padding: 2.5rem 1.25rem 3.5rem; }
+    .gift-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 3rem; align-items: center; }
+    .gift-kicker { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #b98a2f; }
+    .gift-top h1 { font-size: clamp(2.1rem, 4.6vw, 3.2rem); line-height: 1.06; font-weight: 700; margin: 0.8rem 0 1rem; letter-spacing: -0.015em; }
+    .gift-lede { font-size: 1.12rem; line-height: 1.6; opacity: 0.85; margin: 0 0 1.6rem; max-width: 34em; }
+    .gift-form label { display: block; font-weight: 600; font-size: 0.85rem; margin: 0 0 0.3rem; }
+    .gift-form label span { font-weight: 400; opacity: 0.65; }
+    .gift-form input, .gift-form textarea { width: 100%; margin-bottom: 0.9rem; }
+    .gift-form textarea { resize: vertical; min-height: 4.5rem; }
+    .gift-buy {
+        display: block; width: 100%; border: 0; border-radius: 12px; padding: 1rem 1.25rem; cursor: pointer;
+        background: #16324f; color: #f8f1e3; font-size: 1.1rem; font-weight: 700;
+        box-shadow: 0 0 0 2px #b98a2f inset; transition: transform 0.15s ease;
+    }
+    .gift-buy:hover { transform: translateY(-1px); }
+    .gift-small { font-size: 0.85rem; opacity: 0.72; margin: 0.75rem 0 0; line-height: 1.5; }
+    .gift-card-stage { transform: rotate(-2deg); padding: 1rem 0; }
+
+    .gift-year { margin: 4.5rem 0 0; }
+    .gift-year h2, .gift-notes h2 { font-size: 1.9rem; font-weight: 700; margin: 0 0 0.4rem; }
+    .gift-year > p { opacity: 0.8; margin: 0 0 1.75rem; }
+    .gift-moments { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(185, 138, 47, 0.45); }
+    .gift-moments li { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 1.5rem; padding: 1.15rem 0; border-bottom: 1px solid rgba(185, 138, 47, 0.45); }
+    .gift-when { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #b98a2f; padding-top: 0.2rem; }
+    .gift-moments strong { display: block; font-size: 1.08rem; margin-bottom: 0.15rem; }
+    .gift-moments p { margin: 0; opacity: 0.82; line-height: 1.55; }
+
+    .gift-notes { margin: 4rem 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 3rem; }
+    .gift-notes h2 { grid-column: 1 / -1; }
+    .gift-notes h3 { font-size: 1.02rem; font-weight: 700; margin: 0 0 0.3rem; }
+    .gift-notes p { margin: 0; opacity: 0.82; line-height: 1.55; }
+    .gift-foot { margin: 3rem 0 0; font-size: 0.88rem; opacity: 0.7; line-height: 1.55; }
+    .ios-native-app .gift-app-note { display: block !important; }
+
+    @media (max-width: 820px) {
+        .gift-top { grid-template-columns: 1fr; gap: 1.75rem; }
+        .gift-card-stage { order: -1; transform: rotate(-1deg); }
+        .gift-moments li { grid-template-columns: 1fr; gap: 0.3rem; }
+        .gift-notes { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="gift-page">
+    <div class="gift-top">
+        <div>
+            <div class="gift-kicker">A gift for someone in recovery</div>
+            <h1>They did the hard part. Give them a year of backup.</h1>
+            <p class="gift-lede">
+                A year of MyRecoveryPal Premium: a short guided lesson each day, audio for the cravings and the
+                sleepless nights, and a coach to talk to at 2am. You pay once. They open it when they're ready.
+            </p>
+
+            <form class="gift-form stripe-only" method="post" action="{% url 'core:gift_checkout' %}">
+                {% csrf_token %}
+                <label for="giftFrom">From <span>(optional, printed on the card)</span></label>
+                <input class="form-control" id="giftFrom" name="from_name" maxlength="40" autocomplete="off" placeholder="Mom, or your name">
+                <label for="giftMsg">A line for the card <span>(optional)</span></label>
+                <textarea class="form-control" id="giftMsg" name="message" maxlength="280" placeholder="Proud of you. This is so the hard nights are a little less lonely."></textarea>
+                <button class="gift-buy" type="submit">Give a year &middot; ${{ price }}</button>
+                <p class="gift-small">
+                    One payment, about ${{ per_week }} a week. Never renews. No account needed to give it.
+                    You get a printable card and a private link right after checkout.
+                </p>
+            </form>
+            <p class="gift-small gift-app-note" style="display:none;">Gifts aren't available in the iOS app.</p>
+        </div>
+
+        <div class="gift-card-stage" aria-hidden="true">
+            {% include 'accounts/_gift_card_art.html' %}
+        </div>
+    </div>
+
+    <section class="gift-year">
+        <h2>What the year holds</h2>
+        <p>Recovery isn't one big day. It's a lot of ordinary ones, and a few very hard ones. This is for both.</p>
+        <ul class="gift-moments">
+            <li>
+                <div class="gift-when">The first nights</div>
+                <div><strong>Something to press play on</strong>
+                    <p>Sleep wind-downs, morning intentions and a body scan, on top of the craving and grounding audio that is always free.</p></div>
+            </li>
+            <li>
+                <div class="gift-when">2am, any night</div>
+                <div><strong>Someone to talk it through with</strong>
+                    <p>Anchor, an AI recovery coach, answers at any hour, up to 20 messages a day, and remembers earlier conversations. It isn't therapy. It's company in the gap before morning.</p></div>
+            </li>
+            <li>
+                <div class="gift-when">Every morning</div>
+                <div><strong>Five minutes with a plan</strong>
+                    <p>Every guided program in full: First 30 Days, plus two-week tracks for alcohol, opioids, stimulants, cannabis and gambling. One short lesson and one small action a day.</p></div>
+            </li>
+            <li>
+                <div class="gift-when">A missed day</div>
+                <div><strong>A streak that forgives</strong>
+                    <p>One missed day a week won't reset their pledge or check-in streak, and 90 days of mood and craving trends show them how far they've come.</p></div>
+            </li>
+            <li>
+                <div class="gift-when">Day 30, 90, 365</div>
+                <div><strong>A medallion on the day it counts</strong>
+                    <p>Their milestone medallion arrives by email at 7, 30, 90 and 180 days and on every anniversary, in HD and as a short video.</p></div>
+            </li>
+            <li>
+                <div class="gift-when">And for you</div>
+                <div><strong>A seat beside them, if they want you there</strong>
+                    <p>Premium includes one Supporter seat. If they invite you, you can follow their progress, send encouragement, and take the 14-day Family &amp; Friends course, at no extra cost. It is always their choice.</p></div>
+            </li>
+        </ul>
+    </section>
+
+    <section class="gift-notes">
+        <h2>Before you give it</h2>
+        <div><h3>It stays between you and them</h3>
+            <p>We never contact the person you're buying for. You hand over the card or send the link yourself, in your own words, when the moment is right.</p></div>
+        <div><h3>It never turns into a bill</h3>
+            <p>No card is attached to their account and nothing renews. A week before the year ends we let them know, and everything in the free app stays theirs.</p></div>
+        <div><h3>They already use MyRecoveryPal?</h3>
+            <p>The gift adds a year of Premium to the account they have. If they're new, they create a free account in under a minute and the year starts then.</p></div>
+        <div><h3>Not ready yet?</h3>
+            <p>The link doesn't expire. The year starts on the day they redeem it, not the day you bought it.</p></div>
+    </section>
+
+    <p class="gift-foot">
+        MyRecoveryPal is peer support and self-help tools, not medical treatment. If someone you love is in danger right now,
+        call or text 988 (Suicide &amp; Crisis Lifeline). Looking for a way to stay involved instead?
+        <a href="{% url 'core:support_a_loved_one' %}">See how Supporter works</a>.
+    </p>
+</div>
+
+<script>
+(function () {
+    var from = document.getElementById('giftFrom'), msg = document.getElementById('giftMsg');
+    var cardFrom = document.querySelector('[data-gcard-from]'), cardMsg = document.querySelector('[data-gcard-msg]');
+    if (!from || !cardFrom) return;
+    from.addEventListener('input', function () {
+        var v = from.value.trim();
+        cardFrom.textContent = v ? '— ' + v : '';
+    });
+    msg.addEventListener('input', function () {
+        cardMsg.textContent = msg.value.trim() || cardMsg.dataset.default;
+    });
+})();
+</script>
+{% endblock %}

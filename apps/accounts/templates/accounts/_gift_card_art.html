@@ -1,0 +1,64 @@
+{# The gift card itself. Fixed paper-and-ink colours on purpose: it must look the same in light mode, dark mode and on a printer. #}
+<style>
+    .gcard {
+        --paper: #f8f1e3; --ink: #16324f; --brass: #b98a2f; --stub: 168px;
+        display: flex; max-width: 560px; min-height: 250px; margin: 0 auto;
+        background: var(--paper); color: var(--ink); border-radius: 14px; text-align: left;
+        filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.28));
+        -webkit-mask-image:
+            radial-gradient(circle 11px at calc(100% - var(--stub)) 0, transparent 97%, #000),
+            radial-gradient(circle 11px at calc(100% - var(--stub)) 100%, transparent 97%, #000);
+        -webkit-mask-composite: source-in;
+        mask-image:
+            radial-gradient(circle 11px at calc(100% - var(--stub)) 0, transparent 97%, #000),
+            radial-gradient(circle 11px at calc(100% - var(--stub)) 100%, transparent 97%, #000);
+        mask-composite: intersect;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .gcard-main { flex: 1; min-width: 0; padding: 1.6rem 1.5rem 1.4rem 1.75rem; display: flex; flex-direction: column; }
+    .gcard-eyebrow {
+        font-size: 0.68rem; font-weight: 700; line-height: 1;
+        letter-spacing: 0.16em; text-transform: uppercase; color: var(--brass);
+    }
+    .gcard-title { font-size: 2.35rem; line-height: 1.05; font-weight: 700; margin: 0.7rem 0 0.9rem; letter-spacing: -0.01em; color: var(--ink); }
+    .gcard-msg { font-size: 1.02rem; line-height: 1.45; font-style: italic; margin: 0; color: var(--ink); overflow-wrap: anywhere; }
+    .gcard-from { margin-top: auto; padding-top: 0.9rem; font-size: 1rem; color: var(--ink); }
+    .gcard-from:empty { display: none; }
+    .gcard-stub {
+        width: var(--stub); flex: none; padding: 1.25rem 1rem; text-align: center;
+        border-left: 2px dashed rgba(22, 50, 79, 0.28);
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.7rem;
+    }
+    .gcard-seal {
+        width: 96px; height: 96px; border-radius: 50%; display: grid; place-content: center;
+        background: radial-gradient(circle at 32% 28%, #f3dc9c, #c99a3c 55%, #8f6a1f);
+        box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.28), inset 0 0 0 6px rgba(22, 50, 79, 0.35), 0 2px 5px rgba(0, 0, 0, 0.25);
+        color: #3d2c08; line-height: 1;
+    }
+    .gcard-seal b { font-size: 1.9rem; font-weight: 700; }
+    .gcard-seal span { font-size: 0.56rem; font-weight: 700; letter-spacing: 0.2em; margin-top: 3px; }
+    .gcard-terms { font-size: 0.66rem; font-weight: 600; line-height: 1.35; letter-spacing: 0.04em; color: rgba(22, 50, 79, 0.75); }
+    .gcard-qr svg { width: 92px; height: 92px; display: block; }
+    @media (max-width: 520px) {
+        .gcard { flex-direction: column; -webkit-mask-image: none; mask-image: none; }
+        .gcard-stub { width: auto; flex-direction: row; border-left: 0; border-top: 2px dashed rgba(22, 50, 79, 0.28); }
+        .gcard-title { font-size: 2rem; }
+    }
+</style>
+<div class="gcard">
+    <div class="gcard-main">
+        <div class="gcard-eyebrow">MyRecoveryPal &middot; Premium</div>
+        <div class="gcard-title">One year,<br>on me.</div>
+        <p class="gcard-msg" data-gcard-msg data-default="Proud of you. This is so the hard nights are a little less lonely.">{{ message|default:"Proud of you. This is so the hard nights are a little less lonely." }}</p>
+        <div class="gcard-from" data-gcard-from>{% if from_name %}&mdash; {{ from_name }}{% endif %}</div>
+    </div>
+    <div class="gcard-stub">
+        {% if qr_svg %}
+        <div class="gcard-qr">{{ qr_svg|safe }}</div>
+        <div class="gcard-terms">Scan to open<br>your year</div>
+        {% else %}
+        <div class="gcard-seal"><b>365</b><span>DAYS</span></div>
+        <div class="gcard-terms">Good for one year<br>of Premium</div>
+        {% endif %}
+    </div>
+</div>

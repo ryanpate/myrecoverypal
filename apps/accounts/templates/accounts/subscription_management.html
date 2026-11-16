@@ -45,7 +45,7 @@
                             </div>
                             <div class="col-md-6 text-md-right">
                                 {% if subscription.current_period_end %}
-                                    <p class="mb-1"><strong>Next Billing Date:</strong></p>
+                                    <p class="mb-1"><strong>{% if subscription.subscription_source == 'gift' %}Gifted year ends:{% else %}Next Billing Date:{% endif %}</strong></p>
                                     <p class="text-muted">{{ subscription.current_period_end|date:"F d, Y" }}</p>
                                     <p class="text-muted">
                                         <small>({{ subscription.days_until_renewal }} days remaining)</small>
@@ -54,7 +54,10 @@
                             </div>
                         </div>
 
-                        {% if subscription.is_premium or subscription.is_court %}
+                        {% if subscription.subscription_source == 'gift' and subscription.is_premium %}
+                            <hr>
+                            <p class="mb-0">Your Premium was a gift. Nothing renews and no card is on file. We'll email you a week before it ends.</p>
+                        {% elif subscription.is_premium or subscription.is_court %}
                             <hr>
                             <!-- Stripe management (hidden on iOS) -->
                             <div class="btn-group-vertical btn-group-sm w-100 stripe-only" role="group">

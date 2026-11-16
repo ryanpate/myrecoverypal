@@ -1,4 +1,5 @@
 from django.urls import path
+from apps.accounts import gift_views
 from . import views
 from .views import IndexView, AboutView, ContactView
 
@@ -49,4 +50,9 @@ urlpatterns = [
     path('journal-bonus/claim/', views.journal_bonus_claim, name='journal_bonus_claim'),
     path('faith-journal/', views.FaithJournalView.as_view(), name='faith_journal'),
     path('loved-one/', views.LovedOneView.as_view(), name='loved_one'),
+    path('gift/', gift_views.gift_premium, name='gift_premium'),
+    path('gift/checkout/', gift_views.gift_checkout, name='gift_checkout'),
+    path('gift/success/', gift_views.gift_success, name='gift_success'),
+    path('gift/<str:token>/', gift_views.gift_card, name='gift_card'),
+    path('gift/<str:token>/redeem/', gift_views.gift_redeem, name='gift_redeem'),
 ]
