@@ -1418,6 +1418,17 @@ def send_facility_risk_digest():
 # ========================================
 
 @shared_task
+def send_counter_milestone_emails():
+    """Hourly: milestone-day emails for calculator visitors who left an email
+    but have no account, from 9 AM their time (apps/accounts/counter_emails.py)."""
+    from .counter_emails import send_due
+    sent = send_due()
+    if sent:
+        logger.info('Counter milestone emails sent: %d', sent)
+    return sent
+
+
+@shared_task
 def send_dry_january_emails():
     """Hourly: the Dec 31 "starts tomorrow" and Jan 15 "halfway" emails, each
     at 9 AM in the member's own time zone (apps/accounts/dry_january.py)."""

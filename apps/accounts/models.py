@@ -796,6 +796,37 @@ class DryJanuaryEntry(models.Model):
         return f"{self.user.username} Dry January {self.year}"
 
 
+def _counter_email_token():
+    import secrets
+    return secrets.token_urlsafe(24)
+
+
+class CounterEmail(models.Model):
+    """Milestone emails for a calculator visitor with no account
+    (apps/accounts/counter_emails.py).
+
+    Double opt-in: nothing but the confirmation is sent until `confirmed_at`
+    is set from the emailed link. A sobriety date is sensitive, so
+    unsubscribing deletes the row, and unconfirmed rows are purged.
+    """
+    email = models.EmailField(unique=True)
+    start_date = models.DateField()
+    kind = models.CharField(max_length=10, default='sober')  # 'sober' or 'clean'
+    timezone = models.CharField(max_length=64, blank=True)   # IANA, from the browser
+    token = models.CharField(max_length=64, unique=True, default=_counter_email_token)
+    confirmed_at = models.DateTimeField(null=True, blank=True)
+    confirmation_sent_at = models.DateTimeField(null=True, blank=True)
+    # Day count of the last milestone emailed, so each goes out once.
+    last_sent_days = models.IntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [models.Index(fields=['confirmed_at'])]
+
+    def __str__(self):
+        return f'Counter email {self.pk} ({"confirmed" if self.confirmed_at else "pending"})'
+
+
 class DailyRecoveryThought(models.Model):
     """Daily recovery quotes displayed at the top of the social feed."""
     quote = models.TextField()

@@ -6,7 +6,7 @@ from django.views.generic import RedirectView
 from . import views
 from .forms import ResendPasswordResetForm
 from . import payment_views
-from . import dry_january
+from . import counter_emails, dry_january
 from apps.accounts.court_views import (
     court_dashboard, court_profile,
     court_attendance_list, court_attendance_create, court_attendance_edit, court_attendance_delete,
@@ -94,6 +94,9 @@ urlpatterns = [
     path('quick-checkin/', views.quick_checkin, name='quick_checkin'),
     path('pledge-today/', views.pledge_today, name='pledge_today'),
     path('dry-january/join/', dry_january.join, name='dry_january_join'),
+    path('counter-email/', counter_emails.signup, name='counter_email_signup'),
+    path('counter-email/<str:token>/confirm/', counter_emails.confirm, name='counter_email_confirm'),
+    path('counter-email/<str:token>/stop/', counter_emails.stop, name='counter_email_stop'),
     path('pledge/update/', views.update_pledge, name='update_pledge'),
     path('pledge/share-feed/', views.share_pledge_to_feed, name='share_pledge_to_feed'),
     path('set-timezone/', views.set_timezone, name='set_timezone'),
