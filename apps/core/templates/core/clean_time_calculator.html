@@ -321,6 +321,8 @@
         font-weight: 800;
         color: var(--accent-green);
     }
+    .money-next { text-align: center; margin: 0.9rem 0 0; font-size: 0.95rem; }
+    .money-next a { color: var(--primary-dark); font-weight: 600; }
     .money-saved-display .label {
         color: #666;
         font-size: 0.95rem;
@@ -657,6 +659,7 @@
                             <div class="amount" id="money-saved">$0</div>
                             <div class="label">Total Saved Since Getting Clean</div>
                         </div>
+                        <p class="money-next"><a href="{% url 'accounts:pricing' %}">See what a few days of that could do for your recovery <i class="fas fa-arrow-right"></i></a></p>
                     </div>
 
                     <!-- Recovery Benefits -->

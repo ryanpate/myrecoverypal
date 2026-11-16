@@ -50,6 +50,28 @@
         font-weight: 600;
         letter-spacing: 0.5px;
     }
+    .spend-reframe {
+        margin-top: 0.9rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.25);
+        color: #fff;
+        font-size: 0.95rem;
+    }
+    .spend-reframe label { margin: 0; color: #fff; }
+    .spend-reframe-row { white-space: nowrap; }
+    .spend-reframe input {
+        width: 3.5rem;
+        padding: 0.15rem 0.3rem;
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 700;
+        text-align: center;
+    }
+    #spend-reframe-result { margin: 0.5rem 0 0; color: #fff !important; font-weight: 700; }
+    #spend-reframe-kept { margin: 0.2rem 0 0; color: rgba(255, 255, 255, 0.85) !important; font-size: 0.85rem; }
     .billing-toggle {
         display: inline-flex;
         background: rgba(255, 255, 255, 0.15);
@@ -297,6 +319,21 @@
                         <h2 class="display-4" style="color: white !important;">${{ premium_yearly_plan.price|floatformat:2 }}</h2>
                         <p style="color: white !important; margin-bottom: 0;">per year</p>
                         <small style="color: rgba(255,255,255,0.85) !important;">that's $5/month — half the monthly price</small>
+                    </div>
+                    {% endif %}
+
+                    {# The price in the visitor's own terms. Prefilled from the calculators (localStorage); has prices, so stripe-only. #}
+                    {% if not is_premium_user %}
+                    <div class="spend-reframe stripe-only" id="spend-reframe"
+                         data-monthly="{{ premium_monthly_plan.price|floatformat:2 }}"
+                         data-yearly="{{ premium_yearly_plan.price|floatformat:2 }}">
+                        <div class="spend-reframe-row">
+                            <label for="spend-reframe-input">I used to spend $</label>
+                            <input type="number" id="spend-reframe-input" value="15" min="0" step="1" inputmode="decimal">
+                            <label for="spend-reframe-input">a day.</label>
+                        </div>
+                        <p id="spend-reframe-result" aria-live="polite"></p>
+                        <p id="spend-reframe-kept" hidden></p>
                     </div>
                     {% endif %}
                 </div>
@@ -565,6 +602,57 @@
             }
         });
     });
+</script>
+
+<!-- Premium price in the visitor's own terms: days of what they used to spend -->
+<script>
+(function () {
+    const box = document.getElementById('spend-reframe');
+    if (!box) return;
+    const input = document.getElementById('spend-reframe-input');
+    const result = document.getElementById('spend-reframe-result');
+    const kept = document.getElementById('spend-reframe-kept');
+    let savedDate = '';
+    try {
+        const savedSpend = localStorage.getItem('mrpCalcSpend');
+        if (parseFloat(savedSpend) > 0) input.value = savedSpend;
+        savedDate = localStorage.getItem('mrpCalcDate') || '';
+    } catch (e) {}
+
+    // Whole calendar days since the date saved by the calculators.
+    let daysSince = 0;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(savedDate)) {
+        const p = savedDate.split('-');
+        const now = new Date();
+        daysSince = Math.round((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
+            - Date.UTC(+p[0], +p[1] - 1, +p[2])) / 86400000);
+    }
+
+    function render() {
+        const active = document.querySelector('.billing-toggle-btn.active');
+        const period = active ? active.getAttribute('data-period') : (box.dataset.yearly ? 'yearly' : 'monthly');
+        const price = parseFloat(box.dataset[period]) || 0;
+        const spend = parseFloat(input.value) || 0;
+        const days = spend > 0 ? Math.ceil(price / spend) : 0;
+        // Only say it when it's a small number of days; otherwise stay quiet.
+        const show = price > 0 && days > 0 && days <= (period === 'yearly' ? 90 : 15);
+        result.textContent = show
+            ? (days === 1 ? 'One day' : days + ' days') + ' of that covers '
+              + (period === 'yearly' ? 'a whole year' : 'a month') + ' of Premium.'
+            : '';
+        kept.hidden = !(spend > 0 && daysSince > 0);
+        if (!kept.hidden) {
+            kept.textContent = "You've kept about $" + Math.round(spend * daysSince).toLocaleString() + ' since day one.';
+        }
+    }
+
+    input.addEventListener('input', function () {
+        try { localStorage.setItem('mrpCalcSpend', input.value); } catch (e) {}
+        render();
+    });
+    document.querySelectorAll('.billing-toggle-btn').forEach(btn => btn.addEventListener('click', render));
+    render();
+})();
 </script>
 
 <!-- Stripe Checkout Integration (hidden on iOS native app) -->

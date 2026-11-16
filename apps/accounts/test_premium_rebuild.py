@@ -183,3 +183,34 @@ class PremiumPitchTest(TestCase):
             self.assertIn(claim, content)
         for dead in ('private groups', 'Create custom challenges', 'Unlimited groups'):
             self.assertNotIn(dead, content)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class SpendReframeTest(TestCase):
+    """Pricing puts the Premium price in the visitor's own terms (days of what
+    they used to spend), fed by the calculators' saved daily spend."""
+
+    def setUp(self):
+        from apps.accounts.payment_models import SubscriptionPlan
+        SubscriptionPlan.objects.filter(tier='premium').delete()
+        SubscriptionPlan.objects.create(
+            name='Premium Monthly', tier='premium', billing_period='monthly', price='9.99', is_active=True)
+        SubscriptionPlan.objects.create(
+            name='Premium Yearly', tier='premium', billing_period='yearly', price='59.99', is_active=True)
+
+    def test_visitor_sees_reframe_with_plan_prices_hidden_in_ios(self):
+        content = self.client.get(reverse('accounts:pricing')).content.decode()
+        self.assertIn('class="spend-reframe stripe-only"', content)
+        self.assertIn('data-monthly="9.99"', content)
+        self.assertIn('data-yearly="59.99"', content)
+
+    def test_premium_member_does_not_see_it(self):
+        self.client.force_login(_user('paid', tier='premium'))
+        content = self.client.get(reverse('accounts:pricing')).content.decode()
+        self.assertNotIn('id="spend-reframe"', content)
+
+    def test_calculators_remember_spend_and_link_to_pricing(self):
+        for name in ('core:sobriety_calculator', 'core:clean_time_calculator'):
+            content = self.client.get(reverse(name)).content.decode()
+            self.assertIn('mrpCalcSpend', content)
+            self.assertIn(f'<p class="money-next"><a href="{reverse("accounts:pricing")}"', content)
