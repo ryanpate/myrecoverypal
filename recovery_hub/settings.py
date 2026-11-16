@@ -863,6 +863,12 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.accounts.tasks.send_dry_january_emails',
         'schedule': crontab(minute=20),
     },
+    # Milestone-day emails for calculator visitors with no account (hourly;
+    # each address is emailed from 9 AM its own time).
+    'send-counter-milestone-emails': {
+        'task': 'apps.accounts.tasks.send_counter_milestone_emails',
+        'schedule': crontab(minute=25),
+    },
     # Weekly digest - Sundays at 10 AM
     'send-weekly-digests': {
         'task': 'apps.accounts.tasks.send_weekly_digests',

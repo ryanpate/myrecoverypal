@@ -30,8 +30,34 @@ and remembers the date so a returning visitor sees their counter, not the demo.
             <span><i class="fas fa-check"></i> Counts up every day</span>
             <span><i class="fas fa-check"></i> Milestone reminders</span>
         </div>
+        {% if not user.is_authenticated %}
+        {# No account needed: apps/accounts/counter_emails.py (double opt-in). #}
+        <form class="calc-email" id="calc-email-form" method="post" action="{% url 'accounts:counter_email_signup' %}">
+            {% csrf_token %}
+            <input type="hidden" name="kind" value="{{ kind }}">
+            <input type="hidden" name="start_date" id="calc-email-date">
+            <input type="hidden" name="timezone" id="calc-email-tz">
+            <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="calc-email-hp">
+            <label for="calc-email-input">Not ready for an account? Get an email on each milestone day.</label>
+            <div class="calc-email-row">
+                <input type="email" name="email" id="calc-email-input" required autocomplete="email" placeholder="you@example.com">
+                <button type="submit">Email me my milestones</button>
+            </div>
+            <p class="calc-email-msg" id="calc-email-msg" role="status">Milestone days only. One tap to stop.</p>
+        </form>
+        {% endif %}
     {% endif %}
 </div>
+<style>
+    .calc-email { margin-top: 1.25rem; padding-top: 1.1rem; border-top: 1px solid rgba(0,0,0,0.1); }
+    .calc-email label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+    .calc-email-row { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+    .calc-email-row input { flex: 1 1 220px; max-width: 320px; padding: 0.65rem 0.8rem; border: 1px solid #c9d2dc; border-radius: 8px; font-size: 1rem; }
+    .calc-email-row button { padding: 0.65rem 1rem; border: 0; border-radius: 8px; background: #1e4d8b; color: #fff; font-weight: 600; font-size: 1rem; cursor: pointer; font-family: inherit; }
+    .calc-email-row button:disabled { opacity: 0.6; cursor: default; }
+    .calc-email-msg { margin: 0.6rem 0 0; font-size: 0.9rem; }
+    .calc-email-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+</style>
 <script>
 (function () {
     var KEY = 'mrpCalcDate';
@@ -70,6 +96,43 @@ and remembers the date so a returning visitor sees their counter, not the demo.
             return;
         }
         if (window.gtag) gtag('event', 'calculator_save_click', { kind: kind });
+    });
+
+    // Milestone emails without an account. Posts in place; without JS the
+    // form posts normally and the server redirects back with a message.
+    var form = document.getElementById('calc-email-form');
+    if (form) form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var msg = document.getElementById('calc-email-msg');
+        var date = window.mrpCalcSavedDate();
+        if (!date) {
+            msg.textContent = 'Enter your date in the calculator first.';
+            var input = document.querySelector('input[type="date"]');
+            if (input) { input.scrollIntoView({ block: 'center' }); input.focus(); }
+            return;
+        }
+        document.getElementById('calc-email-date').value = date;
+        try {
+            document.getElementById('calc-email-tz').value =
+                Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        } catch (err) {}
+        var button = form.querySelector('button');
+        button.disabled = true;
+        fetch(form.action, {
+            method: 'POST', body: new FormData(form),
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin'
+        }).then(function (r) { return r.json(); }).then(function (data) {
+            msg.textContent = data.message;
+            if (data.ok) {
+                form.querySelector('.calc-email-row').style.display = 'none';
+                if (window.gtag) gtag('event', 'calculator_email_submit', { kind: kind });
+            } else {
+                button.disabled = false;
+            }
+        }).catch(function () {
+            msg.textContent = 'Something went wrong. Please try again.';
+            button.disabled = false;
+        });
     });
 })();
 </script>
