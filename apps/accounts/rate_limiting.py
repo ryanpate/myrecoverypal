@@ -74,6 +74,11 @@ class RateLimitMiddleware:
             if request.method == 'POST' and not self.check_rate_limit(ip, 'password_reset', max_requests=5, window=3600):  # 5 per hour
                 return HttpResponseForbidden('Too many password reset requests. Please try again later.')
 
+        elif request.path == '/accounts/counter-email/':
+            # Each signup sends a confirmation email to an address the visitor chose.
+            if request.method == 'POST' and not self.check_rate_limit(ip, 'counter_email', max_requests=5, window=3600):  # 5 per hour
+                return HttpResponseForbidden('Too many requests. Please try again later.')
+
         elif request.path.startswith('/api/'):
             if not self.check_rate_limit(ip, 'api', max_requests=100, window=60):  # 100 per minute
                 return HttpResponseForbidden('API rate limit exceeded. Please slow down.')

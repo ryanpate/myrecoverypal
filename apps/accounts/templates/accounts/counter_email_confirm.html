@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm milestone emails — MyRecoveryPal{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 560px; margin: 3rem auto; text-align: center;">
+    <h1 class="h3">Email me my milestones</h1>
+    <p class="text-muted">
+        One email on each milestone day, counted from your {{ kind }} date of
+        {{ start|date:"F j, Y" }}. Nothing else, and one tap to stop.
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Yes, email me my milestones</button>
+    </form>
+</div>
+{% endblock %}

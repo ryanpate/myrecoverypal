@@ -2,7 +2,8 @@
 
 Most people who use the sobriety and clean-time calculators leave without
 signing up. This asks only for an email: after a confirmation click (double
-opt-in, so nobody can sign someone else up) it sends one email on each
+opt-in by a button press, so nobody can sign someone else up and a mail
+scanner following the link can't either) it sends one email on each
 milestone day, with their medallion and a link that turns the date into a
 saved counter. Someone who later creates an account stops getting these,
 because members have their own milestone emails.
@@ -13,6 +14,7 @@ from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.contrib import messages
+from django.core import signing
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import JsonResponse
@@ -34,6 +36,8 @@ MILESTONE_DAYS = (7, 30, 60, 90, 180, 270, 365)
 SEND_LOCAL_HOUR = 9
 FALLBACK_TZ = 'America/Chicago'
 RESEND_AFTER = timedelta(hours=1)        # one confirmation an hour per address
+LINK_MAX_AGE = timedelta(days=30)
+SIGNING_SALT = 'counter-email-confirm'
 PURGE_UNCONFIRMED_AFTER = timedelta(days=30)
 SIGNUP_MESSAGE = 'Check your inbox and tap the link to confirm.'
 
@@ -71,45 +75,43 @@ def _url(name, *args, query=''):
 
 
 def request_emails(email, start_date, kind, tz_name):
-    """Create or refresh a pending signup and send its confirmation.
+    """Send a confirmation link for this address, date and kind.
 
-    A repeat signup with a new date goes back to pending, so changing the
-    date takes access to the inbox, the same as starting did. Returns False
-    when the confirmation could not be sent, so the visitor can be told.
+    The link carries the date (signed), and nothing about an already-confirmed
+    signup changes until that link is used: knowing someone's address is not
+    enough to pause or redate their emails. One confirmation an hour per
+    address, whatever date is sent. Returns False when the email could not be
+    sent, so the visitor can be told.
     """
     email = email.strip().lower()
+    tz_name = tz_name[:64]
     now = timezone.now()
     row = CounterEmail.objects.filter(email=email).first()
-    if row is None:
-        row = CounterEmail(email=email)
-    elif row.confirmed_at and (row.start_date, row.kind) == (start_date, kind):
+    if row and row.confirmed_at and (row.start_date, row.kind) == (start_date, kind):
         return True  # already getting exactly this
-    elif (not row.confirmed_at and row.confirmation_sent_at
-          and now - row.confirmation_sent_at < RESEND_AFTER
-          and (row.start_date, row.kind) == (start_date, kind)):
-        return True  # confirmation already on its way
-    row.start_date, row.kind, row.timezone = start_date, kind, tz_name[:64]
-    row.confirmed_at = None
-    row.last_sent_days = None
-    row.confirmation_sent_at = None
-    row.save()
-    if not _send_confirmation(row):
+    if row and row.confirmation_sent_at and now - row.confirmation_sent_at < RESEND_AFTER:
+        return True  # a confirmation is already on its way
+    if row is None:
+        row = CounterEmail.objects.create(
+            email=email, start_date=start_date, kind=kind, timezone=tz_name)
+    if not _send_confirmation(row, start_date, kind, tz_name):
         return False
-    row.confirmation_sent_at = now  # only a delivered confirmation starts the resend wait
+    row.confirmation_sent_at = now  # only a delivered confirmation starts the wait
     row.save(update_fields=['confirmation_sent_at'])
     return True
 
 
-def _send_confirmation(row):
-    confirm = _url('accounts:counter_email_confirm', row.token)
+def _send_confirmation(row, start_date, kind, tz_name):
+    payload = signing.dumps({'d': start_date.isoformat(), 'k': kind, 'z': tz_name}, salt=SIGNING_SALT)
+    confirm = _url('accounts:counter_email_confirm', row.token, query=f'?c={payload}')
     plain = (
-        f'Tap to confirm your {row.kind} milestone emails:\n{confirm}\n\n'
+        f'Tap to confirm your {kind} milestone emails:\n{confirm}\n\n'
         "We'll email you on each milestone day, and nothing else.\n"
         "If you didn't ask for this, ignore this email and you won't hear from us.\n\n"
         '— MyRecoveryPal'
     )
     html = (
-        f'<p>Confirm your {row.kind} milestone emails:</p>'
+        f'<p>Confirm your {kind} milestone emails:</p>'
         f'<p><a href="{confirm}" style="background:#1e4d8b;color:#fff;padding:12px 20px;'
         f'border-radius:8px;text-decoration:none;font-weight:600;">Yes, email me my milestones</a></p>'
         "<p style=\"color:#666;font-size:13px;\">We'll email you on each milestone day, and nothing "
@@ -213,17 +215,43 @@ def signup(request):
     return answer(True, SIGNUP_MESSAGE)
 
 
+def _read_link(request):
+    """The (date, kind, time zone) a confirmation link was issued for, or None."""
+    try:
+        data = signing.loads(request.GET.get('c') or '', salt=SIGNING_SALT,
+                             max_age=LINK_MAX_AGE.total_seconds())
+        start = CustomUserCreationForm.parse_carried_date(data['d'])
+        kind = data['k']
+    except (signing.BadSignature, KeyError, TypeError):
+        return None
+    if not start or kind not in KINDS:
+        return None
+    return start, kind, str(data.get('z') or '')[:64]
+
+
+@require_http_methods(['GET', 'POST'])
 def confirm(request, token):
+    """GET shows a button (mail scanners prefetch links, and a prefetch must
+    not opt anyone in); POST applies the link's date and confirms."""
     row = CounterEmail.objects.filter(token=token).first()
-    if not row:
+    link = _read_link(request) if row else None
+    if not link:
         messages.error(request, 'That link has expired. Enter your date and email again.')
         return _back_to('sober')
-    if not row.confirmed_at:
-        row.confirmed_at = timezone.now()
-        row.save(update_fields=['confirmed_at'])
-        queue_ga_event(request, 'calculator_email_confirmed', kind=row.kind)
+    start, kind, tz_name = link
+    if request.method == 'GET':
+        return render(request, 'accounts/counter_email_confirm.html',
+                      {'start': start, 'kind': kind})
+    if (row.start_date, row.kind) != (start, kind):
+        row.last_sent_days = None
+    was_confirmed = bool(row.confirmed_at)
+    row.start_date, row.kind, row.timezone = start, kind, tz_name
+    row.confirmed_at = row.confirmed_at or timezone.now()
+    row.save()
+    if not was_confirmed:
+        queue_ga_event(request, 'calculator_email_confirmed', kind=kind)
     messages.success(request, "You're set. We'll email you on each milestone day.")
-    return _back_to(row.kind)
+    return _back_to(kind)
 
 
 @require_http_methods(['GET', 'POST'])

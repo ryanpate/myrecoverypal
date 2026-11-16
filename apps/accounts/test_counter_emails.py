@@ -1,4 +1,5 @@
 """Milestone emails for calculator visitors with no account."""
+import re
 from datetime import date, datetime, timedelta, timezone as dt_timezone
 from unittest.mock import patch
 
@@ -127,11 +128,21 @@ class SignupFlowTests(TestCase):
         self.assertEqual(send.call_args.kwargs['subject'], 'Confirm your milestone emails')
         self.assertIn(f'/counter-email/{row.token}/confirm/', send.call_args.kwargs['plain_message'])
 
-    def test_confirm_then_stop_deletes_the_row(self):
-        with patch(SEND, return_value=(True, None)):
+    def _link(self, send):
+        """The confirmation URL path + query from the last email sent."""
+        text = send.call_args.kwargs['plain_message']
+        return re.search(r'https?://[^/\s]+(/accounts/counter-email/\S+)', text).group(1)
+
+    def test_confirm_needs_a_button_press_then_stop_deletes_the_row(self):
+        with patch(SEND, return_value=(True, None)) as send:
             self._post()
         row = CounterEmail.objects.get()
-        resp = self.client.get(reverse('accounts:counter_email_confirm', args=[row.token]))
+        link = self._link(send)
+        # A mail scanner following the link must not opt anyone in.
+        self.assertContains(self.client.get(link), 'Yes, email me my milestones')
+        row.refresh_from_db()
+        self.assertIsNone(row.confirmed_at)
+        resp = self.client.post(link)
         self.assertRedirects(resp, reverse('core:clean_time_calculator'), fetch_redirect_response=False)
         row.refresh_from_db()
         self.assertIsNotNone(row.confirmed_at)
@@ -142,24 +153,49 @@ class SignupFlowTests(TestCase):
         self.assertContains(self.client.post(stop), "deleted your email and date")
         self.assertFalse(CounterEmail.objects.exists())
 
-    def test_repeat_signups_do_not_flood_the_inbox(self):
+    def test_one_confirmation_an_hour_per_address_whatever_the_date(self):
         with patch(SEND, return_value=(True, None)) as send:
             self._post()
             self._post()
+            self._post(start_date=(timezone.localdate() - timedelta(days=40)).isoformat())
         self.assertEqual(send.call_count, 1)
         self.assertEqual(CounterEmail.objects.count(), 1)
 
-    def test_changing_the_date_needs_a_new_confirmation(self):
+    def test_a_confirmed_signup_only_changes_through_its_own_inbox(self):
+        """Knowing someone's address must not be enough to pause or redate
+        their emails: the new date rides in the link, and applies on use."""
         with patch(SEND, return_value=(True, None)) as send:
             self.assertTrue(request_emails('a@example.com', date(2026, 1, 1), 'sober', ''))
             row = CounterEmail.objects.get()
-            CounterEmail.objects.filter(pk=row.pk).update(confirmed_at=timezone.now(), last_sent_days=30)
+            confirmed = timezone.now() - timedelta(days=40)
+            CounterEmail.objects.filter(pk=row.pk).update(
+                confirmed_at=confirmed, last_sent_days=30, confirmation_sent_at=confirmed)
             request_emails('a@example.com', date(2026, 1, 1), 'sober', '')   # same: nothing sent
             self.assertEqual(send.call_count, 1)
-            request_emails('a@example.com', date(2026, 3, 1), 'sober', '')
-        self.assertEqual(send.call_count, 2)
+            request_emails('a@example.com', date(2026, 3, 1), 'clean', 'America/Denver')
+            self.assertEqual(send.call_count, 2)
+            row.refresh_from_db()
+            self.assertEqual((row.start_date, row.kind, row.confirmed_at, row.last_sent_days),
+                             (date(2026, 1, 1), 'sober', confirmed, 30))
+            self.client.post(self._link(send))
         row.refresh_from_db()
-        self.assertEqual((row.start_date, row.confirmed_at, row.last_sent_days), (date(2026, 3, 1), None, None))
+        self.assertEqual((row.start_date, row.kind, row.timezone, row.confirmed_at, row.last_sent_days),
+                         (date(2026, 3, 1), 'clean', 'America/Denver', confirmed, None))
+
+    def test_tampered_or_missing_link_data_confirms_nothing(self):
+        with patch(SEND, return_value=(True, None)) as send:
+            self._post()
+        row = CounterEmail.objects.get()
+        bare = reverse('accounts:counter_email_confirm', args=[row.token])
+        for url in (bare, bare + '?c=forged', self._link(send) + 'x'):
+            self.assertEqual(self.client.post(url).status_code, 302)
+        row.refresh_from_db()
+        self.assertIsNone(row.confirmed_at)
+
+    def test_signups_are_limited_per_ip(self):
+        with patch(SEND, return_value=(True, None)):
+            codes = [self._post(email=f'u{i}@example.com').status_code for i in range(6)]
+        self.assertEqual(codes, [200] * 5 + [403])
 
     def test_failed_confirmation_is_reported_and_can_be_retried_at_once(self):
         with patch(SEND, return_value=(False, 'down')):
