@@ -308,7 +308,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 - **Celery 5.3.4** - Background tasks
 
 ### Integrations
-- **Stripe** - Subscriptions (14-day premium trial on signup) — hidden inside iOS app per Guideline 3.1
+- **Stripe** - Subscriptions (7-day card-required Premium trial at checkout) — hidden inside iOS app per Guideline 3.1
 - **RevenueCat** - StoreKit 2 IAP wrapper for iOS subscriptions (free tier up to $2,500/mo revenue)
 - **Cloudinary** - Media storage
 - **SendGrid** - Email (production), Resend API key also configured
@@ -668,10 +668,10 @@ iOS app is **live** (App Store ID 6760084657, v1.1.0). The full submission check
 
 ### Current State
 - **Revenue:** $0
-- **Monetization:** Freemium ($4.99/mo or $29.99/yr Premium) + BetterHelp affiliate + Ko-fi/BMAC donations
-- **Stripe:** Web subscriptions (Free + Premium tiers, 14-day trial on signup)
+- **Monetization:** Freemium ($9.99/mo or $59.99/yr Premium) + BetterHelp affiliate + Ko-fi/BMAC donations
+- **Stripe:** Web subscriptions (Free + Premium tiers, 7-day card-required trial at checkout; `CARD_TRIAL_DAYS` in `payment_views.py`)
 - **Apple IAP:** iOS subscriptions via RevenueCat/StoreKit 2 (same tiers, Apple takes 15-30% cut)
-- **AI Coach:** "Anchor" - 3 free trial messages, 20/day for Premium
+- **AI Coach:** "Anchor" - 3 messages/day free, 20/day for Premium
 
 ### IMMEDIATE - ✅ ALL COMPLETE
 
@@ -691,19 +691,21 @@ iOS app is **live** (App Store ID 6760084657, v1.1.0). The full submission check
 - [ ] Treatment center directory partnerships (future)
 
 #### 3. Premium Tier - ✅ COMPLETE
-| Free | Premium ($4.99/mo or $29.99/yr) |
+| Free | Premium ($9.99/mo or $59.99/yr) |
 |------|--------------------------------|
-| Unlimited social feed & messaging | All free features |
-| Join up to 5 groups | AI Recovery Coach (20 msgs/day) |
-| 30-day journal | Unlimited groups + private groups |
-| 3 AI Coach trial messages | Unlimited journal + export |
-| Daily check-in | 90-day analytics & charts |
-| Community challenges | Premium badge |
+| Social feed, posts & messaging | All free features |
+| Counter, daily check-in & pledge | Anchor AI coach (20 msgs/day) |
+| Private journal | Streak protection (one missed day a week) |
+| 3 Anchor messages a day | 90-day insights + weekly recap |
+| Craving SOS + free guided audio | Every program, full audio library, all reflections |
+| Today's reflection, first week of each program | Milestone medallions, 1 Supporter seat, PDFs & exports |
+
+The pricing page (`accounts/pricing.html`) and the plan rows are the source of truth; update this table when they change.
 
 - [x] Pricing page at `/accounts/pricing/` with therapy cost comparison
 - [x] Stripe subscription tiers configured
 - [x] Premium feature gates (AI Coach message limits, progressive upgrade hints)
-- [x] 14-day free trial on signup
+- [x] 7-day free trial (card required, at checkout)
 
 ### Court Compliance Tier ($29.99/mo, $269/yr) — Added 2026-05-23, repriced 2026-07-09
 

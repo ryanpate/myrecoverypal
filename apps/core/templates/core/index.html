@@ -34,8 +34,8 @@
       "Sobriety tracking and milestone celebrations",
       "Social community for recovery support",
       "Private journaling and daily check-ins",
-      "Recovery challenges and group support",
-      "Connect with others in recovery",
+{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}      "Recovery challenges and group support",
+{% endif %}      "Connect with others in recovery",
       "Mobile-friendly access anywhere"
     ],
     "about": {
@@ -79,7 +79,7 @@
       "name": "Is MyRecoveryPal free to use?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "MyRecoveryPal is free to join with core features like the social feed, groups, challenges, daily check-ins, and journaling. Free members also get Craving SOS, free guided audio for cravings, today's daily reflection, the first week of every guided program, and printable worksheets. MyRecoveryPal Premium adds every guided program, the full audio and reflection library, saved worksheets and a personal workbook PDF, the AI Recovery Coach, and detailed analytics, with a 7-day free trial. We believe recovery support should be accessible to everyone."
+        "text": "MyRecoveryPal is free to join with core features like the social feed, {% if SHOW_GROUPS_CHALLENGES_SPONSORS %}groups, challenges, {% else %}messaging, {% endif %}daily check-ins, and journaling. Free members also get Craving SOS, free guided audio for cravings, today's daily reflection, the first week of every guided program, and printable worksheets. MyRecoveryPal Premium adds every guided program, the full audio and reflection library, saved worksheets and a personal workbook PDF, the AI Recovery Coach, and detailed analytics, with a 7-day free trial. We believe recovery support should be accessible to everyone."
       }
     },
     {
@@ -319,6 +319,29 @@
   .ml-btn, .ml-card { transition:none; }
   .ml-btn:hover, .ml-card--hover:hover { transform:none; }
 }
+
+/* ---- Night version ----
+   The site-wide dark rules in main.css ([data-theme="dark"] h1, a) outrank
+   the .ml-* classes, so without this block a dark-mode visitor got a
+   light-grey headline and blue button text on a white page. Swap the
+   tokens to dark surfaces and pin link colours back to the design. */
+[data-theme="dark"] .ml {
+  --ml-primary:#8ab4f8;
+  --ml-text-strong:#f3f4f6; --ml-text-body:#e4e4e7; --ml-text-muted:#a7b0c0;
+  --ml-surface-card:#141c2b; --ml-surface-page:#0e1522; --ml-surface-sunken:#222c3f;
+  --ml-border:#2b3648; --ml-divider:#222c3f;
+  --ml-shadow:0 2px 10px rgba(0,0,0,.35); --ml-shadow-hover:0 5px 20px rgba(0,0,0,.45);
+  --ml-shadow-lg:0 10px 40px rgba(0,0,0,.4);
+}
+[data-theme="dark"] .ml a.ml-btn--primary, [data-theme="dark"] .ml a.ml-btn--primary:hover,
+[data-theme="dark"] .ml a.ml-btn--premium, [data-theme="dark"] .ml a.ml-btn--premium:hover,
+[data-theme="dark"] .ml a.ml-btn--ghost, [data-theme="dark"] .ml a.ml-btn--ghost:hover { color:#fff; }
+[data-theme="dark"] .ml a.ml-btn--outline, [data-theme="dark"] .ml a.ml-btn--outline:hover,
+[data-theme="dark"] .ml a.ml-plan-more, [data-theme="dark"] .ml a.ml-plan-more:hover { color:var(--ml-primary); }
+[data-theme="dark"] .ml a.ml-tool, [data-theme="dark"] .ml a.ml-tool:hover { color:inherit; }
+[data-theme="dark"] .ml a.ml-eyebrow--new { color:var(--ml-text-body); }
+[data-theme="dark"] .ml a.ml-eyebrow--new:hover { background:#2b3648; color:var(--ml-text-strong); }
+[data-theme="dark"] .ml .ml-feature-icon i { filter:brightness(1.5) saturate(1.1); }
 </style>
 {% endblock %}
 
@@ -534,7 +557,7 @@
         <h3>Free</h3>
         <div class="ml-plan-price">$0 <small>forever</small></div>
         <ul>
-          <li><i class="fas fa-check" aria-hidden="true"></i> Community feed, groups, messaging &amp; challenges</li>
+          <li><i class="fas fa-check" aria-hidden="true"></i> {% if SHOW_GROUPS_CHALLENGES_SPONSORS %}Community feed, groups, messaging &amp; challenges{% else %}Community feed &amp; private messaging{% endif %}</li>
           <li><i class="fas fa-check" aria-hidden="true"></i> Sobriety counter, daily check-in &amp; pledge</li>
           <li><i class="fas fa-check" aria-hidden="true"></i> Craving SOS and free guided audio</li>
           <li><i class="fas fa-check" aria-hidden="true"></i> Today&rsquo;s reflection &amp; the first week of every program</li>
@@ -572,7 +595,7 @@
     <div class="ml-final-panel">
       <img src="{% static 'images/logo-white.svg' %}" alt="" aria-hidden="true">
       <h2>Heal together, grow together</h2>
-      <p>Your founding spot is free. Limited spots in this community &mdash; come build it with us.</p>
+      <p>Joining is free, and it stays free. Come build this community with us.</p>
       <div class="ml-final-cta">
         <a class="ml-btn ml-btn--lg ml-btn--primary" href="{% url 'accounts:register' %}">Claim your free spot <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
         <a class="ml-btn ml-btn--lg ml-btn--ghost" href="{% url 'core:get_app' %}"><i class="fab fa-apple" aria-hidden="true"></i> Get the app</a>
