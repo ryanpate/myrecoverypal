@@ -114,16 +114,21 @@ def group_seo(primary, schedule):
     """Title and meta description for a group page with several weekly slots."""
     days = {m.day for m in schedule if m.day is not None and 0 <= m.day <= 6}
     when = _days_summary(days) if days else 'Weekly'
+    label = 'AA' if primary.program_label == 'AA' else 'recovery'
+    link = 'Zoom link' if primary.is_zoom else 'join link'
     if primary.attendance_option == 'online':
-        where, kind = 'Online', 'online recovery meeting'
+        where = 'Online on Zoom' if primary.is_zoom else 'Online'
+        kind = f'online {label} meeting'
     else:
         where = f'{primary.city}, {primary.state}' if primary.city and primary.state else (primary.city or '')
-        kind = 'recovery meeting held in person and online' if primary.attendance_option == 'hybrid' \
-            else 'recovery meeting'
-    title = f'{primary.name} — {when} Meetings' + (f', {where}' if where else '')
+        kind = f'{label} meeting held in person and online' if primary.attendance_option == 'hybrid' \
+            else f'{label} meeting'
+    title = (f'{primary.name} — {when} ' + ('AA ' if label == 'AA' else '') + 'Meetings'
+             + (f', {where}' if where else ''))
     count = len(schedule)
-    text = (f'{primary.name} is a free {kind}' + (f' in {where}' if where and where != 'Online' else '')
+    text = (f'{primary.name} is a free {kind}'
+            + (f' in {where}' if where and primary.attendance_option != 'online' else '')
             + f' with {count} meetings a week ({when.lower() if when in ("Daily", "Weekdays") else when}). '
-            + ('See every time, the join link and the format.' if primary.attendance_option == 'online'
+            + (f'See every time, the {link} and the format.' if primary.attendance_option == 'online'
                else 'See every time, the address and the format.'))
     return title, (text if len(text) <= 160 else text[:157].rstrip() + '...')

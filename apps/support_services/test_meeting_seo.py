@@ -35,7 +35,7 @@ class MeetingSeoDescriptionTests(TestCase):
         self.assertIn('Grateful Hearts', desc)
         self.assertIn('free online recovery meeting', desc)
         self.assertIn('on Thursdays at 7:00 PM', desc)
-        self.assertIn('Get the join link', desc)
+        self.assertIn('Get the Zoom link', desc)
 
     def test_in_person_meeting_includes_city_and_state(self):
         m = _meeting(slug='houston-group', attendance_option='in_person',
@@ -83,7 +83,7 @@ class MeetingSeoTitleTests(TestCase):
     def test_online_meeting_title(self):
         self.assertEqual(
             _meeting().seo_title,
-            'Grateful Hearts \u2014 Thursdays 7:00 PM Online Recovery Meeting',
+            'Grateful Hearts \u2014 Thursdays 7:00 PM Online Recovery Meeting on Zoom',
         )
 
     def test_in_person_title_uses_city_state(self):
@@ -93,6 +93,31 @@ class MeetingSeoTitleTests(TestCase):
             m.seo_title,
             'Grateful Hearts \u2014 Thursdays 7:00 PM Houston, TX Recovery Meeting',
         )
+
+    def test_feed_rows_say_aa_and_zoom(self):
+        """Feed imports are all AA intergroups; searchers type "<name> aa zoom"."""
+        m = _meeting(slug='online-nyintergroup-grateful-hearts')
+        self.assertEqual(
+            m.seo_title,
+            'Grateful Hearts \u2014 Thursdays 7:00 PM Online AA Meeting on Zoom',
+        )
+        self.assertIn('is a free online AA meeting', m.seo_description)
+        self.assertIn('Get the Zoom link', m.seo_description)
+
+    def test_feed_row_in_person_title_says_aa(self):
+        m = _meeting(slug='mtg-houston-grateful-hearts', attendance_option='in_person',
+                     conference_url='', city='Houston', state='TX')
+        self.assertEqual(
+            m.seo_title,
+            'Grateful Hearts \u2014 Thursdays 7:00 PM Houston, TX AA Meeting',
+        )
+
+    def test_community_submission_stays_program_neutral(self):
+        from django.contrib.auth import get_user_model
+        user = get_user_model().objects.create_user('sub', 's@example.com', 'pw')
+        m = _meeting(slug='mtg-smart-group', submitted_by=user, conference_url='https://meet.example.com/x')
+        self.assertTrue(m.seo_title.endswith('Online Recovery Meeting'))
+        self.assertIn('Get the join link', m.seo_description)
 
     def test_title_without_schedule(self):
         m = _meeting(slug='bare', day=None, time=None,
