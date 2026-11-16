@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Free Sobriety Calculator Widget for Your Website{% endblock %}
+{% block meta_description %}Add a free sobriety or clean time calculator to your website. Copy one line of code. No signup, no tracking, no ads, and it works on any site builder.{% endblock %}
+{% block meta_keywords %}sobriety calculator widget, sobriety calculator for website, embed sobriety calculator, clean time calculator widget, sobriety counter embed{% endblock %}
+{% block og_title %}Free Sobriety Calculator Widget for Your Website{% endblock %}
+{% block og_description %}Add a free sobriety or clean time calculator to your website. Copy one line of code. No signup, no tracking, no ads.{% endblock %}
+{% block canonical_url %}https://www.myrecoverypal.com{% url 'core:calculator_widget' %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cw { max-width: 880px; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
+    .cw h1 { color: #1e4d8b; font-size: 2rem; margin-bottom: 0.75rem; }
+    .cw h2 { color: #1e4d8b; font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
+    .cw-lead { font-size: 1.1rem; color: #445; max-width: 680px; }
+    .cw-pair { display: grid; grid-template-columns: minmax(0, 480px) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+    .cw-pair iframe { border: 0; width: 100%; display: block; }
+    .cw-code { width: 100%; min-height: 150px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.82rem; padding: 0.75rem; border: 1px solid #c9d2dc; border-radius: 8px;
+        background: #f7f9fc; color: #1a2a44; resize: vertical; }
+    .cw-copy { margin-top: 0.6rem; padding: 0.6rem 1.1rem; border: 0; border-radius: 8px; background: #1e4d8b;
+        color: #fff; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .cw-note { font-size: 0.9rem; color: #667; margin-top: 0.5rem; }
+    .cw ul li { margin-bottom: 0.4rem; }
+    @media (max-width: 760px) { .cw-pair { grid-template-columns: 1fr; } }
+    [data-theme="dark"] .cw h1, [data-theme="dark"] .cw h2 { color: #8ab4f8; }
+    [data-theme="dark"] .cw-lead, [data-theme="dark"] .cw-note { color: #c9d2dc; }
+    [data-theme="dark"] .cw-code { background: #1e2430; color: #e6ebf2; border-color: #3a4558; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cw">
+    <h1>Free Sobriety Calculator Widget for Your Website</h1>
+    <p class="cw-lead">
+        Give your visitors a day counter on your own site. Copy the code under either calculator,
+        paste it into any page, and it works. It is free for treatment centers, sober living homes,
+        meeting websites, counselors and anyone who writes about recovery.
+    </p>
+
+    {% for w in widgets %}
+    <h2>{{ w.title }}</h2>
+    <div class="cw-pair">
+        <iframe src="{{ w.embed_url }}" title="{{ w.title }} preview" height="{{ height }}" loading="lazy"></iframe>
+        <div>
+            <label for="code-{{ w.slug }}"><strong>Copy this code</strong></label>
+            <textarea class="cw-code" id="code-{{ w.slug }}" readonly spellcheck="false">{{ w.code }}</textarea>
+            <button type="button" class="cw-copy" data-copy="code-{{ w.slug }}">Copy code</button>
+            <p class="cw-note">Paste it where you want the calculator to appear. In WordPress, use a
+                &ldquo;Custom HTML&rdquo; block; in Squarespace or Wix, an &ldquo;Embed&rdquo; or &ldquo;Code&rdquo; block.</p>
+        </div>
+    </div>
+    {% endfor %}
+
+    <h2>What your visitors get</h2>
+    <ul>
+        <li>Their exact days sober or clean, counted in their own time zone.</li>
+        <li>The same count in years, months and days.</li>
+        <li>The date of their next milestone.</li>
+    </ul>
+
+    <h2>What it does not do</h2>
+    <ul>
+        <li><strong>No tracking.</strong> The widget sets no cookies and loads no analytics, ads or fonts.</li>
+        <li><strong>Nothing is stored.</strong> The date a visitor types never leaves their browser.</li>
+        <li><strong>No signup</strong> for you or your visitors, and no cost.</li>
+    </ul>
+
+    <h2>Questions</h2>
+    <p><strong>Can I change the size?</strong> Yes. The calculator fills the width of its container up to 480 pixels.
+        Change <code>height="{{ height }}"</code> if your page needs a little more or less room.</p>
+    <p><strong>Do I have to keep the credit line?</strong> We&rsquo;d appreciate it, but it is your page.
+        The line under the calculator is ordinary text you can edit or remove.</p>
+    <p><strong>Want the full version?</strong> The complete
+        <a href="{% url 'core:sobriety_calculator' %}">sobriety calculator</a> and
+        <a href="{% url 'core:clean_time_calculator' %}">clean time calculator</a> add money saved,
+        health milestones and a counter people can save.</p>
+    <p><strong>Running a program?</strong> See
+        <a href="{% url 'core:for_recovery_programs' %}">meeting attendance tracking for sober living and DUI programs</a>.</p>
+</div>
+
+<script>
+document.querySelectorAll('[data-copy]').forEach(function (button) {
+    button.addEventListener('click', function () {
+        var box = document.getElementById(button.dataset.copy);
+        box.select();
+        var done = function () {
+            button.textContent = 'Copied';
+            setTimeout(function () { button.textContent = 'Copy code'; }, 2000);
+            if (window.gtag) gtag('event', 'widget_code_copied', { widget: button.dataset.copy.replace('code-', '') });
+        };
+        if (navigator.clipboard) navigator.clipboard.writeText(box.value).then(done, function () { document.execCommand('copy'); done(); });
+        else { document.execCommand('copy'); done(); }
+    });
+});
+</script>
+{% endblock %}
