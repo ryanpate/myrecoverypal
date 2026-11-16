@@ -241,8 +241,25 @@ class Meeting(models.Model):
             bits.append('Online')
         elif self.city:
             bits.append(f'{self.city}, {self.state}' if self.state else self.city)
-        bits.append('Recovery Meeting')
+        bits.append(f'{self.program_label} Meeting')
+        if self.attendance_option == 'online' and self.is_zoom:
+            bits.append('on Zoom')
         return f'{self.name} \u2014 {" ".join(bits)}'
+
+    @property
+    def program_label(self):
+        """'AA' for rows imported from the AA intergroup feeds, else 'Recovery'.
+
+        Every feed in meeting_sync.FEED_SOURCES is an AA intergroup, and
+        searchers type "<group name> aa meeting". Community submissions can
+        be any program, so they keep the neutral word.
+        """
+        from_feed = self.submitted_by_id is None and self.slug.startswith(('online-', 'mtg-'))
+        return 'AA' if from_feed else 'Recovery'
+
+    @property
+    def is_zoom(self):
+        return 'zoom.' in (self.conference_url or '').lower()
 
     @property
     def city_hub_url(self):
@@ -272,12 +289,13 @@ class Meeting(models.Model):
         Program-neutral wording ("recovery meeting") — the directory
         carries AA, NA, SMART and secular groups alike.
         """
+        label = 'AA' if self.program_label == 'AA' else 'recovery'
         if self.attendance_option == 'online':
-            kind = 'free online recovery meeting'
+            kind = f'free online {label} meeting'
         elif self.attendance_option == 'hybrid':
-            kind = 'free recovery meeting held in person and online'
+            kind = f'free {label} meeting held in person and online'
         else:
-            kind = 'free recovery meeting'
+            kind = f'free {label} meeting'
 
         where = ''
         if self.attendance_option != 'online':
@@ -296,7 +314,8 @@ class Meeting(models.Model):
         if self.attendance_option == 'in_person':
             tail = 'See the address, meeting format and full schedule.'
         else:
-            tail = 'Get the join link, meeting format and full schedule.'
+            link = 'Zoom link' if self.is_zoom else 'join link'
+            tail = f'Get the {link}, meeting format and full schedule.'
 
         text = f'{self.name} is a {kind}{where}{when}. {tail}'
         return text if len(text) <= 160 else text[:157].rstrip() + '...'

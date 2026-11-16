@@ -141,7 +141,7 @@ class GroupDetailPageTests(TestCase):
 
     def test_primary_gets_a_group_level_title(self):
         html = self._html(self.base)
-        self.assertIn('<title>Perry Street Workshop — Mon &amp; Wed Meetings, New York, NY', html)
+        self.assertIn('<title>Perry Street Workshop — Mon &amp; Wed AA Meetings, New York, NY', html)
 
     def test_single_slot_meeting_page_is_unchanged(self):
         solo = _slot('mtg-ny-solo-group', 5, name='Solo Group')
