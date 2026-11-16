@@ -132,6 +132,19 @@ class NaSyncTests(TestCase):
             results = sync_all([NA_SOURCE])
         self.assertEqual(results['na']['created'], 1)
 
+    def test_na_only_run_leaves_legacy_aa_online_rows_active(self):
+        """Regression: the first production --na run deactivated 1,535 legacy
+        "online-<feed>-" AA rows, because the legacy cleanup treated every
+        source it wasn't given as gone."""
+        legacy = Meeting.objects.create(
+            name='Perry Street Workshop', slug='online-nyintergroup-perry-street-workshop',
+            program='AA', attendance_option='online', is_approved=True, is_active=True)
+        with patch.dict(NA_SOURCE, {'load': lambda: [_from_bmlt(bmlt_row(), 'x', 'CO')]}):
+            results = sync_all([NA_SOURCE])
+        self.assertEqual(results['legacy_deactivated'], 0)
+        legacy.refresh_from_db()
+        self.assertTrue(legacy.is_active)
+
 
 def make_na(city, state, n, **extra):
     return [

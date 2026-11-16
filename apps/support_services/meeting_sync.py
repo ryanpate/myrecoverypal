@@ -616,9 +616,12 @@ def sync_all(sources=None):
 
     if sources and failures == len(sources):
         raise RuntimeError("All meeting feed sources failed to sync")
+    # Spare every configured source's rows, not just this run's: a partial
+    # run (--na) must not take down the legacy "online-<key>-" rows of the
+    # sources it wasn't asked to sync.
     if failures == 0:
         results["legacy_deactivated"] = _deactivate_legacy_rows(
-            [s["key"] for s in sources])
+            {s["key"] for s in sources} | {s["key"] for s in ALL_SOURCES})
     # Full pass: catches a group left without a primary when its slot moved
     # address (and so changed group) or was deactivated as a legacy row.
     assign_primaries(Meeting)
