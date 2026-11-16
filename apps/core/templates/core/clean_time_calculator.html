@@ -806,8 +806,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const dailySpendInput = document.getElementById('daily-spend');
 
     // Set max date to today
+    // Dates here are the visitor's own calendar days. new Date('YYYY-MM-DD')
+    // and toISOString() are UTC, which ran a day ahead every evening in the US.
+    function parseLocalDate(value) {
+        const parts = value.split('-');
+        return new Date(+parts[0], +parts[1] - 1, +parts[2]);
+    }
+    function localISO(d) {
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
     const today = new Date();
-    dateInput.max = today.toISOString().split('T')[0];
+    dateInput.max = localISO(today);
 
     const milestones = [
         { days: 1, label: '1 Day' },
@@ -835,10 +845,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function calculateSobriety(sobrietyDate) {
         const now = new Date();
-        const start = new Date(sobrietyDate);
-        const diffTime = now - start;
-        const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        const totalHours = Math.floor(diffTime / (1000 * 60 * 60));
+        const start = parseLocalDate(sobrietyDate);
+        const totalDays = Math.round(
+            (Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
+             - Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())) / (1000 * 60 * 60 * 24));
+        const totalHours = Math.floor((now - start) / (1000 * 60 * 60));
 
         return {
             totalDays,
@@ -973,7 +984,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     // ?date= wins; otherwise a returning visitor sees their own count, not the demo.
     const dateParam = urlParams.get('date') || window.mrpCalcSavedDate();
-    if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam) && new Date(dateParam) <= today) {
+    if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam) && parseLocalDate(dateParam) <= today) {
         dateInput.value = dateParam;
         hideDemoBanner();
         updateDisplay(dateParam);
@@ -983,7 +994,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show 90-day demo so page has visible content for Google/first-time visitors
         const demoDate = new Date();
         demoDate.setDate(demoDate.getDate() - 90);
-        updateDisplay(demoDate.toISOString().split('T')[0]);
+        updateDisplay(localISO(demoDate));
     }
 });
 </script>
