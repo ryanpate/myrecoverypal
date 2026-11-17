@@ -271,7 +271,7 @@
 .ml-anchor-text p { margin:0 0 1.75rem; font-size:1.1rem; line-height:1.6; color:var(--ml-text-muted); }
 .ml-anchor-media { align-self:stretch; display:flex; align-items:center; justify-content:center; padding:2.5rem;
   background:linear-gradient(160deg, rgba(102,126,234,.10), rgba(118,75,162,.14)); }
-.ml-anchor-media img { width:100%; max-width:240px; border-radius:var(--ml-radius-xl); box-shadow:0 20px 40px -12px rgba(102,126,234,.45); }
+.ml-anchor-media img { width:100%; max-width:240px; height:auto; border-radius:var(--ml-radius-xl); box-shadow:0 20px 40px -12px rgba(102,126,234,.45); }
 
 /* ---- Court band ---- */
 .ml-court-inner { background:var(--ml-grad-court); border-radius:var(--ml-radius-xl); box-shadow:var(--ml-shadow-lg);
@@ -306,7 +306,7 @@
 .ml-plan-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:1.5rem; max-width:900px; margin:0 auto; }
 .ml-plan { display:flex; flex-direction:column; }
 .ml-plan h3 { display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; font-size:1.35rem; }
-.ml-plan-price { font-size:2.1rem; font-weight:800; color:var(--ml-text-strong); margin:.3rem 0 .1rem; }
+.ml-plan-price { font-size:2.1rem; font-weight:800; color:var(--ml-text-strong); margin:.3rem 0 .1rem; font-variant-numeric:tabular-nums; }
 .ml-plan-price small { font-size:.95rem; font-weight:600; color:var(--ml-text-muted); }
 .ml-plan-note { font-size:.9rem; color:var(--ml-text-muted); }
 .ml-plan ul { list-style:none; margin:1.1rem 0 1.5rem; padding:0; display:flex; flex-direction:column; gap:.6rem; flex:1; }
@@ -316,6 +316,11 @@
 .ml-plan--premium li i { color:var(--ml-premium-from); }
 .ml-plan .ml-btn { align-self:stretch; }
 .ml-plan-more { display:block; text-align:center; margin-top:.8rem; font-weight:600; color:var(--ml-primary); }
+@media (max-width:768px) {
+  .ml .ml-btn { min-height:44px; }
+  .ml .ml-text-link, .ml-plan-more { display:flex; align-items:center; justify-content:center; min-height:44px; }
+  .ml-plan-more { margin-top:.2rem; }
+}
 @media (max-width:860px) {
   .ml-hero-inner { grid-template-columns:1fr; gap:2.5rem; padding:3rem var(--ml-gutter) 3.5rem; }
   .ml-anchor-card { grid-template-columns:1fr; }
@@ -404,7 +409,7 @@
           <div class="ml-phone-glow" aria-hidden="true"></div>
           <div class="ml-phone-shell">
             <div class="ml-phone-screen">
-              <img src="{% static 'images/screens/mobile-checkin.png' %}" alt="MyRecoveryPal app — daily mood check-in and days sober">
+              <img src="{% static 'images/screens/mobile-checkin.png' %}" alt="MyRecoveryPal app — daily mood check-in and days sober" width="1320" height="2868">
             </div>
           </div>
           <div class="ml-chip ml-chip--medal">
@@ -551,7 +556,7 @@
         </div>
       </div>
       <div class="ml-anchor-media">
-        <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor AI Coach" loading="lazy">
+        <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor AI Coach" width="300" height="300" loading="lazy">
       </div>
     </div>
   </section>
@@ -622,7 +627,7 @@
   <!-- FINAL CTA -->
   <section class="ml-final">
     <div class="ml-final-panel">
-      <img src="{% static 'images/logo-white.svg' %}" alt="" aria-hidden="true">
+      <img src="{% static 'images/logo-white.svg' %}" alt="" aria-hidden="true" width="56" height="56">
       <h2>Heal together, grow together</h2>
       <p>Joining is free, and it stays free. Come build this community with us.</p>
       <div class="ml-final-cta">

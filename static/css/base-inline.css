@@ -3359,3 +3359,36 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.22);
 }
 .nav-new-dot[hidden] { display: none; }
+
+/* Tap targets: links and buttons are at least 44px tall on phones */
+@media (max-width: 768px) {
+    .footer-section a,
+    .footer-apps-row a,
+    .footer-social a,
+    .footer-brand-top,
+    .footer-donate-btn,
+    .sos-pill,
+    .skip-link {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+    }
+    .footer-social a {
+        justify-content: center;
+        min-width: 44px;
+    }
+    .logo-container {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    /* The taller links supply the spacing the gaps used to. */
+    .footer-section ul {
+        gap: 0;
+    }
+    .footer-apps-row {
+        row-gap: 0;
+    }
+    .footer-social {
+        gap: 0.25rem;
+    }
+}

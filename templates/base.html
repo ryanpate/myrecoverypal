@@ -182,7 +182,7 @@
     <!-- Native App Loading Overlay (hidden on web) -->
     <div id="nativeSplashOverlay" class="native-splash-overlay" style="display:none;">
         <div class="native-splash-content">
-            <img src="{% static 'images/logo.svg' %}" alt="" class="native-splash-logo" aria-hidden="true">
+            <img src="{% static 'images/logo.svg' %}" alt="" class="native-splash-logo" aria-hidden="true" width="883" height="883">
             <div class="native-splash-pulse"></div>
         </div>
     </div>
@@ -227,7 +227,7 @@
         <div class="nav-container{% if not user.is_authenticated %} nav-container--guest{% endif %}">
             <div class="nav-left">
                 <a href="{% url 'core:index' %}" class="logo-container">
-                    <img src="{% static 'images/logo.svg' %}" alt="MyRecoveryPal Logo" class="logo-img">
+                    <img src="{% static 'images/logo.svg' %}" alt="MyRecoveryPal Logo" class="logo-img" width="883" height="883">
                     <span class="logo-text">MyRecoveryPal</span>
                 </a>
 
@@ -843,7 +843,7 @@
         <div class="footer-content">
             <div class="footer-brand">
                 <a href="{% url 'core:index' %}" class="footer-brand-top">
-                    <img src="{% static 'images/logo-white.svg' %}" alt="" class="footer-logo">
+                    <img src="{% static 'images/logo-white.svg' %}" alt="" class="footer-logo" width="883" height="883">
                     <span class="footer-wordmark">MyRecoveryPal</span>
                 </a>
                 <p class="footer-tagline">Your recovery support community. Heal together, grow together.</p>
