@@ -38,7 +38,7 @@ class LandingPageTests(TestCase):
                     reverse('core:craving_sos')):
             self.assertContains(resp, f'href="{url}"')
         self.assertContains(resp, 'id="ml-toolkit"')
-        self.assertContains(resp, 'href="#ml-toolkit"')  # hero "New" tag
+        self.assertContains(resp, 'href="#ml-toolkit"')  # hero text link
 
     def test_plans_use_live_prices_hidden_in_ios_app(self):
         set_plan('monthly', '9.99')
