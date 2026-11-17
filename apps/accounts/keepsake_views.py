@@ -15,6 +15,7 @@ from django.views.decorators.http import require_POST
 
 from apps.core.analytics import queue_begin_checkout, queue_one_off_purchase
 
+from .checkout_guard import once_per_minute
 from .keepsakes import (
     KEEPSAKE_KIND, PRODUCTS, fulfil_keepsake_session, handle_printify_event, keepsake_price_cents,
     render_print_file,
@@ -29,6 +30,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 @require_POST
+@once_per_minute('keepsake')
 def keepsake_checkout(request):
     product = request.POST.get('product')
     if product not in PRODUCTS:
@@ -69,7 +71,8 @@ def keepsake_checkout(request):
     if user:
         session_kwargs['customer_email'] = user.email
     try:
-        session = stripe.checkout.Session.create(**session_kwargs)
+        session = stripe.checkout.Session.create(
+            **session_kwargs, idempotency_key=f'keepsake-{order.id}')
     except stripe.error.StripeError:
         logger.exception('Keepsake checkout failed for order %s', order.id)
         order.delete()

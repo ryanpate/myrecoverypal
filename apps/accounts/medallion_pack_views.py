@@ -12,6 +12,7 @@ from django.views.decorators.http import require_POST
 
 from apps.core.analytics import queue_begin_checkout, queue_one_off_purchase
 
+from .checkout_guard import once_per_minute
 from .medallion_models import MedallionPackPurchase
 from .medallion_pack import PACK_KIND, PACK_PRICE_CENTS, fulfil_checkout_session, queue_video_prerender
 from .medallion_video import generate_story_video
@@ -68,6 +69,7 @@ def _badge_fields(data):
 
 
 @require_POST
+@once_per_minute('medallion_pack')
 def medallion_pack_checkout(request):
     """Start a pack purchase. Premium/Court members skip payment (it's included)."""
     fields = _badge_fields(request.POST)
@@ -107,7 +109,8 @@ def medallion_pack_checkout(request):
     if user:
         session_kwargs['customer_email'] = user.email
     try:
-        session = stripe.checkout.Session.create(**session_kwargs)
+        session = stripe.checkout.Session.create(
+            **session_kwargs, idempotency_key=f'medallion-pack-{purchase.id}')
     except stripe.error.StripeError:
         logger.exception('Medallion pack checkout failed for purchase %s', purchase.id)
         purchase.delete()
