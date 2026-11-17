@@ -106,6 +106,30 @@ class RateLimitCacheSettingsTests(TestCase):
 
 
 @override_settings(**_TEST_SETTINGS)
+class GiftCheckoutRateLimitTests(TestCase):
+    def setUp(self):
+        caches['rate_limiting'].clear()
+
+    def test_eleventh_gift_checkout_in_an_hour_is_blocked(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        visitor = via_cloudflare('203.0.113.5')
+        from itertools import count
+        ids = count()
+        fake = lambda **kw: SimpleNamespace(id=f'cs_test_{next(ids)}', url='https://checkout.stripe.com/c/pay/x')
+        with patch('apps.accounts.gift_views.stripe.checkout.Session.create', side_effect=fake):
+            for _ in range(10):
+                self.assertNotEqual(
+                    self.client.post('/gift/checkout/', {'from_name': 'A'}, **visitor).status_code, 403)
+            self.assertEqual(
+                self.client.post('/gift/checkout/', {'from_name': 'A'}, **visitor).status_code, 403)
+            # Someone else is unaffected.
+            self.assertNotEqual(
+                self.client.post('/gift/checkout/', {'from_name': 'B'},
+                                 **via_cloudflare('198.51.100.9')).status_code, 403)
+
+
+@override_settings(**_TEST_SETTINGS)
 class SummernoteUploadAuthTests(TestCase):
     def _png(self):
         from PIL import Image
