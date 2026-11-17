@@ -1590,6 +1590,29 @@ a.btn-primary:hover {
     display: block;
 }
 
+/* Nav menus fade in from the corner nearest their trigger. Quick, because the
+   nav is used constantly. The reduced-motion rule below turns this off. */
+@keyframes mrp-menu-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
+.user-dropdown.active,
+.notification-dropdown.active {
+    transform-origin: top right;
+    animation: mrp-menu-in var(--dur-fast) var(--ease-out);
+}
+
+@media (min-width: 1025px) {
+    .nav-dropdown:hover .nav-dropdown-menu,
+    .nav-dropdown:focus-within .nav-dropdown-menu {
+        transform-origin: top left;
+        animation: mrp-menu-in var(--dur-fast) var(--ease-out);
+    }
+}
+
 .user-dropdown a {
     display: block;
     padding: 0.75rem 1rem;
@@ -1656,7 +1679,7 @@ a.cta-button:visited {
     text-decoration: none;
     border-radius: 50px;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
     display: inline-block;
     border: 2px solid rgba(255, 255, 255, 0.3);
 }
@@ -1667,6 +1690,10 @@ a.cta-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
     color: #fff !important;
+}
+
+a.cta-button:active {
+    transform: scale(0.97);
 }
 
 /* Nav Login Link */

@@ -21,6 +21,18 @@
     /* Button green: 4.8:1 with white text */
     --accent-green-strong-hover: #256b4a;
 
+    /* Motion: one set of curves and durations for the whole site */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    /* entrances, anything appearing */
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    /* things already on screen that move or resize */
+    --dur-fast: 120ms;
+    /* press, hover, and menus in the nav (used constantly, so kept quick) */
+    --dur-menu: 200ms;
+    /* dropdowns, popovers */
+    --dur-move: 280ms;
+    /* layout moves and reveals */
+
     /* Legacy support (keeping old variable names) */
     --primary-color: #1e4d8b;
     --secondary-color: #4db8e8;
@@ -968,7 +980,15 @@ h6 {
 a {
     color: var(--primary-light);
     text-decoration: none;
-    transition: color 0.3s ease;
+    /* Keeps an underline clear of descenders (g, y) wherever one is shown */
+    text-underline-offset: 0.2em;
+    transition: color var(--dur-fast) var(--ease-out);
+}
+
+/* Superscripts must not make their line taller */
+sup,
+sub {
+    line-height: 0;
 }
 
 a:hover {
@@ -1074,7 +1094,7 @@ a:hover {
     border-radius: 50px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
     display: inline-block;
     text-align: center;
 }
@@ -1090,6 +1110,17 @@ a:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
     color: #fff !important;
+}
+
+/* Press feedback */
+.btn:active,
+.button:active,
+.btn-primary:active,
+.btn-success:active,
+.cta-button:active,
+.search-button:active,
+.download-button:active {
+    transform: scale(0.97);
 }
 
 .btn-secondary {

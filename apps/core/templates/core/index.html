@@ -159,7 +159,8 @@
 /* ---- Buttons ---- */
 .ml-btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; font-weight:600;
   border-radius:var(--ml-radius-pill); cursor:pointer; text-decoration:none; white-space:nowrap; border:none;
-  transition:all var(--ml-trans); padding:.75rem 1.5rem; font-size:1rem; line-height:1.2; }
+  transition:transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+  padding:.75rem 1.5rem; font-size:1rem; line-height:1.2; }
 .ml-btn--lg { padding:.9rem 2rem; font-size:1.1rem; }
 .ml-btn--primary { background:var(--accent-green-strong); color:#fff; }
 .ml-btn--primary:hover { transform:translateY(-2px); box-shadow:var(--ml-shadow-accent); color:#fff; }
@@ -169,10 +170,12 @@
 .ml-btn--premium:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(102,126,234,.4); color:#fff; }
 .ml-btn--ghost { background:rgba(255,255,255,.15); color:#fff; border:2px solid rgba(255,255,255,.35); backdrop-filter:blur(4px); }
 .ml-btn--ghost:hover { transform:translateY(-2px); box-shadow:0 5px 15px rgba(0,0,0,.15); color:#fff; }
+.ml .ml-btn:active { transform:scale(.97); }
 
 /* ---- Card ---- */
 .ml-card { background:var(--ml-surface-card); border-radius:var(--ml-radius-lg); box-shadow:var(--ml-shadow);
-  border:1px solid var(--ml-border); padding:2rem; transition:all var(--ml-trans); }
+  border:1px solid var(--ml-border); padding:2rem;
+  transition:transform var(--dur-menu) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out); }
 .ml-card--hover:hover { transform:translateY(-5px); box-shadow:var(--ml-shadow-hover); }
 .ml-card h3 { margin:0 0 .5rem; font-size:1.2rem; font-weight:700; color:var(--ml-text-strong); }
 .ml-card p { margin:0; color:var(--ml-text-muted); line-height:1.6; }
@@ -213,6 +216,9 @@
 .ml-count-today { font:inherit; font-weight:600; cursor:pointer; white-space:nowrap; min-height:46px; padding:.6rem 1rem;
   color:var(--ml-primary); background:transparent; border:1px dashed var(--ml-primary); border-radius:var(--ml-radius-md); }
 .ml-count-result { margin-top:1rem; padding-top:1rem; border-top:1px solid var(--ml-border); }
+/* The visitor's number rises into place when it first appears */
+@keyframes ml-rise { from { opacity:0; transform:translateY(6px); } }
+.ml-count-result:not([hidden]) { animation:ml-rise var(--dur-move) var(--ease-out); }
 .ml-count-num { font-size:clamp(2.6rem,7vw,3.4rem); font-weight:800; line-height:1; letter-spacing:-.03em;
   color:var(--ml-primary); font-variant-numeric:tabular-nums; }
 .ml-count-num small { font-size:1.05rem; font-weight:700; letter-spacing:0; color:var(--ml-text-muted); }
