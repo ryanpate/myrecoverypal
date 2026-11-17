@@ -26,8 +26,12 @@
     /* entrances, anything appearing */
     --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
     /* things already on screen that move or resize */
+    --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+    /* exits only */
     --dur-fast: 120ms;
     /* press, hover, and menus in the nav (used constantly, so kept quick) */
+    --dur-fast-exit: 96ms;
+    /* a nav menu closing: 20% shorter than it opened */
     --dur-menu: 200ms;
     /* dropdowns, popovers */
     --dur-move: 280ms;
@@ -541,7 +545,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: background-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
     color: var(--text-dark);
     font-size: 1.1rem;
 }
@@ -692,7 +696,7 @@
 
 /* Skeleton Container */
 .skeleton-container {
-    transition: opacity 0.3s ease;
+    transition: opacity var(--dur-menu) var(--ease-out);
 }
 
 .skeleton-container.hidden {
@@ -703,7 +707,7 @@
 
 /* Content Container (initially hidden) */
 .content-container {
-    transition: opacity 0.3s ease;
+    transition: opacity var(--dur-menu) var(--ease-out);
 }
 
 .content-container.loading {
@@ -782,7 +786,7 @@
     padding: 4px;
     font-size: 1rem;
     opacity: 0.7;
-    transition: opacity 0.2s;
+    transition: opacity var(--dur-fast) var(--ease-out);
 }
 
 .toast-close:hover {
@@ -832,7 +836,7 @@
 
 /* Like button optimistic animation */
 .like-btn {
-    transition: transform 0.15s ease, color 0.15s ease;
+    transition: transform var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
 }
 
 .like-btn:active {
@@ -1143,7 +1147,7 @@ a:hover {
     border-radius: var(--border-radius-lg);
     padding: 1.5rem;
     box-shadow: var(--shadow);
-    transition: all 0.3s ease;
+    transition: transform var(--dur-menu) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out);
 }
 
 .card:hover,
