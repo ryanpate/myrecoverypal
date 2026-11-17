@@ -1536,7 +1536,11 @@ function acceptDisclaimer() {
 
         var bubble = document.createElement('div');
         bubble.className = 'msg-bubble';
-        bubble.innerHTML = content.replace(/\n/g, '<br>');
+        // Both the member's text and Anchor's reply are untrusted: escape
+        // them first, then turn line breaks into <br>.
+        var escaped = document.createElement('div');
+        escaped.textContent = content;
+        bubble.innerHTML = escaped.innerHTML.replace(/\n/g, '<br>');
 
         var time = document.createElement('div');
         time.className = 'msg-time';

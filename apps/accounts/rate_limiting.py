@@ -79,6 +79,11 @@ class RateLimitMiddleware:
             if request.method == 'POST' and not self.check_rate_limit(ip, 'counter_email', max_requests=5, window=3600):  # 5 per hour
                 return HttpResponseForbidden('Too many requests. Please try again later.')
 
+        elif request.path == '/gift/checkout/':
+            # Open to anyone: each POST creates an order row and a Stripe session.
+            if request.method == 'POST' and not self.check_rate_limit(ip, 'gift_checkout', max_requests=10, window=3600):  # 10 per hour
+                return HttpResponseForbidden('Too many checkout attempts. Please try again later.')
+
         elif request.path.startswith('/api/'):
             if not self.check_rate_limit(ip, 'api', max_requests=100, window=60):  # 100 per minute
                 return HttpResponseForbidden('API rate limit exceeded. Please slow down.')
