@@ -4,7 +4,9 @@ Django settings for recovery_hub project.
 import ssl
 from celery.schedules import crontab
 import os
+import sys
 from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
 import dj_database_url
 import cloudinary
 import cloudinary.uploader
@@ -99,8 +101,14 @@ if SENTRY_DSN:
     )
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get(
-    'SECRET_KEY', 'django-insecure-change-this-in-production')
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    # A deployed service must never sign sessions with a key that is printed
+    # in a public repo. The image build runs collectstatic before Railway
+    # injects variables, so that one command is allowed through.
+    if os.environ.get('RAILWAY_ENVIRONMENT') and 'collectstatic' not in sys.argv:
+        raise ImproperlyConfigured('SECRET_KEY must be set on Railway.')
+    SECRET_KEY = 'django-insecure-change-this-in-production'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
