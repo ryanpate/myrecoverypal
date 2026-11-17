@@ -1065,7 +1065,7 @@ a:hover {
 .search-button,
 .download-button {
     padding: 0.75rem 1.5rem;
-    background: var(--accent-green);
+    background: #2e8059; /* 4.8:1 with white text; --accent-green is 2.5:1 */
     color: #fff !important;
     border: none;
     border-radius: 50px;
@@ -1083,7 +1083,7 @@ a:hover {
 .cta-button:hover,
 .search-button:hover,
 .download-button:hover {
-    background: #45a675;
+    background: #256b4a;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
     color: #fff !important;
