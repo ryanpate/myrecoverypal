@@ -14,6 +14,7 @@ from django.views.decorators.http import require_POST
 from apps.core.analytics import queue_begin_checkout, queue_ga_event, queue_one_off_purchase
 
 from . import gifts
+from .checkout_guard import once_per_minute
 from .gift_models import PremiumGift
 
 logger = logging.getLogger(__name__)
@@ -33,6 +34,7 @@ def gift_premium(request):
 
 
 @require_POST
+@once_per_minute('gift')
 def gift_checkout(request):
     cents = gifts.price_cents()
     gift = PremiumGift.objects.create(
@@ -60,6 +62,7 @@ def gift_checkout(request):
             success_url=request.build_absolute_uri(reverse('core:gift_success'))
                         + '?session_id={CHECKOUT_SESSION_ID}',
             cancel_url=request.build_absolute_uri(reverse('core:gift_premium')),
+            idempotency_key=f'gift-{gift.id}',
         )
     except stripe.error.StripeError:
         logger.exception('Premium gift checkout failed for gift %s', gift.id)

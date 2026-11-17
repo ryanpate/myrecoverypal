@@ -52,6 +52,7 @@ def verify_court_report(request, hash_value):
 from apps.accounts.court_forms import (
     CourtReportProfileForm, MeetingAttendanceForm,
 )
+from apps.accounts.checkout_guard import once_per_minute
 from apps.accounts.court_service import generate_court_report
 from apps.support_services.models import Meeting
 from apps.core.analytics import queue_begin_checkout, queue_ga_event, queue_one_off_purchase
@@ -240,6 +241,7 @@ def court_report_email(request, report_id):
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
+@once_per_minute('court_report')
 def _single_report_checkout(request, period_start, period_end):
     from apps.accounts.court_purchase import COURT_REPORT_KIND, SINGLE_REPORT_PRICE_CENTS
     from apps.accounts.medallion_pack_views import _see_other
@@ -268,6 +270,7 @@ def _single_report_checkout(request, period_start, period_end):
             success_url=request.build_absolute_uri(reverse('accounts:court_report_success'))
                         + '?session_id={CHECKOUT_SESSION_ID}',
             cancel_url=request.build_absolute_uri(reverse('accounts:court_report_list')),
+            idempotency_key=f'court-report-{purchase.id}',
         )
     except stripe.error.StripeError:
         purchase.delete()
