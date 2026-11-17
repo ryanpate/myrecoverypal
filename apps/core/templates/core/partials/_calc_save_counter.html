@@ -58,7 +58,7 @@ and remembers the date so a returning visitor sees their counter, not the demo.
     .calc-email-msg { margin: 0.6rem 0 0; font-size: 0.9rem; }
     .calc-email-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 </style>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     var KEY = 'mrpCalcDate';
     var kind = '{{ kind }}';

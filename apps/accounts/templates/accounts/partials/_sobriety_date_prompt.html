@@ -51,7 +51,7 @@ works without JavaScript; JS only adds the 3-day "Not now" dismissal.
         .sd-input, .sd-btn { flex: 1 1 100%; }
     }
 </style>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     var card = document.getElementById('sobrietyDatePrompt');
     var KEY = 'mrpSobrietyPromptHiddenUntil';

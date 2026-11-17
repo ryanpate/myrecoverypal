@@ -770,7 +770,7 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
     {% endif %}
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
     // Get current page URL and post details
     const pageUrl = window.location.href;
     const postTitle = "{{ post.title|escapejs }}";

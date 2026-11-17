@@ -182,7 +182,7 @@
     <a href="{% url 'accounts:edit_profile' %}" class="btn-cancel">Cancel - Keep My Account</a>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
     // Only enable delete button when user types DELETE
     var confirmInput = document.getElementById('confirm');
     var deleteBtn = document.getElementById('deleteBtn');

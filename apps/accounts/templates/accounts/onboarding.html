@@ -555,7 +555,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     // Stage card selection
     document.querySelectorAll('.stage-card').forEach(function(card) {
         card.addEventListener('click', function() {

@@ -945,7 +945,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     // Global variables for edit functionality
     let currentEditCheckinId = null;
     let currentEditChallengeId = null;

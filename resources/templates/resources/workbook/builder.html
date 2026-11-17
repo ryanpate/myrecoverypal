@@ -98,7 +98,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     // Keep at least one section ticked so the button never produces an empty file.
     var form = document.getElementById('wb-form');

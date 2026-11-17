@@ -586,7 +586,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     document.addEventListener('DOMContentLoaded', function () {
         // Auto-submit filter form on change
         const filterSelects = document.querySelectorAll('.filter-section select');

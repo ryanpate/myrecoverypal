@@ -173,7 +173,12 @@
 <div class="get-app-container">
     <div class="get-app-card">
         <div class="app-logo">
-            <img src="{% static 'images/logo.svg' %}" alt="MyRecoveryPal" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-heart\' style=\'font-size:4rem;color:white;\'></i>'">
+            <img src="{% static 'images/logo.svg' %}" alt="MyRecoveryPal" data-on-error="app-logo-fallback">
+            <script nonce="{{ csp_nonce }}">
+                mrpAction('app-logo-fallback', function () {
+                    this.parentElement.innerHTML = '<i class="fas fa-heart" style="font-size:4rem;color:white;"></i>';
+                });
+            </script>
         </div>
 
         <h1>Get MyRecoveryPal</h1>
@@ -220,7 +225,7 @@
     </div>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
     // Detect device type
     function detectDevice() {
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;

@@ -1396,7 +1396,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
 // Disclaimer modal — show on first visit, remember acceptance
 function acceptDisclaimer() {
     document.getElementById('disclaimerModal').classList.remove('active');

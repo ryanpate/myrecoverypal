@@ -7,7 +7,7 @@ synthesis, and is hidden where the browser lacks it.
 {% if audio_track %}
 <button type="button" class="ws-btn-secondary rf-listen" data-src="{% url 'resources:audio_play' audio_track.slug %}">
     <i class="fas fa-volume-high" aria-hidden="true"></i> <span>Listen</span></button>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     var btn = document.currentScript.previousElementSibling;
     var label = btn.querySelector('span');
@@ -25,7 +25,7 @@ synthesis, and is hidden where the browser lacks it.
 {% else %}
 <button type="button" class="ws-btn-secondary rf-listen" data-target="{{ target }}" hidden>
     <i class="fas fa-volume-high" aria-hidden="true"></i> <span>Listen</span></button>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     var btn = document.currentScript.previousElementSibling;
     if (!('speechSynthesis' in window) || !btn) return;

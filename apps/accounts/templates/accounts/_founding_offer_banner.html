@@ -31,7 +31,7 @@ Context: founding_offer (dict) and optional `slot` for analytics.
     [data-theme="dark"] .founding-offer { background: linear-gradient(135deg, #3a2f12, #4a3a10); color: #fdf3d6; border-color: #a07a10; }
     [data-theme="dark"] .founding-offer-badge { color: #2a1f04; }
 </style>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     var box = document.currentScript.previousElementSibling.previousElementSibling;
     if (!box || typeof gtag !== 'function') return;

@@ -579,7 +579,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     // Rating functionality
     document.addEventListener('DOMContentLoaded', function() {
         const ratingStars = document.querySelectorAll('.rating-star');

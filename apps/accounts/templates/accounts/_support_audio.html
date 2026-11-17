@@ -9,7 +9,7 @@ free session, so it plays for everyone. Context: `track` (AudioTrack).
         <strong>{{ track.title }}</strong> &middot; {{ track.minutes }} min &middot; free</p>
     <audio controls preload="none" src="{% url 'resources:audio_play' track.slug %}"></audio>
 </div>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     var box = document.currentScript.previousElementSibling, audio = box.querySelector('audio');
     audio.addEventListener('play', function once() {

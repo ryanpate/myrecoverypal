@@ -593,7 +593,7 @@
 </div>
 
 <!-- Billing period toggle (monthly/annual) for the Premium card -->
-<script>
+<script nonce="{{ csp_nonce }}">
     document.querySelectorAll('.billing-toggle-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const period = this.getAttribute('data-period');
@@ -618,7 +618,7 @@
 </script>
 
 <!-- Premium price in the visitor's own terms: days of what they used to spend -->
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     const box = document.getElementById('spend-reframe');
     if (!box) return;
@@ -671,7 +671,7 @@
 <!-- Stripe Checkout Integration (hidden on iOS native app) -->
 <div class="stripe-only">
 <script src="https://js.stripe.com/v3/"></script>
-<script>
+<script nonce="{{ csp_nonce }}">
     const stripe = Stripe('{{ stripe_publishable_key }}');
 
     document.querySelectorAll('.subscribe-btn').forEach(button => {

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <script>
+    <script nonce="{{ csp_nonce }}">
         // Mark the native app before first paint so `.stripe-only` web prices
         // never flash inside the iOS app (App Store Guideline 3.1). Capacitor
         // injects its bridge at document start, ahead of this script.
@@ -23,7 +23,7 @@
 
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-81SZGNRESW"></script>
-    <script>
+    <script nonce="{{ csp_nonce }}">
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
@@ -36,7 +36,7 @@
     view that produced them.
     {% endcomment %}
     {{ ga_events|json_script:"ga-queued-events" }}
-    <script>
+    <script nonce="{{ csp_nonce }}">
         (function () {
             var el = document.getElementById('ga-queued-events');
             if (!el) return;
@@ -53,6 +53,8 @@
 
     {% load static %}
     {% load subscription_tags %}
+    <!-- Binds data-on-* attributes to registered actions; loads before any script that registers one -->
+    <script src="{% static 'js/actions.js' %}"></script>
     <!-- Enhanced Mobile Meta Tags -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -198,7 +200,7 @@
         Your Premium trial ends in {{ trial_days_left }} days.
         {% endif %}
         <a href="{% url 'accounts:pricing' %}" style="color: white; font-weight: 700; text-decoration: underline; margin-left: 8px;">Keep Premium<span class="stripe-only" style="display:inline;"> &mdash; $9.99/mo</span></a>
-        <button onclick="document.getElementById('trialBanner').style.display='none'" style="background: none; border: none; color: white; opacity: 0.7; cursor: pointer; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;" aria-label="Dismiss">&times;</button>
+        <button data-on-click="dismiss-trial-banner" style="background: none; border: none; color: white; opacity: 0.7; cursor: pointer; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;" aria-label="Dismiss">&times;</button>
     </div>
     {% endif %}
 
@@ -272,7 +274,7 @@
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <!-- User Menu with Notification Indicator -->
                     <div class="user-menu" style="position: relative;">
-                        <div class="user-menu-toggle" onclick="toggleUserMenu()"
+                        <div class="user-menu-toggle" data-on-click="toggle-user-menu"
                             style="display: flex; align-items: center; gap: 0.75rem;">
                             <div class="user-avatar">
                                 {% if user.avatar %}
@@ -292,7 +294,7 @@
 
                             <!-- Notification Dot Indicator -->
                             <div class="notification-indicator" id="notificationIndicator"
-                                onclick="event.stopPropagation(); toggleNotifications();">
+                                data-on-click="toggle-notifications">
                                 <span class="notification-dot" id="notificationDot"></span>
                             </div>
                         </div>
@@ -384,7 +386,7 @@
                     <div class="notification-dropdown" id="notificationDropdown">
                         <div class="notification-header">
                             <h6>Notifications</h6>
-                            <a href="#" class="mark-all-read" onclick="markAllAsRead(event)">Mark all as read</a>
+                            <a href="#" class="mark-all-read" data-on-click="mark-all-read">Mark all as read</a>
                         </div>
                         <div class="notification-list" id="notificationList">
                             <!-- Notifications will be loaded here -->
@@ -400,11 +402,11 @@
                 {% endif %}
 
                 <!-- Theme Toggle -->
-                <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
+                <button class="theme-toggle" id="themeToggle" data-on-click="toggle-theme" aria-label="Toggle dark mode" title="Toggle dark mode">
                     <i class="fas fa-sun" id="themeIcon"></i>
                 </button>
 
-                <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="Menu">
+                <button class="hamburger" id="hamburgerBtn" data-on-click="toggle-mobile-menu" aria-label="Menu">
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
@@ -414,12 +416,12 @@
     </nav>
 
     <!-- Mobile Navigation Overlay -->
-    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileMenu()"></div>
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" data-on-click="close-mobile-menu"></div>
 
     <!-- Mobile Slide-Out Menu -->
     <div class="mobile-slide-menu" id="mobileSlideMenu">
         <div class="mobile-menu-header">
-            <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">
+            <button class="mobile-menu-close" data-on-click="close-mobile-menu" aria-label="Close menu">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -701,7 +703,7 @@
 
         <div class="mobile-menu-footer">
             <!-- Mobile Theme Toggle -->
-            <button class="mobile-theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+            <button class="mobile-theme-toggle" data-on-click="toggle-theme" aria-label="Toggle dark mode">
                 <i class="fas fa-sun" id="mobileThemeIcon"></i>
                 <span id="mobileThemeLabel">Dark Mode</span>
             </button>
@@ -937,7 +939,18 @@
     <!-- Main JS (theme toggle, etc.) -->
     <script src="{% static 'js/main.js' %}"></script>
 
-    <script>
+    <script nonce="{{ csp_nonce }}">
+        // Actions for the data-on-click attributes in this layout (see actions.js)
+        mrpAction('dismiss-trial-banner', function () { document.getElementById('trialBanner').style.display = 'none'; });
+        mrpAction('toggle-user-menu', function () { toggleUserMenu(); });
+        mrpAction('toggle-notifications', function (event) { event.stopPropagation(); toggleNotifications(); });
+        mrpAction('mark-all-read', function (event) { markAllAsRead(event); });
+        mrpAction('toggle-theme', function () { toggleTheme(); });
+        mrpAction('toggle-mobile-menu', function () { toggleMobileMenu(); });
+        mrpAction('close-mobile-menu', function () { closeMobileMenu(); });
+        mrpAction('close-install-banner', function () { closeInstallBanner(); });
+        mrpAction('notification-click', function (event) { handleNotificationClick(event, this); });
+
         // Mobile detection
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
@@ -979,7 +992,7 @@
                         <a href="https://apps.apple.com/us/app/myrecoverypal/id6760084657" class="btn btn-light btn-sm" style="white-space: nowrap; font-size: 0.8rem; padding: 0.35rem 0.75rem;">
                             Download
                         </a>
-                        <button class="install-prompt-close" onclick="closeInstallBanner()" aria-label="Close">&times;</button>
+                        <button class="install-prompt-close" data-on-click="close-install-banner" aria-label="Close">&times;</button>
                     </div>
                 `;
                 installBanner.innerHTML = iosBannerHTML;
@@ -1004,7 +1017,7 @@
                             <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="white-space: nowrap; font-size: 0.8rem; padding: 0.35rem 0.75rem;">
                                 Guide
                             </a>
-                            <button class="install-prompt-close" onclick="closeInstallBanner()" aria-label="Close">&times;</button>
+                            <button class="install-prompt-close" data-on-click="close-install-banner" aria-label="Close">&times;</button>
                         </div>
                     `;
                 } else {
@@ -1020,7 +1033,7 @@
                             <a href="{% url 'core:install_guide' %}" class="btn btn-light btn-sm" style="white-space: nowrap; font-size: 0.8rem; padding: 0.35rem 0.75rem;">
                                 Learn More
                             </a>
-                            <button class="install-prompt-close" onclick="closeInstallBanner()" aria-label="Close">&times;</button>
+                            <button class="install-prompt-close" data-on-click="close-install-banner" aria-label="Close">&times;</button>
                         </div>
                     `;
                 }
@@ -1177,7 +1190,7 @@
     </script>
 
     <!-- Notification System Script -->
-    <script>
+    <script nonce="{{ csp_nonce }}">
         // Notification System
         let notificationCheckInterval;
         const isAuthenticated = {% if user.is_authenticated %}true{% else %} false{% endif %};
@@ -1286,7 +1299,7 @@
                 <div class="notification-item ${notification.is_read ? '' : 'unread'}"
                      data-id="${esc(notification.id)}"
                      data-link="${esc(notification.link)}"
-                     onclick="handleNotificationClick(event, this)">
+                     data-on-click="notification-click">
                     <div class="notification-avatar">
                         ${notification.sender_avatar ?
                     `<img src="${esc(notification.sender_avatar)}" alt="${esc(notification.sender_name)}">` :
@@ -1410,7 +1423,7 @@
 
     {% if user.is_authenticated %}
     <!-- Browser Timezone Detection -->
-    <script>
+    <script nonce="{{ csp_nonce }}">
     (function () {
       try {
         var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -1429,7 +1442,7 @@
 
     <!-- Additional Scripts -->
     {% include 'partials/_whats_new.html' %}
-    <script>
+    <script nonce="{{ csp_nonce }}">
     // "New" dot on the Library nav link until this browser opens the library.
     (function () {
         var KEY = 'mrp_library_seen';
@@ -1455,7 +1468,7 @@
     </div>
 
 
-    <script>
+    <script nonce="{{ csp_nonce }}">
         // Show sticky CTA after scrolling down
         (function() {
             var stickyBar = document.getElementById('mobileStickyCtaBar');

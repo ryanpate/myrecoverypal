@@ -918,7 +918,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
 document.addEventListener('DOMContentLoaded', function() {
     const dateInput = document.getElementById('sobriety-date');
     const placeholderState = document.getElementById('placeholder-state');

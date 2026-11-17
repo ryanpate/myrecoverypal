@@ -25,7 +25,7 @@ Evening check-out offer on the progress home, from 6 PM local time
     .evening-card-btn { background: #fff; color: #0f2d56 !important; font-weight: 700; padding: 0.55rem 1.2rem; border-radius: 50px; text-decoration: none; }
     .evening-card-dismiss { position: absolute; top: 4px; right: 10px; background: none; border: none; color: rgba(255,255,255,0.7); font-size: 1.3rem; cursor: pointer; }
 </style>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     var card = document.getElementById('eveningCard');
     if (!card) return;

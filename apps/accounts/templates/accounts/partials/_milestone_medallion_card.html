@@ -28,7 +28,7 @@ Milestone-day medallion card on the progress home (medallion_pack.milestone_card
     [data-theme="dark"] .mm-text strong { color: #f5f5f5; }
     [data-theme="dark"] .mm-link { color: #8fb8ee; }
 </style>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     var card = document.getElementById('milestoneMedallionCard');
     if (!card || typeof gtag !== 'function') return;

@@ -505,7 +505,7 @@
     </form>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 document.addEventListener('DOMContentLoaded', function() {
     // Handle conditional field display based on attendance type
     const attendanceOptions = document.querySelectorAll('input[name="attendance_option"]');

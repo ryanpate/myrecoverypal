@@ -149,7 +149,7 @@
     </div>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
     async function followUser(username, button) {
         try {
             const response = await fetch(`/accounts/follow/${username}/`, {

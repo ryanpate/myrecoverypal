@@ -509,7 +509,7 @@
     </div>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
     // Search functionality
     document.getElementById('messageSearch')?.addEventListener('input', function (e) {
         const searchTerm = e.target.value.toLowerCase();

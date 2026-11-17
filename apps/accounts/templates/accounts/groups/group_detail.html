@@ -901,7 +901,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     async function joinGroup(groupId) {
         try {
             const response = await fetch(`/accounts/groups/${groupId}/join/`, {

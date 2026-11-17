@@ -16,7 +16,7 @@ signup and are joined automatically; members go to the landing page to join.
         padding: 0.7rem 1rem; text-decoration: none; font-size: 0.98rem; }
     .dj-banner:hover { background: #e0f2e7; color: #1f5c3d; }
 </style>
-<script>
+<script nonce="{{ csp_nonce }}">
 document.querySelector('[data-dj-banner]').addEventListener('click', function () {
     if (window.gtag) gtag('event', 'dry_january_banner_click', { page: location.pathname });
 });

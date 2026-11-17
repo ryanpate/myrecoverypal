@@ -20,7 +20,7 @@ story image, or copy the link. Context: `r` (the Reflection).
         <button type="button" data-share="copy_link"><i class="fas fa-link" aria-hidden="true"></i> <span>Copy link</span></button>
     </div>
 </div>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     var box = document.currentScript.previousElementSibling;
     var btn = box.querySelector('.rf-share-btn'), menu = box.querySelector('.rf-share-menu');

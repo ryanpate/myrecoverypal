@@ -460,7 +460,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     async function leaveGroup(groupId) {
         if (!confirm('Are you sure you want to leave this group?')) return;
 

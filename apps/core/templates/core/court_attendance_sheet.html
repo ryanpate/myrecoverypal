@@ -152,7 +152,7 @@
     <h2>Find a meeting</h2>
     <p>Search <a href="{% url 'support_services:meeting_list' %}">in-person meetings near you</a> or browse <a href="{% url 'core:online_aa_meetings' %}">online AA meetings</a> happening today.</p>
 </div>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     function track(id, name) {
         var el = document.getElementById(id);

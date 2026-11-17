@@ -895,7 +895,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
 // Share milestone from profile page
 async function shareMilestoneFromProfile(milestoneTitle, button) {
     const shareData = {

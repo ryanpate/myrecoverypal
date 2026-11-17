@@ -514,7 +514,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     document.addEventListener('DOMContentLoaded', function () {
         // Challenge type selection
         const challengeTypeInput = document.getElementById('id_challenge_type');

@@ -443,7 +443,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
 document.addEventListener('DOMContentLoaded', function() {
     const strategies = document.querySelectorAll('.strategy-item');
     const progressFill = document.getElementById('progress-fill');

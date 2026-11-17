@@ -33,3 +33,9 @@ def subscription_context(request):
         pass
 
     return context
+
+
+def csp_nonce(request):
+    """The per-request nonce every inline <script> must carry (see
+    ContentSecurityPolicyMiddleware)."""
+    return {'csp_nonce': getattr(request, 'csp_nonce', '')}

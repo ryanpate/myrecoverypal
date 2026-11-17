@@ -170,7 +170,7 @@
     {% endif %}
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 function getCsrfCookie() {
     var m = document.cookie.match(/csrftoken=([^;]+)/);
     return m ? m[1] : '';
