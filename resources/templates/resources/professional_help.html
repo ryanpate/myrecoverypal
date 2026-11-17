@@ -493,8 +493,8 @@
             </div>
 
             <div style="margin-top: 20px;">
-                <button class="btn-search" onclick="searchFacilities()">Search Facilities</button>
-                <button class="btn-clear" onclick="clearSearch()">Clear Filters</button>
+                <button class="btn-search" data-on-click="search-facilities">Search Facilities</button>
+                <button class="btn-clear" data-on-click="clear-search">Clear Filters</button>
             </div>
         </div>
 
@@ -504,7 +504,7 @@
             </div>
             <div class="sort-controls">
                 <label for="sortBy" style="margin-right: 10px;">Sort by:</label>
-                <select id="sortBy" onchange="sortResults()">
+                <select id="sortBy" data-on-change="sort-results">
                     <option value="name">Name</option>
                     <option value="city">City</option>
                     <option value="state">State</option>
@@ -523,7 +523,7 @@
 <!-- Modal for facility details -->
 <div id="facilityModal" class="modal">
     <div class="modal-content">
-        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <button class="modal-close" data-on-click="close-facility-modal">&times;</button>
         <div id="modalContent"></div>
     </div>
 </div>
@@ -531,6 +531,13 @@
 
 {% block extra_js %}
 <script nonce="{{ csp_nonce }}">
+    // Actions for the data-on-* attributes on this page (see actions.js)
+    mrpAction('search-facilities', function () { searchFacilities(); });
+    mrpAction('clear-search', function () { clearSearch(); });
+    mrpAction('sort-results', function () { sortResults(); });
+    mrpAction('close-facility-modal', function () { closeModal(); });
+    mrpAction('show-facility', function () { showFacilityDetails(Number(this.getAttribute('data-row'))); });
+
     // Facilities data storage
     let facilitiesData = [];
     let filteredFacilities = [];
@@ -692,7 +699,7 @@
             const keyServices = services.slice(0, 5);
 
             return `
-                <div class="facility-card" onclick="showFacilityDetails(${facility._irow})">
+                <div class="facility-card" data-on-click="show-facility" data-row="${facility._irow}">
                     <div class="facility-header">
                         <div class="facility-name">${facility.name1}${facility.name2 ? ' - ' + facility.name2 : ''}</div>
                         <span class="facility-type">${getFacilityType(facility.typeFacility)}</span>
@@ -717,7 +724,7 @@
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
                             </svg>
-                            <a href="${facility.website}" target="_blank" onclick="event.stopPropagation()">${facility.website}</a>
+                            <a href="${facility.website}" target="_blank" data-on-click="stop-propagation">${facility.website}</a>
                         </div>
                         ` : ''}
                     </div>

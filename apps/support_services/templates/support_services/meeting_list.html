@@ -231,11 +231,11 @@
                 <div class="filter-label">Meeting Source</div>
                 <div class="btn-group-wrapper">
                     <button type="button" class="btn-filter {% if selected_source == 'all' %}active{% endif %}"
-                        onclick="setFilter('source', 'all')">All Sources</button>
+                        data-on-click="set-filter" data-filter="source" data-value="all">All Sources</button>
                     <button type="button" class="btn-filter {% if selected_source == 'local' %}active{% endif %}"
-                        onclick="setFilter('source', 'local')">Local Meetings</button>
+                        data-on-click="set-filter" data-filter="source" data-value="local">Local Meetings</button>
                     <button type="button" class="btn-filter {% if selected_source == 'external' %}active{% endif %}"
-                        onclick="setFilter('source', 'external')">Network Meetings</button>
+                        data-on-click="set-filter" data-filter="source" data-value="external">Network Meetings</button>
                 </div>
             </div>
             {% endif %}
@@ -245,11 +245,11 @@
                 <div class="filter-label">Day of Week</div>
                 <div class="btn-group-wrapper">
                     <button type="button" class="btn-filter {% if not selected_day %}active{% endif %}" 
-                            onclick="clearFilter('day')">All Days</button>
+                            data-on-click="clear-filter" data-filter="day">All Days</button>
                     {% for day_value, day_name in days %}
                         <button type="button" 
                                 class="btn-filter {% if selected_day == day_value|stringformat:'s' %}active{% endif %} {% if today_day == day_value %}today-indicator{% endif %}"
-                                onclick="setFilter('day', '{{ day_value }}')">
+                                data-on-click="set-filter" data-filter="day" data-value="{{ day_value }}">
                             {{ day_name }}
                             {% if today_day == day_value %}
                                 <span class="badge bg-danger ms-1">Today</span>
@@ -264,11 +264,11 @@
                 <div class="filter-label">Attendance Type</div>
                 <div class="btn-group-wrapper">
                     <button type="button" class="btn-filter {% if not selected_attendance %}active{% endif %}" 
-                            onclick="clearFilter('attendance')">All Types</button>
+                            data-on-click="clear-filter" data-filter="attendance">All Types</button>
                     {% for att_value, att_name in attendance_options %}
                         <button type="button" 
                                 class="btn-filter {% if selected_attendance == att_value %}active{% endif %}"
-                                onclick="setFilter('attendance', '{{ att_value }}')">
+                                data-on-click="set-filter" data-filter="attendance" data-value="{{ att_value }}">
                             {{ att_name }}
                         </button>
                     {% endfor %}
@@ -537,6 +537,10 @@
 </div>
 
 <script nonce="{{ csp_nonce }}">
+// Actions for the filter buttons' data-on-click attributes (see actions.js)
+mrpAction('set-filter', function () { setFilter(this.getAttribute('data-filter'), this.getAttribute('data-value')); });
+mrpAction('clear-filter', function () { clearFilter(this.getAttribute('data-filter')); });
+
 // Filter functions
 function setFilter(filterType, value) {
     document.getElementById(filterType + 'Filter').value = value;

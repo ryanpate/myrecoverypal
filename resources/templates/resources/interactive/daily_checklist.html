@@ -392,9 +392,9 @@
     <div class="container">
         <header class="header">
             <div class="date-selector">
-                <button class="date-btn" onclick="changeDate(-1)">◀</button>
+                <button class="date-btn" data-change-date="-1">◀</button>
                 <div class="current-date" id="currentDate">Today</div>
-                <button class="date-btn" onclick="changeDate(1)">▶</button>
+                <button class="date-btn" data-change-date="1">▶</button>
             </div>
             <h1>Daily Recovery Checklist</h1>
             <div class="progress-bar">
@@ -411,12 +411,12 @@
                     <span class="section-progress" data-section="connection">0/2</span>
                 </div>
                 <ul class="checklist">
-                    <li class="checklist-item" onclick="toggleItem(this)" data-section="connection">
+                    <li class="checklist-item" data-section="connection">
                         <div class="checkbox"></div>
                         <div class="checklist-text">Reach out to your support network (call, text, or attend a meeting)
                         </div>
                     </li>
-                    <li class="checklist-item" onclick="toggleItem(this)" data-section="connection">
+                    <li class="checklist-item" data-section="connection">
                         <div class="checkbox"></div>
                         <div class="checklist-text">Review and update emergency contacts in your phone</div>
                     </li>
@@ -430,15 +430,15 @@
                     <span class="section-progress" data-section="mental">0/3</span>
                 </div>
                 <ul class="checklist">
-                    <li class="checklist-item" onclick="toggleItem(this)" data-section="mental">
+                    <li class="checklist-item" data-section="mental">
                         <div class="checkbox"></div>
                         <div class="checklist-text">Practice 5-10 minutes of mindful breathing or meditation</div>
                     </li>
-                    <li class="checklist-item" onclick="toggleItem(this)" data-section="mental">
+                    <li class="checklist-item" data-section="mental">
                         <div class="checkbox"></div>
                         <div class="checklist-text">Journal about your feelings, thoughts, and progress</div>
                     </li>
-                    <li class="checklist-item" onclick="toggleItem(this)" data-section="mental">
+                    <li class="checklist-item" data-section="mental">
                         <div class="checkbox"></div>
                         <div class="checklist-text">Identify and document your top 3 triggers</div>
                     </li>
@@ -452,16 +452,16 @@
                     <span class="section-progress" data-section="physical">0/3</span>
                 </div>
                 <ul class="checklist">
-                    <li class="checklist-item" onclick="toggleItem(this)" data-section="physical">
+                    <li class="checklist-item" data-section="physical">
                         <div class="checkbox"></div>
                         <div class="checklist-text">Drink at least 8 cups of water throughout the day</div>
                     </li>
-                    <li class="checklist-item" onclick="toggleItem(this)" data-section="physical">
+                    <li class="checklist-item" data-section="physical">
                         <div class="checkbox"></div>
                         <div class="checklist-text">Eat balanced meals with protein, carbohydrates, and healthy fats
                         </div>
                     </li>
-                    <li class="checklist-item" onclick="toggleItem(this)" data-section="physical">
+                    <li class="checklist-item" data-section="physical">
                         <div class="checkbox"></div>
                         <div class="checklist-text">Engage in 20-30 minutes of physical activity (walk, stretch, or
                             yoga)</div>
@@ -476,19 +476,19 @@
                     <span class="section-progress" data-section="growth">0/4</span>
                 </div>
                 <ul class="checklist">
-                    <li class="checklist-item" onclick="toggleItem(this)" data-section="growth">
+                    <li class="checklist-item" data-section="growth">
                         <div class="checkbox"></div>
                         <div class="checklist-text">Practice gratitude by listing 3 things you're thankful for</div>
                     </li>
-                    <li class="checklist-item" onclick="toggleItem(this)" data-section="growth">
+                    <li class="checklist-item" data-section="growth">
                         <div class="checkbox"></div>
                         <div class="checklist-text">Schedule one meaningful self-care activity</div>
                     </li>
-                    <li class="checklist-item" onclick="toggleItem(this)" data-section="growth">
+                    <li class="checklist-item" data-section="growth">
                         <div class="checkbox"></div>
                         <div class="checklist-text">Set a small, achievable goal for tomorrow</div>
                     </li>
-                    <li class="checklist-item" onclick="toggleItem(this)" data-section="growth">
+                    <li class="checklist-item" data-section="growth">
                         <div class="checkbox"></div>
                         <div class="checklist-text">Reflect on a personal strength and how you'll use it today</div>
                     </li>
@@ -501,15 +501,14 @@
                     <h3 class="notes-title">Daily Reflections</h3>
                 </div>
                 <textarea class="notes-textarea" id="dailyNotes"
-                    placeholder="Take a moment to reflect on your day. What went well? What challenges did you face? What are you grateful for?"
-                    onblur="saveNotes()"></textarea>
+                    placeholder="Take a moment to reflect on your day. What went well? What challenges did you face? What are you grateful for?"></textarea>
             </div>
 
             <div class="action-buttons">
-                <button class="btn btn-secondary" onclick="resetChecklist()">
+                <button class="btn btn-secondary" id="resetChecklistBtn">
                     <span>↻</span> Reset Today
                 </button>
-                <button class="btn btn-primary" onclick="downloadPDF()">
+                <button class="btn btn-primary" id="downloadPdfBtn">
                     <span>📥</span> Download PDF
                 </button>
             </div>
@@ -663,6 +662,17 @@
             // For now, we'll open the print dialog
             window.print();
         }
+
+        // Wire up the controls (no inline handlers, so a nonce-based CSP allows this page)
+        document.querySelectorAll('[data-change-date]').forEach(function (button) {
+            button.addEventListener('click', function () { changeDate(Number(button.dataset.changeDate)); });
+        });
+        document.querySelectorAll('.checklist-item').forEach(function (item) {
+            item.addEventListener('click', function () { toggleItem(item); });
+        });
+        document.getElementById('dailyNotes').addEventListener('blur', function () { saveNotes(); });
+        document.getElementById('resetChecklistBtn').addEventListener('click', function () { resetChecklist(); });
+        document.getElementById('downloadPdfBtn').addEventListener('click', function () { downloadPDF(); });
 
         // Auto-save when user navigates away
         window.addEventListener('beforeunload', function () {

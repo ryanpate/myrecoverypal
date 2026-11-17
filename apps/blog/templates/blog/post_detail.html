@@ -590,7 +590,7 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
             Edit Post
         </a>
         <form method="post" action="{% url 'blog:post_delete' post.slug %}"
-            onsubmit="return confirm('Are you sure you want to delete this post? This action cannot be undone.');">
+            data-on-submit="confirm" data-confirm="Are you sure you want to delete this post? This action cannot be undone.">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">
                 Delete Post
@@ -603,22 +603,22 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
     <div class="share-section">
         <span class="share-label"><i class="fas fa-share-alt"></i> Share this story:</span>
         <div class="share-buttons">
-            <a href="#" class="share-btn facebook" onclick="shareOnFacebook(event)" title="Share on Facebook">
+            <a href="#" class="share-btn facebook" data-on-click="share-facebook" title="Share on Facebook">
                 <i class="fab fa-facebook-f"></i>
             </a>
-            <a href="#" class="share-btn twitter" onclick="shareOnTwitter(event)" title="Share on Twitter/X">
+            <a href="#" class="share-btn twitter" data-on-click="share-twitter" title="Share on Twitter/X">
                 <i class="fab fa-twitter"></i>
             </a>
-            <a href="#" class="share-btn linkedin" onclick="shareOnLinkedIn(event)" title="Share on LinkedIn">
+            <a href="#" class="share-btn linkedin" data-on-click="share-linkedin" title="Share on LinkedIn">
                 <i class="fab fa-linkedin-in"></i>
             </a>
-            <a href="#" class="share-btn whatsapp" onclick="shareOnWhatsApp(event)" title="Share on WhatsApp">
+            <a href="#" class="share-btn whatsapp" data-on-click="share-whatsapp" title="Share on WhatsApp">
                 <i class="fab fa-whatsapp"></i>
             </a>
-            <a href="#" class="share-btn email" onclick="shareViaEmail(event)" title="Share via Email">
+            <a href="#" class="share-btn email" data-on-click="share-email" title="Share via Email">
                 <i class="fas fa-envelope"></i>
             </a>
-            <button class="share-btn copy" onclick="copyToClipboard(event)" title="Copy link"
+            <button class="share-btn copy" data-on-click="copy-link" title="Copy link"
                 style="position: relative;">
                 <i class="fas fa-link"></i>
                 <span class="copy-tooltip">Copied!</span>
@@ -670,22 +670,22 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
         <div class="post-share-bottom">
             <h4><i class="fas fa-heart"></i> Found this helpful? Share with others in recovery</h4>
             <div class="share-buttons">
-                <a href="#" class="share-btn facebook" onclick="shareOnFacebook(event)" title="Share on Facebook">
+                <a href="#" class="share-btn facebook" data-on-click="share-facebook" title="Share on Facebook">
                     <i class="fab fa-facebook-f"></i>
                 </a>
-                <a href="#" class="share-btn twitter" onclick="shareOnTwitter(event)" title="Share on Twitter/X">
+                <a href="#" class="share-btn twitter" data-on-click="share-twitter" title="Share on Twitter/X">
                     <i class="fab fa-twitter"></i>
                 </a>
-                <a href="#" class="share-btn linkedin" onclick="shareOnLinkedIn(event)" title="Share on LinkedIn">
+                <a href="#" class="share-btn linkedin" data-on-click="share-linkedin" title="Share on LinkedIn">
                     <i class="fab fa-linkedin-in"></i>
                 </a>
-                <a href="#" class="share-btn whatsapp" onclick="shareOnWhatsApp(event)" title="Share on WhatsApp">
+                <a href="#" class="share-btn whatsapp" data-on-click="share-whatsapp" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="#" class="share-btn email" onclick="shareViaEmail(event)" title="Share via Email">
+                <a href="#" class="share-btn email" data-on-click="share-email" title="Share via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
-                <button class="share-btn copy" onclick="copyToClipboard(event)" title="Copy link"
+                <button class="share-btn copy" data-on-click="copy-link" title="Copy link"
                     style="position: relative;">
                     <i class="fas fa-link"></i>
                     <span class="copy-tooltip">Copied!</span>
@@ -771,6 +771,14 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
 </div>
 
 <script nonce="{{ csp_nonce }}">
+    // Actions for the share buttons' data-on-click attributes (see actions.js)
+    mrpAction('share-facebook', function (event) { shareOnFacebook(event); });
+    mrpAction('share-twitter', function (event) { shareOnTwitter(event); });
+    mrpAction('share-linkedin', function (event) { shareOnLinkedIn(event); });
+    mrpAction('share-whatsapp', function (event) { shareOnWhatsApp(event); });
+    mrpAction('share-email', function (event) { shareViaEmail(event); });
+    mrpAction('copy-link', function (event) { copyToClipboard(event); });
+
     // Get current page URL and post details
     const pageUrl = window.location.href;
     const postTitle = "{{ post.title|escapejs }}";
