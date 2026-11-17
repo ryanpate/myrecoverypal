@@ -17,6 +17,9 @@
     /* Light blue/cyan from logo */
     --accent-green: #52b788;
     /* Green from checkmark */
+    --accent-green-strong: #2e8059;
+    /* Button green: 4.8:1 with white text */
+    --accent-green-strong-hover: #256b4a;
 
     /* Legacy support (keeping old variable names) */
     --primary-color: #1e4d8b;
@@ -1065,7 +1068,7 @@ a:hover {
 .search-button,
 .download-button {
     padding: 0.75rem 1.5rem;
-    background: #2e8059; /* 4.8:1 with white text; --accent-green is 2.5:1 */
+    background: var(--accent-green-strong);
     color: #fff !important;
     border: none;
     border-radius: 50px;
@@ -1083,7 +1086,7 @@ a:hover {
 .cta-button:hover,
 .search-button:hover,
 .download-button:hover {
-    background: #256b4a;
+    background: var(--accent-green-strong-hover);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
     color: #fff !important;

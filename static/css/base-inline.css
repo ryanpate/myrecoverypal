@@ -557,12 +557,12 @@ body.android-native-app {
 
 .ios-native-app[data-theme="dark"] .native-tab.active,
 [data-theme="dark"] .ios-native-app .native-tab.active {
-    color: #4db8e8;
+    color: var(--primary-light);
 }
 
 .ios-native-app[data-theme="dark"] .native-tab.active::before,
 [data-theme="dark"] .ios-native-app .native-tab.active::before {
-    background: #4db8e8;
+    background: var(--primary-light);
 }
 
 /* ========================================
@@ -664,7 +664,7 @@ body.android-native-app {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     z-index: 100000;
-    background: #1e4d8b;
+    background: var(--primary-dark);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1490,7 +1490,7 @@ a.btn-primary:hover {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    background: linear-gradient(135deg, #1e4d8b 0%, #0f2d56 100%);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, #0f2d56 100%);
     color: white !important;
     padding: 0.4rem 0.85rem;
     border-radius: 25px;
@@ -1651,7 +1651,7 @@ a.cta-button,
 a.cta-button:link,
 a.cta-button:visited {
     padding: 0.6rem 1.5rem;
-    background: #2e8059; /* 4.8:1 with white text; --accent-green is 2.5:1 */
+    background: var(--accent-green-strong);
     color: #fff !important;
     text-decoration: none;
     border-radius: 50px;
@@ -1663,7 +1663,7 @@ a.cta-button:visited {
 
 .cta-button:hover,
 a.cta-button:hover {
-    background: #256b4a;
+    background: var(--accent-green-strong-hover);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
     color: #fff !important;
@@ -2059,7 +2059,7 @@ MOBILE SLIDE-OUT NAVIGATION
 .mobile-logout-btn {
     width: 100%;
     padding: 0.75rem;
-    background: #2e8059;
+    background: var(--accent-green-strong);
     color: white;
     border: none;
     border-radius: 8px;
@@ -2069,7 +2069,7 @@ MOBILE SLIDE-OUT NAVIGATION
 }
 
 .mobile-logout-btn:active {
-    background: #256b4a;
+    background: var(--accent-green-strong-hover);
 }
 
 /* Mobile Theme Toggle */
@@ -2824,7 +2824,7 @@ ALERT MESSAGES - Fixed positioning
 
 .alert-success {
     background: rgba(212, 237, 218, 0.95);
-    border-left: 4px solid #52b788;
+    border-left: 4px solid var(--accent-green);
     color: #155724;
 }
 
@@ -2843,7 +2843,7 @@ ALERT MESSAGES - Fixed positioning
 
 .alert-info {
     background: rgba(209, 236, 241, 0.95);
-    border-left: 4px solid #4db8e8;
+    border-left: 4px solid var(--primary-light);
     color: #0c5460;
 }
 
@@ -3119,7 +3119,7 @@ select:focus {
 }
 
 .mobile-sticky-cta-btn {
-    background: linear-gradient(135deg, #52b788 0%, #45a374 100%);
+    background: linear-gradient(135deg, var(--accent-green) 0%, #45a374 100%);
     color: white;
     padding: 0.65rem 1.5rem;
     border-radius: 50px;
@@ -3355,7 +3355,7 @@ select:focus {
     margin-left: 5px;
     vertical-align: super;
     border-radius: 50%;
-    background: #52b788;
+    background: var(--accent-green);
     box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.22);
 }
 .nav-new-dot[hidden] { display: none; }

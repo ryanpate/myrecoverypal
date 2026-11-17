@@ -143,7 +143,6 @@
   --ml-premium-from:#667eea; --ml-premium-to:#764ba2;
   --ml-gold-accent:#f5a623; --ml-gold-soft:#f0c040;
   --ml-grad-primary:linear-gradient(135deg,#1e4d8b 0%,#4db8e8 60%,#52b788 100%);
-  --ml-grad-accent:linear-gradient(135deg,#4db8e8 0%,#52b788 100%);
   --ml-grad-court:linear-gradient(135deg,#1e4d8b 0%,#0f2d56 100%);
   --ml-grad-premium:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
   --ml-grad-gold:linear-gradient(135deg,#f0c040 0%,#d4a017 100%);
@@ -162,7 +161,7 @@
   border-radius:var(--ml-radius-pill); cursor:pointer; text-decoration:none; white-space:nowrap; border:none;
   transition:all var(--ml-trans); padding:.75rem 1.5rem; font-size:1rem; line-height:1.2; }
 .ml-btn--lg { padding:.9rem 2rem; font-size:1.1rem; }
-.ml-btn--primary { background:#2e8059; color:#fff; }
+.ml-btn--primary { background:var(--accent-green-strong); color:#fff; }
 .ml-btn--primary:hover { transform:translateY(-2px); box-shadow:var(--ml-shadow-accent); color:#fff; }
 .ml-btn--outline { background:transparent; color:var(--ml-primary); border:2px solid var(--ml-primary); }
 .ml-btn--outline:hover { transform:translateY(-2px); box-shadow:var(--ml-shadow); color:var(--ml-primary); }
@@ -192,15 +191,12 @@
 .ml-blob--green { bottom:-200px; left:-160px; background:radial-gradient(circle, rgba(82,183,136,.14), transparent 65%); }
 .ml-hero-inner { position:relative; display:grid; grid-template-columns:1.05fr .95fr; gap:3rem;
   align-items:center; padding:4.5rem var(--ml-gutter) 5rem; }
-.ml-eyebrow { display:inline-flex; align-items:center; gap:.5rem; background:var(--ml-surface-sunken);
-  border-radius:var(--ml-radius-pill); padding:.4rem .9rem; font-size:.82rem; font-weight:600;
-  color:var(--ml-text-muted); margin-bottom:1.5rem; }
-.ml-eyebrow .dot { width:8px; height:8px; border-radius:50%; background:var(--ml-accent); box-shadow:0 0 0 4px rgba(82,183,136,.18); }
 .ml-h1 { margin:0 0 1.25rem; font-weight:800; letter-spacing:-.03em; line-height:1.03;
   font-size:clamp(2.6rem,4.6vw,3.9rem); color:var(--ml-text-strong); }
-.ml-grad-text { background:var(--ml-grad-accent); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
 .ml-lead { margin:0 0 2rem; max-width:480px; font-size:1.18rem; line-height:1.55; color:var(--ml-text-muted); }
-.ml-cta-row { display:flex; gap:.85rem; flex-wrap:wrap; margin-bottom:1.75rem; }
+.ml-cta-row { display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap; margin-bottom:1.75rem; }
+.ml .ml-text-link { font-weight:600; color:var(--ml-primary); text-decoration:underline; text-underline-offset:3px; }
+.ml h1, .ml h2 { text-wrap:balance; }
 .ml-trust { display:flex; flex-wrap:wrap; gap:1.25rem; list-style:none; margin:0; padding:0; }
 .ml-trust li { display:flex; align-items:center; gap:.45rem; font-size:.92rem; color:var(--ml-text-body); font-weight:500; }
 .ml-trust i { color:var(--ml-accent); }
@@ -255,8 +251,7 @@
 /* ---- Sections ---- */
 .ml-section { padding:5rem var(--ml-gutter); }
 .ml-court-section { padding:4.5rem var(--ml-gutter); }
-.ml-eyebrow-label { font-size:.8rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--ml-primary); }
-.ml-h2 { margin:.6rem 0 .6rem; font-size:clamp(1.9rem,3vw,2.5rem); font-weight:800; letter-spacing:-.02em; color:var(--ml-text-strong); }
+.ml-h2 { margin:0 0 .6rem; font-size:clamp(1.9rem,3vw,2.5rem); font-weight:800; letter-spacing:-.02em; color:var(--ml-text-strong); }
 .ml-section-head { max-width:620px; margin-bottom:2.75rem; }
 .ml-section-head p { margin:0; font-size:1.1rem; color:var(--ml-text-muted); line-height:1.55; }
 
@@ -299,9 +294,6 @@
 
 /* ---- Responsive ---- */
 /* ---- New toolkit + plans ---- */
-.ml-eyebrow--new { text-decoration:none; color:var(--ml-text-body); transition:background var(--ml-trans); }
-.ml-eyebrow--new:hover { background:#e9edf3; color:var(--ml-text-strong); }
-.ml-new-tag { background:#2e8059; color:#fff; border-radius:var(--ml-radius-pill); padding:.1rem .55rem; font-size:.72rem; font-weight:800; letter-spacing:.04em; text-transform:uppercase; }
 .ml-toolkit { background:var(--ml-surface-card); }
 .ml-tool-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:1.5rem; }
 .ml-tool { display:flex; flex-direction:column; text-decoration:none; color:inherit; }
@@ -362,8 +354,6 @@
 [data-theme="dark"] .ml a.ml-btn--outline, [data-theme="dark"] .ml a.ml-btn--outline:hover,
 [data-theme="dark"] .ml a.ml-plan-more, [data-theme="dark"] .ml a.ml-plan-more:hover { color:var(--ml-primary); }
 [data-theme="dark"] .ml a.ml-tool, [data-theme="dark"] .ml a.ml-tool:hover { color:inherit; }
-[data-theme="dark"] .ml a.ml-eyebrow--new { color:var(--ml-text-body); }
-[data-theme="dark"] .ml a.ml-eyebrow--new:hover { background:#2b3648; color:var(--ml-text-strong); }
 [data-theme="dark"] .ml .ml-feature-icon i { filter:brightness(1.5) saturate(1.1); }
 </style>
 {% endblock %}
@@ -377,8 +367,7 @@
     <div class="ml-blob ml-blob--green" aria-hidden="true"></div>
     <div class="ml-container ml-hero-inner">
       <div class="ml-hero-text">
-        <a class="ml-eyebrow ml-eyebrow--new" href="#ml-toolkit" data-promo="landing_hero_new"><span class="ml-new-tag">New</span> Guided audio, 30-day programs &amp; daily reflections <i class="fas fa-arrow-down" aria-hidden="true"></i></a>
-        <h1 class="ml-h1">Recovery is hard.<br>Doing it <span class="ml-grad-text">together</span> isn&rsquo;t.</h1>
+        <h1 class="ml-h1">Count your sober days alongside people in recovery.</h1>
         <p class="ml-lead">Join a community that actually gets it. Track your days, hit milestones, and find people who show up &mdash; whether you&rsquo;re 1 day or 10 years in.</p>
         {# The visitor's own counter, before any signup. Nothing leaves the browser; the date rides into signup on the button below. #}
         <div class="ml-count" id="ml-count">
@@ -402,7 +391,7 @@
         </div>
         <div class="ml-cta-row">
           <a class="ml-btn ml-btn--lg ml-btn--primary js-carry-date" href="{% url 'accounts:register' %}" id="ml-count-cta"><span id="ml-count-cta-text">Claim your free spot</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-          <a class="ml-btn ml-btn--lg ml-btn--outline" href="#ml-features"><i class="fas fa-play" aria-hidden="true"></i> See how it works</a>
+          <a class="ml-text-link" href="#ml-toolkit" data-promo="landing_hero_new">See the recovery toolkit</a>
         </div>
         <ul class="ml-trust">
           <li><i class="fas fa-circle-check" aria-hidden="true"></i> Free to join</li>
@@ -447,7 +436,6 @@
   <!-- FEATURES -->
   <section id="ml-features" class="ml-container ml-section">
     <div class="ml-section-head">
-      <span class="ml-eyebrow-label">What you get</span>
       <h2 class="ml-h2">Everything you need to keep going</h2>
       <p>Free to join. Tools that meet you exactly where you are.</p>
     </div>
@@ -488,7 +476,6 @@
   <section id="ml-toolkit" class="ml-toolkit">
     <div class="ml-container ml-section" style="padding-top:0;">
       <div class="ml-section-head">
-        <span class="ml-eyebrow-label">New in MyRecoveryPal</span>
         <h2 class="ml-h2">Your recovery toolkit</h2>
         <p>Guided help for the hard moments and the everyday ones. Start free; Premium opens all of it.</p>
       </div>
@@ -559,7 +546,7 @@
         <h2>A coach in your pocket, 24/7</h2>
         <p>&ldquo;I built an AI you can text at 2am when the craving hits.&rdquo; It&rsquo;s not therapy &mdash; it&rsquo;s something to talk to, judgment-free, whenever you need it. Free to try.</p>
         <div class="ml-cta-row" style="margin-bottom:0;">
-          <a class="ml-btn ml-btn--lg ml-btn--premium" href="{% url 'core:ai_recovery_coach' %}"><i class="fas fa-comment-dots" aria-hidden="true"></i> Try Anchor free</a>
+          <a class="ml-btn ml-btn--lg ml-btn--primary" href="{% url 'core:ai_recovery_coach' %}"><i class="fas fa-comment-dots" aria-hidden="true"></i> Try Anchor free</a>
           <a class="ml-btn ml-btn--lg ml-btn--outline" href="{% url 'core:ai_recovery_coach' %}">Learn more</a>
         </div>
       </div>
@@ -590,7 +577,6 @@
   <!-- FREE vs PREMIUM -->
   <section id="ml-plans" class="ml-container ml-section">
     <div class="ml-section-head" style="margin-left:auto;margin-right:auto;text-align:center;">
-      <span class="ml-eyebrow-label">Free forever, or go further</span>
       <h2 class="ml-h2">Start free. Upgrade when you&rsquo;re ready.</h2>
       <p>The community, your counter and every safety tool stay free. Premium adds the full library and a coach.</p>
     </div>
@@ -626,7 +612,7 @@
           <li><i class="fas fa-check" aria-hidden="true"></i> Anchor AI coach, 20 messages a day</li>
           <li><i class="fas fa-check" aria-hidden="true"></i> Mood &amp; craving trends, milestone medallions, and a free Supporter seat for a loved one</li>
         </ul>
-        <a class="ml-btn ml-btn--premium" href="{% url 'accounts:pricing' %}" data-promo="landing_plans_premium">Start your free trial</a>
+        <a class="ml-btn ml-btn--primary" href="{% url 'accounts:pricing' %}" data-promo="landing_plans_premium">Start your free trial</a>
         <a class="ml-plan-more" href="{% url 'accounts:pricing' %}" data-promo="landing_plans_compare">Compare all plans</a>
         <a class="ml-plan-more stripe-only" href="{% url 'core:gift_premium' %}" data-promo="landing_plans_gift">Buying for someone else? Gift a year</a>
       </div>
