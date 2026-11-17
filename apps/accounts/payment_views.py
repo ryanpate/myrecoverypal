@@ -3,6 +3,7 @@
 Payment and subscription views for Stripe integration
 """
 import stripe
+import hashlib
 import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -132,7 +133,15 @@ def _build_checkout_session(request, plan, coupon=None):
     )
     if coupon:
         session_kwargs['discounts'] = [{'coupon': coupon}]
-    checkout_session = stripe.checkout.Session.create(**session_kwargs)
+    # A double-click or a retried request within the same minute gets the
+    # same Checkout Session back instead of a second one. The key covers every
+    # parameter, so a different plan or coupon is never mistaken for a repeat.
+    fingerprint = json.dumps(session_kwargs, sort_keys=True, default=str)
+    minute = int(timezone.now().timestamp() // 60)
+    checkout_session = stripe.checkout.Session.create(
+        **session_kwargs,
+        idempotency_key=hashlib.sha256(f'{fingerprint}:{minute}'.encode()).hexdigest(),
+    )
     if plan.tier == 'premium':
         from . import trial_experiment as trial_ab
         trial_ab.track(request.user, trial_ab.BEGAN_CHECKOUT, {'period': plan.billing_period})

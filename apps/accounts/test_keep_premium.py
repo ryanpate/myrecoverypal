@@ -112,6 +112,26 @@ class BuildCheckoutSessionTrialTests(TestCase):
             _, kwargs = mock_stripe.checkout.Session.create.call_args
             return kwargs['subscription_data']
 
+    def _idempotency_key(self, coupon=None):
+        req = self.factory.get('/accounts/keep-premium/')
+        req.user = User.objects.get(pk=self.user.pk)
+        with patch.object(payment_views, 'stripe') as mock_stripe:
+            mock_stripe.Customer.create.return_value = MagicMock(id='cus_x')
+            mock_stripe.checkout.Session.create.return_value = MagicMock(id='cs', url='https://x')
+            payment_views._build_checkout_session(req, self.plan, coupon=coupon)
+            _, kwargs = mock_stripe.checkout.Session.create.call_args
+            return kwargs['idempotency_key']
+
+    def test_repeat_checkout_in_same_minute_reuses_idempotency_key(self):
+        now = timezone.now().replace(second=5, microsecond=0)
+        with patch.object(payment_views.timezone, 'now', return_value=now):
+            first = self._idempotency_key()
+            self.assertEqual(first, self._idempotency_key())
+            # Different parameters must never look like a repeat.
+            self.assertNotEqual(first, self._idempotency_key(coupon='co_x'))
+        with patch.object(payment_views.timezone, 'now', return_value=now + timedelta(minutes=2)):
+            self.assertNotEqual(first, self._idempotency_key())
+
     def test_active_trial_aligns_trial_end(self):
         sub = Subscription.objects.get(user=self.user)
         sub.trial_end = timezone.now() + timedelta(days=7)
