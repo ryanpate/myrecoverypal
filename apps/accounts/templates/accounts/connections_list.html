@@ -450,7 +450,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     async function followUser(username) {
         try {
             const response = await fetch(`/accounts/follow/${username}/`, {

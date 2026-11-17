@@ -229,7 +229,7 @@
         </button>
     </div>
 
-    <script>
+    <script nonce="{{ csp_nonce }}">
     function inviteSponsor() {
         fetch('/accounts/invite/sponsor/?role=sponsor')
             .then(function(r) { return r.json(); })

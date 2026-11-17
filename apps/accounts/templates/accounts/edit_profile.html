@@ -284,7 +284,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     // Downscale the avatar in the browser before it is uploaded.
     //
     // A raw phone photo is often 8-12MB. Sent over mobile data it can take

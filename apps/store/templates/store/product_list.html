@@ -762,7 +762,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     var SHOP_URL = window.location.origin + "{% url 'store:product_list' %}";
 

@@ -318,7 +318,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
 // Native Web Share API (mobile)
 async function nativeShare(milestoneTitle, button) {
     const shareData = {

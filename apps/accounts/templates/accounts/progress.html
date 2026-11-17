@@ -2222,7 +2222,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     const btn = document.getElementById('pledgeTodayBtn');
     if (!btn) return;
@@ -2254,7 +2254,7 @@
     });
 })();
 </script>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     const toggleBtn = document.getElementById('pledgeNoteToggleBtn');
     const toggleLabel = document.getElementById('pledgeNoteToggleLabel');
@@ -2379,7 +2379,7 @@
 {% if not is_free_user %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4" crossorigin="anonymous"></script>
 {% if total_checkins > 0 %}
-<script>
+<script nonce="{{ csp_nonce }}">
     const chartData = {{ chart_data|safe }};
     const moodDistribution = {{ mood_distribution|safe }};
     const heatmapData = {{ heatmap_data|safe }};
@@ -2661,7 +2661,7 @@
 {% endif %}{# end if not is_free_user — Chart.js guard #}
 
 <!-- ===== Check-in Date Resolution (client timezone) ===== -->
-<script>
+<script nonce="{{ csp_nonce }}">
 (function() {
     var doneBar = document.getElementById('checkinDoneBar');
     var formCard = document.getElementById('checkinFormCard');
@@ -2686,7 +2686,7 @@
 })();
 </script>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 (function() {
     var formCard = document.getElementById('checkinFormCard');
     var submitBtn = document.getElementById('inlineCheckinSubmit');
@@ -2771,7 +2771,7 @@
 </script>
 
 <!-- ===== Tab Switching ===== -->
-<script>
+<script nonce="{{ csp_nonce }}">
 (function() {
     var tabProgress = document.getElementById('tabProgress');
     var tabFeed = document.getElementById('tabFeed');
@@ -2804,10 +2804,11 @@
                 .then(function(html) {
                     feedInner.innerHTML = html;
                     feedSkeleton.style.display = 'none';
-                    // innerHTML doesn't execute <script> tags — extract and run them
+                    // innerHTML doesn't execute script tags — extract and run them
                     var scripts = feedInner.querySelectorAll('script');
                     scripts.forEach(function(oldScript) {
                         var newScript = document.createElement('script');
+                        newScript.nonce = '{{ csp_nonce }}';
                         newScript.textContent = oldScript.textContent;
                         oldScript.parentNode.replaceChild(newScript, oldScript);
                     });
@@ -2833,7 +2834,7 @@
 
 
 <!-- ===== Share Buttons ===== -->
-<script>
+<script nonce="{{ csp_nonce }}">
 (function() {
     var activeDropdown = null;
 
@@ -2971,7 +2972,7 @@
 })();
 </script>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 // Share milestone/progress via native share or milestone share page
 function shareMilestone(days) {
     var shareUrl = window.location.origin + '/accounts/milestone/' + days + '/';

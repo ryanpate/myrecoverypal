@@ -82,7 +82,7 @@ apps/core/context_processors.py::whats_new decides the page and audience).
     [data-theme="dark"] .wn-btn--ghost { color: #93c5fd; border-color: #374151; }
     [data-theme="dark"] .wn-btn--ghost:hover { background: #273244; }
 </style>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     var dlg = document.getElementById('whatsNew');
     if (!dlg || typeof dlg.showModal !== 'function') return;

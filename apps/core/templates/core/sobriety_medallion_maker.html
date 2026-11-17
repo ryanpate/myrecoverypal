@@ -402,7 +402,7 @@
             </a>
         </div>
     </section>
-    <script>
+    <script nonce="{{ csp_nonce }}">
     document.querySelectorAll('.smm-extra').forEach(function (a) {
         a.addEventListener('click', function () {
             if (window.gtag) gtag('event', 'select_promotion', { promotion_id: a.dataset.promo, creative_slot: 'medallion_landing' });

@@ -87,7 +87,7 @@
     </div>
 
     <p class="rp-noprint" style="margin-top:1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
-        <button class="rp-btn" onclick="window.print()">Print this page</button>
+        <button class="rp-btn" data-on-click="print-page">Print this page</button>
         <a class="rp-btn alt" href="{% url 'core:court_attendance_sheet' %}">Still on paper? Free attendance sheet</a>
         <a class="rp-btn alt" href="{% url 'core:for_probation_officers' %}">How report verification works</a>
     </p>

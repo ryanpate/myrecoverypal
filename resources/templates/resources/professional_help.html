@@ -530,7 +530,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     // Facilities data storage
     let facilitiesData = [];
     let filteredFacilities = [];

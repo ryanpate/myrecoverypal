@@ -126,7 +126,7 @@
         <h1>You're Offline</h1>
         <p>It looks like you've lost your internet connection. Don't worry, some features may still work while you're offline.</p>
 
-        <button class="retry-btn" onclick="window.location.reload()">
+        <button class="retry-btn" data-on-click="reload-page">
             <i class="fas fa-sync-alt"></i> Try Again
         </button>
 
@@ -156,7 +156,7 @@
     </div>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
     // Auto-retry when connection is restored
     window.addEventListener('online', () => {
         console.log('Connection restored');

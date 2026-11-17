@@ -136,7 +136,7 @@
         <p>Some courts and some hosts expect your camera on for the whole meeting before they will confirm attendance. If yours does, keep your camera on and use your real first name as your display name.</p>
     </details>
 </div>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     var el = document.getElementById('ompSignup');
     if (el) el.addEventListener('click', function () { if (window.gtag) gtag('event', 'court_signup_click', { page: 'online_proof' }); });

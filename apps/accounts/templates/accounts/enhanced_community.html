@@ -848,7 +848,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     // Update last seen on page load
     {% if user.is_authenticated %}
     fetch('/accounts/api/update-last-seen/', {

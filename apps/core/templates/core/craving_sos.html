@@ -241,7 +241,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     // ---- Breathing: 4-7-8, four rounds ----
     var breathBtn = document.getElementById('breath-toggle');

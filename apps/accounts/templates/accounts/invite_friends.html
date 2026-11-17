@@ -468,7 +468,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
 function copyInviteLink() {
     const input = document.getElementById('invite-link');
     const btn = document.getElementById('copy-btn');

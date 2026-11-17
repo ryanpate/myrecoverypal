@@ -638,7 +638,7 @@
   </section>
 
 </div>
-<script>
+<script nonce="{{ csp_nonce }}">
 // GA4: which landing promos people click (select_promotion).
 document.addEventListener('click', function (e) {
   var a = e.target.closest && e.target.closest('[data-promo]');
@@ -647,7 +647,7 @@ document.addEventListener('click', function (e) {
   }
 });
 </script>
-<script>
+<script nonce="{{ csp_nonce }}">
 // Hero counter. Same day math, milestones and localStorage keys as the
 // calculators, so a date or daily spend entered on either follows the visitor
 // to signup and to the pricing page.

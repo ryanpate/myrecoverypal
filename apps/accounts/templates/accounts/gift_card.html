@@ -65,7 +65,7 @@
             {% if gift.buyer_email %}We emailed this to {{ gift.buyer_email }} so you can come back to it. {% endif %}
             The link works once, for whoever opens it first, and it doesn't expire.
         </p>
-        <script>
+        <script nonce="{{ csp_nonce }}">
         document.getElementById('giftCopy').addEventListener('click', function () {
             var btn = this;
             navigator.clipboard.writeText(btn.dataset.url).then(function () { btn.textContent = 'Copied'; });

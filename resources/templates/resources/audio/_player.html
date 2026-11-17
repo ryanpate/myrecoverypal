@@ -10,7 +10,7 @@ and sets Media Session metadata for the lock screen / Control Center.
     <audio controls preload="metadata" src="{% url 'resources:audio_play' track.slug %}"></audio>
     <button type="button" class="ws-btn-secondary au-resume" hidden></button>
 </div>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     var box = document.currentScript.previousElementSibling;
     var audio = box.querySelector('audio');

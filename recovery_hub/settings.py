@@ -251,6 +251,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # Subscription context for premium feature gating
                 'apps.accounts.context_processors.subscription_context',
+                'apps.accounts.context_processors.csp_nonce',
                 # SEO defaults for better search engine visibility
                 'apps.core.context_processors.seo_defaults',
                 'apps.core.context_processors.ga_events',
@@ -734,6 +735,9 @@ if not DEBUG:
 # apps.accounts.middleware.ContentSecurityPolicyMiddleware. Set
 # CSP_REPORT_ONLY=true to stop enforcing (report-only) without a deploy.
 CSP_REPORT_ONLY = os.environ.get('CSP_REPORT_ONLY', 'False').lower() == 'true'
+# CSP_STRICT=true replaces script-src 'unsafe-inline' with a per-request nonce.
+# Leave it off until no template has an inline on*= handler left.
+CSP_STRICT = os.environ.get('CSP_STRICT', 'False').lower() == 'true'
 
 if not DEBUG:
     SECURE_CONTENT_TYPE_OPTIONS_HEADER = True  # X-Content-Type-Options: nosniff

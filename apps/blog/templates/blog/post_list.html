@@ -803,7 +803,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     // Auto-submit search form with delay
     const searchInput = document.querySelector('input[name="search"]');
     if (searchInput) {

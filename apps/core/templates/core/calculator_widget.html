@@ -79,7 +79,7 @@
         <a href="{% url 'core:for_recovery_programs' %}">meeting attendance tracking for sober living and DUI programs</a>.</p>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 document.querySelectorAll('[data-copy]').forEach(function (button) {
     button.addEventListener('click', function () {
         var box = document.getElementById(button.dataset.copy);

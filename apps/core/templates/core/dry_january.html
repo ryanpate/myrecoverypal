@@ -164,7 +164,7 @@
 
     <p class="dj-note">MyRecoveryPal is not affiliated with Alcohol Change UK, which runs the official Dry January campaign.</p>
 </div>
-<script>
+<script nonce="{{ csp_nonce }}">
 document.querySelectorAll('[data-dj-cta]').forEach(function (el) {
     el.addEventListener('click', function () {
         if (window.gtag) gtag('event', 'dry_january_cta_click', { state: el.dataset.djCta });

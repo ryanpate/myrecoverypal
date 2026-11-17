@@ -71,7 +71,7 @@ Dismiss hides it for 7 days via localStorage so it never nags.
     }
     .premium-upsell-dismiss:hover { color: #fff; }
 </style>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function(){
     var card = document.getElementById('premiumUpsellCard');
     if (!card) return;

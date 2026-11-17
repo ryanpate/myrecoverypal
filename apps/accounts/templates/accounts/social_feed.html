@@ -1980,7 +1980,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
 // Test if this script block loads - BUILD 2026-03-05-v1
 console.log('=== SOCIAL FEED JS LOADED ===');
 window.onerror = function(msg, url, line) {

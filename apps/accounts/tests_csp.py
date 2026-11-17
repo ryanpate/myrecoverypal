@@ -85,3 +85,72 @@ class ContentSecurityPolicyTests(TestCase):
         resp = self.client.get('/accounts/login/')
         self.assertIn('Content-Security-Policy-Report-Only', resp.headers)
         self.assertNotIn('Content-Security-Policy', resp.headers)
+
+
+@override_settings(**_TEST_SETTINGS)
+class CspNonceTests(TestCase):
+    """CSP_STRICT swaps script-src 'unsafe-inline' for a per-request nonce."""
+
+    def _script_src(self, resp):
+        return _directives(resp.headers['Content-Security-Policy'])['script-src']
+
+    def test_default_policy_still_allows_inline_scripts(self):
+        script_src = self._script_src(self.client.get('/accounts/login/'))
+        self.assertIn("'unsafe-inline'", script_src)
+        self.assertFalse([v for v in script_src if v.startswith("'nonce-")])
+
+    @override_settings(CSP_STRICT=True)
+    def test_strict_policy_uses_the_nonce_the_page_was_rendered_with(self):
+        resp = self.client.get('/accounts/login/')
+        script_src = self._script_src(resp)
+        self.assertNotIn("'unsafe-inline'", script_src)
+        nonces = [v[len("'nonce-"):-1] for v in script_src if v.startswith("'nonce-")]
+        self.assertEqual(len(nonces), 1)
+        self.assertIn(f'<script nonce="{nonces[0]}">', resp.content.decode())
+
+    @override_settings(CSP_STRICT=True)
+    def test_each_response_gets_its_own_nonce(self):
+        first = self._script_src(self.client.get('/accounts/login/'))
+        second = self._script_src(self.client.get('/accounts/login/'))
+        self.assertNotEqual(first, second)
+
+    @override_settings(CSP_STRICT=True)
+    def test_summernote_editor_keeps_inline_scripts(self):
+        resp = self.client.get('/summernote/editor/id_content/')
+        self.assertIn("'unsafe-inline'", self._script_src(resp))
+
+
+class InlineScriptTemplateTests(TestCase):
+    """What a nonce policy would block, checked in the template source."""
+
+    # Converted so far. Add a directory here when its last inline handler goes.
+    HANDLER_FREE = ['templates', 'apps/core/templates']
+    # Has its own policy (EMBED_CSP) because other sites frame it.
+    OWN_POLICY = {'apps/core/templates/core/embed_calculator.html'}
+
+    def _templates(self, roots):
+        import glob
+        from django.conf import settings
+        for root in roots:
+            for path in glob.glob(f'{settings.BASE_DIR}/{root}/**/*.html', recursive=True):
+                rel = path[len(str(settings.BASE_DIR)) + 1:]
+                if rel not in self.OWN_POLICY:
+                    with open(path, encoding='utf-8') as f:
+                        yield rel, f.read()
+
+    def test_every_inline_script_carries_the_nonce(self):
+        import re
+        untagged = []
+        for rel, source in self._templates(['templates', 'apps', 'resources']):
+            for tag in re.findall(r'<script(?:\s[^>]*)?>', source):
+                if 'src=' in tag or 'nonce="{{ csp_nonce }}"' in tag or 'application/ld+json' in tag:
+                    continue
+                untagged.append(f'{rel}: {tag}')
+        self.assertEqual(untagged, [])
+
+    def test_converted_templates_have_no_inline_handlers(self):
+        import re
+        found = []
+        for rel, source in self._templates(self.HANDLER_FREE):
+            found += [f'{rel}: {m}' for m in re.findall(r'\son[a-z]+="[^"]*"', source)]
+        self.assertEqual(found, [])

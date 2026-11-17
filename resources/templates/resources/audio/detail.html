@@ -68,7 +68,7 @@
             </div>
         </div>
         {% if track.preview %}
-        <script>
+        <script nonce="{{ csp_nonce }}">
         (function () {
             var box = document.getElementById('auPreview'), locked = document.getElementById('auLocked');
             if (!box || !locked) return;

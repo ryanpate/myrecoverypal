@@ -25,7 +25,7 @@ the Apple purchase flow inside the iOS app, so no web price appears here.
     {% endif %}
     <a class="pg-milestone-later" href="{% url 'resources:program_detail' program.slug %}">Not now, see my progress</a>
 </section>
-<script>
+<script nonce="{{ csp_nonce }}">
 (function () {
     if (typeof gtag !== 'function') return;
     gtag('event', 'view_promotion', { promotion_id: 'program_free_days_done', creative_slot: '{{ program.slug|escapejs }}' });

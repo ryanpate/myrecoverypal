@@ -312,7 +312,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     // Live preview updates
     document.addEventListener('DOMContentLoaded', function () {
         const nameInput = document.getElementById('name');

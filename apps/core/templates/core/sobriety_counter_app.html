@@ -1125,7 +1125,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
 document.addEventListener('DOMContentLoaded', function() {
     const dateInput = document.getElementById('mini-sobriety-date');
     const resultDiv = document.getElementById('mini-calc-result');

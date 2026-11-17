@@ -1,4 +1,5 @@
 import logging
+import secrets
 import time
 from django.utils import timezone
 from django.conf import settings
@@ -50,11 +51,14 @@ class ContentSecurityPolicyMiddleware:
     (<object>/<embed>) and <base> hijacking are off; pages can't be framed;
     forms can only post here or on to Stripe.
 
-    What it does NOT buy: protection against injected inline script. The
-    templates rely on ~120 inline <script> blocks and ~190 inline on*=
-    handlers, so script-src has to keep 'unsafe-inline'. Dropping it means
-    moving those handlers into JS files and adding nonces — until then,
-    output escaping remains the XSS defence and this header is a second layer.
+    What it does NOT buy yet: protection against injected inline script.
+    script-src keeps 'unsafe-inline' because many templates still use inline
+    on*= handlers. Every request gets a nonce (request.csp_nonce, rendered as
+    {{ csp_nonce }} on each inline <script>), and CSP_STRICT=true swaps
+    'unsafe-inline' for that nonce. Turn it on only once the remaining inline
+    handlers are converted: under a nonce policy browsers block all of them.
+    Until then output escaping remains the XSS defence and this header is a
+    second layer. The Summernote editor pages always keep 'unsafe-inline'.
 
     When a page starts loading something from a new host it must be added
     here, or browsers will block it (look for "Refused to load" in the
@@ -121,14 +125,22 @@ class ContentSecurityPolicyMiddleware:
         return '; '.join(f"{name} {' '.join(values)}" for name, values in directives.items())
 
     def __call__(self, request):
+        request.csp_nonce = secrets.token_urlsafe(16)
         response = self.get_response(request)
         header = ('Content-Security-Policy-Report-Only'
                   if getattr(settings, 'CSP_REPORT_ONLY', False)
                   else 'Content-Security-Policy')
         if header not in response:
-            response[header] = (self.summernote_policy
-                                if request.path.startswith('/summernote/')
-                                else self.policy)
+            if request.path.startswith('/summernote/'):
+                response[header] = self.summernote_policy
+            elif getattr(settings, 'CSP_STRICT', False):
+                response[header] = self._build({
+                    **self.DIRECTIVES,
+                    'script-src': [f"'nonce-{request.csp_nonce}'" if v == "'unsafe-inline'" else v
+                                   for v in self.DIRECTIVES['script-src']],
+                })
+            else:
+                response[header] = self.policy
         return response
 
 
