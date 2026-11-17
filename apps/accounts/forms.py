@@ -196,6 +196,7 @@ class CustomUserCreationForm(forms.ModelForm):
 class CustomUserCreationFormWithInvite(UserCreationForm):
     email = forms.EmailField(
         required=True,
+        widget=forms.EmailInput(attrs={'autocomplete': 'email'}),
         help_text='Required. Enter a valid email address.'
     )
     invite_code = forms.CharField(
