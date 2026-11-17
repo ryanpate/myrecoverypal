@@ -57,7 +57,7 @@
 
     <div class="ws-print-area">
         <form id="ws-form" autocomplete="off"
-              {% if has_premium and editable %}method="post" action="{% url 'resources:worksheet_save' worksheet.slug %}"{% else %}onsubmit="return false;"{% endif %}>
+              {% if has_premium and editable %}method="post" action="{% url 'resources:worksheet_save' worksheet.slug %}"{% else %}data-on-submit="prevent-default"{% endif %}>
             {% if has_premium and editable %}
                 {% csrf_token %}
                 {% if entry %}<input type="hidden" name="entry_id" value="{{ entry.pk }}">{% endif %}
@@ -109,14 +109,14 @@
             {% endif %}
         {% endif %}
         {% if not entry %}
-        <button type="button" class="ws-btn-secondary" onclick="window.print()">
+        <button type="button" class="ws-btn-secondary" data-on-click="print-page">
             <i class="fas fa-print" aria-hidden="true"></i> Print</button>
         <a class="ws-btn-secondary" href="{% url 'resources:worksheet_blank_pdf' worksheet.slug %}">
             <i class="fas fa-download" aria-hidden="true"></i> Blank PDF</a>
         {% endif %}
         {% if entry %}
         <form method="post" action="{% url 'resources:worksheet_entry_delete' entry.pk %}" class="ws-inline-form"
-              onsubmit="return confirm('Delete this entry? This cannot be undone.');">
+              data-on-submit="confirm" data-confirm="Delete this entry? This cannot be undone.">
             {% csrf_token %}
             <button type="submit" class="ws-btn-danger">Delete</button>
         </form>

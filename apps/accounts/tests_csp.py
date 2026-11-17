@@ -124,7 +124,10 @@ class InlineScriptTemplateTests(TestCase):
     """What a nonce policy would block, checked in the template source."""
 
     # Converted so far. Add a directory here when its last inline handler goes.
-    HANDLER_FREE = ['templates', 'apps/core/templates']
+    HANDLER_FREE = [
+        'templates', 'apps/core/templates', 'apps/blog/templates',
+        'apps/support_services/templates', 'apps/journal/templates', 'resources/templates',
+    ]
     # Has its own policy (EMBED_CSP) because other sites frame it.
     OWN_POLICY = {'apps/core/templates/core/embed_calculator.html'}
 
@@ -152,5 +155,7 @@ class InlineScriptTemplateTests(TestCase):
         import re
         found = []
         for rel, source in self._templates(self.HANDLER_FREE):
-            found += [f'{rel}: {m}' for m in re.findall(r'\son[a-z]+="[^"]*"', source)]
+            # Any on*= attribute, whatever precedes it (a space, a newline, a template tag).
+            found += [f'{rel}: {m}' for m in
+                      re.findall(r'''(?<![\w-])on[a-z]{3,}\s*=\s*(?:"[^"]*"|'[^']*')''', source)]
         self.assertEqual(found, [])

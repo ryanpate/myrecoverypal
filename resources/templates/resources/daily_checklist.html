@@ -401,10 +401,10 @@
         <!-- Action Buttons -->
         <div class="action-buttons">
             <div class="btn-group">
-                <button class="btn btn-secondary" onclick="resetChecklist()">
+                <button class="btn btn-secondary" data-on-click="reset-checklist">
                     <span>🔄</span> Reset Checklist
                 </button>
-                <button class="btn btn-primary" onclick="downloadPDF()">
+                <button class="btn btn-primary" data-on-click="download-pdf">
                     <span>📥</span> Download as PDF
                 </button>
             </div>
@@ -418,6 +418,9 @@
 
 {% block extra_js %}
 <script nonce="{{ csp_nonce }}">
+    mrpAction('reset-checklist', function () { resetChecklist(); });
+    mrpAction('download-pdf', function () { downloadPDF(); });
+
     // Initialize checklist
     const STORAGE_KEY = 'daily-recovery-checklist';
     let checklistData = {};

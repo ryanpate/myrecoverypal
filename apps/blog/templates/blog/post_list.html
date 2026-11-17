@@ -522,6 +522,8 @@
             margin: 0.25rem !important;
         }
     }
+    /* Pager links fill on hover (the inline styles set the resting colours) */
+    .pager-link-hover:hover { background: #1e4d8b !important; color: white !important; }
 </style>
 {% endblock %}
 
@@ -696,9 +698,7 @@
                 <div style="display: inline-block;">
                     {% if page_obj.has_previous %}
                     <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
-                        style="background: white; color: #1e4d8b; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; text-decoration: none; border: 2px solid #1e4d8b; border-radius: 8px; display: inline-block; margin: 0 0.5rem; transition: all 0.3s ease;"
-                        onmouseover="this.style.background='#1e4d8b'; this.style.color='white';"
-                        onmouseout="this.style.background='white'; this.style.color='#1e4d8b';">
+                        style="background: white; color: #1e4d8b; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; text-decoration: none; border: 2px solid #1e4d8b; border-radius: 8px; display: inline-block; margin: 0 0.5rem; transition: all 0.3s ease;" class="pager-link-hover">
                         ← Previous
                     </a>
                     {% endif %}
@@ -710,9 +710,7 @@
 
                     {% if page_obj.has_next %}
                     <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
-                        style="background: white; color: #1e4d8b; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; text-decoration: none; border: 2px solid #1e4d8b; border-radius: 8px; display: inline-block; margin: 0 0.5rem; transition: all 0.3s ease;"
-                        onmouseover="this.style.background='#1e4d8b'; this.style.color='white';"
-                        onmouseout="this.style.background='white'; this.style.color='#1e4d8b';">
+                        style="background: white; color: #1e4d8b; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; text-decoration: none; border: 2px solid #1e4d8b; border-radius: 8px; display: inline-block; margin: 0 0.5rem; transition: all 0.3s ease;" class="pager-link-hover">
                         Next →
                     </a>
                     {% endif %}

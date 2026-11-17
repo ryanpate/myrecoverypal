@@ -20,6 +20,14 @@
     // Used on many pages.
     actions['print-page'] = function () { window.print(); };
     actions['reload-page'] = function () { window.location.reload(); };
+    // <form data-on-submit="confirm" data-confirm="Delete this?">
+    actions['confirm'] = function () { return window.confirm(this.getAttribute('data-confirm')); };
+    actions['stop-propagation'] = function (event) { event.stopPropagation(); };
+    actions['prevent-default'] = function () { return false; };
+    // <button data-on-click="set-display" data-target="someId" data-display="none">
+    actions['set-display'] = function () {
+        document.getElementById(this.getAttribute('data-target')).style.display = this.getAttribute('data-display');
+    };
 
     function run(el, type, event) {
         var name = el.getAttribute('data-on-' + type);

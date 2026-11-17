@@ -121,7 +121,7 @@
 
     {% if progress and progress.done_count %}
     <form method="post" action="{% url 'resources:program_restart' program.slug %}" style="margin-top: 1.5rem;"
-          onsubmit="return confirm('Start {{ program.title|escapejs }} over from Day 1? Your progress will be reset.');">
+          data-on-submit="confirm" data-confirm="Start {{ program.title }} over from Day 1? Your progress will be reset.">
         {% csrf_token %}
         <button type="submit" class="ws-btn-danger" style="padding-left: 0;">Start over from Day 1</button>
     </form>
