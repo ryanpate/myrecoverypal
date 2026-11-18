@@ -29,17 +29,17 @@ works without JavaScript; JS only adds the 3-day "Not now" dismissal.
     .sd-icon { flex: none; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center;
         justify-content: center; background: #52b788; color: #fff; font-size: 1.35rem; }
     .sd-body { flex: 1; min-width: 0; }
-    .sd-title { margin: 0 0 .3rem; font-size: 1.25rem; font-weight: 800; color: #1a2a44; }
-    .sd-sub { margin: 0 0 .9rem; color: #4b5563; line-height: 1.5; font-size: .95rem; }
+    .sd-title { margin: 0 0 .3rem; font-size: 1.25rem; font-weight: 800; color: var(--text-dark, #1a2a44); }
+    .sd-sub { margin: 0 0 .9rem; color: var(--text-muted, #4b5563); line-height: 1.5; font-size: .95rem; }
     .sd-form { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
     .sd-input { padding: .6rem .8rem; border: 1px solid #cfd8e3; border-radius: 10px; font-size: 1rem;
-        background: #fff; color: #1a2a44; min-width: 160px; }
+        background: var(--card-bg, #fff); color: var(--text-dark, #1a2a44); min-width: 160px; }
     .sd-btn { border: none; cursor: pointer; border-radius: 999px; padding: .65rem 1.2rem; font-weight: 700;
         font-size: .95rem; color: #fff; background: #1e4d8b;
         --heading-color: currentColor; }
-    .sd-btn-ghost { background: transparent; color: #1e4d8b; border: 1.5px solid #1e4d8b; }
-    .sd-note { margin: .75rem 0 0; font-size: .82rem; color: #6b7280; }
-    .sd-dismiss { background: none; border: none; color: #6b7280; text-decoration: underline; cursor: pointer;
+    .sd-btn-ghost { background: transparent; color: var(--brand-text, #1e4d8b); border: 1.5px solid #1e4d8b; }
+    .sd-note { margin: .75rem 0 0; font-size: .82rem; color: var(--text-muted, #6b7280); }
+    .sd-dismiss { background: none; border: none; color: var(--text-muted, #6b7280); text-decoration: underline; cursor: pointer;
         font-size: .82rem; margin-left: .5rem; padding: 0; }
     [data-theme="dark"] .sd-prompt { background: linear-gradient(135deg, #1e293b 0%, #16352a 100%); border-color: #2f5b45; }
     [data-theme="dark"] .sd-title { color: #e8eef7; }

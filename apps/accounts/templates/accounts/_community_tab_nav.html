@@ -21,6 +21,8 @@
     padding: 0.3rem;
     border-radius: 999px;
     margin: 0 auto 1.5rem;
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
 }
 .community-tab-nav__link {
     display: inline-flex;
@@ -29,15 +31,15 @@
     padding: 0.5rem 1.1rem;
     border-radius: 999px;
     text-decoration: none;
-    color: #555;
+    color: var(--text-muted, #555);
     font-weight: 600;
     font-size: 0.9rem;
     transition: background-color 0.15s, color 0.15s;
 }
-.community-tab-nav__link:hover { color: #1e4d8b; }
+.community-tab-nav__link:hover { color: var(--brand-text, #1e4d8b); }
 .community-tab-nav__link--active {
-    background: white;
-    color: #1e4d8b;
+    background: var(--card-bg, #fff);
+    color: var(--brand-text, #1e4d8b);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 @media (max-width: 600px) {

@@ -82,8 +82,8 @@
     }
 
     .featured-cta .cta-btn {
-        background: white;
-        color: #1e4d8b;
+        background: var(--card-bg, #fff);
+        color: var(--brand-text, #1e4d8b);
         padding: 0.875rem 2.5rem;
         border-radius: 50px;
         text-decoration: none;
@@ -98,11 +98,11 @@
         transform: translateY(-2px);
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
         text-decoration: none;
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
     }
 
     .filter-section {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 1.5rem;
         border-radius: 12px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -119,10 +119,10 @@
 
     .filter-tab {
         padding: 0.5rem 1rem;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color, #e0e0e0);
         border-radius: 25px;
         text-decoration: none;
-        color: #666;
+        color: var(--text-muted, #666);
         transition: all 0.3s;
         font-size: 0.9rem;
         display: inline-flex;
@@ -167,7 +167,7 @@
     }
 
     .post-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 12px;
         overflow: hidden;
         box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
@@ -257,13 +257,13 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 0.85rem;
         margin-bottom: 0.75rem;
     }
 
     .post-title {
-        color: #333;
+        color: var(--text-dark, #333);
         text-decoration: none;
         font-size: 1.25rem;
         font-weight: 600;
@@ -273,11 +273,11 @@
     }
 
     .post-title:hover {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
     }
 
     .post-excerpt {
-        color: #666;
+        color: var(--text-muted, #666);
         line-height: 1.6;
         margin-bottom: 1rem;
         flex: 1;
@@ -288,7 +288,7 @@
         justify-content: space-between;
         align-items: center;
         padding-top: 1rem;
-        border-top: 1px solid #f0f0f0;
+        border-top: 1px solid var(--border-color, #f0f0f0);
     }
 
     .post-category {
@@ -299,6 +299,8 @@
         font-size: 0.8rem;
         text-decoration: none;
         transition: all 0.3s;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .post-category:hover {
@@ -310,7 +312,7 @@
         display: flex;
         gap: 1rem;
         font-size: 0.85rem;
-        color: #999;
+        color: var(--text-faint, #999);
     }
 
     .post-stats span {
@@ -332,7 +334,7 @@
     }
 
     .sidebar-section {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 1.5rem;
         border-radius: 12px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -340,7 +342,7 @@
     }
 
     .sidebar-section h5 {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1rem;
         font-size: 1.1rem;
     }
@@ -352,7 +354,7 @@
 
     .category-list li {
         padding: 0.5rem 0;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--border-color, #f0f0f0);
     }
 
     .category-list li:last-child {
@@ -360,7 +362,7 @@
     }
 
     .category-list a {
-        color: #666;
+        color: var(--text-muted, #666);
         text-decoration: none;
         display: flex;
         justify-content: space-between;
@@ -369,11 +371,11 @@
     }
 
     .category-list a:hover {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
     }
 
     .category-count {
-        background: #f0f0f0;
+        background: var(--bg-gray, #f0f0f0);
         padding: 0.125rem 0.5rem;
         border-radius: 12px;
         font-size: 0.8rem;
@@ -386,11 +388,11 @@
     }
 
     .tag {
-        background: #f0f0f0;
+        background: var(--bg-gray, #f0f0f0);
         padding: 0.25rem 0.75rem;
         border-radius: 20px;
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-muted, #666);
         text-decoration: none;
         transition: all 0.3s ease;
     }
@@ -408,7 +410,7 @@
         width: 100%;
         padding: 0.75rem 1rem;
         padding-right: 3rem;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color, #e0e0e0);
         border-radius: 25px;
         font-size: 0.95rem;
         transition: border-color 0.3s;
@@ -620,8 +622,8 @@
                 </div>
                 {% empty %}
                 <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
-                    <h3 style="color: #666;">No posts found</h3>
-                    <p style="color: #999;">Be the first to share your story!</p>
+                    <h3 style="color: var(--text-muted, #666);">No posts found</h3>
+                    <p style="color: var(--text-faint, #999);">Be the first to share your story!</p>
                     {% if user.is_authenticated %}
                     <a href="{% url 'blog:post_create' %}" class="btn btn-success mt-3">
                         Write First Post
@@ -634,11 +636,11 @@
             <!-- Pagination -->
             {% if is_paginated %}
             <div class="blog-pagination-wrapper"
-                style="background: #f8f9fa; border-radius: 12px; padding: 2rem; margin: 3rem 0 2rem 0; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                style="background: var(--bg-light, #f8f9fa); border-radius: 12px; padding: 2rem; margin: 3rem 0 2rem 0; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
                 <div style="display: inline-block;">
                     {% if page_obj.has_previous %}
                     <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
-                        style="background: white; color: #1e4d8b; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; text-decoration: none; border: 2px solid #1e4d8b; border-radius: 8px; display: inline-block; margin: 0 0.5rem; transition: all 0.3s ease;" class="pager-link-hover">
+                        style="background: var(--card-bg, #fff); color: var(--brand-text, #1e4d8b); padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; text-decoration: none; border: 2px solid #1e4d8b; border-radius: 8px; display: inline-block; margin: 0 0.5rem; transition: all 0.3s ease;" class="pager-link-hover">
                         ← Previous
                     </a>
                     {% endif %}
@@ -650,7 +652,7 @@
 
                     {% if page_obj.has_next %}
                     <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
-                        style="background: white; color: #1e4d8b; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; text-decoration: none; border: 2px solid #1e4d8b; border-radius: 8px; display: inline-block; margin: 0 0.5rem; transition: all 0.3s ease;" class="pager-link-hover">
+                        style="background: var(--card-bg, #fff); color: var(--brand-text, #1e4d8b); padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; text-decoration: none; border: 2px solid #1e4d8b; border-radius: 8px; display: inline-block; margin: 0 0.5rem; transition: all 0.3s ease;" class="pager-link-hover">
                         Next →
                     </a>
                     {% endif %}
@@ -668,9 +670,9 @@
                 <ul style="list-style: none; padding: 0;">
                     {% for post in recent_posts %}
                     <li style="padding: 0.5rem 0;">
-                        <a href="{{ post.get_absolute_url }}" style="color: #666; text-decoration: none;">
-                            <strong style="display: block; color: #333;">{{ post.title|truncatewords:8 }}</strong>
-                            <small style="color: #999;">{{ post.published_at|date:"M d" }}</small>
+                        <a href="{{ post.get_absolute_url }}" style="color: var(--text-muted, #666); text-decoration: none;">
+                            <strong style="display: block; color: var(--text-dark, #333);">{{ post.title|truncatewords:8 }}</strong>
+                            <small style="color: var(--text-faint, #999);">{{ post.published_at|date:"M d" }}</small>
                         </a>
                     </li>
                     {% endfor %}
@@ -697,26 +699,26 @@
             <div class="sidebar-section">
                 <h5>Explore More</h5>
                 <ul style="list-style: none; padding: 0;">
-                    <li style="padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0;">
-                        <a href="{% url 'accounts:community' %}" style="color: #666; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color, #f0f0f0);">
+                        <a href="{% url 'accounts:community' %}" style="color: var(--text-muted, #666); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
                             <i class="fas fa-users" style="color: #52b788;"></i> Recovery Community
                         </a>
                     </li>
 {% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
-                    <li style="padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0;">
-                        <a href="{% url 'accounts:groups_list' %}" style="color: #666; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color, #f0f0f0);">
+                        <a href="{% url 'accounts:groups_list' %}" style="color: var(--text-muted, #666); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
                             <i class="fas fa-user-friends" style="color: #4db8e8;"></i> Support Groups
                         </a>
                     </li>
 {% endif %}
-                    <li style="padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0;">
-                        <a href="{% url 'resources:list' %}" style="color: #666; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color, #f0f0f0);">
+                        <a href="{% url 'resources:list' %}" style="color: var(--text-muted, #666); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
                             <i class="fas fa-bookmark" style="color: #9b59b6;"></i> Recovery Resources
                         </a>
                     </li>
 {% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
                     <li style="padding: 0.5rem 0;">
-                        <a href="{% url 'accounts:challenges_home' %}" style="color: #666; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                        <a href="{% url 'accounts:challenges_home' %}" style="color: var(--text-muted, #666); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
                             <i class="fas fa-trophy" style="color: #f39c12;"></i> Recovery Challenges
                         </a>
                     </li>

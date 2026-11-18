@@ -24,7 +24,7 @@
 
 /* Biometric Settings Toggles */
 .biometric-settings-section h3 {
-    color: var(--primary-color, #1e4d8b);
+    color: var(--brand-text, #1e4d8b);
     margin-bottom: 1rem;
     font-size: 1.3rem;
     display: flex;
@@ -37,7 +37,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.875rem 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color, #eee);
     transition: opacity var(--dur-fast) var(--ease-out);
 }
 
@@ -58,7 +58,7 @@
 
 .biometric-setting-desc {
     font-size: 0.85rem;
-    color: #888;
+    color: var(--text-muted, #888);
     margin-top: 0.15rem;
 }
 
@@ -93,7 +93,7 @@
     width: 27px;
     left: 2px;
     bottom: 2px;
-    background: white;
+    background: var(--card-bg, #fff);
     border-radius: 50%;
     transition: transform var(--dur-menu) var(--ease-in-out);
 }
@@ -164,7 +164,7 @@
 
 .ios-native-app .mobile-menu-user-info h3,
 .android-native-app .mobile-menu-user-info h3 {
-    color: #000;
+    color: var(--text-dark, #000);
     font-size: 1.15rem;
     font-weight: 600;
 }
@@ -223,8 +223,8 @@
     display: flex;
     align-items: center;
     padding: 12px 16px;
-    background: white;
-    color: #1c1c1e;
+    background: var(--card-bg, #fff);
+    color: var(--text-dark, #1c1c1e);
     font-size: 1rem;
     font-weight: 400;
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
@@ -263,7 +263,7 @@
 .android-native-app .mobile-menu-nav a i {
     width: 28px;
     text-align: center;
-    color: var(--primary-dark, #1e4d8b);
+    color: var(--brand-text, #1e4d8b);
     margin-right: 12px;
     font-size: 1.05rem;
 }
@@ -271,8 +271,8 @@
 /* Override special inline background styles on native */
 .ios-native-app .mobile-menu-nav a[style*="background"],
 .android-native-app .mobile-menu-nav a[style*="background"] {
-    background: white !important;
-    color: #1c1c1e !important;
+    background: var(--card-bg, #fff) !important;
+    color: var(--text-dark, #1c1c1e) !important;
 }
 
 /* Chevron pseudo-element on every menu link */
@@ -309,7 +309,7 @@
 
 .ios-native-app .mobile-theme-toggle,
 .android-native-app .mobile-theme-toggle {
-    background: white;
+    background: var(--card-bg, #fff);
     border: none;
     border-radius: 12px;
     padding: 12px;
@@ -319,7 +319,7 @@
 
 .ios-native-app .mobile-logout-btn,
 .android-native-app .mobile-logout-btn {
-    background: white;
+    background: var(--card-bg, #fff);
     color: #ff3b30;
     border-radius: 12px;
     font-weight: 400;
@@ -494,7 +494,7 @@
 
 /* Active tab: colored icon + 3px top indicator bar */
 .native-tab.active {
-    color: var(--primary-dark, #1e4d8b);
+    color: var(--brand-text, #1e4d8b);
 }
 
 .native-tab.active::before {
@@ -620,7 +620,7 @@ body.android-native-app {
 
 .native-notif-bell i {
     font-size: 1.2rem;
-    color: #1c1c1e;
+    color: var(--text-dark, #1c1c1e);
 }
 
 .native-notif-badge {
@@ -769,7 +769,7 @@ a {
 }
 
 a:hover {
-    color: var(--primary-dark);
+    color: var(--brand-text, #1e4d8b);
 }
 
 /* Override Bootstrap primary colors */
@@ -794,7 +794,7 @@ a.btn-primary:hover {
 }
 
 .text-primary {
-    color: var(--primary-dark) !important;
+    color: var(--brand-text, #1e4d8b) !important;
 }
 
 /* ========================================
@@ -1066,7 +1066,7 @@ a.btn-primary:hover {
     position: absolute;
     top: calc(100% + 10px);
     right: 0;
-    background: white;
+    background: var(--card-bg, #fff);
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     width: 380px;
@@ -1080,7 +1080,7 @@ a.btn-primary:hover {
 
 .notification-header {
     padding: 1rem;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1099,7 +1099,7 @@ a.btn-primary:hover {
 }
 
 .mark-all-read:hover {
-    color: var(--primary-dark);
+    color: var(--brand-text, #1e4d8b);
 }
 
 .notification-list {
@@ -1109,7 +1109,7 @@ a.btn-primary:hover {
 
 .notification-item {
     padding: 1rem;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--border-color, #f0f0f0);
     display: flex;
     align-items: start;
     gap: 0.75rem;
@@ -1120,12 +1120,13 @@ a.btn-primary:hover {
 }
 
 .notification-item:hover {
-    background: #f8f9fa;
+    background: var(--bg-light, #f8f9fa);
 }
 
 .notification-item.unread {
     background: #f0f8ff;
 }
+[data-theme="dark"] .notification-item.unread { background: var(--bg-light); }
 
 .notification-avatar {
     width: 40px;
@@ -1159,18 +1160,18 @@ a.btn-primary:hover {
 
 .notification-message {
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-muted, #666);
     margin-bottom: 0.25rem;
 }
 
 .notification-time {
     font-size: 0.8rem;
-    color: #999;
+    color: var(--text-faint, #999);
 }
 
 .notification-footer {
     padding: 0.75rem 1rem;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--border-color, #e0e0e0);
     text-align: center;
 }
 
@@ -1183,7 +1184,7 @@ a.btn-primary:hover {
 .empty-notifications {
     padding: 3rem 1rem;
     text-align: center;
-    color: #999;
+    color: var(--text-faint, #999);
 }
 
 .empty-notifications i {
@@ -1259,7 +1260,7 @@ a.btn-primary:hover {
 .logo-text {
     font-size: 1.3rem;
     font-weight: 700;
-    color: var(--primary-dark);
+    color: var(--brand-text, #1e4d8b);
     text-decoration: none;
 }
 
@@ -1282,6 +1283,8 @@ a.btn-primary:hover {
     background: #fff3cd !important;
     color: #856404 !important;
     border-left: 4px solid #ffc107;
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
 }
 
 /* Navigation Links */
@@ -1316,7 +1319,7 @@ a.btn-primary:hover {
 }
 
 .nav-links a:hover {
-    color: var(--primary-dark);
+    color: var(--brand-text, #1e4d8b);
 }
 
 .nav-links a:hover::after {
@@ -1324,7 +1327,7 @@ a.btn-primary:hover {
 }
 
 .nav-links a.active {
-    color: var(--primary-dark);
+    color: var(--brand-text, #1e4d8b);
 }
 
 .nav-links a.active::after {
@@ -1362,7 +1365,7 @@ a.btn-primary:hover {
     padding: 0.5rem 0;
     min-width: 230px;
     list-style: none;
-    background: #fff;
+    background: var(--card-bg, #fff);
     border-radius: 12px;
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
     z-index: 1001;
@@ -1415,7 +1418,7 @@ a.btn-primary:hover {
     padding: 0.35rem 1.1rem 0.25rem;
     font-size: 0.7rem;
     font-weight: 700;
-    color: #888;
+    color: var(--text-muted, #888);
 }
 .nav-dropdown-group--premium .nav-dropdown-label,
 .nav-dropdown-group--premium .nav-dropdown-label i,
@@ -1478,13 +1481,13 @@ a.btn-primary:hover {
     padding: 0.5rem 0;
 }
 .user-dropdown-section + .user-dropdown-section {
-    border-top: 1px solid #eef1f5;
+    border-top: 1px solid var(--border-color, #eef1f5);
     margin-top: 0.25rem;
 }
 .user-dropdown-section-label {
     font-size: 0.7rem;
     font-weight: 700;
-    color: #888;
+    color: var(--text-muted, #888);
     padding: 0.35rem 1rem 0.25rem;
 }
 
@@ -1499,7 +1502,7 @@ a.btn-primary:hover {
     gap: 0.75rem;
     padding: 0.5rem 1rem;
     background: var(--bg-light);
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border-color, #e0e0e0);
     border-radius: 50px;
     cursor: pointer;
     transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
@@ -1533,7 +1536,7 @@ a.btn-primary:hover {
     position: absolute;
     top: 100%;
     right: 0;
-    background: white;
+    background: var(--card-bg, #fff);
     border-radius: 10px;
     box-shadow: var(--shadow-hover);
     min-width: 220px;
@@ -1612,13 +1615,13 @@ a.btn-primary:hover {
 
 .user-dropdown a:hover {
     background: var(--bg-light);
-    color: var(--primary-dark);
+    color: var(--brand-text, #1e4d8b);
 }
 
 .user-dropdown hr {
     margin: 0;
     border: none;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--border-color, #e0e0e0);
 }
 
 /* Logout button styled as link */
@@ -1644,7 +1647,7 @@ a.btn-primary:hover {
 
 .logout-btn:hover {
     background: var(--bg-light);
-    color: var(--primary-dark);
+    color: var(--brand-text, #1e4d8b);
 }
 
 /* Message notification badge */
@@ -1727,8 +1730,8 @@ a.cta-button:active {
     bottom: 0 !important;
     left: 0;
     right: 0;
-    background: white;
-    border-top: 1px solid #e5e7eb;
+    background: var(--card-bg, #fff);
+    border-top: 1px solid var(--border-color, #e5e7eb);
     padding: 4px 0;
     /* Reduced from 8px */
     padding-bottom: max(4px, calc(4px + var(--safe-area-inset-bottom)));
@@ -1748,7 +1751,7 @@ a.cta-button:active {
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    color: #6b7280;
+    color: var(--text-muted, #6b7280);
     font-size: 0.65rem;
     /* Reduced from 0.75rem */
     padding: 2px;
@@ -1757,7 +1760,7 @@ a.cta-button:active {
 }
 
 .mobile-bottom-nav a.active {
-    color: var(--primary-dark);
+    color: var(--brand-text, #1e4d8b);
 }
 
 .mobile-bottom-nav i {
@@ -1904,7 +1907,7 @@ MOBILE SLIDE-OUT NAVIGATION
     right: -280px;
     width: 280px;
     height: 100%;
-    background: white;
+    background: var(--card-bg, #fff);
     z-index: 999;
     transition: transform var(--dur-move) var(--ease-out);
     box-shadow: -2px 0 20px rgba(0, 0, 0, 0.1);
@@ -1986,11 +1989,11 @@ MOBILE SLIDE-OUT NAVIGATION
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: white;
+    background: var(--card-bg, #fff);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary-dark);
+    color: var(--brand-text, #1e4d8b);
     font-weight: bold;
     font-size: 1.2rem;
 }
@@ -2020,7 +2023,7 @@ MOBILE SLIDE-OUT NAVIGATION
 
 .mobile-menu-section {
     padding: 1.5rem 0;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
 }
 
 .mobile-menu-section:last-child {
@@ -2030,7 +2033,7 @@ MOBILE SLIDE-OUT NAVIGATION
 .mobile-menu-label {
     padding: 0.5rem 1.5rem;
     font-size: 0.75rem;
-    color: #6b7280;
+    color: var(--text-muted, #6b7280);
     font-weight: 600;
 }
 
@@ -2916,7 +2919,7 @@ ALERT MESSAGES - Fixed positioning
 /* Stat numbers and important metrics */
 .stat-number,
 .big-number {
-    color: var(--primary-dark);
+    color: var(--brand-text, #1e4d8b);
     font-weight: 700;
 }
 
@@ -3005,7 +3008,7 @@ select:focus {
 }
 
 .text-muted {
-    color: #6c757d;
+    color: var(--text-muted, #6c757d);
 }
 
 /* Margin utilities */
@@ -3101,7 +3104,7 @@ select:focus {
     bottom: 0;
     left: 0;
     right: 0;
-    background: white;
+    background: var(--card-bg, #fff);
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
     z-index: 9999;
     padding: 0.75rem 1rem;
@@ -3128,12 +3131,12 @@ select:focus {
 }
 
 .mobile-sticky-cta-text strong {
-    color: var(--primary-dark, #1e4d8b);
+    color: var(--brand-text, #1e4d8b);
     font-size: 1rem;
 }
 
 .mobile-sticky-cta-text span {
-    color: #666;
+    color: var(--text-muted, #666);
     font-size: 0.8rem;
 }
 

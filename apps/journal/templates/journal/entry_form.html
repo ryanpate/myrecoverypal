@@ -9,7 +9,7 @@
         max-width: 800px;
         margin: 100px auto 2rem;
         padding: 2rem;
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
@@ -21,12 +21,12 @@
     .form-section {
         margin-bottom: 2rem;
         padding: 1.5rem;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 10px;
     }
     
     .form-section h4 {
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1rem;
     }
     
@@ -59,11 +59,14 @@
     
     .gratitude-section {
         background: #e3f2fd;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
     
     .craving-section {
         background: #fff3e0;
     }
+    [data-theme="dark"] .craving-section { background: var(--bg-light); }
     
     #id_craving_intensity_wrapper {
         display: none;

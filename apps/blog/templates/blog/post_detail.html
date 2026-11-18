@@ -282,7 +282,7 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
     }
 
     .post-content {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 3rem 4rem;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -298,6 +298,8 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
         padding: 1rem;
         margin-bottom: 2rem;
         color: #856404;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .post-content img {
@@ -310,12 +312,12 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
     .post-content h2 {
         margin-top: 2rem;
         margin-bottom: 1rem;
-        color: #333;
+        color: var(--text-dark, #333);
     }
 
     .post-content p {
         line-height: 1.8;
-        color: #444;
+        color: var(--text-dark, #444);
         margin-bottom: 1rem;
     }
 
@@ -323,12 +325,12 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
     .post-share-bottom {
         margin-top: 2rem;
         padding-top: 2rem;
-        border-top: 2px solid #f0f0f0;
+        border-top: 2px solid var(--border-color, #f0f0f0);
         text-align: center;
     }
 
     .post-share-bottom h4 {
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 1.5rem;
         font-size: 1.25rem;
     }
@@ -341,9 +343,9 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
         width: 50px;
         height: 50px;
         font-size: 1.3rem;
-        background: #f8f9fa;
-        border: 2px solid #e0e0e0;
-        color: #666;
+        background: var(--bg-light, #f8f9fa);
+        border: 2px solid var(--border-color, #e0e0e0);
+        color: var(--text-muted, #666);
     }
 
     .post-share-bottom .share-btn:hover {
@@ -354,17 +356,17 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
     .post-tags {
         margin-top: 2rem;
         padding-top: 2rem;
-        border-top: 1px solid #eee;
+        border-top: 1px solid var(--border-color, #eee);
     }
 
     .comments-section {
         margin-top: 3rem;
         padding-top: 3rem;
-        border-top: 2px solid #eee;
+        border-top: 2px solid var(--border-color, #eee);
     }
 
     .comment {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         padding: 1.5rem;
         border-radius: 10px;
         margin-bottom: 1rem;
@@ -374,12 +376,12 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
         display: flex;
         justify-content: space-between;
         margin-bottom: 0.5rem;
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 0.9rem;
     }
 
     .comment-form {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         padding: 2rem;
         border-radius: 10px;
         margin-top: 2rem;
@@ -388,7 +390,7 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
     .related-posts {
         margin-top: 3rem;
         padding-top: 3rem;
-        border-top: 2px solid #eee;
+        border-top: 2px solid var(--border-color, #eee);
     }
 
     .related-posts-grid {
@@ -399,11 +401,11 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
     }
 
     .related-post-card {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         padding: 1.5rem;
         border-radius: 10px;
         text-decoration: none;
-        color: #333;
+        color: var(--text-dark, #333);
         transition: all 0.3s ease;
     }
 
@@ -418,7 +420,7 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
         font-size: 21px;
         line-height: 1.58;
         letter-spacing: -0.003em;
-        color: rgba(0, 0, 0, 0.84);
+        color: var(--text-dark, rgba(0, 0, 0, 0.84));
         max-width: 100%;
     }
 
@@ -455,7 +457,7 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
         padding-left: 20px;
         margin: 2rem 0;
         font-style: italic;
-        color: rgba(0, 0, 0, 0.68);
+        color: var(--text-muted, rgba(0, 0, 0, 0.68));
     }
 
     .post-content-wrapper img {
@@ -484,7 +486,7 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
     }
 
     .post-content-wrapper a:hover {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
     }
 
     .post-content-wrapper iframe {

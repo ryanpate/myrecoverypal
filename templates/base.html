@@ -359,11 +359,11 @@
                                 </a>
                                 {% if is_court_user %}
                                 <a href="{% url 'accounts:court_dashboard' %}" style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
-                                    <i class="fas fa-gavel" style="color: #1e4d8b;"></i> Court Compliance
+                                    <i class="fas fa-gavel" style="color: var(--brand-text, #1e4d8b);"></i> Court Compliance
                                 </a>
                                 {% else %}
                                 <a href="{% url 'core:court_ordered_meeting_tracker' %}" style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
-                                    <i class="fas fa-gavel" style="color: #1e4d8b;"></i> Court Compliance
+                                    <i class="fas fa-gavel" style="color: var(--brand-text, #1e4d8b);"></i> Court Compliance
                                 </a>
                                 {% endif %}
                                 <a href="{% url 'accounts:invite_friends' %}" style="color: #52b788;">
@@ -598,13 +598,13 @@
                 <a href="{% url 'accounts:court_dashboard' %}"
                     class="{% if request.resolver_match.url_name == 'court_dashboard' %}active{% endif %}"
                     style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
-                    <i class="fas fa-gavel" style="margin-right: 0.5rem; color: #1e4d8b;"></i> Court Compliance
+                    <i class="fas fa-gavel" style="margin-right: 0.5rem; color: var(--brand-text, #1e4d8b);"></i> Court Compliance
                 </a>
                 {% else %}
                 <a href="{% url 'core:court_ordered_meeting_tracker' %}"
                     class="{% if request.resolver_match.url_name == 'court_ordered_meeting_tracker' %}active{% endif %}"
                     style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
-                    <i class="fas fa-gavel" style="margin-right: 0.5rem; color: #1e4d8b;"></i> Court Compliance
+                    <i class="fas fa-gavel" style="margin-right: 0.5rem; color: var(--brand-text, #1e4d8b);"></i> Court Compliance
                 </a>
                 {% endif %}
                 <a href="{% url 'accounts:invite_friends' %}"
@@ -915,7 +915,7 @@
                 <a href="https://ko-fi.com/myrecoverypal" target="_blank" rel="noopener" class="footer-donate-btn" style="background: #FF5E5B; color: white;">
                     <i class="fas fa-heart"></i> Ko-fi
                 </a>
-                <a href="https://buymeacoffee.com/myrecoverypal" target="_blank" rel="noopener" class="footer-donate-btn" style="background: #FFDD00; color: #000;">
+                <a href="https://buymeacoffee.com/myrecoverypal" target="_blank" rel="noopener" class="footer-donate-btn" style="background: #FFDD00; color: #000; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
                     <i class="fas fa-mug-hot"></i> Buy Me a Coffee
                 </a>
             </div>

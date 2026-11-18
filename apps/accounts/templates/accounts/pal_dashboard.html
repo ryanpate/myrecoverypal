@@ -38,7 +38,7 @@
     }
 
     .dashboard-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 2rem;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -51,10 +51,10 @@
     }
 
     .pal-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 1.5rem;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color, #e0e0e0);
         margin-bottom: 1rem;
         transition: all 0.3s;
     }
@@ -76,6 +76,8 @@
         color: #666;
         overflow: hidden;
         margin-right: 1.5rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .pal-avatar img {
@@ -94,17 +96,21 @@
     .status-pending {
         background: #fff3cd;
         color: #856404;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .status-active {
         background: #d1ecf1;
         color: #0c5460;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .empty-state {
         text-align: center;
         padding: 3rem 2rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .action-btn {
@@ -158,7 +164,7 @@
     .feature-card {
         text-align: center;
         padding: 1.5rem;
-        border: 2px dashed #ddd;
+        border: 2px dashed var(--border-color, #ddd);
         border-radius: 10px;
         transition: all 0.3s;
     }
@@ -263,7 +269,7 @@
 
     <!-- Educational Banner for users without a pal -->
     {% if not current_pal %}
-    <div class="dashboard-card" style="background: #e8f7f0; border: 2px solid #52b788; margin-bottom: 2rem;">
+    <div class="dashboard-card" style="background: rgba(82, 183, 136, 0.12); border: 2px solid #52b788; margin-bottom: 2rem;">
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h3 style="color: #2d6a4f; margin-bottom: 1rem;"><i class="fas fa-handshake-angle" style="color: #52b788;"></i> What is a Recovery Pal?</h3>
@@ -275,34 +281,34 @@
                         <div style="font-size: 2rem; color: #52b788;">
                             <i class="fas fa-calendar-check"></i>
                         </div>
-                        <div style="font-size: 0.85rem; color: #333; margin-top: 0.5rem;">Daily Check-ins</div>
+                        <div style="font-size: 0.85rem; color: var(--text-dark, #333); margin-top: 0.5rem;">Daily Check-ins</div>
                     </div>
                     <div class="col-6 col-md-3 text-center mb-3">
                         <div style="font-size: 2rem; color: #52b788;">
                             <i class="fas fa-bullseye"></i>
                         </div>
-                        <div style="font-size: 0.85rem; color: #333; margin-top: 0.5rem;">Shared Goals</div>
+                        <div style="font-size: 0.85rem; color: var(--text-dark, #333); margin-top: 0.5rem;">Shared Goals</div>
                     </div>
                     <div class="col-6 col-md-3 text-center mb-3">
                         <div style="font-size: 2rem; color: #52b788;">
                             <i class="fas fa-shield-alt"></i>
                         </div>
-                        <div style="font-size: 0.85rem; color: #333; margin-top: 0.5rem;">Accountability</div>
+                        <div style="font-size: 0.85rem; color: var(--text-dark, #333); margin-top: 0.5rem;">Accountability</div>
                     </div>
                     <div class="col-6 col-md-3 text-center mb-3">
                         <div style="font-size: 2rem; color: #52b788;">
                             <i class="fas fa-heart"></i>
                         </div>
-                        <div style="font-size: 0.85rem; color: #333; margin-top: 0.5rem;">Mutual Support</div>
+                        <div style="font-size: 0.85rem; color: var(--text-dark, #333); margin-top: 0.5rem;">Mutual Support</div>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 text-center">
-                <div style="background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(82, 183, 136, 0.2);">
+                <div style="background: var(--card-bg, #fff); border-radius: 15px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(82, 183, 136, 0.2);">
                     <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">
                         <i class="fas fa-user-friends" style="color: #52b788;"></i>
                     </div>
-                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 1rem;">Research shows that having an accountability partner can increase your chances of reaching a goal by up to <strong>95%</strong></p>
+                    <p style="color: var(--text-muted, #666); font-size: 0.9rem; margin-bottom: 1rem;">Research shows that having an accountability partner can increase your chances of reaching a goal by up to <strong>95%</strong></p>
                     <a href="{% url 'accounts:community' %}" class="btn" style="background: #52b788; color: white; padding: 0.75rem 2rem; border-radius: 50px; font-weight: 600; display: inline-block; text-decoration: none; transition: all 0.3s;">
                         <i class="fas fa-search"></i> Find Your Pal
                     </a>

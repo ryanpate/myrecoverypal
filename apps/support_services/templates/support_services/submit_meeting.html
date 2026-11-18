@@ -6,7 +6,7 @@
 {% block extra_css %}
 <style>
     .form-section {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 10px;
         padding: 30px;
         margin-bottom: 30px;
@@ -14,10 +14,10 @@
     }
 
     .form-section h3 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 20px;
         padding-bottom: 10px;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
     }
 
     .form-group {
@@ -26,14 +26,14 @@
 
     .form-label {
         font-weight: 600;
-        color: #4B5563;
+        color: var(--text-muted, #4B5563);
         margin-bottom: 8px;
         display: block;
     }
 
     .form-control,
     .form-select {
-        border: 1px solid #E5E7EB;
+        border: 1px solid var(--border-color, #E5E7EB);
         border-radius: 8px;
         padding: 10px 15px;
         width: 100%;
@@ -49,7 +49,7 @@
 
     .form-text {
         font-size: 0.875rem;
-        color: #6B7280;
+        color: var(--text-muted, #6B7280);
         margin-top: 5px;
     }
 
@@ -63,8 +63,8 @@
         display: flex;
         align-items: center;
         padding: 15px 20px;
-        background: #f8f9fa;
-        border: 2px solid #E5E7EB;
+        background: var(--bg-light, #f8f9fa);
+        border: 2px solid var(--border-color, #E5E7EB);
         border-radius: 10px;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -82,7 +82,7 @@
     }
 
     .form-check-input:checked ~ .form-check-label {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         font-weight: 600;
     }
 
@@ -111,9 +111,9 @@
 
     .btn-cancel {
         background: transparent;
-        color: #6B7280;
+        color: var(--text-muted, #6B7280);
         padding: 12px 30px;
-        border: 2px solid #E5E7EB;
+        border: 2px solid var(--border-color, #E5E7EB);
         border-radius: 50px;
         font-weight: 600;
         font-size: 1.1rem;
@@ -125,7 +125,7 @@
 
     .btn-cancel:hover {
         border-color: #9CA3AF;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
     }
 
     .required-star {
@@ -176,8 +176,8 @@
         display: flex;
         align-items: center;
         padding: 10px;
-        background: #f8f9fa;
-        border: 1px solid #E5E7EB;
+        background: var(--bg-light, #f8f9fa);
+        border: 1px solid var(--border-color, #E5E7EB);
         border-radius: 8px;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -193,7 +193,7 @@
     }
 
     .type-checkbox input[type="checkbox"]:checked ~ label {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         font-weight: 500;
     }
 

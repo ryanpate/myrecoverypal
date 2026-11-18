@@ -7,7 +7,7 @@
 {% block extra_css %}
 <style>
     .form-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 2rem;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -17,7 +17,7 @@
     .form-section {
         margin-bottom: 2rem;
         padding-bottom: 1.5rem;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--border-color, #e0e0e0);
     }
 
     .form-section:last-child {
@@ -26,7 +26,7 @@
     }
 
     .section-title {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1rem;
         display: flex;
         align-items: center;
@@ -35,7 +35,7 @@
 
     .form-control {
         border-radius: 10px;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color, #e0e0e0);
         padding: 0.75rem 1rem;
         transition: border-color 0.3s;
     }
@@ -47,13 +47,13 @@
 
     .form-select {
         border-radius: 10px;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color, #e0e0e0);
         padding: 0.75rem 1rem;
     }
 
     .help-text {
         font-size: 0.875rem;
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         margin-top: 0.25rem;
     }
 
@@ -61,7 +61,7 @@
         width: 50px;
         height: 50px;
         border-radius: 10px;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color, #e0e0e0);
         cursor: pointer;
     }
 
@@ -90,6 +90,7 @@
         padding: 1.5rem;
         margin-top: 2rem;
     }
+    [data-theme="dark"] .danger-zone { background: var(--bg-light); }
 </style>
 {% endblock %}
 
@@ -235,7 +236,7 @@
             </form>
 
             <!-- Transfer Ownership -->
-            <div class="form-card" style="border: 2px solid #ffc107; background: #fffbeb;">
+            <div class="form-card" style="border: 2px solid #ffc107; background: var(--bg-light, #fffbeb);">
                 <h5 class="text-warning"><i class="fas fa-exchange-alt"></i> Transfer Ownership</h5>
                 <p class="text-muted mb-3">Transfer this group to another member. You will become a regular member.</p>
                 <div class="mb-3">
@@ -250,7 +251,7 @@
             </div>
 
             <!-- Invite Links -->
-            <div class="form-card" style="border: 2px solid #17a2b8; background: #e7f5ff;">
+            <div class="form-card" style="border: 2px solid #17a2b8; background: #e7f5ff; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);">
                 <h5 class="text-info"><i class="fas fa-link"></i> Invite Link</h5>
                 <p class="text-muted mb-3">Generate a shareable link to invite members directly (bypasses approval for private groups).</p>
                 <div class="input-group mb-2">

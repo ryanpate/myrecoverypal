@@ -86,10 +86,10 @@
                             </div>
                             <!-- iOS IAP management (shown only on iOS) -->
                             <div class="iap-only" style="margin-top: 1rem;">
-                                <div style="background: #f0f4ff; border-radius: 12px; padding: 1.25rem; text-align: center;">
-                                    <i class="fab fa-apple" style="font-size: 2rem; color: #333; margin-bottom: 0.5rem;"></i>
+                                <div style="background: var(--bg-light, #f0f4ff); border-radius: 12px; padding: 1.25rem; text-align: center;">
+                                    <i class="fab fa-apple" style="font-size: 2rem; color: var(--text-dark, #333); margin-bottom: 0.5rem;"></i>
                                     <p style="font-weight: 600; margin-bottom: 0.25rem;">Apple Subscription</p>
-                                    <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
+                                    <p style="font-size: 0.85rem; color: var(--text-muted, #666); margin-bottom: 1rem;">
                                         Your subscription is managed through your Apple ID. You can change your plan, update payment, or cancel from Apple's subscription settings.
                                     </p>
                                     <button class="btn btn-primary btn-block" onclick="if(window.MRPIAP) window.MRPIAP.manageSubscription();" style="border-radius: 10px; padding: 0.75rem; font-weight: 600;">
@@ -98,11 +98,11 @@
                                     <button class="btn btn-outline-secondary btn-block btn-sm" onclick="if(window.MRPIAP) window.MRPIAP.restorePurchases();" style="border-radius: 10px; margin-top: 0.5rem;">
                                         <i class="fas fa-redo"></i> Restore Purchases
                                     </button>
-                                    <p style="font-size: 0.75rem; color: #888; margin-top: 1rem; line-height: 1.4;">
+                                    <p style="font-size: 0.75rem; color: var(--text-muted, #888); margin-top: 1rem; line-height: 1.4;">
                                         MyRecoveryPal Premium auto-renews unless canceled at least 24 hours before the end of the current period.
                                         <br>
-                                        <a href="{% url 'core:terms' %}" style="color: #1e4d8b;">Terms of Use</a> |
-                                        <a href="{% url 'core:privacy' %}" style="color: #1e4d8b;">Privacy Policy</a>
+                                        <a href="{% url 'core:terms' %}" style="color: var(--brand-text, #1e4d8b);">Terms of Use</a> |
+                                        <a href="{% url 'core:privacy' %}" style="color: var(--brand-text, #1e4d8b);">Privacy Policy</a>
                                     </p>
                                 </div>
                             </div>

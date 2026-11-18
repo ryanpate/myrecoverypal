@@ -14,7 +14,7 @@
 
     /* Form Card */
     .milestone-form-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 12px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         overflow: hidden;
@@ -37,7 +37,7 @@
     }
 
     .suggestions-header h4 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         font-size: 1.1rem;
         font-weight: 600;
         margin: 0;
@@ -61,7 +61,7 @@
 
     .suggestion-chip {
         background: #f8f9fc;
-        border: 2px solid #e9ecef;
+        border: 2px solid var(--border-color, #e9ecef);
         border-radius: 25px;
         padding: 0.75rem 1rem;
         cursor: pointer;
@@ -73,6 +73,7 @@
         color: #495057;
         position: relative;
         overflow: hidden;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .suggestion-chip::before {
@@ -91,7 +92,7 @@
     }
 
     .suggestion-chip:hover {
-        background: white;
+        background: var(--card-bg, #fff);
         border-color: #667eea;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
@@ -114,7 +115,7 @@
         display: flex;
         gap: 0.5rem;
         margin-bottom: 1rem;
-        border-bottom: 2px solid #e9ecef;
+        border-bottom: 2px solid var(--border-color, #e9ecef);
         padding-bottom: 0;
         overflow-x: auto;
     }
@@ -123,7 +124,7 @@
         background: none;
         border: none;
         padding: 0.75rem 1.25rem;
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         font-weight: 500;
         cursor: pointer;
         position: relative;
@@ -139,7 +140,7 @@
 
     .category-tab.active {
         color: #667eea;
-        background: white;
+        background: var(--card-bg, #fff);
     }
 
     .category-tab.active::after {
@@ -159,7 +160,7 @@
 
     .form-label {
         font-weight: 600;
-        color: #495057;
+        color: var(--text-dark, #495057);
         margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
@@ -172,7 +173,7 @@
     }
 
     .form-label .optional {
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         font-size: 0.85rem;
         font-weight: normal;
     }
@@ -180,7 +181,7 @@
     .form-control,
     .form-select,
     textarea.form-control {
-        border: 1px solid #e9ecef;
+        border: 1px solid var(--border-color, #e9ecef);
         border-radius: 8px;
         padding: 0.875rem 1rem;
         font-size: 1rem;
@@ -191,7 +192,7 @@
     .form-control:focus,
     .form-select:focus,
     textarea.form-control:focus {
-        background: white;
+        background: var(--card-bg, #fff);
         border-color: #667eea;
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         outline: none;
@@ -204,7 +205,7 @@
 
     .form-text {
         font-size: 0.875rem;
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         margin-top: 0.25rem;
         display: flex;
         align-items: center;
@@ -214,7 +215,7 @@
     .character-counter {
         text-align: right;
         font-size: 0.875rem;
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         margin-top: 0.25rem;
     }
 
@@ -232,7 +233,7 @@
         left: 1rem;
         top: 50%;
         transform: translateY(-50%);
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         pointer-events: none;
     }
 
@@ -243,6 +244,7 @@
         padding: 1rem;
         margin-bottom: 1.5rem;
     }
+    [data-theme="dark"] .privacy-toggle { background: var(--bg-light); }
 
     .form-check {
         display: flex;
@@ -275,7 +277,7 @@
         gap: 1rem;
         justify-content: space-between;
         padding-top: 1.5rem;
-        border-top: 2px solid #e9ecef;
+        border-top: 2px solid var(--border-color, #e9ecef);
         margin-top: 2rem;
     }
 
@@ -307,8 +309,8 @@
     }
 
     .btn-secondary {
-        background: #e9ecef;
-        color: #495057 !important;
+        background: var(--bg-gray, #e9ecef);
+        color: var(--text-dark, #495057) !important;
         min-width: 120px;
         justify-content: center;
     }
@@ -326,6 +328,8 @@
         display: flex;
         gap: 0.75rem;
         align-items: start;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
 
     .help-tip-icon {
@@ -339,14 +343,14 @@
     }
 
     .help-tip-content h5 {
-        color: #495057;
+        color: var(--text-dark, #495057);
         font-size: 0.95rem;
         font-weight: 600;
         margin-bottom: 0.25rem;
     }
 
     .help-tip-content p {
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         font-size: 0.875rem;
         margin: 0;
     }

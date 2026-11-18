@@ -12,6 +12,9 @@
 :root {
     /* Primary Brand Colors */
     --primary-dark: #1e4d8b;
+    /* Brand blue used as text. Lightens in dark mode, where #1e4d8b on a dark
+       surface is unreadable; --primary-dark stays put for solid panels. */
+    --brand-text: #1e4d8b;
     /* Dark blue from logo */
     --primary-light: #4db8e8;
     /* Light blue/cyan from logo */
@@ -221,6 +224,16 @@
 
     /* Keep brand colors - they have good contrast */
     --primary-dark: #1e4d8b;
+    --brand-text: #8fb8ee;
+}
+
+/* Aliases used by a few templates. Declared on the themed element so they
+   resolve to that theme's values. */
+:root,
+[data-theme="dark"] {
+    --text-primary: var(--text-dark);
+    --text-color: var(--text-dark);
+    --bg-card: var(--card-bg);
     --primary-light: #4db8e8;
     --accent-green: #52b788;
 }
@@ -242,11 +255,13 @@
 }
 
 /* Dark Mode - Links */
-[data-theme="dark"] a {
+/* :where() keeps these at the same weight as the light-mode link rule, so a
+   class that sets its own colour (a link styled as a button) still wins. */
+:where([data-theme="dark"]) a {
     color: var(--primary-light);
 }
 
-[data-theme="dark"] a:hover {
+:where([data-theme="dark"]) a:hover {
     color: #6bc5ed;
 }
 
@@ -1004,7 +1019,7 @@ sub {
 }
 
 a:hover {
-    color: var(--primary-dark);
+    color: var(--brand-text, #1e4d8b);
 }
 
 /* Common Page Headers - Unified Style */
@@ -1124,7 +1139,7 @@ a:hover {
 .stat-card,
 .meeting-card,
 .service-card {
-    background: white;
+    background: var(--card-bg, #fff);
     border-radius: var(--border-radius-lg);
     padding: 1.5rem;
     box-shadow: var(--shadow);
@@ -1168,7 +1183,7 @@ a.service-card:hover {
     box-shadow: var(--shadow);
     border-radius: 50px;
     overflow: hidden;
-    background: white;
+    background: var(--card-bg, #fff);
     max-width: 600px;
     margin: 2rem auto;
 }
@@ -1199,13 +1214,13 @@ input[type="search"] {
 
 /* Fix old purple gradients */
 .gradient-text {
-    color: var(--primary-dark);
+    color: var(--brand-text, #1e4d8b);
 }
 
 /* Statistics and Numbers */
 .stat-number,
 .big-number {
-    color: var(--primary-dark);
+    color: var(--brand-text, #1e4d8b);
     font-weight: 700;
 }
 

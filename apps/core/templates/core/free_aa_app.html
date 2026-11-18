@@ -75,44 +75,44 @@
     .ar-hero p { font-size: 1.3rem; max-width: 700px; margin: 0 auto 2rem; opacity: 0.95; }
     .ar-hero .cta-button { display: inline-block; padding: 1rem 2.5rem; background: #ee6c4d; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.2rem; transition: all 0.3s ease; }
     .ar-hero .cta-button:hover { transform: translateY(-3px); background: #e85a38; }
-    .steps-section { padding: 4rem 2rem; background: #f8f9fa; }
-    .steps-section h2 { text-align: center; color: #1e3a5f; font-size: 2.2rem; margin-bottom: 0.5rem; }
-    .steps-section .subtitle { text-align: center; color: #666; font-size: 1.1rem; margin-bottom: 3rem; }
+    .steps-section { padding: 4rem 2rem; background: var(--bg-light, #f8f9fa); }
+    .steps-section h2 { text-align: center; color: var(--text-dark, #1e3a5f); font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .steps-section .subtitle { text-align: center; color: var(--text-muted, #666); font-size: 1.1rem; margin-bottom: 3rem; }
     .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
-    .step-card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s ease; }
+    .step-card { background: var(--card-bg, #fff); padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s ease; }
     .step-card:hover { transform: translateY(-5px); }
-    .step-card .icon { font-size: 2.5rem; margin-bottom: 1rem; color: #3d5a80; }
-    .step-card h3 { color: #1e3a5f; margin-bottom: 0.75rem; }
-    .step-card p { color: #666; line-height: 1.6; }
-    .content-section { padding: 4rem 2rem; background: white; }
+    .step-card .icon { font-size: 2.5rem; margin-bottom: 1rem; color: var(--text-muted, #3d5a80); }
+    .step-card h3 { color: var(--text-dark, #1e3a5f); margin-bottom: 0.75rem; }
+    .step-card p { color: var(--text-muted, #666); line-height: 1.6; }
+    .content-section { padding: 4rem 2rem; background: var(--card-bg, #fff); }
     .content-section .container { max-width: 800px; margin: 0 auto; }
-    .content-section h2 { color: #1e3a5f; font-size: 2rem; margin-bottom: 1.5rem; }
-    .content-section h3 { color: #1e3a5f; font-size: 1.4rem; margin: 2rem 0 1rem; }
-    .content-section p { color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
+    .content-section h2 { color: var(--text-dark, #1e3a5f); font-size: 2rem; margin-bottom: 1.5rem; }
+    .content-section h3 { color: var(--text-dark, #1e3a5f); font-size: 1.4rem; margin: 2rem 0 1rem; }
+    .content-section p { color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
     .content-section ul { margin: 1.5rem 0; padding-left: 1.5rem; }
-    .content-section ul li { color: #555; line-height: 1.8; margin-bottom: 0.75rem; }
-    .principles-section { padding: 4rem 2rem; background: #e0e8f0; }
-    .principles-section h2 { text-align: center; color: #1e3a5f; font-size: 2rem; margin-bottom: 2rem; }
+    .content-section ul li { color: var(--text-muted, #555); line-height: 1.8; margin-bottom: 0.75rem; }
+    .principles-section { padding: 4rem 2rem; background: #e0e8f0; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark); }
+    .principles-section h2 { text-align: center; color: var(--text-dark, #1e3a5f); font-size: 2rem; margin-bottom: 2rem; }
     .principles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; max-width: 900px; margin: 0 auto; }
-    .principle-card { background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 3px 15px rgba(0,0,0,0.08); }
+    .principle-card { background: var(--card-bg, #fff); padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 3px 15px rgba(0,0,0,0.08); }
     .principle-card .number { font-size: 1.5rem; font-weight: 800; color: #ee6c4d; }
-    .principle-card .text { color: #1e3a5f; font-weight: 500; margin-top: 0.5rem; font-size: 0.95rem; }
-    .faq-section { padding: 4rem 2rem; background: white; }
-    .faq-section h2 { text-align: center; color: #1e3a5f; font-size: 2.2rem; margin-bottom: 2rem; }
+    .principle-card .text { color: var(--text-dark, #1e3a5f); font-weight: 500; margin-top: 0.5rem; font-size: 0.95rem; }
+    .faq-section { padding: 4rem 2rem; background: var(--card-bg, #fff); }
+    .faq-section h2 { text-align: center; color: var(--text-dark, #1e3a5f); font-size: 2.2rem; margin-bottom: 2rem; }
     .faq-container { max-width: 800px; margin: 0 auto; }
-    .faq-item { background: #f8f9fa; border-radius: 10px; margin-bottom: 1rem; padding: 1.5rem; }
-    .faq-item h3 { color: #1e3a5f; margin-bottom: 0.75rem; font-size: 1.2rem; }
-    .faq-item p { color: #666; line-height: 1.7; margin: 0; }
+    .faq-item { background: var(--bg-light, #f8f9fa); border-radius: 10px; margin-bottom: 1rem; padding: 1.5rem; }
+    .faq-item h3 { color: var(--text-dark, #1e3a5f); margin-bottom: 0.75rem; font-size: 1.2rem; }
+    .faq-item p { color: var(--text-muted, #666); line-height: 1.7; margin: 0; }
     .cta-section { padding: 5rem 2rem; background: linear-gradient(135deg, #1e3a5f 0%, #3d5a80 100%); text-align: center; color: white; }
     .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
     .cta-section p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.95; }
     .cta-section .cta-button { display: inline-block; padding: 1rem 3rem; background: #ee6c4d; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.3rem; transition: all 0.3s ease; }
     .cta-section .cta-button:hover { transform: translateY(-3px); background: #e85a38; }
     .cta-section .subtext { margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; }
-    .related-links { padding: 3rem 2rem; background: #f8f9fa; }
-    .related-links h3 { text-align: center; color: #1e3a5f; margin-bottom: 1.5rem; }
+    .related-links { padding: 3rem 2rem; background: var(--bg-light, #f8f9fa); }
+    .related-links h3 { text-align: center; color: var(--text-dark, #1e3a5f); margin-bottom: 1.5rem; }
     .related-grid { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto; }
-    .related-grid a { background: white; padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: #1e3a5f; font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
+    .related-grid a { background: var(--card-bg, #fff); padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: var(--text-dark, #1e3a5f); font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
     .related-grid a:hover { transform: translateY(-3px); }
     @media (max-width: 768px) { .ar-hero h1 { font-size: 2rem; } }
 </style>
@@ -202,25 +202,25 @@
 </section>
 
 <!-- 12 Steps Integration Section -->
-<section class="content-section" style="padding: 3rem 2rem; background: white;">
+<section class="content-section" style="padding: 3rem 2rem; background: var(--card-bg, #fff);">
     <div style="max-width: 800px; margin: 0 auto;">
-        <h2 style="color: var(--primary-dark); font-size: 1.8rem; margin-bottom: 1.5rem;">How MyRecoveryPal Works with the 12 Steps</h2>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">The 12 Steps provide a proven framework for recovery, and MyRecoveryPal is designed to support your journey through each one. While no app can replace the fellowship of an AA meeting or the guidance of a sponsor, the right tools can reinforce the work you are doing between meetings and help you stay connected to your program every day.</p>
+        <h2 style="color: var(--brand-text, #1e4d8b); font-size: 1.8rem; margin-bottom: 1.5rem;">How MyRecoveryPal Works with the 12 Steps</h2>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">The 12 Steps provide a proven framework for recovery, and MyRecoveryPal is designed to support your journey through each one. While no app can replace the fellowship of an AA meeting or the guidance of a sponsor, the right tools can reinforce the work you are doing between meetings and help you stay connected to your program every day.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">Steps 1-3: Honesty, Hope, and Surrender</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">The first three steps are about acknowledging powerlessness over alcohol, believing that recovery is possible, and making a decision to seek help. Daily check-ins support this work by giving you an honest snapshot of where you are each day — your mood, your craving level, your emotional state. Over time, these check-ins become a practice in honesty with yourself, the foundation of Step 1. The gratitude prompt encourages the hope that Steps 2 and 3 are built on.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">Steps 1-3: Honesty, Hope, and Surrender</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">The first three steps are about acknowledging powerlessness over alcohol, believing that recovery is possible, and making a decision to seek help. Daily check-ins support this work by giving you an honest snapshot of where you are each day — your mood, your craving level, your emotional state. Over time, these check-ins become a practice in honesty with yourself, the foundation of Step 1. The gratitude prompt encourages the hope that Steps 2 and 3 are built on.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">Steps 4-5: Personal Inventory</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Step 4 asks you to make a searching and fearless moral inventory, and Step 5 involves sharing that inventory with another person. The private journal feature provides a safe, completely confidential space to work through your inventory writing. Your journal entries are never shared, never visible to other users, and never used for any purpose other than your own reflection. Many members use it alongside their sponsor work to process thoughts before or after Step 5 conversations.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">Steps 4-5: Personal Inventory</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Step 4 asks you to make a searching and fearless moral inventory, and Step 5 involves sharing that inventory with another person. The private journal feature provides a safe, completely confidential space to work through your inventory writing. Your journal entries are never shared, never visible to other users, and never used for any purpose other than your own reflection. Many members use it alongside their sponsor work to process thoughts before or after Step 5 conversations.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">Steps 8-9: Making Amends</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Steps 8 and 9 involve making a list of people you have harmed and making direct amends where possible. The Recovery Pal feature connects you with an accountability partner who understands this process. Having someone to talk through amends with — someone who has been through it themselves — can provide the courage and perspective you need. Your Recovery Pal is not a replacement for your sponsor, but an additional layer of support.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">Steps 8-9: Making Amends</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Steps 8 and 9 involve making a list of people you have harmed and making direct amends where possible. The Recovery Pal feature connects you with an accountability partner who understands this process. Having someone to talk through amends with — someone who has been through it themselves — can provide the courage and perspective you need. Your Recovery Pal is not a replacement for your sponsor, but an additional layer of support.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">Steps 10-12: Daily Practice and Service</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">The maintenance steps are about continued self-reflection, spiritual growth, and helping others. The community feed mirrors the spirit of Step 12 — carrying the message to others who are still suffering. By sharing your experience on the social feed, encouraging newcomers in groups, and participating in challenges, you practice the principle of service that keeps long-term recovery strong. Daily check-ins serve as your Step 10 inventory, helping you promptly recognize when something is off.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">Steps 10-12: Daily Practice and Service</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">The maintenance steps are about continued self-reflection, spiritual growth, and helping others. The community feed mirrors the spirit of Step 12 — carrying the message to others who are still suffering. By sharing your experience on the social feed, encouraging newcomers in groups, and participating in challenges, you practice the principle of service that keeps long-term recovery strong. Daily check-ins serve as your Step 10 inventory, helping you promptly recognize when something is off.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">Sobriety Counter and AA Chip Milestones</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">The sobriety counter in MyRecoveryPal celebrates the same milestones recognized by AA chips: 24 hours, 30 days, 60 days, 90 days, 6 months, 9 months, and yearly anniversaries. Each milestone triggers a celebration that the community can rally around, just like receiving a chip at a meeting. For many members, the digital milestone serves as a daily reminder of progress between the physical chips they collect at their home group.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">Sobriety Counter and AA Chip Milestones</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">The sobriety counter in MyRecoveryPal celebrates the same milestones recognized by AA chips: 24 hours, 30 days, 60 days, 90 days, 6 months, 9 months, and yearly anniversaries. Each milestone triggers a celebration that the community can rally around, just like receiving a chip at a meeting. For many members, the digital milestone serves as a daily reminder of progress between the physical chips they collect at their home group.</p>
     </div>
 </section>
 

@@ -8,7 +8,7 @@
         max-width: 600px;
         margin: 100px auto 2rem;
         padding: 2rem;
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
@@ -17,7 +17,7 @@
         text-align: center;
         margin-bottom: 2rem;
         padding-bottom: 1.5rem;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
     }
 
     .delete-header h1 {
@@ -27,7 +27,7 @@
     }
 
     .delete-header p {
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 0.95rem;
     }
 
@@ -64,14 +64,14 @@
         display: block;
         font-weight: 600;
         margin-bottom: 0.4rem;
-        color: #333;
+        color: var(--text-dark, #333);
         font-size: 0.9rem;
     }
 
     .form-group input {
         width: 100%;
         padding: 0.6rem 0.75rem;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-color, #ddd);
         border-radius: 6px;
         font-size: 0.95rem;
     }
@@ -84,7 +84,7 @@
 
     .form-group .help-text {
         font-size: 0.8rem;
-        color: #888;
+        color: var(--text-muted, #888);
         margin-top: 0.25rem;
     }
 
@@ -107,6 +107,7 @@
 
     .btn-delete:disabled {
         background: #ccc;
+        color: #4b5563;
         cursor: not-allowed;
     }
 
@@ -114,7 +115,7 @@
         display: block;
         text-align: center;
         margin-top: 1rem;
-        color: var(--primary-color, #1e4d8b);
+        color: var(--brand-text, #1e4d8b);
         text-decoration: none;
         font-weight: 500;
     }

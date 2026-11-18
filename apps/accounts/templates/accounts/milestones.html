@@ -17,16 +17,16 @@
         align-items: center;
         margin-bottom: 2rem;
         padding-bottom: 1rem;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
     }
 
     .milestones-header-content h2 {
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 0.5rem;
     }
 
     .milestones-header-content p {
-        color: #666;
+        color: var(--text-muted, #666);
         margin: 0;
     }
 
@@ -67,7 +67,7 @@
     }
 
     .milestone-item {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 2rem;
         margin-bottom: 2rem;
         border-radius: 10px;
@@ -112,7 +112,7 @@
     }
 
     .milestone-date {
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 0.9rem;
         margin-top: 0.5rem;
         display: flex;
@@ -123,7 +123,7 @@
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 10px;
         margin: 2rem 0;
     }
@@ -135,12 +135,12 @@
     }
 
     .empty-state h3 {
-        color: #666;
+        color: var(--text-muted, #666);
         margin-bottom: 0.5rem;
     }
 
     .empty-state p {
-        color: #999;
+        color: var(--text-faint, #999);
         margin-bottom: 1.5rem;
     }
 
@@ -151,12 +151,12 @@
         gap: 0.5rem;
         margin-top: 1rem;
         padding-top: 1rem;
-        border-top: 1px solid #f0f0f0;
+        border-top: 1px solid var(--border-color, #f0f0f0);
     }
 
     .share-label {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-muted, #666);
         margin-right: 0.25rem;
     }
 

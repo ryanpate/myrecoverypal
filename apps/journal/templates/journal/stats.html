@@ -27,21 +27,21 @@
     }
 
     .stat-card {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 2rem;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .stat-card h3 {
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1.5rem;
     }
 
     .big-number {
         font-size: 3rem;
         font-weight: bold;
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
         text-align: center;
         display: block;
         margin: 1rem 0;
@@ -65,6 +65,8 @@
         background: #e0e0e0;
         border-radius: 20px;
         font-size: 0.9rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
 
     .tag-item.large {
@@ -84,7 +86,7 @@
         display: flex;
         justify-content: space-between;
         padding: 0.5rem 0;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--border-color, #eee);
     }
 
     .pattern-bar {
@@ -94,6 +96,8 @@
         overflow: hidden;
         flex: 1;
         margin-left: 1rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
 
     .pattern-fill {
@@ -108,6 +112,7 @@
         background: #fff3e0;
         border-radius: 10px;
     }
+    [data-theme="dark"] .craving-stats { background: var(--bg-light); }
 
     .craving-percentage {
         font-size: 2.5rem;
@@ -129,7 +134,7 @@
         <div class="stat-card">
             <h3>Total Journal Entries</h3>
             <span class="big-number">{{ total_entries }}</span>
-            <p style="text-align: center; color: #666;">
+            <p style="text-align: center; color: var(--text-muted, #666);">
                 Keep writing! Consistency is key to recovery.
             </p>
         </div>
@@ -140,7 +145,7 @@
             {% if mood_trend %}
             <canvas id="moodChart" class="mood-trend"></canvas>
             {% else %}
-            <p style="text-align: center; color: #666; padding: 2rem;">
+            <p style="text-align: center; color: var(--text-muted, #666); padding: 2rem;">
                 No mood data available yet. Track your mood in journal entries to see trends.
             </p>
             {% endif %}
@@ -196,7 +201,7 @@
     {% endif %}
 
     <!-- Journal Product CTA -->
-    <div class="stat-card" style="background: #fefce8; border: 1px solid #fbbf24; text-align: center;">
+    <div class="stat-card" style="background: #fefce8; border: 1px solid #fbbf24; text-align: center; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);">
         <div style="font-size: 2rem; margin-bottom: 0.5rem;">📖</div>
         <h3 style="color: #92400e;">Take Your Journaling Offline</h3>
         <p style="font-size: 0.95rem; color: #78716c; max-width: 480px; margin: 0 auto 1rem; line-height: 1.6;">

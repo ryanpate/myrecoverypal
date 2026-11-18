@@ -12,14 +12,14 @@
 {% block extra_css %}
 <style>
     .habit-value { max-width: 860px; margin: 0 auto 2rem; }
-    .habit-value-title { font-size: 1.35rem; font-weight: 800; color: #1e4d8b; margin-bottom: 1.25rem; }
+    .habit-value-title { font-size: 1.35rem; font-weight: 800; color: var(--brand-text, #1e4d8b); margin-bottom: 1.25rem; }
     .habit-value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: left; }
-    .habit-value-item { display: flex; flex-direction: column; gap: 0.3rem; background: #fff;
+    .habit-value-item { display: flex; flex-direction: column; gap: 0.3rem; background: var(--card-bg, #fff);
         border: 1px solid #e3eaf3; border-radius: 12px; padding: 1rem 1.1rem; }
-    .habit-value-item strong { color: #1a2a44; }
-    .habit-value-item span { color: #555; font-size: 0.9rem; line-height: 1.45; }
+    .habit-value-item strong { color: var(--text-dark, #1a2a44); }
+    .habit-value-item span { color: var(--text-muted, #555); font-size: 0.9rem; line-height: 1.45; }
     .habit-value-icon { font-size: 1.5rem; }
-    .habit-value-note { color: #888; font-size: 0.85rem; margin: 1rem 0 0; }
+    .habit-value-note { color: var(--text-muted, #888); font-size: 0.85rem; margin: 1rem 0 0; }
     @media (max-width: 700px) { .habit-value-grid { grid-template-columns: 1fr; } }
     /* Phones: get to the Premium price fast. The three tiles shrink to one
        line each (the Premium card repeats the detail) and the Premium card
@@ -104,8 +104,8 @@
         cursor: pointer;
     }
     .billing-toggle-btn.active {
-        background: #fff;
-        color: #1e4d8b;
+        background: var(--card-bg, #fff);
+        color: var(--brand-text, #1e4d8b);
     }
     .toggle-save {
         background: #52b788;
@@ -119,7 +119,7 @@
     }
     .ai-coach-desc {
         font-size: 0.85rem;
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         margin-left: 24px;
         margin-top: -4px;
         margin-bottom: 8px;
@@ -139,14 +139,14 @@
         border-color: rgba(102, 126, 234, 0.3);
     }
     .try-coach-section h3 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 12px;
     }
     [data-theme="dark"] .try-coach-section h3 {
         color: #8ab4f8;
     }
     .try-coach-section p {
-        color: #555;
+        color: var(--text-muted, #555);
         max-width: 500px;
         margin: 0 auto 20px;
     }
@@ -273,10 +273,10 @@
         <!-- Free Tier -->
         <div class="col-lg-5 col-md-6 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-header text-center bg-light" style="background-color: #f8f9fa !important;">
-                    <h3 class="my-3" style="color: #1e4d8b !important;">Free</h3>
-                    <h2 class="display-4" style="color: #1e4d8b !important;">$0</h2>
-                    <p class="text-muted" style="color: #6c757d !important;">Forever</p>
+                <div class="card-header text-center bg-light" style="background-color: var(--bg-light, #f8f9fa) !important;">
+                    <h3 class="my-3" style="color: var(--brand-text, #1e4d8b) !important;">Free</h3>
+                    <h2 class="display-4" style="color: var(--brand-text, #1e4d8b) !important;">$0</h2>
+                    <p class="text-muted" style="color: var(--text-muted, #6c757d) !important;">Forever</p>
                 </div>
                 <div class="card-body text-dark bg-white">
                     <ul class="list-unstyled">
@@ -314,7 +314,7 @@
                 <div class="card-header text-center bg-primary text-white" style="background-color: #1e4d8b !important;">
                     <span class="badge badge-warning mb-2">MOST POPULAR</span>
                     {% if not user.is_authenticated or card_trial_eligible %}
-                    <span class="badge badge-success mb-2 ml-1" style="background: #2e8059;">7-DAY FREE TRIAL</span>
+                    <span class="badge badge-success mb-2 ml-1" style="background: #2e8059; color: #fff;">7-DAY FREE TRIAL</span>
                     {% endif %}
                     <h3 class="my-3" style="color: white !important;">Premium</h3>
 
@@ -353,7 +353,7 @@
                     {% endif %}
                 </div>
                 <div class="card-body text-dark bg-white">
-                    <p class="mb-2" style="font-weight: 600; color: #1e4d8b;"><i class="fas fa-check-double text-success"></i> Everything in Free, plus:</p>
+                    <p class="mb-2" style="font-weight: 600; color: var(--brand-text, #1e4d8b);"><i class="fas fa-check-double text-success"></i> Everything in Free, plus:</p>
 
                     <!-- Featured benefit: the daily habit people actually keep (pledge + check-in) -->
                     <div class="pricing-ai-highlight">
@@ -416,7 +416,7 @@
                     {% endif %}
                 </div>
                 <div class="card-body text-dark bg-white">
-                    <p class="mb-2" style="font-weight: 600; color: #1e4d8b;"><i class="fas fa-check-double text-success"></i> Everything in Premium, plus:</p>
+                    <p class="mb-2" style="font-weight: 600; color: var(--brand-text, #1e4d8b);"><i class="fas fa-check-double text-success"></i> Everything in Premium, plus:</p>
                     <ul class="list-unstyled">
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Log AA, NA, SMART &amp; secular meeting attendance</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Court-acceptable PDF reports with tamper-evident fingerprint</li>
@@ -575,7 +575,7 @@
 <!-- Subscription Terms & Restore Purchases (iOS only) -->
 <div class="iap-only" style="margin-top: -1rem; margin-bottom: 2rem; text-align: center;">
     <div style="max-width: 500px; margin: 0 auto 1rem; padding: 0 1rem;">
-        <p style="font-size: 0.75rem; color: #888; line-height: 1.5;">
+        <p style="font-size: 0.75rem; color: var(--text-muted, #888); line-height: 1.5;">
             <strong>MyRecoveryPal Premium</strong> is an auto-renewable subscription.
             Monthly ($9.99/month) and Annual ($59.99/year) plans available.
             Payment will be charged to your Apple ID account at confirmation of purchase.
@@ -583,9 +583,9 @@
             Manage and cancel subscriptions in Settings &gt; Apple ID &gt; Subscriptions.
         </p>
         <p style="font-size: 0.8rem; margin-top: 0.5rem;">
-            <a href="{% url 'core:terms' %}" style="color: #1e4d8b; text-decoration: underline;">Terms of Use</a>
+            <a href="{% url 'core:terms' %}" style="color: var(--brand-text, #1e4d8b); text-decoration: underline;">Terms of Use</a>
             &nbsp;|&nbsp;
-            <a href="{% url 'core:privacy' %}" style="color: #1e4d8b; text-decoration: underline;">Privacy Policy</a>
+            <a href="{% url 'core:privacy' %}" style="color: var(--brand-text, #1e4d8b); text-decoration: underline;">Privacy Policy</a>
         </p>
     </div>
     <button class="btn btn-link text-muted" onclick="if(window.MRPIAP) window.MRPIAP.restorePurchases().then(function(r){ if(window.MRPIAP.isPremium) window.location.reload(); else { var t=document.createElement('div');t.className='alert alert-info text-center';t.style.cssText='position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 24px;border-radius:10px;';t.textContent='No previous purchases found.';document.body.appendChild(t);setTimeout(function(){t.remove();},3000); } });">

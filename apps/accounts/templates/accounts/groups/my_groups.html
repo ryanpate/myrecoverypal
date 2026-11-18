@@ -38,7 +38,7 @@
     }
 
     .group-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 0;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -88,7 +88,7 @@
         font-size: 1.3rem;
         font-weight: bold;
         margin-bottom: 0.5rem;
-        color: #333;
+        color: var(--text-dark, #333);
     }
 
     .group-meta {
@@ -97,7 +97,7 @@
         gap: 1rem;
         margin-bottom: 1rem;
         font-size: 0.85rem;
-        color: #777;
+        color: var(--text-muted, #777);
     }
 
     .group-meta-item {
@@ -120,16 +120,22 @@
     .status-active {
         background: #d1ecf1;
         color: #0c5460;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .status-admin {
         background: #f8d7da;
         color: #721c24;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .status-moderator {
         background: #fff3cd;
         color: #856404;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .group-actions {
@@ -165,7 +171,7 @@
     }
 
     .btn-outline {
-        background: white;
+        background: var(--card-bg, #fff);
         color: #52b788;
         border: 2px solid #52b788;
     }
@@ -179,7 +185,7 @@
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .empty-icon {
@@ -196,7 +202,7 @@
     }
 
     .stat-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 2rem;
         text-align: center;
@@ -215,7 +221,7 @@
     }
 
     .activity-item {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 10px;
         padding: 1rem;
         margin-bottom: 1rem;

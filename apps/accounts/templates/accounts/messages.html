@@ -37,7 +37,7 @@
     }
 
     .messages-wrapper {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         overflow: hidden;
@@ -45,7 +45,7 @@
 
     .messages-toolbar {
         padding: 1.5rem;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--border-color, #e0e0e0);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -65,7 +65,7 @@
 
     .search-box input {
         padding: 0.5rem 1rem 0.5rem 2.5rem;
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--border-color, #e0e0e0);
         border-radius: 25px;
         width: 250px;
         transition: all 0.3s ease;
@@ -82,7 +82,7 @@
         left: 1rem;
         top: 50%;
         transform: translateY(-50%);
-        color: #999;
+        color: var(--text-faint, #999);
     }
 
     .filter-tabs {
@@ -93,17 +93,17 @@
     .filter-tab {
         padding: 0.5rem 1rem;
         background: transparent;
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--border-color, #e0e0e0);
         border-radius: 20px;
-        color: #666;
+        color: var(--text-muted, #666);
         cursor: pointer;
         transition: all 0.3s ease;
         text-decoration: none;
     }
 
     .filter-tab:hover {
-        background: #f8f9fa;
-        color: var(--primary-dark);
+        background: var(--bg-light, #f8f9fa);
+        color: var(--brand-text, #1e4d8b);
     }
 
     .filter-tab.active {
@@ -141,7 +141,7 @@
 
     .message-item {
         padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--border-color, #f0f0f0);
         display: flex;
         gap: 1rem;
         transition: all 0.3s ease;
@@ -150,13 +150,14 @@
     }
 
     .message-item:hover {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
     }
 
     .message-item.unread {
         background: #f0f8ff;
         border-left: 3px solid var(--primary-light);
     }
+    [data-theme="dark"] .message-item.unread { background: var(--bg-light); }
 
     .message-avatar {
         width: 50px;
@@ -194,7 +195,7 @@
 
     .message-sender {
         font-weight: 600;
-        color: #333;
+        color: var(--text-dark, #333);
         font-size: 1rem;
     }
 
@@ -206,7 +207,7 @@
     }
 
     .message-time {
-        color: #999;
+        color: var(--text-faint, #999);
         font-size: 0.85rem;
     }
 
@@ -225,11 +226,11 @@
     .message-subject {
         font-weight: 500;
         margin-bottom: 0.25rem;
-        color: #555;
+        color: var(--text-muted, #555);
     }
 
     .message-preview {
-        color: #777;
+        color: var(--text-muted, #777);
         font-size: 0.9rem;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -253,8 +254,8 @@
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background: white;
-        border: 1px solid #e0e0e0;
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--border-color, #e0e0e0);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -271,7 +272,7 @@
     .empty-messages {
         text-align: center;
         padding: 4rem 2rem;
-        color: #999;
+        color: var(--text-faint, #999);
     }
 
     .empty-icon {
@@ -282,12 +283,12 @@
 
     .empty-title {
         font-size: 1.5rem;
-        color: #666;
+        color: var(--text-muted, #666);
         margin-bottom: 0.5rem;
     }
 
     .empty-text {
-        color: #999;
+        color: var(--text-faint, #999);
         margin-bottom: 1.5rem;
     }
 
@@ -300,11 +301,13 @@
         color: #4caf50;
         border-radius: 10px;
         font-size: 0.75rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .pagination {
         padding: 1.5rem;
-        border-top: 1px solid #e0e0e0;
+        border-top: 1px solid var(--border-color, #e0e0e0);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -313,18 +316,18 @@
 
     .page-btn {
         padding: 0.5rem 0.75rem;
-        border: 1px solid #e0e0e0;
-        background: white;
+        border: 1px solid var(--border-color, #e0e0e0);
+        background: var(--card-bg, #fff);
         border-radius: 5px;
-        color: #666;
+        color: var(--text-muted, #666);
         cursor: pointer;
         transition: all 0.3s ease;
         text-decoration: none;
     }
 
     .page-btn:hover {
-        background: #f8f9fa;
-        color: var(--primary-dark);
+        background: var(--bg-light, #f8f9fa);
+        color: var(--brand-text, #1e4d8b);
     }
 
     .page-btn.active {

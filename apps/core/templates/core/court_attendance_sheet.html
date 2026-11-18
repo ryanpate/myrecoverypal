@@ -43,19 +43,19 @@
 {% block extra_css %}
 <style>
     .cas { max-width: 860px; margin: 0 auto; padding: 3rem 1.25rem 4rem; line-height: 1.65; }
-    .cas h1 { color: #1e4d8b; font-size: 2.1rem; line-height: 1.25; margin: 0 0 0.75rem; }
-    .cas h2 { color: #1e4d8b; font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
-    .cas-lead { font-size: 1.1rem; color: #444; margin-bottom: 1.5rem; }
+    .cas h1 { color: var(--brand-text, #1e4d8b); font-size: 2.1rem; line-height: 1.25; margin: 0 0 0.75rem; }
+    .cas h2 { color: var(--brand-text, #1e4d8b); font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
+    .cas-lead { font-size: 1.1rem; color: var(--text-dark, #444); margin-bottom: 1.5rem; }
     .cas-download { display: inline-flex; align-items: center; gap: 0.5rem; background: #1e4d8b; color: #fff; font-weight: 700;
         padding: 0.9rem 1.8rem; border-radius: 50px; text-decoration: none; font-size: 1.05rem;
         --heading-color: currentColor; }
     .cas-download:hover { color: #fff; background: #163a6b; }
-    .cas-note { font-size: 0.9rem; color: #666; margin-top: 0.6rem; }
-    .cas-preview { margin: 2rem 0 0; overflow-x: auto; border: 1px solid #dde4ee; border-radius: 12px; padding: 1rem; background: #fff; }
+    .cas-note { font-size: 0.9rem; color: var(--text-muted, #666); margin-top: 0.6rem; }
+    .cas-preview { margin: 2rem 0 0; overflow-x: auto; border: 1px solid #dde4ee; border-radius: 12px; padding: 1rem; background: var(--card-bg, #fff); }
     .cas-preview table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 0.78rem; }
     .cas-preview th { background: #1e4d8b; color: #fff; text-align: left; padding: 0.35rem 0.45rem; --heading-color: currentColor; }
-    .cas-preview td { border: 1px solid #c9d3e0; height: 1.8rem; color: #333; padding: 0 0.45rem; }
-    .cas-preview caption { caption-side: top; text-align: left; font-weight: 700; color: #1a2a44; padding-bottom: 0.5rem; }
+    .cas-preview td { border: 1px solid #c9d3e0; height: 1.8rem; color: var(--text-dark, #333); padding: 0 0.45rem; }
+    .cas-preview caption { caption-side: top; text-align: left; font-weight: 700; color: var(--text-dark, #1a2a44); padding-bottom: 0.5rem; }
     .cas ol li { margin-bottom: 0.5rem; }
     .cas-upgrade { background: #0f2d56; color: #fff; border-radius: 16px; padding: 1.75rem; margin: 2.5rem 0; --heading-color: currentColor; }
     .cas-upgrade h2 { color: #fff; margin-top: 0; }

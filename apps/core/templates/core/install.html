@@ -17,11 +17,11 @@
 
     .install-content {
         padding: 4rem 0;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
     }
 
     .install-intro {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 3rem 2rem;
         border-radius: 10px;
         margin-bottom: 3rem;
@@ -41,8 +41,8 @@
     }
 
     .platform-tab {
-        background: white;
-        border: 2px solid #e9ecef;
+        background: var(--card-bg, #fff);
+        border: 2px solid var(--border-color, #e9ecef);
         padding: 1rem 2rem;
         border-radius: 8px;
         cursor: pointer;
@@ -70,7 +70,7 @@
 
     .platform-instructions {
         display: none;
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 3rem;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -111,29 +111,29 @@
     }
 
     .step-content h4 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 0.75rem;
     }
 
     .step-content p {
-        color: #666;
+        color: var(--text-muted, #666);
         line-height: 1.8;
         margin-bottom: 1rem;
     }
 
     .step-image {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         padding: 1rem;
         border-radius: 8px;
-        border: 1px solid #e9ecef;
+        border: 1px solid var(--border-color, #e9ecef);
         margin-top: 1rem;
         text-align: center;
-        color: #999;
+        color: var(--text-faint, #999);
         font-style: italic;
     }
 
     .benefits-section {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 3rem 2rem;
         border-radius: 10px;
         margin-top: 3rem;
@@ -166,12 +166,12 @@
     }
 
     .benefit-item h4 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 0.5rem;
     }
 
     .benefit-item p {
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .install-button-section {
@@ -323,11 +323,11 @@
         <div class="platform-instructions" id="firefox-instructions">
             <h3 class="mb-4">Installing on Firefox</h3>
 
-            <div class="alert" style="background: #fff3cd; border: 1px solid #ffc107; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+            <div class="alert" style="background: #fff3cd; border: 1px solid #ffc107; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);">
                 <strong><i class="fas fa-info-circle"></i> Note:</strong> Firefox has different PWA support depending on your device.
             </div>
 
-            <h4 style="color: #1e4d8b; margin-top: 2rem; margin-bottom: 1.5rem;">Firefox for Android</h4>
+            <h4 style="color: var(--brand-text, #1e4d8b); margin-top: 2rem; margin-bottom: 1.5rem;">Firefox for Android</h4>
 
             <div class="instruction-step">
                 <div class="step-number">1</div>
@@ -370,9 +370,9 @@
                 </div>
             </div>
 
-            <h4 style="color: #1e4d8b; margin-top: 3rem; margin-bottom: 1.5rem;">Firefox for Desktop</h4>
+            <h4 style="color: var(--brand-text, #1e4d8b); margin-top: 3rem; margin-bottom: 1.5rem;">Firefox for Desktop</h4>
 
-            <div style="background: #f8d7da; border: 1px solid #f5c2c7; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+            <div style="background: #f8d7da; border: 1px solid #f5c2c7; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);">
                 <h5 style="color: #842029; margin-bottom: 1rem;"><i class="fas fa-exclamation-triangle"></i> Limited Desktop Support</h5>
                 <p style="color: #58151c; margin-bottom: 1rem;">Firefox desktop currently has limited PWA support. For the best experience on desktop, we recommend using:</p>
                 <ul style="color: #58151c; margin-bottom: 0;">
@@ -387,7 +387,7 @@
                 <div class="step-content">
                     <h4>Alternative: Create a Bookmark</h4>
                     <p>While Firefox desktop doesn't support full PWA installation, you can:</p>
-                    <ul style="color: #666; margin-top: 1rem;">
+                    <ul style="color: var(--text-muted, #666); margin-top: 1rem;">
                         <li>Bookmark MyRecoveryPal (Ctrl+D / Cmd+D)</li>
                         <li>Pin the tab for quick access</li>
                         <li>Use the site normally in your browser</li>
@@ -401,7 +401,7 @@
         <div class="platform-instructions" id="ios-instructions">
             <h3 class="mb-4">Installing on iPhone/iPad</h3>
 
-            <div class="alert" style="background: #e7f3ff; border: 1px solid #b6d4fe; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+            <div class="alert" style="background: #e7f3ff; border: 1px solid #b6d4fe; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);">
                 <strong><i class="fab fa-apple"></i> Important:</strong> You must use <strong>Safari</strong> for this to work. Chrome, Firefox, and other browsers on iPhone do not support app installation.
             </div>
 
@@ -419,7 +419,7 @@
                 <div class="step-content">
                     <h4>Tap the <strong>...</strong> (More) Button</h4>
                     <p>Look at the <strong>bottom-right area</strong> of Safari's address bar. You'll see a small <strong>...</strong> (three dots) button. Tap it to reveal more options.</p>
-                    <p style="color: #666; font-size: 0.9rem;"><strong>Don't see the toolbar?</strong> Tap once on the page or scroll up slightly &mdash; the toolbar hides while scrolling and will reappear.</p>
+                    <p style="color: var(--text-muted, #666); font-size: 0.9rem;"><strong>Don't see the toolbar?</strong> Tap once on the page or scroll up slightly &mdash; the toolbar hides while scrolling and will reappear.</p>
                 </div>
             </div>
 
@@ -436,7 +436,7 @@
                 <div class="step-content">
                     <h4>Select "Add to Home Screen"</h4>
                     <p>A share menu will slide up. <strong>Scroll down</strong> past the row of app icons (Messages, Mail, etc.) to the list of actions below. Look for <strong>"Add to Home Screen"</strong> with a <strong>+</strong> icon and tap it.</p>
-                    <p style="color: #666; font-size: 0.9rem;"><strong>Can't find it?</strong> Scroll all the way to the bottom. If it's still not there, tap "Edit Actions..." at the bottom and make sure "Add to Home Screen" is toggled on.</p>
+                    <p style="color: var(--text-muted, #666); font-size: 0.9rem;"><strong>Can't find it?</strong> Scroll all the way to the bottom. If it's still not there, tap "Edit Actions..." at the bottom and make sure "Add to Home Screen" is toggled on.</p>
                 </div>
             </div>
 
@@ -461,7 +461,7 @@
         <div class="platform-instructions" id="desktop-instructions">
             <h3 class="mb-4">Installing on Desktop (Windows/Mac/Linux)</h3>
 
-            <div class="alert" style="background: #fff3cd; border: 1px solid #ffc107; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+            <div class="alert" style="background: #fff3cd; border: 1px solid #ffc107; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);">
                 <strong><i class="fas fa-info-circle"></i> Note:</strong> Desktop PWA installation works best with Chrome or Edge. Firefox desktop doesn't support PWA installation - see the Firefox tab above for alternatives.
             </div>
 
@@ -560,19 +560,19 @@
         <div class="benefits-section">
             <h3 class="mb-4">Troubleshooting</h3>
             <div style="max-width: 800px; margin: 0 auto;">
-                <h5 style="color: #1e4d8b; margin-top: 1.5rem;">I don't see the install button</h5>
-                <p style="color: #666;">Try visiting the site a few times. Most browsers require 2-3 visits before showing the install prompt. Also make sure you're using a supported browser (Chrome, Edge, Safari on iOS).</p>
+                <h5 style="color: var(--brand-text, #1e4d8b); margin-top: 1.5rem;">I don't see the install button</h5>
+                <p style="color: var(--text-muted, #666);">Try visiting the site a few times. Most browsers require 2-3 visits before showing the install prompt. Also make sure you're using a supported browser (Chrome, Edge, Safari on iOS).</p>
 
-                <h5 style="color: #1e4d8b; margin-top: 1.5rem;">How do I uninstall the app?</h5>
-                <p style="color: #666;"><strong>Android:</strong> Long-press the app icon → Uninstall<br>
+                <h5 style="color: var(--brand-text, #1e4d8b); margin-top: 1.5rem;">How do I uninstall the app?</h5>
+                <p style="color: var(--text-muted, #666);"><strong>Android:</strong> Long-press the app icon → Uninstall<br>
                 <strong>iOS:</strong> Long-press the app icon → Remove App<br>
                 <strong>Desktop:</strong> Right-click the app icon → Uninstall</p>
 
-                <h5 style="color: #1e4d8b; margin-top: 1.5rem;">Will this use a lot of storage?</h5>
-                <p style="color: #666;">No! The app uses minimal storage (typically under 50MB) and automatically manages cache size.</p>
+                <h5 style="color: var(--brand-text, #1e4d8b); margin-top: 1.5rem;">Will this use a lot of storage?</h5>
+                <p style="color: var(--text-muted, #666);">No! The app uses minimal storage (typically under 50MB) and automatically manages cache size.</p>
 
-                <h5 style="color: #1e4d8b; margin-top: 1.5rem;">Need more help?</h5>
-                <p style="color: #666;">Contact us at <a href="mailto:ryan@myrecoverypal.com">ryan@myrecoverypal.com</a> and we'll help you get set up!</p>
+                <h5 style="color: var(--brand-text, #1e4d8b); margin-top: 1.5rem;">Need more help?</h5>
+                <p style="color: var(--text-muted, #666);">Contact us at <a href="mailto:ryan@myrecoverypal.com">ryan@myrecoverypal.com</a> and we'll help you get set up!</p>
             </div>
         </div>
     </div>

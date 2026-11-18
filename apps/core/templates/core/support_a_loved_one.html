@@ -56,7 +56,7 @@
         <p style="font-size:1.25rem; opacity:.95; line-height:1.55; max-width:720px; margin:0 auto 2rem;">
             Follow your loved one's recovery progress, cheer them on, and get a gentle heads-up if they go quiet — all with their consent, and always under their control.
         </p>
-        <a href="{% if user.is_authenticated %}{% url 'accounts:supporter_invite_member' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:supporter_invite_member' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:#fff; color:#1e4d8b; text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem; box-shadow:0 8px 20px rgba(0,0,0,.18);">Invite your loved one &rarr;</a>
+        <a href="{% if user.is_authenticated %}{% url 'accounts:supporter_invite_member' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:supporter_invite_member' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:var(--card-bg, #fff); color:var(--brand-text, #1e4d8b); text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem; box-shadow:0 8px 20px rgba(0,0,0,.18);">Invite your loved one &rarr;</a>
         <p style="font-size:.9rem; opacity:.85; margin-top:1rem;">Free to invite &middot; Supporter $7.99/mo only once they accept &middot; Free for the person in recovery</p>
     </div>
 </section>
@@ -69,25 +69,25 @@
 <div style="padding: 0 1rem;">{% include 'resources/programs/_family_course_promo.html' %}</div>
 
 <!-- How it works -->
-<section style="padding:4rem 1rem; background:#f7f9fc;">
+<section style="padding:4rem 1rem; background:var(--bg-light, #f7f9fc);">
     <div style="max-width:1000px; margin:auto;">
-        <h2 style="text-align:center; color:#1e4d8b; font-size:1.9rem; margin:0 0 .5rem;">How it works</h2>
-        <p style="text-align:center; color:#666; margin:0 0 2.5rem;">Three simple steps — and your loved one stays in control the whole way.</p>
+        <h2 style="text-align:center; color:var(--brand-text, #1e4d8b); font-size:1.9rem; margin:0 0 .5rem;">How it works</h2>
+        <p style="text-align:center; color:var(--text-muted, #666); margin:0 0 2.5rem;">Three simple steps — and your loved one stays in control the whole way.</p>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:1.5rem;">
-            <div style="background:white; padding:1.75rem; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.05);">
+            <div style="background:var(--card-bg, #fff); padding:1.75rem; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.05);">
                 <div style="font-size:1.6rem;">1️⃣</div>
-                <h3 style="color:#1e4d8b; margin:.5rem 0;">Connect with consent</h3>
-                <p style="color:#555; line-height:1.55;">Invite your loved one (or accept their invite). They approve the connection and choose what you can see.</p>
+                <h3 style="color:var(--brand-text, #1e4d8b); margin:.5rem 0;">Connect with consent</h3>
+                <p style="color:var(--text-muted, #555); line-height:1.55;">Invite your loved one (or accept their invite). They approve the connection and choose what you can see.</p>
             </div>
-            <div style="background:white; padding:1.75rem; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.05);">
+            <div style="background:var(--card-bg, #fff); padding:1.75rem; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.05);">
                 <div style="font-size:1.6rem;">2️⃣</div>
-                <h3 style="color:#1e4d8b; margin:.5rem 0;">Follow their progress</h3>
-                <p style="color:#555; line-height:1.55;">See their days sober and milestones — and, if they choose, their check-in streak and mood trend. Send one-tap encouragement.</p>
+                <h3 style="color:var(--brand-text, #1e4d8b); margin:.5rem 0;">Follow their progress</h3>
+                <p style="color:var(--text-muted, #555); line-height:1.55;">See their days sober and milestones — and, if they choose, their check-in streak and mood trend. Send one-tap encouragement.</p>
             </div>
-            <div style="background:white; padding:1.75rem; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.05);">
+            <div style="background:var(--card-bg, #fff); padding:1.75rem; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.05);">
                 <div style="font-size:1.6rem;">3️⃣</div>
-                <h3 style="color:#1e4d8b; margin:.5rem 0;">Be there when it matters</h3>
-                <p style="color:#555; line-height:1.55;">At the closest level, get a gentle alert if they go quiet for a few days — and receive their "I need support" pings.</p>
+                <h3 style="color:var(--brand-text, #1e4d8b); margin:.5rem 0;">Be there when it matters</h3>
+                <p style="color:var(--text-muted, #555); line-height:1.55;">At the closest level, get a gentle alert if they go quiet for a few days — and receive their "I need support" pings.</p>
             </div>
         </div>
     </div>
@@ -96,37 +96,37 @@
 <!-- Sharing levels -->
 <section style="padding:4rem 1rem;">
     <div style="max-width:1000px; margin:auto;">
-        <h2 style="text-align:center; color:#1e4d8b; font-size:1.9rem; margin:0 0 .5rem;">They choose what you see</h2>
-        <p style="text-align:center; color:#666; margin:0 0 2.5rem;">Your loved one picks a level for you — and can change it anytime.</p>
+        <h2 style="text-align:center; color:var(--brand-text, #1e4d8b); font-size:1.9rem; margin:0 0 .5rem;">They choose what you see</h2>
+        <p style="text-align:center; color:var(--text-muted, #666); margin:0 0 2.5rem;">Your loved one picks a level for you — and can change it anytime.</p>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:1.5rem;">
             <div style="border:1px solid #e6ecf3; border-radius:14px; padding:1.75rem;">
-                <h3 style="color:#1e4d8b;">Cheerleader</h3>
-                <p style="color:#555; line-height:1.55;">Their day count, milestones, and a way to cheer them on. Pure good news.</p>
+                <h3 style="color:var(--brand-text, #1e4d8b);">Cheerleader</h3>
+                <p style="color:var(--text-muted, #555); line-height:1.55;">Their day count, milestones, and a way to cheer them on. Pure good news.</p>
             </div>
             <div style="border:1px solid #e6ecf3; border-radius:14px; padding:1.75rem;">
-                <h3 style="color:#1e4d8b;">Standard</h3>
-                <p style="color:#555; line-height:1.55;">Everything in Cheerleader, plus their check-in consistency and mood trend.</p>
+                <h3 style="color:var(--brand-text, #1e4d8b);">Standard</h3>
+                <p style="color:var(--text-muted, #555); line-height:1.55;">Everything in Cheerleader, plus their check-in consistency and mood trend.</p>
             </div>
             <div style="border:1px solid #e6ecf3; border-radius:14px; padding:1.75rem;">
-                <h3 style="color:#1e4d8b;">Close support</h3>
-                <p style="color:#555; line-height:1.55;">Everything in Standard, plus a gentle alert if they go quiet and their "I need support" pings.</p>
+                <h3 style="color:var(--brand-text, #1e4d8b);">Close support</h3>
+                <p style="color:var(--text-muted, #555); line-height:1.55;">Everything in Standard, plus a gentle alert if they go quiet and their "I need support" pings.</p>
             </div>
         </div>
-        <p style="text-align:center; color:#2f5d49; background:#f0f7f3; border-left:4px solid #52b788; border-radius:0 10px 10px 0; padding:1rem 1.25rem; max-width:760px; margin:2.5rem auto 0; line-height:1.55;">
+        <p style="text-align:center; color:#2f5d49; background:#f0f7f3; border-left:4px solid #52b788; border-radius:0 10px 10px 0; padding:1rem 1.25rem; max-width:760px; margin:2.5rem auto 0; line-height:1.55; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
             🔒 <strong>Their journal, cravings, and private notes are never shared</strong> — at any level. This is about staying connected, not surveillance.
         </p>
     </div>
 </section>
 
 <!-- Who it's for -->
-<section style="padding:3.5rem 1rem; background:#f7f9fc;">
+<section style="padding:3.5rem 1rem; background:var(--bg-light, #f7f9fc);">
     <div style="max-width:900px; margin:auto; text-align:center;">
-        <h2 style="color:#1e4d8b; font-size:1.7rem; margin:0 0 1.5rem;">Built for the people who care</h2>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:1rem; color:#444;">
-            <div>👪 <strong>Parents</strong><br><span style="color:#666; font-size:.95rem;">Stay close without hovering.</span></div>
-            <div>💞 <strong>Partners &amp; spouses</strong><br><span style="color:#666; font-size:.95rem;">Walk the journey together.</span></div>
-            <div>🧭 <strong>Sponsors</strong><br><span style="color:#666; font-size:.95rem;">Support your sponsee between meetings.</span></div>
-            <div>🤍 <strong>Friends</strong><br><span style="color:#666; font-size:.95rem;">Show up when it counts.</span></div>
+        <h2 style="color:var(--brand-text, #1e4d8b); font-size:1.7rem; margin:0 0 1.5rem;">Built for the people who care</h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:1rem; color:var(--text-dark, #444);">
+            <div>👪 <strong>Parents</strong><br><span style="color:var(--text-muted, #666); font-size:.95rem;">Stay close without hovering.</span></div>
+            <div>💞 <strong>Partners &amp; spouses</strong><br><span style="color:var(--text-muted, #666); font-size:.95rem;">Walk the journey together.</span></div>
+            <div>🧭 <strong>Sponsors</strong><br><span style="color:var(--text-muted, #666); font-size:.95rem;">Support your sponsee between meetings.</span></div>
+            <div>🤍 <strong>Friends</strong><br><span style="color:var(--text-muted, #666); font-size:.95rem;">Show up when it counts.</span></div>
         </div>
     </div>
 </section>
@@ -134,18 +134,18 @@
 <!-- FAQ -->
 <section style="padding:4rem 1rem;">
     <div style="max-width:760px; margin:auto;">
-        <h2 style="text-align:center; color:#1e4d8b; font-size:1.9rem; margin:0 0 2rem;">Frequently Asked Questions</h2>
+        <h2 style="text-align:center; color:var(--brand-text, #1e4d8b); font-size:1.9rem; margin:0 0 2rem;">Frequently Asked Questions</h2>
         <div style="display:flex; flex-direction:column; gap:1.25rem;">
-            <div><h3 style="color:#1e4d8b; margin:0 0 .35rem;">How can I support someone in recovery from a distance?</h3>
-                <p style="color:#555; margin:0; line-height:1.6;">Your loved one shares their progress — milestones, check-in consistency, mood trends — and you send one-tap encouragement. You stay connected without having to ask "how are you?" every day. They choose what you see and can pause anytime.</p></div>
-            <div><h3 style="color:#1e4d8b; margin:0 0 .35rem;">Can I track my loved one's sobriety?</h3>
-                <p style="color:#555; margin:0; line-height:1.6;">Only with their consent. They invite you or approve your request and pick a sharing level — from milestones only, up to check-in trends and a gentle inactivity alert. Their journal and private notes are never shared.</p></div>
-            <div><h3 style="color:#1e4d8b; margin:0 0 .35rem;">What if they don't want to share everything?</h3>
-                <p style="color:#555; margin:0; line-height:1.6;">That's the whole point. The person in recovery controls the level per supporter and can change it or stop sharing at any time. Nothing is shared without their explicit consent.</p></div>
-            <div><h3 style="color:#1e4d8b; margin:0 0 .35rem;">How much does it cost?</h3>
-                <p style="color:#555; margin:0; line-height:1.6;">Inviting is free, and you only subscribe once your loved one accepts. A Supporter membership is $7.99/month. Sharing is always free for the person in recovery. Cancel anytime.</p></div>
-            <div><h3 style="color:#1e4d8b; margin:0 0 .35rem;">Is it private and safe?</h3>
-                <p style="color:#555; margin:0; line-height:1.6;">Yes. Sharing is consent-based and fully controlled by your loved one. Journal entries, cravings, and private notes are never shared. Crisis resources (988 Suicide &amp; Crisis Lifeline) are always shown.</p></div>
+            <div><h3 style="color:var(--brand-text, #1e4d8b); margin:0 0 .35rem;">How can I support someone in recovery from a distance?</h3>
+                <p style="color:var(--text-muted, #555); margin:0; line-height:1.6;">Your loved one shares their progress — milestones, check-in consistency, mood trends — and you send one-tap encouragement. You stay connected without having to ask "how are you?" every day. They choose what you see and can pause anytime.</p></div>
+            <div><h3 style="color:var(--brand-text, #1e4d8b); margin:0 0 .35rem;">Can I track my loved one's sobriety?</h3>
+                <p style="color:var(--text-muted, #555); margin:0; line-height:1.6;">Only with their consent. They invite you or approve your request and pick a sharing level — from milestones only, up to check-in trends and a gentle inactivity alert. Their journal and private notes are never shared.</p></div>
+            <div><h3 style="color:var(--brand-text, #1e4d8b); margin:0 0 .35rem;">What if they don't want to share everything?</h3>
+                <p style="color:var(--text-muted, #555); margin:0; line-height:1.6;">That's the whole point. The person in recovery controls the level per supporter and can change it or stop sharing at any time. Nothing is shared without their explicit consent.</p></div>
+            <div><h3 style="color:var(--brand-text, #1e4d8b); margin:0 0 .35rem;">How much does it cost?</h3>
+                <p style="color:var(--text-muted, #555); margin:0; line-height:1.6;">Inviting is free, and you only subscribe once your loved one accepts. A Supporter membership is $7.99/month. Sharing is always free for the person in recovery. Cancel anytime.</p></div>
+            <div><h3 style="color:var(--brand-text, #1e4d8b); margin:0 0 .35rem;">Is it private and safe?</h3>
+                <p style="color:var(--text-muted, #555); margin:0; line-height:1.6;">Yes. Sharing is consent-based and fully controlled by your loved one. Journal entries, cravings, and private notes are never shared. Crisis resources (988 Suicide &amp; Crisis Lifeline) are always shown.</p></div>
         </div>
     </div>
 </section>
@@ -155,7 +155,7 @@
     <div style="max-width:760px; margin:auto;">
         <h2 style="font-size:2rem; font-weight:800; margin:0 0 1rem;">Be part of their journey</h2>
         <p style="font-size:1.15rem; opacity:.95; margin:0 0 2rem;">Create a free account, then connect with your loved one in minutes.</p>
-        <a href="{% if user.is_authenticated %}{% url 'accounts:supporter_invite_member' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:supporter_invite_member' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:#fff; color:#1e4d8b; text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem;">Invite your loved one &rarr;</a>
+        <a href="{% if user.is_authenticated %}{% url 'accounts:supporter_invite_member' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:supporter_invite_member' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:var(--card-bg, #fff); color:var(--brand-text, #1e4d8b); text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem;">Invite your loved one &rarr;</a>
         <p class="stripe-only" style="font-size:.95rem; opacity:.9; margin-top:1.5rem;">
             Would rather give than follow? <a href="{% url 'core:gift_premium' %}" style="color:#fff; text-decoration:underline;">Gift them a year of Premium &rarr;</a>
         </p>

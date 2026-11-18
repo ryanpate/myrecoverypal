@@ -39,12 +39,12 @@
     }
 
     .empty-state h3 {
-        color: #4B5563;
+        color: var(--text-muted, #4B5563);
         margin-bottom: 1rem;
     }
 
     .empty-state p {
-        color: #6B7280;
+        color: var(--text-muted, #6B7280);
         margin-bottom: 2rem;
     }
 </style>
@@ -60,7 +60,7 @@
 <!-- Main Content -->
 <div class="bookmarks-container">
     {% if bookmarks %}
-    <p style="color: #6B7280; margin-bottom: 2rem;">
+    <p style="color: var(--text-muted, #6B7280); margin-bottom: 2rem;">
         You have {{ bookmarks.count }} bookmarked resource{{ bookmarks.count|pluralize }}
     </p>
 
@@ -85,7 +85,7 @@
 
             <div class="resource-card-footer">
                 <div class="resource-stats">
-                    <span class="stat-item" style="color: #6B7280; font-size: 0.85rem;">
+                    <span class="stat-item" style="color: var(--text-muted, #6B7280); font-size: 0.85rem;">
                         Saved {{ bookmark.created_at|timesince }} ago
                     </span>
                 </div>

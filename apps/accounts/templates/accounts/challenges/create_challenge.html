@@ -6,7 +6,7 @@
 {% block extra_css %}
 <style>
     .form-container {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 2rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -16,7 +16,7 @@
     .form-section {
         margin-bottom: 2rem;
         padding-bottom: 2rem;
-        border-bottom: 1px solid #e9ecef;
+        border-bottom: 1px solid var(--border-color, #e9ecef);
     }
 
     .form-section:last-child {
@@ -44,13 +44,13 @@
 
     .form-label {
         font-weight: 600;
-        color: #495057;
+        color: var(--text-dark, #495057);
         margin-bottom: 0.5rem;
     }
 
     .form-control {
         border-radius: 8px;
-        border: 1px solid #ced4da;
+        border: 1px solid var(--border-color, #ced4da);
         padding: 0.75rem;
         transition: all 0.3s ease;
     }
@@ -77,13 +77,13 @@
     }
 
     .challenge-type-option {
-        border: 2px solid #e9ecef;
+        border: 2px solid var(--border-color, #e9ecef);
         border-radius: 8px;
         padding: 1rem;
         text-align: center;
         cursor: pointer;
         transition: all 0.3s ease;
-        background: white;
+        background: var(--card-bg, #fff);
     }
 
     .challenge-type-option:hover {
@@ -110,13 +110,13 @@
     }
 
     .duration-option {
-        border: 1px solid #ced4da;
+        border: 1px solid var(--border-color, #ced4da);
         border-radius: 6px;
         padding: 0.75rem;
         text-align: center;
         cursor: pointer;
         transition: all 0.3s ease;
-        background: white;
+        background: var(--card-bg, #fff);
     }
 
     .duration-option:hover {
@@ -136,6 +136,7 @@
         padding: 1.5rem;
         margin-bottom: 2rem;
     }
+    [data-theme="dark"] .tips-section { background: var(--bg-light); }
 
     .tip-item {
         display: flex;
@@ -159,10 +160,11 @@
         padding: 1.5rem;
         margin-top: 1rem;
     }
+    [data-theme="dark"] .preview-section { background: var(--bg-light); }
 
     .char-counter {
         font-size: 0.8rem;
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         text-align: right;
         margin-top: 0.25rem;
     }

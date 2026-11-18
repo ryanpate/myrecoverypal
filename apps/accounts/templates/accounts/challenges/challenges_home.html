@@ -76,16 +76,22 @@
     .status-active {
         background: #d4edda;
         color: #155724;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .status-upcoming {
         background: #fff3cd;
         color: #856404;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .status-completed {
         background: #d1ecf1;
         color: #0c5460;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .progress-ring {
@@ -111,7 +117,7 @@
     }
 
     .quick-stats {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 1.5rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -136,11 +142,11 @@
 
     .stat-label {
         font-size: 0.9rem;
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
     }
 
     .filter-section {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 1.5rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -157,7 +163,7 @@
     }
 
     .activity-feed {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 1.5rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -180,7 +186,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: #e9ecef;
+        background: var(--bg-gray, #e9ecef);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -189,7 +195,7 @@
     }
 
     .my-participations {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 1.5rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -197,7 +203,7 @@
     }
 
     .participation-item {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 8px;
         padding: 1rem;
         margin-bottom: 0.75rem;

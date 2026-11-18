@@ -15,7 +15,7 @@
 
     /* Post creation box */
     .create-post-box {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 0.85rem 1.1rem;
         margin-bottom: 1.25rem;
@@ -34,7 +34,7 @@
 
     .create-post-compact .placeholder-text {
         flex: 1;
-        color: #999;
+        color: var(--text-faint, #999);
         font-size: 0.95rem;
     }
 
@@ -96,13 +96,13 @@
         justify-content: space-between;
         align-items: center;
         padding-top: 0.75rem;
-        border-top: 1px solid #e0e0e0;
+        border-top: 1px solid var(--border-color, #e0e0e0);
     }
 
     .visibility-select {
         padding: 0.5rem;
         border-radius: 8px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-color, #ddd);
         font-size: 0.9rem;
         cursor: pointer;
     }
@@ -135,7 +135,7 @@
 
     /* Individual posts */
     .post-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         margin-bottom: 1rem;
         border: 1px solid var(--border-color, #e5e7eb);
@@ -222,7 +222,7 @@
 
     .post-meta {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-muted, #666);
         margin: 0;
         display: block;
         line-height: 1.3;
@@ -256,14 +256,14 @@
 
     .anchor-teaser-title {
         font-weight: 600;
-        color: #1e293b;
+        color: var(--text-dark, #1e293b);
         font-size: 0.95rem;
         margin-bottom: 0.25rem;
     }
 
     .anchor-teaser-text {
         font-size: 0.85rem;
-        color: #64748b;
+        color: var(--text-muted, #64748b);
         line-height: 1.4;
         margin-bottom: 0.75rem;
     }
@@ -318,13 +318,13 @@
     .medallion-teaser-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .medallion-teaser-title {
         font-weight: 700;
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         font-size: 0.95rem;
         margin-bottom: 0.25rem;
     }
     .medallion-teaser-text {
         font-size: 0.85rem;
-        color: #64748b;
+        color: var(--text-muted, #64748b);
         line-height: 1.4;
         margin-bottom: 0.75rem;
     }
@@ -364,7 +364,7 @@
     }
 
     .post-content a {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         text-decoration: none;
         word-break: break-all;
     }
@@ -380,18 +380,18 @@
     /* Link Preview Cards */
     .link-preview {
         display: flex;
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--border-color, #e0e0e0);
         border-radius: 12px;
         overflow: hidden;
         margin-top: 0.75rem;
         text-decoration: none;
         color: inherit;
-        background: #fafafa;
+        background: var(--bg-light, #fafafa);
         transition: background 0.2s;
     }
 
     .link-preview:hover {
-        background: #f0f0f0;
+        background: var(--bg-gray, #f0f0f0);
         text-decoration: none;
         color: inherit;
     }
@@ -416,7 +416,7 @@
 
     .link-preview-domain {
         font-size: 0.75rem;
-        color: #888;
+        color: var(--text-muted, #888);
         display: flex;
         align-items: center;
         gap: 0.35rem;
@@ -431,7 +431,7 @@
     .link-preview-title {
         font-size: 0.9rem;
         font-weight: 600;
-        color: #333;
+        color: var(--text-dark, #333);
         line-height: 1.3;
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -441,7 +441,7 @@
 
     .link-preview-desc {
         font-size: 0.8rem;
-        color: #666;
+        color: var(--text-muted, #666);
         line-height: 1.3;
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -490,8 +490,8 @@
         display: flex;
         justify-content: space-between;
         font-size: 0.9rem;
-        color: #666;
-        border-top: 1px solid #f0f0f0;
+        color: var(--text-muted, #666);
+        border-top: 1px solid var(--border-color, #f0f0f0);
     }
 
     .post-actions-bar {
@@ -531,7 +531,7 @@
     /* Comments section */
     .comments-section {
         padding: 0 1rem 1rem 1rem;
-        border-top: 1px solid #f0f0f0;
+        border-top: 1px solid var(--border-color, #f0f0f0);
     }
 
     .comment {
@@ -550,7 +550,7 @@
 
     .comment-content {
         flex: 1;
-        background: #f5f5f5;
+        background: var(--bg-gray, #f5f5f5);
         padding: 0.5rem 0.75rem;
         border-radius: 12px;
     }
@@ -568,7 +568,7 @@
 
     .comment-time {
         font-size: 0.75rem;
-        color: #999;
+        color: var(--text-faint, #999);
         margin-top: 0.25rem;
     }
 
@@ -599,7 +599,7 @@
     .comment-action-btn {
         background: none;
         border: none;
-        color: #999;
+        color: var(--text-faint, #999);
         cursor: pointer;
         font-size: 0.75rem;
         padding: 0;
@@ -626,7 +626,7 @@
 
     .comment-input {
         flex: 1;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-color, #ddd);
         border-radius: 20px;
         padding: 0.5rem 1rem;
         font-size: 0.9rem;
@@ -654,7 +654,7 @@
     .empty-state {
         text-align: center;
         padding: 3rem 1rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .empty-state i {
@@ -689,7 +689,7 @@
     /* Character counter */
     .char-counter {
         font-size: 0.85rem;
-        color: #999;
+        color: var(--text-faint, #999);
     }
 
     .char-counter.warning {
@@ -737,7 +737,7 @@
     }
 
     .signup-gate-content {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 16px;
         padding: 2.5rem 2rem;
         text-align: center;
@@ -763,13 +763,13 @@
     }
 
     .signup-gate-content h3 {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         margin: 0 0 0.75rem 0;
         font-size: 1.5rem;
     }
 
     .signup-gate-content p {
-        color: #666;
+        color: var(--text-muted, #666);
         margin: 0 0 1.5rem 0;
         font-size: 1rem;
         line-height: 1.5;
@@ -799,7 +799,7 @@
         margin-top: 1.25rem !important;
         margin-bottom: 0 !important;
         font-size: 0.9rem !important;
-        color: #888 !important;
+        color: var(--text-muted, #888) !important;
     }
 
     .signup-gate-subtext a {
@@ -809,7 +809,7 @@
 
     /* Post menu dropdown */
     .post-menu-dropdown button:hover {
-        background: #f5f5f5;
+        background: var(--bg-gray, #f5f5f5);
     }
 
     /* New User Welcome Section */
@@ -820,6 +820,7 @@
         margin-bottom: 1.5rem;
         border: 1px solid #e0f2f1;
     }
+    [data-theme="dark"] .welcome-section { background: var(--bg-light); }
 
     .welcome-header {
         text-align: center;
@@ -827,13 +828,13 @@
     }
 
     .welcome-header h2 {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-size: 1.4rem;
         margin: 0 0 0.5rem 0;
     }
 
     .welcome-header p {
-        color: #666;
+        color: var(--text-muted, #666);
         margin: 0;
         font-size: 0.95rem;
     }
@@ -851,7 +852,7 @@
     }
 
     .suggested-user-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 1rem;
         display: flex;
@@ -901,7 +902,7 @@
 
     .suggested-bio {
         font-size: 0.8rem;
-        color: #888;
+        color: var(--text-muted, #888);
         margin-bottom: 0.75rem;
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -987,7 +988,7 @@
     }
 
     .edit-modal {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 12px;
         width: 90%;
         max-width: 500px;
@@ -1003,7 +1004,7 @@
     .edit-modal textarea {
         width: 100%;
         min-height: 120px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-color, #ddd);
         border-radius: 8px;
         padding: 0.75rem;
         font-size: 1rem;
@@ -1032,9 +1033,9 @@
     }
 
     .edit-modal-cancel {
-        background: #f5f5f5;
-        border: 1px solid #ddd;
-        color: #666;
+        background: var(--bg-gray, #f5f5f5);
+        border: 1px solid var(--border-color, #ddd);
+        color: var(--text-muted, #666);
     }
 
     .edit-modal-save {
@@ -1049,7 +1050,7 @@
 
     /* Inline suggested users (between posts) */
     .inline-suggestions {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 0.75rem 1rem;
         margin-bottom: 1rem;
@@ -1066,7 +1067,7 @@
     .inline-suggestions-header h4 {
         margin: 0;
         font-size: 0.85rem;
-        color: #888;
+        color: var(--text-muted, #888);
         font-weight: 600;
     }
 
@@ -1158,7 +1159,7 @@
 
     /* Check-in widget */
     .checkin-widget {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 1rem;
         margin-bottom: 0.75rem;
@@ -1172,11 +1173,11 @@
         margin-bottom: 0.75rem;
         font-size: 0.9rem;
         font-weight: 600;
-        color: #333;
+        color: var(--text-dark, #333);
     }
 
     .checkin-widget-header i {
-        color: var(--primary-dark, #6c5ce7);
+        color: var(--brand-text, #1e4d8b);
     }
 
     .checkin-prompt-link {
@@ -1220,12 +1221,12 @@
     .checkin-done-info .done-label {
         font-size: 0.85rem;
         font-weight: 600;
-        color: #333;
+        color: var(--text-dark, #333);
     }
 
     .checkin-done-info .done-mood {
         font-size: 0.8rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .checkin-streak-badge {
@@ -1242,7 +1243,7 @@
 
     .checkin-progress-link {
         font-size: 0.8rem;
-        color: var(--primary-dark, #6c5ce7);
+        color: var(--brand-text, #1e4d8b);
         text-decoration: none;
         font-weight: 500;
     }
@@ -1262,7 +1263,7 @@
     .checkin-post-mood {
         font-size: 1.1rem;
         font-weight: 600;
-        color: #333;
+        color: var(--text-dark, #333);
         display: flex;
         align-items: center;
         gap: 0.4rem;
@@ -1270,13 +1271,13 @@
 
     .checkin-post-mood i {
         font-size: 0.75rem;
-        color: var(--primary-dark, #6c5ce7);
+        color: var(--brand-text, #1e4d8b);
     }
 
     .checkin-post-gratitude {
         margin-top: 0.5rem;
         font-size: 0.85rem;
-        color: #555;
+        color: var(--text-muted, #555);
         font-style: italic;
         padding-left: 0.5rem;
         border-left: 2px solid var(--primary-dark, #6c5ce7);
@@ -1700,7 +1701,7 @@
                         <button class="action-btn post-menu-btn" data-post-id="{{ post.id }}" style="padding: 0.25rem 0.5rem; color: #fff;">
                             <i class="fas fa-ellipsis-h"></i>
                         </button>
-                        <div class="post-menu-dropdown" id="menu-{{ post.id }}" style="display: none; position: absolute; right: 0; top: 100%; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); min-width: 120px; z-index: 100;">
+                        <div class="post-menu-dropdown" id="menu-{{ post.id }}" style="display: none; position: absolute; right: 0; top: 100%; background: var(--card-bg, #fff); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); min-width: 120px; z-index: 100;">
                             <button class="edit-post-btn" data-post-id="{{ post.id }}" data-content="{{ post.content|escapejs }}" style="display: block; width: 100%; padding: 0.75rem 1rem; border: none; background: none; text-align: left; cursor: pointer; font-size: 0.9rem;">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
@@ -1732,7 +1733,7 @@
                         <button class="action-btn post-menu-btn" data-post-id="{{ post.id }}" style="padding: 0.25rem 0.5rem;">
                             <i class="fas fa-ellipsis-h"></i>
                         </button>
-                        <div class="post-menu-dropdown" id="menu-{{ post.id }}" style="display: none; position: absolute; right: 0; top: 100%; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); min-width: 120px; z-index: 100;">
+                        <div class="post-menu-dropdown" id="menu-{{ post.id }}" style="display: none; position: absolute; right: 0; top: 100%; background: var(--card-bg, #fff); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); min-width: 120px; z-index: 100;">
                             <button class="edit-post-btn" data-post-id="{{ post.id }}" data-content="{{ post.content|escapejs }}" style="display: block; width: 100%; padding: 0.75rem 1rem; border: none; background: none; text-align: left; cursor: pointer; font-size: 0.9rem;">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
@@ -1875,7 +1876,7 @@
                 {% if page_obj.has_previous %}
                 <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline">Previous</a>
                 {% endif %}
-                <span style="margin: 0 1rem; color: #666;">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                <span style="margin: 0 1rem; color: var(--text-muted, #666);">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
                 {% if page_obj.has_next %}
                 <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline">Next</a>
                 {% endif %}
@@ -1938,7 +1939,7 @@
             </div>
 
             <div class="empty-state" style="padding: 1.5rem;">
-                <p style="margin: 0; color: #888;">Or be the first to share something!</p>
+                <p style="margin: 0; color: var(--text-muted, #888);">Or be the first to share something!</p>
             </div>
             {% else %}
             <div class="empty-state">

@@ -5,14 +5,14 @@
 {% block extra_css %}
 <style>
     .meeting-filters {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 10px;
         padding: 20px;
         margin-bottom: 30px;
     }
 
     .meeting-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 10px;
         padding: 20px;
         margin-bottom: 20px;
@@ -28,18 +28,18 @@
     .meeting-time {
         font-size: 1.1rem;
         font-weight: 600;
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
     }
 
     .meeting-name {
         font-size: 1.2rem;
         font-weight: 600;
-        color: #1F2937;
+        color: var(--text-dark, #1F2937);
         margin-bottom: 10px;
     }
 
     .meeting-location {
-        color: #6B7280;
+        color: var(--text-muted, #6B7280);
         margin-bottom: 10px;
     }
 
@@ -58,6 +58,8 @@
         border-radius: 15px;
         font-size: 0.85rem;
         font-weight: 500;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .attendance-badge {
@@ -72,16 +74,21 @@
     .attendance-badge.in-person {
         background: #DCFCE7;
         color: #166534;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .attendance-badge.online {
         background: #DBEAFE;
         color: #1E40AF;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .attendance-badge.hybrid {
         background: #FEF3C7;
         color: #92400E;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .today-badge {
@@ -92,6 +99,8 @@
         font-size: 0.85rem;
         font-weight: 600;
         margin-left: 10px;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .filter-section {
@@ -100,14 +109,14 @@
 
     .filter-label {
         font-weight: 600;
-        color: #4B5563;
+        color: var(--text-muted, #4B5563);
         margin-bottom: 8px;
     }
 
     .btn-filter {
-        background: white;
-        border: 2px solid #E5E7EB;
-        color: #4B5563;
+        background: var(--card-bg, #fff);
+        border: 2px solid var(--border-color, #E5E7EB);
+        color: var(--text-muted, #4B5563);
         padding: 8px 16px;
         border-radius: 8px;
         margin-right: 8px;
@@ -117,7 +126,7 @@
 
     .btn-filter:hover {
         border-color: #1e4d8b;
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
     }
 
     .btn-filter.active {
@@ -130,18 +139,18 @@
     .no-results {
         text-align: center;
         padding: 60px 20px;
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 10px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .no-results h3 {
-        color: #4B5563;
+        color: var(--text-muted, #4B5563);
         margin-bottom: 15px;
     }
 
     .no-results p {
-        color: #9CA3AF;
+        color: var(--text-faint, #9CA3AF);
         margin-bottom: 20px;
     }
 

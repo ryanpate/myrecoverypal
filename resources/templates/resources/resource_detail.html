@@ -92,7 +92,7 @@
     }
     
     .resource-main-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         overflow: hidden;
@@ -100,7 +100,7 @@
     
     .resource-info-header {
         padding: 2rem;
-        border-bottom: 1px solid #E5E7EB;
+        border-bottom: 1px solid var(--border-color, #E5E7EB);
     }
     
     .resource-title-section {
@@ -113,7 +113,7 @@
     
     .resource-title-large {
         font-size: 2rem;
-        color: #1F2937;
+        color: var(--text-dark, #1F2937);
         margin: 0;
     }
     
@@ -128,7 +128,7 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        color: #6B7280;
+        color: var(--text-muted, #6B7280);
         font-size: 0.95rem;
     }
     
@@ -138,17 +138,17 @@
     
     .resource-content {
         line-height: 1.8;
-        color: #374151;
+        color: var(--text-dark, #374151);
     }
     
     .resource-content h2 {
-        color: #1F2937;
+        color: var(--text-dark, #1F2937);
         margin-top: 2rem;
         margin-bottom: 1rem;
     }
     
     .resource-content h3 {
-        color: #374151;
+        color: var(--text-dark, #374151);
         margin-top: 1.5rem;
         margin-bottom: 0.75rem;
     }
@@ -163,7 +163,7 @@
     }
     
     .download-section {
-        background: #F3F4F6;
+        background: var(--bg-gray, #F3F4F6);
         padding: 2rem;
         border-radius: 12px;
         margin: 2rem 0;
@@ -194,7 +194,7 @@
     
     .download-info {
         margin-top: 1rem;
-        color: #6B7280;
+        color: var(--text-muted, #6B7280);
         font-size: 0.9rem;
     }
     
@@ -220,8 +220,8 @@
         align-items: center;
         gap: 0.5rem;
         padding: 0.75rem 1.5rem;
-        background: white;
-        color: var(--primary-color);
+        background: var(--card-bg, #fff);
+        color: var(--brand-text, #1e4d8b);
         border: 2px solid var(--primary-color);
         border-radius: 50px;
         text-decoration: none;
@@ -242,7 +242,7 @@
     }
     
     .rating-section {
-        background: #F9FAFB;
+        background: var(--bg-light, #F9FAFB);
         padding: 2rem;
         border-radius: 12px;
         margin: 2rem 0;
@@ -271,7 +271,7 @@
     }
     
     .related-resources h2 {
-        color: #1F2937;
+        color: var(--text-dark, #1F2937);
         margin-bottom: 2rem;
         text-align: center;
     }
@@ -286,17 +286,17 @@
         max-width: 1000px;
         margin: 2rem auto;
         padding: 0 2rem;
-        color: #6B7280;
+        color: var(--text-muted, #6B7280);
     }
     
     .breadcrumbs a {
-        color: #6B7280;
+        color: var(--text-muted, #6B7280);
         text-decoration: none;
         transition: color 0.3s ease;
     }
     
     .breadcrumbs a:hover {
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
     }
     
     .access-badge {
@@ -309,11 +309,15 @@
     .access-free {
         background: #D1FAE5;
         color: #065F46;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
     
     .access-registered {
         background: #DBEAFE;
         color: #1E40AF;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
     
     .locked-resource-panel {
@@ -330,6 +334,8 @@
     .access-premium {
         background: #FEF3C7;
         color: #92400E;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
     
     @media (max-width: 768px) {
@@ -402,7 +408,7 @@
                 </div>
             </div>
             
-            <p style="font-size: 1.1rem; color: #4B5563; margin-bottom: 1rem;">
+            <p style="font-size: 1.1rem; color: var(--text-muted, #4B5563); margin-bottom: 1rem;">
                 {{ resource.description }}
             </p>
             
@@ -508,7 +514,7 @@
                         <input type="hidden" name="rating" id="rating-input" 
                                value="{% if user_rating %}{{ user_rating.rating }}{% endif %}">
                         <textarea name="review" rows="3" placeholder="Share your thoughts about this resource (optional)"
-                                  style="width: 100%; padding: 0.75rem; border: 1px solid #E5E7EB; 
+                                  style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color, #E5E7EB); 
                                          border-radius: 8px; margin-top: 1rem;">{% if user_rating %}{{ user_rating.review }}{% endif %}</textarea>
                         <button type="submit" class="cta-button" style="margin-top: 1rem;">
                             {% if user_rating %}Update Rating{% else %}Submit Rating{% endif %}
@@ -517,7 +523,7 @@
                 </div>
             {% else %}
                 <div style="text-align: center; margin: 2rem 0;">
-                    <p style="color: #6B7280; margin-bottom: 1rem;">
+                    <p style="color: var(--text-muted, #6B7280); margin-bottom: 1rem;">
                         Sign in to bookmark and rate this resource
                     </p>
                     <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="cta-button">

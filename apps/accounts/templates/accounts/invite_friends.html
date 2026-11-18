@@ -17,18 +17,18 @@
     }
 
     .invite-header h1 {
-        color: #333;
+        color: var(--text-dark, #333);
         font-size: 2rem;
         margin-bottom: 0.5rem;
     }
 
     .invite-header p {
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 1.1rem;
     }
 
     .invite-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 16px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         padding: 2rem;
@@ -37,7 +37,7 @@
 
     .invite-card h2 {
         font-size: 1.3rem;
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 1rem;
         display: flex;
         align-items: center;
@@ -57,11 +57,11 @@
     }
 
     .stat-card {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 12px;
         padding: 1.5rem;
         text-align: center;
-        border: 1px solid #e8e8e8;
+        border: 1px solid var(--border-color, #e8e8e8);
     }
 
     .stat-number {
@@ -74,7 +74,7 @@
     }
 
     .stat-label {
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 0.9rem;
         margin-top: 0.25rem;
     }
@@ -85,11 +85,13 @@
         border-radius: 12px;
         padding: 1.5rem;
         margin-bottom: 1.5rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
 
     .invite-link-label {
         font-weight: 600;
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 0.75rem;
         display: block;
     }
@@ -106,8 +108,8 @@
         border: 2px solid #d0e8d8;
         border-radius: 10px;
         font-size: 0.95rem;
-        background: white;
-        color: #333;
+        background: var(--card-bg, #fff);
+        color: var(--text-dark, #333);
         font-family: monospace;
     }
 
@@ -193,7 +195,7 @@
     .invite-code-display {
         text-align: center;
         padding: 1.5rem;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 12px;
         margin-bottom: 1rem;
     }
@@ -202,12 +204,12 @@
         font-size: 2rem;
         font-weight: 700;
         letter-spacing: 0.2em;
-        color: #333;
+        color: var(--text-dark, #333);
         font-family: monospace;
     }
 
     .invite-code-label {
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 0.9rem;
         margin-top: 0.5rem;
     }
@@ -221,6 +223,8 @@
         font-size: 0.85rem;
         font-weight: 500;
         margin-top: 0.75rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     /* Generate Button */
@@ -263,12 +267,12 @@
     }
 
     .empty-state h3 {
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 0.5rem;
     }
 
     .empty-state p {
-        color: #666;
+        color: var(--text-muted, #666);
         margin-bottom: 1.5rem;
     }
 
@@ -278,6 +282,7 @@
         padding: 1rem 1.5rem;
         border-radius: 0 8px 8px 0;
     }
+    [data-theme="dark"] .tips-section { background: var(--bg-light); }
 
     .tips-section h3 {
         color: #856404;
@@ -304,7 +309,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        color: #666;
+        color: var(--text-muted, #666);
         text-decoration: none;
         margin-bottom: 1rem;
         font-size: 0.95rem;
@@ -395,17 +400,17 @@
             </div>
 
             <!-- Email Invite Form -->
-            <div id="email-invite-form" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: white; border-radius: 12px; border: 2px solid #e0e8d8;">
-                <h4 style="margin: 0 0 1rem 0; color: #333; display: flex; align-items: center; gap: 0.5rem;">
+            <div id="email-invite-form" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: var(--card-bg, #fff); border-radius: 12px; border: 2px solid #e0e8d8;">
+                <h4 style="margin: 0 0 1rem 0; color: var(--text-dark, #333); display: flex; align-items: center; gap: 0.5rem;">
                     <i class="fas fa-paper-plane" style="color: #52b788;"></i> Send Invite via Email
                 </h4>
                 <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #555;">Friend's Email</label>
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-muted, #555);">Friend's Email</label>
                     <input type="email" id="invite-email" placeholder="friend@example.com"
                            style="width: 100%; padding: 0.875rem 1rem; border: 2px solid #d0e8d8; border-radius: 10px; font-size: 0.95rem; box-sizing: border-box;">
                 </div>
                 <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #555;">Personal Message (optional)</label>
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-muted, #555);">Personal Message (optional)</label>
                     <textarea id="invite-message" placeholder="Add a personal note to your invitation..." rows="3"
                               style="width: 100%; padding: 0.875rem 1rem; border: 2px solid #d0e8d8; border-radius: 10px; font-size: 0.95rem; resize: vertical; box-sizing: border-box;"></textarea>
                 </div>
@@ -415,7 +420,7 @@
                         <i class="fas fa-paper-plane"></i> Send Invitation
                     </button>
                     <button type="button" onclick="toggleEmailForm()"
-                            style="padding: 0.875rem 1.5rem; background: #f0f0f0; color: #666; border: none; border-radius: 10px; font-weight: 500; cursor: pointer;">
+                            style="padding: 0.875rem 1.5rem; background: var(--bg-gray, #f0f0f0); color: var(--text-muted, #666); border: none; border-radius: 10px; font-weight: 500; cursor: pointer;">
                         Cancel
                     </button>
                 </div>

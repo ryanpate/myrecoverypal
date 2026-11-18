@@ -19,7 +19,7 @@
     }
 
     .get-app-card {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 3rem 2rem;
         border-radius: 20px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
@@ -57,13 +57,13 @@
     }
 
     .get-app-card h1 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1rem;
         font-size: 2rem;
     }
 
     .get-app-card p {
-        color: #666;
+        color: var(--text-muted, #666);
         line-height: 1.8;
         margin-bottom: 2rem;
         font-size: 1.1rem;
@@ -106,7 +106,7 @@
 
     .features-list li {
         padding: 0.75rem 0;
-        color: #666;
+        color: var(--text-muted, #666);
         display: flex;
         align-items: center;
         gap: 1rem;
@@ -119,7 +119,7 @@
     }
 
     .manual-install-link {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         text-decoration: none;
         margin-top: 1.5rem;
         display: inline-block;
@@ -131,12 +131,12 @@
     }
 
     .device-detect {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         padding: 1rem;
         border-radius: 10px;
         margin-bottom: 1.5rem;
         font-size: 0.9rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .pulse-animation {
@@ -207,8 +207,8 @@
             Need help installing? View detailed instructions →
         </a>
 
-        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e9ecef;">
-            <p style="font-size: 0.9rem; color: #999; margin: 0;">
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color, #e9ecef);">
+            <p style="font-size: 0.9rem; color: var(--text-faint, #999); margin: 0;">
                 Free • Safe • Secure<br>
                 <small>No app store required</small>
             </p>

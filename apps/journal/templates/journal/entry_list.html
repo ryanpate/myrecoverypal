@@ -20,7 +20,7 @@
     }
     
     .search-filters {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 1.5rem;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -35,7 +35,7 @@
     }
     
     .entries-list {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         overflow: hidden;
@@ -43,12 +43,12 @@
     
     .entry-item {
         padding: 1.5rem;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--border-color, #f0f0f0);
         transition: background 0.3s ease;
     }
     
     .entry-item:hover {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
     }
     
     .entry-item:last-child {
@@ -65,7 +65,7 @@
     .entry-title {
         font-size: 1.2rem;
         font-weight: bold;
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
         text-decoration: none;
     }
     
@@ -74,12 +74,12 @@
     }
     
     .entry-date {
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 0.9rem;
     }
     
     .entry-preview {
-        color: #444;
+        color: var(--text-dark, #444);
         line-height: 1.6;
         margin: 0.5rem 0;
     }
@@ -98,19 +98,21 @@
         background: #e3f2fd;
         border-radius: 15px;
         font-size: 0.85rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
     
     .tag {
         display: inline-block;
         padding: 0.25rem 0.5rem;
-        background: #f0f0f0;
+        background: var(--bg-gray, #f0f0f0);
         border-radius: 10px;
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
     
     .mood-chart {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 1.5rem;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -130,6 +132,8 @@
         border-radius: 5px;
         position: relative;
         overflow: hidden;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
     
     .mood-fill {
@@ -155,7 +159,7 @@
     <p>Your complete recovery journey</p>
     <div style="margin-top: 1rem;">
         {% if is_premium_user %}
-        <a href="{% url 'journal:export_entries' %}" class="btn" style="background: white; color: #1e4d8b; padding: 0.5rem 1.25rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none;">
+        <a href="{% url 'journal:export_entries' %}" class="btn" style="background: var(--card-bg, #fff); color: var(--brand-text, #1e4d8b); padding: 0.5rem 1.25rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none;">
             <i class="fas fa-download" aria-hidden="true"></i> Export Journal
         </a>
         {% else %}
@@ -163,14 +167,14 @@
             <i class="fas fa-lock" aria-hidden="true"></i> Export Journal <span style="font-size: 0.75rem; opacity: 0.8; margin-left: 0.25rem;">Premium</span>
         </span>
         <div id="exportUpgradeToast" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; padding: 1rem;">
-            <div style="background: white; border-radius: 20px; padding: 2rem; max-width: 400px; width: 100%; text-align: center;">
+            <div style="background: var(--card-bg, #fff); border-radius: 20px; padding: 2rem; max-width: 400px; width: 100%; text-align: center;">
                 <div style="width: 50px; height: 50px; background: #764ba2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
                     <i class="fas fa-file-export" style="color: white; font-size: 1.2rem;"></i>
                 </div>
-                <h3 style="margin: 0 0 0.5rem; font-size: 1.2rem; color: #1e293b;">Export Your Journal</h3>
-                <p style="color: #64748b; margin: 0 0 1.25rem; font-size: 0.9rem;">Download all your journal entries as a file. Export is part of Premium, along with streak protection and your mood &amp; craving insights.</p>
+                <h3 style="margin: 0 0 0.5rem; font-size: 1.2rem; color: var(--text-dark, #1e293b);">Export Your Journal</h3>
+                <p style="color: var(--text-muted, #64748b); margin: 0 0 1.25rem; font-size: 0.9rem;">Download all your journal entries as a file. Export is part of Premium, along with streak protection and your mood &amp; craving insights.</p>
                 <a href="{% url 'accounts:pricing' %}" style="display: block; background: #764ba2; color: white; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 600; text-decoration: none; margin-bottom: 0.75rem; --heading-color: currentColor;">Upgrade to Premium</a>
-                <button data-on-click="set-display" data-target="exportUpgradeToast" data-display="none" style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 0.85rem;">Maybe later</button>
+                <button data-on-click="set-display" data-target="exportUpgradeToast" data-display="none" style="background: none; border: none; color: var(--text-faint, #94a3b8); cursor: pointer; font-size: 0.85rem;">Maybe later</button>
             </div>
         </div>
         {% endif %}
@@ -255,7 +259,7 @@
                     {% endif %}
                     
                     {% if entry.cravings_today %}
-                        <span class="tag" style="background: #fff3e0;">
+                        <span class="tag" style="background: var(--bg-light, #fff3e0);">
                             ⚠️ Cravings
                         </span>
                     {% endif %}
