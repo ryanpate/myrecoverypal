@@ -1,3 +1,6 @@
+import datetime
+from unittest import mock
+
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
@@ -51,3 +54,31 @@ class ProfileSobrietyCardTests(TestCase):
         self.assertEqual(milestone['days_until'], 15)
         self.assertEqual(ctx['sobriety_breakdown'],
                          {'years': 0, 'months': 1, 'weeks': 6})
+
+
+@override_settings(**_TEST_SETTINGS)
+class SobrietyCountsUseTheLocalDateTests(TestCase):
+    """Late evening in a US time zone is already tomorrow in UTC. Days sober
+    must follow the member's own calendar day, as the pledge and check-in do."""
+
+    # 9 PM on January 1 in Chicago; already January 2 in UTC.
+    NOW = datetime.datetime(2026, 1, 2, 3, 0, tzinfo=datetime.timezone.utc)
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='nightowl', email='nightowl@example.com', password='x',
+            sobriety_date=datetime.date(2025, 12, 22), timezone='America/Chicago')
+
+    def test_days_sober_counts_to_the_local_day(self):
+        with mock.patch('django.utils.timezone.now', return_value=self.NOW), \
+                timezone.override('America/Chicago'):
+            self.assertEqual(self.user.get_days_sober(), 10)
+
+    def test_profile_card_counts_to_the_viewers_local_day(self):
+        self.client.force_login(self.user)
+        with mock.patch('django.utils.timezone.now', return_value=self.NOW):
+            resp = self.client.get(reverse('accounts:profile', args=['nightowl']))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, '<div class="sobriety-days-big">10</div>')
+        self.assertEqual(resp.context['next_sobriety_milestone']['label'], '14 Days')
+        self.assertEqual(resp.context['next_sobriety_milestone']['days_until'], 4)
