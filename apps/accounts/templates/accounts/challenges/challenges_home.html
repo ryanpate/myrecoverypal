@@ -29,7 +29,6 @@
         align-items: center;
         gap: 0.5rem;
         border: 2px solid rgba(255, 255, 255, 0.3);
-        backdrop-filter: blur(10px);
     }
 
     .header-btn:hover {
@@ -128,7 +127,7 @@
     .stat-number {
         font-size: 2rem;
         font-weight: bold;
-        background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+        background: var(--primary-dark);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -138,8 +137,6 @@
     .stat-label {
         font-size: 0.9rem;
         color: #6c757d;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
     }
 
     .filter-section {
@@ -151,7 +148,7 @@
     }
 
     .recommended-challenges {
-        background: linear-gradient(135deg, var(--primary-dark), var(--primary-light), var(--accent-green));
+        background: var(--primary-dark);
         border-radius: 12px;
         padding: 2rem;
         color: white;

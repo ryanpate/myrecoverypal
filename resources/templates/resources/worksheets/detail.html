@@ -86,7 +86,7 @@
             {% if worksheet.audience != 'family' %}
             <form method="post" action="{% url 'resources:worksheet_entry_coach' entry.pk %}" class="ws-inline-form">
                 {% csrf_token %}
-                <button type="submit" class="ws-btn-secondary">⚓ Discuss with Anchor</button>
+                <button type="submit" class="ws-btn-secondary">Discuss with Anchor</button>
             </form>
             {% endif %}
             {% endif %}

@@ -27,7 +27,6 @@
         align-items: center;
         gap: 0.5rem;
         border: 2px solid rgba(255, 255, 255, 0.3);
-        backdrop-filter: blur(10px);
     }
 
     .header-btn:hover {
@@ -57,7 +56,7 @@
 
     .group-header {
         height: 100px;
-        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        background: #1e4d8b;
         position: relative;
         display: flex;
         align-items: center;
@@ -208,7 +207,7 @@
     .stat-number {
         font-size: 2.5rem;
         font-weight: bold;
-        background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+        background: var(--primary-dark);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -309,7 +308,7 @@
         <div class="col-md-6 col-lg-4">
             <div class="group-card">
                 <div class="group-header"
-                    style="background: {{ membership.group.group_color|default:'linear-gradient(135deg, #1e4d8b 0%, #52b788 100%)' }};">
+                    style="background: {{ membership.group.group_color|default:'#1e4d8b' }};">
                     {% if membership.group.group_image %}
                     <img src="{{ membership.group.group_image.url }}" alt="{{ membership.group.name }}"
                         class="group-image">

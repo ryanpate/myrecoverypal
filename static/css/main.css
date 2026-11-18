@@ -58,9 +58,9 @@
     --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1);
 
     /* Gradients - Updated to match brand */
-    --gradient-primary: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
-    --gradient-secondary: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
-    --gradient-accent: linear-gradient(135deg, #4db8e8 0%, #52b788 100%);
+    --gradient-primary: #1e4d8b;
+    --gradient-secondary: #1e4d8b;
+    --gradient-accent: #2e8059;
 
     /* Borders */
     --border-radius: 12px;
@@ -121,8 +121,8 @@
     --gold-deep: #d4a017;
 
     /* ---- Feature gradients ---- */
-    --gradient-court: linear-gradient(135deg, #1e4d8b 0%, #0f2d56 100%);
-    --gradient-premium: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-court: #1e4d8b;
+    --gradient-premium: #764ba2;
     --premium-from: #667eea;
     --premium-to: #764ba2;
 
@@ -1052,36 +1052,6 @@ a:hover {
     margin: 0 auto;
 }
 
-/* Animated Background Pattern for Headers */
-.page-header::before,
-.blog-header::before,
-.resources-header::before,
-.category-header::before,
-.educational-resources-header::before,
-.support-header::before {
-    content: '';
-    position: absolute;
-    width: 150%;
-    height: 150%;
-    top: -25%;
-    left: -25%;
-    background-image:
-        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
-    animation: float-bg 20s ease-in-out infinite;
-}
-
-@keyframes float-bg {
-
-    0%,
-    100% {
-        transform: translate(0, 0);
-    }
-
-    50% {
-        transform: translate(-20px, -20px);
-    }
-}
 
 /* Buttons - Unified Styles */
 .btn,
@@ -1218,18 +1188,13 @@ input[type="search"] {
 
 /* Fix old purple gradients */
 .gradient-text {
-    background: var(--gradient-secondary) !important;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--primary-dark);
 }
 
 /* Statistics and Numbers */
 .stat-number,
 .big-number {
-    background: var(--gradient-secondary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--primary-dark);
     font-weight: 700;
 }
 

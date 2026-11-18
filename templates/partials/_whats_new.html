@@ -13,7 +13,6 @@ apps/core/context_processors.py::whats_new decides the page and audience).
 {% if show_whats_new %}
 <dialog class="wn" id="whatsNew" aria-labelledby="whatsNewTitle" data-version="{{ whats_new_version }}">
     <button type="button" class="wn-close" data-wn-close aria-label="Close">&times;</button>
-    <div class="wn-eyebrow"><span class="wn-tag">New</span> in MyRecoveryPal</div>
     <h2 id="whatsNewTitle">{% if is_premium_user %}More is included in your Premium{% else %}Your recovery toolkit just grew{% endif %}</h2>
     <ul class="wn-list">
         <li><a href="{% url 'resources:audio' %}" data-promo="whats_new_audio">
@@ -53,9 +52,6 @@ apps/core/context_processors.py::whats_new decides the page and audience).
                 line-height: 1; color: #6b7280; cursor: pointer; padding: 4px 8px; border-radius: 8px; }
     .wn-close:hover, .wn-close:focus-visible { background: #f3f4f6; color: #111827; }
     .wn-close:focus-visible { outline: 2px solid #4db8e8; outline-offset: 1px; }
-    .wn-eyebrow { font-size: .82rem; font-weight: 700; color: #6b7280; display: flex; align-items: center; gap: .45rem; }
-    .wn-tag { background: #52b788; color: #fff; border-radius: 50px; padding: .1rem .55rem; font-size: .7rem;
-              letter-spacing: .04em; text-transform: uppercase; }
     .wn h2 { font-size: 1.45rem; font-weight: 800; margin: .45rem 2rem 1rem 0; color: #1e4d8b; line-height: 1.2; }
     .wn-list { list-style: none; margin: 0 0 1.25rem; padding: 0; display: flex; flex-direction: column; gap: .35rem; }
     .wn-list a { display: flex; gap: .8rem; align-items: flex-start; padding: .6rem .55rem; border-radius: 12px;
@@ -67,14 +63,14 @@ apps/core/context_processors.py::whats_new decides the page and audience).
     .wn-list small { display: block; color: #6b7280; font-size: .85rem; line-height: 1.4; margin-top: 2px; }
     .wn-actions { display: flex; flex-direction: column; gap: .5rem; }
     .wn-btn { display: block; text-align: center; padding: .8rem 1rem; border-radius: 50px; font-weight: 700;
-              text-decoration: none; color: #fff; background: linear-gradient(135deg, #667eea, #764ba2); }
+              text-decoration: none; color: #fff; background: #764ba2; }
     .wn-btn:hover { color: #fff; filter: brightness(1.05); }
     .wn a.wn-btn:not(.wn-btn--ghost), [data-theme="dark"] .wn a.wn-btn:not(.wn-btn--ghost) { color: #fff; }
     .wn-btn--ghost { background: transparent; color: #1e4d8b; border: 2px solid #dbe3ee; }
     .wn-btn--ghost:hover { color: #1e4d8b; background: #f3f6fa; }
     [data-theme="dark"] .wn { background: #1f2937; color: #e5e7eb; }
     [data-theme="dark"] .wn h2 { color: #93c5fd; }
-    [data-theme="dark"] .wn-list small, [data-theme="dark"] .wn-eyebrow { color: #9ca3af; }
+    [data-theme="dark"] .wn-list small { color: #9ca3af; }
     [data-theme="dark"] .wn-list a:hover, [data-theme="dark"] .wn-list a:focus-visible { background: #273244; }
     [data-theme="dark"] .wn-close { color: #9ca3af; }
     [data-theme="dark"] .wn-close:hover, [data-theme="dark"] .wn-close:focus-visible { background: #273244; color: #fff; }

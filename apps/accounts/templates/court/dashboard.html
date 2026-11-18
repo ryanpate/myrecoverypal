@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container" style="max-width:1000px; margin:2rem auto; padding:0 1rem;">
 
-<div style="background:linear-gradient(135deg,#1e4d8b,#4db8e8); color:white; padding:1.75rem 2rem; border-radius:14px; margin-bottom:1.5rem;">
+<div style="background:#1e4d8b; color:white; padding:1.75rem 2rem; border-radius:14px; margin-bottom:1.5rem;">
     <h1 style="margin:0 0 0.4rem;">Court Compliance</h1>
     <p style="margin:0; opacity:.9;">Track court-ordered recovery meeting attendance and generate court-acceptable PDF reports.</p>
 </div>
@@ -19,17 +19,17 @@
 
 <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem;">
     <div style="background:white; padding:1.25rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.05);">
-        <div style="font-size:0.85rem; color:#888; text-transform:uppercase; letter-spacing:0.5px;">This Week</div>
+        <div style="font-size:0.85rem; color:#888;">This Week</div>
         <div style="font-size:2rem; font-weight:700; color:#1e4d8b; margin:.25rem 0;">{{ this_week_count }} / {{ required_per_week }}</div>
         <div style="font-size:0.9rem; color:#555;">meetings logged</div>
     </div>
     <div style="background:white; padding:1.25rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.05);">
-        <div style="font-size:0.85rem; color:#888; text-transform:uppercase; letter-spacing:0.5px;">Reports</div>
+        <div style="font-size:0.85rem; color:#888;">Reports</div>
         <div style="font-size:2rem; font-weight:700; color:#1e4d8b; margin:.25rem 0;">{{ recent_reports|length }}</div>
         <div style="font-size:0.9rem; color:#555;">generated</div>
     </div>
     <div style="background:white; padding:1.25rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.05);">
-        <div style="font-size:0.85rem; color:#888; text-transform:uppercase; letter-spacing:0.5px;">Actions</div>
+        <div style="font-size:0.85rem; color:#888;">Actions</div>
         <a href="{% url 'accounts:court_attendance_create' %}" class="btn btn-success" style="margin-top:.5rem; display:block; text-align:center;">+ Log Meeting</a>
     </div>
 </div>

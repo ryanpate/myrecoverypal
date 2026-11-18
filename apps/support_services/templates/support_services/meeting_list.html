@@ -28,7 +28,7 @@
     .meeting-time {
         font-size: 1.1rem;
         font-weight: 600;
-        color: #7C3AED;
+        color: #1e4d8b;
     }
 
     .meeting-name {
@@ -53,8 +53,8 @@
     .meeting-type-badge {
         display: inline-block;
         padding: 4px 10px;
-        background: #EDE9FE;
-        color: #7C3AED;
+        background: #e8f0fb;
+        color: #1e4d8b;
         border-radius: 15px;
         font-size: 0.85rem;
         font-weight: 500;
@@ -116,13 +116,13 @@
     }
 
     .btn-filter:hover {
-        border-color: #7C3AED;
-        color: #7C3AED;
+        border-color: #1e4d8b;
+        color: #1e4d8b;
     }
 
     .btn-filter.active {
-        background: #7C3AED;
-        border-color: #7C3AED;
+        background: #1e4d8b;
+        border-color: #1e4d8b;
         color: white;
     }
 
@@ -153,12 +153,15 @@
             padding: 15px;
         }
     }
+    [data-theme="dark"] .meeting-time,
+    [data-theme="dark"] .btn-filter:hover { color: #8fb8ee; border-color: #8fb8ee; }
+    [data-theme="dark"] .btn-filter.active { color: #fff; }
 </style>
 {% endblock %}
 
 {% block content %}
 <!-- Hero Section with Gradient -->
-<div class="hero-section py-5" style="background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%); color: white;">
+<div class="hero-section py-5" style="background: #1e4d8b; color: white;">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-12 text-center">
