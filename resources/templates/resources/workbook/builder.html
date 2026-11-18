@@ -19,7 +19,7 @@
     .wb-ranges input { position: absolute; opacity: 0; width: 1px; height: 1px; }
     .wb-ranges span { display: inline-block; padding: 0.45rem 1rem; border-radius: 999px; cursor: pointer;
                       border: 1px solid rgba(128,128,128,0.45); font-weight: 600; font-size: 0.92rem; }
-    .wb-ranges input:checked + span { background: var(--primary-color, #1e4d8b); border-color: var(--primary-color, #1e4d8b); color: #fff; }
+    .wb-ranges input:checked + span { background: var(--primary-color, #1e4d8b); border-color: var(--primary-color, #1e4d8b); color: #fff; --heading-color: currentColor; }
     .wb-ranges input:focus-visible + span { outline: 2px solid var(--accent-color, #52b788); outline-offset: 2px; }
     [data-theme="dark"] .wb-ranges input:checked + span { color: #0f172a; }
 </style>

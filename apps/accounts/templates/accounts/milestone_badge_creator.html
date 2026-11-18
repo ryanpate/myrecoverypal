@@ -61,6 +61,7 @@
     .style-option.selected .style-label {
         background: var(--primary-dark, #1e4d8b);
         color: white;
+        --heading-color: currentColor;
     }
     .style-option.locked { position: relative; cursor: pointer; }
     .style-option.locked img { filter: grayscale(0.4) brightness(0.75); }
@@ -94,6 +95,7 @@
         gap: 1rem;
         margin-bottom: 1.5rem;
         flex-wrap: wrap;
+        --heading-color: currentColor;
     }
     .signup-banner strong { font-size: 1.05rem; }
     .signup-banner p { margin: 0.25rem 0 0; opacity: 0.95; font-size: 0.88rem; }
@@ -325,10 +327,12 @@
     .btn-download {
         background: var(--primary-dark, #1e4d8b);
         color: white;
+        --heading-color: currentColor;
     }
     .btn-share {
         background: #2e8059;
         color: white;
+        --heading-color: currentColor;
     }
     .pack-cta-wrap { margin-top: 1.25rem; }
     .pack-cta {
@@ -416,6 +420,7 @@
         padding: 1.1rem 1.15rem;
         margin-bottom: 1.25rem;
         text-align: left;
+        --heading-color: currentColor;
     }
     .share-feed-head {
         display: flex;
@@ -572,6 +577,7 @@
         font-weight: 700;
         cursor: pointer;
         white-space: nowrap;
+        --heading-color: currentColor;
     }
 
     /* Dark mode */

@@ -261,6 +261,7 @@
     color: white;
     padding: 4rem 2rem;
     text-align: center;
+    --heading-color: currentColor;
 }
 
 .crisis-header h1 {
@@ -269,7 +270,8 @@
     color: white;
 }
 
-.crisis-header .lead {
+.crisis-header .container > .lead {
+    color: white;
     font-size: 1.2rem;
     max-width: 700px;
     margin: 0 auto;
@@ -446,6 +448,7 @@ section > .container > p {
     text-decoration: none;
     font-weight: 500;
     transition: background 0.3s;
+    --heading-color: currentColor;
 }
 
 .resource-item a:hover {
@@ -479,6 +482,7 @@ section > .container > p {
     justify-content: center;
     font-weight: 700;
     flex-shrink: 0;
+    --heading-color: currentColor;
 }
 
 .step-content h3 {
@@ -496,6 +500,12 @@ section > .container > p {
     background: #2e8059;
     color: white;
     text-align: center;
+    --heading-color: currentColor;
+}
+
+.encouragement-section .container > p,
+.encouragement-section .container > ul {
+    color: white;
 }
 
 .encouragement-section h2 {

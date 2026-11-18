@@ -60,6 +60,7 @@
         margin-left: 4px;
         font-weight: 600;
         letter-spacing: 0.5px;
+        --heading-color: currentColor;
     }
     .spend-reframe {
         margin-top: 0.9rem;
@@ -161,6 +162,7 @@
         font-weight: 600;
         font-size: 1.05rem;
         transition: transform 0.2s, box-shadow 0.2s;
+        --heading-color: currentColor;
     }
     .btn-coach-try:hover {
         color: white;
@@ -251,7 +253,7 @@
 
     <!-- Trial Status Alert -->
     {% if user_subscription and user_subscription.status == 'trialing' %}
-    <div class="alert alert-info text-center mb-4" style="background: #764ba2; border: none; color: white;">
+    <div class="alert alert-info text-center mb-4" style="background: #764ba2; border: none; color: white; --heading-color: currentColor;">
         <i class="fas fa-clock"></i> <strong>You're on a Premium trial!</strong>
         {% if user_subscription.trial_end %}
             Your trial ends on {{ user_subscription.trial_end|date:"F d, Y" }}.

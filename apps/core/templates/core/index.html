@@ -161,7 +161,7 @@
   transition:transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
   padding:.75rem 1.5rem; font-size:1rem; line-height:1.2; }
 .ml-btn--lg { padding:.9rem 2rem; font-size:1.1rem; }
-.ml-btn--primary { background:var(--accent-green-strong); color:#fff; }
+.ml-btn--primary { background:var(--accent-green-strong); color:#fff; --heading-color: currentColor; }
 .ml-btn--primary:hover { transform:translateY(-2px); box-shadow:var(--ml-shadow-accent); color:#fff; }
 .ml-btn--outline { background:transparent; color:var(--ml-primary); border:2px solid var(--ml-primary); }
 .ml-btn--outline:hover { transform:translateY(-2px); box-shadow:var(--ml-shadow); color:var(--ml-primary); }
@@ -269,7 +269,8 @@
 
 /* ---- Court band ---- */
 .ml-court-inner { background:var(--ml-panel); border-radius:var(--ml-radius-xl); box-shadow:var(--ml-shadow-lg);
-  color:#fff; padding:3rem; display:grid; grid-template-columns:1.1fr .9fr; gap:2.5rem; align-items:center; }
+  color:#fff; padding:3rem; display:grid; grid-template-columns:1.1fr .9fr; gap:2.5rem; align-items:center;
+  --heading-color: currentColor; }
 .ml-court-inner h2 { margin:0 0 .85rem; font-size:clamp(1.7rem,2.6vw,2.25rem); font-weight:800; letter-spacing:-.02em; color:#fff; }
 .ml-court-inner > div > p { margin:0 0 1.75rem; font-size:1.08rem; line-height:1.6; color:rgba(255,255,255,.9); max-width:460px; }
 .ml-court-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.9rem; }
@@ -280,7 +281,8 @@
 /* ---- Final CTA ---- */
 .ml-final { padding:1rem var(--ml-gutter) 5rem; }
 .ml-final-panel { max-width:900px; margin:0 auto; text-align:center; background:var(--ml-panel);
-  border-radius:var(--ml-radius-xl); box-shadow:var(--ml-shadow-lg); padding:3.5rem 2.5rem; color:#fff; position:relative; overflow:hidden; }
+  border-radius:var(--ml-radius-xl); box-shadow:var(--ml-shadow-lg); padding:3.5rem 2.5rem; color:#fff; position:relative; overflow:hidden;
+  --heading-color: currentColor; }
 .ml-final-panel img { height:56px; opacity:.95; margin-bottom:1.25rem; }
 .ml-final-panel h2 { margin:0 0 .75rem; font-size:clamp(1.9rem,3vw,2.6rem); font-weight:800; letter-spacing:-.02em; color:#fff; }
 .ml-final-panel p { margin:0 auto 2rem; max-width:520px; font-size:1.12rem; line-height:1.55; color:rgba(255,255,255,.92); }

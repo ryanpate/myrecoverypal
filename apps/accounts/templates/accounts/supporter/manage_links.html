@@ -9,6 +9,7 @@
     background: var(--gradient-primary, #1e4d8b);
     border-radius: 20px; padding: 2.25rem 2rem; color: #fff;
     box-shadow: 0 12px 30px rgba(30,77,139,.22);
+    --heading-color: currentColor;
   }
   .sc-hero h1 { margin: 0 0 .5rem; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; color:#fff; }
   .sc-hero p { margin: 0; max-width: 30rem; font-size: 1.02rem; line-height: 1.55; color: rgba(255,255,255,.92); }
@@ -33,6 +34,7 @@
     width: 46px; height: 46px; flex: none; border-radius: 50%;
     background: var(--gradient-primary, #1e4d8b);
     color: #fff; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+    --heading-color: currentColor;
   }
   .sc-card .who { flex: 1 1 180px; min-width: 0; }
   .sc-card .who strong { display: block; font-size: 1.02rem; color: var(--text-color,#1f2a44);
@@ -61,7 +63,8 @@
   .sc-empty .sc-cta2 { display: inline-flex; align-items: center; gap: .5rem;
     background: var(--gradient-primary, #1e4d8b); color: #fff !important;
     font-weight: 700; padding: .8rem 1.6rem; border-radius: 999px; text-decoration: none;
-    box-shadow: 0 8px 20px rgba(30,77,139,.25); transition: transform .15s ease; }
+    box-shadow: 0 8px 20px rgba(30,77,139,.25); transition: transform .15s ease;
+    --heading-color: currentColor; }
   .sc-empty .sc-cta2:hover { transform: translateY(-2px); }
 
   /* Levels explainer */

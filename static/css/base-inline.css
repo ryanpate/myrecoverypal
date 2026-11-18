@@ -740,6 +740,7 @@ body {
     z-index: 10001;
     border-radius: 0 0 5px 0;
     opacity: 0;
+    --heading-color: currentColor;
 }
 
 .skip-link:focus {
@@ -755,7 +756,7 @@ h4,
 h5,
 h6 {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
-    color: var(--primary-dark);
+    color: var(--heading-color, var(--primary-dark));
     font-weight: 600;
     line-height: 1.2;
 }
@@ -835,6 +836,7 @@ a.btn-primary:hover {
     position: relative;
     overflow: hidden;
     margin-bottom: 2rem;
+    --heading-color: currentColor;
 }
 
 /* Ensure all text elements within page headers are white */
@@ -1273,6 +1275,7 @@ a.btn-primary:hover {
     border-radius: 12px;
     font-size: 0.75rem;
     margin-left: 0.5rem;
+    --heading-color: currentColor;
 }
 
 .pending-checkin-alert {
@@ -1456,6 +1459,7 @@ a.btn-primary:hover {
     text-decoration: none;
     transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
     box-shadow: 0 1px 4px rgba(15, 45, 86, 0.25);
+    --heading-color: currentColor;
 }
 .court-cta:hover {
     transform: translateY(-1px);
@@ -1521,6 +1525,7 @@ a.btn-primary:hover {
     font-weight: bold;
     flex-shrink: 0;
     overflow: visible;
+    --heading-color: currentColor;
 }
 
 .user-dropdown {
@@ -1667,6 +1672,7 @@ a.cta-button:visited {
     transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
     display: inline-block;
     border: 2px solid rgba(255, 255, 255, 0.3);
+    --heading-color: currentColor;
 }
 
 .cta-button:hover,
@@ -1675,6 +1681,7 @@ a.cta-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
     color: #fff !important;
+    --heading-color: currentColor;
 }
 
 a.cta-button:active {
@@ -1774,6 +1781,7 @@ a.cta-button:active {
     z-index: 999;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
     font-size: 0.85rem;
+    --heading-color: currentColor;
 }
 
 .install-prompt.show {
@@ -1937,6 +1945,7 @@ MOBILE SLIDE-OUT NAVIGATION
     padding: 1.5rem;
     color: white;
     position: relative;
+    --heading-color: currentColor;
 }
 
 .mobile-menu-close {
@@ -2076,6 +2085,7 @@ MOBILE SLIDE-OUT NAVIGATION
     font-weight: 600;
     cursor: pointer;
     transition: background-color var(--dur-fast) var(--ease-out);
+    --heading-color: currentColor;
 }
 
 .mobile-logout-btn:active {
@@ -2161,6 +2171,7 @@ footer {
     color: white;
     padding: 3.5rem 2rem 1.75rem;
     margin-top: 4rem;
+    --heading-color: currentColor;
 }
 
 .footer-content {
@@ -3137,6 +3148,7 @@ select:focus {
     white-space: nowrap;
     box-shadow: 0 2px 10px rgba(82, 183, 136, 0.3);
     transition: transform var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+    --heading-color: currentColor;
 }
 
 .mobile-sticky-cta-btn:hover {
@@ -3269,6 +3281,7 @@ select:focus {
     z-index: 99998;
     pointer-events: none;
     transition: opacity 0.15s;
+    --heading-color: currentColor;
 }
 
 .pull-refresh-indicator.visible {
@@ -3293,6 +3306,7 @@ select:focus {
     align-self: center;
     box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.45);
     animation: sos-pulse 2.4s ease-out infinite;
+    --heading-color: currentColor;
 }
 .sos-pill:hover {
     background: #b02a37;

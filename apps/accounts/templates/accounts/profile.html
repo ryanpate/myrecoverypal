@@ -22,6 +22,7 @@
         /* Remove margin, use padding instead */
         overflow: visible !important;
         /* Ensure avatar isn't clipped */
+        --heading-color: currentColor;
     }
 
     .profile-header h1,
@@ -65,6 +66,7 @@
         font-weight: bold;
         overflow: hidden;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        --heading-color: currentColor;
     }
 
     .profile-avatar img {
@@ -103,6 +105,7 @@
     .btn-primary {
         background: #1e4d8b;
         color: white;
+        --heading-color: currentColor;
     }
 
     .btn-primary:hover {
@@ -132,6 +135,7 @@
         display: inline-block;
         transition: all 0.3s ease;
         font-weight: 600;
+        --heading-color: currentColor;
     }
 
     .message-btn:hover {
@@ -685,7 +689,7 @@
         </a>
         {% endif %}
         {% if not request.user.get_recovery_pal and profile_user != request.user %}
-        <a href="{% url 'accounts:request_pal' profile_user.username %}" class="btn" style="background: #2e8059; color: white; padding: 0.75rem 1.5rem; border-radius: 50px; text-decoration: none; display: inline-block; transition: all 0.3s ease; font-weight: 600; margin-left: 0.5rem;">
+        <a href="{% url 'accounts:request_pal' profile_user.username %}" class="btn" style="background: #2e8059; color: white; padding: 0.75rem 1.5rem; border-radius: 50px; text-decoration: none; display: inline-block; transition: all 0.3s ease; font-weight: 600; margin-left: 0.5rem; --heading-color: currentColor;">
             <i class="fas fa-handshake-angle"></i> Request as Pal
         </a>
         {% elif request.user.get_recovery_pal == profile_user %}
