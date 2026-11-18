@@ -32,8 +32,8 @@ end
 
 post_install do |installer|
   assertDeploymentTarget(installer)
-  # Current Xcode builds for iOS 15.0 and later only, and several pods still
-  # declare 14.0 in their podspecs. Raise any pod target below the app's target.
+  # Current Xcode builds for iOS 15.0 and later only, and some third-party pods
+  # still declare an older target. Raise any pod target below the app's target.
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 15.0
@@ -41,36 +41,4 @@ post_install do |installer|
       end
     end
   end
-  patch_revenuecat_paywall_color(installer)
-end
-
-# RevenueCat 5.67.1 (the newest version the Capacitor 7 plugin allows) does not
-# compile with Swift 6.4: PaywallColor declares its designated initializer in an
-# extension, and the compiler now also synthesizes a memberwise
-# init(stringRepresentation:) that collides with the public throwing one.
-# RevenueCat fixed this upstream by moving the initializer into the struct body.
-# This applies that same move. Remove it once the app is on Capacitor 8 and a
-# RevenueCat release that already contains the fix.
-def patch_revenuecat_paywall_color(installer)
-  path = File.join(installer.sandbox.root.to_s, 'RevenueCat/Sources/Paywalls/PaywallColor.swift')
-  return unless File.exist?(path)
-
-  designated_init = <<~SWIFT.gsub(/^(?=.)/, '    ')
-    /// "Designated" initializer
-    private init(stringRepresentation: String, underlyingColor: (any Sendable)?) {
-        self.stringRepresentation = stringRepresentation
-        self._underlyingColor = underlyingColor
-    }
-  SWIFT
-  anchor = "    fileprivate var _underlyingColor: (any Sendable)?\n"
-
-  source = File.read(path)
-  return unless source.include?(designated_init) && source.include?(anchor)
-  return if source.index(designated_init) < source.index(anchor) + anchor.length + 2
-
-  source = source.sub(designated_init + "\n", '')
-  source = source.sub(anchor, anchor + "\n" + designated_init)
-  File.chmod(0644, path)
-  File.write(path, source)
-  puts 'Patched RevenueCat PaywallColor.swift for Swift 6.4'
 end
