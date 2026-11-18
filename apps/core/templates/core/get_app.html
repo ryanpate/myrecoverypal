@@ -6,7 +6,7 @@
 {% block extra_css %}
 <style>
     body {
-        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        background: #1e4d8b;
         min-height: 100vh;
     }
 
@@ -43,7 +43,7 @@
         width: 120px;
         height: 120px;
         margin: 0 auto 2rem;
-        background: linear-gradient(135deg, #4db8e8, #52b788);
+        background: #2e8059;
         border-radius: 25px;
         display: flex;
         align-items: center;
@@ -140,17 +140,8 @@
     }
 
     .pulse-animation {
-        animation: pulse 2s infinite;
     }
 
-    @keyframes pulse {
-        0%, 100% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.05);
-        }
-    }
 
     @media (max-width: 768px) {
         .get-app-card {

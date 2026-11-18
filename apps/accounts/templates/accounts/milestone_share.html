@@ -33,18 +33,6 @@
 <style>
     .ms-page { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
     .ms-hero { text-align: center; margin-bottom: 3rem; }
-    .ms-eyebrow {
-        display: inline-block;
-        background: rgba(30, 77, 139, 0.08);
-        color: var(--primary-dark, #1e4d8b);
-        padding: 0.4rem 1rem;
-        border-radius: 50px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 1rem;
-    }
     .ms-headline {
         font-size: clamp(1.6rem, 4.5vw, 2.4rem);
         font-weight: 800;
@@ -72,7 +60,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.6rem;
-        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        background: var(--primary-dark, #1e4d8b);
         color: #fff;
         text-decoration: none;
         padding: 1rem 2.25rem;
@@ -123,7 +111,7 @@
     }
     .ms-entry-row input { flex: 1; min-width: 120px; }
     .ms-entry-row button {
-        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        background: var(--primary-dark, #1e4d8b);
         color: #fff;
         border: none;
         padding: 0.85rem 1.5rem;
@@ -167,7 +155,7 @@
         width: 52px;
         height: 52px;
         border-radius: 14px;
-        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        background: var(--primary-dark, #1e4d8b);
         color: #fff;
         display: flex;
         align-items: center;
@@ -180,7 +168,7 @@
 
     /* Bottom signup CTA */
     .ms-signup {
-        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        background: var(--primary-dark, #1e4d8b);
         color: #fff;
         border-radius: 24px;
         padding: 2.5rem 1.5rem;
@@ -215,7 +203,6 @@
 <div class="ms-page">
     <!-- Hero -->
     <section class="ms-hero">
-        <span class="ms-eyebrow">Recovery Milestone</span>
         <h1 class="ms-headline">
             {% if shared_name %}<span class="ms-name">{{ shared_name }}</span> is celebrating<br>{% endif %}
             {{ label }} of recovery

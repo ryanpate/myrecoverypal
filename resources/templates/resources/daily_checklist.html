@@ -6,7 +6,7 @@
 {% block extra_css %}
 <style>
     .checklist-header {
-        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        background: #1e4d8b;
         padding: 100px 0 50px;
         color: white;
         text-align: center;
@@ -14,30 +14,7 @@
         overflow: hidden;
     }
 
-    .checklist-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-        animation: pulse 4s ease-in-out infinite;
-    }
 
-    @keyframes pulse {
-
-        0%,
-        100% {
-            transform: scale(1);
-            opacity: 0.5;
-        }
-
-        50% {
-            transform: scale(1.1);
-            opacity: 0.3;
-        }
-    }
 
     .checklist-container {
         max-width: 800px;
@@ -93,7 +70,7 @@
 
     .progress-fill {
         height: 100%;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        background: #764ba2;
         width: 0%;
         transition: width 0.5s ease;
         display: flex;
@@ -124,7 +101,7 @@
     .section-icon {
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #764ba2;
         border-radius: 10px;
         display: flex;
         align-items: center;
@@ -202,7 +179,7 @@
     }
 
     .checkbox:checked~.checkbox-custom {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #764ba2;
         border-color: #667eea;
     }
 
@@ -258,7 +235,7 @@
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #764ba2;
         color: white;
     }
 
@@ -281,7 +258,7 @@
     .quote-section {
         margin: 40px 0;
         padding: 40px;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        background: #f8f9fa;
         border-radius: 16px;
         text-align: center;
     }

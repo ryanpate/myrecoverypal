@@ -90,18 +90,6 @@
 <style>
     .smm { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1rem 0; }
     .smm-hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3rem; align-items: center; margin-bottom: 4rem; }
-    .smm-eyebrow {
-        display: inline-block;
-        background: rgba(30, 77, 139, 0.08);
-        color: var(--primary-dark, #1e4d8b);
-        padding: 0.4rem 1rem;
-        border-radius: 50px;
-        font-size: 0.78rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
-        margin-bottom: 1rem;
-    }
     .smm h1 {
         font-size: clamp(1.8rem, 4.5vw, 2.8rem);
         font-weight: 800;
@@ -109,7 +97,6 @@
         margin-bottom: 1rem;
         color: var(--text-primary, #1a1a1a);
     }
-    .smm h1 span { background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .smm-lead { font-size: 1.1rem; color: var(--text-muted, #555); line-height: 1.55; margin-bottom: 1.5rem; }
     .smm-checks { list-style: none; padding: 0; margin: 0 0 1.75rem; }
     .smm-checks li { padding: 0.35rem 0 0.35rem 1.75rem; position: relative; color: var(--text-primary, #333); font-size: 0.95rem; }
@@ -118,7 +105,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.6rem;
-        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        background: var(--primary-dark, #1e4d8b);
         color: #fff;
         text-decoration: none;
         padding: 1rem 2rem;
@@ -142,7 +129,7 @@
 
     /* Quick tool */
     .smm-tool {
-        background: linear-gradient(135deg, #f8f9fa, #fff);
+        background: #f8f9fa;
         border: 1px solid var(--border-color, #e5e7eb);
         border-radius: 24px;
         padding: 2.5rem 2rem;
@@ -168,7 +155,7 @@
     }
     .smm-tool input { flex: 1; min-width: 140px; }
     .smm-tool button {
-        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        background: var(--primary-dark, #1e4d8b);
         color: #fff;
         border: none;
         padding: 0.9rem 1.75rem;
@@ -215,7 +202,7 @@
         width: 56px;
         height: 56px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        background: var(--primary-dark, #1e4d8b);
         color: #fff;
         display: flex;
         align-items: center;
@@ -277,7 +264,7 @@
 
     /* Bottom CTA */
     .smm-bottom-cta {
-        background: linear-gradient(135deg, var(--primary-dark, #1e4d8b), var(--primary-light, #2d7dd2));
+        background: var(--primary-dark, #1e4d8b);
         color: #fff;
         border-radius: 24px;
         padding: 3rem 2rem;
@@ -318,7 +305,6 @@
     <!-- HERO -->
     <section class="smm-hero">
         <div>
-            <span class="smm-eyebrow">Free · No Signup</span>
             <h1>Your <span>Sobriety Medallion</span>, Generated in 10 Seconds</h1>
             <p class="smm-lead">
                 Create a custom AA-style recovery medallion to celebrate every clean milestone.

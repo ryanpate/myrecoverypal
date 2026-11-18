@@ -14,7 +14,7 @@
 <style>
     /* Category-specific styles */
     .category-header {
-        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        background: #1e4d8b;
         padding: 100px 0 50px;
         color: white;
         text-align: center;
@@ -351,7 +351,7 @@
         {% for resource in resources %}
         <div class="resource-card">
             {% if resource.featured %}
-            <span class="featured-badge">⭐ Featured</span>
+            <span class="featured-badge">Featured</span>
             {% endif %}
 
             <div class="resource-card-header">

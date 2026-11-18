@@ -17,7 +17,7 @@
 
 /* Remove old purple gradient */
 .blog-header {
-    background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%) !important;
+    background: #1e4d8b !important;
     padding: 110px 1.5rem 64px;
     color: white;
     text-align: center;
@@ -41,7 +41,7 @@
 .resource-detail-header,
 .category-header,
 .educational-resources-header {
-    background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%) !important;
+    background: #1e4d8b !important;
 }
 
 /* Crisis Banner - More Compact */
@@ -204,7 +204,7 @@
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    background: var(--primary-color);
     transform: translateX(-100%);
     transition: transform 0.3s ease;
 }

@@ -22,7 +22,7 @@
     .meeting-detail-time {
         font-size: 1.15rem;
         font-weight: 600;
-        color: #7C3AED;
+        color: #1e4d8b;
         margin-bottom: 16px;
     }
 
@@ -46,8 +46,6 @@
         font-size: 1rem;
         font-weight: 600;
         color: #374151;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
         margin-bottom: 10px;
     }
 
@@ -66,8 +64,8 @@
     .meeting-type-badge {
         display: inline-block;
         padding: 4px 10px;
-        background: #EDE9FE;
-        color: #7C3AED;
+        background: #e8f0fb;
+        color: #1e4d8b;
         border-radius: 15px;
         font-size: 0.85rem;
     }
@@ -75,13 +73,13 @@
     .meeting-schedule { list-style: none; padding: 0; margin: 0; }
     .meeting-schedule-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.75rem;
         padding: 0.5rem 0.6rem; border-bottom: 1px solid #F3F4F6; border-radius: 6px; font-size: 0.92rem; }
-    .meeting-schedule-row.is-current { background: #F5F3FF; }
+    .meeting-schedule-row.is-current { background: #f0f6ff; }
     .meeting-schedule-day { font-weight: 600; min-width: 6.5rem; color: #1F2937; }
     .meeting-schedule-time { min-width: 4.5rem; color: #1F2937; }
     .meeting-schedule-meta { flex: 1 1 10rem; color: #6B7280; font-size: 0.85rem; }
-    .meeting-schedule-here { font-size: 0.8rem; color: #7C3AED; font-weight: 600; }
-    .meeting-schedule-link { font-size: 0.8rem; color: #7C3AED; }
-    .meeting-schedule-more summary { cursor: pointer; color: #7C3AED; font-size: 0.9rem; padding: 0.5rem 0.6rem; }
+    .meeting-schedule-here { font-size: 0.8rem; color: #1e4d8b; font-weight: 600; }
+    .meeting-schedule-link { font-size: 0.8rem; color: #1e4d8b; }
+    .meeting-schedule-more summary { cursor: pointer; color: #1e4d8b; font-size: 0.9rem; padding: 0.5rem 0.6rem; }
     [data-theme="dark"] .meeting-schedule-row { border-color: #374151; }
     [data-theme="dark"] .meeting-schedule-row.is-current { background: #2e1065; }
     [data-theme="dark"] .meeting-schedule-day, [data-theme="dark"] .meeting-schedule-time { color: #E5E7EB; }
@@ -95,7 +93,13 @@
     }
 
     .nearby-meeting:last-child { border-bottom: none; }
-    .nearby-meeting:hover { color: #7C3AED; }
+    .nearby-meeting:hover { color: #1e4d8b; }
+    [data-theme="dark"] .meeting-detail-time,
+    [data-theme="dark"] .meeting-schedule-here,
+    [data-theme="dark"] .meeting-schedule-link,
+    [data-theme="dark"] .meeting-schedule-more summary,
+    [data-theme="dark"] .nearby-meeting:hover { color: #8fb8ee; }
+    [data-theme="dark"] .meeting-schedule-row.is-current { background: rgba(143, 184, 238, 0.12); }
 </style>
 {% endblock %}
 

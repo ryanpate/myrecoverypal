@@ -32,7 +32,6 @@
         align-items: center;
         gap: 0.5rem;
         border: 2px solid rgba(255, 255, 255, 0.3);
-        backdrop-filter: blur(10px);
     }
 
     .header-btn:hover {
@@ -47,33 +46,6 @@
         font-size: 1rem;
     }
 
-    .blog-stats {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1rem;
-        margin: 2rem auto;
-        max-width: 800px;
-    }
-
-    .stat-card {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 1rem;
-        border-radius: 10px;
-        text-align: center;
-        backdrop-filter: blur(10px);
-    }
-
-    .stat-number {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: white !important;
-        margin-bottom: 0.25rem;
-    }
-
-    .stat-label {
-        color: rgba(255, 255, 255, 0.9) !important;
-        font-size: 0.85rem;
-    }
 
     .blog-container {
         max-width: 1200px;
@@ -83,7 +55,7 @@
 
     /* Featured CTA Box */
     .featured-cta {
-        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        background: #1e4d8b;
         color: white;
         padding: 2.5rem 2rem;
         border-radius: 12px;
@@ -234,6 +206,11 @@
         position: relative;
     }
 
+    /* No featured image: no placeholder tile, just the badges above the text */
+    .post-image--none { height: auto; background: none; display: block; }
+    .post-image--none .post-badges { position: static; }
+    .post-image--none .post-badges:has(span) { padding: 1rem 1.5rem 0; }
+
     .post-image img {
         width: 100%;
         height: 100%;
@@ -255,7 +232,6 @@
         border-radius: 20px;
         font-size: 0.75rem;
         font-weight: 600;
-        backdrop-filter: blur(10px);
     }
 
     .warning-badge {
@@ -494,9 +470,6 @@
             justify-content: center;
         }
 
-        .blog-stats {
-            grid-template-columns: repeat(2, 1fr);
-        }
 
         .featured-cta {
             padding: 2rem 1.5rem;
@@ -533,47 +506,14 @@
         <h1>Recovery Stories & Resources</h1>
         <p>Inspiring journeys, practical tips, and support for your recovery</p>
 
-        <!-- Action buttons in header -->
+        {% if user.is_authenticated %}
         <div class="header-action-buttons">
-            {% if user.is_authenticated %}
-            <a href="{% url 'blog:post_create' %}" class="header-btn">
-                <i class="fas fa-pen"></i>
-                Share Your Story
-            </a>
             <a href="{% url 'blog:my_posts' %}" class="header-btn">
                 <i class="fas fa-folder-open"></i>
                 My Posts
             </a>
-            {% endif %}
-            <a href="{% url 'resources:list' %}" class="header-btn">
-                <i class="fas fa-book"></i>
-                Resources
-            </a>
-            <a href="{% url 'accounts:community' %}" class="header-btn">
-                <i class="fas fa-users"></i>
-                Community
-            </a>
         </div>
-
-        <!-- Blog Stats -->
-        <div class="blog-stats">
-            <div class="stat-card">
-                <div class="stat-number">{{ posts_count|default:0 }}</div>
-                <div class="stat-label">Stories</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">{{ categories.count|default:0 }}</div>
-                <div class="stat-label">Categories</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">{{ authors_count|default:0 }}</div>
-                <div class="stat-label">Contributors</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">{{ comments_count|default:0 }}</div>
-                <div class="stat-label">Comments</div>
-            </div>
-        </div>
+        {% endif %}
     </div>
 </div>
 
@@ -629,11 +569,9 @@
             <div class="posts-grid">
                 {% for post in posts %}
                 <div class="post-card">
-                    <div class="post-image">
+                    <div class="post-image{% if not post.featured_image %} post-image--none{% endif %}">
                         {% if post.featured_image %}
                         <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" loading="lazy">
-                        {% else %}
-                        <i class="fas fa-book-open"></i>
                         {% endif %}
 
                         <div class="post-badges">

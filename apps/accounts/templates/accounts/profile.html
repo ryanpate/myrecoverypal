@@ -12,7 +12,7 @@
 
     /* Profile Header Section - Complete override of base styles */
     .profile-header {
-        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%) !important;
+        background: #1e4d8b !important;
         padding: 100px 0 100px !important;
         /* Increased bottom padding to make room for avatar */
         color: white !important;
@@ -56,7 +56,7 @@
         height: 120px;
         border-radius: 50%;
         border: 4px solid white;
-        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        background: #1e4d8b;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -101,7 +101,7 @@
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, #1e4d8b 0%, #52b788 100%);
+        background: #1e4d8b;
         color: white;
     }
 
@@ -124,7 +124,7 @@
     }
 
     .message-btn {
-        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 100%);
+        background: #1e4d8b;
         color: white;
         padding: 0.75rem 2rem;
         border-radius: 50px;
@@ -142,7 +142,7 @@
 
     /* Enhanced Sobriety Counter Widget */
     .sobriety-widget {
-        background: linear-gradient(135deg, #1e4d8b 0%, #2d5a9e 50%, #52b788 100%);
+        background: #1e4d8b;
         border-radius: 20px;
         padding: 2rem;
         margin-bottom: 2rem;
@@ -151,16 +151,6 @@
         overflow: hidden;
     }
 
-    .sobriety-widget::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-        pointer-events: none;
-    }
 
     .sobriety-widget-inner {
         position: relative;
@@ -239,8 +229,6 @@
         font-size: 1.5rem;
         color: rgba(255, 255, 255, 0.9);
         font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 2px;
     }
 
     .sobriety-breakdown {
@@ -269,8 +257,6 @@
     .sobriety-unit-label {
         font-size: 0.75rem;
         color: rgba(255, 255, 255, 0.8);
-        text-transform: uppercase;
-        letter-spacing: 1px;
     }
 
     .sobriety-start-date {
@@ -699,7 +685,7 @@
         </a>
         {% endif %}
         {% if not request.user.get_recovery_pal and profile_user != request.user %}
-        <a href="{% url 'accounts:request_pal' profile_user.username %}" class="btn" style="background: linear-gradient(135deg, #52b788 0%, #40916c 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 50px; text-decoration: none; display: inline-block; transition: all 0.3s ease; font-weight: 600; margin-left: 0.5rem;">
+        <a href="{% url 'accounts:request_pal' profile_user.username %}" class="btn" style="background: #2e8059; color: white; padding: 0.75rem 1.5rem; border-radius: 50px; text-decoration: none; display: inline-block; transition: all 0.3s ease; font-weight: 600; margin-left: 0.5rem;">
             <i class="fas fa-handshake-angle"></i> Request as Pal
         </a>
         {% elif request.user.get_recovery_pal == profile_user %}

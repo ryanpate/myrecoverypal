@@ -6,7 +6,7 @@
 {% block extra_css %}
 <style>
     .entries-header {
-        background: linear-gradient(135deg, #1e4d8b 0%, #4db8e8 60%, #52b788 100%);
+        background: #1e4d8b;
         padding: 100px 0 50px;
         color: white;
         text-align: center;
@@ -163,12 +163,12 @@
         </span>
         <div id="exportUpgradeToast" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; padding: 1rem;">
             <div style="background: white; border-radius: 20px; padding: 2rem; max-width: 400px; width: 100%; text-align: center;">
-                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                <div style="width: 50px; height: 50px; background: #764ba2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
                     <i class="fas fa-file-export" style="color: white; font-size: 1.2rem;"></i>
                 </div>
                 <h3 style="margin: 0 0 0.5rem; font-size: 1.2rem; color: #1e293b;">Export Your Journal</h3>
                 <p style="color: #64748b; margin: 0 0 1.25rem; font-size: 0.9rem;">Download all your journal entries as a file. Export is part of Premium, along with streak protection and your mood &amp; craving insights.</p>
-                <a href="{% url 'accounts:pricing' %}" style="display: block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 600; text-decoration: none; margin-bottom: 0.75rem;">Upgrade to Premium</a>
+                <a href="{% url 'accounts:pricing' %}" style="display: block; background: #764ba2; color: white; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 600; text-decoration: none; margin-bottom: 0.75rem;">Upgrade to Premium</a>
                 <button data-on-click="set-display" data-target="exportUpgradeToast" data-display="none" style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 0.85rem;">Maybe later</button>
             </div>
         </div>
