@@ -7,7 +7,7 @@
 {% block extra_css %}
 <style>
     .form-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 2rem;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -17,7 +17,7 @@
     .form-section {
         margin-bottom: 2rem;
         padding-bottom: 1.5rem;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--border-color, #e0e0e0);
     }
 
     .form-section:last-child {
@@ -26,7 +26,7 @@
     }
 
     .section-title {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1rem;
         display: flex;
         align-items: center;
@@ -35,7 +35,7 @@
 
     .form-control {
         border-radius: 10px;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color, #e0e0e0);
         padding: 0.75rem 1rem;
         transition: border-color 0.3s;
     }
@@ -47,7 +47,7 @@
 
     .form-select {
         border-radius: 10px;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color, #e0e0e0);
         padding: 0.75rem 1rem;
     }
 
@@ -58,7 +58,7 @@
 
     .help-text {
         font-size: 0.875rem;
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         margin-top: 0.25rem;
     }
 
@@ -66,7 +66,7 @@
         width: 80px;
         height: 80px;
         border-radius: 15px;
-        background: #e9ecef;
+        background: var(--bg-gray, #e9ecef);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -78,12 +78,12 @@
         width: 50px;
         height: 50px;
         border-radius: 10px;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color, #e0e0e0);
         cursor: pointer;
     }
 
     .preview-card {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 15px;
         padding: 1.5rem;
         margin-top: 2rem;
@@ -108,6 +108,8 @@
         border-radius: 10px;
         padding: 1.5rem;
         margin-top: 2rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
 </style>
 {% endblock %}

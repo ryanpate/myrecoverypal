@@ -43,7 +43,7 @@
     }
     
     .journal-form {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 2rem;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -52,17 +52,19 @@
     .form-section {
         margin-bottom: 2rem;
         padding: 1.5rem;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 10px;
     }
     
     .follow-up-section {
         background: #e3f2fd;
         border-left-color: var(--primary-color);
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
     
     .form-section h4 {
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1rem;
     }
     
@@ -72,6 +74,7 @@
         border-radius: 5px;
         margin-bottom: 2rem;
     }
+    [data-theme="dark"] .writing-tips { background: var(--bg-light); }
     
     .writing-tips h5 {
         color: #f57c00;
@@ -86,7 +89,7 @@
     .no-prompt {
         text-align: center;
         padding: 3rem;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 10px;
     }
     

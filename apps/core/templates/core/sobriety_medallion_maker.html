@@ -130,7 +130,7 @@
 
     /* Quick tool */
     .smm-tool {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border: 1px solid var(--border-color, #e5e7eb);
         border-radius: 24px;
         padding: 2.5rem 2rem;
@@ -151,7 +151,7 @@
         border: 1px solid var(--border-color, #d1d5db);
         border-radius: 12px;
         font-size: 1rem;
-        background: #fff;
+        background: var(--card-bg, #fff);
         color: var(--text-primary, #1a1a1a);
     }
     .smm-tool input { flex: 1; min-width: 140px; }
@@ -178,7 +178,7 @@
         gap: 1rem;
     }
     .smm-card {
-        background: #fff;
+        background: var(--card-bg, #fff);
         border: 1px solid var(--border-color, #e5e7eb);
         border-radius: 16px;
         overflow: hidden;
@@ -229,14 +229,14 @@
     .smm-extra i { font-size: 1.5rem; color: #b8902a; margin-bottom: 0.6rem; }
     .smm-extra h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
     .smm-extra p { color: var(--text-muted, #666); font-size: 0.9rem; line-height: 1.5; margin-bottom: 0.75rem; }
-    .smm-extra-link { font-weight: 700; color: var(--primary-dark, #1e4d8b); font-size: 0.9rem; }
+    .smm-extra-link { font-weight: 700; color: var(--brand-text, #1e4d8b); font-size: 0.9rem; }
     [data-theme="dark"] .smm-extra { background: var(--bg-card, #1f1f1f); border-color: #6b5a1e; }
     [data-theme="dark"] .smm-extra h3 { color: #f5f5f5; }
     [data-theme="dark"] .smm-extra p { color: #c8c8c8; }
     [data-theme="dark"] .smm-extra-link { color: #8fb8ee; }
 
     /* Explainer */
-    .smm-explainer { background: #f8f9fa; border-radius: 24px; padding: 3rem 2rem; margin-bottom: 4rem; }
+    .smm-explainer { background: var(--bg-light, #f8f9fa); border-radius: 24px; padding: 3rem 2rem; margin-bottom: 4rem; }
     .smm-explainer h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 1rem; }
     .smm-explainer p { color: var(--text-primary, #333); line-height: 1.7; margin-bottom: 1rem; font-size: 1rem; }
 
@@ -244,7 +244,7 @@
     .smm-faq { margin-bottom: 4rem; }
     .smm-faq h2 { text-align: center; font-size: 1.8rem; font-weight: 800; margin-bottom: 2rem; }
     .smm-faq details {
-        background: #fff;
+        background: var(--card-bg, #fff);
         border: 1px solid var(--border-color, #e5e7eb);
         border-radius: 12px;
         padding: 1.1rem 1.25rem;
@@ -261,7 +261,7 @@
         color: var(--text-primary, #1a1a1a);
     }
     .smm-faq summary::-webkit-details-marker { display: none; }
-    .smm-faq summary::after { content: '+'; font-size: 1.5rem; font-weight: 300; color: var(--primary-dark, #1e4d8b); transition: transform 0.2s; }
+    .smm-faq summary::after { content: '+'; font-size: 1.5rem; font-weight: 300; color: var(--brand-text, #1e4d8b); transition: transform 0.2s; }
     .smm-faq details[open] summary::after { transform: rotate(45deg); }
     .smm-faq details p { margin-top: 0.75rem; color: var(--text-muted, #555); line-height: 1.6; font-size: 0.95rem; }
 
@@ -279,8 +279,8 @@
     .smm-bottom-cta p { opacity: 0.92; margin-bottom: 1.5rem; font-size: 1rem; }
     .smm-bottom-cta a {
         display: inline-block;
-        background: #fff;
-        color: var(--primary-dark, #1e4d8b);
+        background: var(--card-bg, #fff);
+        color: var(--brand-text, #1e4d8b);
         text-decoration: none;
         padding: 1rem 2.25rem;
         border-radius: 50px;

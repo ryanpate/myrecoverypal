@@ -94,18 +94,19 @@
 <style>
 .notification-item-full {
     padding: 1rem;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
     transition: background 0.2s;
 }
 
 .notification-item-full:hover {
-    background: #f8f9fa;
+    background: var(--bg-light, #f8f9fa);
 }
 
 .notification-item-full.unread {
     background: #f0f8ff;
     border-left: 3px solid var(--primary-light);
 }
+[data-theme="dark"] .notification-item-full.unread { background: var(--bg-light); }
 
 .notification-icon-circle {
     width: 50px;

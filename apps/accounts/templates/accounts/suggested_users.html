@@ -7,7 +7,7 @@
 {% block extra_css %}
 <style>
     .user-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 1.5rem;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -44,18 +44,18 @@
     }
 
     .user-card h5 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 0.5rem;
     }
 
     .user-username {
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         font-size: 0.9rem;
         margin-bottom: 1rem;
     }
 
     .user-bio {
-        color: #495057;
+        color: var(--text-dark, #495057);
         font-size: 0.9rem;
         line-height: 1.5;
         margin-bottom: 1rem;
@@ -86,7 +86,7 @@
     .empty-state {
         text-align: center;
         padding: 3rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .empty-state i {

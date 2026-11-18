@@ -70,17 +70,19 @@
 
 {% block extra_css %}
 <style>
+    :root { --accent-text: #4a1942; }
+    [data-theme="dark"] { --accent-text: #e0b3d3; }
     .ar-hero { background: linear-gradient(135deg, #4a1942 0%, #893168 60%, #c1666b 100%); padding: 5rem 2rem; text-align: center; color: white; }
     .ar-hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.2; }
     .ar-hero p { font-size: 1.3rem; max-width: 700px; margin: 0 auto 2rem; opacity: 0.95; }
     .ar-hero .cta-button { display: inline-block; padding: 1rem 2.5rem; background: #52b788; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.2rem; transition: all 0.3s ease; }
     .ar-hero .cta-button:hover { transform: translateY(-3px); background: #45a675; }
-    .crisis-bar { background: #ffeeba; padding: 1rem 2rem; text-align: center; }
+    .crisis-bar { background: #ffeeba; padding: 1rem 2rem; text-align: center; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark); }
     .crisis-bar p { margin: 0; color: #856404; font-weight: 500; }
     .crisis-bar a { color: #533f03; font-weight: 700; }
-    .features-section { padding: 4rem 2rem; background: #f8f9fa; }
-    .features-section h2 { text-align: center; color: #4a1942; font-size: 2.2rem; margin-bottom: 0.5rem; }
-    .features-section .subtitle { text-align: center; color: #666; font-size: 1.1rem; margin-bottom: 3rem; }
+    .features-section { padding: 4rem 2rem; background: var(--bg-light, #f8f9fa); }
+    .features-section h2 { text-align: center; color: var(--accent-text, #4a1942); font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .features-section .subtitle { text-align: center; color: var(--text-muted, #666); font-size: 1.1rem; margin-bottom: 3rem; }
     .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
     .feature-card {
         /* Plain text columns: spacing does the grouping, no card chrome */
@@ -99,35 +101,35 @@
     [data-theme="dark"] .feature-card {
         background: none;
     }
-    .feature-card h3 { color: #4a1942; margin-bottom: 0.75rem; }
-    .feature-card p { color: #666; line-height: 1.6; }
-    .content-section { padding: 4rem 2rem; background: white; }
+    .feature-card h3 { color: var(--accent-text, #4a1942); margin-bottom: 0.75rem; }
+    .feature-card p { color: var(--text-muted, #666); line-height: 1.6; }
+    .content-section { padding: 4rem 2rem; background: var(--card-bg, #fff); }
     .content-section .container { max-width: 800px; margin: 0 auto; }
-    .content-section h2 { color: #4a1942; font-size: 2rem; margin-bottom: 1.5rem; }
-    .content-section h3 { color: #4a1942; font-size: 1.4rem; margin: 2rem 0 1rem; }
-    .content-section p { color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
+    .content-section h2 { color: var(--accent-text, #4a1942); font-size: 2rem; margin-bottom: 1.5rem; }
+    .content-section h3 { color: var(--accent-text, #4a1942); font-size: 1.4rem; margin: 2rem 0 1rem; }
+    .content-section p { color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
     .content-section ul { margin: 1.5rem 0; padding-left: 1.5rem; }
-    .content-section ul li { color: #555; line-height: 1.8; margin-bottom: 0.75rem; }
-    .mat-section { padding: 4rem 2rem; background: #f8e1e7; }
+    .content-section ul li { color: var(--text-muted, #555); line-height: 1.8; margin-bottom: 0.75rem; }
+    .mat-section { padding: 4rem 2rem; background: #f8e1e7; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark); }
     .mat-section .container { max-width: 800px; margin: 0 auto; text-align: center; }
-    .mat-section h2 { color: #4a1942; font-size: 2rem; margin-bottom: 1rem; }
-    .mat-section p { color: #555; line-height: 1.8; font-size: 1.1rem; }
-    .faq-section { padding: 4rem 2rem; background: white; }
-    .faq-section h2 { text-align: center; color: #4a1942; font-size: 2.2rem; margin-bottom: 2rem; }
+    .mat-section h2 { color: var(--accent-text, #4a1942); font-size: 2rem; margin-bottom: 1rem; }
+    .mat-section p { color: var(--text-muted, #555); line-height: 1.8; font-size: 1.1rem; }
+    .faq-section { padding: 4rem 2rem; background: var(--card-bg, #fff); }
+    .faq-section h2 { text-align: center; color: var(--accent-text, #4a1942); font-size: 2.2rem; margin-bottom: 2rem; }
     .faq-container { max-width: 800px; margin: 0 auto; }
-    .faq-item { background: #f8f9fa; border-radius: 10px; margin-bottom: 1rem; padding: 1.5rem; }
-    .faq-item h3 { color: #4a1942; margin-bottom: 0.75rem; font-size: 1.2rem; }
-    .faq-item p { color: #666; line-height: 1.7; margin: 0; }
+    .faq-item { background: var(--bg-light, #f8f9fa); border-radius: 10px; margin-bottom: 1rem; padding: 1.5rem; }
+    .faq-item h3 { color: var(--accent-text, #4a1942); margin-bottom: 0.75rem; font-size: 1.2rem; }
+    .faq-item p { color: var(--text-muted, #666); line-height: 1.7; margin: 0; }
     .cta-section { padding: 5rem 2rem; background: linear-gradient(135deg, #4a1942 0%, #893168 100%); text-align: center; color: white; }
     .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
     .cta-section p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.95; }
     .cta-section .cta-button { display: inline-block; padding: 1rem 3rem; background: #52b788; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.3rem; transition: all 0.3s ease; }
     .cta-section .cta-button:hover { transform: translateY(-3px); background: #45a675; }
     .cta-section .subtext { margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; }
-    .related-links { padding: 3rem 2rem; background: #f8f9fa; }
-    .related-links h3 { text-align: center; color: #4a1942; margin-bottom: 1.5rem; }
+    .related-links { padding: 3rem 2rem; background: var(--bg-light, #f8f9fa); }
+    .related-links h3 { text-align: center; color: var(--accent-text, #4a1942); margin-bottom: 1.5rem; }
     .related-grid { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto; }
-    .related-grid a { background: white; padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: #4a1942; font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
+    .related-grid a { background: var(--card-bg, #fff); padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: var(--accent-text, #4a1942); font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
     .related-grid a:hover { transform: translateY(-3px); }
     @media (max-width: 768px) { .ar-hero h1 { font-size: 2rem; } }
 </style>
@@ -211,22 +213,22 @@
 </section>
 
 <!-- Opioid-Specific Recovery Section -->
-<section class="content-section" style="padding: 3rem 2rem; background: white;">
+<section class="content-section" style="padding: 3rem 2rem; background: var(--card-bg, #fff);">
     <div style="max-width: 800px; margin: 0 auto;">
-        <h2 style="color: var(--primary-dark); font-size: 1.8rem; margin-bottom: 1.5rem;">Opioid Recovery: A Unique Challenge</h2>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">The opioid crisis remains one of the most devastating public health emergencies in modern history. Opioid overdoses have claimed over 500,000 lives in the United States since 1999, with synthetic opioids — primarily illicitly manufactured fentanyl — now responsible for the majority of overdose deaths. The crisis has touched every demographic, every region, and every economic class. Behind these numbers are real people, families, and communities struggling to find a path forward.</p>
+        <h2 style="color: var(--brand-text, #1e4d8b); font-size: 1.8rem; margin-bottom: 1.5rem;">Opioid Recovery: A Unique Challenge</h2>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">The opioid crisis remains one of the most devastating public health emergencies in modern history. Opioid overdoses have claimed over 500,000 lives in the United States since 1999, with synthetic opioids — primarily illicitly manufactured fentanyl — now responsible for the majority of overdose deaths. The crisis has touched every demographic, every region, and every economic class. Behind these numbers are real people, families, and communities struggling to find a path forward.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">Why Opioid Recovery Is Uniquely Difficult</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Opioids create one of the strongest physical dependencies of any drug class. With regular use, your brain's opioid receptors adapt to the presence of the drug, reducing natural endorphin production and fundamentally altering how you experience pain and pleasure. Withdrawal symptoms — which can include severe muscle and bone pain, insomnia, diarrhea, vomiting, cold flashes, and involuntary leg movements — are intensely uncomfortable and can begin within hours of the last dose. While opioid withdrawal is rarely life-threatening on its own, the sheer misery of it drives many people back to using simply to make the symptoms stop. This is why having support during the early days is so critical.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">Why Opioid Recovery Is Uniquely Difficult</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Opioids create one of the strongest physical dependencies of any drug class. With regular use, your brain's opioid receptors adapt to the presence of the drug, reducing natural endorphin production and fundamentally altering how you experience pain and pleasure. Withdrawal symptoms — which can include severe muscle and bone pain, insomnia, diarrhea, vomiting, cold flashes, and involuntary leg movements — are intensely uncomfortable and can begin within hours of the last dose. While opioid withdrawal is rarely life-threatening on its own, the sheer misery of it drives many people back to using simply to make the symptoms stop. This is why having support during the early days is so critical.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">Medication-Assisted Treatment Compatibility</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">MyRecoveryPal fully supports people using medication-assisted treatment (MAT), including buprenorphine (Suboxone, Subutex), methadone, and naltrexone (Vivitrol). MAT is endorsed by the World Health Organization, the National Institute on Drug Abuse, and SAMHSA as an evidence-based treatment for opioid use disorder. It reduces cravings, prevents withdrawal, and significantly lowers the risk of fatal overdose. Despite this, people on MAT sometimes face stigma — even within recovery communities — with others claiming they are not "truly clean." That attitude has no place here. If you are on MAT and working toward a better life, you are in recovery, and this community supports you.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">Medication-Assisted Treatment Compatibility</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">MyRecoveryPal fully supports people using medication-assisted treatment (MAT), including buprenorphine (Suboxone, Subutex), methadone, and naltrexone (Vivitrol). MAT is endorsed by the World Health Organization, the National Institute on Drug Abuse, and SAMHSA as an evidence-based treatment for opioid use disorder. It reduces cravings, prevents withdrawal, and significantly lowers the risk of fatal overdose. Despite this, people on MAT sometimes face stigma — even within recovery communities — with others claiming they are not "truly clean." That attitude has no place here. If you are on MAT and working toward a better life, you are in recovery, and this community supports you.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">Fentanyl Awareness and Harm Reduction</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Illicitly manufactured fentanyl has transformed the opioid crisis. It is 50 to 100 times more potent than morphine, and it now contaminates supplies of heroin, counterfeit pills, and even non-opioid drugs like cocaine and methamphetamine. For people in early recovery or those who experience a relapse, this contamination makes every use potentially fatal. Carrying naloxone (Narcan) saves lives — many states now allow it to be purchased without a prescription at pharmacies. MyRecoveryPal provides quick access to crisis resources including the SAMHSA helpline (1-800-662-4357) and local Narcan distribution information.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">Fentanyl Awareness and Harm Reduction</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Illicitly manufactured fentanyl has transformed the opioid crisis. It is 50 to 100 times more potent than morphine, and it now contaminates supplies of heroin, counterfeit pills, and even non-opioid drugs like cocaine and methamphetamine. For people in early recovery or those who experience a relapse, this contamination makes every use potentially fatal. Carrying naloxone (Narcan) saves lives — many states now allow it to be purchased without a prescription at pharmacies. MyRecoveryPal provides quick access to crisis resources including the SAMHSA helpline (1-800-662-4357) and local Narcan distribution information.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">Peer Support from People Who Understand</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">There is a difference between someone who cares about you and someone who truly understands what you are going through. Friends and family can offer love and encouragement, but they may not grasp the intensity of opioid cravings, the fear of withdrawal, or the shame that often accompanies opioid addiction. Connecting with peers who have lived through the same experience — who know what day 3 of withdrawal feels like, who have navigated the complexities of MAT, who have rebuilt their lives after opioid addiction — provides a kind of support that nothing else can replicate. That is what the MyRecoveryPal community offers.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">Peer Support from People Who Understand</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">There is a difference between someone who cares about you and someone who truly understands what you are going through. Friends and family can offer love and encouragement, but they may not grasp the intensity of opioid cravings, the fear of withdrawal, or the shame that often accompanies opioid addiction. Connecting with peers who have lived through the same experience — who know what day 3 of withdrawal feels like, who have navigated the complexities of MAT, who have rebuilt their lives after opioid addiction — provides a kind of support that nothing else can replicate. That is what the MyRecoveryPal community offers.</p>
     </div>
 </section>
 

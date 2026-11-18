@@ -95,6 +95,8 @@
 
 {% block extra_css %}
 <style>
+    :root { --plum-text: #6b2d5c; }
+    [data-theme="dark"] { --plum-text: #e0b3d3; }
     .ar-hero {
         background: linear-gradient(135deg, #6b2d5c 0%, #9b4dca 60%, #52b788 100%);
         padding: 5rem 2rem;
@@ -109,9 +111,9 @@
         transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(82, 183, 136, 0.3);
     }
     .ar-hero .cta-button:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(82, 183, 136, 0.4); background: #45a675; }
-    .features-section { padding: 4rem 2rem; background: #f8f9fa; }
-    .features-section h2 { text-align: center; color: #6b2d5c; font-size: 2.2rem; margin-bottom: 0.5rem; }
-    .features-section .subtitle { text-align: center; color: #666; font-size: 1.1rem; margin-bottom: 3rem; }
+    .features-section { padding: 4rem 2rem; background: var(--bg-light, #f8f9fa); }
+    .features-section h2 { text-align: center; color: var(--plum-text, #6b2d5c); font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .features-section .subtitle { text-align: center; color: var(--text-muted, #666); font-size: 1.1rem; margin-bottom: 3rem; }
     .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
     .feature-card {
         /* Plain text columns: spacing does the grouping, no card chrome */
@@ -130,17 +132,17 @@
     [data-theme="dark"] .feature-card {
         background: none;
     }
-    .feature-card h3 { color: #6b2d5c; margin-bottom: 0.75rem; }
-    .feature-card p { color: #666; line-height: 1.6; }
-    .content-section { padding: 4rem 2rem; background: white; }
+    .feature-card h3 { color: var(--plum-text, #6b2d5c); margin-bottom: 0.75rem; }
+    .feature-card p { color: var(--text-muted, #666); line-height: 1.6; }
+    .content-section { padding: 4rem 2rem; background: var(--card-bg, #fff); }
     .content-section .container { max-width: 800px; margin: 0 auto; }
-    .content-section h2 { color: #6b2d5c; font-size: 2rem; margin-bottom: 1.5rem; }
-    .content-section h3 { color: #6b2d5c; font-size: 1.4rem; margin: 2rem 0 1rem; }
-    .content-section p { color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
+    .content-section h2 { color: var(--plum-text, #6b2d5c); font-size: 2rem; margin-bottom: 1.5rem; }
+    .content-section h3 { color: var(--plum-text, #6b2d5c); font-size: 1.4rem; margin: 2rem 0 1rem; }
+    .content-section p { color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
     .content-section ul { margin: 1.5rem 0; padding-left: 1.5rem; }
-    .content-section ul li { color: #555; line-height: 1.8; margin-bottom: 0.75rem; }
-    .testimonial-section { padding: 4rem 2rem; background: #f8f9fa; }
-    .testimonial-section h2 { text-align: center; color: #6b2d5c; font-size: 2rem; margin-bottom: 2rem; }
+    .content-section ul li { color: var(--text-muted, #555); line-height: 1.8; margin-bottom: 0.75rem; }
+    .testimonial-section { padding: 4rem 2rem; background: var(--bg-light, #f8f9fa); }
+    .testimonial-section h2 { text-align: center; color: var(--plum-text, #6b2d5c); font-size: 2rem; margin-bottom: 2rem; }
     .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto; }
     .testimonial-card {
         /* Plain text columns: spacing does the grouping, no card chrome */
@@ -159,25 +161,25 @@
     [data-theme="dark"] .testimonial-card {
         background: none;
     }
-    .testimonial-card p { color: #555; line-height: 1.7; font-style: italic; margin-bottom: 1rem; }
-    .testimonial-author { color: #6b2d5c; font-weight: 600; }
+    .testimonial-card p { color: var(--text-muted, #555); line-height: 1.7; font-style: italic; margin-bottom: 1rem; }
+    .testimonial-author { color: var(--plum-text, #6b2d5c); font-weight: 600; }
     .testimonial-days { color: #52b788; font-size: 0.9rem; }
-    .faq-section { padding: 4rem 2rem; background: white; }
-    .faq-section h2 { text-align: center; color: #6b2d5c; font-size: 2.2rem; margin-bottom: 2rem; }
+    .faq-section { padding: 4rem 2rem; background: var(--card-bg, #fff); }
+    .faq-section h2 { text-align: center; color: var(--plum-text, #6b2d5c); font-size: 2.2rem; margin-bottom: 2rem; }
     .faq-container { max-width: 800px; margin: 0 auto; }
-    .faq-item { background: #f8f9fa; border-radius: 10px; margin-bottom: 1rem; padding: 1.5rem; }
-    .faq-item h3 { color: #6b2d5c; margin-bottom: 0.75rem; font-size: 1.2rem; }
-    .faq-item p { color: #666; line-height: 1.7; margin: 0; }
+    .faq-item { background: var(--bg-light, #f8f9fa); border-radius: 10px; margin-bottom: 1rem; padding: 1.5rem; }
+    .faq-item h3 { color: var(--plum-text, #6b2d5c); margin-bottom: 0.75rem; font-size: 1.2rem; }
+    .faq-item p { color: var(--text-muted, #666); line-height: 1.7; margin: 0; }
     .cta-section { padding: 5rem 2rem; background: linear-gradient(135deg, #6b2d5c 0%, #9b4dca 100%); text-align: center; color: white; }
     .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
     .cta-section p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.95; }
     .cta-section .cta-button { display: inline-block; padding: 1rem 3rem; background: #52b788; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.3rem; transition: all 0.3s ease; }
     .cta-section .cta-button:hover { transform: translateY(-3px); background: #45a675; }
     .cta-section .subtext { margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; }
-    .related-links { padding: 3rem 2rem; background: #f8f9fa; }
-    .related-links h3 { text-align: center; color: #6b2d5c; margin-bottom: 1.5rem; }
+    .related-links { padding: 3rem 2rem; background: var(--bg-light, #f8f9fa); }
+    .related-links h3 { text-align: center; color: var(--plum-text, #6b2d5c); margin-bottom: 1.5rem; }
     .related-grid { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto; }
-    .related-grid a { background: white; padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: #6b2d5c; font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
+    .related-grid a { background: var(--card-bg, #fff); padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: var(--plum-text, #6b2d5c); font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
     .related-grid a:hover { transform: translateY(-3px); }
     @media (max-width: 768px) { .ar-hero h1 { font-size: 2rem; } .stats-bar { gap: 1.5rem; } .stat-number { font-size: 2rem; } }
 </style>
@@ -252,39 +254,39 @@
     <h2>Why People Choose MyRecoveryPal</h2>
     <div class="testimonial-grid">
         <div class="testimonial-card">
-            <h3 style="color: #6b2d5c; margin-bottom: 0.5rem;">Real Community</h3>
+            <h3 style="color: var(--plum-text, #6b2d5c); margin-bottom: 0.5rem;">Real Community</h3>
             <p style="font-style: normal;">Connect with people who truly understand drug addiction. Not well-meaning friends who don't get it—people who've been there.</p>
         </div>
         <div class="testimonial-card">
-            <h3 style="color: #6b2d5c; margin-bottom: 0.5rem;">24/7 Support</h3>
+            <h3 style="color: var(--plum-text, #6b2d5c); margin-bottom: 0.5rem;">24/7 Support</h3>
             <p style="font-style: normal;">Cravings don't wait for NA meetings. Our community is here around the clock—whether it's 2 PM or 2 AM.</p>
         </div>
         <div class="testimonial-card">
-            <h3 style="color: #6b2d5c; margin-bottom: 0.5rem;">Free to Join</h3>
+            <h3 style="color: var(--plum-text, #6b2d5c); margin-bottom: 0.5rem;">Free to Join</h3>
             <p style="font-style: normal;">Core features are free with no credit card required. Optional Premium ($9.99/mo) for advanced tools. Recovery support should be accessible to everyone.</p>
         </div>
     </div>
 </section>
 
 <!-- Recovery Stages Section -->
-<section class="content-section" style="padding: 3rem 2rem; background: white;">
+<section class="content-section" style="padding: 3rem 2rem; background: var(--card-bg, #fff);">
     <div style="max-width: 800px; margin: 0 auto;">
-        <h2 style="color: var(--primary-dark); font-size: 1.8rem; margin-bottom: 1.5rem;">Understanding Drug Addiction Recovery Stages</h2>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Recovery from drug addiction is not a single event — it is a process that unfolds in stages, each with its own challenges and milestones. Understanding what to expect at each stage can help you prepare, stay motivated, and recognize that what you are feeling is normal.</p>
+        <h2 style="color: var(--brand-text, #1e4d8b); font-size: 1.8rem; margin-bottom: 1.5rem;">Understanding Drug Addiction Recovery Stages</h2>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Recovery from drug addiction is not a single event — it is a process that unfolds in stages, each with its own challenges and milestones. Understanding what to expect at each stage can help you prepare, stay motivated, and recognize that what you are feeling is normal.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">Acute Withdrawal: The First Days</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">The acute withdrawal timeline varies significantly by substance. Opioid withdrawal typically peaks within 72 hours and lasts 3 to 7 days, with symptoms like muscle aches, nausea, and intense cravings. Stimulant withdrawal (cocaine, methamphetamine) tends to last 1 to 2 weeks, often marked by fatigue, depression, and excessive sleep. Benzodiazepine withdrawal can be the longest and most medically serious, lasting anywhere from 2 to 8 weeks, with risks of seizures that may require medical supervision. Regardless of the substance, the first few days are often the hardest — and having a way to track each clean day can make the difference between pushing through and giving up.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">Acute Withdrawal: The First Days</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">The acute withdrawal timeline varies significantly by substance. Opioid withdrawal typically peaks within 72 hours and lasts 3 to 7 days, with symptoms like muscle aches, nausea, and intense cravings. Stimulant withdrawal (cocaine, methamphetamine) tends to last 1 to 2 weeks, often marked by fatigue, depression, and excessive sleep. Benzodiazepine withdrawal can be the longest and most medically serious, lasting anywhere from 2 to 8 weeks, with risks of seizures that may require medical supervision. Regardless of the substance, the first few days are often the hardest — and having a way to track each clean day can make the difference between pushing through and giving up.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">Post-Acute Withdrawal Syndrome (PAWS)</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">After acute withdrawal fades, many people experience post-acute withdrawal syndrome — a set of lingering symptoms that can last weeks or even months. PAWS can include mood swings, anxiety, irritability, trouble sleeping, difficulty concentrating, and sudden waves of cravings that seem to come from nowhere. These symptoms often catch people off guard because they assumed the worst was over. Knowing that PAWS is a normal part of the brain healing itself can prevent the discouragement that leads to relapse. At the root of PAWS is the brain's dopamine system slowly recalibrating after prolonged substance use — our guide on <a href="/blog/post/dopamine-detox-addiction-recovery/">dopamine detox and addiction recovery</a> explains this process and why it takes time.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">Post-Acute Withdrawal Syndrome (PAWS)</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">After acute withdrawal fades, many people experience post-acute withdrawal syndrome — a set of lingering symptoms that can last weeks or even months. PAWS can include mood swings, anxiety, irritability, trouble sleeping, difficulty concentrating, and sudden waves of cravings that seem to come from nowhere. These symptoms often catch people off guard because they assumed the worst was over. Knowing that PAWS is a normal part of the brain healing itself can prevent the discouragement that leads to relapse. At the root of PAWS is the brain's dopamine system slowly recalibrating after prolonged substance use — our guide on <a href="/blog/post/dopamine-detox-addiction-recovery/">dopamine detox and addiction recovery</a> explains this process and why it takes time.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">How MyRecoveryPal Supports Each Stage</h3>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">How MyRecoveryPal Supports Each Stage</h3>
         <ul style="margin: 1rem 0; padding-left: 1.5rem;">
-            <li style="color: #555; line-height: 1.8; margin-bottom: 0.5rem;"><strong>Early recovery (Days 1-30):</strong> Daily check-ins help you push through withdrawal one day at a time. Crisis resources and the community feed provide immediate support when cravings hit hardest.</li>
-            <li style="color: #555; line-height: 1.8; margin-bottom: 0.5rem;"><strong>Building stability (Months 1-6):</strong> Recovery groups and challenges give you structure. Your Recovery Pal provides accountability as you navigate PAWS and rebuild daily routines.</li>
-            <li style="color: #555; line-height: 1.8; margin-bottom: 0.5rem;"><strong>Long-term recovery (6+ months):</strong> The community lets you give back by supporting newcomers. Milestone celebrations reinforce how far you have come, and the journal helps you reflect on your growth.</li>
+            <li style="color: var(--text-muted, #555); line-height: 1.8; margin-bottom: 0.5rem;"><strong>Early recovery (Days 1-30):</strong> Daily check-ins help you push through withdrawal one day at a time. Crisis resources and the community feed provide immediate support when cravings hit hardest.</li>
+            <li style="color: var(--text-muted, #555); line-height: 1.8; margin-bottom: 0.5rem;"><strong>Building stability (Months 1-6):</strong> Recovery groups and challenges give you structure. Your Recovery Pal provides accountability as you navigate PAWS and rebuild daily routines.</li>
+            <li style="color: var(--text-muted, #555); line-height: 1.8; margin-bottom: 0.5rem;"><strong>Long-term recovery (6+ months):</strong> The community lets you give back by supporting newcomers. Milestone celebrations reinforce how far you have come, and the journal helps you reflect on your growth.</li>
         </ul>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Tracking your clean time through each of these stages is not just about counting days — it is about building evidence that recovery is working. On the hard days, looking back at your progress can be the reminder you need to keep going.</p>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Tracking your clean time through each of these stages is not just about counting days — it is about building evidence that recovery is working. On the hard days, looking back at your progress can be the reminder you need to keep going.</p>
     </div>
 </section>
 

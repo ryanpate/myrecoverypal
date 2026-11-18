@@ -9,7 +9,7 @@
         max-width: 800px;
         margin: 100px auto 2rem;
         padding: 2rem;
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
@@ -18,11 +18,11 @@
         text-align: center;
         margin-bottom: 2rem;
         padding-bottom: 2rem;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
     }
 
     .profile-header h1 {
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
@@ -42,7 +42,9 @@
         font-size: 3rem;
         color: #666;
         overflow: hidden;
-        border: 4px solid #f0f0f0;
+        border: 4px solid var(--border-color, #f0f0f0);
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .current-avatar img {
@@ -53,13 +55,13 @@
 
     .current-avatar i {
         font-size: 3rem;
-        color: #999;
+        color: var(--text-faint, #999);
     }
 
     .form-section {
         margin-bottom: 2rem;
         padding-bottom: 2rem;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--border-color, #eee);
     }
 
     .form-section:last-child {
@@ -67,7 +69,7 @@
     }
 
     .form-section h3 {
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1rem;
         font-size: 1.3rem;
         display: flex;
@@ -76,7 +78,7 @@
     }
 
     .form-section p {
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 0.9rem;
         margin-bottom: 1rem;
     }
@@ -95,19 +97,19 @@
     }
 
     .privacy-note {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         padding: 1rem;
         border-radius: 5px;
         margin-bottom: 1rem;
         font-size: 0.9rem;
-        color: #666;
+        color: var(--text-muted, #666);
         display: flex;
         align-items: start;
         gap: 0.5rem;
     }
 
     .privacy-note i {
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
         margin-top: 0.2rem;
     }
 
@@ -116,10 +118,12 @@
         padding: 1.5rem;
         border-radius: 10px;
         margin-bottom: 1rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
 
     .recovery-info h4 {
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
@@ -144,7 +148,7 @@
 
     .help-text {
         font-size: 0.85rem;
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         margin-top: 0.25rem;
         display: flex;
         align-items: center;
@@ -273,7 +277,7 @@
     </form>
 
     <!-- Account Deletion -->
-    <div class="form-section" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee;">
+    <div class="form-section" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color, #eee);">
         <h3 style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
         <p>Permanently delete your account and all associated data.</p>
         <a href="{% url 'accounts:delete_account' %}" class="btn btn-outline-danger">

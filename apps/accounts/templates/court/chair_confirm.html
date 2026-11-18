@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container" style="max-width:480px; margin:2rem auto; padding:0 1rem;">
     <h1 style="font-size:1.5rem; text-align:center;">Confirm attendance</h1>
-    <div style="background:white; color:#1a2a44; padding:1.5rem; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,.08);">
+    <div style="background:var(--card-bg, #fff); color:var(--text-dark, #1a2a44); padding:1.5rem; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,.08);">
         <p style="margin:0 0 1rem;">
             <strong>{{ member_name }}</strong> is asking you to confirm they attended
             <strong>{{ att.meeting_name }}</strong> on {{ att.meeting_date|date:"l, M j \a\t g:i A" }}.
@@ -23,9 +23,9 @@
             {% csrf_token %}
             <label style="display:block; font-weight:600; margin-bottom:.25rem;">Your name</label>
             <input type="text" name="chair_name" maxlength="120" required placeholder="First name and last initial is fine"
-                   style="width:100%; padding:.6rem; border:1px solid #ccc; border-radius:8px; margin-bottom:.75rem;">
+                   style="width:100%; padding:.6rem; border:1px solid var(--border-color, #ccc); border-radius:8px; margin-bottom:.75rem;">
             <label style="display:block; font-weight:600; margin-bottom:.25rem;">Your role at this meeting</label>
-            <select name="chair_role" style="width:100%; padding:.6rem; border:1px solid #ccc; border-radius:8px; margin-bottom:.75rem;">
+            <select name="chair_role" style="width:100%; padding:.6rem; border:1px solid var(--border-color, #ccc); border-radius:8px; margin-bottom:.75rem;">
                 {% for value, label in roles %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
             </select>
             <label style="display:flex; gap:.5rem; align-items:flex-start; font-size:.9rem; margin-bottom:1rem;">
@@ -34,7 +34,7 @@
             </label>
             <button type="submit" class="btn btn-primary" style="width:100%;">Confirm attendance</button>
         </form>
-        <p style="color:#666; font-size:.8rem; margin:.75rem 0 0;">No account needed. We record your name, role and the time of confirmation.</p>
+        <p style="color:var(--text-muted, #666); font-size:.8rem; margin:.75rem 0 0;">No account needed. We record your name, role and the time of confirmation.</p>
         {% endif %}
     </div>
 </div>

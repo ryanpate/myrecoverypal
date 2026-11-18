@@ -7,7 +7,7 @@
 {% block extra_css %}
 <style>
     .dashboard-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 2rem;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -26,10 +26,10 @@
     }
 
     .sponsor-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 1.5rem;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color, #e0e0e0);
         margin-bottom: 1rem;
         transition: all 0.3s;
     }
@@ -51,6 +51,8 @@
         color: #666;
         overflow: hidden;
         margin-right: 1rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .sponsor-avatar img {
@@ -69,17 +71,21 @@
     .status-pending {
         background: #fff3cd;
         color: #856404;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .status-active {
         background: #d1ecf1;
         color: #0c5460;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .empty-state {
         text-align: center;
         padding: 3rem 2rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .empty-state i {

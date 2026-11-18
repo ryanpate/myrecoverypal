@@ -17,11 +17,11 @@
 
     .guidelines-content {
         padding: 4rem 0;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
     }
 
     .guidelines-intro {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 3rem 2rem;
         border-radius: 10px;
         margin-bottom: 3rem;
@@ -32,7 +32,7 @@
     }
 
     .guideline-section {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 2.5rem;
         border-radius: 10px;
         margin-bottom: 2rem;
@@ -40,7 +40,7 @@
     }
 
     .guideline-section h3 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1.5rem;
         display: flex;
         align-items: center;
@@ -60,7 +60,7 @@
 
     .guideline-list li {
         padding: 1rem 0;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--border-color, #f0f0f0);
         display: flex;
         align-items: start;
         gap: 1rem;
@@ -81,7 +81,7 @@
     }
 
     .guideline-text strong {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         display: block;
         margin-bottom: 0.25rem;
     }
@@ -91,6 +91,8 @@
         padding: 1.5rem;
         margin: 2rem 0;
         border-radius: 5px;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
 
     .important-note h4 {
@@ -108,15 +110,17 @@
         padding: 2rem;
         border-radius: 5px;
         margin-top: 2rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
 
     .reporting-section h4 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1rem;
     }
 
     .cta-section {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 4rem 2rem;
         text-align: center;
         border-radius: 10px;

@@ -115,17 +115,17 @@
 
     .session-link-date {
         font-size: 0.75rem;
-        color: #94a3b8;
+        color: var(--text-faint, #94a3b8);
     }
 
     .session-link.active .session-link-date {
-        color: #64748b;
+        color: var(--text-muted, #64748b);
     }
 
     .sidebar-empty {
         padding: 2rem 1rem;
         text-align: center;
-        color: #94a3b8;
+        color: var(--text-faint, #94a3b8);
         font-size: 0.85rem;
     }
 
@@ -196,13 +196,13 @@
     .coach-info-name {
         font-size: 1.1rem;
         font-weight: 700;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         line-height: 1.2;
     }
 
     .coach-info-label {
         font-size: 0.8rem;
-        color: #64748b;
+        color: var(--text-muted, #64748b);
     }
 
     .premium-tag {
@@ -232,7 +232,7 @@
     }
 
     .msg-counter i {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
     }
 
     .msg-counter.counter-low {
@@ -292,7 +292,7 @@
     }
 
     .disclaimer-modal {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 16px;
         max-width: 440px;
         width: 100%;
@@ -330,12 +330,12 @@
     .disclaimer-modal-body p {
         font-size: 0.9rem;
         line-height: 1.6;
-        color: #374151;
+        color: var(--text-dark, #374151);
         margin: 0 0 1rem;
     }
 
     .disclaimer-modal-body strong {
-        color: #1f2937;
+        color: var(--text-dark, #1f2937);
     }
 
     .disclaimer-modal-crisis {
@@ -506,7 +506,7 @@
 
     .msg-time {
         font-size: 0.7rem;
-        color: #94a3b8;
+        color: var(--text-faint, #94a3b8);
         margin-top: 4px;
         padding: 0 0.25rem;
     }
@@ -535,7 +535,7 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        color: #64748b;
+        color: var(--text-muted, #64748b);
         font-size: 0.9rem;
     }
 
@@ -576,7 +576,7 @@
         flex: 1;
         text-align: center;
         padding: 1.5rem 1.5rem 2rem;
-        color: #64748b;
+        color: var(--text-muted, #64748b);
         overflow-y: auto;
     }
 
@@ -633,7 +633,7 @@
     .welcome-heading {
         font-size: 1.5rem;
         font-weight: 700;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 0.5rem;
     }
 
@@ -642,7 +642,7 @@
         max-width: 480px;
         margin-bottom: 1.5rem;
         line-height: 1.6;
-        color: #64748b;
+        color: var(--text-muted, #64748b);
     }
 
     .welcome-chips {
@@ -720,7 +720,7 @@
     }
 
     .chat-textarea::placeholder {
-        color: #94a3b8;
+        color: var(--text-faint, #94a3b8);
     }
 
     .btn-send {
@@ -760,7 +760,7 @@
 
     .char-count {
         font-size: 0.75rem;
-        color: #94a3b8;
+        color: var(--text-faint, #94a3b8);
     }
 
     .char-count.warning {
@@ -773,7 +773,7 @@
 
     .msg-remaining {
         font-size: 0.75rem;
-        color: #94a3b8;
+        color: var(--text-faint, #94a3b8);
     }
 
     /* ==============================
@@ -800,19 +800,19 @@
     .upgrade-card-icon {
         font-size: 2rem;
         margin-bottom: 0.75rem;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
     }
 
     .upgrade-card-title {
         font-size: 1.1rem;
         font-weight: 700;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 0.5rem;
     }
 
     .upgrade-card-text {
         font-size: 0.9rem;
-        color: #64748b;
+        color: var(--text-muted, #64748b);
         margin-bottom: 1.25rem;
         line-height: 1.6;
     }
@@ -843,12 +843,12 @@
         display: block;
         margin-top: 0.75rem;
         font-size: 0.85rem;
-        color: #64748b;
+        color: var(--text-muted, #64748b);
         text-decoration: none;
     }
 
     .upgrade-trial-link:hover {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         text-decoration: underline;
     }
 
@@ -1266,7 +1266,7 @@
                             <i class="fas fa-plus" aria-hidden="true"></i> New Chat
                         </button>
                     </form>
-                    <button onclick="document.getElementById('sidebarToggle').click()" style="background: var(--bg-lighter); border: 1px solid #ddd; border-radius: 20px; padding: 8px 14px; cursor: pointer; color: var(--text-dark); font-size: 0.8rem; font-weight: 500; display: flex; align-items: center; gap: 4px;">
+                    <button onclick="document.getElementById('sidebarToggle').click()" style="background: var(--bg-lighter); border: 1px solid var(--border-color, #ddd); border-radius: 20px; padding: 8px 14px; cursor: pointer; color: var(--text-dark); font-size: 0.8rem; font-weight: 500; display: flex; align-items: center; gap: 4px;">
                         <i class="fas fa-clock-rotate-left" aria-hidden="true"></i> History
                     </button>
                 </div>
@@ -1296,7 +1296,7 @@
                 <!-- Welcome state — flows naturally in the scrollable chat area -->
                 <div class="welcome-state" id="welcomeState">
                     <!-- Disclaimer as first element -->
-                    <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 10px; padding: 8px 12px; font-size: 0.75rem; color: #92400e; text-align: center; margin-bottom: 1rem; width: 100%;">
+                    <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 10px; padding: 8px 12px; font-size: 0.75rem; color: #92400e; text-align: center; margin-bottom: 1rem; width: 100%; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
                         <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
                         AI tool, not a medical professional. Crisis? <a href="tel:988" style="color: #92400e; font-weight: 600;">988</a> | <a href="tel:911" style="color: #92400e; font-weight: 600;">911</a>
                         &middot; <span class="disclaimer-link" onclick="document.getElementById('disclaimerModal').classList.add('active')" style="cursor: pointer; text-decoration: underline;">Details</span>

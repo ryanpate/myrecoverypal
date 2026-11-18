@@ -8,7 +8,7 @@
 <style>
 
     .community-filters {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 1.5rem;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -24,10 +24,10 @@
 
     .filter-tab {
         padding: 0.5rem 1rem;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color, #e0e0e0);
         border-radius: 25px;
         text-decoration: none;
-        color: #666;
+        color: var(--text-muted, #666);
         transition: all 0.3s;
         display: flex;
         align-items: center;
@@ -54,7 +54,7 @@
     }
 
     .member-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 1.5rem;
         box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
@@ -81,7 +81,9 @@
         font-weight: 600;
         text-transform: uppercase;
         overflow: hidden;
-        border: 3px solid #f0f0f0;
+        border: 3px solid var(--border-color, #f0f0f0);
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .member-avatar img {
@@ -110,11 +112,11 @@
         font-size: 1.2rem;
         font-weight: bold;
         margin-bottom: 0.5rem;
-        color: #333;
+        color: var(--text-dark, #333);
     }
 
     .member-username {
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 0.9rem;
         margin-bottom: 0.5rem;
     }
@@ -125,7 +127,7 @@
         gap: 1rem;
         margin: 1rem 0;
         font-size: 0.85rem;
-        color: #777;
+        color: var(--text-muted, #777);
     }
 
     .member-stat {
@@ -155,11 +157,15 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .recovery-badge.sponsor {
         background: #fff3cd;
         color: #856404;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .member-actions {
@@ -203,10 +209,10 @@
 
     .action-btn {
         padding: 0.5rem;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-color, #ddd);
         border-radius: 8px;
-        background: white;
-        color: #666;
+        background: var(--card-bg, #fff);
+        color: var(--text-muted, #666);
         text-decoration: none;
         display: flex;
         align-items: center;
@@ -215,7 +221,7 @@
     }
 
     .action-btn:hover {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         color: #52b788;
         text-decoration: none;
     }
@@ -394,7 +400,7 @@
                 </div>
 
                 {% if member.bio %}
-                <p style="font-size: 0.9rem; color: #666; margin: 1rem 0;">
+                <p style="font-size: 0.9rem; color: var(--text-muted, #666); margin: 1rem 0;">
                     {{ member.bio|truncatewords:20 }}
                 </p>
                 {% endif %}
@@ -420,7 +426,7 @@
         </div>
         {% empty %}
         <div class="col-12 text-center py-5">
-            <h4 style="color: #666;">No members found</h4>
+            <h4 style="color: var(--text-muted, #666);">No members found</h4>
             <p>Try adjusting your search criteria or check back later.</p>
         </div>
         {% endfor %}
@@ -428,24 +434,24 @@
 
     <!-- Pagination -->
     <!-- Related Pages for SEO -->
-    <div style="background: #f8f9fa; padding: 2rem; border-radius: 12px; margin-top: 2rem;">
-        <h3 style="color: #1e4d8b; margin-bottom: 1.5rem; text-align: center;">More Ways to Connect</h3>
+    <div style="background: var(--bg-light, #f8f9fa); padding: 2rem; border-radius: 12px; margin-top: 2rem;">
+        <h3 style="color: var(--brand-text, #1e4d8b); margin-bottom: 1.5rem; text-align: center;">More Ways to Connect</h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
-            <a href="{% url 'accounts:groups_list' %}" style="background: white; padding: 1rem; border-radius: 8px; text-decoration: none; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+            <a href="{% url 'accounts:groups_list' %}" style="background: var(--card-bg, #fff); padding: 1rem; border-radius: 8px; text-decoration: none; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
                 <i class="fas fa-user-friends" style="font-size: 1.5rem; color: #4db8e8; display: block; margin-bottom: 0.5rem;"></i>
-                <span style="color: #333; font-weight: 500;">Support Groups</span>
+                <span style="color: var(--text-dark, #333); font-weight: 500;">Support Groups</span>
             </a>
-            <a href="{% url 'accounts:challenges_home' %}" style="background: white; padding: 1rem; border-radius: 8px; text-decoration: none; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+            <a href="{% url 'accounts:challenges_home' %}" style="background: var(--card-bg, #fff); padding: 1rem; border-radius: 8px; text-decoration: none; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
                 <i class="fas fa-trophy" style="font-size: 1.5rem; color: #f39c12; display: block; margin-bottom: 0.5rem;"></i>
-                <span style="color: #333; font-weight: 500;">Recovery Challenges</span>
+                <span style="color: var(--text-dark, #333); font-weight: 500;">Recovery Challenges</span>
             </a>
-            <a href="{% url 'blog:post_list' %}" style="background: white; padding: 1rem; border-radius: 8px; text-decoration: none; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+            <a href="{% url 'blog:post_list' %}" style="background: var(--card-bg, #fff); padding: 1rem; border-radius: 8px; text-decoration: none; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
                 <i class="fas fa-book-open" style="font-size: 1.5rem; color: #e74c3c; display: block; margin-bottom: 0.5rem;"></i>
-                <span style="color: #333; font-weight: 500;">Recovery Stories</span>
+                <span style="color: var(--text-dark, #333); font-weight: 500;">Recovery Stories</span>
             </a>
-            <a href="{% url 'resources:list' %}" style="background: white; padding: 1rem; border-radius: 8px; text-decoration: none; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+            <a href="{% url 'resources:list' %}" style="background: var(--card-bg, #fff); padding: 1rem; border-radius: 8px; text-decoration: none; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
                 <i class="fas fa-bookmark" style="font-size: 1.5rem; color: #9b59b6; display: block; margin-bottom: 0.5rem;"></i>
-                <span style="color: #333; font-weight: 500;">Recovery Resources</span>
+                <span style="color: var(--text-dark, #333); font-weight: 500;">Recovery Resources</span>
             </a>
         </div>
     </div>

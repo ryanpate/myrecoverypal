@@ -14,7 +14,7 @@
     }
 
     .main-feed {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
         overflow: hidden;
@@ -22,8 +22,8 @@
 
     .feed-header {
         padding: 1.5rem;
-        border-bottom: 1px solid #f0f0f0;
-        background: #f8f9fa;
+        border-bottom: 1px solid var(--border-color, #f0f0f0);
+        background: var(--bg-light, #f8f9fa);
     }
 
     .activity-feed {
@@ -33,12 +33,12 @@
 
     .activity-item {
         padding: 1.5rem;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--border-color, #f0f0f0);
         transition: background 0.3s;
     }
 
     .activity-item:hover {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
     }
 
     .activity-header {
@@ -59,6 +59,8 @@
         overflow: hidden;
         color: #999;
         font-size: 1.5rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .activity-avatar img {
@@ -73,13 +75,13 @@
 
     .activity-user {
         font-weight: 600;
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 0.25rem;
     }
 
     .activity-time {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .activity-description {
@@ -92,13 +94,13 @@
         gap: 1rem;
         margin-top: 1rem;
         padding-top: 1rem;
-        border-top: 1px solid #f0f0f0;
+        border-top: 1px solid var(--border-color, #f0f0f0);
     }
 
     .engagement-btn {
         background: none;
         border: none;
-        color: #666;
+        color: var(--text-muted, #666);
         cursor: pointer;
         padding: 0.5rem 1rem;
         border-radius: 20px;
@@ -110,13 +112,15 @@
     }
 
     .engagement-btn:hover {
-        background: #f0f0f0;
+        background: var(--bg-gray, #f0f0f0);
         color: #52b788;
     }
 
     .engagement-btn.liked {
         color: #e74c3c;
         background: #fee;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .engagement-btn i {
@@ -130,7 +134,7 @@
     }
 
     .sidebar-section {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 1.5rem;
         box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
@@ -138,7 +142,7 @@
 
     .sidebar-section h3 {
         margin-bottom: 1rem;
-        color: #333;
+        color: var(--text-dark, #333);
         font-size: 1.1rem;
         display: flex;
         align-items: center;
@@ -158,7 +162,7 @@
     .stat-item {
         text-align: center;
         padding: 1rem;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 10px;
     }
 
@@ -171,7 +175,7 @@
 
     .stat-label {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .connection-item {
@@ -184,7 +188,7 @@
     }
 
     .connection-item:hover {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
     }
 
     .connection-avatar {
@@ -199,6 +203,8 @@
         flex-shrink: 0;
         color: #999;
         font-size: 1.2rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .connection-avatar img {
@@ -214,7 +220,7 @@
 
     .connection-name {
         font-weight: 500;
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 0.25rem;
         white-space: nowrap;
         overflow: hidden;
@@ -223,7 +229,7 @@
 
     .connection-status {
         font-size: 0.8rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .group-item {
@@ -238,7 +244,7 @@
     }
 
     .group-item:hover {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         text-decoration: none;
         color: inherit;
     }
@@ -257,7 +263,7 @@
     }
 
     .checkin-form {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         padding: 1.5rem;
         border-radius: 10px;
         margin-bottom: 1rem;
@@ -272,9 +278,9 @@
 
     .mood-option {
         padding: 0.5rem 1rem;
-        border: 2px solid #ddd;
+        border: 2px solid var(--border-color, #ddd);
         border-radius: 25px;
-        background: white;
+        background: var(--card-bg, #fff);
         cursor: pointer;
         transition: all 0.3s;
         font-size: 0.9rem;
@@ -309,10 +315,10 @@
         align-items: center;
         gap: 0.5rem;
         padding: 0.75rem;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-color, #ddd);
         border-radius: 8px;
-        background: white;
-        color: #666;
+        background: var(--card-bg, #fff);
+        color: var(--text-muted, #666);
         text-decoration: none;
         transition: all 0.3s;
         font-size: 0.9rem;
@@ -320,7 +326,7 @@
     }
 
     .action-btn:hover {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         color: #52b788;
         border-color: #52b788;
         text-decoration: none;
@@ -333,20 +339,20 @@
 
     .milestone-item {
         padding: 1rem;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 8px;
         margin-bottom: 0.75rem;
     }
 
     .milestone-title {
         font-weight: 600;
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 0.25rem;
     }
 
     .milestone-date {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .suggested-connection {
@@ -354,7 +360,7 @@
         align-items: center;
         gap: 0.75rem;
         padding: 1rem;
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--border-color, #e0e0e0);
         border-radius: 10px;
         margin-bottom: 0.75rem;
     }
@@ -370,6 +376,8 @@
         overflow: hidden;
         color: #999;
         font-size: 1.3rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .suggestion-avatar img {
@@ -390,7 +398,7 @@
 
     .suggestion-reason {
         font-size: 0.8rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .follow-suggestion-btn {
@@ -412,7 +420,7 @@
     .empty-feed {
         text-align: center;
         padding: 3rem 2rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .empty-feed-icon {
@@ -572,15 +580,15 @@
                             <div class="activity-time">{{ activity.created_at|timesince }} ago</div>
                         </div>
                         {% if activity.activity_type == 'milestone_created' %}
-                        <div class="activity-type-icon" style="background: #fff3cd; color: #856404;">
+                        <div class="activity-type-icon" style="background: #fff3cd; color: #856404; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
                             <i class="fas fa-trophy"></i>
                         </div>
                         {% elif activity.activity_type == 'blog_post_published' %}
-                        <div class="activity-type-icon" style="background: #d1ecf1; color: #0c5460;">
+                        <div class="activity-type-icon" style="background: #d1ecf1; color: #0c5460; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
                             <i class="fas fa-newspaper"></i>
                         </div>
                         {% elif activity.activity_type == 'check_in_posted' %}
-                        <div class="activity-type-icon" style="background: #d4edda; color: #155724;">
+                        <div class="activity-type-icon" style="background: #d4edda; color: #155724; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
                             <i class="fas fa-check-circle"></i>
                         </div>
                         {% endif %}
@@ -589,7 +597,7 @@
                     <div class="activity-description">
                         <strong>{{ activity.title }}</strong>
                         {% if activity.description %}
-                        <p style="margin: 0.5rem 0 0 0; color: #666;">{{ activity.description }}</p>
+                        <p style="margin: 0.5rem 0 0 0; color: var(--text-muted, #666);">{{ activity.description }}</p>
                         {% endif %}
                     </div>
 
@@ -609,11 +617,11 @@
 
                     <!-- Comments Section -->
                     <div id="comments-{{ activity.id }}"
-                        style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f0f0f0;">
+                        style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color, #f0f0f0);">
                         {% for comment in activity.comments.all|slice:":3" %}
-                        <div style="margin-bottom: 0.75rem; padding: 0.75rem; background: #f8f9fa; border-radius: 8px;">
+                        <div style="margin-bottom: 0.75rem; padding: 0.75rem; background: var(--bg-light, #f8f9fa); border-radius: 8px;">
                             <strong>{{ comment.user.get_full_name|default:comment.user.username }}</strong>
-                            <span style="color: #666; font-size: 0.85rem;">{{ comment.created_at|timesince }} ago</span>
+                            <span style="color: var(--text-muted, #666); font-size: 0.85rem;">{{ comment.created_at|timesince }} ago</span>
                             <p style="margin: 0.25rem 0 0 0;">{{ comment.content }}</p>
                         </div>
                         {% endfor %}
@@ -704,7 +712,7 @@
                 {% endif %}
 
                 {% if user.get_active_sponsorships %}
-                <h5 style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem; color: #666;">Your Sponsees</h5>
+                <h5 style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem; color: var(--text-muted, #666);">Your Sponsees</h5>
                 {% for sponsorship in user.get_active_sponsorships|slice:":3" %}
                 <div class="connection-item">
                     <div class="connection-avatar">
@@ -809,7 +817,7 @@
                     </div>
                     <div class="flex-grow-1">
                         <div style="font-weight: 500;">{{ group.name }}</div>
-                        <div style="font-size: 0.8rem; color: #666;">{{ group.member_count }} members</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted, #666);">{{ group.member_count }} members</div>
                     </div>
                 </a>
                 {% endfor %}
@@ -847,14 +855,14 @@
             </div>
 
             <!-- Support Our Mission (hidden on iOS native app per App Store Guideline 3.1.1) -->
-            <div class="sidebar-section stripe-only" style="text-align: center; padding: 1.25rem; background: #f0f9ff; border-radius: 12px; border: 1px solid #d4e8d4;">
+            <div class="sidebar-section stripe-only" style="text-align: center; padding: 1.25rem; background: var(--bg-light, #f0f9ff); border-radius: 12px; border: 1px solid #d4e8d4;">
                 <h3 style="font-size: 1rem; margin-bottom: 0.5rem;"><i class="fas fa-heart" style="color: #e74c3c;"></i> Support Our Mission</h3>
-                <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.75rem;">Help keep MyRecoveryPal free for everyone in recovery.</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted, #666); margin-bottom: 0.75rem;">Help keep MyRecoveryPal free for everyone in recovery.</p>
                 <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                     <a href="https://ko-fi.com/myrecoverypal" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.5rem; background: #FF5E5B; color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: opacity 0.2s;">
                         <i class="fas fa-heart"></i> Support on Ko-fi
                     </a>
-                    <a href="https://buymeacoffee.com/myrecoverypal" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.5rem; background: #FFDD00; color: #000; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: opacity 0.2s;">
+                    <a href="https://buymeacoffee.com/myrecoverypal" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.5rem; background: #FFDD00; color: #000; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: opacity 0.2s; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
                         <i class="fas fa-mug-hot"></i> Buy Me a Coffee
                     </a>
                 </div>

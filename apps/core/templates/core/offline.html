@@ -11,13 +11,13 @@
         align-items: center;
         justify-content: center;
         padding: 2rem;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
     }
 
     .offline-content {
         text-align: center;
         max-width: 600px;
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 3rem 2rem;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -38,13 +38,13 @@
     }
 
     .offline-content h1 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1rem;
         font-size: 2rem;
     }
 
     .offline-content p {
-        color: #666;
+        color: var(--text-muted, #666);
         line-height: 1.8;
         margin-bottom: 1.5rem;
         font-size: 1.1rem;
@@ -71,11 +71,11 @@
     .offline-tips {
         margin-top: 2rem;
         padding-top: 2rem;
-        border-top: 1px solid #e9ecef;
+        border-top: 1px solid var(--border-color, #e9ecef);
     }
 
     .offline-tips h3 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         font-size: 1.2rem;
         margin-bottom: 1rem;
     }
@@ -88,7 +88,7 @@
 
     .offline-tips li {
         padding: 0.5rem 0;
-        color: #666;
+        color: var(--text-muted, #666);
         display: flex;
         align-items: center;
         gap: 0.75rem;
@@ -150,7 +150,7 @@
         </div>
 
         <div style="margin-top: 2rem;">
-            <a href="/" style="color: #1e4d8b; text-decoration: none;">
+            <a href="/" style="color: var(--brand-text, #1e4d8b); text-decoration: none;">
                 <i class="fas fa-home"></i> Go to Home
             </a>
         </div>

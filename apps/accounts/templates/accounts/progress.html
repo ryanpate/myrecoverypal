@@ -57,8 +57,8 @@
     }
 
     .time-btn.active {
-        background: white;
-        color: #1e4d8b;
+        background: var(--card-bg, #fff);
+        color: var(--brand-text, #1e4d8b);
     }
 
     /* Milestone Progress Card */
@@ -155,7 +155,7 @@
     }
 
     .milestone-progress-fill {
-        background: white;
+        background: var(--card-bg, #fff);
         height: 100%;
         border-radius: 10px;
         transition: width 0.5s ease;
@@ -179,7 +179,7 @@
     }
 
     .week-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 1.25rem;
         text-align: center;
@@ -188,7 +188,7 @@
 
     .week-label {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-muted, #666);
         margin-bottom: 0.5rem;
     }
 
@@ -200,7 +200,7 @@
 
     .week-details {
         font-size: 0.8rem;
-        color: #999;
+        color: var(--text-faint, #999);
         margin-top: 0.25rem;
     }
 
@@ -214,7 +214,7 @@
 
     .change-arrow.up { color: #52b788; }
     .change-arrow.down { color: #ff6b6b; }
-    .change-arrow.same { color: #999; }
+    .change-arrow.same { color: var(--text-faint, #999); }
 
     .change-percent {
         font-size: 0.9rem;
@@ -227,7 +227,7 @@
     /* Stats Grid */
     .progress-insights-head { margin: 0 0 1.1rem; }
     .progress-insights-head h2 { margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text-dark, #2c3e50); }
-    .progress-insights-head p { margin: 0.25rem 0 0; color: #6b7280; font-size: 0.98rem; }
+    .progress-insights-head p { margin: 0.25rem 0 0; color: var(--text-muted, #6b7280); font-size: 0.98rem; }
 
     .stats-grid {
         display: grid;
@@ -237,7 +237,7 @@
     }
 
     .stat-card {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 1.25rem;
         border-radius: 15px;
         text-align: left;
@@ -250,7 +250,7 @@
     .stat-icon {
         width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
         display: inline-flex; align-items: center; justify-content: center;
-        background: #f3f4f6; font-size: 1.05rem;
+        background: var(--bg-gray, #f3f4f6); font-size: 1.05rem;
     }
     [data-theme="dark"] .stat-icon { background: #374151; }
 
@@ -296,14 +296,14 @@
 
     .stat-label {
         font-size: 0.92rem;
-        color: #6b7280;
+        color: var(--text-muted, #6b7280);
         font-weight: 500;
         margin-top: 0.5rem;
     }
 
     /* Chart Cards */
     .chart-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 1.5rem;
         margin-bottom: 1.5rem;
@@ -358,7 +358,7 @@
 
     .heatmap-month {
         font-size: 0.7rem;
-        color: #999;
+        color: var(--text-faint, #999);
         text-align: center;
         padding-bottom: 0.25rem;
     }
@@ -373,16 +373,16 @@
         width: 14px;
         height: 14px;
         border-radius: 3px;
-        background: #eee;
+        background: var(--bg-gray, #eee);
     }
 
     [data-theme="dark"] .heatmap-day {
         background: #333;
     }
 
-    .heatmap-day.level-1 { background: #fef3c7; }
-    .heatmap-day.level-2 { background: #fcd34d; }
-    .heatmap-day.level-3 { background: #a3e635; }
+    .heatmap-day.level-1 { background: #fef3c7; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark); }
+    .heatmap-day.level-2 { background: #fcd34d; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark); }
+    .heatmap-day.level-3 { background: #a3e635; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark); }
     .heatmap-day.level-4 { background: #4ade80; }
     .heatmap-day.level-5 { background: #22c55e; }
     .heatmap-day.level-6 { background: #16a34a; }
@@ -394,7 +394,7 @@
         gap: 0.5rem;
         margin-top: 1rem;
         font-size: 0.75rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .heatmap-legend-item {
@@ -426,7 +426,7 @@
     }
 
     .insight-text {
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 0.95rem;
     }
 
@@ -438,7 +438,7 @@
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 20px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     }
@@ -454,12 +454,12 @@
     }
 
     .empty-state h3 {
-        color: #666;
+        color: var(--text-muted, #666);
         margin-bottom: 0.5rem;
     }
 
     .empty-state p {
-        color: #999;
+        color: var(--text-faint, #999);
         margin-bottom: 1.5rem;
     }
 
@@ -560,8 +560,8 @@
     }
 
     .landing-tab.active {
-        background: #fff;
-        color: #1e4d8b;
+        background: var(--card-bg, #fff);
+        color: var(--brand-text, #1e4d8b);
         box-shadow: 0 1px 4px rgba(15, 45, 86, 0.18);
     }
 
@@ -621,13 +621,13 @@
 
     .checkin-prompt-bar .prompt-text {
         font-size: 0.95rem;
-        color: #1e3a5f;
+        color: var(--text-dark, #1e3a5f);
         font-weight: 600;
     }
 
     .checkin-prompt-bar .prompt-sub {
         font-size: 0.8rem;
-        color: #64748b;
+        color: var(--text-muted, #64748b);
         font-weight: 400;
     }
 
@@ -673,16 +673,16 @@
     .inline-checkin { width: 100%; }
     .checkin-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
     .checkin-prompt-bar .prompt-text { margin: 0; font-size: 1.2rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text-dark, #2c3e50); }
-    .checkin-date { font-size: 0.85rem; color: #9ca3af; font-weight: 600; }
+    .checkin-date { font-size: 0.85rem; color: var(--text-faint, #9ca3af); font-weight: 600; }
 
     .inline-mood-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.6rem; margin: 1.25rem 0 0.4rem; }
     .inline-mood-btn {
         display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
         padding: 0.7rem 0.3rem; border-radius: 12px; cursor: pointer;
-        border: 2px solid transparent; background: #f3f4f6; transition: all 0.15s;
+        border: 2px solid transparent; background: var(--bg-gray, #f3f4f6); transition: all 0.15s;
     }
     .inline-mood-btn .mood-emoji { font-size: 1.7rem; line-height: 1; filter: grayscale(0.15); }
-    .inline-mood-btn .mood-label { font-size: 0.7rem; font-weight: 600; color: #6b7280; }
+    .inline-mood-btn .mood-label { font-size: 0.7rem; font-weight: 600; color: var(--text-muted, #6b7280); }
     .inline-mood-btn:hover { background: rgba(82, 183, 136, 0.08); }
     .inline-mood-btn.selected { border-color: #52b788; background: rgba(82, 183, 136, 0.10); }
     .inline-mood-btn.selected .mood-emoji { filter: none; }
@@ -691,7 +691,7 @@
     .inline-craving-row { display: flex; gap: 0.55rem; flex-wrap: wrap; align-items: center; margin-top: 1.25rem; }
     .inline-craving-label { flex-basis: 100%; font-size: 0.9rem; font-weight: 600; color: var(--text-dark, #2c3e50); margin: 0 0 0.55rem; }
     .inline-craving-btn {
-        border: 1.5px solid #d1d5db; background: #fff; color: #2c3e50;
+        border: 1.5px solid var(--border-color, #d1d5db); background: var(--card-bg, #fff); color: var(--text-dark, #2c3e50);
         border-radius: 50px; padding: 0.5rem 1.15rem; cursor: pointer;
         font-weight: 600; font-size: 0.9rem; transition: all 0.15s;
     }
@@ -699,7 +699,7 @@
     .inline-craving-btn.selected { border-color: #4db8e8; background: rgba(77, 184, 232, 0.10); color: #1e4d8b; }
 
     .inline-checkin-actions { display: flex; align-items: center; gap: 1.25rem; margin-top: 1.5rem; flex-wrap: wrap; }
-    .checkin-add-details { font-size: 0.92rem; font-weight: 600; color: #1e4d8b; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; }
+    .checkin-add-details { font-size: 0.92rem; font-weight: 600; color: var(--brand-text, #1e4d8b); text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; }
 
     /* Dark mode — refreshed check-in card */
     [data-theme="dark"] .checkin-prompt-bar { background: #1f2937; border-color: #374151; }
@@ -740,7 +740,7 @@
         left: 2px;
         width: 18px;
         height: 18px;
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 50%;
         transition: transform 0.2s;
         box-shadow: 0 1px 3px rgba(0,0,0,0.2);
@@ -896,7 +896,7 @@
         top: calc(100% + 0.5rem);
         right: 0;
         min-width: 200px;
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 12px;
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
         z-index: 100;
@@ -922,7 +922,7 @@
         padding: 0.6rem 1rem;
         background: none;
         border: none;
-        color: #333;
+        color: var(--text-dark, #333);
         font-size: 0.85rem;
         text-decoration: none;
         cursor: pointer;
@@ -932,7 +932,7 @@
 
     .share-dropdown a:hover,
     .share-dropdown button:hover {
-        background: #f5f5f5;
+        background: var(--bg-gray, #f5f5f5);
     }
 
     .share-dropdown a i,
@@ -975,7 +975,7 @@
     }
 
     .skeleton-post {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 16px;
         padding: 1.5rem;
         margin-bottom: 1rem;
@@ -1113,23 +1113,23 @@
 
     /* ===== Premium Gate Overlay ===== */
     .premium-gate-overlay-card {
-        background: white;
+        background: var(--card-bg, #fff);
     }
 
     .premium-gate-heading {
-        color: #1e293b;
+        color: var(--text-dark, #1e293b);
     }
 
     .premium-gate-subtitle {
-        color: #64748b;
+        color: var(--text-muted, #64748b);
     }
 
     .premium-gate-feature {
-        color: #334155;
+        color: var(--text-dark, #334155);
     }
 
     .premium-gate-price-note {
-        color: #94a3b8;
+        color: var(--text-faint, #94a3b8);
     }
 
     /* ===== Dark Mode: Premium Gate ===== */
@@ -1385,20 +1385,20 @@
         font-size: 1.25rem;
         font-weight: 800;
         letter-spacing: -0.01em;
-        color: #1e3a5f;
+        color: var(--text-dark, #1e3a5f);
     }
 
     .pledge-reason {
         margin: 0 0 0.6rem;
         font-size: 0.92rem;
-        color: #4b5f7a;
+        color: var(--text-muted, #4b5f7a);
     }
 
     .pledge-reason strong {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
     }
 
-    .pledge-shield { margin: -0.4rem 0 0.85rem; font-size: 0.85rem; color: #1e4d8b; }
+    .pledge-shield { margin: -0.4rem 0 0.85rem; font-size: 0.85rem; color: var(--brand-text, #1e4d8b); }
     .streak-saved-card { display: flex; flex-direction: column; gap: 0.2rem; margin: 0 0 1rem;
         padding: 0.75rem 0.9rem; border-radius: 12px; background: #fff7ed; border: 1px solid #fed7aa;
         font-size: 0.9rem; color: #7c2d12; text-align: left; }
@@ -1406,7 +1406,7 @@
     .anchor-followup-card { margin: 0 0 1rem; padding: 0.9rem 1rem; border-radius: 12px;
         background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a5f; font-size: 0.95rem; }
     .anchor-followup-card p { margin: 0.35rem 0 0.5rem; }
-    .anchor-followup-link { font-weight: 700; color: #1e4d8b; }
+    .anchor-followup-link { font-weight: 700; color: var(--brand-text, #1e4d8b); }
     [data-theme="dark"] .anchor-followup-card { background: #172554; border-color: #1e40af; color: #dbeafe; }
     [data-theme="dark"] .anchor-followup-link { color: #93c5fd; }
     [data-theme="dark"] .pledge-shield { color: #93c5fd; }
@@ -1457,7 +1457,7 @@
         margin: 0 0 0.6rem;
         font-size: 0.92rem;
         font-style: italic;
-        color: #33475b;
+        color: var(--text-dark, #33475b);
         white-space: pre-wrap;
         word-break: break-word;
     }
@@ -1487,10 +1487,10 @@
         align-items: center;
         gap: 0.4rem;
         padding: 0.45rem 0.9rem;
-        background: #fff;
+        background: var(--card-bg, #fff);
         border: 1px solid #cfe0f5;
         border-radius: 50px;
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         font-size: 0.85rem;
         font-weight: 600;
         cursor: pointer;
@@ -1813,14 +1813,14 @@
         </div>
     </div>
 
-    <div id="homeAnchorPrompt" style="display:none; border:1px solid #1e4d8b; background:#f4f8fc; border-radius:12px; padding:14px; margin:0 0 14px; text-align:center;">
-        <div style="color:#1e4d8b; font-weight:600; margin-bottom:6px;">Today sounds heavy.</div>
+    <div id="homeAnchorPrompt" style="display:none; border:1px solid #1e4d8b; background:var(--bg-light, #f4f8fc); border-radius:12px; padding:14px; margin:0 0 14px; text-align:center;">
+        <div style="color:var(--brand-text, #1e4d8b); font-weight:600; margin-bottom:6px;">Today sounds heavy.</div>
         <a id="homeAnchorLink" href="#" style="background:#1e4d8b; color:#fff; padding:9px 18px; border-radius:8px; text-decoration:none; font-weight:600; display:inline-block; --heading-color: currentColor;">
             Talk it through with Anchor
         </a>
         <div id="homeSupportAudio" class="support-audio" style="display:none; margin-top:12px; padding-top:10px; border-top:1px solid rgba(30,77,139,0.18);">
-            <p class="support-audio-or" style="font-size:0.9rem; margin:0 0 0.35rem; color:#1e4d8b;">Or press play and let a voice talk you through it:</p>
-            <p style="margin:0 0 0.6rem; font-size:0.95rem; color:#1e4d8b;"><i class="fas fa-headphones" aria-hidden="true"></i>
+            <p class="support-audio-or" style="font-size:0.9rem; margin:0 0 0.35rem; color:var(--brand-text, #1e4d8b);">Or press play and let a voice talk you through it:</p>
+            <p style="margin:0 0 0.6rem; font-size:0.95rem; color:var(--brand-text, #1e4d8b);"><i class="fas fa-headphones" aria-hidden="true"></i>
                 <strong id="homeSupportAudioTitle"></strong> &middot; <span id="homeSupportAudioMins"></span> min &middot; free</p>
             <audio id="homeSupportAudioPlayer" controls preload="none" style="width:100%;"></audio>
         </div>
@@ -2049,7 +2049,7 @@
                 <div class="stat-card">
                     <div class="stat-top">
                         <div class="stat-value">{{ checkin_rate }}%</div>
-                        <span class="stat-icon"><i class="fas fa-bullseye" style="color:#1e4d8b;" aria-hidden="true"></i></span>
+                        <span class="stat-icon"><i class="fas fa-bullseye" style="color:var(--brand-text, #1e4d8b);" aria-hidden="true"></i></span>
                     </div>
                     <div class="stat-label">Check-in Rate</div>
                 </div>
@@ -2125,9 +2125,9 @@
             </div>
             <div class="heatmap-legend">
                 <span>Less</span>
-                <div class="heatmap-legend-item" style="background: #eee;"></div>
-                <div class="heatmap-legend-item level-1" style="background: #fef3c7;"></div>
-                <div class="heatmap-legend-item level-3" style="background: #a3e635;"></div>
+                <div class="heatmap-legend-item" style="background: var(--bg-gray, #eee);"></div>
+                <div class="heatmap-legend-item level-1" style="background: #fef3c7; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);"></div>
+                <div class="heatmap-legend-item level-3" style="background: #a3e635; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);"></div>
                 <div class="heatmap-legend-item level-5" style="background: #22c55e;"></div>
                 <div class="heatmap-legend-item level-6" style="background: #16a34a;"></div>
                 <span>Better Mood</span>
@@ -2199,23 +2199,23 @@
 </div>
 
 <!-- Log a Slip link -->
-<div style="text-align: center; margin: 2rem 0; padding: 1rem; border-top: 1px solid #eee;">
-    <a href="{% url 'accounts:log_slip' %}" style="color: #999; text-decoration: none; font-size: 0.9rem;">
+<div style="text-align: center; margin: 2rem 0; padding: 1rem; border-top: 1px solid var(--border-color, #eee);">
+    <a href="{% url 'accounts:log_slip' %}" style="color: var(--text-faint, #999); text-decoration: none; font-size: 0.9rem;">
         <i class="fas fa-pen-to-square" aria-hidden="true"></i> Had a slip? Log it privately
     </a>
 </div>
 
 {% if relapse_logs %}
 <div style="max-width: 1000px; margin: 0 auto 2rem; padding: 0 1rem;">
-    <h3 style="color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 1rem; cursor: pointer;" onclick="var el=document.getElementById('slipHistory'); el.style.display = el.style.display === 'none' ? 'block' : 'none'">
+    <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.1rem; margin-bottom: 1rem; cursor: pointer;" onclick="var el=document.getElementById('slipHistory'); el.style.display = el.style.display === 'none' ? 'block' : 'none'">
         <i class="fas fa-history" aria-hidden="true"></i> Slip History ({{ relapse_logs|length }}) <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
     </h3>
     <div id="slipHistory" style="display: none;">
         {% for log in relapse_logs %}
-        <div style="background: #f8f9fa; border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem; border-left: 3px solid var(--primary-light);">
-            <div style="font-weight: 600; color: var(--primary-dark);">{{ log.relapse_date|date:"N j, Y" }}</div>
-            {% if log.trigger %}<div style="color: #666; font-size: 0.9rem; margin-top: 0.25rem;">Trigger: {{ log.trigger }}</div>{% endif %}
-            {% if log.notes %}<div style="color: #555; font-size: 0.9rem; margin-top: 0.25rem;">{{ log.notes }}</div>{% endif %}
+        <div style="background: var(--bg-light, #f8f9fa); border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem; border-left: 3px solid var(--primary-light);">
+            <div style="font-weight: 600; color: var(--brand-text, #1e4d8b);">{{ log.relapse_date|date:"N j, Y" }}</div>
+            {% if log.trigger %}<div style="color: var(--text-muted, #666); font-size: 0.9rem; margin-top: 0.25rem;">Trigger: {{ log.trigger }}</div>{% endif %}
+            {% if log.notes %}<div style="color: var(--text-muted, #555); font-size: 0.9rem; margin-top: 0.25rem;">{{ log.notes }}</div>{% endif %}
         </div>
         {% endfor %}
     </div>

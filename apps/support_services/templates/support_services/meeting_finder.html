@@ -10,7 +10,7 @@
 
     /* Container for the meeting finder iframe */
     .meeting-finder-container {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 10px;
         padding: 20px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -35,7 +35,7 @@
 
     /* Local meetings section */
     .local-meetings-toggle {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 10px;
         padding: 20px;
         margin-bottom: 30px;
@@ -50,8 +50,8 @@
 
     .toggle-btn {
         padding: 10px 20px;
-        border: 2px solid #E5E7EB;
-        background: white;
+        border: 2px solid var(--border-color, #E5E7EB);
+        background: var(--card-bg, #fff);
         border-radius: 50px;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -79,6 +79,7 @@
         padding: 15px 20px;
         border-radius: 10px;
         margin-bottom: 30px;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .info-box i {
@@ -89,7 +90,7 @@
     .loading-message {
         text-align: center;
         padding: 40px;
-        color: #6B7280;
+        color: var(--text-muted, #6B7280);
     }
 
     @media (max-width: 768px) {
@@ -153,7 +154,7 @@
                 <div class="card h-100 shadow-sm">
                     <div class="card-body text-center">
                         <div class="mb-3">
-                            <i class="fas fa-users fa-3x" style="color: #1e4d8b;"></i>
+                            <i class="fas fa-users fa-3x" style="color: var(--brand-text, #1e4d8b);"></i>
                         </div>
                         <h5 class="card-title">Alcoholics Anonymous</h5>
                         <p class="card-text">Find AA meetings near you or online worldwide</p>

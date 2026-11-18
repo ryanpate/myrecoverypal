@@ -37,8 +37,8 @@ accept. Dismiss hides it for 14 days via localStorage.
     .supporter-invite-title { font-weight: 700; font-size: 1.05rem; }
     .supporter-invite-text { font-size: 0.9rem; opacity: 0.92; line-height: 1.4; }
     .supporter-invite-btn {
-        background: #fff;
-        color: #1e4d8b;
+        background: var(--card-bg, #fff);
+        color: var(--brand-text, #1e4d8b);
         font-weight: 700;
         padding: 0.6rem 1.3rem;
         border-radius: 50px;
@@ -46,7 +46,7 @@ accept. Dismiss hides it for 14 days via localStorage.
         white-space: nowrap;
         transition: transform 0.15s ease;
     }
-    .supporter-invite-btn:hover { transform: translateY(-1px); color: #0f2d56; }
+    .supporter-invite-btn:hover { transform: translateY(-1px); color: var(--text-dark, #0f2d56); }
     .supporter-invite-dismiss {
         position: absolute;
         top: 6px;

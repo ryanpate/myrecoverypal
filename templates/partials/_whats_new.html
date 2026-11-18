@@ -16,19 +16,19 @@ apps/core/context_processors.py::whats_new decides the page and audience).
     <h2 id="whatsNewTitle">{% if is_premium_user %}More is included in your Premium{% else %}Your recovery toolkit just grew{% endif %}</h2>
     <ul class="wn-list">
         <li><a href="{% url 'resources:audio' %}" data-promo="whats_new_audio">
-            <span class="wn-icon" style="background:#ccfbf1;" aria-hidden="true">🎧</span>
+            <span class="wn-icon" style="background:#ccfbf1; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);" aria-hidden="true">🎧</span>
             <span><strong>Guided audio</strong><small>Press play when a craving hits: urge surfing, breathing, grounding. Plus sleep and morning sessions.</small></span></a></li>
         <li><a href="{% url 'resources:programs' %}" data-promo="whats_new_programs">
-            <span class="wn-icon" style="background:#ede9fe;" aria-hidden="true">🌱</span>
+            <span class="wn-icon" style="background:#ede9fe; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);" aria-hidden="true">🌱</span>
             <span><strong>Day-by-day programs</strong><small>First 30 Days, and two-week tracks for alcohol, opioids, stimulants, cannabis and gambling.</small></span></a></li>
         <li><a href="{% url 'resources:reflections' %}" data-promo="whats_new_reflections">
-            <span class="wn-icon" style="background:#e0f2fe;" aria-hidden="true">☀️</span>
+            <span class="wn-icon" style="background:#e0f2fe; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);" aria-hidden="true">☀️</span>
             <span><strong>Daily reflections</strong><small>A short reading and a question to sit with, every day. Now read aloud, too.</small></span></a></li>
         <li><a href="{% url 'resources:worksheets' %}" data-promo="whats_new_worksheets">
-            <span class="wn-icon" style="background:#dcfce7;" aria-hidden="true">📝</span>
+            <span class="wn-icon" style="background:var(--bg-light, #dcfce7);" aria-hidden="true">📝</span>
             <span><strong>Worksheets &amp; your Recovery Workbook</strong><small>Fill them in, save your answers, and turn them into a personal PDF.</small></span></a></li>
         <li><a href="{% url 'resources:program_detail' 'family-and-friends' %}" data-promo="whats_new_family">
-            <span class="wn-icon" style="background:#fef3c7;" aria-hidden="true">💛</span>
+            <span class="wn-icon" style="background:#fef3c7; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);" aria-hidden="true">💛</span>
             <span><strong>A course for your family</strong><small>Fourteen days for the people who love you{% if not is_premium_user %}. Included with Premium's Supporter seat{% endif %}.</small></span></a></li>
     </ul>
     <div class="wn-actions">
@@ -42,17 +42,17 @@ apps/core/context_processors.py::whats_new decides the page and audience).
 </dialog>
 <style>
     .wn { margin: auto; border: none; border-radius: 20px; padding: 1.6rem 1.5rem 1.4rem; width: min(480px, calc(100vw - 32px));
-          max-height: calc(100vh - 48px); overflow: auto; background: #fff; color: #2c3e50;
+          max-height: calc(100vh - 48px); overflow: auto; background: var(--card-bg, #fff); color: var(--text-dark, #2c3e50);
           box-shadow: 0 24px 60px rgba(15, 45, 86, 0.3); }
     .wn::backdrop { background: rgba(15, 23, 42, 0.55); }
     .wn[open] { animation: wn-in .25s ease-out; }
     @keyframes wn-in { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
     @media (prefers-reduced-motion: reduce) { .wn[open] { animation: none; } }
     .wn-close { position: absolute; top: 10px; right: 12px; background: none; border: none; font-size: 1.6rem;
-                line-height: 1; color: #6b7280; cursor: pointer; padding: 4px 8px; border-radius: 8px; }
-    .wn-close:hover, .wn-close:focus-visible { background: #f3f4f6; color: #111827; }
+                line-height: 1; color: var(--text-muted, #6b7280); cursor: pointer; padding: 4px 8px; border-radius: 8px; }
+    .wn-close:hover, .wn-close:focus-visible { background: var(--bg-gray, #f3f4f6); color: var(--text-dark, #111827); }
     .wn-close:focus-visible { outline: 2px solid #4db8e8; outline-offset: 1px; }
-    .wn h2 { font-size: 1.45rem; font-weight: 800; margin: .45rem 2rem 1rem 0; color: #1e4d8b; line-height: 1.2; }
+    .wn h2 { font-size: 1.45rem; font-weight: 800; margin: .45rem 2rem 1rem 0; color: var(--brand-text, #1e4d8b); line-height: 1.2; }
     .wn-list { list-style: none; margin: 0 0 1.25rem; padding: 0; display: flex; flex-direction: column; gap: .35rem; }
     .wn-list a { display: flex; gap: .8rem; align-items: flex-start; padding: .6rem .55rem; border-radius: 12px;
                  text-decoration: none; color: inherit; }
@@ -60,14 +60,14 @@ apps/core/context_processors.py::whats_new decides the page and audience).
     .wn-icon { flex: 0 0 40px; height: 40px; border-radius: 10px; display: inline-flex; align-items: center;
                justify-content: center; font-size: 1.25rem; }
     .wn-list strong { display: block; font-size: .98rem; }
-    .wn-list small { display: block; color: #6b7280; font-size: .85rem; line-height: 1.4; margin-top: 2px; }
+    .wn-list small { display: block; color: var(--text-muted, #6b7280); font-size: .85rem; line-height: 1.4; margin-top: 2px; }
     .wn-actions { display: flex; flex-direction: column; gap: .5rem; }
     .wn-btn { display: block; text-align: center; padding: .8rem 1rem; border-radius: 50px; font-weight: 700;
               text-decoration: none; color: #fff; background: #764ba2;
               --heading-color: currentColor; }
     .wn-btn:hover { color: #fff; filter: brightness(1.05); }
     .wn a.wn-btn:not(.wn-btn--ghost), [data-theme="dark"] .wn a.wn-btn:not(.wn-btn--ghost) { color: #fff; }
-    .wn-btn--ghost { background: transparent; color: #1e4d8b; border: 2px solid #dbe3ee; }
+    .wn-btn--ghost { background: transparent; color: var(--brand-text, #1e4d8b); border: 2px solid #dbe3ee; }
     .wn-btn--ghost:hover { color: #1e4d8b; background: #f3f6fa; }
     [data-theme="dark"] .wn { background: #1f2937; color: #e5e7eb; }
     [data-theme="dark"] .wn h2 { color: #93c5fd; }

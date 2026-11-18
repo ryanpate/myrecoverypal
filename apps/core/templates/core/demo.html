@@ -45,7 +45,7 @@
     }
 
     .demo-section:nth-child(even) {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
     }
 
     .demo-content {
@@ -66,13 +66,13 @@
     }
 
     .demo-text h2 {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-size: 2rem;
         margin-bottom: 1rem;
     }
 
     .demo-text p {
-        color: #666;
+        color: var(--text-muted, #666);
         line-height: 1.8;
         font-size: 1.1rem;
         margin-bottom: 1rem;
@@ -86,7 +86,7 @@
 
     .demo-text ul li {
         padding: 0.75rem 0;
-        color: #666;
+        color: var(--text-muted, #666);
         position: relative;
         padding-left: 2rem;
     }
@@ -104,8 +104,8 @@
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         overflow: hidden;
-        border: 2px solid #e0e0e0;
-        background: white;
+        border: 2px solid var(--border-color, #e0e0e0);
+        background: var(--card-bg, #fff);
     }
 
     .demo-image img {
@@ -116,7 +116,7 @@
 
     .demo-image-placeholder {
         text-align: center;
-        color: #999;
+        color: var(--text-faint, #999);
         padding: 2rem;
         min-height: 300px;
         display: flex;
@@ -160,7 +160,7 @@
 
     .cta-button {
         padding: 1rem 2.5rem;
-        background: white;
+        background: var(--card-bg, #fff);
         color: var(--accent-green);
         text-decoration: none;
         border-radius: 50px;

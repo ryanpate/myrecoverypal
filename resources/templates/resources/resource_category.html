@@ -42,7 +42,7 @@
     }
 
     .filters-bar {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 1.5rem;
         margin: 2rem 0;
         border-radius: 12px;
@@ -55,7 +55,7 @@
 
     .filter-label {
         font-weight: 600;
-        color: #4B5563;
+        color: var(--text-muted, #4B5563);
     }
 
     .filter-buttons {
@@ -66,11 +66,11 @@
 
     .filter-btn {
         padding: 0.5rem 1rem;
-        border: 1px solid #E5E7EB;
-        background: white;
+        border: 1px solid var(--border-color, #E5E7EB);
+        background: var(--card-bg, #fff);
         border-radius: 20px;
         text-decoration: none;
-        color: #4B5563;
+        color: var(--text-muted, #4B5563);
         font-size: 0.9rem;
         transition: all 0.3s ease;
     }
@@ -91,7 +91,7 @@
     }
 
     .resource-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 1.5rem;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -130,7 +130,7 @@
     .resource-card-title {
         font-size: 1.25rem;
         font-weight: 600;
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
         text-decoration: none;
         line-height: 1.3;
     }
@@ -140,7 +140,7 @@
     }
 
     .resource-card-description {
-        color: #6B7280;
+        color: var(--text-muted, #6B7280);
         line-height: 1.6;
         margin-bottom: 1rem;
         flex-grow: 1;
@@ -152,7 +152,7 @@
         gap: 1rem;
         margin-bottom: 1rem;
         font-size: 0.9rem;
-        color: #6B7280;
+        color: var(--text-muted, #6B7280);
         flex-wrap: wrap;
     }
 
@@ -204,13 +204,13 @@
     }
 
     .btn-view {
-        background: #f3f4f6;
-        color: #4B5563;
+        background: var(--bg-gray, #f3f4f6);
+        color: var(--text-muted, #4B5563);
     }
 
     .btn-view:hover {
-        background: #e5e7eb;
-        color: #1F2937;
+        background: var(--bg-gray, #e5e7eb);
+        color: var(--text-dark, #1F2937);
     }
 
     .resource-card-footer {
@@ -218,14 +218,14 @@
         justify-content: space-between;
         align-items: center;
         padding-top: 1rem;
-        border-top: 1px solid #E5E7EB;
+        border-top: 1px solid var(--border-color, #E5E7EB);
     }
 
     .resource-stats {
         display: flex;
         gap: 1rem;
         font-size: 0.85rem;
-        color: #9CA3AF;
+        color: var(--text-faint, #9CA3AF);
     }
 
     .stat-item {
@@ -235,7 +235,7 @@
     }
 
     .view-resource-btn {
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
         text-decoration: none;
         font-weight: 500;
         display: inline-flex;
@@ -251,11 +251,11 @@
     .no-resources {
         text-align: center;
         padding: 4rem 2rem;
-        color: #6B7280;
+        color: var(--text-muted, #6B7280);
     }
 
     .no-resources h3 {
-        color: #4B5563;
+        color: var(--text-muted, #4B5563);
         margin-bottom: 1rem;
     }
 
@@ -270,10 +270,10 @@
     .pagination a,
     .pagination span {
         padding: 0.5rem 1rem;
-        border: 1px solid #E5E7EB;
+        border: 1px solid var(--border-color, #E5E7EB);
         border-radius: 8px;
         text-decoration: none;
-        color: #4B5563;
+        color: var(--text-muted, #4B5563);
         transition: all 0.3s ease;
     }
 
@@ -464,7 +464,7 @@
             {% if request.GET.type %}
             No {{ request.GET.type }} resources in this category yet.
             <br>
-            <a href="{{ request.path }}" style="color: var(--primary-color);">
+            <a href="{{ request.path }}" style="color: var(--brand-text, #1e4d8b);">
                 View all {{ category.name }} resources
             </a>
             {% else %}

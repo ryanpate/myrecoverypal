@@ -7,7 +7,7 @@
 {% block extra_css %}
 <style>
     .sponsor-profile {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 2rem;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -26,6 +26,8 @@
         color: #666;
         overflow: hidden;
         margin: 0 auto 1rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .sponsor-avatar img {
@@ -35,7 +37,7 @@
     }
 
     .request-form {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 2rem;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -44,7 +46,7 @@
 
     .form-control {
         border-radius: 10px;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color, #e0e0e0);
         padding: 0.75rem 1rem;
         transition: border-color 0.3s;
     }
@@ -85,13 +87,15 @@
         border-radius: 10px;
         padding: 1.5rem;
         margin-bottom: 2rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
 
     .info-card h6 {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
     }
 
     .sponsor-stats {
@@ -104,7 +108,7 @@
 
     .stat-item {
         padding: 1rem;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 10px;
     }
 

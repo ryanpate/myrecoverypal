@@ -357,7 +357,7 @@
 
     /* Bio Section */
     .bio-section {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         padding: 1.5rem;
         border-radius: 10px;
         margin-bottom: 1.5rem;
@@ -365,19 +365,19 @@
 
     .bio-section h3 {
         margin-bottom: 1rem;
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         font-weight: 600;
     }
 
     .bio-section p {
         margin: 0;
         line-height: 1.6;
-        color: #444;
+        color: var(--text-dark, #444);
     }
 
     /* Profile Info Card */
     .profile-info {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 2rem;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -387,7 +387,7 @@
     .info-section {
         margin-bottom: 2rem;
         padding-bottom: 2rem;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--border-color, #f0f0f0);
     }
 
     .info-section:last-child {
@@ -397,7 +397,7 @@
     }
 
     .info-section h3 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1rem;
         font-size: 1.2rem;
         font-weight: 600;
@@ -416,11 +416,11 @@
 
     .info-label {
         font-weight: 600;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .info-value {
-        color: #333;
+        color: var(--text-dark, #333);
         text-align: right;
     }
 
@@ -457,7 +457,7 @@
     }
 
     .milestone-card {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         padding: 1rem;
         border-radius: 5px;
         text-align: center;
@@ -512,13 +512,13 @@
 
     .milestone-title {
         font-weight: 600;
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 0.25rem;
     }
 
     .milestone-date {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     /* Recent Posts */
@@ -530,7 +530,7 @@
 
     .recent-posts li {
         padding: 0.75rem 0;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--border-color, #f0f0f0);
     }
 
     .recent-posts li:last-child {
@@ -538,32 +538,32 @@
     }
 
     .recent-posts a {
-        color: #333;
+        color: var(--text-dark, #333);
         text-decoration: none;
         font-weight: 500;
         transition: color 0.3s ease;
     }
 
     .recent-posts a:hover {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
     }
 
     .post-meta {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-muted, #666);
         margin-top: 0.25rem;
     }
 
     .post-meta-separator {
         margin: 0 0.5rem;
-        color: #999;
+        color: var(--text-faint, #999);
     }
 
     /* Private Profile */
     .private-profile {
         text-align: center;
         padding: 3rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .private-profile i {
@@ -574,7 +574,7 @@
 
     /* Links */
     .info-section a {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         text-decoration: none;
         transition: color 0.3s ease;
     }
@@ -587,7 +587,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         text-decoration: none;
         transition: color 0.3s ease;
     }
@@ -693,7 +693,7 @@
             <i class="fas fa-handshake-angle"></i> Request as Pal
         </a>
         {% elif request.user.get_recovery_pal == profile_user %}
-        <span class="btn" style="background: #e8f7f0; color: #2d6a4f; padding: 0.75rem 1.5rem; border-radius: 50px; display: inline-block; font-weight: 600; margin-left: 0.5rem; cursor: default;">
+        <span class="btn" style="background: #e8f7f0; color: #2d6a4f; padding: 0.75rem 1.5rem; border-radius: 50px; display: inline-block; font-weight: 600; margin-left: 0.5rem; cursor: default; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
             <i class="fas fa-check-circle"></i> Your Recovery Pal
         </span>
         {% endif %}
@@ -820,7 +820,7 @@
         {% if profile_user.recovery_goals %}
         <div class="info-section">
             <h3><i class="fas fa-bullseye"></i> Recovery Goals</h3>
-            <p style="color: #444; line-height: 1.6;">{{ profile_user.recovery_goals|linebreaks }}</p>
+            <p style="color: var(--text-dark, #444); line-height: 1.6;">{{ profile_user.recovery_goals|linebreaks }}</p>
         </div>
         {% endif %}
 
@@ -875,7 +875,7 @@
         <p>{{ profile_user.get_full_name|default:profile_user.username }} hasn't made their full profile public.</p>
         {% if not request.user.is_authenticated %}
         <p style="margin-top: 1rem;">
-            <a href="{% url 'accounts:login' %}?next={{ request.path }}" style="color: #1e4d8b;">Login</a> to view more
+            <a href="{% url 'accounts:login' %}?next={{ request.path }}" style="color: var(--brand-text, #1e4d8b);">Login</a> to view more
             profiles and connect with the community.
         </p>
         {% endif %}

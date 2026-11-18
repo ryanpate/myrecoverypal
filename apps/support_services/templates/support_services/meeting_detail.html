@@ -5,7 +5,7 @@
 {% block extra_css %}
 <style>
     .meeting-detail-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 10px;
         padding: 30px;
         margin-bottom: 30px;
@@ -15,14 +15,14 @@
     .meeting-detail-name {
         font-size: 1.6rem;
         font-weight: 700;
-        color: #1F2937;
+        color: var(--text-dark, #1F2937);
         margin-bottom: 8px;
     }
 
     .meeting-detail-time {
         font-size: 1.15rem;
         font-weight: 600;
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 16px;
     }
 
@@ -34,9 +34,9 @@
         font-weight: 600;
     }
 
-    .attendance-badge.in_person { background: #DCFCE7; color: #166534; }
-    .attendance-badge.online { background: #DBEAFE; color: #1E40AF; }
-    .attendance-badge.hybrid { background: #FEF3C7; color: #92400E; }
+    .attendance-badge.in_person { background: #DCFCE7; color: #166534; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; }
+    .attendance-badge.online { background: #DBEAFE; color: #1E40AF; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; }
+    .attendance-badge.hybrid { background: #FEF3C7; color: #92400E; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; }
 
     .meeting-detail-section {
         margin-top: 20px;
@@ -45,12 +45,12 @@
     .meeting-detail-section h3 {
         font-size: 1rem;
         font-weight: 600;
-        color: #374151;
+        color: var(--text-dark, #374151);
         margin-bottom: 10px;
     }
 
     .meeting-detail-location {
-        color: #4B5563;
+        color: var(--text-muted, #4B5563);
         line-height: 1.6;
     }
 
@@ -68,18 +68,20 @@
         color: #1e4d8b;
         border-radius: 15px;
         font-size: 0.85rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .meeting-schedule { list-style: none; padding: 0; margin: 0; }
     .meeting-schedule-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.75rem;
         padding: 0.5rem 0.6rem; border-bottom: 1px solid #F3F4F6; border-radius: 6px; font-size: 0.92rem; }
     .meeting-schedule-row.is-current { background: #f0f6ff; }
-    .meeting-schedule-day { font-weight: 600; min-width: 6.5rem; color: #1F2937; }
-    .meeting-schedule-time { min-width: 4.5rem; color: #1F2937; }
-    .meeting-schedule-meta { flex: 1 1 10rem; color: #6B7280; font-size: 0.85rem; }
-    .meeting-schedule-here { font-size: 0.8rem; color: #1e4d8b; font-weight: 600; }
-    .meeting-schedule-link { font-size: 0.8rem; color: #1e4d8b; }
-    .meeting-schedule-more summary { cursor: pointer; color: #1e4d8b; font-size: 0.9rem; padding: 0.5rem 0.6rem; }
+    .meeting-schedule-day { font-weight: 600; min-width: 6.5rem; color: var(--text-dark, #1F2937); }
+    .meeting-schedule-time { min-width: 4.5rem; color: var(--text-dark, #1F2937); }
+    .meeting-schedule-meta { flex: 1 1 10rem; color: var(--text-muted, #6B7280); font-size: 0.85rem; }
+    .meeting-schedule-here { font-size: 0.8rem; color: var(--brand-text, #1e4d8b); font-weight: 600; }
+    .meeting-schedule-link { font-size: 0.8rem; color: var(--brand-text, #1e4d8b); }
+    .meeting-schedule-more summary { cursor: pointer; color: var(--brand-text, #1e4d8b); font-size: 0.9rem; padding: 0.5rem 0.6rem; }
     [data-theme="dark"] .meeting-schedule-row { border-color: #374151; }
     [data-theme="dark"] .meeting-schedule-row.is-current { background: #2e1065; }
     [data-theme="dark"] .meeting-schedule-day, [data-theme="dark"] .meeting-schedule-time { color: #E5E7EB; }
@@ -88,12 +90,12 @@
         display: block;
         padding: 12px 0;
         border-bottom: 1px solid #F3F4F6;
-        color: #1F2937;
+        color: var(--text-dark, #1F2937);
         text-decoration: none;
     }
 
     .nearby-meeting:last-child { border-bottom: none; }
-    .nearby-meeting:hover { color: #1e4d8b; }
+    .nearby-meeting:hover { color: var(--brand-text, #1e4d8b); }
     [data-theme="dark"] .meeting-detail-time,
     [data-theme="dark"] .meeting-schedule-here,
     [data-theme="dark"] .meeting-schedule-link,
@@ -294,7 +296,7 @@
         <div class="col-lg-4">
             {% if nearby_meetings %}
             <div class="meeting-detail-card">
-                <h3 style="font-size: 1.1rem; font-weight: 600; color: #1F2937; margin-bottom: 12px;">
+                <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-dark, #1F2937); margin-bottom: 12px;">
                     Nearby Meetings
                 </h3>
                 {% for nearby in nearby_meetings %}

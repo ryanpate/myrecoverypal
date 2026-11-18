@@ -1,19 +1,7 @@
 /* Resources Page Styles - resources.css */
 
-:root {
-    /* Updated to match main brand colors */
-    --primary-color: #1e4d8b;
-    /* Dark blue */
-    --secondary-color: #4db8e8;
-    /* Light blue */
-    --accent-color: #52b788;
-    /* Green */
-    --text-dark: #2c3e50;
-    --text-light: #ffffff;
-    --bg-light: #f8f9fa;
-    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
-}
+/* Brand and text tokens come from main.css. They are not redefined here: a
+   later :root block would override the dark theme's values on these pages. */
 
 /* Remove old purple gradient */
 .blog-header {
@@ -76,7 +64,7 @@
 }
 
 .crisis-contact {
-    background: white;
+    background: var(--card-bg, #fff);
     padding: 0.75rem;
     border-radius: 8px;
     font-weight: 600;
@@ -105,7 +93,7 @@
     border: 1px solid var(--border-color, #e5e7eb);
     border-radius: 50px;
     overflow: hidden;
-    background: white;
+    background: var(--card-bg, #fff);
     padding: 0.35rem 0.35rem 0.35rem 0.5rem;
 }
 
@@ -183,7 +171,7 @@
 }
 
 .category-card {
-    background: white;
+    background: var(--card-bg, #fff);
     border-radius: 15px;
     padding: 2rem;
     border: 1px solid var(--border-color, #e5e7eb);
@@ -239,7 +227,7 @@
 }
 
 .category-card p {
-    color: #6B7280;
+    color: var(--text-muted, #6B7280);
     font-size: 0.95rem;
     line-height: 1.5;
 }
@@ -249,7 +237,7 @@
     margin-top: 0.5rem;
     padding: 0.25rem 0.75rem;
     background: var(--bg-light);
-    color: var(--primary-color);
+    color: var(--brand-text, #1e4d8b);
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 500;
@@ -273,7 +261,7 @@
 }
 
 .featured-card {
-    background: white;
+    background: var(--card-bg, #fff);
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: var(--shadow);
@@ -291,19 +279,19 @@
 }
 
 .featured-card h3 {
-    color: var(--primary-color);
+    color: var(--brand-text, #1e4d8b);
     margin-bottom: 0.75rem;
 }
 
 .featured-card p {
-    color: #6B7280;
+    color: var(--text-muted, #6B7280);
     margin-bottom: 1rem;
 }
 
 /* Resource Items */
 .resource-item {
     padding: 1.5rem;
-    background: white;
+    background: var(--card-bg, #fff);
     border-radius: 12px;
     box-shadow: var(--shadow);
     transition: all 0.3s ease;
@@ -326,7 +314,7 @@
 
 .resource-title {
     font-weight: 600;
-    color: var(--primary-color);
+    color: var(--brand-text, #1e4d8b);
     font-size: 1.1rem;
     text-decoration: none;
 }
@@ -346,13 +334,13 @@
 }
 
 .resource-description {
-    color: #6B7280;
+    color: var(--text-muted, #6B7280);
     margin-bottom: 0.75rem;
     line-height: 1.6;
 }
 
 .resource-link {
-    color: var(--primary-color);
+    color: var(--brand-text, #1e4d8b);
     text-decoration: none;
     font-weight: 500;
     display: inline-flex;
@@ -481,6 +469,6 @@
     display: inline-block; margin-top: 1rem; padding: 0.6rem 1.2rem; border-radius: 10px;
     font-weight: 700; text-decoration: none; color: #1f2937; background: linear-gradient(135deg, #ffd700, #f5a623);
 }
-.tk-upgrade:hover { color: #1f2937; filter: brightness(1.05); }
+.tk-upgrade:hover { color: var(--text-dark, #1f2937); filter: brightness(1.05); }
 [data-theme="dark"] .tk-tag { color: #95d5b2; }
 [data-theme="dark"] .tk-premium .tk-card { background: rgba(255, 255, 255, 0.04); }

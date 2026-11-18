@@ -26,7 +26,7 @@
     }
 
     .checklist-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         overflow: hidden;
@@ -35,22 +35,22 @@
     .checklist-intro {
         padding: 40px;
         text-align: center;
-        background: #f8f9fa;
-        border-bottom: 1px solid #e9ecef;
+        background: var(--bg-light, #f8f9fa);
+        border-bottom: 1px solid var(--border-color, #e9ecef);
     }
 
     .checklist-intro p {
         font-size: 16px;
-        color: #495057;
+        color: var(--text-dark, #495057);
         max-width: 600px;
         margin: 0 auto;
         line-height: 1.8;
     }
 
     .progress-bar {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         padding: 30px 40px;
-        border-bottom: 1px solid #e9ecef;
+        border-bottom: 1px solid var(--border-color, #e9ecef);
     }
 
     .progress-label {
@@ -58,12 +58,12 @@
         justify-content: space-between;
         margin-bottom: 10px;
         font-weight: 500;
-        color: #495057;
+        color: var(--text-dark, #495057);
     }
 
     .progress-track {
         height: 20px;
-        background: #e9ecef;
+        background: var(--bg-gray, #e9ecef);
         border-radius: 10px;
         overflow: hidden;
         position: relative;
@@ -97,7 +97,7 @@
         align-items: center;
         margin-bottom: 20px;
         padding-bottom: 12px;
-        border-bottom: 2px solid #e9ecef;
+        border-bottom: 2px solid var(--border-color, #e9ecef);
     }
 
     .section-icon {
@@ -117,13 +117,13 @@
     .section-title {
         font-size: 22px;
         font-weight: 600;
-        color: #2d3436;
+        color: var(--text-dark, #2d3436);
         flex: 1;
     }
 
     .section-count {
         font-size: 14px;
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         font-weight: normal;
     }
 
@@ -137,9 +137,9 @@
         align-items: flex-start;
         margin-bottom: 18px;
         padding: 15px;
-        background: #fafbfc;
+        background: var(--bg-light, #fafbfc);
         border-radius: 10px;
-        border: 1px solid #e9ecef;
+        border: 1px solid var(--border-color, #e9ecef);
         transition: all 0.3s ease;
         cursor: pointer;
         user-select: none;
@@ -155,6 +155,7 @@
         background: #f0f9ff;
         border-color: #667eea;
     }
+    [data-theme="dark"] .checklist-item.checked { background: var(--bg-light); }
 
     .checkbox-wrapper {
         position: relative;
@@ -174,9 +175,9 @@
         left: 0;
         width: 24px;
         height: 24px;
-        border: 2px solid #dee2e6;
+        border: 2px solid var(--border-color, #dee2e6);
         border-radius: 6px;
-        background: white;
+        background: var(--card-bg, #fff);
         transition: all 0.3s ease;
         pointer-events: none;
     }
@@ -205,15 +206,15 @@
     .checklist-text {
         flex: 1;
         font-size: 16px;
-        color: #495057;
+        color: var(--text-dark, #495057);
         line-height: 1.6;
     }
 
     .action-buttons {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         padding: 40px;
         text-align: center;
-        border-top: 1px solid #e9ecef;
+        border-top: 1px solid var(--border-color, #e9ecef);
     }
 
     .btn-group {
@@ -249,7 +250,7 @@
     }
 
     .btn-secondary {
-        background: white;
+        background: var(--card-bg, #fff);
         color: #667eea;
         border: 2px solid #667eea;
     }
@@ -262,7 +263,7 @@
     .quote-section {
         margin: 40px 0;
         padding: 40px;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 16px;
         text-align: center;
     }
@@ -278,7 +279,7 @@
     .quote-text {
         font-size: 20px;
         font-style: italic;
-        color: #495057;
+        color: var(--text-dark, #495057);
         margin-bottom: 15px;
         font-weight: 300;
         line-height: 1.8;
@@ -286,7 +287,7 @@
 
     .quote-author {
         font-size: 16px;
-        color: #6c757d;
+        color: var(--text-muted, #6c757d);
         font-weight: 500;
     }
 
@@ -389,7 +390,7 @@
                     <span>📥</span> Download as PDF
                 </button>
             </div>
-            <p style="margin-top: 20px; color: #6c757d; font-size: 14px;">
+            <p style="margin-top: 20px; color: var(--text-muted, #6c757d); font-size: 14px;">
                 Your progress is saved automatically in your browser
             </p>
         </div>

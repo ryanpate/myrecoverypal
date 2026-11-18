@@ -13,7 +13,7 @@
     }
 
     body {
-        background: #f8fafc;
+        background: var(--bg-light, #f8fafc);
         min-height: 100vh;
     }
 
@@ -24,7 +24,7 @@
     }
 
     .onboarding-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 24px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
         overflow: hidden;
@@ -36,7 +36,7 @@
         justify-content: center;
         gap: 0.75rem;
         padding: 1.5rem;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
     }
 
     .progress-dot {
@@ -45,6 +45,8 @@
         border-radius: 50%;
         background: #e0e0e0;
         transition: all 0.3s ease;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
 
     .progress-dot.active {
@@ -82,13 +84,13 @@
 
     .step-header h2 {
         font-size: 1.5rem;
-        color: #1a1a2e;
+        color: var(--text-dark, #1a1a2e);
         margin: 0 0 0.5rem;
         font-weight: 700;
     }
 
     .step-header p {
-        color: #666;
+        color: var(--text-muted, #666);
         margin: 0;
         font-size: 0.95rem;
     }
@@ -105,7 +107,7 @@
         align-items: center;
         gap: 1rem;
         padding: 1rem 1.25rem;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border: 2px solid transparent;
         border-radius: 14px;
         cursor: pointer;
@@ -113,7 +115,7 @@
     }
 
     .stage-card:hover {
-        background: white;
+        background: var(--card-bg, #fff);
         border-color: var(--secondary);
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(77, 184, 232, 0.15);
@@ -132,7 +134,7 @@
         width: 44px;
         height: 44px;
         border-radius: 12px;
-        background: white;
+        background: var(--card-bg, #fff);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -148,14 +150,14 @@
     .stage-info h4 {
         margin: 0;
         font-size: 1rem;
-        color: #1a1a2e;
+        color: var(--text-dark, #1a1a2e);
     }
 
     .stage-check {
         margin-left: auto;
         width: 24px;
         height: 24px;
-        border: 2px solid #ddd;
+        border: 2px solid var(--border-color, #ddd);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -179,30 +181,30 @@
         display: block;
         font-weight: 600;
         margin-bottom: 0.5rem;
-        color: #333;
+        color: var(--text-dark, #333);
     }
 
     .form-control {
         width: 100%;
         padding: 0.875rem 1rem;
-        border: 2px solid #e8e8e8;
+        border: 2px solid var(--border-color, #e8e8e8);
         border-radius: 12px;
         font-size: 1rem;
         transition: all 0.2s ease;
-        background: #fafafa;
+        background: var(--bg-light, #fafafa);
         box-sizing: border-box;
     }
 
     .form-control:focus {
         border-color: var(--secondary);
         outline: none;
-        background: white;
+        background: var(--card-bg, #fff);
         box-shadow: 0 0 0 4px rgba(77, 184, 232, 0.1);
     }
 
     .form-hint {
         font-size: 0.8rem;
-        color: #888;
+        color: var(--text-muted, #888);
         margin-top: 0.25rem;
     }
 
@@ -218,6 +220,8 @@
         color: var(--accent);
         font-weight: 600;
         animation: fadeIn 0.3s ease;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .days-preview.visible {
@@ -239,7 +243,7 @@
         display: block;
         text-align: center;
         margin-top: 0.75rem;
-        color: #aaa;
+        color: var(--text-faint, #aaa);
         font-size: 0.875rem;
         text-decoration: none;
         cursor: pointer;
@@ -250,7 +254,7 @@
     }
 
     .skip-link:hover {
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     /* Completion Screen */
@@ -280,12 +284,12 @@
 
     .completion-screen h2 {
         font-size: 1.75rem;
-        color: #1a1a2e;
+        color: var(--text-dark, #1a1a2e);
         margin: 0 0 0.5rem;
     }
 
     .completion-screen > p {
-        color: #666;
+        color: var(--text-muted, #666);
         margin: 0 0 1.5rem;
         font-size: 1rem;
     }
@@ -301,6 +305,8 @@
         color: var(--accent);
         font-weight: 700;
         font-size: 1.1rem;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
     }
 
     .sober-badge .sober-number {
@@ -315,7 +321,7 @@
 
     .completion-note {
         font-size: 0.8rem;
-        color: #aaa;
+        color: var(--text-faint, #aaa);
         margin-top: 0.75rem;
     }
 
@@ -323,7 +329,7 @@
     .nav-buttons {
         margin-top: 2rem;
         padding-top: 1.5rem;
-        border-top: 1px solid #eee;
+        border-top: 1px solid var(--border-color, #eee);
     }
 
     .btn {
@@ -489,7 +495,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="sobriety_date">When did your recovery journey begin? <span style="font-weight:400;color:#aaa;">(optional)</span></label>
+                    <label for="sobriety_date">When did your recovery journey begin? <span style="font-weight:400;color:var(--text-faint, #aaa);">(optional)</span></label>
                     <input type="date" class="form-control" id="sobriety_date" name="sobriety_date"
                            value="{% if user.sobriety_date %}{{ user.sobriety_date|date:'Y-m-d' }}{% endif %}"
                            max="{% now 'Y-m-d' %}">

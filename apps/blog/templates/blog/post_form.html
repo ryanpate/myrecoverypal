@@ -7,7 +7,7 @@
         max-width: 900px;
         margin: 2rem auto;
         padding: 2rem;
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
@@ -15,7 +15,7 @@
     .form-header {
         margin-bottom: 2rem;
         padding-bottom: 1rem;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
     }
 
     .paste-tip {
@@ -23,18 +23,20 @@
         padding: 1rem;
         margin: 1rem 0 2rem 0;
         border-radius: 5px;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
 
     .paste-tip h5 {
         margin: 0 0 0.5rem 0;
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         font-size: 1.1rem;
     }
 
     .paste-tip p {
         margin: 0;
         font-size: 0.9rem;
-        color: #333;
+        color: var(--text-dark, #333);
     }
 
     .form-group {
@@ -43,7 +45,7 @@
 
     .form-group label {
         font-weight: 600;
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 0.5rem;
         display: block;
     }
@@ -51,7 +53,7 @@
     .form-control {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-color, #ddd);
         border-radius: 5px;
         font-size: 1rem;
         transition: border-color 0.3s ease;
@@ -66,7 +68,7 @@
     .checkbox-group {
         margin: 1.5rem 0;
         padding: 1rem;
-        background: #f9f9f9;
+        background: var(--bg-light, #f9f9f9);
         border-radius: 5px;
     }
 
@@ -81,7 +83,7 @@
     .form-actions {
         margin-top: 2rem;
         padding-top: 2rem;
-        border-top: 2px solid #f0f0f0;
+        border-top: 2px solid var(--border-color, #f0f0f0);
         display: flex;
         gap: 1rem;
         justify-content: space-between;
@@ -119,8 +121,8 @@
     }
 
     .btn-outline {
-        background: white;
-        color: var(--primary-color) !important;
+        background: var(--card-bg, #fff);
+        color: var(--brand-text, #1e4d8b) !important;
         border: 2px solid var(--primary-color);
     }
 
@@ -131,7 +133,7 @@
 
     .help-text {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-muted, #666);
         margin-top: 0.25rem;
     }
 
@@ -147,18 +149,18 @@
     }
 
     .cke_chrome {
-        border: 1px solid #ddd !important;
+        border: 1px solid var(--border-color, #ddd) !important;
         border-radius: 5px !important;
     }
 
     .cke_top {
-        border-bottom: 1px solid #ddd !important;
-        background: #f8f9fa !important;
+        border-bottom: 1px solid var(--border-color, #ddd) !important;
+        background: var(--bg-light, #f8f9fa) !important;
     }
 
     .cke_bottom {
-        border-top: 1px solid #ddd !important;
-        background: #f8f9fa !important;
+        border-top: 1px solid var(--border-color, #ddd) !important;
+        background: var(--bg-light, #f8f9fa) !important;
     }
 
     @media (max-width: 768px) {

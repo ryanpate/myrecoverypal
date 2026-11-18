@@ -155,13 +155,13 @@
         border: 2px solid white;
     }
     .counter-header .cta-button.secondary:hover {
-        background: white;
-        color: var(--primary-dark);
+        background: var(--card-bg, #fff);
+        color: var(--brand-text, #1e4d8b);
     }
 
     /* Mini Calculator */
     .mini-calculator {
-        background: white;
+        background: var(--card-bg, #fff);
         max-width: 480px;
         margin: 2rem auto 0;
         padding: 1.5rem 2rem;
@@ -169,7 +169,7 @@
         box-shadow: var(--shadow-hover);
     }
     .mini-calculator h3 {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-size: 1rem;
         margin-bottom: 1rem;
         text-align: center;
@@ -182,16 +182,16 @@
         flex-wrap: wrap;
     }
     .mini-calc-input label {
-        color: #555;
+        color: var(--text-muted, #555);
         font-weight: 500;
     }
     .mini-calc-input input[type="date"] {
         padding: 0.6rem 1rem;
-        border: 2px solid #e9ecef;
+        border: 2px solid var(--border-color, #e9ecef);
         border-radius: 8px;
         font-size: 1rem;
         font-weight: 600;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
     }
     .mini-calc-input input:focus {
         outline: none;
@@ -202,12 +202,12 @@
         text-align: center;
         margin-top: 1.5rem;
         padding-top: 1.5rem;
-        border-top: 1px solid #e9ecef;
+        border-top: 1px solid var(--border-color, #e9ecef);
     }
     .mini-calc-result .days-count {
         font-size: 3rem;
         font-weight: 800;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         line-height: 1;
     }
     .mini-calc-result .days-label {
@@ -224,16 +224,16 @@
     }
     .mini-calc-result .breakdown span {
         font-size: 0.85rem;
-        color: #666;
+        color: var(--text-muted, #666);
     }
     .mini-calc-result .breakdown strong {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
     }
     .mini-calc-cta {
         margin-top: 1rem;
     }
     .mini-calc-cta a {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-weight: 600;
         text-decoration: none;
         font-size: 0.9rem;
@@ -251,13 +251,13 @@
     }
     .comparison-section h2 {
         text-align: center;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-size: 2rem;
         margin-bottom: 0.5rem;
     }
     .comparison-section .subtitle {
         text-align: center;
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 1.05rem;
         margin-bottom: 2rem;
     }
@@ -270,7 +270,7 @@
         width: 100%;
         border-collapse: collapse;
         font-size: 0.95rem;
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: var(--border-radius);
         overflow: hidden;
         box-shadow: var(--shadow);
@@ -288,7 +288,7 @@
     }
     .comparison-table td {
         padding: 1rem;
-        border-bottom: 1px solid #e9ecef;
+        border-bottom: 1px solid var(--border-color, #e9ecef);
     }
     .comparison-table tr:last-child td {
         border-bottom: none;
@@ -296,9 +296,10 @@
     .comparison-table td.highlight {
         background: #f0f7ff;
     }
+    [data-theme="dark"] .comparison-table td.highlight { background: var(--bg-light); }
     .comparison-table .feature-name {
         font-weight: 600;
-        color: #333;
+        color: var(--text-dark, #333);
     }
     .comparison-table .check {
         color: var(--accent-green);
@@ -326,13 +327,13 @@
     }
     .features-section h2 {
         text-align: center;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-size: 2rem;
         margin-bottom: 0.5rem;
     }
     .features-section .subtitle {
         text-align: center;
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 1.05rem;
         margin-bottom: 2.5rem;
     }
@@ -361,12 +362,12 @@
         background: none;
     }
     .feature-card h3 {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 0.5rem;
         font-size: 1.15rem;
     }
     .feature-card p {
-        color: #666;
+        color: var(--text-muted, #666);
         line-height: 1.6;
         font-size: 0.95rem;
     }
@@ -374,11 +375,11 @@
     /* Use Cases Section */
     .use-cases-section {
         padding: 4rem 2rem;
-        background: white;
+        background: var(--card-bg, #fff);
     }
     .use-cases-section h2 {
         text-align: center;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-size: 1.8rem;
         margin-bottom: 2rem;
     }
@@ -405,12 +406,12 @@
         margin-bottom: 0.75rem;
     }
     .use-case-card h3 {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-size: 1.05rem;
         margin-bottom: 0.5rem;
     }
     .use-case-card p {
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 0.9rem;
         line-height: 1.5;
     }
@@ -422,7 +423,7 @@
     }
     .milestones-section h2 {
         text-align: center;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-size: 1.8rem;
         margin-bottom: 2rem;
     }
@@ -434,7 +435,7 @@
         margin: 0 auto;
     }
     .milestone-card {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 1.25rem 1rem;
         border-radius: var(--border-radius);
         text-align: center;
@@ -452,11 +453,11 @@
     .milestone-card .days {
         font-size: 1.6rem;
         font-weight: 800;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         transition: color 0.3s;
     }
     .milestone-card .name {
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 0.8rem;
         margin-top: 0.25rem;
         font-weight: 500;
@@ -466,24 +467,24 @@
     /* Content Section */
     .content-section {
         padding: 4rem 2rem;
-        background: white;
+        background: var(--card-bg, #fff);
     }
     .content-section .container {
         max-width: 800px;
         margin: 0 auto;
     }
     .content-section h2 {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-size: 1.8rem;
         margin-bottom: 1.5rem;
     }
     .content-section h3 {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-size: 1.3rem;
         margin: 2rem 0 1rem;
     }
     .content-section p {
-        color: #555;
+        color: var(--text-muted, #555);
         line-height: 1.8;
         font-size: 1.05rem;
         margin-bottom: 1rem;
@@ -493,12 +494,12 @@
         padding-left: 1.5rem;
     }
     .content-section ul li {
-        color: #555;
+        color: var(--text-muted, #555);
         line-height: 1.8;
         margin-bottom: 0.5rem;
     }
     .content-section a {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-weight: 600;
     }
     .content-section a:hover {
@@ -512,7 +513,7 @@
     }
     .faq-section h2 {
         text-align: center;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-size: 2rem;
         margin-bottom: 2rem;
     }
@@ -521,19 +522,19 @@
         margin: 0 auto;
     }
     .faq-item {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: var(--border-radius);
         margin-bottom: 1rem;
         padding: 1.5rem;
         box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     .faq-item h3 {
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 0.75rem;
         font-size: 1.1rem;
     }
     .faq-item p {
-        color: #666;
+        color: var(--text-muted, #666);
         line-height: 1.7;
         margin: 0;
     }
@@ -541,11 +542,11 @@
     /* Related Links */
     .related-links {
         padding: 3rem 2rem;
-        background: white;
+        background: var(--card-bg, #fff);
     }
     .related-links h3 {
         text-align: center;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1.5rem;
         font-size: 1.2rem;
     }
@@ -562,7 +563,7 @@
         padding: 0.75rem 1.25rem;
         border-radius: 8px;
         text-decoration: none;
-        color: var(--primary-dark);
+        color: var(--brand-text, #1e4d8b);
         font-weight: 500;
         font-size: 0.9rem;
         transition: all 0.3s;

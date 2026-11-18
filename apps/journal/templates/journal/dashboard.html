@@ -27,7 +27,7 @@
     }
     
     .stat-card {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 1.5rem;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -37,11 +37,11 @@
     .stat-number {
         font-size: 2.5rem;
         font-weight: bold;
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
     }
     
     .stat-label {
-        color: #666;
+        color: var(--text-muted, #666);
         margin-top: 0.5rem;
     }
     
@@ -62,14 +62,14 @@
     }
     
     .main-content {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 2rem;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     
     .sidebar-card {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 1.5rem;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -77,19 +77,19 @@
     }
     
     .prompt-card {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         padding: 1.5rem;
         border-radius: 10px;
     }
     
     .prompt-card h4 {
-        color: var(--primary-color);
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1rem;
     }
     
     .recent-entry {
         padding: 1rem 0;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--border-color, #eee);
     }
     
     .recent-entry:last-child {
@@ -204,11 +204,11 @@
                             <a href="{% url 'journal:entry_detail' entry.pk %}" style="font-weight: bold;">
                                 {{ entry.title|default:"Untitled Entry" }}
                             </a>
-                            <div style="color: #666; font-size: 0.9rem; margin-top: 0.25rem;">
+                            <div style="color: var(--text-muted, #666); font-size: 0.9rem; margin-top: 0.25rem;">
                                 {{ entry.created_at|date:"F d, Y - g:i A" }}
                             </div>
                             {% if entry.prompt %}
-                                <div style="color: #666; font-size: 0.85rem;">
+                                <div style="color: var(--text-muted, #666); font-size: 0.85rem;">
                                     Prompt: {{ entry.prompt.title }}
                                 </div>
                             {% endif %}
@@ -219,7 +219,7 @@
                     </div>
                 </div>
             {% empty %}
-                <p style="text-align: center; color: #666; padding: 2rem;">
+                <p style="text-align: center; color: var(--text-muted, #666); padding: 2rem;">
                     No journal entries yet. Start your journaling journey today!
                 </p>
             {% endfor %}
@@ -278,7 +278,7 @@
             {% endif %}
 
             <!-- Journal Product -->
-            <div class="sidebar-card journal-product-card" style="background: #fefce8; border: 1px solid #fbbf24; text-align: center; padding: 1.25rem;">
+            <div class="sidebar-card journal-product-card" style="background: var(--bg-light, #fefce8); border: 1px solid #fbbf24; text-align: center; padding: 1.25rem;">
                 <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📖</div>
                 <h4 style="color: #92400e; margin: 0 0 0.5rem; font-size: 1rem;">90-Day Recovery Journal</h4>
                 <p style="font-size: 0.85rem; color: #78716c; margin: 0 0 0.75rem; line-height: 1.5;">Guided daily prompts, gratitude exercises &amp; reflection space to complement your digital journal.</p>

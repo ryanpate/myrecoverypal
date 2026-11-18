@@ -107,9 +107,9 @@
             {% endfor %}
         </div>
         {% else %}
-        <p style="text-align: center; color: #6B7280; margin: 2rem 0;">
+        <p style="text-align: center; color: var(--text-muted, #6B7280); margin: 2rem 0;">
             No resources found matching your search. Try different keywords or
-            <a href="{% url 'resources:list' %}" style="color: var(--primary-color);">browse all resources</a>.
+            <a href="{% url 'resources:list' %}" style="color: var(--brand-text, #1e4d8b);">browse all resources</a>.
         </p>
         {% endif %}
     </section>
@@ -155,14 +155,14 @@
     {% if user.is_authenticated %}
     {% if not query %}
     <div style="text-align: center; margin: 3rem 0;">
-        <p style="color: #6B7280; margin-bottom: 1rem;">Can't find what you're looking for?</p>
+        <p style="color: var(--text-muted, #6B7280); margin-bottom: 1rem;">Can't find what you're looking for?</p>
         <a href="{% url 'resources:my_bookmarks' %}" class="cta-button">View My Bookmarks</a>
     </div>
     {% endif %}
     {% else %}
-    <div style="text-align: center; margin: 3rem 0; padding: 2rem; background: #f8f9fa; border-radius: 15px;">
+    <div style="text-align: center; margin: 3rem 0; padding: 2rem; background: var(--bg-light, #f8f9fa); border-radius: 15px;">
         <h3 style="color: var(--text-dark); margin-bottom: 1rem;">Get More from Recovery Resources</h3>
-        <p style="color: #6B7280; margin-bottom: 1.5rem;">
+        <p style="color: var(--text-muted, #6B7280); margin-bottom: 1.5rem;">
             Create a free account to bookmark resources, track your progress, and access exclusive content.
         </p>
         <a href="{% url 'accounts:register' %}" class="cta-button">Join Our Community</a>

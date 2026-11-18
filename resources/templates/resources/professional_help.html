@@ -18,7 +18,7 @@
     }
 
     .professional-header {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 30px;
         margin-bottom: 30px;
@@ -26,18 +26,18 @@
     }
 
     .professional-header h1 {
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 10px;
         font-size: 2.5rem;
     }
 
     .professional-header p {
-        color: #666;
+        color: var(--text-muted, #666);
         font-size: 1.1rem;
     }
 
     .search-section {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 30px;
         margin-bottom: 30px;
@@ -58,14 +58,14 @@
 
     .search-group label {
         margin-bottom: 8px;
-        color: #555;
+        color: var(--text-muted, #555);
         font-weight: 500;
     }
 
     .search-group input,
     .search-group select {
         padding: 12px;
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--border-color, #e0e0e0);
         border-radius: 8px;
         font-size: 16px;
         transition: all 0.3s ease;
@@ -97,9 +97,9 @@
     }
 
     .btn-clear {
-        background: #f5f5f5;
-        color: #666;
-        border: 2px solid #e0e0e0;
+        background: var(--bg-gray, #f5f5f5);
+        color: var(--text-muted, #666);
+        border: 2px solid var(--border-color, #e0e0e0);
         padding: 12px 30px;
         border-radius: 8px;
         font-size: 16px;
@@ -114,7 +114,7 @@
     }
 
     .filters-section {
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
         border-radius: 10px;
         padding: 20px;
         margin-top: 20px;
@@ -122,7 +122,7 @@
 
     .filters-title {
         font-size: 1.2rem;
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 15px;
         font-weight: 600;
     }
@@ -134,7 +134,7 @@
     }
 
     .filter-tag {
-        background: white;
+        background: var(--card-bg, #fff);
         border: 2px solid #667eea;
         color: #667eea;
         padding: 8px 15px;
@@ -155,7 +155,7 @@
     }
 
     .results-info {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 10px;
         padding: 20px;
         margin-bottom: 20px;
@@ -167,7 +167,7 @@
 
     .results-count {
         font-size: 1.1rem;
-        color: #333;
+        color: var(--text-dark, #333);
         font-weight: 500;
     }
 
@@ -185,7 +185,7 @@
     }
 
     .facility-card {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 25px;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
@@ -216,15 +216,15 @@
 
     .facility-name {
         font-size: 1.3rem;
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 5px;
         font-weight: 600;
     }
 
     .facility-type {
         display: inline-block;
-        background: #f0f0f0;
-        color: #666;
+        background: var(--bg-gray, #f0f0f0);
+        color: var(--text-muted, #666);
         padding: 4px 10px;
         border-radius: 5px;
         font-size: 0.85rem;
@@ -234,15 +234,15 @@
     .facility-contact {
         margin: 15px 0;
         padding: 15px 0;
-        border-top: 1px solid #f0f0f0;
-        border-bottom: 1px solid #f0f0f0;
+        border-top: 1px solid var(--border-color, #f0f0f0);
+        border-bottom: 1px solid var(--border-color, #f0f0f0);
     }
 
     .contact-item {
         display: flex;
         align-items: center;
         margin: 8px 0;
-        color: #555;
+        color: var(--text-muted, #555);
     }
 
     .contact-item svg {
@@ -258,7 +258,7 @@
 
     .services-title {
         font-size: 0.9rem;
-        color: #666;
+        color: var(--text-muted, #666);
         margin-bottom: 10px;
         font-weight: 600;
     }
@@ -270,8 +270,8 @@
     }
 
     .service-tag {
-        background: #f8f9fa;
-        color: #555;
+        background: var(--bg-light, #f8f9fa);
+        color: var(--text-muted, #555);
         padding: 4px 8px;
         border-radius: 4px;
         font-size: 0.75rem;
@@ -297,7 +297,7 @@
     }
 
     .no-results {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 60px 30px;
         text-align: center;
@@ -305,12 +305,12 @@
     }
 
     .no-results h3 {
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 15px;
     }
 
     .no-results p {
-        color: #666;
+        color: var(--text-muted, #666);
         line-height: 1.6;
     }
 
@@ -322,7 +322,7 @@
     }
 
     .welcome-message {
-        background: white;
+        background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 40px;
         text-align: center;
@@ -330,12 +330,12 @@
     }
 
     .welcome-message h3 {
-        color: #333;
+        color: var(--text-dark, #333);
         margin-bottom: 20px;
     }
 
     .welcome-message p {
-        color: #666;
+        color: var(--text-muted, #666);
         line-height: 1.6;
         margin-bottom: 20px;
     }
@@ -353,7 +353,7 @@
     }
 
     .modal-content {
-        background: white;
+        background: var(--card-bg, #fff);
         max-width: 800px;
         margin: 50px auto;
         border-radius: 15px;
@@ -371,11 +371,11 @@
         border: none;
         font-size: 30px;
         cursor: pointer;
-        color: #999;
+        color: var(--text-faint, #999);
     }
 
     .modal-close:hover {
-        color: #333;
+        color: var(--text-dark, #333);
     }
 
     @media (max-width: 768px) {

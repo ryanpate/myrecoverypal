@@ -17,11 +17,11 @@
 
     .cookies-content {
         padding: 4rem 0;
-        background: #f8f9fa;
+        background: var(--bg-light, #f8f9fa);
     }
 
     .cookies-intro {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 3rem 2rem;
         border-radius: 10px;
         margin-bottom: 3rem;
@@ -32,7 +32,7 @@
     }
 
     .cookie-section {
-        background: white;
+        background: var(--card-bg, #fff);
         padding: 2.5rem;
         border-radius: 10px;
         margin-bottom: 2rem;
@@ -40,7 +40,7 @@
     }
 
     .cookie-section h3 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 1.5rem;
     }
 
@@ -51,7 +51,7 @@
     }
 
     .cookie-section p {
-        color: #666;
+        color: var(--text-muted, #666);
         line-height: 1.8;
         margin-bottom: 1rem;
     }
@@ -65,7 +65,7 @@
     .cookie-section li {
         padding: 0.5rem 0 0.5rem 2rem;
         position: relative;
-        color: #666;
+        color: var(--text-muted, #666);
     }
 
     .cookie-section li:before {
@@ -83,8 +83,8 @@
     }
 
     .cookie-table th {
-        background: #f8f9fa;
-        color: #1e4d8b;
+        background: var(--bg-light, #f8f9fa);
+        color: var(--brand-text, #1e4d8b);
         padding: 1rem;
         text-align: left;
         border-bottom: 2px solid #52b788;
@@ -92,8 +92,8 @@
 
     .cookie-table td {
         padding: 1rem;
-        border-bottom: 1px solid #e9ecef;
-        color: #666;
+        border-bottom: 1px solid var(--border-color, #e9ecef);
+        color: var(--text-muted, #666);
     }
 
     .cookie-table tr:last-child td {
@@ -105,15 +105,17 @@
         padding: 1.5rem;
         margin: 2rem 0;
         border-radius: 5px;
+        /* light surface in both themes: keep dark text */
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
 
     .important-note h4 {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin-bottom: 0.5rem;
     }
 
     .important-note p {
-        color: #1e4d8b;
+        color: var(--brand-text, #1e4d8b);
         margin: 0;
     }
 

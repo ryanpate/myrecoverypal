@@ -75,9 +75,9 @@
     .ar-hero p { font-size: 1.3rem; max-width: 700px; margin: 0 auto 2rem; opacity: 0.95; }
     .ar-hero .cta-button { display: inline-block; padding: 1rem 2.5rem; background: #d4a017; color: #1a472a; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 1.2rem; transition: all 0.3s ease; }
     .ar-hero .cta-button:hover { transform: translateY(-3px); background: #c4920f; }
-    .features-section { padding: 4rem 2rem; background: #f8f9fa; }
+    .features-section { padding: 4rem 2rem; background: var(--bg-light, #f8f9fa); }
     .features-section h2 { text-align: center; color: #1a472a; font-size: 2.2rem; margin-bottom: 0.5rem; }
-    .features-section .subtitle { text-align: center; color: #666; font-size: 1.1rem; margin-bottom: 3rem; }
+    .features-section .subtitle { text-align: center; color: var(--text-muted, #666); font-size: 1.1rem; margin-bottom: 3rem; }
     .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
     .feature-card {
         /* Plain text columns: spacing does the grouping, no card chrome */
@@ -97,36 +97,36 @@
         background: none;
     }
     .feature-card h3 { color: #1a472a; margin-bottom: 0.75rem; }
-    .feature-card p { color: #666; line-height: 1.6; }
-    .savings-section { padding: 4rem 2rem; background: #e8f5e9; text-align: center; }
+    .feature-card p { color: var(--text-muted, #666); line-height: 1.6; }
+    .savings-section { padding: 4rem 2rem; background: #e8f5e9; text-align: center; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark); }
     .savings-section h2 { color: #1a472a; font-size: 2rem; margin-bottom: 1rem; }
-    .savings-display { background: white; max-width: 400px; margin: 0 auto; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+    .savings-display { background: var(--card-bg, #fff); max-width: 400px; margin: 0 auto; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
     .savings-display .amount { font-size: 3.5rem; font-weight: 800; color: #1a472a; }
     .savings-display .label { font-size: 1.2rem; color: #2d5016; }
-    .savings-display .subtext { margin-top: 1rem; color: #666; font-size: 0.95rem; }
-    .content-section { padding: 4rem 2rem; background: white; }
+    .savings-display .subtext { margin-top: 1rem; color: var(--text-muted, #666); font-size: 0.95rem; }
+    .content-section { padding: 4rem 2rem; background: var(--card-bg, #fff); }
     .content-section .container { max-width: 800px; margin: 0 auto; }
     .content-section h2 { color: #1a472a; font-size: 2rem; margin-bottom: 1.5rem; }
     .content-section h3 { color: #1a472a; font-size: 1.4rem; margin: 2rem 0 1rem; }
-    .content-section p { color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
+    .content-section p { color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
     .content-section ul { margin: 1.5rem 0; padding-left: 1.5rem; }
-    .content-section ul li { color: #555; line-height: 1.8; margin-bottom: 0.75rem; }
-    .faq-section { padding: 4rem 2rem; background: #f8f9fa; }
+    .content-section ul li { color: var(--text-muted, #555); line-height: 1.8; margin-bottom: 0.75rem; }
+    .faq-section { padding: 4rem 2rem; background: var(--bg-light, #f8f9fa); }
     .faq-section h2 { text-align: center; color: #1a472a; font-size: 2.2rem; margin-bottom: 2rem; }
     .faq-container { max-width: 800px; margin: 0 auto; }
-    .faq-item { background: white; border-radius: 10px; margin-bottom: 1rem; padding: 1.5rem; }
+    .faq-item { background: var(--card-bg, #fff); border-radius: 10px; margin-bottom: 1rem; padding: 1.5rem; }
     .faq-item h3 { color: #1a472a; margin-bottom: 0.75rem; font-size: 1.2rem; }
-    .faq-item p { color: #666; line-height: 1.7; margin: 0; }
+    .faq-item p { color: var(--text-muted, #666); line-height: 1.7; margin: 0; }
     .cta-section { padding: 5rem 2rem; background: linear-gradient(135deg, #1a472a 0%, #2d5016 100%); text-align: center; color: white; }
     .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
     .cta-section p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.95; }
     .cta-section .cta-button { display: inline-block; padding: 1rem 3rem; background: #d4a017; color: #1a472a; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 1.3rem; transition: all 0.3s ease; }
     .cta-section .cta-button:hover { transform: translateY(-3px); background: #c4920f; }
     .cta-section .subtext { margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; }
-    .related-links { padding: 3rem 2rem; background: #f8f9fa; }
+    .related-links { padding: 3rem 2rem; background: var(--bg-light, #f8f9fa); }
     .related-links h3 { text-align: center; color: #1a472a; margin-bottom: 1.5rem; }
     .related-grid { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto; }
-    .related-grid a { background: white; padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: #1a472a; font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
+    .related-grid a { background: var(--card-bg, #fff); padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: #1a472a; font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
     .related-grid a:hover { transform: translateY(-3px); }
     @media (max-width: 768px) { .ar-hero h1 { font-size: 2rem; } .savings-display .amount { font-size: 2.5rem; } }
 </style>
@@ -207,20 +207,20 @@
 </section>
 
 <!-- Financial Recovery Section -->
-<section class="content-section" style="padding: 3rem 2rem; background: white;">
+<section class="content-section" style="padding: 3rem 2rem; background: var(--card-bg, #fff);">
     <div style="max-width: 800px; margin: 0 auto;">
-        <h2 style="color: var(--primary-dark); font-size: 1.8rem; margin-bottom: 1.5rem;">The Financial Recovery Journey</h2>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Gambling addiction is unique among addictions because there is no substance entering your body — yet the psychological grip can be just as powerful and destructive. Unlike alcohol or drug addiction, there is no physical withdrawal when you stop gambling. Instead, the challenge is entirely psychological: the intense urge to chase losses, the belief that the next bet will be the one that fixes everything, and the dopamine rush that your brain has been rewired to crave. Understanding these differences is key to building an effective recovery plan.</p>
+        <h2 style="color: var(--brand-text, #1e4d8b); font-size: 1.8rem; margin-bottom: 1.5rem;">The Financial Recovery Journey</h2>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Gambling addiction is unique among addictions because there is no substance entering your body — yet the psychological grip can be just as powerful and destructive. Unlike alcohol or drug addiction, there is no physical withdrawal when you stop gambling. Instead, the challenge is entirely psychological: the intense urge to chase losses, the belief that the next bet will be the one that fixes everything, and the dopamine rush that your brain has been rewired to crave. Understanding these differences is key to building an effective recovery plan.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">Seeing What You Save</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">One of the most powerful motivators in gambling recovery is watching your financial situation improve in real time. The money saved calculator in MyRecoveryPal lets you set your average daily or weekly gambling spend and see exactly how much money you are keeping by staying bet-free. After 30 days, someone who gambled $50 per day has saved $1,500. After a year, that is over $18,000. These are not abstract numbers — they represent rent payments made on time, debts being paid down, and the financial stability that gambling destroyed. Seeing that figure grow each day reinforces why you are doing this.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">Seeing What You Save</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">One of the most powerful motivators in gambling recovery is watching your financial situation improve in real time. The money saved calculator in MyRecoveryPal lets you set your average daily or weekly gambling spend and see exactly how much money you are keeping by staying bet-free. After 30 days, someone who gambled $50 per day has saved $1,500. After a year, that is over $18,000. These are not abstract numbers — they represent rent payments made on time, debts being paid down, and the financial stability that gambling destroyed. Seeing that figure grow each day reinforces why you are doing this.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">Identifying Your Triggers</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Gambling triggers are everywhere in modern life, and they are becoming harder to avoid. Major sporting events, targeted online advertisements, casino promotions, and even casual conversations about fantasy leagues can set off powerful urges. Stress, boredom, loneliness, and financial pressure are also common internal triggers. Daily check-ins in MyRecoveryPal help you log these moments — when you felt the urge, what was happening, and how intense it was. Over weeks and months, patterns emerge that help you anticipate and prepare for high-risk situations before they catch you off guard.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">Identifying Your Triggers</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Gambling triggers are everywhere in modern life, and they are becoming harder to avoid. Major sporting events, targeted online advertisements, casino promotions, and even casual conversations about fantasy leagues can set off powerful urges. Stress, boredom, loneliness, and financial pressure are also common internal triggers. Daily check-ins in MyRecoveryPal help you log these moments — when you felt the urge, what was happening, and how intense it was. Over weeks and months, patterns emerge that help you anticipate and prepare for high-risk situations before they catch you off guard.</p>
 
-        <h3 style="color: var(--primary-dark); font-size: 1.3rem; margin: 2rem 0 1rem;">The Role of Community in Gambling Recovery</h3>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Gambling addiction thrives in secrecy and isolation. Many people struggling with gambling have never told anyone the full extent of their problem — the hidden debts, the lies, the desperate attempts to win it back. Gamblers Anonymous (GA) provides invaluable face-to-face support, but meetings may not be available in every area or at every hour. MyRecoveryPal fills those gaps with a community of people who understand gambling addiction specifically. You can join recovery groups focused on gambling, connect with others who know what it feels like to be up at 3 AM placing bets you cannot afford, and find an accountability partner who will be honest with you when you need it most.</p>
-        <p style="color: #555; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">If you are attending GA meetings, MyRecoveryPal is designed to complement that work — not replace it. Between meetings, when the urge to gamble hits, the community is here around the clock.</p>
+        <h3 style="color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2rem 0 1rem;">The Role of Community in Gambling Recovery</h3>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">Gambling addiction thrives in secrecy and isolation. Many people struggling with gambling have never told anyone the full extent of their problem — the hidden debts, the lies, the desperate attempts to win it back. Gamblers Anonymous (GA) provides invaluable face-to-face support, but meetings may not be available in every area or at every hour. MyRecoveryPal fills those gaps with a community of people who understand gambling addiction specifically. You can join recovery groups focused on gambling, connect with others who know what it feels like to be up at 3 AM placing bets you cannot afford, and find an accountability partner who will be honest with you when you need it most.</p>
+        <p style="color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem;">If you are attending GA meetings, MyRecoveryPal is designed to complement that work — not replace it. Between meetings, when the urge to gamble hits, the community is here around the clock.</p>
     </div>
 </section>
 
