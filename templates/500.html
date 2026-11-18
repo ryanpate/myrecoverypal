@@ -30,7 +30,7 @@
             background: var(--card-bg, #fff);
             padding: 3rem 2rem;
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
         }
 
         .error-icon {
@@ -64,13 +64,12 @@
             color: white;
             text-decoration: none;
             display: inline-block;
-            transition: all 0.3s ease;
+            transition: var(--transition-ui);
         }
 
         .btn-primary:hover {
             background: #45a675;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
+            box-shadow: none;
             color: white;
         }
 

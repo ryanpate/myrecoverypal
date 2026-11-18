@@ -7,9 +7,7 @@
 .blog-header {
     background: #1e4d8b !important;
     padding: 110px 1.5rem 64px;
-    color: white;
     text-align: center;
-    --heading-color: currentColor;
 }
 
 .blog-header h1 {
@@ -23,7 +21,7 @@
     max-width: 540px;
     margin: 0.6rem auto 0;
     font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.92);
+    color: var(--text-muted);
 }
 
 /* Update other gradient references */
@@ -68,7 +66,7 @@
     padding: 0.75rem;
     border-radius: 8px;
     font-weight: 600;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
 }
 
 /* Resources Container */
@@ -118,15 +116,15 @@
     color: white;
     border: none;
     padding: 0.7rem 1.75rem;
-    border-radius: 50px;
+    border-radius: var(--radius-btn, 10px);
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transition-ui);
 }
 
 .search-button:hover {
     background: #45a675;
-    box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
+    box-shadow: none;
 }
 
 /* CTA Button Style (matching main site) */
@@ -136,16 +134,15 @@
     background: var(--accent-color);
     color: white;
     text-decoration: none;
-    border-radius: 50px;
+    border-radius: var(--radius-btn, 10px);
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: var(--transition-ui);
     border: none;
     cursor: pointer;
 }
 
 .cta-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(82, 211, 170, 0.4);
+    box-shadow: none;
     background: #45b89d;
 }
 
@@ -175,8 +172,8 @@
     border-radius: 15px;
     padding: 2rem;
     border: 1px solid var(--border-color, #e5e7eb);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    transition: var(--transition-ui);
     cursor: pointer;
     text-decoration: none;
     color: inherit;
@@ -265,7 +262,7 @@
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: var(--shadow);
-    transition: all 0.3s ease;
+    transition: var(--transition-ui);
 }
 
 .featured-card:hover {
@@ -294,7 +291,7 @@
     background: var(--card-bg, #fff);
     border-radius: 12px;
     box-shadow: var(--shadow);
-    transition: all 0.3s ease;
+    transition: var(--transition-ui);
     margin-bottom: 1rem;
 }
 
@@ -456,7 +453,7 @@
     background: rgba(82, 183, 136, 0.08);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-.tk-card:hover { color: inherit; transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12); }
+.tk-card:hover { color: inherit; transform: translateY(-2px); box-shadow: var(--shadow-hover); }
 .tk-icon { font-size: 1.7rem; line-height: 1; }
 .tk-name { font-weight: 700; font-size: 1.02rem; }
 .tk-desc { font-size: 0.9rem; line-height: 1.4; opacity: 0.82; flex: 1; }

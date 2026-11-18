@@ -56,8 +56,10 @@
     --bg-gray: #F3F4F6;
 
     /* Shadows */
-    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 5px 20px rgba(0, 0, 0, 0.15);
+    /* Resting surfaces are outlined with a hairline, not lifted with a blur.
+       A soft shadow is kept for things that really float or respond to hover. */
+    --shadow: 0 0 0 1px var(--border-color);
+    --shadow-hover: 0 0 0 1px var(--border-color), 0 10px 24px -8px rgba(15, 23, 42, 0.14);
     --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1);
 
     /* Gradients - Updated to match brand */
@@ -66,9 +68,12 @@
     --gradient-accent: #2e8059;
 
     /* Borders */
-    --border-radius: 12px;
-    --border-radius-lg: 15px;
-    --border-radius-xl: 20px;
+    --border-radius: 10px;
+    --border-radius-lg: 14px;
+    --border-radius-xl: 18px;
+    /* Buttons are rounded rectangles; pills are kept for chips and filters. */
+    --radius-btn: 10px;
+    --grain: url("../images/grain-light.png");
 
     /* Additional variables for dark mode compatibility */
     --card-bg: #ffffff;
@@ -144,9 +149,9 @@
 
     /* ---- Radius ---- */
     --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 15px;
-    --radius-xl: 20px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
     --radius-pill: 50px;
     --radius-chip: 25px;
     --radius-badge: 20px;
@@ -158,8 +163,13 @@
 
     /* ---- Motion ---- */
     --ease: cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-fast: 0.15s ease;
-    --transition: 0.3s ease;
+    --transition-fast: var(--dur-fast) var(--ease-out);
+    --transition: var(--dur-menu) var(--ease-out);
+    /* What a control animates on hover, focus and press. Named properties
+       only, so layout properties never tween. */
+    --transition-ui: color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out),
+        opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
     --lift-hover: translateY(-2px);
     --lift-card: translateY(-5px);
 
@@ -218,8 +228,9 @@
     --border-color: #374151;
 
     /* Shadows - darker for dark mode */
-    --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    --shadow-hover: 0 5px 20px rgba(0, 0, 0, 0.4);
+    --shadow: 0 0 0 1px var(--border-color);
+    --shadow-hover: 0 0 0 1px var(--border-color), 0 10px 24px -8px rgba(0, 0, 0, 0.5);
+    --grain: url("../images/grain-dark.png");
     --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.3);
 
     /* Keep brand colors - they have good contrast */
@@ -240,7 +251,7 @@
 
 /* Dark Mode - Body and Base */
 [data-theme="dark"] body {
-    background: var(--bg-lighter);
+    background: var(--bg-lighter) var(--grain);
     color: var(--text-dark);
 }
 
@@ -981,7 +992,37 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
     color: var(--text-dark);
-    background: var(--bg-light);
+    background: var(--bg-light) var(--grain);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* Type: tight display tracking, balanced headings, no orphans in copy,
+   figures that do not jiggle when they change. */
+h1,
+h2,
+h3 {
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+}
+
+p,
+li {
+    text-wrap: pretty;
+}
+
+sup,
+sub {
+    line-height: 0;
+}
+
+.stat-number,
+.big-number,
+.days-display,
+.sobriety-days,
+.milestone-days,
+time {
+    font-variant-numeric: tabular-nums;
 }
 
 /* Headings default to brand blue. Inside a solid-colour panel that sets its
@@ -1038,14 +1079,13 @@ a:hover {
 .prompts-header,
 .entries-header,
 .hero-section {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
-    background: var(--gradient-primary) !important;
-    padding: 100px 0 50px;
-    color: white;
+    /* Page titles sit on the page itself: no coloured band. */
+    background: transparent !important;
+    padding: 3rem 1rem 0.5rem !important;
+    color: var(--text-dark) !important;
     text-align: center;
     position: relative;
-    overflow: hidden;
-    --heading-color: currentColor;
+    margin-bottom: 1.5rem;
 }
 
 .page-header h1,
@@ -1057,9 +1097,9 @@ a:hover {
 .entries-header h1,
 .hero-section h1 {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
-    font-size: 2.5rem;
-    color: white !important;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    font-size: clamp(1.75rem, 1.1rem + 2.2vw, 2.5rem);
+    color: var(--brand-text) !important;
+    text-shadow: none;
     margin-bottom: 0.5rem;
 }
 
@@ -1071,8 +1111,8 @@ a:hover {
 .support-header p,
 .hero-section p {
     font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.95) !important;
-    max-width: 600px;
+    color: var(--text-muted) !important;
+    max-width: 60ch;
     margin: 0 auto;
 }
 
@@ -1089,7 +1129,7 @@ a:hover {
     background: var(--accent-green-strong);
     color: #fff !important;
     border: none;
-    border-radius: 50px;
+    border-radius: var(--radius-btn);
     font-weight: 600;
     cursor: pointer;
     transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
@@ -1106,8 +1146,6 @@ a:hover {
 .search-button:hover,
 .download-button:hover {
     background: var(--accent-green-strong-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
     color: #fff !important;
     --heading-color: currentColor;
 }
@@ -1244,6 +1282,6 @@ input[type="search"] {
     .educational-resources-header,
     .support-header,
     .hero-section {
-        padding: 80px 0 40px;
+        padding: 1.75rem 1rem 0.25rem !important;
     }
 }

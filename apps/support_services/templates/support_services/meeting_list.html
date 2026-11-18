@@ -16,13 +16,13 @@
         border-radius: 10px;
         padding: 20px;
         margin-bottom: 20px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: var(--shadow);
         transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .meeting-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        box-shadow: var(--shadow-hover);
     }
 
     .meeting-time {
@@ -121,7 +121,7 @@
         border-radius: 8px;
         margin-right: 8px;
         margin-bottom: 8px;
-        transition: all 0.2s;
+        transition: var(--transition-ui);
     }
 
     .btn-filter:hover {
@@ -141,7 +141,7 @@
         padding: 60px 20px;
         background: var(--card-bg, #fff);
         border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: var(--shadow);
     }
 
     .no-results h3 {

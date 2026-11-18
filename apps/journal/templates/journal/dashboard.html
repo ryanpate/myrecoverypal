@@ -8,9 +8,7 @@
     .journal-header {
         background: #1e4d8b;
         padding: 100px 0 50px;
-        color: white;
         text-align: center;
-        --heading-color: currentColor;
     }
     
     .journal-container {
@@ -30,7 +28,7 @@
         background: var(--card-bg, #fff);
         padding: 1.5rem;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: var(--shadow);
         text-align: center;
     }
     
@@ -65,14 +63,14 @@
         background: var(--card-bg, #fff);
         padding: 2rem;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: var(--shadow);
     }
     
     .sidebar-card {
         background: var(--card-bg, #fff);
         padding: 1.5rem;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: var(--shadow);
         margin-bottom: 1.5rem;
     }
     
@@ -124,14 +122,13 @@
         color: white;
         padding: 0.75rem 2rem;
         text-decoration: none;
-        border-radius: 50px;
-        transition: all 0.3s ease;
+        border-radius: var(--radius-btn, 10px);
+        transition: var(--transition-ui);
         display: inline-block;
     }
     
     .btn-journal:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        box-shadow: none;
     }
     
     @media (max-width: 768px) {

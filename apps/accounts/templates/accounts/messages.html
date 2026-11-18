@@ -39,7 +39,7 @@
     .messages-wrapper {
         background: var(--card-bg, #fff);
         border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         overflow: hidden;
     }
 
@@ -68,7 +68,7 @@
         border: 1px solid var(--border-color, #e0e0e0);
         border-radius: 25px;
         width: 250px;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
 
     .search-box input:focus {
@@ -97,7 +97,7 @@
         border-radius: 20px;
         color: var(--text-muted, #666);
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         text-decoration: none;
     }
 
@@ -117,10 +117,10 @@
         background: var(--accent-green);
         color: white;
         border: none;
-        border-radius: 25px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         text-decoration: none;
         display: inline-flex;
         align-items: center;
@@ -129,8 +129,7 @@
 
     .compose-btn:hover {
         background: #45a675;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
+        box-shadow: none;
         color: white;
     }
 
@@ -144,7 +143,7 @@
         border-bottom: 1px solid var(--border-color, #f0f0f0);
         display: flex;
         gap: 1rem;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         cursor: pointer;
         position: relative;
     }
@@ -260,7 +259,7 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
 
     .action-btn:hover {
@@ -321,7 +320,7 @@
         border-radius: 5px;
         color: var(--text-muted, #666);
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         text-decoration: none;
     }
 

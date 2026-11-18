@@ -94,7 +94,7 @@
     .resource-main-card {
         background: var(--card-bg, #fff);
         border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         overflow: hidden;
     }
     
@@ -178,17 +178,16 @@
         background: var(--accent-color);
         color: white;
         text-decoration: none;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
         font-size: 1.1rem;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         border: none;
         cursor: pointer;
     }
     
     .download-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(82, 211, 170, 0.4);
+        box-shadow: none;
         background: #45b89d;
     }
     
@@ -204,7 +203,7 @@
     
     .external-link-button:hover {
         background: var(--secondary-color);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        box-shadow: none;
     }
     
     .action-buttons {
@@ -223,10 +222,10 @@
         background: var(--card-bg, #fff);
         color: var(--brand-text, #1e4d8b);
         border: 2px solid var(--primary-color);
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         text-decoration: none;
         font-weight: 500;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         cursor: pointer;
     }
     

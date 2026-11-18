@@ -22,7 +22,7 @@
         background: var(--card-bg, #fff);
         padding: 3rem 2rem;
         border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--shadow);
         max-width: 500px;
         text-align: center;
         animation: slideUp 0.5s ease;
@@ -75,13 +75,13 @@
         color: white;
         padding: 18px 40px;
         font-size: 1.3rem;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         display: inline-flex;
         align-items: center;
         gap: 1rem;
-        box-shadow: 0 5px 20px rgba(82, 183, 136, 0.3);
+        box-shadow: none;
         width: 100%;
         justify-content: center;
         max-width: 350px;
@@ -89,8 +89,7 @@
 
     .install-btn-large:hover {
         background: #45a675;
-        transform: translateY(-3px);
-        box-shadow: 0 8px 30px rgba(82, 183, 136, 0.4);
+        box-shadow: none;
     }
 
     .install-btn-large i {

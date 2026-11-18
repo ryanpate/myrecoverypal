@@ -158,16 +158,15 @@
         background: var(--accent-green, #52b788);
         color: white;
         text-decoration: none;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
         font-size: 1.2rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(82, 183, 136, 0.3);
+        transition: var(--transition-ui);
+        box-shadow: none;
     }
 
     .aic-hero .cta-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(82, 183, 136, 0.4);
+        box-shadow: none;
         background: #45a675;
     }
 
@@ -175,19 +174,17 @@
         display: inline-block;
         padding: 1rem 2.5rem;
         background: transparent;
-        color: white;
+        color: var(--brand-text);
         text-decoration: none;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
         font-size: 1.2rem;
-        transition: all 0.3s ease;
-        border: 2px solid rgba(255, 255, 255, 0.7);
+        transition: var(--transition-ui);
+        border: 1px solid var(--border-color);
     }
 
     .aic-hero .cta-button-outline:hover {
-        transform: translateY(-3px);
-        background: rgba(255, 255, 255, 0.15);
-        border-color: white;
+        border-color: var(--brand-text);
     }
 
     /* Features Section */
@@ -334,7 +331,7 @@
         background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 2.5rem 2rem;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--shadow);
         text-align: center;
         position: relative;
         transition: transform 0.3s ease;
@@ -405,10 +402,10 @@
     .pricing-card .cta-button {
         display: inline-block;
         padding: 0.85rem 2rem;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
         font-size: 1.05rem;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         text-decoration: none;
         margin-top: 0.5rem;
     }
@@ -416,12 +413,11 @@
     .pricing-card .cta-button-primary {
         background: var(--accent-green, #52b788);
         color: white;
-        box-shadow: 0 4px 15px rgba(82, 183, 136, 0.3);
+        box-shadow: none;
     }
 
     .pricing-card .cta-button-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(82, 183, 136, 0.4);
+        box-shadow: none;
         background: #45a675;
     }
 
@@ -485,7 +481,7 @@
         gap: 0.5rem;
         font-weight: 600;
         color: #d32f2f;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--shadow);
     }
 
     .crisis-number i {
@@ -555,14 +551,13 @@
         background: var(--accent-green, #52b788);
         color: white;
         text-decoration: none;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
         font-size: 1.3rem;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
 
     .cta-section .cta-button:hover {
-        transform: translateY(-3px);
         background: #45a675;
     }
 
@@ -600,7 +595,7 @@
         text-decoration: none;
         color: var(--brand-text, #1e4d8b);
         font-weight: 500;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--shadow);
         transition: transform 0.3s;
     }
 

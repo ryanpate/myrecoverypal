@@ -184,7 +184,7 @@
     background: var(--card-bg, #fff);
     padding: 2rem;
     border-radius: 12px;
-    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow);
     transition: transform 0.3s;
 }
 
@@ -235,7 +235,7 @@
     background: var(--card-bg, #fff);
     padding: 2rem;
     border-radius: 12px;
-    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow);
 }
 
 .contact-faq h2 {
@@ -372,14 +372,13 @@
     background: #52b788;
     color: white;
     text-decoration: none;
-    border-radius: 50px;
+    border-radius: var(--radius-btn, 10px);
     font-weight: 600;
-    transition: all 0.3s;
+    transition: var(--transition-ui);
 }
 
 .btn-primary:hover {
     background: #45a675;
-    transform: translateY(-2px);
 }
 
 .btn-secondary {
@@ -388,10 +387,10 @@
     background: var(--card-bg, #fff);
     color: var(--brand-text, #1e4d8b);
     text-decoration: none;
-    border-radius: 50px;
+    border-radius: var(--radius-btn, 10px);
     font-weight: 600;
     border: 2px solid #1e4d8b;
-    transition: all 0.3s;
+    transition: var(--transition-ui);
 }
 
 .btn-secondary:hover {

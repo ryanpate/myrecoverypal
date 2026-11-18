@@ -16,10 +16,10 @@
   .sc-hero .sc-cta {
     display: inline-flex; align-items: center; gap: .5rem; margin-top: 1.4rem;
     background: var(--card-bg, #fff); color: var(--brand-text, #1e4d8b) !important; font-weight: 700;
-    padding: .8rem 1.5rem; border-radius: 999px; text-decoration: none;
-    box-shadow: 0 6px 16px rgba(0,0,0,.16); transition: transform .15s ease, box-shadow .15s ease;
+    padding: .8rem 1.5rem; border-radius: var(--radius-btn, 10px); text-decoration: none;
+    box-shadow: none; transition: transform .15s ease, box-shadow .15s ease;
   }
-  .sc-hero .sc-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,.22); }
+  .sc-hero .sc-cta:hover {box-shadow: none; }
 
   .sc-section-label { font-size: .8rem;    font-weight: 700; color: var(--text-muted,#7a869a); margin: 2.25rem 0 .9rem; }
 
@@ -62,10 +62,10 @@
   .sc-empty p { margin: 0 auto 1.25rem; max-width: 26rem; color: var(--text-muted,#6b7689); line-height: 1.55; }
   .sc-empty .sc-cta2 { display: inline-flex; align-items: center; gap: .5rem;
     background: var(--gradient-primary, #1e4d8b); color: #fff !important;
-    font-weight: 700; padding: .8rem 1.6rem; border-radius: 999px; text-decoration: none;
-    box-shadow: 0 8px 20px rgba(30,77,139,.25); transition: transform .15s ease;
+    font-weight: 700; padding: .8rem 1.6rem; border-radius: var(--radius-btn, 10px); text-decoration: none;
+    box-shadow: none; transition: transform .15s ease;
     --heading-color: currentColor; }
-  .sc-empty .sc-cta2:hover { transform: translateY(-2px); }
+  .sc-empty .sc-cta2:hover {}
 
   /* Levels explainer */
   .sc-levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: .9rem; }

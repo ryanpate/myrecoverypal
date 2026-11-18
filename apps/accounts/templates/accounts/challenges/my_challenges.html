@@ -20,9 +20,9 @@
         background: rgba(255, 255, 255, 0.2);
         color: white !important;
         text-decoration: none;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
@@ -31,8 +31,7 @@
 
     .header-btn:hover {
         background: rgba(255, 255, 255, 0.3);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: none;
         color: white !important;
         text-decoration: none;
     }
@@ -41,7 +40,7 @@
         background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 2rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         margin-bottom: 2rem;
     }
 
@@ -95,7 +94,7 @@
         background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 2rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         margin-bottom: 2rem;
     }
 
@@ -104,12 +103,12 @@
         border-radius: 12px;
         padding: 1.5rem;
         margin-bottom: 1.5rem;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         background: var(--card-bg, #fff);
     }
 
     .challenge-card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: var(--shadow-hover);
         transform: translateY(-2px);
     }
 
@@ -181,7 +180,7 @@
         border: none;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: var(--transition-ui);
         text-decoration: none;
         display: inline-block;
         text-align: center;
@@ -202,7 +201,7 @@
         border: 1px solid var(--border-color, #dee2e6);
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: var(--transition-ui);
         text-decoration: none;
         display: inline-block;
         text-align: center;
@@ -284,7 +283,7 @@
         background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 2rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
     }
 
     .completed-challenge-item {

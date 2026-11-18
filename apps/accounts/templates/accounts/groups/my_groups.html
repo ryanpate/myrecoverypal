@@ -20,9 +20,9 @@
         background: rgba(255, 255, 255, 0.2);
         color: white !important;
         text-decoration: none;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
@@ -31,8 +31,7 @@
 
     .header-btn:hover {
         background: rgba(255, 255, 255, 0.3);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: none;
         color: white !important;
         text-decoration: none;
     }
@@ -41,8 +40,8 @@
         background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 0;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s;
+        box-shadow: var(--shadow);
+        transition: var(--transition-ui);
         overflow: hidden;
         margin-bottom: 2rem;
         border: 2px solid transparent;
@@ -50,7 +49,7 @@
 
     .group-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        box-shadow: var(--shadow-hover);
         border-color: #52b788;
     }
 
@@ -151,7 +150,7 @@
         border-radius: 8px;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: var(--transition-ui);
         text-decoration: none;
         text-align: center;
         display: flex;
@@ -177,7 +176,6 @@
     }
 
     .action-btn:hover {
-        transform: translateY(-1px);
         text-decoration: none;
         color: white;
     }
@@ -206,7 +204,7 @@
         border-radius: 15px;
         padding: 2rem;
         text-align: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
     }
 
     /* Use the gradient style from base.html for stat numbers */

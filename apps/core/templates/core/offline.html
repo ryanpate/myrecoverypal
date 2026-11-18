@@ -20,7 +20,7 @@
         background: var(--card-bg, #fff);
         padding: 3rem 2rem;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
     }
 
     .offline-icon {
@@ -59,13 +59,12 @@
         border-radius: 5px;
         border: none;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
 
     .retry-btn:hover {
         background: #45a675;
         border-color: #45a675;
-        transform: translateY(-2px);
     }
 
     .offline-tips {

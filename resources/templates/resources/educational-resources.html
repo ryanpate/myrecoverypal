@@ -38,14 +38,14 @@
         background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 2rem;
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--shadow);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         height: 100%;
     }
 
     .resource-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+        box-shadow: var(--shadow-hover);
     }
 
     .card-icon {
@@ -116,7 +116,7 @@
         background: var(--card-bg, #fff);
         padding: 3rem;
         border-radius: 15px;
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        box-shadow: none;
         margin-top: 3rem;
     }
 
@@ -134,8 +134,7 @@
     }
 
     .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(139, 127, 240, 0.3);
+        box-shadow: none;
     }
 
     .btn-outline-primary {
@@ -143,13 +142,12 @@
         border-color: #8b7ff0;
         padding: 0.75rem 2rem;
         font-weight: 600;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
 
     .btn-outline-primary:hover {
         background: #8b7ff0;
         border-color: #8b7ff0;
-        transform: translateY(-2px);
     }
 
     /* Mobile Responsive */

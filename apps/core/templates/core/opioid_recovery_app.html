@@ -75,8 +75,8 @@
     .ar-hero { background: linear-gradient(135deg, #4a1942 0%, #893168 60%, #c1666b 100%); padding: 5rem 2rem; text-align: center; color: white; }
     .ar-hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.2; }
     .ar-hero p { font-size: 1.3rem; max-width: 700px; margin: 0 auto 2rem; opacity: 0.95; }
-    .ar-hero .cta-button { display: inline-block; padding: 1rem 2.5rem; background: #52b788; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.2rem; transition: all 0.3s ease; }
-    .ar-hero .cta-button:hover { transform: translateY(-3px); background: #45a675; }
+    .ar-hero .cta-button { display: inline-block; padding: 1rem 2.5rem; background: #52b788; color: white; text-decoration: none; border-radius: var(--radius-btn, 10px); font-weight: 600; font-size: 1.2rem; transition: var(--transition-ui); }
+    .ar-hero .cta-button:hover {background: #45a675; }
     .crisis-bar { background: #ffeeba; padding: 1rem 2rem; text-align: center; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark); }
     .crisis-bar p { margin: 0; color: #856404; font-weight: 500; }
     .crisis-bar a { color: #533f03; font-weight: 700; }
@@ -123,13 +123,13 @@
     .cta-section { padding: 5rem 2rem; background: linear-gradient(135deg, #4a1942 0%, #893168 100%); text-align: center; color: white; }
     .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
     .cta-section p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.95; }
-    .cta-section .cta-button { display: inline-block; padding: 1rem 3rem; background: #52b788; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.3rem; transition: all 0.3s ease; }
-    .cta-section .cta-button:hover { transform: translateY(-3px); background: #45a675; }
+    .cta-section .cta-button { display: inline-block; padding: 1rem 3rem; background: #52b788; color: white; text-decoration: none; border-radius: var(--radius-btn, 10px); font-weight: 600; font-size: 1.3rem; transition: var(--transition-ui); }
+    .cta-section .cta-button:hover {background: #45a675; }
     .cta-section .subtext { margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; }
     .related-links { padding: 3rem 2rem; background: var(--bg-light, #f8f9fa); }
     .related-links h3 { text-align: center; color: var(--accent-text, #4a1942); margin-bottom: 1.5rem; }
     .related-grid { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto; }
-    .related-grid a { background: var(--card-bg, #fff); padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: var(--accent-text, #4a1942); font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
+    .related-grid a { background: var(--card-bg, #fff); padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: var(--accent-text, #4a1942); font-weight: 500; box-shadow: var(--shadow); transition: transform 0.3s; }
     .related-grid a:hover { transform: translateY(-3px); }
     @media (max-width: 768px) { .ar-hero h1 { font-size: 2rem; } }
 </style>

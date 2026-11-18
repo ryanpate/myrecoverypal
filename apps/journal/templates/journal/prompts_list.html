@@ -8,9 +8,7 @@
     .prompts-header {
         background: #1e4d8b;
         padding: 100px 0 50px;
-        color: white;
         text-align: center;
-        --heading-color: currentColor;
     }
     
     .prompts-container {
@@ -23,7 +21,7 @@
         background: var(--card-bg, #fff);
         padding: 1.5rem;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: var(--shadow);
         margin-bottom: 2rem;
     }
     
@@ -41,7 +39,7 @@
         border-radius: 20px;
         text-decoration: none;
         color: var(--text-muted, #666);
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
     
     .filter-btn:hover {
@@ -67,8 +65,8 @@
         background: var(--card-bg, #fff);
         padding: 1.5rem;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
+        box-shadow: var(--shadow);
+        transition: var(--transition-ui);
         position: relative;
         overflow: hidden;
     }
@@ -85,7 +83,7 @@
     
     .prompt-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        box-shadow: var(--shadow-hover);
     }
     
     .prompt-category {
@@ -130,15 +128,14 @@
         color: white;
         padding: 0.5rem 1.5rem;
         text-decoration: none;
-        border-radius: 20px;
+        border-radius: var(--radius-btn, 10px);
         font-size: 0.9rem;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
     
     .use-prompt-btn:hover {
         background: var(--primary-color);
-        transform: translateY(-2px);
-        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        box-shadow: none;
     }
     
     .no-prompts {

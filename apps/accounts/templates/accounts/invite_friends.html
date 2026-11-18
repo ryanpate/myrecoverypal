@@ -30,7 +30,7 @@
     .invite-card {
         background: var(--card-bg, #fff);
         border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--shadow);
         padding: 2rem;
         margin-bottom: 1.5rem;
     }
@@ -129,12 +129,11 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
 
     .btn-copy:hover {
         background: #45a078;
-        transform: translateY(-1px);
     }
 
     .btn-copy.copied {
@@ -154,16 +153,15 @@
         align-items: center;
         gap: 0.5rem;
         padding: 0.75rem 1.25rem;
-        border-radius: 25px;
+        border-radius: var(--radius-btn, 10px);
         text-decoration: none;
         font-weight: 500;
         font-size: 0.9rem;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
 
     .share-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: none;
     }
 
     .share-btn.facebook {
@@ -241,17 +239,16 @@
         background: #2e8059;
         color: white;
         border: none;
-        border-radius: 30px;
+        border-radius: var(--radius-btn, 10px);
         font-size: 1.1rem;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         --heading-color: currentColor;
     }
 
     .btn-generate:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(77, 184, 232, 0.4);
+        box-shadow: none;
     }
 
     /* Empty State */

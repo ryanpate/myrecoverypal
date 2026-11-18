@@ -41,12 +41,12 @@ accept. Dismiss hides it for 14 days via localStorage.
         color: var(--brand-text, #1e4d8b);
         font-weight: 700;
         padding: 0.6rem 1.3rem;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         text-decoration: none;
         white-space: nowrap;
         transition: transform 0.15s ease;
     }
-    .supporter-invite-btn:hover { transform: translateY(-1px); color: var(--text-dark, #0f2d56); }
+    .supporter-invite-btn:hover {color: var(--text-dark, #0f2d56); }
     .supporter-invite-dismiss {
         position: absolute;
         top: 6px;

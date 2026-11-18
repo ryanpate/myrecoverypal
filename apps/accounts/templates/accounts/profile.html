@@ -12,51 +12,34 @@
 
     /* Profile Header Section - Complete override of base styles */
     .profile-header {
-        background: #1e4d8b !important;
-        padding: 100px 0 100px !important;
-        /* Increased bottom padding to make room for avatar */
-        color: white !important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2.5rem 1rem 1rem !important;
         text-align: center !important;
-        position: relative !important;
         margin-bottom: 0 !important;
-        /* Remove margin, use padding instead */
-        overflow: visible !important;
-        /* Ensure avatar isn't clipped */
-        --heading-color: currentColor;
-    }
-
-    .profile-header h1,
-    .profile-header p {
-        color: white !important;
-        position: relative;
-        z-index: 2;
     }
 
     .profile-header h1 {
-        font-size: 2.5rem !important;
-        margin-bottom: 0.5rem !important;
+        font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.1rem) !important;
+        margin-bottom: 0.25rem !important;
     }
 
     .profile-header p {
-        font-size: 1.1rem !important;
-        opacity: 0.95 !important;
+        font-size: 1rem !important;
     }
 
-    /* Avatar Container - positioned at bottom of header */
+    /* Avatar sits above the name, in the flow */
     .profile-avatar-container {
-        position: absolute;
-        bottom: -60px;
-        /* Half of avatar height extends below header */
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 10;
+        order: -1;
+        margin-bottom: 0.9rem;
     }
 
     .profile-avatar {
         width: 120px;
         height: 120px;
         border-radius: 50%;
-        border: 4px solid white;
+        border: 1px solid var(--border-color);
         background: #1e4d8b;
         display: flex;
         align-items: center;
@@ -78,8 +61,7 @@
     /* Main Container - add top margin to account for avatar */
     .profile-container {
         max-width: 1000px;
-        margin: 80px auto 0 auto !important;
-        /* Top margin accounts for avatar overhang */
+        margin: 0.5rem auto 0 auto !important;
         padding: 0 2rem 2rem;
     }
 
@@ -96,7 +78,7 @@
         font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         text-decoration: none;
         display: inline-block;
         margin: 0 0.5rem;
@@ -109,8 +91,7 @@
     }
 
     .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3);
+        box-shadow: none;
         color: white;
     }
 
@@ -121,8 +102,7 @@
 
     .btn-secondary:hover {
         background: #5a6268;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        box-shadow: none;
         color: white;
     }
 
@@ -130,17 +110,16 @@
         background: #1e4d8b;
         color: white;
         padding: 0.75rem 2rem;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         text-decoration: none;
         display: inline-block;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         font-weight: 600;
         --heading-color: currentColor;
     }
 
     .message-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(77, 184, 232, 0.3);
+        box-shadow: none;
         color: white;
     }
 
@@ -189,10 +168,10 @@
         border: none;
         color: white;
         padding: 0.5rem 1rem;
-        border-radius: 20px;
+        border-radius: var(--radius-btn, 10px);
         font-size: 0.85rem;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: var(--transition-ui);
         display: flex;
         align-items: center;
         gap: 0.4rem;
@@ -380,7 +359,7 @@
         background: var(--card-bg, #fff);
         padding: 2rem;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         margin-bottom: 2rem;
     }
 
@@ -462,7 +441,7 @@
         border-radius: 5px;
         text-align: center;
         border: 2px solid transparent;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         position: relative;
     }
 
@@ -598,29 +577,14 @@
 
     /* Mobile Responsive */
     @media (max-width: 768px) {
-        .profile-header {
-            padding: 80px 0 80px !important;
-            /* Maintain space for avatar on mobile */
-        }
-
         .profile-header h1 {
             font-size: 2rem !important;
-        }
-
-        .profile-avatar-container {
-            bottom: -50px;
-            /* Smaller avatar, less overhang */
         }
 
         .profile-avatar {
             width: 100px;
             height: 100px;
             font-size: 2rem;
-        }
-
-        .profile-container {
-            margin-top: 70px !important;
-            /* Adjust for smaller avatar */
         }
 
         .info-row {
@@ -689,7 +653,7 @@
         </a>
         {% endif %}
         {% if not request.user.get_recovery_pal and profile_user != request.user %}
-        <a href="{% url 'accounts:request_pal' profile_user.username %}" class="btn" style="background: #2e8059; color: white; padding: 0.75rem 1.5rem; border-radius: 50px; text-decoration: none; display: inline-block; transition: all 0.3s ease; font-weight: 600; margin-left: 0.5rem; --heading-color: currentColor;">
+        <a href="{% url 'accounts:request_pal' profile_user.username %}" class="btn" style="background: #2e8059; color: white; padding: 0.75rem 1.5rem; border-radius: var(--radius-btn, 10px); text-decoration: none; display: inline-block; transition: var(--transition-ui); font-weight: 600; margin-left: 0.5rem; --heading-color: currentColor;">
             <i class="fas fa-handshake-angle"></i> Request as Pal
         </a>
         {% elif request.user.get_recovery_pal == profile_user %}

@@ -99,7 +99,7 @@
 .ws-upsell ul { margin: 0 0 1rem 1.1rem; padding: 0; line-height: 1.6; }
 .ws-upsell a.ws-upsell-btn {
     display: inline-block; background: var(--card-bg, #fff); color: #2d6a4f; font-weight: 700;
-    padding: 0.6rem 1.3rem; border-radius: 50px; text-decoration: none;
+    padding: 0.6rem 1.3rem; border-radius: var(--radius-btn, 10px); text-decoration: none;
 }
 
 .ws-tip { border-left: 4px solid var(--accent-color, #52b788); padding: 0.6rem 1rem; margin: 1rem 0; opacity: 0.9; }
@@ -116,7 +116,7 @@
     border: 1px solid rgba(128,128,128,0.25); border-radius: 14px; padding: 1.2rem;
     text-decoration: none; color: inherit; transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-.ws-card:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,0.12); color: inherit; }
+.ws-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); color: inherit; }
 .ws-card-icon { font-size: 1.8rem; }
 .ws-card h2 { font-size: 1.1rem; margin: 0; }
 .ws-card p { margin: 0; opacity: 0.8; font-size: 0.93rem; line-height: 1.45; flex: 1; }
@@ -164,7 +164,7 @@
     display: block; height: 100%; box-sizing: border-box; border: 1px solid rgba(128,128,128,0.25);
     border-radius: 12px; padding: 0.8rem 1rem; text-decoration: none; color: inherit;
 }
-.rf-list a:hover { box-shadow: 0 6px 14px rgba(0,0,0,0.1); color: inherit; }
+.rf-list a:hover { box-shadow: var(--shadow-hover); color: inherit; }
 .rf-list strong { display: flex; justify-content: space-between; gap: 0.5rem; }
 .rf-list small { display: block; opacity: 0.75; margin-top: 0.25rem; line-height: 1.4; }
 .rf-lock { opacity: 0.6; font-size: 0.85rem; white-space: nowrap; }
