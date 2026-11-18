@@ -28,13 +28,14 @@
         background: var(--primary-color, #2c7a7b); color: #fff; border: none;
         font-weight: 700; font-size: 1rem; padding: 0.75rem 1.8rem;
         border-radius: 8px; cursor: pointer;
+        --heading-color: currentColor;
     }
     .rpp-pdf, .rpp-pdf-locked {
         display: inline-flex; align-items: center; gap: 0.45rem;
         font-weight: 600; text-decoration: none;
         border-radius: 8px; padding: 0.7rem 1.3rem;
     }
-    .rpp-pdf { background: #1e4d8b; color: #fff; }
+    .rpp-pdf { background: #1e4d8b; color: #fff; --heading-color: currentColor; }
     .rpp-pdf-locked { background: rgba(128,128,128,0.15); color: inherit; }
     .rpp-add-contact { background: none; border: 1px dashed rgba(128,128,128,0.5);
         border-radius: 8px; padding: 0.45rem 1rem; cursor: pointer; font-weight: 600; }

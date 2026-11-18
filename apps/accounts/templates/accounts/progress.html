@@ -19,6 +19,7 @@
         text-align: center;
         margin-bottom: 2rem;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        --heading-color: currentColor;
     }
 
     .progress-header h1 {
@@ -70,6 +71,7 @@
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
         position: relative;
         overflow: hidden;
+        --heading-color: currentColor;
     }
 
     .milestone-card::after {
@@ -470,6 +472,7 @@
         font-weight: 600;
         text-decoration: none;
         display: inline-block;
+        --heading-color: currentColor;
     }
 
     .btn-checkin:hover {
@@ -613,6 +616,7 @@
         color: white;
         font-size: 1rem;
         flex-shrink: 0;
+        --heading-color: currentColor;
     }
 
     .checkin-prompt-bar .prompt-text {
@@ -1811,7 +1815,7 @@
 
     <div id="homeAnchorPrompt" style="display:none; border:1px solid #1e4d8b; background:#f4f8fc; border-radius:12px; padding:14px; margin:0 0 14px; text-align:center;">
         <div style="color:#1e4d8b; font-weight:600; margin-bottom:6px;">Today sounds heavy.</div>
-        <a id="homeAnchorLink" href="#" style="background:#1e4d8b; color:#fff; padding:9px 18px; border-radius:8px; text-decoration:none; font-weight:600; display:inline-block;">
+        <a id="homeAnchorLink" href="#" style="background:#1e4d8b; color:#fff; padding:9px 18px; border-radius:8px; text-decoration:none; font-weight:600; display:inline-block; --heading-color: currentColor;">
             Talk it through with Anchor
         </a>
         <div id="homeSupportAudio" class="support-audio" style="display:none; margin-top:12px; padding-top:10px; border-top:1px solid rgba(30,77,139,0.18);">
@@ -1884,7 +1888,7 @@
         {% if days_sober and days_sober > 0 %}
         <div style="text-align: center; margin: 1rem 0;">
             <a href="{% url 'accounts:milestone_badge_creator' %}"
-               style="display: inline-block; background: var(--primary-dark); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: 0.95rem; text-decoration: none;">
+               style="display: inline-block; background: var(--primary-dark); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: 0.95rem; text-decoration: none; --heading-color: currentColor;">
                 <i class="fas fa-award" aria-hidden="true"></i> Create &amp; Share Badge
             </a>
         </div>
@@ -1970,7 +1974,7 @@
                         <li class="premium-gate-feature" style="padding: 0.4rem 0; font-size: 0.9rem;"><i class="fas fa-check-circle" style="color: #52b788; margin-right: 0.5rem;" aria-hidden="true"></i> 90-day check-in heatmap</li>
                         <li class="premium-gate-feature" style="padding: 0.4rem 0; font-size: 0.9rem;"><i class="fas fa-check-circle" style="color: #52b788; margin-right: 0.5rem;" aria-hidden="true"></i> Streak protection: one missed day a week won't break your streak</li>
                     </ul>
-                    <a href="{% url 'accounts:pricing' %}" style="display: block; background: #764ba2; color: white; padding: 0.85rem 1.5rem; border-radius: 12px; font-weight: 600; font-size: 1rem; text-decoration: none; margin-bottom: 0.75rem; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(102,126,234,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+                    <a href="{% url 'accounts:pricing' %}" style="display: block; background: #764ba2; color: white; padding: 0.85rem 1.5rem; border-radius: 12px; font-weight: 600; font-size: 1rem; text-decoration: none; margin-bottom: 0.75rem; transition: transform 0.2s, box-shadow 0.2s; --heading-color: currentColor;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(102,126,234,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
                         Upgrade to Premium
                     </a>
                     <p class="premium-gate-price-note stripe-only" style="font-size: 0.8rem; margin: 0;">From $5/month billed annually. Cancel anytime.</p>

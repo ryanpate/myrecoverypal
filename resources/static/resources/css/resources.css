@@ -21,6 +21,7 @@
     padding: 110px 1.5rem 64px;
     color: white;
     text-align: center;
+    --heading-color: currentColor;
 }
 
 .blog-header h1 {

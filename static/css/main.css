@@ -969,6 +969,14 @@ body {
     background: var(--bg-light);
 }
 
+/* Headings default to brand blue. Inside a solid-colour panel that sets its
+   own text colour, the panel sets --heading-color: currentColor so headings
+   follow that text colour instead of disappearing into the background. */
+.text-white,
+.text-light {
+    --heading-color: currentColor;
+}
+
 h1,
 h2,
 h3,
@@ -976,7 +984,7 @@ h4,
 h5,
 h6 {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    color: var(--primary-dark);
+    color: var(--heading-color, var(--primary-dark));
     font-weight: 600;
     line-height: 1.2;
 }
@@ -1022,6 +1030,7 @@ a:hover {
     text-align: center;
     position: relative;
     overflow: hidden;
+    --heading-color: currentColor;
 }
 
 .page-header h1,
@@ -1071,6 +1080,7 @@ a:hover {
     transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
     display: inline-block;
     text-align: center;
+    --heading-color: currentColor;
 }
 
 .btn:hover,
@@ -1084,6 +1094,7 @@ a:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
     color: #fff !important;
+    --heading-color: currentColor;
 }
 
 /* Press feedback */
