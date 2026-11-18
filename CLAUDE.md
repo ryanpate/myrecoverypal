@@ -23,7 +23,7 @@ npx cap sync ios                              # Sync web assets to iOS
 npx cap open android                          # Open Android Studio
 npx cap open ios                              # Open Xcode
 
-# Android Release Build (requires Java 17+)
+# Android Release Build (requires Java 21; Capacitor 8)
 JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home" \
   ANDROID_HOME=~/Library/Android/sdk \
   ./android/gradlew -p android bundleRelease
@@ -318,7 +318,7 @@ ABTestingService.track_conversion(user, 'onboarding_flow', 'completed_onboarding
 - **APNs** - iOS push notifications (HTTP/2 via httpx + PyJWT)
 
 ### Mobile
-- **Capacitor 7.4.4** - Native wrapper (iOS + Android projects tracked in git)
+- **Capacitor 8.6.2** - Native wrapper (iOS + Android projects tracked in git). iOS 15+, Android minSdk 24 / targetSdk 36. Run `pod install` from `ios/App` with `LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8`.
 - **12 Capacitor plugins:** push-notifications, status-bar, haptics, share, app, keyboard, browser, local-notifications, preferences, RevenueCat, biometric-auth
 - **6 native JS modules:** capacitor-native.js, capacitor-push.js, capacitor-iap.js, capacitor-biometric.js, capacitor-transitions.js, capacitor-offline.js
 - **Firebase Cloud Messaging** - Push notifications (Android configured)

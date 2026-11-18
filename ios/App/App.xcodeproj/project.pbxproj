@@ -23,6 +23,7 @@
 		8091CBCF2F5A622B005CED78 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8091CBCE2F5A622B005CED78 /* PrivacyInfo.xcprivacy */; };
 		8137A207493F3EEA856E976D /* SobrietyCounterWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = E3DBA7C402CF04F06D84A77D /* SobrietyCounterWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		963FD41A504EC6379A40E6C3 /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 443512C95668536597C4E494 /* Pods_App.framework */; };
+		5BA26ED7568A4CD893352946 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8838FA683FA446D18281703C /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +75,7 @@
 		DF1FB7BF622B498469F6C677 /* WidgetBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetBridge.swift; sourceTree = "<group>"; };
 		E3DBA7C402CF04F06D84A77D /* SobrietyCounterWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SobrietyCounterWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE17783F2AF73653732837B9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		8838FA683FA446D18281703C /* SceneDelegate.swift */ = {isa = PBXFileReference; name = "SceneDelegate.swift"; path = "SceneDelegate.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +145,7 @@
 				50B271D01FEDC1A000F3C39B /* public */,
 				DF1FB7BF622B498469F6C677 /* WidgetBridge.swift */,
 				9FB615B9E780C619D424276D /* MyViewController.swift */,
+				8838FA683FA446D18281703C /* SceneDelegate.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -222,8 +225,8 @@
 		504EC2FC1FED79650016851F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 0920;
+				LastSwiftUpdateCheck = 920;
+				LastUpgradeCheck = 920;
 				TargetAttributes = {
 					504EC3031FED79650016851F = {
 						CreatedOnToolsVersion = 9.2;
@@ -332,6 +335,7 @@
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				015FF9F14F0142684C5DEAD9 /* WidgetBridge.swift in Sources */,
 				160E86BF9B071B5B429E7046 /* MyViewController.swift in Sources */,
+				5BA26ED7568A4CD893352946 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
