@@ -11,7 +11,7 @@
         padding: 2rem;
         background: var(--card-bg, #fff);
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
     }
 
     .message-form-container h2 {
@@ -73,8 +73,7 @@
     }
 
     .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3);
+        box-shadow: none;
     }
 </style>
 {% endblock %}

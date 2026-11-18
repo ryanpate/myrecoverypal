@@ -22,7 +22,7 @@
         border-radius: 15px;
         padding: 30px;
         margin-bottom: 30px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
     }
 
     .professional-header h1 {
@@ -68,7 +68,7 @@
         border: 2px solid var(--border-color, #e0e0e0);
         border-radius: 8px;
         font-size: 16px;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
 
     .search-group input:focus,
@@ -92,8 +92,7 @@
     }
 
     .btn-search:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: none;
     }
 
     .btn-clear {
@@ -105,7 +104,7 @@
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: var(--transition-ui);
         margin-left: 10px;
     }
 
@@ -140,7 +139,7 @@
         padding: 8px 15px;
         border-radius: 20px;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: var(--transition-ui);
         font-size: 14px;
     }
 
@@ -162,7 +161,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: var(--shadow);
     }
 
     .results-count {
@@ -188,8 +187,8 @@
         background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 25px;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
+        box-shadow: var(--shadow);
+        transition: var(--transition-ui);
         cursor: pointer;
         position: relative;
         overflow: hidden;
@@ -207,7 +206,7 @@
 
     .facility-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        box-shadow: var(--shadow-hover);
     }
 
     .facility-header {
@@ -288,12 +287,12 @@
         font-weight: 600;
         cursor: pointer;
         margin-top: 20px;
-        transition: all 0.2s ease;
+        transition: var(--transition-ui);
         --heading-color: currentColor;
     }
 
     .btn-view-details:hover {
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: none;
     }
 
     .no-results {
@@ -301,7 +300,7 @@
         border-radius: 15px;
         padding: 60px 30px;
         text-align: center;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--shadow);
     }
 
     .no-results h3 {
@@ -326,7 +325,7 @@
         border-radius: 15px;
         padding: 40px;
         text-align: center;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--shadow);
     }
 
     .welcome-message h3 {

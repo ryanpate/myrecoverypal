@@ -36,23 +36,23 @@
     }
 
     .group-avatar {
-        width: 120px;
-        height: 120px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.2);
+        width: 72px;
+        height: 72px;
+        border-radius: var(--border-radius-lg);
+        background: var(--bg-gray);
+        color: var(--brand-text);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 4rem;
+        font-size: 2rem;
         margin-bottom: 1rem;
-        border: 3px solid rgba(255, 255, 255, 0.3);
     }
 
     .info-card {
         background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 2rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         margin-bottom: 2rem;
     }
 
@@ -69,7 +69,7 @@
         border-radius: 10px;
         padding: 1rem;
         text-align: center;
-        transition: all 0.3s;
+        transition: var(--transition-ui);
     }
 
     .member-card:hover {
@@ -133,7 +133,7 @@
         border-radius: 10px;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: var(--transition-ui);
         text-decoration: none;
         display: inline-flex;
         align-items: center;
@@ -158,7 +158,6 @@
     }
 
     .join-btn:hover:not(.disabled) {
-        transform: translateY(-2px);
         text-decoration: none;
         color: inherit;
     }
@@ -188,7 +187,7 @@
         background: var(--card-bg, #fff);
         border-radius: 12px;
         margin-bottom: 1rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         overflow: hidden;
     }
 
@@ -285,7 +284,7 @@
         cursor: pointer;
         padding: 0.5rem 1rem;
         border-radius: 8px;
-        transition: all 0.3s;
+        transition: var(--transition-ui);
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -491,7 +490,7 @@
         border-radius: 8px;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: var(--transition-ui);
     }
 
     .edit-modal-cancel {
@@ -538,7 +537,7 @@
                 <div class="d-flex gap-3 align-items-center">
                     <span class="badge bg-light text-dark">{{ group.get_group_type_display }}</span>
                     <span class="badge bg-light text-dark">{{ group.get_privacy_level_display }}</span>
-                    <span><i class="fas fa-users"></i> {{ group.active_member_count|default:group.member_count }}
+                    <span style="color: var(--text-muted);"><i class="fas fa-users"></i> {{ group.active_member_count|default:group.member_count }}
                         members</span>
                 </div>
             </div>

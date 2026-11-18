@@ -10,7 +10,7 @@
         border-radius: 10px;
         padding: 30px;
         margin-bottom: 30px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
     }
 
     .form-section h3 {
@@ -37,7 +37,7 @@
         border-radius: 8px;
         padding: 10px 15px;
         width: 100%;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
 
     .form-control:focus,
@@ -67,7 +67,7 @@
         border: 2px solid var(--border-color, #E5E7EB);
         border-radius: 10px;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         flex: 1;
         min-width: 150px;
     }
@@ -96,17 +96,16 @@
         color: white;
         padding: 12px 30px;
         border: none;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
         font-size: 1.1rem;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         cursor: pointer;
     }
 
     .btn-submit:hover {
         background: #45a675;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
+        box-shadow: none;
     }
 
     .btn-cancel {
@@ -114,10 +113,10 @@
         color: var(--text-muted, #6B7280);
         padding: 12px 30px;
         border: 2px solid var(--border-color, #E5E7EB);
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
         font-size: 1.1rem;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         cursor: pointer;
         text-decoration: none;
         display: inline-block;
@@ -180,7 +179,7 @@
         border: 1px solid var(--border-color, #E5E7EB);
         border-radius: 8px;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: var(--transition-ui);
     }
 
     .type-checkbox:hover {

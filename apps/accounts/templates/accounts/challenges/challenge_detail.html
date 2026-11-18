@@ -48,7 +48,7 @@
         background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 2rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         margin-bottom: 2rem;
     }
 
@@ -76,7 +76,7 @@
         background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 1.5rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         margin-bottom: 2rem;
     }
 
@@ -87,7 +87,7 @@
         border-radius: 8px;
         margin-bottom: 0.5rem;
         background: var(--bg-light, #f8f9fa);
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
 
     .leaderboard-item:hover {
@@ -144,7 +144,7 @@
         background: var(--card-bg, #fff);
         border-radius: 12px;
         padding: 2rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         margin-bottom: 2rem;
     }
 
@@ -191,7 +191,7 @@
         background: var(--card-bg, #fff);
         border-radius: 12px;
         margin-bottom: 1rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         overflow: hidden;
     }
 
@@ -259,7 +259,7 @@
         cursor: pointer;
         padding: 0.5rem 1rem;
         border-radius: 8px;
-        transition: all 0.3s;
+        transition: var(--transition-ui);
         display: flex;
         align-items: center;
         gap: 0.5rem;

@@ -18,12 +18,12 @@
   .rnw-points li { display: flex; gap: .7rem; align-items: flex-start; margin-bottom: .8rem;
     color: var(--text-color,#33415c); font-size: .97rem; line-height: 1.45; }
   .rnw-points i { color: var(--accent-green,#52b788); margin-top: .2rem; }
-  .rnw-btn { display: block; text-align: center; text-decoration: none; border-radius: 999px; padding: .95rem;
+  .rnw-btn { display: block; text-align: center; text-decoration: none; border-radius: var(--radius-btn, 10px); padding: .95rem;
     font-size: 1.05rem; font-weight: 700; color: #fff !important;
     background: var(--gradient-primary, #1e4d8b);
-    box-shadow: 0 8px 20px rgba(30,77,139,.25); transition: transform .15s ease;
+    box-shadow: none; transition: transform .15s ease;
     --heading-color: currentColor; }
-  .rnw-btn:hover { transform: translateY(-2px); }
+  .rnw-btn:hover {}
   .rnw-note { text-align: center; font-size: .82rem; color: var(--text-muted,#8a94a6); margin: .9rem 0 0; }
   [data-theme="dark"] .rnw-card { background: #243041; border-color: #344256; }
   [data-theme="dark"] .rnw-points li { color: #d7deea; }

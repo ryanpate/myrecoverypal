@@ -20,11 +20,11 @@
     color: var(--text-color,#33415c); font-size: .95rem; }
   .acc-points i { color: var(--accent-green,#52b788); margin-top: .2rem; }
   .acc-btn { display: inline-block; width: 100%; box-sizing: border-box; border: none; cursor: pointer;
-    border-radius: 999px; padding: .95rem; font-size: 1.05rem; font-weight: 700; color: #fff;
+    border-radius: var(--radius-btn, 10px); padding: .95rem; font-size: 1.05rem; font-weight: 700; color: #fff;
     background: var(--gradient-primary, #1e4d8b);
-    box-shadow: 0 8px 20px rgba(30,77,139,.25); transition: transform .15s ease;
+    box-shadow: none; transition: transform .15s ease;
     --heading-color: currentColor; }
-  .acc-btn:hover { transform: translateY(-2px); }
+  .acc-btn:hover {}
   [data-theme="dark"] .acc-card { background: #243041; border-color: #344256; }
   [data-theme="dark"] .acc-card h1, [data-theme="dark"] .acc-points li { color: #e8eef7; }
 </style>

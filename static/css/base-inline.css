@@ -724,7 +724,7 @@ body {
     /* 56px = nav-container content height (10px pad + 32px logo + 10px pad + 4px borders) */
     padding-left: var(--safe-area-inset-left);
     padding-right: var(--safe-area-inset-right);
-    background: var(--bg-light);
+    background: var(--bg-light) var(--grain);
     color: var(--text-dark);
 }
 
@@ -828,15 +828,13 @@ a.btn-primary:hover {
 .demo-header,
 .post-header,
 .hero-section {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
-    background: var(--gradient-primary) !important;
-    padding: 100px 0 50px;
-    color: white !important;
+    /* Page titles sit on the page itself: no coloured band. */
+    background: transparent !important;
+    padding: 3rem 1rem 0.5rem !important;
+    color: var(--text-dark) !important;
     text-align: center;
     position: relative;
-    overflow: hidden;
-    margin-bottom: 2rem;
-    --heading-color: currentColor;
+    margin-bottom: 1.5rem;
 }
 
 /* Ensure all text elements within page headers are white */
@@ -965,8 +963,8 @@ a.btn-primary:hover {
 .hero-section h5,
 .hero-section h6,
 .hero-section p {
-    color: white !important;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    color: var(--brand-text) !important;
+    text-shadow: none;
 }
 
 /* Header h1 specific styles */
@@ -988,7 +986,7 @@ a.btn-primary:hover {
 .demo-header h1,
 .post-header h1,
 .hero-section h1 {
-    font-size: 2.5rem;
+    font-size: clamp(1.75rem, 1.1rem + 2.2vw, 2.5rem);
     font-weight: 700;
     margin-bottom: 0.5rem;
     position: relative;
@@ -1014,12 +1012,69 @@ a.btn-primary:hover {
 .post-header p,
 .hero-section p {
     font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.95) !important;
-    max-width: 600px;
+    color: var(--text-muted) !important;
+    max-width: 60ch;
     margin: 0 auto;
 }
 
-/* Animated background for all headers */
+/* Page titles that define their own header class get the same treatment. */
+:is(.group-header, .messages-header, .contact-header, .cookies-header, .guidelines-header, .install-header, .success-header, .team-header, .newsletter-header, .support-hero, .service-header, .checklist-header, .bookmarks-header, .resource-detail-header, .crisis-header) {
+    background: transparent !important;
+    padding: 3rem 1rem 0.5rem !important;
+    color: var(--text-dark) !important;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+:is(.group-header, .messages-header, .contact-header, .cookies-header, .guidelines-header, .install-header, .success-header, .team-header, .newsletter-header, .support-hero, .service-header, .checklist-header, .bookmarks-header, .resource-detail-header, .crisis-header) :is(h1, h2, h3, h4, h5, h6) {
+    color: var(--brand-text) !important;
+    text-shadow: none;
+}
+
+:is(.group-header, .messages-header, .contact-header, .cookies-header, .guidelines-header, .install-header, .success-header, .team-header, .newsletter-header, .support-hero, .service-header, .checklist-header, .bookmarks-header, .resource-detail-header, .crisis-header) h1 {
+    font-size: clamp(1.75rem, 1.1rem + 2.2vw, 2.5rem) !important;
+}
+
+:is(.group-header, .messages-header, .contact-header, .cookies-header, .guidelines-header, .install-header, .success-header, .team-header, .newsletter-header, .support-hero, .service-header, .checklist-header, .bookmarks-header, .resource-detail-header, .crisis-header) :is(p, .lead) {
+    color: var(--text-muted) !important;
+    text-shadow: none;
+}
+
+@media (max-width: 768px) {
+    :is(.group-header, .messages-header, .contact-header, .cookies-header, .guidelines-header, .install-header, .success-header, .team-header, .newsletter-header, .support-hero, .service-header, .checklist-header, .bookmarks-header, .resource-detail-header, .crisis-header) {
+        padding: 1.75rem 1rem 0.25rem !important;
+    }
+}
+
+/* Secondary actions that sit under a page title. */
+.header-action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.header-btn {
+    background: var(--card-bg) !important;
+    color: var(--brand-text) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-btn) !important;
+    box-shadow: none !important;
+    padding: 0.55rem 1rem !important;
+    font-size: 0.92rem;
+    transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+
+.header-btn:hover {
+    border-color: var(--brand-text) !important;
+    transform: none !important;
+}
+
+.header-btn:active {
+    transform: scale(0.97) !important;
+}
+
 
 /* Notification Indicator Styles */
 .notification-indicator {
@@ -1456,17 +1511,16 @@ a.btn-primary:hover {
     background: var(--primary-dark);
     color: white !important;
     padding: 0.4rem 0.85rem;
-    border-radius: 25px;
+    border-radius: var(--radius-btn, 10px);
     font-weight: 600;
     font-size: 0.9rem;
     text-decoration: none;
     transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
-    box-shadow: 0 1px 4px rgba(15, 45, 86, 0.25);
+    box-shadow: none;
     --heading-color: currentColor;
 }
 .court-cta:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(15, 45, 86, 0.35);
+    box-shadow: none;
     color: white !important;
 }
 .court-cta.active {
@@ -1670,7 +1724,7 @@ a.cta-button:visited {
     background: var(--accent-green-strong);
     color: #fff !important;
     text-decoration: none;
-    border-radius: 50px;
+    border-radius: var(--radius-btn, 10px);
     font-weight: 600;
     transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
     display: inline-block;
@@ -1681,8 +1735,7 @@ a.cta-button:visited {
 .cta-button:hover,
 a.cta-button:hover {
     background: var(--accent-green-strong-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
+    box-shadow: none;
     color: #fff !important;
     --heading-color: currentColor;
 }
@@ -1782,7 +1835,7 @@ a.cta-button:active {
     border-radius: 8px;
     display: none;
     z-index: 999;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow);
     font-size: 0.85rem;
     --heading-color: currentColor;
 }
@@ -2287,8 +2340,7 @@ footer {
 }
 
 .footer-donate-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: none;
     color: inherit;
 }
 
@@ -2502,7 +2554,7 @@ footer {
     .my-groups-header,
     .my-challenges-header,
     .hero-section {
-        padding: 80px 1rem 40px;
+        padding: 1.75rem 1rem 0.25rem !important;
     }
 
     .page-header h1,
@@ -2830,7 +2882,7 @@ ALERT MESSAGES - Fixed positioning
     padding: 1rem 1.5rem;
     border-radius: 12px;
     border: none;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow);
     animation: slideDown 0.3s ease-out;
     backdrop-filter: blur(10px);
 }
@@ -2951,8 +3003,7 @@ ALERT MESSAGES - Fixed positioning
 
 .btn-success:hover {
     background: #45a675 !important;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(82, 183, 136, 0.3);
+    box-shadow: none;
 }
 
 /* Form inputs */
@@ -3075,7 +3126,7 @@ select:focus {
 
 .trial-countdown-banner .btn:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: none;
 }
 
 /* Mobile responsive trial banner */
@@ -3105,7 +3156,7 @@ select:focus {
     left: 0;
     right: 0;
     background: var(--card-bg, #fff);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: none;
     z-index: 9999;
     padding: 0.75rem 1rem;
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0));
@@ -3144,12 +3195,12 @@ select:focus {
     background: #2e8059;
     color: white;
     padding: 0.65rem 1.5rem;
-    border-radius: 50px;
+    border-radius: var(--radius-btn, 10px);
     font-weight: 600;
     font-size: 0.95rem;
     text-decoration: none;
     white-space: nowrap;
-    box-shadow: 0 2px 10px rgba(82, 183, 136, 0.3);
+    box-shadow: none;
     transition: transform var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
     --heading-color: currentColor;
 }
@@ -3163,7 +3214,7 @@ select:focus {
    ([data-theme="dark"] a) outranks the button's white text. */
 [data-theme="dark"] .mobile-sticky-cta {
     background: var(--card-bg, #1f2937);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: none;
 }
 
 [data-theme="dark"] .mobile-sticky-cta-text strong {

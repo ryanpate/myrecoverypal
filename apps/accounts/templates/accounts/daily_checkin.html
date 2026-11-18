@@ -71,7 +71,7 @@
         align-items: center;
         justify-content: center;
         background: rgba(82, 183, 136, 0.12);
-        transition: all var(--transition);
+        transition: var(--transition-ui);
     }
 
     .pledge-icon i { font-size: 1.55rem; color: var(--color-accent); }
@@ -110,10 +110,10 @@
         cursor: pointer;
         font-family: var(--font-sans);
         font-weight: 700;
-        border-radius: var(--radius-pill);
+        border-radius: var(--radius-btn, 10px);
         background: var(--color-accent);
         color: #fff;
-        transition: all var(--transition);
+        transition: var(--transition-ui);
         padding: 0.8rem 1.6rem;
         font-size: 1rem;
     }
@@ -179,13 +179,13 @@
         padding: 0.45rem 0.9rem;
         background: var(--surface-card);
         border: 1.5px solid var(--border-input);
-        border-radius: var(--radius-pill);
+        border-radius: var(--radius-btn, 10px);
         color: var(--brand-text, #1e4d8b);
         font-family: var(--font-sans);
         font-size: 0.85rem;
         font-weight: 600;
         cursor: pointer;
-        transition: all var(--transition-fast);
+        transition: var(--transition-ui);
     }
     .pledge-action-btn:hover { box-shadow: var(--shadow-hover); }
 
@@ -271,7 +271,7 @@
         border-radius: var(--radius-md);
         border: 2px solid transparent;
         background: var(--surface-sunken);
-        transition: all var(--transition-fast);
+        transition: var(--transition-ui);
     }
     .mood-cell input { display: none; }
     .mood-cell .emoji { font-size: 1.9rem; line-height: 1; filter: grayscale(0.2); }
@@ -303,7 +303,7 @@
         font-family: var(--font-sans);
         font-weight: 600;
         font-size: 0.9rem;
-        transition: all var(--transition-fast);
+        transition: var(--transition-ui);
     }
     .craving-pill.selected {
         border-color: var(--color-secondary);

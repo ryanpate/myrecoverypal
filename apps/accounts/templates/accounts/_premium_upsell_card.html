@@ -35,42 +35,42 @@ Dismiss hides it for 7 days via localStorage so it never nags.
         justify-content: space-between;
         gap: 1rem;
         flex-wrap: wrap;
-        background: #2e8059;
-        color: #fff;
-        border-radius: 16px;
+        background: var(--card-bg);
+        color: var(--text-dark);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-lg);
         padding: 1.1rem 1.25rem;
         margin: 0 0 1.25rem;
-        box-shadow: 0 6px 18px rgba(45,106,79,0.25);
-        --heading-color: currentColor;
     }
     .premium-upsell-body { display: flex; align-items: center; gap: 0.9rem; flex: 1 1 240px; }
     .premium-upsell-icon { font-size: 1.9rem; line-height: 1; }
     .premium-upsell-title { font-weight: 700; font-size: 1.05rem; }
-    .premium-upsell-text { font-size: 0.9rem; opacity: 0.92; line-height: 1.4; }
+    .premium-upsell-text { font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; }
     .premium-upsell-btn {
-        background: var(--card-bg, #fff);
-        color: #2d6a4f;
+        background: transparent;
+        color: var(--brand-text);
+        border: 1px solid var(--border-color);
         font-weight: 700;
         padding: 0.6rem 1.3rem;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         text-decoration: none;
         white-space: nowrap;
         transition: transform 0.15s ease;
     }
-    .premium-upsell-btn:hover { transform: translateY(-1px); color: #1b4332; }
+    .premium-upsell-btn:hover { border-color: var(--brand-text); color: var(--brand-text); }
     .premium-upsell-dismiss {
         position: absolute;
         top: 6px;
         right: 10px;
         background: none;
         border: none;
-        color: rgba(255,255,255,0.8);
+        color: var(--text-faint);
         font-size: 1.4rem;
         line-height: 1;
         cursor: pointer;
         padding: 2px 6px;
     }
-    .premium-upsell-dismiss:hover { color: #fff; }
+    .premium-upsell-dismiss:hover { color: var(--text-dark); }
 </style>
 <script nonce="{{ csp_nonce }}">
 (function(){

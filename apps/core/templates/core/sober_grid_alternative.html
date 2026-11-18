@@ -147,16 +147,15 @@
         background: #52b788;
         color: white;
         text-decoration: none;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
         font-size: 1.2rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(82, 183, 136, 0.3);
+        transition: var(--transition-ui);
+        box-shadow: none;
     }
 
     .sg-hero .cta-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(82, 183, 136, 0.4);
+        box-shadow: none;
         background: #45a675;
     }
 
@@ -354,7 +353,7 @@
         border-radius: 10px;
         margin-bottom: 1rem;
         padding: 1.5rem;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        box-shadow: var(--shadow);
     }
 
     .faq-item h3 {
@@ -394,14 +393,13 @@
         background: #52b788;
         color: white;
         text-decoration: none;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
         font-size: 1.3rem;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
 
     .cta-section .cta-button:hover {
-        transform: translateY(-3px);
         background: #45a675;
     }
 
@@ -454,7 +452,7 @@
         <h3>Where Did Sober Grid Users Go?</h3>
         <p>Many former Sober Grid users have been looking for alternatives that offer the same core experience: a social network built specifically for people in recovery. MyRecoveryPal was built to fill that gap — with a social feed, peer connections, recovery groups, and features Sober Grid never had like an AI recovery coach, group challenges, and private journaling.</p>
 
-        <a href="{% url 'accounts:register' %}" class="cta-button" style="display: inline-block; padding: 0.8rem 2rem; background: #52b788; color: white; text-decoration: none; border-radius: 50px; font-weight: 600; margin-top: 1rem;">Join MyRecoveryPal Free</a>
+        <a href="{% url 'accounts:register' %}" class="cta-button" style="display: inline-block; padding: 0.8rem 2rem; background: #52b788; color: white; text-decoration: none; border-radius: var(--radius-btn, 10px); font-weight: 600; margin-top: 1rem;">Join MyRecoveryPal Free</a>
     </div>
 </section>
 

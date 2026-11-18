@@ -27,7 +27,7 @@
         background: var(--card-bg, #fff);
         padding: 4rem 2rem;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: var(--shadow);
         max-width: 700px;
         margin: 0 auto;
         text-align: center;
@@ -65,14 +65,13 @@
         padding: 12px 30px;
         font-size: 1.1rem;
         border-radius: 5px;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         margin-top: 2rem;
     }
 
     .btn-primary:hover {
         background: #45a675;
         border-color: #45a675;
-        transform: translateY(-2px);
     }
 
     @media (max-width: 768px) {

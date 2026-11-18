@@ -16,7 +16,7 @@
     .milestone-form-card {
         background: var(--card-bg, #fff);
         border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         overflow: hidden;
     }
 
@@ -65,7 +65,7 @@
         border-radius: 25px;
         padding: 0.75rem 1rem;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -129,7 +129,7 @@
         cursor: pointer;
         position: relative;
         white-space: nowrap;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         border-radius: 8px 8px 0 0;
     }
 
@@ -185,7 +185,7 @@
         border-radius: 8px;
         padding: 0.875rem 1rem;
         font-size: 1rem;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         background: #f8f9fc;
     }
 
@@ -288,7 +288,7 @@
         font-size: 1rem;
         border: none;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
@@ -304,8 +304,7 @@
     }
 
     .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(82, 183, 136, 0.3);
+        box-shadow: none;
     }
 
     .btn-secondary {

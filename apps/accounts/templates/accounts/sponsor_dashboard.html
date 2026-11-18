@@ -10,7 +10,7 @@
         background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 2rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         margin-bottom: 2rem;
         transition: transform 0.3s;
     }
@@ -31,7 +31,7 @@
         padding: 1.5rem;
         border: 2px solid var(--border-color, #e0e0e0);
         margin-bottom: 1rem;
-        transition: all 0.3s;
+        transition: var(--transition-ui);
     }
 
     .sponsor-card:hover {
@@ -101,7 +101,7 @@
         cursor: pointer;
         text-decoration: none;
         font-weight: 500;
-        transition: all 0.3s;
+        transition: var(--transition-ui);
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
@@ -124,7 +124,6 @@
     }
 
     .action-btn:hover {
-        transform: translateY(-1px);
         text-decoration: none;
         color: inherit;
     }

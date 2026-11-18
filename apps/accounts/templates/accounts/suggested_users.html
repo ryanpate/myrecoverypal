@@ -10,15 +10,15 @@
         background: var(--card-bg, #fff);
         border-radius: 15px;
         padding: 1.5rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         margin-bottom: 1.5rem;
-        transition: all 0.3s;
+        transition: var(--transition-ui);
         height: 100%;
     }
 
     .user-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+        box-shadow: var(--shadow-hover);
     }
 
     .user-avatar {
@@ -70,7 +70,7 @@
         padding: 0.75rem;
         border-radius: 8px;
         font-weight: 600;
-        transition: all 0.3s;
+        transition: var(--transition-ui);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -79,8 +79,7 @@
 
     .btn-follow:hover {
         background: #45a374;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3);
+        box-shadow: none;
     }
 
     .empty-state {

@@ -58,13 +58,12 @@
         font-weight: 600;
         font-size: 0.95rem;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         --heading-color: currentColor;
     }
 
     .btn-new-session:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 15px rgba(30, 77, 139, 0.3);
+        box-shadow: none;
     }
 
     .sidebar-sessions {
@@ -88,7 +87,7 @@
         border-radius: 10px;
         text-decoration: none;
         color: var(--text-dark);
-        transition: all 0.2s ease;
+        transition: var(--transition-ui);
         margin-bottom: 2px;
         cursor: pointer;
     }
@@ -661,7 +660,7 @@
         font-size: 0.88rem;
         color: var(--text-dark);
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: var(--transition-ui);
     }
 
     .welcome-chip:hover {
@@ -734,7 +733,7 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: var(--transition-ui);
         flex-shrink: 0;
         font-size: 0.85rem;
         --heading-color: currentColor;
@@ -742,7 +741,7 @@
 
     .btn-send:hover:not(:disabled) {
         transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(30, 77, 139, 0.3);
+        box-shadow: none;
     }
 
     .btn-send:disabled {
@@ -823,18 +822,17 @@
         background: var(--gradient-primary);
         color: white;
         border: none;
-        border-radius: 25px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
         font-size: 0.95rem;
         text-decoration: none;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         cursor: pointer;
         --heading-color: currentColor;
     }
 
     .btn-upgrade:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(30, 77, 139, 0.25);
+        box-shadow: none;
         color: white;
         text-decoration: none;
     }
@@ -868,7 +866,7 @@
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         z-index: 100;
         opacity: 0;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         pointer-events: none;
         max-width: 90%;
         text-align: center;

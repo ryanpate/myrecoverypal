@@ -38,12 +38,12 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        border-radius: var(--radius-pill);
+        border-radius: var(--radius-btn, 10px);
         padding: 0.7rem 1.4rem;
         font-weight: 700;
         font-size: 0.95rem;
         text-decoration: none;
-        transition: all var(--transition);
+        transition: var(--transition-ui);
     }
     .ckdone-btn.primary { background: var(--color-accent); color: #fff; }
     .ckdone-btn.primary:hover { transform: var(--lift-hover); box-shadow: var(--shadow-accent); }

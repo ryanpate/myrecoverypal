@@ -9,11 +9,9 @@
     .about-header {
         background: #1e4d8b;
         padding: 100px 0 50px;
-        color: white;
         text-align: center;
         position: relative;
         overflow: hidden;
-        --heading-color: currentColor;
     }
 
     .about-header::before {
@@ -47,7 +45,7 @@
         background: var(--card-bg, #fff);
         padding: 4rem 0;
         margin-bottom: 3rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: var(--shadow);
     }
 
     .mission-card {
@@ -80,7 +78,7 @@
         background: var(--card-bg, #fff);
         border-radius: 10px;
         margin-bottom: 3rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: var(--shadow);
     }
 
     .story-content {
@@ -99,13 +97,13 @@
         background: var(--card-bg, #fff);
         padding: 2rem;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
+        box-shadow: var(--shadow);
+        transition: var(--transition-ui);
     }
 
     .value-card:hover {
         transform: translateX(5px);
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-hover);
     }
 
     .value-card h4 {
@@ -136,7 +134,7 @@
         background: var(--card-bg, #fff);
         padding: 2rem;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: var(--shadow);
     }
 
     .team-avatar {
@@ -210,7 +208,7 @@
         text-align: center;
         border-radius: 10px;
         margin-top: 3rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: none;
     }
 
     .cta-buttons {
@@ -227,13 +225,12 @@
         padding: 12px 30px;
         font-size: 1.1rem;
         border-radius: 5px;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
 
     .btn-primary:hover {
         background: #45a675;
         border-color: #45a675;
-        transform: translateY(-2px);
     }
 
     .btn-outline {
@@ -243,7 +240,7 @@
         padding: 12px 30px;
         font-size: 1.1rem;
         border-radius: 5px;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
     }
 
     .btn-outline:hover {

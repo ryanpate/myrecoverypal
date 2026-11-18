@@ -165,7 +165,7 @@
             background: var(--card-bg, #fff);
             border-radius: 8px;
             border: 1px solid var(--border-color, #e9ecef);
-            transition: all 0.3s ease;
+            transition: var(--transition-ui);
             cursor: pointer;
             user-select: none;
         }
@@ -193,7 +193,7 @@
             margin-right: 12px;
             flex-shrink: 0;
             position: relative;
-            transition: all 0.3s ease;
+            transition: var(--transition-ui);
             background: var(--card-bg, #fff);
         }
 
@@ -240,7 +240,7 @@
             font-size: 16px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition-ui);
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -253,8 +253,7 @@
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            box-shadow: none;
         }
 
         .btn-secondary {
@@ -279,7 +278,7 @@
             font-weight: 500;
             opacity: 0;
             transform: translateY(20px);
-            transition: all 0.3s ease;
+            transition: var(--transition-ui);
             box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
         }
 

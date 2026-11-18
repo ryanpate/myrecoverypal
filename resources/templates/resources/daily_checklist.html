@@ -28,7 +28,7 @@
     .checklist-card {
         background: var(--card-bg, #fff);
         border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         overflow: hidden;
     }
 
@@ -140,7 +140,7 @@
         background: var(--bg-light, #fafbfc);
         border-radius: 10px;
         border: 1px solid var(--border-color, #e9ecef);
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         cursor: pointer;
         user-select: none;
     }
@@ -178,7 +178,7 @@
         border: 2px solid var(--border-color, #dee2e6);
         border-radius: 6px;
         background: var(--card-bg, #fff);
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         pointer-events: none;
     }
 
@@ -227,11 +227,11 @@
     .btn {
         padding: 12px 30px;
         border: none;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
         font-size: 16px;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         text-decoration: none;
         display: inline-flex;
         align-items: center;
@@ -245,8 +245,7 @@
     }
 
     .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        box-shadow: none;
     }
 
     .btn-secondary {

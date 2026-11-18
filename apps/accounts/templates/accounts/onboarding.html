@@ -26,7 +26,7 @@
     .onboarding-card {
         background: var(--card-bg, #fff);
         border-radius: 24px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow);
         overflow: hidden;
     }
 
@@ -44,7 +44,7 @@
         height: 10px;
         border-radius: 50%;
         background: #e0e0e0;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         /* light surface in both themes: keep dark text */
         --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
     }
@@ -111,7 +111,7 @@
         border: 2px solid transparent;
         border-radius: 14px;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: var(--transition-ui);
     }
 
     .stage-card:hover {
@@ -163,7 +163,7 @@
         align-items: center;
         justify-content: center;
         color: transparent;
-        transition: all 0.2s ease;
+        transition: var(--transition-ui);
     }
 
     .stage-card.selected .stage-check {
@@ -190,7 +190,7 @@
         border: 2px solid var(--border-color, #e8e8e8);
         border-radius: 12px;
         font-size: 1rem;
-        transition: all 0.2s ease;
+        transition: var(--transition-ui);
         background: var(--bg-light, #fafafa);
         box-sizing: border-box;
     }
@@ -339,7 +339,7 @@
         font-weight: 600;
         font-size: 1rem;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: var(--transition-ui);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -355,8 +355,7 @@
     }
 
     .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(77, 184, 232, 0.35);
+        box-shadow: none;
     }
 
     /* Responsive */

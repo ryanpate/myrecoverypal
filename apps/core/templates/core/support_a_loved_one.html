@@ -56,7 +56,7 @@
         <p style="font-size:1.25rem; opacity:.95; line-height:1.55; max-width:720px; margin:0 auto 2rem;">
             Follow your loved one's recovery progress, cheer them on, and get a gentle heads-up if they go quiet — all with their consent, and always under their control.
         </p>
-        <a href="{% if user.is_authenticated %}{% url 'accounts:supporter_invite_member' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:supporter_invite_member' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:var(--card-bg, #fff); color:var(--brand-text, #1e4d8b); text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem; box-shadow:0 8px 20px rgba(0,0,0,.18);">Invite your loved one &rarr;</a>
+        <a href="{% if user.is_authenticated %}{% url 'accounts:supporter_invite_member' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:supporter_invite_member' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:var(--card-bg, #fff); color:var(--brand-text, #1e4d8b); text-decoration:none; border-radius:var(--radius-btn, 10px); font-weight:700; font-size:1.1rem; box-shadow:0 8px 20px rgba(0,0,0,.18);">Invite your loved one &rarr;</a>
         <p style="font-size:.9rem; opacity:.85; margin-top:1rem;">Free to invite &middot; Supporter $7.99/mo only once they accept &middot; Free for the person in recovery</p>
     </div>
 </section>
@@ -155,7 +155,7 @@
     <div style="max-width:760px; margin:auto;">
         <h2 style="font-size:2rem; font-weight:800; margin:0 0 1rem;">Be part of their journey</h2>
         <p style="font-size:1.15rem; opacity:.95; margin:0 0 2rem;">Create a free account, then connect with your loved one in minutes.</p>
-        <a href="{% if user.is_authenticated %}{% url 'accounts:supporter_invite_member' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:supporter_invite_member' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:var(--card-bg, #fff); color:var(--brand-text, #1e4d8b); text-decoration:none; border-radius:50px; font-weight:700; font-size:1.1rem;">Invite your loved one &rarr;</a>
+        <a href="{% if user.is_authenticated %}{% url 'accounts:supporter_invite_member' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:supporter_invite_member' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:var(--card-bg, #fff); color:var(--brand-text, #1e4d8b); text-decoration:none; border-radius:var(--radius-btn, 10px); font-weight:700; font-size:1.1rem;">Invite your loved one &rarr;</a>
         <p class="stripe-only" style="font-size:.95rem; opacity:.9; margin-top:1.5rem;">
             Would rather give than follow? <a href="{% url 'core:gift_premium' %}" style="color:#fff; text-decoration:underline;">Gift them a year of Premium &rarr;</a>
         </p>

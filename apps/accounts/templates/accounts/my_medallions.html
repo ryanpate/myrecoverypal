@@ -22,13 +22,13 @@
         color: #fff;
         text-decoration: none;
         padding: 0.85rem 1.75rem;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 700;
         font-size: 1rem;
-        box-shadow: 0 6px 18px rgba(30, 77, 139, 0.25);
+        box-shadow: none;
         --heading-color: currentColor;
     }
-    .gallery-create-btn:hover { color: #fff; transform: translateY(-2px); }
+    .gallery-create-btn:hover { color: #fff;}
     .gallery-create-btn i { color: #d4af37; }
 
     .gallery-grid {
@@ -45,7 +45,7 @@
         flex-direction: column;
         transition: transform 0.2s, box-shadow 0.2s;
     }
-    .gallery-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1); }
+    .gallery-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
     .gallery-card-img {
         width: 100%;
         aspect-ratio: 1;

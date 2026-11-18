@@ -163,16 +163,15 @@
         background: var(--card-bg, #fff);
         color: var(--accent-green);
         text-decoration: none;
-        border-radius: 50px;
+        border-radius: var(--radius-btn, 10px);
         font-weight: 600;
         font-size: 1.1rem;
-        transition: all 0.3s ease;
+        transition: var(--transition-ui);
         display: inline-block;
     }
 
     .cta-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        box-shadow: none;
     }
 
     .cta-button-secondary {
