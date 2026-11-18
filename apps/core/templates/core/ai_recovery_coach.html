@@ -190,7 +190,6 @@
         border-color: white;
     }
 
-
     /* Features Section */
     .features-section {
         padding: 4rem 2rem;
@@ -220,18 +219,22 @@
     }
 
     .feature-card {
-        background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        text-align: center;
-        transition: transform 0.3s ease;
+        /* Plain text columns: spacing does the grouping, no card chrome */
+        text-align: left;
+        background: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
     }
 
     .feature-card:hover {
-        transform: translateY(-5px);
+        transform: none;
+        box-shadow: none;
     }
 
+    [data-theme="dark"] .feature-card {
+        background: none;
+    }
 
     .feature-card h3 {
         color: var(--primary-dark, #1e4d8b);
@@ -345,18 +348,6 @@
         border: 3px solid var(--accent-green, #52b788);
     }
 
-    .pricing-card .badge {
-        position: absolute;
-        top: -14px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--accent-green, #52b788);
-        color: white;
-        padding: 0.35rem 1.25rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
 
     .pricing-card h3 {
         color: var(--primary-dark, #1e4d8b);
@@ -454,7 +445,6 @@
         margin: 0 auto;
         padding: 2rem;
         background: #fff8e1;
-        border-left: 4px solid #ffc107;
         border-radius: 8px;
     }
 
@@ -620,16 +610,10 @@
 
     /* Dark Mode */
 
-
-
     [data-theme="dark"] .features-section {
         background: #16161e;
     }
 
-    [data-theme="dark"] .feature-card {
-        background: #1e1e2e;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    }
 
     [data-theme="dark"] .feature-card h3 {
         color: #6db3f2;
@@ -768,8 +752,6 @@
             font-size: 1.1rem;
         }
 
-
-
         .features-section h2,
         .how-it-works h2,
         .pricing-section h2,
@@ -887,7 +869,6 @@
             <a href="{% url 'accounts:register' %}" class="cta-button cta-button-secondary">Get Started Free</a>
         </div>
         <div class="pricing-card featured">
-            <div class="badge">Most Popular</div>
             <h3>Premium</h3>
             <div class="pricing-price">$9.99<span>/month</span></div>
             <ul class="pricing-features">

@@ -162,7 +162,6 @@
 
     .notice-box {
         background: #fff3cd;
-        border-left: 4px solid #ffc107;
         padding: 1.5rem;
         margin: 2rem auto;
         max-width: 800px;
@@ -264,21 +263,21 @@
     }
 
     .feature-card {
-        background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        text-align: center;
-        transition: transform 0.3s ease;
+        /* Plain text columns: spacing does the grouping, no card chrome */
+        text-align: left;
+        background: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
     }
 
     .feature-card:hover {
-        transform: translateY(-5px);
+        transform: none;
+        box-shadow: none;
     }
 
-    .feature-card .icon {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
+    [data-theme="dark"] .feature-card {
+        background: none;
     }
 
     .feature-card h3 {
@@ -534,32 +533,26 @@
     <p class="subtitle">Built by people in recovery, for people in recovery</p>
     <div class="features-grid">
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-users"></i></div>
             <h3>Social Recovery Network</h3>
             <p>Connect with others who understand your journey. Share updates, celebrate milestones, and build genuine friendships.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-calendar-check"></i></div>
             <h3>Sobriety Tracking</h3>
             <p>Track your days sober with automatic milestone celebrations. The community celebrates every victory with you.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-user-friends"></i></div>
             <h3>Recovery Pals</h3>
             <p>Find an accountability partner who checks in on you. Mutual support for those tough moments.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-layer-group"></i></div>
             <h3>Recovery Groups</h3>
             <p>Join or create groups based on your interests, location, or recovery type. Find your tribe.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-trophy"></i></div>
             <h3>Challenges</h3>
             <p>Join 30, 60, or 90-day challenges to stay accountable. Daily check-ins keep you on track.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-lock"></i></div>
             <h3>Privacy First</h3>
             <p>Post anonymously, control who sees your content, and keep your journal completely private.</p>
         </div>

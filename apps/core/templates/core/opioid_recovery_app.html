@@ -78,17 +78,27 @@
     .crisis-bar { background: #ffeeba; padding: 1rem 2rem; text-align: center; }
     .crisis-bar p { margin: 0; color: #856404; font-weight: 500; }
     .crisis-bar a { color: #533f03; font-weight: 700; }
-    .stats-bar { background: white; padding: 2rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .stat-item { text-align: center; }
-    .stat-number { font-size: 2.5rem; font-weight: 800; color: #4a1942; }
-    .stat-label { color: #666; font-size: 0.95rem; }
     .features-section { padding: 4rem 2rem; background: #f8f9fa; }
     .features-section h2 { text-align: center; color: #4a1942; font-size: 2.2rem; margin-bottom: 0.5rem; }
     .features-section .subtitle { text-align: center; color: #666; font-size: 1.1rem; margin-bottom: 3rem; }
     .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
-    .feature-card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s ease; }
-    .feature-card:hover { transform: translateY(-5px); }
-    .feature-card .icon { font-size: 2.5rem; margin-bottom: 1rem; color: #893168; }
+    .feature-card {
+        /* Plain text columns: spacing does the grouping, no card chrome */
+        text-align: left;
+        background: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+    }
+
+    .feature-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    [data-theme="dark"] .feature-card {
+        background: none;
+    }
     .feature-card h3 { color: #4a1942; margin-bottom: 0.75rem; }
     .feature-card p { color: #666; line-height: 1.6; }
     .content-section { padding: 4rem 2rem; background: white; }
@@ -136,54 +146,32 @@
     <p><i class="fas fa-exclamation-triangle"></i> In crisis? <a href="{% url 'core:crisis' %}">Access immediate help resources</a> or call SAMHSA: 1-800-662-4357</p>
 </div>
 
-<!-- Stats Bar -->
-<div class="stats-bar">
-    <div class="stat-item">
-        <div class="stat-number">6+</div>
-        <div class="stat-label">Core Features</div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-number">Free</div>
-        <div class="stat-label">to Join</div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-number">24/7</div>
-        <div class="stat-label">Peer Support</div>
-    </div>
-</div>
-
 <!-- Features Section -->
 <section class="features-section">
     <h2>Built for Opioid Recovery</h2>
     <p class="subtitle">By people who understand the unique challenges of opioid addiction</p>
     <div class="features-grid">
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-calendar-check"></i></div>
             <h3>Clean Time Tracker</h3>
             <p>Track your opioid-free days with milestone celebrations. Every clean day is a victory worth celebrating.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-users"></i></div>
             <h3>Opioid Recovery Community</h3>
             <p>Connect with others who truly understand fentanyl, heroin, and painkiller addiction. You're not alone.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-clipboard-check"></i></div>
             <h3>Daily Check-ins</h3>
             <p>Track cravings, mood, and triggers. Identify patterns and see your progress over time.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-user-friends"></i></div>
             <h3>Recovery Pal Matching</h3>
             <p>Get matched with someone who's been through opioid addiction. Someone to call when urges hit hard.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-trophy"></i></div>
             <h3>Recovery Challenges</h3>
             <p>Join 30, 60, 90-day challenges with daily accountability. Structure your early recovery.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-phone-alt"></i></div>
             <h3>Crisis Resources</h3>
             <p>Quick access to overdose prevention, Narcan resources, and emergency helplines when you need them.</p>
         </div>

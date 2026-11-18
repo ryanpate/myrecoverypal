@@ -1131,14 +1131,14 @@ a:hover {
     transition: transform var(--dur-menu) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out);
 }
 
-.card:hover,
-.resource-card:hover,
-.blog-card:hover,
-.feature-card:hover,
-.stat-card:hover,
-.meeting-card:hover,
-.service-card:hover {
-    transform: translateY(-5px);
+/* Only cards that are themselves links lift on hover. A container that
+   merely holds content gives no feedback, because nothing happens on click. */
+a.card:hover,
+a.resource-card:hover,
+a.blog-card:hover,
+a.meeting-card:hover,
+a.service-card:hover {
+    transform: translateY(-3px);
     box-shadow: var(--shadow-hover);
 }
 

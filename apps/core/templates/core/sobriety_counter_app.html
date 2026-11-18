@@ -243,27 +243,6 @@
     }
 
     /* Stats Bar */
-    .stats-bar {
-        background: white;
-        padding: 2rem;
-        display: flex;
-        justify-content: center;
-        gap: 3rem;
-        flex-wrap: wrap;
-        border-bottom: 1px solid #e9ecef;
-    }
-    .stat-item {
-        text-align: center;
-    }
-    .stat-number {
-        font-size: 2rem;
-        font-weight: 800;
-        color: var(--primary-dark);
-    }
-    .stat-label {
-        color: #666;
-        font-size: 0.9rem;
-    }
 
     /* Comparison Section */
     .comparison-section {
@@ -340,77 +319,6 @@
         font-weight: 600;
     }
 
-    /* Testimonials Section */
-    .testimonials-section {
-        padding: 4rem 2rem;
-        background: white;
-    }
-    .testimonials-section h2 {
-        text-align: center;
-        color: var(--primary-dark);
-        font-size: 2rem;
-        margin-bottom: 2rem;
-    }
-    .testimonials-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        max-width: 1000px;
-        margin: 0 auto;
-    }
-    .testimonial-card {
-        background: var(--bg-light);
-        padding: 2rem;
-        border-radius: var(--border-radius);
-        border-left: 4px solid var(--accent-green);
-    }
-    .testimonial-card .stars {
-        color: #ffc107;
-        margin-bottom: 1rem;
-        font-size: 1.1rem;
-    }
-    .testimonial-card .quote {
-        color: #555;
-        line-height: 1.7;
-        font-style: italic;
-        margin-bottom: 1.5rem;
-    }
-    .testimonial-card .author {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-    .testimonial-card .avatar {
-        width: 45px;
-        height: 45px;
-        background: var(--gradient-accent);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 700;
-        font-size: 1.1rem;
-        --heading-color: currentColor;
-    }
-    .testimonial-card .author-info .name {
-        font-weight: 600;
-        color: var(--primary-dark);
-    }
-    .testimonial-card .author-info .days {
-        font-size: 0.85rem;
-        color: #666;
-    }
-    .switched-from {
-        display: inline-block;
-        background: #fef2f2;
-        color: #991b1b;
-        font-size: 0.7rem;
-        padding: 0.15rem 0.4rem;
-        border-radius: 4px;
-        margin-top: 0.25rem;
-    }
-
     /* Features Section */
     .features-section {
         padding: 4rem 2rem;
@@ -436,19 +344,21 @@
         margin: 0 auto;
     }
     .feature-card {
-        background: white;
-        padding: 2rem;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow);
-        transition: transform 0.3s ease;
+        /* Plain text columns: spacing does the grouping, no card chrome */
+        text-align: left;
+        background: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
     }
+
     .feature-card:hover {
-        transform: translateY(-3px);
+        transform: none;
+        box-shadow: none;
     }
-    .feature-card .icon {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-        color: var(--primary-light);
+
+    [data-theme="dark"] .feature-card {
+        background: none;
     }
     .feature-card h3 {
         color: var(--primary-dark);
@@ -716,9 +626,6 @@
         .comparison-table { font-size: 0.85rem; }
         .comparison-table th, .comparison-table td { padding: 0.75rem 0.5rem; }
         .mini-calc-result .days-count { font-size: 2.5rem; }
-        .testimonials-grid { grid-template-columns: 1fr; }
-        .stats-bar { gap: 1.5rem; }
-        .stat-number { font-size: 1.5rem; }
         .cta-section h2 { font-size: 1.8rem; }
     }
 </style>
@@ -758,26 +665,6 @@
         </div>
     </div>
 </section>
-
-<!-- Stats Bar -->
-<div class="stats-bar">
-    <div class="stat-item">
-        <div class="stat-number">Free</div>
-        <div class="stat-label">to Join</div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-number">Growing</div>
-        <div class="stat-label">Community</div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-number">6+</div>
-        <div class="stat-label">Core Features</div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-number">10+</div>
-        <div class="stat-label">Milestone Badges</div>
-    </div>
-</div>
 
 <!-- Comparison Section -->
 <section class="comparison-section">
@@ -878,81 +765,32 @@
     </div>
 </section>
 
-<!-- Testimonials Section -->
-<section class="testimonials-section">
-    <h2>Why People Choose MyRecoveryPal</h2>
-    <div class="testimonials-grid">
-        <div class="testimonial-card">
-            <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-            <p class="quote">"I was paying $10/month for I Am Sober premium. MyRecoveryPal gives me everything I had plus an actual community. The group challenges keep me accountable in ways a simple counter never could."</p>
-            <div class="author">
-                <div class="avatar">M</div>
-                <div class="author-info">
-                    <div class="name">Mike T.</div>
-                    <div class="days">478 days sober</div>
-                    <span class="switched-from">Switched from I Am Sober</span>
-                </div>
-            </div>
-        </div>
-        <div class="testimonial-card">
-            <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-            <p class="quote">"The Recovery Pal feature changed everything. Having someone check in on me daily who actually understands what I'm going through is priceless. And it's completely free!"</p>
-            <div class="author">
-                <div class="avatar">S</div>
-                <div class="author-info">
-                    <div class="name">Sarah K.</div>
-                    <div class="days">203 days sober</div>
-                    <span class="switched-from">Switched from Sober Time</span>
-                </div>
-            </div>
-        </div>
-        <div class="testimonial-card">
-            <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-            <p class="quote">"I tried 5 different sobriety apps before finding MyRecoveryPal. The web access is huge - I can check my progress at work without installing an app."</p>
-            <div class="author">
-                <div class="avatar">J</div>
-                <div class="author-info">
-                    <div class="name">James R.</div>
-                    <div class="days">1,247 days sober</div>
-                    <span class="switched-from">Switched from Nomo</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Features Section -->
 <section class="features-section">
     <h2>Why MyRecoveryPal Is Different</h2>
     <p class="subtitle">More than a counter - it's a complete recovery support system</p>
     <div class="features-grid">
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-stopwatch"></i></div>
             <h3>Accurate Day Counter</h3>
             <p>Real-time tracking of days, weeks, months, and years. Enter your sobriety date once and we handle the rest.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-medal"></i></div>
             <h3>Milestone Celebrations</h3>
             <p>Confetti animations and community recognition at 1 day, 1 week, 30 days, 90 days, 1 year, and beyond.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-users"></i></div>
             <h3>Real Community</h3>
             <p>A social feed where you can share wins, get support, and connect with people who truly understand recovery.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-user-friends"></i></div>
             <h3>Recovery Pals</h3>
             <p>Get matched with an accountability partner. Check in on each other daily and celebrate milestones together.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-trophy"></i></div>
             <h3>Group Challenges</h3>
             <p>Join 30, 60, or 90-day challenges with other members. Extra motivation and structured accountability.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-chart-line"></i></div>
             <h3>Mood Tracking</h3>
             <p>Daily check-ins track your mood and cravings over time. See patterns and progress in your recovery journey.</p>
         </div>
@@ -964,22 +802,18 @@
     <h2>Track Any Addiction</h2>
     <div class="use-cases-grid">
         <div class="use-case-card">
-            <div class="icon"><i class="fas fa-wine-glass-alt"></i></div>
             <h3>Alcohol Sobriety</h3>
             <p>Track days alcohol-free with specialized support.</p>
         </div>
         <div class="use-case-card">
-            <div class="icon"><i class="fas fa-pills"></i></div>
             <h3>Drug Recovery</h3>
             <p>Track clean time from opioids, stimulants, or other substances.</p>
         </div>
         <div class="use-case-card">
-            <div class="icon"><i class="fas fa-smoking-ban"></i></div>
             <h3>Quit Smoking</h3>
             <p>Count cigarette-free days and health improvements.</p>
         </div>
         <div class="use-case-card">
-            <div class="icon"><i class="fas fa-dice"></i></div>
             <h3>Gambling-Free</h3>
             <p>Track days without gambling and connect with others.</p>
         </div>

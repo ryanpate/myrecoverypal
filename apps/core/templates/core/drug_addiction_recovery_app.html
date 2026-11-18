@@ -109,17 +109,27 @@
         transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(82, 183, 136, 0.3);
     }
     .ar-hero .cta-button:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(82, 183, 136, 0.4); background: #45a675; }
-    .stats-bar { background: white; padding: 2rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .stat-item { text-align: center; }
-    .stat-number { font-size: 2.5rem; font-weight: 800; color: #6b2d5c; }
-    .stat-label { color: #666; font-size: 0.95rem; }
     .features-section { padding: 4rem 2rem; background: #f8f9fa; }
     .features-section h2 { text-align: center; color: #6b2d5c; font-size: 2.2rem; margin-bottom: 0.5rem; }
     .features-section .subtitle { text-align: center; color: #666; font-size: 1.1rem; margin-bottom: 3rem; }
     .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
-    .feature-card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s ease; }
-    .feature-card:hover { transform: translateY(-5px); }
-    .feature-card .icon { font-size: 2.5rem; margin-bottom: 1rem; color: #52b788; }
+    .feature-card {
+        /* Plain text columns: spacing does the grouping, no card chrome */
+        text-align: left;
+        background: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+    }
+
+    .feature-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    [data-theme="dark"] .feature-card {
+        background: none;
+    }
     .feature-card h3 { color: #6b2d5c; margin-bottom: 0.75rem; }
     .feature-card p { color: #666; line-height: 1.6; }
     .content-section { padding: 4rem 2rem; background: white; }
@@ -132,7 +142,23 @@
     .testimonial-section { padding: 4rem 2rem; background: #f8f9fa; }
     .testimonial-section h2 { text-align: center; color: #6b2d5c; font-size: 2rem; margin-bottom: 2rem; }
     .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto; }
-    .testimonial-card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
+    .testimonial-card {
+        /* Plain text columns: spacing does the grouping, no card chrome */
+        text-align: left;
+        background: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+    }
+
+    .testimonial-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    [data-theme="dark"] .testimonial-card {
+        background: none;
+    }
     .testimonial-card p { color: #555; line-height: 1.7; font-style: italic; margin-bottom: 1rem; }
     .testimonial-author { color: #6b2d5c; font-weight: 600; }
     .testimonial-days { color: #52b788; font-size: 0.9rem; }
@@ -165,54 +191,32 @@
     <a href="{% url 'accounts:register' %}" class="cta-button">Start Your Recovery Free</a>
 </section>
 
-<!-- Stats Bar -->
-<div class="stats-bar">
-    <div class="stat-item">
-        <div class="stat-number">6+</div>
-        <div class="stat-label">Core Features</div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-number">Free</div>
-        <div class="stat-label">to Join</div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-number">24/7</div>
-        <div class="stat-label">Peer Support</div>
-    </div>
-</div>
-
 <!-- Features Section -->
 <section class="features-section">
     <h2>Built for Drug Addiction Recovery</h2>
     <p class="subtitle">Whether you're in NA, working a program, or finding your own path—we're here for you</p>
     <div class="features-grid">
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-calendar-check"></i></div>
             <h3>Clean Time Tracker</h3>
             <p>Track your drug-free days with milestone celebrations. Every clean day matters—and the community celebrates with you.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-users"></i></div>
             <h3>NA-Friendly Community</h3>
             <p>Connect with others in recovery from all substances. Share your story, find sponsors, and build a sober support network.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-clipboard-check"></i></div>
             <h3>Daily Check-ins</h3>
             <p>Track your mood, cravings, and triggers each day. Identify patterns and see your progress over time.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-trophy"></i></div>
             <h3>Recovery Challenges</h3>
             <p>Join 30, 60, or 90-day challenges with daily accountability. Structure your early recovery with community support.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-user-friends"></i></div>
             <h3>Recovery Pal Matching</h3>
             <p>Get matched with an accountability partner who understands drug addiction. Someone to call when urges hit.</p>
         </div>
         <div class="feature-card">
-            <div class="icon"><i class="fas fa-book"></i></div>
             <h3>Private Recovery Journal</h3>
             <p>Process your recovery journey in a completely private space. Work through emotions without judgment.</p>
         </div>
@@ -248,17 +252,14 @@
     <h2>Why People Choose MyRecoveryPal</h2>
     <div class="testimonial-grid">
         <div class="testimonial-card">
-            <div style="font-size: 2.5rem; color: #52b788; margin-bottom: 1rem;"><i class="fas fa-users"></i></div>
             <h3 style="color: #6b2d5c; margin-bottom: 0.5rem;">Real Community</h3>
             <p style="font-style: normal;">Connect with people who truly understand drug addiction. Not well-meaning friends who don't get it—people who've been there.</p>
         </div>
         <div class="testimonial-card">
-            <div style="font-size: 2.5rem; color: #52b788; margin-bottom: 1rem;"><i class="fas fa-hand-holding-heart"></i></div>
             <h3 style="color: #6b2d5c; margin-bottom: 0.5rem;">24/7 Support</h3>
             <p style="font-style: normal;">Cravings don't wait for NA meetings. Our community is here around the clock—whether it's 2 PM or 2 AM.</p>
         </div>
         <div class="testimonial-card">
-            <div style="font-size: 2.5rem; color: #52b788; margin-bottom: 1rem;"><i class="fas fa-lock"></i></div>
             <h3 style="color: #6b2d5c; margin-bottom: 0.5rem;">Free to Join</h3>
             <p style="font-style: normal;">Core features are free with no credit card required. Optional Premium ($9.99/mo) for advanced tools. Recovery support should be accessible to everyone.</p>
         </div>
