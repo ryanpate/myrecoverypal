@@ -3032,37 +3032,45 @@ class ProfileView(DetailView):
             # Calculate next sobriety milestone for the widget
             if profile_user.sobriety_date and profile_user.show_sobriety_date:
                 days_sober = profile_user.get_days_sober()
-                # Define milestone thresholds
-                milestones = [1, 7, 14, 30, 60, 90, 100, 180, 270, 365, 500, 730, 1000, 1095, 1460, 1825, 2555, 3650]
+                from dateutil.relativedelta import relativedelta
+                today = timezone.now().date()
+                rd = relativedelta(today, profile_user.sobriety_date)
+                context['sobriety_breakdown'] = {
+                    'years': rd.years,
+                    'months': rd.years * 12 + rd.months,
+                    'weeks': days_sober // 7,
+                }
+
+                # Day-count milestones for the first year, then calendar
+                # anniversaries (a year is not always 365 days).
+                milestones = [1, 7, 14, 30, 60, 90, 100, 180, 270]
 
                 next_milestone = None
                 prev_milestone = 0
                 for m in milestones:
                     if days_sober < m:
                         next_milestone = m
+                        label = f"{m} Day{'s' if m != 1 else ''}"
                         break
                     prev_milestone = m
 
                 if not next_milestone:
-                    # Beyond fixed milestones: use calendar year anniversaries
-                    from dateutil.relativedelta import relativedelta
-                    today = timezone.now().date()
-                    years_sober = relativedelta(today, profile_user.sobriety_date).years
-                    last_anniversary = profile_user.sobriety_date + relativedelta(years=years_sober)
-                    next_anniversary = profile_user.sobriety_date + relativedelta(years=years_sober + 1)
-                    prev_milestone = (last_anniversary - profile_user.sobriety_date).days
+                    next_years = rd.years + 1
+                    last_anniversary = profile_user.sobriety_date + relativedelta(years=rd.years)
+                    next_anniversary = profile_user.sobriety_date + relativedelta(years=next_years)
+                    prev_milestone = max(prev_milestone, (last_anniversary - profile_user.sobriety_date).days)
                     next_milestone = (next_anniversary - profile_user.sobriety_date).days
+                    label = f"{next_years} Year{'s' if next_years != 1 else ''}"
 
-                if next_milestone:
-                    days_in_range = next_milestone - prev_milestone
-                    days_completed = days_sober - prev_milestone
-                    progress = int((days_completed / days_in_range) * 100) if days_in_range > 0 else 0
+                days_in_range = next_milestone - prev_milestone
+                days_completed = days_sober - prev_milestone
+                progress = int((days_completed / days_in_range) * 100) if days_in_range > 0 else 0
 
-                    context['next_sobriety_milestone'] = {
-                        'days': next_milestone,
-                        'progress': min(progress, 100),
-                        'days_until': next_milestone - days_sober
-                    }
+                context['next_sobriety_milestone'] = {
+                    'label': label,
+                    'progress': min(progress, 100),
+                    'days_until': next_milestone - days_sober
+                }
         else:
             context['show_full_profile'] = False
 

@@ -692,15 +692,15 @@
 
             <div class="sobriety-breakdown">
                 <div class="sobriety-unit">
-                    <span class="sobriety-unit-value">{% widthratio days_sober 365 1 %}</span>
+                    <span class="sobriety-unit-value">{{ sobriety_breakdown.years }}</span>
                     <span class="sobriety-unit-label">Years</span>
                 </div>
                 <div class="sobriety-unit">
-                    <span class="sobriety-unit-value">{% widthratio days_sober 30 1 %}</span>
+                    <span class="sobriety-unit-value">{{ sobriety_breakdown.months }}</span>
                     <span class="sobriety-unit-label">Months</span>
                 </div>
                 <div class="sobriety-unit">
-                    <span class="sobriety-unit-value">{% widthratio days_sober 7 1 %}</span>
+                    <span class="sobriety-unit-value">{{ sobriety_breakdown.weeks }}</span>
                     <span class="sobriety-unit-label">Weeks</span>
                 </div>
             </div>
@@ -714,12 +714,12 @@
             <div class="sobriety-milestone">
                 <div class="milestone-header">
                     <span class="milestone-label"><i class="fas fa-flag-checkered"></i> Next Milestone</span>
-                    <span class="milestone-target">{{ next_sobriety_milestone.days }} Days</span>
+                    <span class="milestone-target">{{ next_sobriety_milestone.label }}</span>
                 </div>
                 <div class="milestone-progress-bar">
                     <div class="milestone-progress-fill" style="width: {{ next_sobriety_milestone.progress }}%;"></div>
                 </div>
-                <div class="milestone-days-left">{{ next_sobriety_milestone.days_until }} days to go</div>
+                <div class="milestone-days-left">{{ next_sobriety_milestone.days_until }} day{{ next_sobriety_milestone.days_until|pluralize }} to go</div>
             </div>
             {% endif %}
 
