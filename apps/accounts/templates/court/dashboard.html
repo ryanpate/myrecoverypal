@@ -17,7 +17,7 @@
 </div>
 {% endif %}
 
-<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem;">
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
     <div style="background:var(--card-bg, #fff); padding:1.25rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.05);">
         <div style="font-size:0.85rem; color:var(--text-muted, #888);">This Week</div>
         <div style="font-size:2rem; font-weight:700; color:var(--brand-text, #1e4d8b); margin:.25rem 0;">{{ this_week_count }} / {{ required_per_week }}</div>

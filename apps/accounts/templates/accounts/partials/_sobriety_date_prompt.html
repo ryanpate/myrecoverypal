@@ -11,7 +11,8 @@ works without JavaScript; JS only adds the 3-day "Not now" dismissal.
             Starting fresh today counts too.</p>
         <form method="post" action="{% url 'accounts:set_sobriety_date' %}" class="sd-form">
             {% csrf_token %}
-            <input type="date" name="sobriety_date" class="sd-input" aria-label="Your sobriety date"
+            <label class="sd-label" for="sdDateInput">Your sobriety date</label>
+            <input type="date" name="sobriety_date" class="sd-input" id="sdDateInput"
                    max="{% now 'Y-m-d' %}">
             <button type="submit" class="sd-btn">Start my counter</button>
             <button type="submit" name="start_today" value="1" class="sd-btn sd-btn-ghost" formnovalidate>I'm starting today</button>
@@ -26,6 +27,8 @@ works without JavaScript; JS only adds the 3-day "Not now" dismissal.
     .sd-prompt { max-width: 1000px; margin: 1.5rem auto 0; padding: 1.5rem 1.75rem; display: flex; gap: 1.1rem;
         align-items: flex-start; background: var(--card-bg);
         border: 1px solid var(--border-color); border-radius: var(--border-radius-xl); }
+    /* iOS shows an empty date field as a blank box, so it needs a visible label */
+    .sd-label { flex-basis: 100%; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
     .sd-icon { flex: none; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center;
         justify-content: center; background: #52b788; color: #fff; font-size: 1.35rem; }
     .sd-body { flex: 1; min-width: 0; }

@@ -534,7 +534,7 @@
                 </div>
                 <h1>{{ group.name }}</h1>
                 <p class="lead">{{ group.description|truncatewords:20 }}</p>
-                <div class="d-flex gap-3 align-items-center">
+                <div class="d-flex flex-wrap gap-2 align-items-center">
                     <span class="badge bg-light text-dark">{{ group.get_group_type_display }}</span>
                     <span class="badge bg-light text-dark">{{ group.get_privacy_level_display }}</span>
                     <span style="color: var(--text-muted);"><i class="fas fa-users"></i> {{ group.active_member_count|default:group.member_count }}

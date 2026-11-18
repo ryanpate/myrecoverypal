@@ -720,8 +720,9 @@ body.android-native-app {
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    padding-top: calc(56px + var(--safe-area-inset-top, 0px));
-    /* 56px = nav-container content height (10px pad + 32px logo + 10px pad + 4px borders) */
+    padding-top: calc(73px + var(--safe-area-inset-top, 0px));
+    /* 73px = the nav bar's real height. Its tallest child is the 44px SOS pill,
+       not the 32px logo, so the old 56px left the top of every page under the bar. */
     padding-left: var(--safe-area-inset-left);
     padding-right: var(--safe-area-inset-right);
     background: var(--bg-light) var(--grain);
@@ -2383,7 +2384,7 @@ footer {
 /* Apply mobile layout for screens up to 1024px - covers phones in landscape */
 @media (max-width: 1024px) {
     body {
-        padding-top: 70px;
+        padding-top: 82px;
         padding-bottom: 56px;
         /* Account for bottom nav */
     }
@@ -3120,32 +3121,37 @@ select:focus {
     }
 }
 
+/* Trial countdown: one quiet line under the nav. It scrolls away with the
+   page instead of sticking, so it never costs reading space on a phone. */
 .trial-countdown-banner {
-    animation: slideDown 0.3s ease-out;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    padding: 0.55rem 1rem;
+    font-size: 0.9rem;
+    line-height: 1.35;
+    text-align: center;
+    color: #fff;
+    background: var(--primary-dark);
+    --heading-color: currentColor;
 }
 
-.trial-countdown-banner .btn:hover {
-    transform: scale(1.05);
-    box-shadow: none;
+.trial-countdown-banner.is-soon {
+    background: #b45309;
 }
 
-/* Mobile responsive trial banner */
-@media (max-width: 768px) {
-    .trial-countdown-banner {
-        font-size: 0.85rem;
-        padding: 0.6rem 0.5rem;
-        top: 60px;
-    }
+.trial-countdown-banner.is-urgent {
+    background: #b02a37;
+}
 
-    .trial-countdown-banner .container {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .trial-countdown-banner .btn {
-        width: 100%;
-        max-width: 200px;
-    }
+.trial-countdown-banner a,
+.trial-countdown-banner a:hover {
+    color: #fff;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
 }
 
 /* Mobile Sticky CTA styles (extracted from base.html) */
@@ -3377,6 +3383,40 @@ select:focus {
 }
 .ios-native-app .sos-pill,
 .android-native-app .sos-pill { display: inline-flex !important; }
+
+/* The standard logo is dark blue; on the dark nav it all but disappears. */
+[data-theme="dark"] .logo-img {
+    content: url("../images/logo-white.svg");
+}
+
+/* Signed-in header on phones: the wordmark gives way before anything
+   overlaps it. The theme toggle is also in the slide-out menu. */
+@media (max-width: 600px) {
+    .nav-container:not(.nav-container--guest) .theme-toggle {
+        display: none;
+    }
+    .nav-container:not(.nav-container--guest) .nav-left,
+    .nav-container:not(.nav-container--guest) .logo-container {
+        min-width: 0;
+        flex-shrink: 1;
+    }
+    .nav-container:not(.nav-container--guest) .logo-img {
+        flex-shrink: 0;
+    }
+    .nav-container:not(.nav-container--guest) .logo-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .nav-container:not(.nav-container--guest) .sos-pill {
+        flex-shrink: 0;
+    }
+    /* With the name hidden, the account control is just the avatar */
+    .user-menu-toggle {
+        padding: 0.25rem;
+        gap: 0;
+    }
+}
 
 /* Logged-out header on phones: SOS + Sign Up + hamburger must fit beside
    the logo. "Log in" and the theme toggle are both in the slide-out menu. */
