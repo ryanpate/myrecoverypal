@@ -209,7 +209,10 @@ class User(AbstractUser):
 
     def get_days_sober(self):
         if self.sobriety_date:
-            return (timezone.now().date() - self.sobriety_date).days
+            # The local calendar day, as for pledges and check-ins: in a request
+            # that is the member's own time zone (UserTimezoneMiddleware), and
+            # UTC everywhere else.
+            return (timezone.localdate() - self.sobriety_date).days
         return 0
 
     def get_public_days_sober(self):
@@ -221,7 +224,7 @@ class User(AbstractUser):
         days = self.get_days_sober()
         if days >= 365 and self.sobriety_date:
             from dateutil.relativedelta import relativedelta
-            rd = relativedelta(timezone.now().date(), self.sobriety_date)
+            rd = relativedelta(timezone.localdate(), self.sobriety_date)
             years = rd.years
             if years >= 1:
                 return f"{years} year{'s' if years > 1 else ''}"

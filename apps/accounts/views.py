@@ -1385,7 +1385,7 @@ def progress_view(request):
     if not is_milestone_day and request.user.sobriety_date and days_sober >= 365:
         # Check year anniversaries
         from dateutil.relativedelta import relativedelta
-        rd = relativedelta(timezone.now().date(), request.user.sobriety_date)
+        rd = relativedelta(timezone.localdate(), request.user.sobriety_date)
         is_milestone_day = rd.months == 0 and rd.days == 0
 
     # Today's check-in for inline check-in widget
@@ -1444,7 +1444,7 @@ def progress_view(request):
     # Compute years/months for display
     if request.user.sobriety_date and days_sober >= 365:
         from dateutil.relativedelta import relativedelta
-        rd = relativedelta(timezone.now().date(), request.user.sobriety_date)
+        rd = relativedelta(timezone.localdate(), request.user.sobriety_date)
         context['years_sober'] = rd.years
         context['months_sober'] = rd.months
 
@@ -3033,7 +3033,7 @@ class ProfileView(DetailView):
             if profile_user.sobriety_date and profile_user.show_sobriety_date:
                 days_sober = profile_user.get_days_sober()
                 from dateutil.relativedelta import relativedelta
-                today = timezone.now().date()
+                today = timezone.localdate()
                 rd = relativedelta(today, profile_user.sobriety_date)
                 context['sobriety_breakdown'] = {
                     'years': rd.years,
