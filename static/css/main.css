@@ -997,6 +997,14 @@ body {
     text-rendering: optimizeLegibility;
 }
 
+/* Form controls never exceed their column on a narrow screen. */
+input,
+select,
+textarea {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 /* Type: tight display tracking, balanced headings, no orphans in copy,
    figures that do not jiggle when they change. */
 h1,
@@ -1132,6 +1140,9 @@ a:hover {
     border-radius: var(--radius-btn);
     font-weight: 600;
     cursor: pointer;
+    /* A long label wraps inside the button instead of pushing the page wide */
+    max-width: 100%;
+    box-sizing: border-box;
     transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
     display: inline-block;
     text-align: center;
