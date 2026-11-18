@@ -39,7 +39,7 @@
     "@capacitor/push-notifications": "^7.0.3",
     "@capacitor/share": "^7.0.4",
     "@capacitor/status-bar": "^7.0.1",
-    "@revenuecat/purchases-capacitor": "^11.3.2"
+    "@revenuecat/purchases-capacitor": "^11.3.3"
   },
   "devDependencies": {
     "railway": "^3.12.0"
