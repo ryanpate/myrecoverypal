@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Login - Journey to Recovery{% endblock %}
+{% block title %}Log in - MyRecoveryPal{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 
 {% block extra_css %}
@@ -20,7 +20,7 @@
         margin-bottom: 2rem;
     }
 
-    .auth-header h2 {
+    .auth-header h1 {
         color: var(--brand-text, #1e4d8b);
         margin-bottom: 0.5rem;
     }
@@ -105,9 +105,6 @@
         background: #1c1c1e;
         color: #e4e4e7;
     }
-    [data-theme="dark"] .auth-header p {
-        color: #aaa;
-    }
     [data-theme="dark"] .auth-divider {
         color: #666;
     }
@@ -117,9 +114,6 @@
     }
     [data-theme="dark"] .auth-links a {
         color: #7eb8ff;
-    }
-    [data-theme="dark"] .auth-links a[style*="accent-green"] {
-        color: #6ee7b7 !important;
     }
     [data-theme="dark"] .auth-container input[type="text"],
     [data-theme="dark"] .auth-container input[type="password"],
@@ -138,15 +132,14 @@
 {% block content %}
 <div class="auth-container">
     <div class="auth-header">
-        <h2>Welcome Back</h2>
-        <p>Login to continue your recovery journey</p>
+        <h1>Log in</h1>
     </div>
 
     <form method="post" id="loginForm">
         {% csrf_token %}
         {{ form|crispy }}
 
-        <button type="submit" class="btn btn-primary">Login</button>
+        <button type="submit" class="btn btn-primary">Log in</button>
     </form>
 
     <div id="biometricLoginSection" style="display: none;">
@@ -159,7 +152,7 @@
 
     <div class="auth-links">
         <a href="{% url 'accounts:password_reset' %}">Forgot your password?</a>
-        <a href="{% url 'accounts:register' %}" style="color: var(--accent-green); font-weight: 600;">Don't have an account? Join free today!</a>
+        <a href="{% url 'accounts:register' %}" style="font-weight: 600;">No account yet? Join free</a>
     </div>
 </div>
 {% endblock %}

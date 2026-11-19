@@ -764,13 +764,13 @@ h6 {
 
 /* Links */
 a {
-    color: var(--primary-light);
+    color: var(--text-link);
     text-decoration: none;
     transition: color var(--dur-fast) var(--ease-out);
 }
 
 a:hover {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-link-hover);
 }
 
 /* Override Bootstrap primary colors */
@@ -778,15 +778,15 @@ a:hover {
 a.btn-primary,
 a.btn-primary:link,
 a.btn-primary:visited {
-    background-color: var(--accent-green) !important;
-    border-color: var(--accent-green) !important;
+    background-color: var(--accent-green-strong) !important;
+    border-color: var(--accent-green-strong) !important;
     color: #fff !important;
 }
 
 .btn-primary:hover,
 a.btn-primary:hover {
-    background-color: #45a675 !important;
-    border-color: #45a675 !important;
+    background-color: var(--accent-green-strong-hover) !important;
+    border-color: var(--accent-green-strong-hover) !important;
     color: #fff !important;
 }
 
@@ -1095,6 +1095,11 @@ a.btn-primary:hover {
     background-color: #4CAF50;
     /* Green when no notifications */
     transition: background-color var(--dur-fast) var(--ease-out);
+    display: block;
+}
+
+/* The phone header hides the username span; the dot is a span too and must stay */
+.user-menu-toggle .notification-dot {
     display: block;
 }
 
@@ -1479,7 +1484,7 @@ a.btn-primary:hover {
 .nav-dropdown-group--premium .nav-dropdown-label,
 .nav-dropdown-group--premium .nav-dropdown-label i,
 .nav-dropdown-group--premium a i {
-    color: #d4910f;
+    color: var(--gold-text);
 }
 .nav-dropdown-menu a.nav-dropdown-upgrade {
     margin: 0.35rem 1.1rem 0.2rem;
@@ -1503,31 +1508,15 @@ a.btn-primary:hover {
 [data-theme="dark"] .nav-dropdown-label { color: #9aa7b2; }
 
 /* ================================================
-   COURT COMPLIANCE NAV PILL (top nav + mobile slide-out)
+   COURT COMPLIANCE NAV LINK (top nav)
+   A plain nav link like its neighbours: the header keeps one filled
+   button (Sign Up) and one red one (SOS).
 ================================================ */
 .court-cta {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    background: var(--primary-dark);
-    color: white !important;
-    padding: 0.4rem 0.85rem;
-    border-radius: var(--radius-btn, 10px);
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-decoration: none;
-    transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
-    box-shadow: none;
-    --heading-color: currentColor;
 }
-.court-cta:hover {
-    box-shadow: none;
-    color: white !important;
-}
-.court-cta.active {
-    box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.6), 0 1px 4px rgba(15, 45, 86, 0.25);
-}
-.court-cta i { color: #f5a623; }
 
 /* ================================================
    USER DROPDOWN SECTION HEADERS
@@ -1806,10 +1795,9 @@ a.cta-button:active {
     justify-content: center;
     text-decoration: none;
     color: var(--text-muted, #6b7280);
-    font-size: 0.65rem;
-    /* Reduced from 0.75rem */
-    padding: 2px;
-    /* Reduced from 4px */
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-height: 44px;
     flex: 1;
 }
 
@@ -2267,6 +2255,8 @@ footer {
     gap: 0.6rem;
     margin-bottom: 0.9rem;
     text-decoration: none;
+    /* On the navy footer: keep the light blue the default link colour used to give */
+    color: var(--primary-light);
 }
 
 .footer-logo {
@@ -2290,7 +2280,7 @@ footer {
 
 .footer-section h3 {
     margin: 0 0 0.85rem;
-    color: var(--accent-green);
+    color: #fff;
     font-size: 0.82rem;
     font-weight: 700;
 }
@@ -2387,6 +2377,17 @@ footer {
         padding-top: 82px;
         padding-bottom: 56px;
         /* Account for bottom nav */
+    }
+
+    /* Below the slide-out menu (999) so an open menu covers it */
+    .mobile-bottom-nav--member {
+        display: flex;
+        z-index: 990;
+    }
+
+    /* Keeps the install banner above the bar on tablets too */
+    .install-prompt {
+        bottom: 70px;
     }
 
     main {
@@ -2842,7 +2843,9 @@ footer {
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-    * {
+    *,
+    *::before,
+    *::after {
         animation: none !important;
         transition: none !important;
     }
@@ -2998,12 +3001,12 @@ ALERT MESSAGES - Fixed positioning
 }
 
 .btn-success {
-    background: var(--accent-green) !important;
+    background: var(--accent-green-strong) !important;
     color: white;
 }
 
 .btn-success:hover {
-    background: #45a675 !important;
+    background: var(--accent-green-strong-hover) !important;
     box-shadow: none;
 }
 
@@ -3364,22 +3367,11 @@ select:focus {
     margin-right: 0.5rem;
     flex-shrink: 0;
     align-self: center;
-    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.45);
-    animation: sos-pulse 2.4s ease-out infinite;
     --heading-color: currentColor;
 }
 .sos-pill:hover {
     background: #b02a37;
     color: #fff;
-    animation: none;
-}
-@keyframes sos-pulse {
-    0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.45); }
-    55% { box-shadow: 0 0 0 7px rgba(220, 53, 69, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
-}
-@media (prefers-reduced-motion: reduce) {
-    .sos-pill { animation: none; box-shadow: 0 2px 8px rgba(220, 53, 69, 0.35); }
 }
 .ios-native-app .sos-pill,
 .android-native-app .sos-pill { display: inline-flex !important; }
@@ -3403,10 +3395,9 @@ select:focus {
     .nav-container:not(.nav-container--guest) .logo-img {
         flex-shrink: 0;
     }
+    /* The logo image already spells the name; drop the text rather than truncate it. */
     .nav-container:not(.nav-container--guest) .logo-text {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        display: none;
     }
     .nav-container:not(.nav-container--guest) .sos-pill {
         flex-shrink: 0;

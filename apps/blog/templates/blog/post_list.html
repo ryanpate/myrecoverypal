@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Recovery Blog - Journey to Recovery{% endblock %}
+{% block title %}Recovery Blog - MyRecoveryPal{% endblock %}
 {% block meta_title %}Recovery Blog - Stories, Tips & Resources | MyRecoveryPal{% endblock %}
 {% block meta_description %}Read inspiring recovery stories, expert advice, and practical tips for your sobriety journey.{% endblock %}
-{% block og_title %}Recovery Blog - Journey to Recovery{% endblock %}
+{% block og_title %}Recovery Blog - MyRecoveryPal{% endblock %}
 {% block og_description %}Read inspiring recovery stories, expert advice, and practical tips for your sobriety journey.{% endblock %}
-{% block twitter_title %}Recovery Blog - Journey to Recovery{% endblock %}
+{% block twitter_title %}Recovery Blog - MyRecoveryPal{% endblock %}
 {% block twitter_description %}Read inspiring recovery stories, expert advice, and practical tips for your sobriety journey.{% endblock %}
 
 {% block extra_css %}
@@ -133,7 +133,7 @@
     }
 
     .filter-tab.active {
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
         border-color: #52b788;
     }
@@ -396,7 +396,7 @@
     }
 
     .tag:hover {
-        background: var(--accent-green);
+        background: var(--accent-green-strong);
         color: white;
     }
 
@@ -424,7 +424,7 @@
         right: 5px;
         top: 50%;
         transform: translateY(-50%);
-        background: var(--accent-green);
+        background: var(--accent-green-strong);
         border: none;
         color: white;
         padding: 0.5rem 1rem;
@@ -434,7 +434,7 @@
     }
 
     .search-box button:hover {
-        background: #45a675;
+        background: var(--accent-green-strong-hover);
     }
 
     .blog-pagination-wrapper a:hover {
@@ -644,7 +644,7 @@
                     {% endif %}
 
                     <span
-                        style="background: #52b788; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; border: 2px solid #52b788; border-radius: 8px; display: inline-block; margin: 0 0.5rem;">
+                        style="background: var(--accent-green-strong); color: white; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; border: 2px solid #52b788; border-radius: 8px; display: inline-block; margin: 0 0.5rem;">
                         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
                     </span>
 

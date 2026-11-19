@@ -331,6 +331,11 @@ LOGIN_REDIRECT_URL = 'accounts:progress'
 LOGOUT_REDIRECT_URL = 'core:index'
 
 # Django-allauth settings
+# The login form takes the generated username or the email the member signed up with
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'apps.accounts.backends.EmailBackend',
+]
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 # SECURITY: Email verification mandatory for production

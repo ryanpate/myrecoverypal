@@ -13,7 +13,7 @@
             Join our waitlist to get early access.
         </p>
         <a href="{% url 'accounts:request_access' %}"
-            style="display: inline-block; background: var(--card-bg, #fff); color: #4db8e8; padding: 0.6rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none;">
+            style="display: inline-block; background: #fff; color: #1e4d8b; padding: 0.6rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none;">
             Request Access &rarr;
         </a>
     </div>
@@ -23,7 +23,7 @@
 
         {% if invite_only %}
             {# INVITE-ONLY MODE: keep the full form path unchanged. #}
-            <h2 style="text-align: center; margin: 0 0 0.5rem; color: var(--brand-text, #1e4d8b);">Create your account</h2>
+            <h1 style="text-align: center; margin: 0 0 0.5rem; color: var(--brand-text, #1e4d8b); font-size: 1.5rem;">Create your account</h1>
             <p style="text-align: center; color: var(--text-muted, #666); margin: 0 0 1.25rem; font-size: 0.9rem;">Invite-only beta &mdash; enter your code below.</p>
             <form method="post">
                 {% csrf_token %}
@@ -66,13 +66,8 @@
             </form>
         {% else %}
             {# PUBLIC MODE: friction-reduced 2-field form. #}
-            <h2 style="text-align: center; margin: 0 0 0.4rem; color: var(--brand-text, #1e4d8b); font-size: 1.5rem;">Create your account</h2>
-            <p style="text-align: center; color: var(--text-muted, #666); margin: 0 0 0.85rem; font-size: 0.9rem;">Includes your day counter, meeting finder and Anchor AI Coach</p>
-            <div style="text-align: center; margin-bottom: 1.5rem;">
-                <span style="display: inline-block; background: #e3f4ec; color: #45a374; padding: 0.3rem 0.85rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
-                    &#x2713; Free forever &middot; No credit card
-                </span>
-            </div>
+            <h1 style="text-align: center; margin: 0 0 0.4rem; color: var(--brand-text, #1e4d8b); font-size: 1.5rem;">Create your account</h1>
+            <p style="text-align: center; color: var(--text-muted, #666); margin: 0 0 1.5rem; font-size: 0.9rem;">Free forever, no credit card. Includes your day counter, meeting finder and Anchor AI coach.</p>
 
             <form method="post">
                 {% csrf_token %}
@@ -119,7 +114,7 @@
         <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color, #eee); text-align: center;">
             <p style="color: var(--text-muted, #666); margin: 0; font-size: 0.9rem;">
                 Already have an account?
-                <a href="{% url 'accounts:login' %}" style="color: var(--primary-light, #4db8e8); font-weight: 600;">Sign in</a>
+                <a href="{% url 'accounts:login' %}" style="font-weight: 600;">Log in</a>
             </p>
         </div>
     </div>

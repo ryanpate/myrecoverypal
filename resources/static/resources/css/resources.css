@@ -112,7 +112,7 @@
 }
 
 .search-button {
-    background: var(--accent-green, #52b788);
+    background: var(--accent-green-strong, #2e8059);
     color: white;
     border: none;
     padding: 0.7rem 1.75rem;
@@ -123,7 +123,7 @@
 }
 
 .search-button:hover {
-    background: #45a675;
+    background: var(--accent-green-strong-hover, #256b4a);
     box-shadow: none;
 }
 

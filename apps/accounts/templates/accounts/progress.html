@@ -18,9 +18,26 @@
         margin-bottom: 1.5rem;
     }
 
-    .progress-header h1 {
+    .progress-header h2 {
         margin: 0 0 0.25rem;
         font-size: 1.5rem;
+    }
+
+    /* Charts and stats sit behind one row, so the daily actions lead the page */
+    .insights-disclosure {
+        margin: 1.5rem 0;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+    .insights-disclosure > summary {
+        min-height: 44px;
+        padding: 0.9rem 0.25rem;
+        font-weight: 600;
+        color: var(--brand-text);
+        cursor: pointer;
+    }
+    .insights-disclosure[open] {
+        border-bottom: 0;
     }
 
     .progress-header p {
@@ -635,7 +652,7 @@
         align-items: center;
         gap: 0.5rem;
         padding: 0.75rem 1.5rem;
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: #fff;
         border: none;
         border-radius: 50px;
@@ -1176,8 +1193,8 @@
         margin-bottom: 1.25rem;
     }
 
-    .ios-native-app .progress-header h1,
-    .android-native-app .progress-header h1 {
+    .ios-native-app .progress-header h2,
+    .android-native-app .progress-header h2 {
         font-size: 1.35rem;
     }
 
@@ -1315,13 +1332,13 @@
 
     .ios-native-app .checkin-prompt-bar,
     .android-native-app .checkin-prompt-bar {
-        margin: 1rem 0.75rem;
+        margin: 1rem auto;
         padding: 0.75rem 1rem;
     }
 
     .ios-native-app .checkin-done-bar,
     .android-native-app .checkin-done-bar {
-        margin: 1rem 0.75rem;
+        margin: 1rem auto;
         padding: 0.85rem 1rem;
     }
 
@@ -1411,16 +1428,13 @@
     [data-theme="dark"] .streak-saved-card { background: #431407; border-color: #9a3412; color: #fed7aa; }
     [data-theme="dark"] .streak-saved-link { color: #fdba74; }
     .pledge-streak {
-        display: inline-block;
         margin: 0 0 0.85rem;
-        padding: 0.3rem 0.75rem;
-        background: linear-gradient(135deg, #ffa502 0%, #ff6348 100%);
-        color: #fff;
-        border-radius: 20px;
-        font-size: 0.8rem;
+        color: var(--text-dark);
+        font-size: 0.95rem;
         font-weight: 600;
-        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
     }
+    .pledge-actions[hidden] { display: none; }
 
     #pledgeTodayBtn {
         border-radius: var(--radius-btn, 10px);
@@ -1644,6 +1658,29 @@
             max-width: none;
         }
     }
+
+    /* Every card on Today shares one column: 968px wide with 16px gutters,
+       the same box .progress-container gives the cards inside it. */
+    .pledge-card,
+    .checkin-prompt-bar,
+    .checkin-done-bar,
+    #homeAnchorPrompt {
+        width: calc(100% - 2rem);
+        max-width: 968px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    /* The native apps use 12px gutters (see .progress-container above) */
+    .ios-native-app .pledge-card,
+    .android-native-app .pledge-card,
+    .ios-native-app .checkin-prompt-bar,
+    .android-native-app .checkin-prompt-bar,
+    .ios-native-app .checkin-done-bar,
+    .android-native-app .checkin-done-bar,
+    .ios-native-app #homeAnchorPrompt,
+    .android-native-app #homeAnchorPrompt {
+        width: calc(100% - 1.5rem);
+    }
 </style>
 {% endblock %}
 
@@ -1659,10 +1696,18 @@
     </div>
     {% endif %}
     {% if milestone_medallion %}{% include 'accounts/partials/_milestone_medallion_card.html' %}{% endif %}
-    {% if dry_january %}{% include 'accounts/partials/_dry_january_card.html' %}{% endif %}
-    {% program_progress_card %}
-    {% include 'accounts/partials/_daily_thought.html' %}
 </div>
+<h1 class="visually-hidden">Today</h1>
+<!-- ===== Tab Bar ===== -->
+<div class="landing-tabs">
+    <button class="landing-tab active" data-tab="progress" id="tabProgress">
+        <i class="fas fa-chart-line" aria-hidden="true"></i> My Progress
+    </button>
+    <button class="landing-tab" data-tab="feed" id="tabFeed">
+        <i class="fas fa-comments" aria-hidden="true"></i> My Feed
+    </button>
+</div>
+
 <!-- ===== Daily Pledge Card ===== -->
 <div class="pledge-card" id="pledgeCard" data-pledged="{{ pledged_today|yesno:'1,0' }}">
     <div class="pledge-photo">
@@ -1677,7 +1722,7 @@
             <strong>{{ user.pledge_reason|default:user.recovery_goals|truncatewords:8|default:"one day at a time" }}</strong>
         </p>
         <p class="pledge-streak" {% if pledge_streak == 0 %}hidden{% endif %}>
-            🔥 <span id="pledgeStreakCount">{{ pledge_streak }}</span>-day pledge streak
+            <span id="pledgeStreakCount">{{ pledge_streak }}</span>-day pledge streak
         </p>
         {% if streak_protected %}
         <p class="pledge-shield">🛡️ Premium streak protection covered a missed day, so your streak is still going.</p>
@@ -1700,7 +1745,7 @@
             <img src="{{ pledge_photo_url }}" alt="Today's pledge photo" id="pledgePhotoImg">
         </div>
 
-        <div class="pledge-actions">
+        <div class="pledge-actions" id="pledgeActions" {% if not pledged_today %}hidden{% endif %}>
             <button type="button" class="pledge-action-btn" id="pledgeNoteToggleBtn">
                 <i class="fas fa-pen" aria-hidden="true"></i>
                 <span id="pledgeNoteToggleLabel">{% if pledge_note or pledge_photo_url %}Edit note or photo{% else %}Add a note or photo{% endif %}</span>
@@ -1742,16 +1787,6 @@
             </a>
         </div>
     </div>
-</div>
-
-<!-- ===== Tab Bar ===== -->
-<div class="landing-tabs">
-    <button class="landing-tab active" data-tab="progress" id="tabProgress">
-        <i class="fas fa-chart-line" aria-hidden="true"></i> My Progress
-    </button>
-    <button class="landing-tab" data-tab="feed" id="tabFeed">
-        <i class="fas fa-comments" aria-hidden="true"></i> My Feed
-    </button>
 </div>
 
 <!-- ===== Progress Tab Content ===== -->
@@ -1809,7 +1844,7 @@
         </div>
     </div>
 
-    <div id="homeAnchorPrompt" style="display:none; border:1px solid #1e4d8b; background:var(--bg-light, #f4f8fc); border-radius:12px; padding:14px; margin:0 0 14px; text-align:center;">
+    <div id="homeAnchorPrompt" style="display:none; border:1px solid #1e4d8b; background:var(--bg-light, #f4f8fc); border-radius:12px; padding:14px; margin:0 auto 14px; text-align:center;">
         <div style="color:var(--brand-text, #1e4d8b); font-weight:600; margin-bottom:6px;">Today sounds heavy.</div>
         <a id="homeAnchorLink" href="#" style="background:#1e4d8b; color:#fff; padding:9px 18px; border-radius:8px; text-decoration:none; font-weight:600; display:inline-block; --heading-color: currentColor;">
             Talk it through with Anchor
@@ -1823,22 +1858,6 @@
     </div>
 
     <div class="progress-container">
-        <!-- Header -->
-        <div class="progress-header">
-            <h1><i class="fas fa-chart-line"></i> My Progress</h1>
-            <p>Track your mood, cravings, and energy over time</p>
-
-            <div class="time-selector">
-                <a href="?days=7" class="time-btn {% if days == 7 %}active{% endif %}">7 Days</a>
-                <a href="?days=30" class="time-btn {% if days == 30 %}active{% endif %}">30 Days</a>
-                <a href="?days=90" class="time-btn {% if days == 90 %}active{% endif %}">90 Days</a>
-            </div>
-        </div>
-
-        {% include 'accounts/_evening_card.html' %}
-        {% include 'accounts/_premium_upsell_card.html' %}
-        {% include 'accounts/_supporter_invite_card.html' %}
-
         {% if days_sober %}
         <!-- Milestone Progress -->
         <div class="milestone-card{% if is_milestone_day %} milestone-celebration{% endif %}">
@@ -1890,7 +1909,24 @@
         </div>
         {% endif %}
 
+        {% include 'accounts/_evening_card.html' %}
+        {% program_progress_card %}
+        {% include 'accounts/partials/_daily_thought.html' %}
+        {% if dry_january %}{% include 'accounts/partials/_dry_january_card.html' %}{% endif %}
+
         <span id="analytics" aria-hidden="true"></span>
+        <details class="insights-disclosure" id="insightsDetails">
+        <summary>See insights</summary>
+        <div class="progress-header">
+            <h2><i class="fas fa-chart-line" aria-hidden="true"></i> My Progress</h2>
+            <p>Track your mood, cravings, and energy over time</p>
+
+            <div class="time-selector">
+                <a href="?days=7#analytics" class="time-btn {% if days == 7 %}active{% endif %}">7 Days</a>
+                <a href="?days=30#analytics" class="time-btn {% if days == 30 %}active{% endif %}">30 Days</a>
+                <a href="?days=90#analytics" class="time-btn {% if days == 90 %}active{% endif %}">90 Days</a>
+            </div>
+        </div>
         {% if total_checkins > 0 %}
 
         {% if is_free_user %}
@@ -2144,6 +2180,10 @@
             </a>
         </div>
         {% endif %}
+        </details>
+
+        {% include 'accounts/_premium_upsell_card.html' %}
+        {% include 'accounts/_supporter_invite_card.html' %}
     </div>
 </div><!-- end #progressContent -->
 
@@ -2245,6 +2285,8 @@
             btn.hidden = true;
             const done = document.getElementById('pledgeDone');
             if (done) done.hidden = false;
+            const actions = document.getElementById('pledgeActions');
+            if (actions) actions.hidden = false;
             if (window.MRPNative && window.MRPNative.hapticSuccess) {
                 window.MRPNative.hapticSuccess();
             }
@@ -2824,6 +2866,10 @@
     tabFeed.addEventListener('click', function() { switchTab('feed'); });
 
     // Check hash on load
+    var insights = document.getElementById('insightsDetails');
+    if (insights && (window.location.hash === '#analytics' || /[?&]days=/.test(window.location.search))) {
+        insights.open = true;
+    }
     if (window.location.hash === '#feed') {
         switchTab('feed');
     }

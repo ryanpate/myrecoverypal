@@ -67,7 +67,7 @@
     }
 
     .filter-tab.active {
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
         border-color: #52b788;
     }
@@ -313,7 +313,7 @@
     }
 
     .follow-btn.follow {
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
     }
 
@@ -419,11 +419,19 @@
         z-index: 1040;
     }
 
+    /* Clear the bottom tab bar on phones and tablets */
+    @media (max-width: 1024px) {
+        .quick-actions-fab {
+            bottom: calc(56px + 1rem + env(safe-area-inset-bottom, 0px));
+            right: 1rem;
+        }
+    }
+
     .fab-button {
         width: 60px;
         height: 60px;
         border-radius: 50%;
-        background: var(--accent-green, #52b788);
+        background: var(--accent-green-strong, #2e8059);
         border: none;
         color: white;
         font-size: 1.5rem;

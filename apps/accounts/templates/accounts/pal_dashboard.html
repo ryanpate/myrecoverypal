@@ -127,7 +127,7 @@
     }
 
     .btn-accept {
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
     }
 
@@ -228,7 +228,7 @@
         <p style="opacity: 0.9; margin-bottom: 1rem; font-size: 0.95rem;">
             Send your sponsor an invite link to connect on MyRecoveryPal.
         </p>
-        <button id="sponsorInviteBtn" onclick="inviteSponsor()" style="background: var(--accent-green); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: var(--radius-btn, 10px); font-weight: 600; cursor: pointer; font-size: 1rem;">
+        <button id="sponsorInviteBtn" onclick="inviteSponsor()" style="background: var(--accent-green-strong); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: var(--radius-btn, 10px); font-weight: 600; cursor: pointer; font-size: 1rem;">
             <i class="fas fa-share-alt" aria-hidden="true"></i> Send Invite Link
         </button>
     </div>
@@ -307,7 +307,7 @@
                         <i class="fas fa-user-friends" style="color: #52b788;"></i>
                     </div>
                     <p style="color: var(--text-muted, #666); font-size: 0.9rem; margin-bottom: 1rem;">Research shows that having an accountability partner can increase your chances of reaching a goal by up to <strong>95%</strong></p>
-                    <a href="{% url 'accounts:community' %}" class="btn" style="background: #52b788; color: white; padding: 0.75rem 2rem; border-radius: var(--radius-btn, 10px); font-weight: 600; display: inline-block; text-decoration: none; transition: var(--transition-ui);">
+                    <a href="{% url 'accounts:community' %}" class="btn" style="background: var(--accent-green-strong); color: white; padding: 0.75rem 2rem; border-radius: var(--radius-btn, 10px); font-weight: 600; display: inline-block; text-decoration: none; transition: var(--transition-ui);">
                         <i class="fas fa-search"></i> Find Your Pal
                     </a>
                 </div>
