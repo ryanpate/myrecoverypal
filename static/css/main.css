@@ -23,6 +23,9 @@
     --accent-green-strong: #2e8059;
     /* Button green: 4.8:1 with white text */
     --accent-green-strong-hover: #256b4a;
+    /* Green and red as text: pass 4.5:1 on the page in both themes */
+    --green-text: #2e8059;
+    --danger-text: #b91c1c;
 
     /* Motion: one set of curves and durations for the whole site */
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -107,7 +110,7 @@
     /* ---- Text ---- */
     --text-strong: #2c3e50;
     --text-body: #2c3e50;
-    --text-faint: #9ca3af;
+    --text-faint: #6b7280;
     /* Links are navy in light mode: the light blue is 2.25:1 on white */
     --text-link: #1e4d8b;
     --text-link-hover: #0f2d56;
@@ -198,7 +201,9 @@
 [data-theme="dark"] {
     --text-strong: #e4e4e7;
     --text-body: #e4e4e7;
-    --text-faint: #6b7280;
+    --text-faint: #9ca3af;
+    --green-text: #52b788;
+    --danger-text: #f87171;
     --text-link: #4db8e8;
     --text-link-hover: #6bc5ed;
     --gold-text: #f0c040;

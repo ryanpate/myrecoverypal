@@ -1424,51 +1424,24 @@
     }
     .ck-nudge-cta:hover { background: var(--accent-green-strong-hover); color: #fff; transform: var(--lift-hover); }
 
-    /* Check-in done variant */
-    .ck-nudge.done { display: flex; align-items: center; gap: 0.85rem; }
-    .ck-nudge.done .mood-emoji { font-size: 2rem; line-height: 1; }
-    .ck-nudge.done .done-text .label { font-weight: 700; color: var(--text-strong); font-size: 0.95rem; }
-    .ck-nudge.done .done-text .sub { font-size: 0.82rem; color: var(--text-muted); }
-    .ck-nudge.done .streak-chip {
-        display: inline-flex; align-items: center; gap: 0.35rem; margin-left: auto;
-        background: rgba(245,166,35,0.14); color: var(--gold-deep);
-        border-radius: var(--radius-pill); padding: 0.3rem 0.7rem; font-size: 0.78rem; font-weight: 700;
+    /* ---- Support row: one quiet line, not a card ---- */
+    .support-row {
+        display: flex; align-items: center; justify-content: space-between; gap: 0.75rem 1rem; flex-wrap: wrap;
+        padding: 0.25rem 0.25rem 1.25rem; margin-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border-divider);
     }
-    .ck-nudge.done .progress-link { color: var(--text-link-hover); font-weight: 600; font-size: 0.85rem; text-decoration: none; white-space: nowrap; }
-
-    /* ---- Support row ---- */
-    .support-row { padding: 1.2rem 1.4rem; margin-bottom: 1.25rem; }
-    .support-row-top { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-    .support-row-top .copy { flex: 1 1 200px; min-width: 0; }
-    .support-row-top .copy .title { font-weight: 700; color: var(--text-strong); font-size: 1rem; }
-    .support-row-top .copy .sub { font-size: 0.88rem; color: var(--text-muted); margin-top: 0.2rem; }
+    .support-row .copy { flex: 1 1 220px; min-width: 0; font-size: 0.92rem; color: var(--text-muted); }
+    .support-row .title { font-weight: 700; color: var(--text-strong); margin-right: 0.35rem; }
+    .support-row .txt strong { color: var(--text-body); }
+    .support-row .manage-link { color: var(--text-link); font-weight: 600; text-decoration: underline; white-space: nowrap; }
     .support-cta {
-        display: inline-flex; align-items: center; gap: 0.5rem;
-        background: var(--accent-green-strong); color: #fff; border: none; cursor: pointer;
-        border-radius: var(--radius-btn, 10px); padding: 0.65rem 1.3rem; font-family: var(--font-sans);
+        display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px;
+        background: transparent; color: var(--brand-text); border: 1.5px solid currentColor; cursor: pointer;
+        border-radius: var(--radius-btn, 10px); padding: 0.55rem 1.1rem; font-family: var(--font-sans);
         font-weight: 700; font-size: 0.95rem; transition: var(--transition-ui);
     }
-    .support-cta:hover { background: var(--accent-green-strong-hover); transform: var(--lift-hover); }
-    .support-presence {
-        display: flex; align-items: center; gap: 0.6rem; margin-top: 1rem;
-        padding-top: 1rem; border-top: 1px solid var(--border-divider);
-    }
-    .presence-avatars { display: flex; }
-    .presence-avatars .pa {
-        width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--surface-card);
-        display: flex; align-items: center; justify-content: center;
-        color: #fff; font-weight: 700; font-size: 0.8rem;
-    }
-    .presence-avatars .pa:not(:first-child) { margin-left: -10px; }
-    .support-presence .txt { font-size: 0.88rem; color: var(--text-muted); }
-    .support-presence .txt strong { color: var(--text-body); }
-    .support-presence .manage-link {
-        margin-left: auto; color: var(--text-link-hover); font-weight: 600;
-        font-size: 0.88rem; text-decoration: none; white-space: nowrap;
-    }
+    .support-cta:hover { background: var(--surface-sunken); }
 
-    /* Daily recovery thought panel styles live in partials/_daily_thought.html
-       (self-contained — the partial also renders on the progress home). */
 
     /* ---- Post cards ---- */
     .post-card { margin-bottom: 1.25rem; }
@@ -1599,20 +1572,8 @@
             </form>
         </div>
     </div>
-    <!-- Check-in nudge -->
-    {% if todays_checkin %}
-    <div class="create-post-box ck-nudge done">
-        <div class="mood-emoji">{% if todays_checkin.mood == 1 %}😣{% elif todays_checkin.mood == 2 %}😔{% elif todays_checkin.mood == 3 %}😐{% elif todays_checkin.mood == 4 %}🙂{% elif todays_checkin.mood == 5 %}😄{% elif todays_checkin.mood == 6 %}🌟{% endif %}</div>
-        <div class="done-text">
-            <div class="label">{{ todays_checkin.get_mood_display_with_emoji }}</div>
-            <div class="sub">Checked in {{ todays_checkin.created_at|timesince }} ago</div>
-        </div>
-        {% if checkin_streak and checkin_streak > 1 %}
-        <div class="streak-chip"><i class="fas fa-fire" aria-hidden="true"></i> {{ checkin_streak }}-day streak</div>
-        {% endif %}
-        <a href="{% url 'accounts:progress' %}" class="progress-link">Progress</a>
-    </div>
-    {% elif user.is_authenticated %}
+    <!-- Check-in nudge: only until today's check-in is done -->
+    {% if not todays_checkin %}
     <div class="create-post-box ck-nudge">
         <div class="ck-nudge-head">
             <span class="lead"><i class="fas fa-circle-check" aria-hidden="true"></i> How are you feeling today?</span>
@@ -1633,31 +1594,21 @@
     {% endif %}
 
     <!-- Support row -->
-    <div class="create-post-box support-row">
-        <div class="support-row-top">
-            <div class="copy">
-                <div class="title">Need support right now?</div>
-                <div class="sub">Reach your circle in one tap — someone's always around.</div>
-            </div>
-            <form method="post" action="{% url 'accounts:supporter_request_support' %}" style="margin:0;">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ request.path }}">
-                <button type="submit" class="support-cta"><i class="fas fa-hand-holding-heart" aria-hidden="true"></i> I need support</button>
-            </form>
-        </div>
-        <div class="support-presence">
+    <div class="support-row">
+        <div class="copy">
+            <span class="title">Need support right now?</span>
             {% if supporter_total %}
-            <div class="presence-avatars">
-                {% for s in supporter_samples %}
-                <div class="pa" style="background: hsl({{ s.id|add:100 }}, 45%, 50%);">{{ s.first_name|default:s.username|slice:":1"|upper }}</div>
-                {% endfor %}
-            </div>
-            <span class="txt"><strong>{{ supporter_online }} of your {{ supporter_total }} supporter{{ supporter_total|pluralize }}</strong> {{ supporter_online|pluralize:"is,are" }} online now</span>
-            {% else %}
-            <span class="txt">Invite people to support you — they'll show up here.</span>
-            {% endif %}
+            <span class="txt"><strong>{{ supporter_online }} of your {{ supporter_total }} supporter{{ supporter_total|pluralize }}</strong> {{ supporter_online|pluralize:"is,are" }} online now.</span>
             <a href="{% url 'accounts:supporter_manage' %}" class="manage-link">People supporting me</a>
+            {% else %}
+            <a href="{% url 'accounts:supporter_manage' %}" class="manage-link">Invite people to support you</a>
+            {% endif %}
         </div>
+        <form method="post" action="{% url 'accounts:supporter_request_support' %}" style="margin:0;">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <button type="submit" class="support-cta"><i class="fas fa-hand-holding-heart" aria-hidden="true"></i> I need support</button>
+        </form>
     </div>
 
     {% else %}
@@ -1679,7 +1630,6 @@
 
     <!-- Feed Posts -->
     <div id="postsContainer" class="content-container loading">
-        {% include 'accounts/partials/_daily_thought.html' %}
         {% if posts %}
             {% for post in posts %}
             <div class="post-card{% if post.post_type == 'milestone' %} milestone-card{% endif %}" data-post-id="{{ post.id }}">

@@ -45,7 +45,6 @@
         font-size: 1rem;
     }
 
-
     .blog-container {
         max-width: 1200px;
         margin: 0 auto;
@@ -187,12 +186,6 @@
         z-index: 1;
     }
 
-    .post-card .post-category,
-    .post-card .post-stats {
-        position: relative;
-        z-index: 2;
-    }
-
     .post-image {
         width: 100%;
         height: 200px;
@@ -235,12 +228,7 @@
     }
 
     .warning-badge {
-        background: rgba(255, 107, 107, 0.9);
-        color: white;
-    }
-
-    .personal-story-badge {
-        background: rgba(78, 205, 196, 0.9);
+        background: #b91c1c;
         color: white;
     }
 
@@ -279,49 +267,6 @@
         line-height: 1.6;
         margin-bottom: 1rem;
         flex: 1;
-    }
-
-    .post-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-top: 1rem;
-        border-top: 1px solid var(--border-color, #f0f0f0);
-    }
-
-    .post-category {
-        background: #e8f4f8;
-        color: var(--primary-dark);
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        text-decoration: none;
-        transition: var(--transition-ui);
-        /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
-    }
-
-    .post-category:hover {
-        background: var(--primary-dark);
-        color: white;
-    }
-
-    .post-stats {
-        display: flex;
-        gap: 1rem;
-        font-size: 0.85rem;
-        color: var(--text-faint, #999);
-    }
-
-    .post-stats span {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-    }
-
-    .post-stats i {
-        font-size: 0.9rem;
-        color: #bbb;
     }
 
     .sidebar {
@@ -374,30 +319,11 @@
 
     .category-count {
         background: var(--bg-gray, #f0f0f0);
+        color: var(--text-dark, #2c3e50);
+        font-variant-numeric: tabular-nums;
         padding: 0.125rem 0.5rem;
         border-radius: 12px;
         font-size: 0.8rem;
-    }
-
-    .tag-cloud {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-
-    .tag {
-        background: var(--bg-gray, #f0f0f0);
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        color: var(--text-muted, #666);
-        text-decoration: none;
-        transition: var(--transition-ui);
-    }
-
-    .tag:hover {
-        background: var(--accent-green-strong);
-        color: white;
     }
 
     .search-box {
@@ -471,7 +397,6 @@
             max-width: 250px;
             justify-content: center;
         }
-
 
         .featured-cta {
             padding: 2rem 1.5rem;
@@ -580,9 +505,6 @@
                             {% if post.trigger_warning %}
                             <span class="warning-badge">TW</span>
                             {% endif %}
-                            {% if post.is_personal_story %}
-                            <span class="personal-story-badge">Personal</span>
-                            {% endif %}
                         </div>
                     </div>
 
@@ -590,6 +512,9 @@
                         <div class="post-meta">
                             <span>{{ post.published_at|date:"M d, Y" }}</span>
                             <span>{{ post.reading_time }} min read</span>
+                            {% if post.category %}
+                            <a href="{% url 'blog:category_posts' post.category.slug %}">{{ post.category.name }}</a>
+                            {% endif %}
                         </div>
 
                         <a href="{{ post.get_absolute_url }}" class="post-title">
@@ -604,18 +529,6 @@
                             {% endif %}
                         </p>
 
-                        <div class="post-footer">
-                            {% if post.category %}
-                            <a href="{% url 'blog:category_posts' post.category.slug %}" class="post-category">
-                                {{ post.category.name }}
-                            </a>
-                            {% endif %}
-
-                            <div class="post-stats">
-                                <span><i class="fas fa-eye"></i> {{ post.views }}</span>
-                                <span><i class="fas fa-comment"></i> {{ post.comments.count }}</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 {% empty %}
@@ -661,23 +574,6 @@
 
         <!-- Sidebar -->
         <div class="sidebar">
-            <!-- Recent Posts -->
-            {% if recent_posts %}
-            <div class="sidebar-section">
-                <h5>Recent Posts</h5>
-                <ul style="list-style: none; padding: 0;">
-                    {% for post in recent_posts %}
-                    <li style="padding: 0.5rem 0;">
-                        <a href="{{ post.get_absolute_url }}" style="color: var(--text-muted, #666); text-decoration: none;">
-                            <strong style="display: block; color: var(--text-dark, #333);">{{ post.title|truncatewords:8 }}</strong>
-                            <small style="color: var(--text-faint, #999);">{{ post.published_at|date:"M d" }}</small>
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-
             <!-- Categories -->
             <div class="sidebar-section">
                 <h5>Categories</h5>
@@ -693,48 +589,6 @@
                 </ul>
             </div>
 
-            <!-- Related Links for SEO -->
-            <div class="sidebar-section">
-                <h5>Explore More</h5>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color, #f0f0f0);">
-                        <a href="{% url 'accounts:community' %}" style="color: var(--text-muted, #666); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fas fa-users" style="color: #52b788;"></i> Recovery Community
-                        </a>
-                    </li>
-{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
-                    <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color, #f0f0f0);">
-                        <a href="{% url 'accounts:groups_list' %}" style="color: var(--text-muted, #666); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fas fa-user-friends" style="color: #4db8e8;"></i> Support Groups
-                        </a>
-                    </li>
-{% endif %}
-                    <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color, #f0f0f0);">
-                        <a href="{% url 'resources:list' %}" style="color: var(--text-muted, #666); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fas fa-bookmark" style="color: #9b59b6;"></i> Recovery Resources
-                        </a>
-                    </li>
-{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}
-                    <li style="padding: 0.5rem 0;">
-                        <a href="{% url 'accounts:challenges_home' %}" style="color: var(--text-muted, #666); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fas fa-trophy" style="color: #f39c12;"></i> Recovery Challenges
-                        </a>
-                    </li>
-{% endif %}
-                </ul>
-            </div>
-
-            <!-- Popular Tags -->
-            <div class="sidebar-section">
-                <h5>Popular Tags</h5>
-                <div class="tag-cloud">
-                    {% for tag in popular_tags %}
-                    <a href="{% url 'blog:tag_posts' tag.slug %}" class="tag">
-                        {{ tag.name }}
-                    </a>
-                    {% endfor %}
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -742,6 +596,12 @@
 
 {% block extra_js %}
 <script nonce="{{ csp_nonce }}">
+    // A featured image that fails to load: show the card without an image, not an empty block
+    document.querySelectorAll('.post-image img').forEach(function (img) {
+        function drop() { img.parentNode.classList.add('post-image--none'); img.remove(); }
+        if (img.complete && img.naturalWidth === 0) drop(); else img.addEventListener('error', drop);
+    });
+
     // Auto-submit search form with delay
     const searchInput = document.querySelector('input[name="search"]');
     if (searchInput) {

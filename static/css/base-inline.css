@@ -1345,7 +1345,7 @@ a.btn-primary:hover {
     color: #856404 !important;
     border-left: 4px solid #ffc107;
     /* light surface in both themes: keep dark text */
-    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
 }
 
 /* Navigation Links */

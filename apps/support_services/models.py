@@ -176,6 +176,12 @@ class Meeting(models.Model):
             models.Index(fields=['is_approved', 'is_active']),
         ]
 
+    @property
+    def type_labels(self):
+        """Readable names for the stored type codes; an unknown code shows as itself."""
+        names = dict(self.MEETING_TYPES)
+        return [names.get(code, code) for code in self.types or []]
+
     def __str__(self):
         day_display = self.get_day_display() if self.day is not None else 'No day set'
         time_display = self.time.strftime(

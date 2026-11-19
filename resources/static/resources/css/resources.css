@@ -441,31 +441,14 @@
         padding: 1rem;
     }
 }
-/* Library hub toolkit: tool cards, Premium tools, every program */
-.tk-section { max-width: 1200px; margin: 1.75rem auto; }
-.tk-title { font-size: 1.4rem; margin: 0 0 0.2rem; display: flex; align-items: center; gap: 0.4rem; }
-.tk-sub { margin: 0 0 0.9rem; opacity: 0.8; }
+/* Library hub toolkit: tools and Premium tools as plain lists, then every program */
+.tk-section { max-width: 1200px; margin: 2.25rem auto; }
+.tk-title { font-size: 1.4rem; margin: 0 0 0.2rem; }
+.tk-sub { margin: 0 0 1rem; color: var(--text-muted, #4b5563); }
 .tk-sub a { font-weight: 600; }
-.tk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.9rem; }
-.tk-card {
-    display: flex; flex-direction: column; gap: 0.3rem;
-    padding: 1.05rem 1.1rem; border-radius: 14px; text-decoration: none; color: inherit;
-    background: rgba(82, 183, 136, 0.08);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.tk-card:hover { color: inherit; transform: translateY(-2px); box-shadow: var(--shadow-hover); }
-.tk-icon { font-size: 1.7rem; line-height: 1; }
-.tk-name { font-weight: 700; font-size: 1.02rem; }
-.tk-desc { font-size: 0.9rem; line-height: 1.4; opacity: 0.82; flex: 1; }
-.tk-tag {
-    margin-top: 0.35rem; font-size: 0.8rem; font-weight: 600; color: #2d6a4f;
-}
-.tk-premium { padding: 1.2rem; border-radius: 16px; background: rgba(245, 166, 35, 0.1); }
-.tk-premium .tk-card { background: rgba(255, 255, 255, 0.7); }
-.tk-upgrade {
-    display: inline-block; margin-top: 1rem; padding: 0.6rem 1.2rem; border-radius: 10px;
-    font-weight: 700; text-decoration: none; color: #1f2937; background: linear-gradient(135deg, #ffd700, #f5a623);
-}
-.tk-upgrade:hover { color: var(--text-dark, #1f2937); filter: brightness(1.05); }
-[data-theme="dark"] .tk-tag { color: #95d5b2; }
-[data-theme="dark"] .tk-premium .tk-card { background: rgba(255, 255, 255, 0.04); }
+.tk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem 3.5rem; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.tk-list li { display: grid; grid-template-columns: 1fr auto; column-gap: 0.75rem; align-items: baseline; align-content: start; }
+.tk-name { font-weight: 700; font-size: 1.05rem; text-decoration: underline; text-underline-offset: 3px; padding-block: 0.55rem; }
+.tk-tag { font-size: 0.85rem; font-weight: 600; color: var(--text-muted, #4b5563); white-space: nowrap; }
+.tk-desc { grid-column: 1 / -1; margin: 0; font-size: 0.92rem; line-height: 1.45; color: var(--text-muted, #4b5563); max-width: 60ch; }
+.tk-upgrade { display: inline-block; margin-top: 1.1rem; padding-block: 0.4rem; font-weight: 700; text-decoration: underline; }

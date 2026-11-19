@@ -43,15 +43,6 @@
         margin-top: 0.5rem;
     }
     
-    .streak-fire {
-        color: #ff6b6b;
-        animation: flicker 2s ease-in-out infinite;
-    }
-    
-    @keyframes flicker {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.8; }
-    }
     
     .journal-grid {
         display: grid;
@@ -130,6 +121,9 @@
     .btn-journal:hover {
         box-shadow: none;
     }
+
+    .action-buttons { align-items: center; flex-wrap: wrap; margin-top: 1.5rem; }
+    .journal-quiet-link { font-weight: 600; text-decoration: underline; padding-block: 0.6rem; }
     
     @media (max-width: 768px) {
         .journal-grid {
@@ -154,10 +148,24 @@
 </div>
 
 <div class="journal-container">
-    <!-- Quick Stats -->
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        {% if not wrote_today %}
+            <a href="{% url 'journal:create_entry' %}" class="btn-journal">Write Today's Entry</a>
+            {% if daily_prompt %}
+                <a href="{% url 'journal:guided_entry_with_prompt' daily_prompt.id %}" class="btn-journal">Use Today's Prompt</a>
+            {% endif %}
+        {% else %}
+            <a href="{% url 'journal:create_entry' %}" class="btn-journal">Write Another Entry</a>
+        {% endif %}
+        <a href="{% url 'journal:prompts_list' %}" class="journal-quiet-link">Browse prompts</a>
+    </div>
+    
+    <!-- Quick Stats: only once there are entries to count -->
+    {% if total_entries %}
     <div class="quick-stats">
         <div class="stat-card">
-            <div class="stat-number">{{ streak.current_streak }} <span class="streak-fire">🔥</span></div>
+            <div class="stat-number">{{ streak.current_streak }}</div>
             <div class="stat-label">Day Streak</div>
         </div>
         <div class="stat-card">
@@ -173,19 +181,7 @@
             <div class="stat-label">Longest Streak</div>
         </div>
     </div>
-    
-    <!-- Action Buttons -->
-    <div class="action-buttons">
-        {% if not wrote_today %}
-            <a href="{% url 'journal:create_entry' %}" class="btn-journal">Write Today's Entry</a>
-            {% if daily_prompt %}
-                <a href="{% url 'journal:guided_entry_with_prompt' daily_prompt.id %}" class="btn-journal">Use Today's Prompt</a>
-            {% endif %}
-        {% else %}
-            <a href="{% url 'journal:create_entry' %}" class="btn-journal">Write Another Entry</a>
-        {% endif %}
-        <a href="{% url 'journal:prompts_list' %}" class="btn btn-secondary">Browse Prompts</a>
-    </div>
+    {% endif %}
     
     <div class="journal-grid">
         <!-- Main Content -->
@@ -216,8 +212,8 @@
                     </div>
                 </div>
             {% empty %}
-                <p style="text-align: center; color: var(--text-muted, #666); padding: 2rem;">
-                    No journal entries yet. Start your journaling journey today!
+                <p style="color: var(--text-muted, #666); padding: 1rem 0;">
+                    No entries yet. Whatever you write here stays private.
                 </p>
             {% endfor %}
             

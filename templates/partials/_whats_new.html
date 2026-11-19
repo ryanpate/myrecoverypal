@@ -16,19 +16,19 @@ apps/core/context_processors.py::whats_new decides the page and audience).
     <h2 id="whatsNewTitle">{% if is_premium_user %}More is included in your Premium{% else %}Your recovery toolkit just grew{% endif %}</h2>
     <ul class="wn-list">
         <li><a href="{% url 'resources:audio' %}" data-promo="whats_new_audio">
-            <span class="wn-icon" style="background:#ccfbf1; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);" aria-hidden="true">🎧</span>
+            <span class="wn-icon" style="background:#ccfbf1; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; color: var(--text-dark);" aria-hidden="true">🎧</span>
             <span><strong>Guided audio</strong><small>Press play when a craving hits: urge surfing, breathing, grounding. Plus sleep and morning sessions.</small></span></a></li>
         <li><a href="{% url 'resources:programs' %}" data-promo="whats_new_programs">
-            <span class="wn-icon" style="background:#ede9fe; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);" aria-hidden="true">🌱</span>
+            <span class="wn-icon" style="background:#ede9fe; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; color: var(--text-dark);" aria-hidden="true">🌱</span>
             <span><strong>Day-by-day programs</strong><small>First 30 Days, and two-week tracks for alcohol, opioids, stimulants, cannabis and gambling.</small></span></a></li>
         <li><a href="{% url 'resources:reflections' %}" data-promo="whats_new_reflections">
-            <span class="wn-icon" style="background:#e0f2fe; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);" aria-hidden="true">☀️</span>
+            <span class="wn-icon" style="background:#e0f2fe; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; color: var(--text-dark);" aria-hidden="true">☀️</span>
             <span><strong>Daily reflections</strong><small>A short reading and a question to sit with, every day. Now read aloud, too.</small></span></a></li>
         <li><a href="{% url 'resources:worksheets' %}" data-promo="whats_new_worksheets">
             <span class="wn-icon" style="background:var(--bg-light, #dcfce7);" aria-hidden="true">📝</span>
             <span><strong>Worksheets &amp; your Recovery Workbook</strong><small>Fill them in, save your answers, and turn them into a personal PDF.</small></span></a></li>
         <li><a href="{% url 'resources:program_detail' 'family-and-friends' %}" data-promo="whats_new_family">
-            <span class="wn-icon" style="background:#fef3c7; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);" aria-hidden="true">💛</span>
+            <span class="wn-icon" style="background:#fef3c7; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; color: var(--text-dark);" aria-hidden="true">💛</span>
             <span><strong>A course for your family</strong><small>Fourteen days for the people who love you{% if not is_premium_user %}. Included with Premium's Supporter seat{% endif %}.</small></span></a></li>
     </ul>
     <div class="wn-actions">

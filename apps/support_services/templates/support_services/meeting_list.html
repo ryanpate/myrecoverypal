@@ -12,6 +12,8 @@
     }
 
     .meeting-card {
+        /* the meeting name link stretches over the whole row */
+        position: relative;
         background: var(--card-bg, #fff);
         border-radius: 10px;
         padding: 20px;
@@ -44,23 +46,31 @@
     }
 
     .meeting-types {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 10px;
+        margin: 10px 0 0;
+        font-size: 0.9rem;
+        color: var(--text-muted, #4b5563);
     }
 
-    .meeting-type-badge {
-        display: inline-block;
-        padding: 4px 10px;
-        background: #e8f0fb;
-        color: #1e4d8b;
-        border-radius: 15px;
-        font-size: 0.85rem;
-        font-weight: 500;
-        /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+    /* Links and buttons inside a row stay clickable above the stretched name link */
+    .meeting-card a:not(.stretched-link),
+    .meeting-card .bookmark-btn {
+        position: relative;
+        z-index: 2;
     }
+
+    /* Saving is a quiet control until it is on; the row itself is the main action */
+    .meeting-card .bookmark-btn:not(.btn-primary) {
+        background: transparent;
+        color: var(--brand-text, #1e4d8b) !important;
+        border: 1px solid var(--border-color, #e5e7eb);
+    }
+
+    .search-more { margin: 0.6rem 0 0; display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; font-size: 0.95rem; }
+    .search-more a { text-decoration: underline; padding-block: 0.4rem; }
+
+    .state-browse > summary { min-height: 44px; padding-block: 0.6rem; font-weight: 600; color: var(--brand-text, #1e4d8b); cursor: pointer; }
+    .state-browse-list { display: flex; flex-wrap: wrap; gap: 0.1rem 1.25rem; margin: 0.25rem 0 0; }
+    .state-browse-list a { padding-block: 0.6rem; text-decoration: underline; font-variant-numeric: tabular-nums; }
 
     .attendance-badge {
         display: inline-block;
@@ -74,33 +84,33 @@
     .attendance-badge.in-person {
         background: #DCFCE7;
         color: #166534;
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .attendance-badge.online {
         background: #DBEAFE;
         color: #1E40AF;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .attendance-badge.hybrid {
         background: #FEF3C7;
         color: #92400E;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .today-badge {
         background: #FEE2E2;
-        color: #DC2626;
+        color: #b91c1c;
         padding: 4px 12px;
         border-radius: 15px;
         font-size: 0.85rem;
         font-weight: 600;
         margin-left: 10px;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .filter-section {
@@ -194,27 +204,12 @@
         </ol>
     </nav>
 
-    {% if states %}
-    <section class="mb-4">
-        <h2 style="font-size:1.05rem;">Browse by state</h2>
-        {% for s in states %}
-        <a class="badge bg-light text-dark me-1"
-           href="{% url 'support_services:state_hub' state=s.state|lower %}">
-            {{ s.state }} ({{ s.count }})</a>
-        {% endfor %}
-        <p class="mt-2 mb-0"><a href="{% url 'support_services:na_home' %}">
-            Looking for Narcotics Anonymous? Browse NA meetings &rarr;</a></p>
-    </section>
-    {% endif %}
-
-    {% include 'support_services/_court_compliance_nudge.html' %}
-
     <!-- Search and Filters -->
     <div class="meeting-filters">
         <form method="get" action="{% url 'support_services:meeting_list' %}" id="filterForm">
             <!-- Search Bar -->
             <div class="row mb-3">
-                <div class="col-lg-6">
+                <div class="col-lg-8">
                     <div class="input-group">
                         <input type="text" 
                                class="form-control form-control-lg" 
@@ -225,16 +220,10 @@
                             <i class="fas fa-search"></i> Search
                         </button>
                     </div>
-                </div>
-                <div class="col-lg-3 mt-3 mt-lg-0">
-                    <a href="{% url 'support_services:meeting_finder' %}" class="btn btn-info btn-lg w-100">
-                        <i class="fas fa-globe"></i> Worldwide Search
-                    </a>
-                </div>
-                <div class="col-lg-3 mt-3 mt-lg-0">
-                    <a href="{% url 'support_services:submit_meeting' %}" class="btn btn-success btn-lg w-100">
-                        <i class="fas fa-plus"></i> Submit Meeting
-                    </a>
+                    <p class="search-more">
+                        <a href="{% url 'support_services:meeting_finder' %}">Search the worldwide network</a>
+                        <a href="{% url 'support_services:submit_meeting' %}">Submit a meeting</a>
+                    </p>
                 </div>
             </div>
             
@@ -265,7 +254,7 @@
                                 data-on-click="set-filter" data-filter="day" data-value="{{ day_value }}">
                             {{ day_name }}
                             {% if today_day == day_value %}
-                                <span class="badge bg-danger ms-1">Today</span>
+                                <span class="badge bg-danger ms-1" style="color: #fff;">Today</span>
                             {% endif %}
                         </button>
                     {% endfor %}
@@ -370,6 +359,23 @@
         </form>
     </div>
 
+    {% include 'support_services/_court_compliance_nudge.html' %}
+
+    {% if states %}
+    <section class="mb-4">
+        <details class="state-browse">
+            <summary>Browse by state</summary>
+            <p class="state-browse-list">
+                {% for s in states %}
+                <a href="{% url 'support_services:state_hub' state=s.state|lower %}">{{ s.state }} ({{ s.count }})</a>
+                {% endfor %}
+            </p>
+        </details>
+        <p class="mt-2 mb-0"><a href="{% url 'support_services:na_home' %}">
+            Looking for Narcotics Anonymous? Browse NA meetings &rarr;</a></p>
+    </section>
+    {% endif %}
+
     <!-- Results Count -->
     {% if meetings %}
     <div class="mb-3">
@@ -388,8 +394,6 @@
             {% if meetings %}
                 {% for meeting in meetings %}
                 <div class="meeting-card">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
                             <div class="d-flex align-items-start">
                                 <div class="flex-grow-1">
                                     <div class="d-flex align-items-center mb-2">
@@ -411,7 +415,7 @@
                                     
                                     <h3 class="meeting-name">
                                         <a href="{% url 'support_services:meeting_detail' meeting.slug %}" 
-                                           class="text-decoration-none text-dark">
+                                           class="stretched-link text-decoration-none text-dark">
                                             {{ meeting.name }}
                                         </a>
                                     </h3>
@@ -445,31 +449,17 @@
                                     {% endif %}
                                     
                                     {% if meeting.types %}
-                                    <div class="meeting-types">
-                                        {% for type_code in meeting.types %}
-                                            <span class="meeting-type-badge">{{ type_code }}</span>
-                                        {% endfor %}
-                                    </div>
+                                    <p class="meeting-types">{{ meeting.type_labels|join:" · " }}</p>
                                     {% endif %}
                                 </div>
+                                {% if user.is_authenticated %}
+                                <button class="btn btn-outline-secondary ms-2 bookmark-btn"
+                                        data-type="meeting"
+                                        data-id="{{ meeting.id }}" aria-label="Save this meeting">
+                                    <i class="far fa-bookmark" aria-hidden="true"></i>
+                                </button>
+                                {% endif %}
                             </div>
-                        </div>
-                        
-                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                            <a href="{% url 'support_services:meeting_detail' meeting.slug %}" 
-                               class="btn btn-outline-primary">
-                                View Details <i class="fas fa-arrow-right ms-1"></i>
-                            </a>
-                            
-                            {% if user.is_authenticated %}
-                            <button class="btn btn-outline-secondary ms-2 bookmark-btn" 
-                                    data-type="meeting" 
-                                    data-id="{{ meeting.id }}">
-                                <i class="far fa-bookmark"></i>
-                            </button>
-                            {% endif %}
-                        </div>
-                    </div>
                 </div>
                 {% endfor %}
 
