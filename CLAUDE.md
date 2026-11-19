@@ -409,12 +409,12 @@ Every new member-facing feature needs a link in **all** of these surfaces. `apps
 
 | Surface | File | Contents |
 |---------|------|----------|
-| Top nav (desktop) | `templates/base.html` (`#navLinks`) | Logged in: Today, Meetings, Community, Library, Tools ▾, Court Compliance pill. Logged out: Meetings, Library, Tools ▾, Court Compliance |
+| Top nav (desktop) | `templates/base.html` (`#navLinks`) | Logged in: Today, Meetings, Community, Library, Tools ▾, Court Compliance (a plain link, not a pill, since 2026-11-19). Logged out: Meetings, Library, Tools ▾, Court Compliance |
 | Tools dropdown | `templates/partials/_resources_nav_dropdown.html` | Three columns: **Library** (Programs & Classes, Guided Audio, Daily Reflections, Worksheets, Family & Friends Course, All Resources) · **Premium Tools** (Anchor, My Recovery Workbook, My Saved Worksheets, Saved Reflections, 90-Day Insights → `progress#analytics`; "Unlock Premium" for free users; a preview + "See Premium" when logged out) · **Free Tools** (Craving SOS, Medallion Maker, Relapse Prevention Plan, Blog, Shop, Crisis Help) |
 | Account (avatar) dropdown | `templates/base.html` (`#userDropdown`) | My Recovery · Community · **Premium Tools** · Account |
 | Mobile slide-out | `templates/base.html` (`#mobileSlideMenu`) | Logged in: My Recovery · Community · Quick Actions · Library · Premium Tools · Free Tools · Account. Logged out: Explore · Library · Premium Tools · Free Tools |
-| Web bottom bar | `templates/base.html` (`#mobileBottomNav`) | Today, Meetings, Community, Me |
-| Library hub | `resources/templates/resources/_toolkit.html` | Toolkit card grid, Premium tools panel, a card per program (via `program_views.program_cards`) |
+| Web bottom bar | `templates/base.html` (`#mobileBottomNav`) | Today, Meetings, Community, Me. Shown to signed-in members at ≤1024px via `.mobile-bottom-nav--member`; anything fixed to the bottom of a page must clear its 56px |
+| Library hub | `resources/templates/resources/_toolkit.html` | Toolkit list, Premium tools list (plain rows since 2026-11-19), a card per program (via `program_views.program_cards`) |
 
 - "Community" always means the social feed (`accounts:social_feed`): top nav, bottom bar, and "Community Feed" in the mobile Quick Actions. The member directory (`accounts:community`, with Members/Groups tabs) is labelled **Members** in the account dropdown and mobile menu (**Members & Groups**, with the tab bar, when groups are shown). Never label both "Community" (`CommunityLabelsTest`).
 - Groups, challenges and sponsor matching are hidden while `settings.SHOW_GROUPS_CHALLENGES_SPONSORS` is False (since 2026-10-26, for near-zero use). Their pages still work and program cohorts still use groups; wrap any new entry point in `{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}` (`HiddenSocialFeaturesTest`).

@@ -146,7 +146,7 @@
         max-width: 100%;
         box-sizing: border-box;
         padding: 1rem 1.5rem;
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
         text-decoration: none;
         border-radius: var(--radius-btn, 10px);
@@ -158,7 +158,7 @@
 
     .sg-hero .cta-button:hover {
         box-shadow: none;
-        background: #45a675;
+        background: var(--accent-green-strong-hover);
     }
 
     .notice-box {
@@ -168,7 +168,7 @@
         max-width: 800px;
         border-radius: 0 8px 8px 0;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; color: var(--text-dark);
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; color: var(--text-dark);
     }
 
     .notice-box h3 {
@@ -230,12 +230,12 @@
     }
 
     .check-yes {
-        color: #52b788;
+        color: var(--green-text, #2e8059);
         font-weight: bold;
     }
 
     .check-no {
-        color: #dc3545;
+        color: var(--danger-text, #b91c1c);
     }
 
     .features-section {
@@ -392,7 +392,7 @@
     .cta-section .cta-button {
         display: inline-block;
         padding: 1rem 3rem;
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
         text-decoration: none;
         border-radius: var(--radius-btn, 10px);
@@ -402,7 +402,7 @@
     }
 
     .cta-section .cta-button:hover {
-        background: #45a675;
+        background: var(--accent-green-strong-hover);
     }
 
     .cta-section .subtext {
@@ -454,7 +454,7 @@
         <h3>Where Did Sober Grid Users Go?</h3>
         <p>Many former Sober Grid users have been looking for alternatives that offer the same core experience: a social network built specifically for people in recovery. MyRecoveryPal was built to fill that gap — with a social feed, peer connections, recovery groups, and features Sober Grid never had like an AI recovery coach, group challenges, and private journaling.</p>
 
-        <a href="{% url 'accounts:register' %}" class="cta-button" style="display: inline-block; padding: 0.8rem 2rem; background: #52b788; color: white; text-decoration: none; border-radius: var(--radius-btn, 10px); font-weight: 600; margin-top: 1rem;">Join MyRecoveryPal Free</a>
+        <a href="{% url 'accounts:register' %}" class="cta-button" style="display: inline-block; padding: 0.8rem 2rem; background: var(--accent-green-strong); color: white; text-decoration: none; border-radius: var(--radius-btn, 10px); font-weight: 600; margin-top: 1rem;">Join MyRecoveryPal Free</a>
     </div>
 </section>
 

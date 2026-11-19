@@ -11,14 +11,13 @@
 
 {% block extra_css %}
 <style>
-    .habit-value { max-width: 860px; margin: 0 auto 2rem; }
+    .habit-value { max-width: 860px; margin: 1.5rem auto 3rem; }
     .habit-value-title { font-size: 1.35rem; font-weight: 800; color: var(--brand-text, #1e4d8b); margin-bottom: 1.25rem; }
     .habit-value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: left; }
     .habit-value-item { display: flex; flex-direction: column; gap: 0.3rem; background: var(--card-bg, #fff);
         border: 1px solid #e3eaf3; border-radius: 12px; padding: 1rem 1.1rem; }
     .habit-value-item strong { color: var(--text-dark, #1a2a44); }
     .habit-value-item span { color: var(--text-muted, #555); font-size: 0.9rem; line-height: 1.45; }
-    .habit-value-icon { font-size: 1.5rem; }
     .habit-value-note { color: var(--text-muted, #888); font-size: 0.85rem; margin: 1rem 0 0; }
     @media (max-width: 700px) { .habit-value-grid { grid-template-columns: 1fr; } }
     /* Phones: get to the Premium price fast. The three tiles shrink to one
@@ -28,9 +27,7 @@
         .habit-value-grid { gap: .4rem; }
         .habit-value-item { flex-direction: row; align-items: center; gap: .6rem; padding: .55rem .8rem; }
         .habit-value-item span { display: none; }
-        .habit-value-icon { margin: 0; font-size: 1.1rem; }
         .plan-col-premium { order: -1; }
-        .plan-col-premium > .card { transform: none !important; }
     }
     [data-theme="dark"] .habit-value-title { color: #8ab4f8; }
     [data-theme="dark"] .habit-value-item { background: #1e2430; border-color: #2e3949; }
@@ -40,15 +37,15 @@
     .container { max-width: 1200px; }
 
     .pricing-ai-highlight {
-        background: rgba(102, 126, 234, 0.1);
-        border: 1px solid rgba(102, 126, 234, 0.3);
+        background: rgba(30, 77, 139, 0.1);
+        border: 1px solid rgba(30, 77, 139, 0.3);
         border-radius: 8px;
         padding: 10px 12px;
         margin-bottom: 8px;
     }
     [data-theme="dark"] .pricing-ai-highlight {
-        background: rgba(102, 126, 234, 0.2);
-        border-color: rgba(102, 126, 234, 0.4);
+        background: rgba(30, 77, 139, 0.2);
+        border-color: rgba(30, 77, 139, 0.4);
     }
     .badge-new {
         background: #764ba2;
@@ -108,7 +105,7 @@
         color: var(--brand-text, #1e4d8b);
     }
     .toggle-save {
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: #fff;
         font-size: 0.65rem;
         font-weight: 700;
@@ -126,48 +123,6 @@
     }
     [data-theme="dark"] .ai-coach-desc {
         color: #adb5bd;
-    }
-    .try-coach-section {
-        background: #f8f9ff;
-        border-radius: 16px;
-        padding: 40px;
-        text-align: center;
-        border: 1px solid rgba(102, 126, 234, 0.2);
-    }
-    [data-theme="dark"] .try-coach-section {
-        background: #1a1f3a;
-        border-color: rgba(102, 126, 234, 0.3);
-    }
-    .try-coach-section h3 {
-        color: var(--brand-text, #1e4d8b);
-        margin-bottom: 12px;
-    }
-    [data-theme="dark"] .try-coach-section h3 {
-        color: #8ab4f8;
-    }
-    .try-coach-section p {
-        color: var(--text-muted, #555);
-        max-width: 500px;
-        margin: 0 auto 20px;
-    }
-    [data-theme="dark"] .try-coach-section p {
-        color: #adb5bd;
-    }
-    .btn-coach-try {
-        background: #764ba2;
-        color: white;
-        border: none;
-        padding: 12px 32px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 1.05rem;
-        transition: transform 0.2s, box-shadow 0.2s;
-        --heading-color: currentColor;
-    }
-    .btn-coach-try:hover {
-        color: white;
-        box-shadow: none;
-        text-decoration: none;
     }
     /* Dark mode card overrides */
     [data-theme="dark"] .card.shadow-sm .card-header.bg-light,
@@ -191,19 +146,12 @@
     [data-theme="dark"] .card .card-header.bg-light .text-muted {
         color: #adb5bd !important;
     }
-    [data-theme="dark"] .accordion .card {
-        background-color: #1e1e1e;
-        border-color: #333;
-    }
-    [data-theme="dark"] .accordion .card-header {
-        background-color: #2d2d2d;
-    }
-    [data-theme="dark"] .accordion .btn-link {
-        color: #8ab4f8;
-    }
-    [data-theme="dark"] .accordion .card-body {
-        color: #e0e0e0;
-    }
+    .other-plans-title { text-align: center; font-size: 1.35rem; margin: 0 0 1.5rem; }
+    .faq { max-width: 760px; margin: 3rem auto 0; }
+    .faq-row { border-top: 1px solid var(--border-color, #e5e7eb); }
+    .faq-row:last-child { border-bottom: 1px solid var(--border-color, #e5e7eb); }
+    .faq-row summary { min-height: 44px; padding: 0.85rem 0.25rem; font-weight: 600; color: var(--brand-text, #1e4d8b); cursor: pointer; }
+    .faq-row p { margin: 0; padding: 0 0.25rem 1rem; max-width: 65ch; color: var(--text-dark, #2c3e50); line-height: 1.6; }
 </style>
 {% endblock %}
 
@@ -221,38 +169,11 @@
 </div>
 
 <div class="container py-5">
-    <!-- What Premium adds to the daily habit (pledge + check-in). No price here:
-         prices live in the plan cards, which handle the iOS rules. -->
-    <div class="habit-value text-center">
-        <h2 class="habit-value-title">
-            {% if own_streak and own_streak >= 2 %}Your {{ own_streak }}-day streak deserves a safety net
-            {% else %}Premium is built around the two minutes you spend here each day{% endif %}
-        </h2>
-        <div class="habit-value-grid">
-            <div class="habit-value-item">
-                <div class="habit-value-icon" aria-hidden="true">🛡️</div>
-                <strong>Miss a day, keep your streak</strong>
-                <span>One missed day a week won't reset your pledge or check-in streak.</span>
-            </div>
-            <div class="habit-value-item">
-                <div class="habit-value-icon" aria-hidden="true">📈</div>
-                <strong>See what your check-ins say</strong>
-                <span>Mood, craving and energy trends over 90 days, plus a weekly recap.</span>
-            </div>
-            <div class="habit-value-item">
-                <div class="habit-value-icon" aria-hidden="true">⚓</div>
-                <strong>Talk it through</strong>
-                <span>Anchor, your AI recovery coach, 20 messages a day when a day gets hard.</span>
-            </div>
-        </div>
-        <p class="habit-value-note">Cancel anytime. No questions asked.</p>
-    </div>
-
     {% include 'accounts/_founding_offer_banner.html' with slot='pricing' %}
 
     <!-- Trial Status Alert -->
     {% if user_subscription and user_subscription.status == 'trialing' %}
-    <div class="alert alert-info text-center mb-4" style="background: #764ba2; border: none; color: white; --heading-color: currentColor;">
+    <div class="alert alert-info text-center mb-4" style="background: #1e4d8b; border: none; color: white; --heading-color: currentColor;">
         <i class="fas fa-clock"></i> <strong>You're on a Premium trial!</strong>
         {% if user_subscription.trial_end %}
             Your trial ends on {{ user_subscription.trial_end|date:"F d, Y" }}.
@@ -309,11 +230,11 @@
         <!-- Premium Tier — one card, monthly/annual toggle (annual default) -->
         {% if premium_monthly_plan or premium_yearly_plan %}
         <div class="col-lg-5 col-md-6 mb-4 plan-col-premium">
-            <div class="card h-100 shadow-lg border-primary" style="transform: scale(1.05);">
+            <div class="card h-100 shadow-lg border-primary">
                 <div class="card-header text-center bg-primary text-white" style="background-color: #1e4d8b !important;">
                     <span class="badge badge-warning mb-2">MOST POPULAR</span>
                     {% if not user.is_authenticated or card_trial_eligible %}
-                    <span class="badge badge-success mb-2 ml-1" style="background: #2e8059; color: #fff;">7-DAY FREE TRIAL</span>
+                    <span class="badge badge-success mb-2 ml-1" style="background: #2e8059 !important; color: #fff;">7-DAY FREE TRIAL</span>
                     {% endif %}
                     <h3 class="my-3" style="color: white !important;">Premium</h3>
 
@@ -357,7 +278,7 @@
                     <!-- Featured benefit: the daily habit people actually keep (pledge + check-in) -->
                     <div class="pricing-ai-highlight">
                         <li class="mb-1" style="list-style: none;">
-                            <i class="fas fa-shield-halved" style="color: #667eea;"></i>
+                            <i class="fas fa-shield-halved" style="color: var(--brand-text, #1e4d8b);"></i>
                             <strong>Streak protection</strong>
                         </li>
                         <p class="ai-coach-desc mb-0">One missed day a week won't break your pledge or check-in streak</p>
@@ -402,16 +323,43 @@
             </div>
         </div>
         {% endif %}
+    </div>
 
+    <!-- What Premium adds to the daily habit (pledge + check-in). No price here:
+         prices live in the plan cards, which handle the iOS rules. -->
+    <div class="habit-value text-center">
+        <h2 class="habit-value-title">
+            {% if own_streak and own_streak >= 2 %}Your {{ own_streak }}-day streak deserves a safety net
+            {% else %}Premium is built around the two minutes you spend here each day{% endif %}
+        </h2>
+        <div class="habit-value-grid">
+            <div class="habit-value-item">
+                <strong>Miss a day, keep your streak</strong>
+                <span>One missed day a week won't reset your pledge or check-in streak.</span>
+            </div>
+            <div class="habit-value-item">
+                <strong>See what your check-ins say</strong>
+                <span>Mood, craving and energy trends over 90 days, plus a weekly recap.</span>
+            </div>
+            <div class="habit-value-item">
+                <strong>Talk it through</strong>
+                <span>Anchor, your AI recovery coach, 20 messages a day when a day gets hard.</span>
+            </div>
+        </div>
+        <p class="habit-value-note">Cancel anytime. No questions asked.</p>
+    </div>
+
+    <h2 class="other-plans-title">Other plans</h2>
+    <div class="row justify-content-center">
         <!-- Court Compliance Tier -->
         <div class="col-lg-5 col-md-6 mb-4">
-            <div class="card h-100 shadow-sm" style="border: 2px solid #1e4d8b;">
-                <div class="card-header text-center text-white" style="background: #1e4d8b !important;">
-                    <h3 class="my-3" style="color: white !important;">Court Compliance</h3>
-                    <h2 class="display-4" style="color: white !important;">${% if court_monthly_plan %}{{ court_monthly_plan.price|floatformat:2 }}{% else %}29.99{% endif %}</h2>
-                    <p style="color: white !important;">per month</p>
+            <div class="card h-100 shadow-sm">
+                <div class="card-header text-center bg-light" style="background-color: var(--bg-light, #f8f9fa) !important;">
+                    <h3 class="my-3" style="color: var(--brand-text, #1e4d8b) !important;">Court Compliance</h3>
+                    <h2 class="display-4" style="color: var(--brand-text, #1e4d8b) !important;">${% if court_monthly_plan %}{{ court_monthly_plan.price|floatformat:2 }}{% else %}29.99{% endif %}</h2>
+                    <p class="text-muted" style="color: var(--text-muted, #6c757d) !important;">per month</p>
                     {% if court_yearly_plan %}
-                    <small style="color: rgba(255,255,255,0.85);">Annual: ${{ court_yearly_plan.price|floatformat:0 }}/yr (save 25%)</small>
+                    <small style="color: var(--text-dark, #2c3e50);">Annual: ${{ court_yearly_plan.price|floatformat:0 }}/yr (save 25%)</small>
                     {% endif %}
                 </div>
                 <div class="card-body text-dark bg-white">
@@ -427,31 +375,31 @@
                     </ul>
                     <p class="small text-muted mt-3 mb-0">Designed for DUI/DWI defendants, drug court participants, and anyone with court-ordered meeting attendance requirements. Supports both 12-step and secular recovery programs.</p>
                 </div>
-                <div class="card-footer text-center" style="background: #1e4d8b;">
+                <div class="card-footer text-center bg-light">
                     {% if user.is_authenticated and user_subscription.is_court %}
-                        <a class="btn btn-light btn-block" href="{% url 'accounts:court_dashboard' %}">
+                        <a class="btn btn-primary btn-block" href="{% url 'accounts:court_dashboard' %}">
                             <i class="fas fa-gavel"></i> Open Court Dashboard
                         </a>
                     {% elif not user.is_authenticated %}
-                        <a class="btn btn-light btn-block" href="{% url 'accounts:register' %}?next={% url 'accounts:pricing' %}">
+                        <a class="btn btn-primary btn-block" href="{% url 'accounts:register' %}?next={% url 'accounts:pricing' %}">
                             Sign Up to Start
                         </a>
                     {% elif court_monthly_plan %}
-                        <button class="btn btn-light btn-block subscribe-btn stripe-only"
+                        <button class="btn btn-primary btn-block subscribe-btn stripe-only"
                                 data-plan-id="{{ court_monthly_plan.id }}"
                                 data-plan-name="{{ court_monthly_plan.name }}">
                             Start Court Compliance &mdash; ${{ court_monthly_plan.price|floatformat:2 }}/mo
                         </button>
                         {% if court_yearly_plan %}
                         <button class="btn btn-link btn-block subscribe-btn stripe-only mt-1 p-0"
-                                style="color: rgba(255,255,255,0.9); text-decoration: underline;"
+                                style="background: transparent; color: var(--brand-text, #1e4d8b) !important; text-decoration: underline;"
                                 data-plan-id="{{ court_yearly_plan.id }}"
                                 data-plan-name="{{ court_yearly_plan.name }}">
                             or pay annually &mdash; ${{ court_yearly_plan.price|floatformat:0 }}/yr (save 25%)
                         </button>
                         {% endif %}
                     {% else %}
-                        <a class="btn btn-light btn-block" href="mailto:{{ SUPPORT_EMAIL }}?subject=Court%20Compliance%20Tier%20Signup">
+                        <a class="btn btn-primary btn-block" href="mailto:{{ SUPPORT_EMAIL }}?subject=Court%20Compliance%20Tier%20Signup">
                             Contact Support
                         </a>
                     {% endif %}
@@ -490,84 +438,30 @@
         Buying for someone else? <a href="{% url 'core:gift_premium' %}" data-promo="pricing_gift"><strong>Gift a year of Premium</strong></a>: one payment, never renews, with a card you can print.
     </p>
 
-    <!-- Try the AI Coach Section -->
-    <div class="row justify-content-center mt-4 mb-5">
-        <div class="col-lg-8">
-            <div class="try-coach-section">
-                <i class="fas fa-robot" style="font-size: 2.5rem; color: #667eea; margin-bottom: 16px;"></i>
-                <h3>Not sure? Try the AI Coach free</h3>
-                <p>Get 3 free messages a day to experience personalized recovery support -- no signup or credit card required.</p>
-                <a href="{% url 'accounts:recovery_coach' %}" class="btn btn-coach-try">
-                    <i class="fas fa-comment-dots mr-1"></i> Try AI Coach Free
-                </a>
-            </div>
-        </div>
-    </div>
+    <p class="text-center mt-3 mb-5">
+        Not sure? <a href="{% url 'accounts:recovery_coach' %}"><strong>Try the AI coach free</strong></a>: 3 messages a day, no card needed.
+    </p>
 
     <!-- FAQ Section -->
-    <div class="row mt-5">
-        <div class="col-lg-12">
-            <h2 class="text-center mb-4">Frequently Asked Questions</h2>
-            <div class="accordion" id="faqAccordion">
-                <div class="card">
-                    <div class="card-header" id="faq1">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse1">
-                                Can I cancel anytime?
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapse1" class="collapse show" data-parent="#faqAccordion">
-                        <div class="card-body">
-                            Yes! You can cancel your subscription at any time. You'll continue to have access until the end of your billing period.
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header" id="faq2">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse2">
-                                Is there a free trial?
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapse2" class="collapse" data-parent="#faqAccordion">
-                        <div class="card-body">
-                            Yes. Premium comes with a 7-day free trial, once per account. You add a card at checkout and aren't charged until day 7; cancel any time before then and you pay nothing. The Free tier is yours forever either way, including 3 AI Coach messages a day and unlimited support when you're struggling.
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header" id="faq3">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse3">
-                                What is the AI Recovery Coach?
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapse3" class="collapse" data-parent="#faqAccordion">
-                        <div class="card-body">
-                            The AI Recovery Coach is a 24/7 AI-powered companion that provides personalized recovery support, coping strategies, and encouragement. Free users get 3 messages a day, while Premium members get 20 messages per day. It is not a replacement for professional help but a supportive tool available whenever you need it.
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header" id="faq4">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse4">
-                                What payment methods do you accept?
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapse4" class="collapse" data-parent="#faqAccordion">
-                        <div class="card-body">
-                            <span class="stripe-only">We accept all major credit cards (Visa, Mastercard, American Express, Discover) through our secure payment processor, Stripe.</span>
-                            <span class="iap-only">Subscriptions are processed securely through your Apple ID account. You can manage or cancel your subscription in iOS Settings at any time.</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="faq">
+        <h2 class="text-center mb-4">Frequently Asked Questions</h2>
+        <details class="faq-row" open>
+            <summary>Can I cancel anytime?</summary>
+            <p>Yes. You can cancel your subscription at any time, and you keep access until the end of your billing period.</p>
+        </details>
+        <details class="faq-row">
+            <summary>Is there a free trial?</summary>
+            <p>Yes. Premium comes with a 7-day free trial, once per account. You add a card at checkout and aren't charged until day 7; cancel any time before then and you pay nothing. The Free tier is yours forever either way, including 3 AI Coach messages a day and unlimited support when you're struggling.</p>
+        </details>
+        <details class="faq-row">
+            <summary>What is the AI Recovery Coach?</summary>
+            <p>The AI Recovery Coach is a 24/7 AI-powered companion that provides personalized recovery support, coping strategies, and encouragement. Free users get 3 messages a day, while Premium members get 20 messages per day. It is not a replacement for professional help but a supportive tool available whenever you need it.</p>
+        </details>
+        <details class="faq-row">
+            <summary>What payment methods do you accept?</summary>
+            <p><span class="stripe-only">We accept all major credit cards (Visa, Mastercard, American Express, Discover) through our secure payment processor, Stripe.</span>
+                <span class="iap-only">Subscriptions are processed securely through your Apple ID account. You can manage or cancel your subscription in iOS Settings at any time.</span></p>
+        </details>
     </div>
 </div>
 

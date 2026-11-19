@@ -4352,11 +4352,6 @@ def social_feed_view(request):
         'total_posts_count': total_posts_count,
     }
 
-    # Daily recovery thought for feed
-    from apps.accounts.daily_content import get_daily_thought, get_daily_reading
-    context['daily_thought'] = get_daily_thought()
-    context['daily_reading'] = get_daily_reading()
-
     # For authenticated users, check if feed is empty/sparse and add suggestions
     if user.is_authenticated:
         # Today's check-in for the widget

@@ -18,7 +18,7 @@
                 remove it from all future outreach.
             </p>
             {% if error %}
-                <p style="color: #c0392b; background: #fdecea; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">{{ error }}</p>
+                <p style="color: #c0392b; background: #fdecea; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;">{{ error }}</p>
             {% endif %}
             <form method="post" action="{% url 'cold_outreach_unsubscribe' %}" style="text-align: left;">
                 {% csrf_token %}
@@ -27,7 +27,7 @@
                        placeholder="you@example.com"
                        style="width: 100%; padding: 0.75rem 0.9rem; border: 1px solid var(--border-color, #ccc); border-radius: 8px; font-size: 1rem; box-sizing: border-box; margin-bottom: 1.25rem;">
                 <button type="submit"
-                        style="width: 100%; padding: 0.85rem 1rem; background: #52b788; color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                        style="width: 100%; padding: 0.85rem 1rem; background: var(--accent-green-strong); color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">
                     Unsubscribe me
                 </button>
             </form>

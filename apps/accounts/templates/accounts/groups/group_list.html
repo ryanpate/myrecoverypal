@@ -72,7 +72,7 @@
     }
 
     .filter-chip.active {
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
         border-color: #52b788;
         transform: translateY(-2px);
@@ -190,27 +190,27 @@
         background: #e8f4f8;
         color: #1e4d8b;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .group-badge.privacy {
         background: #f0f9ff;
         color: #1e40af;
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .group-badge.privacy.private {
         background: #fef3c7;
         color: #92400e;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .group-badge.privacy.secret {
         background: #fee2e2;
         color: #991b1b;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .group-actions {
@@ -236,7 +236,7 @@
     }
 
     .join-btn.primary {
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
     }
 
@@ -245,7 +245,7 @@
         color: #1e4d8b;
         border: 1px solid #1e4d8b;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .join-btn.disabled {
@@ -567,7 +567,7 @@
                         {{ group.get_privacy_level_display }}
                     </span>
                     {% if group.is_full %}
-                    <span class="group-badge" style="background: #fee2e2; color: #991b1b; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">Full</span>
+                    <span class="group-badge" style="background: #fee2e2; color: #991b1b; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;">Full</span>
                     {% endif %}
                 </div>
 

@@ -49,10 +49,6 @@ class PostListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
-        context['popular_tags'] = Tag.objects.all()[:15]
-        context['recent_posts'] = Post.objects.filter(
-            status='published'
-        ).order_by('-published_at')[:5]
 
         # Stats change infrequently (only on new post/comment) — cache 10min.
         # Replaces 3 separate COUNT/DISTINCT queries per blog page load.

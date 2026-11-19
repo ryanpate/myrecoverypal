@@ -1260,7 +1260,7 @@
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <form method="post" action="{% url 'accounts:coach_new_session' %}" style="margin: 0;">
                         {% csrf_token %}
-                        <button type="submit" style="background: var(--accent-green); color: white; border: none; border-radius: 20px; padding: 8px 14px; cursor: pointer; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                        <button type="submit" style="background: var(--accent-green-strong); color: white; border: none; border-radius: 20px; padding: 8px 14px; cursor: pointer; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
                             <i class="fas fa-plus" aria-hidden="true"></i> New Chat
                         </button>
                     </form>
@@ -1294,7 +1294,7 @@
                 <!-- Welcome state — flows naturally in the scrollable chat area -->
                 <div class="welcome-state" id="welcomeState">
                     <!-- Disclaimer as first element -->
-                    <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 10px; padding: 8px 12px; font-size: 0.75rem; color: #92400e; text-align: center; margin-bottom: 1rem; width: 100%; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
+                    <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 10px; padding: 8px 12px; font-size: 0.75rem; color: #92400e; text-align: center; margin-bottom: 1rem; width: 100%; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;">
                         <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
                         AI tool, not a medical professional. Crisis? <a href="tel:988" style="color: #92400e; font-weight: 600;">988</a> | <a href="tel:911" style="color: #92400e; font-weight: 600;">911</a>
                         &middot; <span class="disclaimer-link" onclick="document.getElementById('disclaimerModal').classList.add('active')" style="cursor: pointer; text-decoration: underline;">Details</span>

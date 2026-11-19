@@ -1,7 +1,7 @@
 # apps/accounts/forms.py
 from django import forms
 from django.contrib.auth.forms import (
-    UserCreationForm, UserChangeForm, PasswordResetForm,
+    AuthenticationForm, UserCreationForm, UserChangeForm, PasswordResetForm,
 )
 from .models import (
     User, Milestone, SupportMessage, SponsorRelationship,
@@ -659,6 +659,14 @@ class UserSearchForm(forms.Form):
             ),
             Submit('submit', 'Search', css_class='btn btn-outline-primary')
         )
+
+
+class LoginForm(AuthenticationForm):
+    """Either works (see backends.EmailBackend), so the label says so."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].label = 'Email or username'
 
 
 class ResendPasswordResetForm(PasswordResetForm):

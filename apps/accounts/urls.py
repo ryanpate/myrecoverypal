@@ -4,7 +4,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.views.generic import RedirectView
 from . import views
-from .forms import ResendPasswordResetForm
+from .forms import LoginForm, ResendPasswordResetForm
 from . import payment_views
 from . import counter_emails, dry_january
 from apps.accounts.court_views import (
@@ -30,7 +30,7 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('onboarding/', views.onboarding_view, name='onboarding'),
     path('onboarding/skip/', views.skip_onboarding, name='skip_onboarding'),
-    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html', authentication_form=LoginForm), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='core:index'), name='logout'),
 
     # Password reset

@@ -175,7 +175,6 @@
 .ml-card { background:var(--ml-surface-card); border-radius:var(--ml-radius-lg);
   border:1px solid var(--ml-border); padding:2rem;
   transition:transform var(--dur-menu) var(--ease-out), box-shadow var(--dur-menu) var(--ease-out); }
-.ml-card--hover:hover { transform:translateY(-5px); box-shadow:var(--ml-shadow-hover); }
 .ml-card h3 { margin:0 0 .5rem; font-size:1.2rem; font-weight:700; color:var(--ml-text-strong); }
 .ml-card p { margin:0; color:var(--ml-text-muted); line-height:1.6; }
 
@@ -228,9 +227,6 @@
 
 /* ---- Phone mockup ---- */
 .ml-phone { position:relative; width:300px; margin:0 auto; }
-.ml-phone-glow { position:absolute; inset:-14% -22%; border-radius:50%;
-  background:radial-gradient(60% 60% at 50% 40%, rgba(77,184,232,.32), rgba(82,183,136,.18) 55%, transparent 72%);
-  filter:blur(8px); z-index:0; }
 .ml-phone-shell { position:relative; z-index:1; width:300px; padding:11px; background:#1b2a3f;
   border-radius:46px; box-shadow:0 30px 60px -18px rgba(15,45,86,.45), 0 8px 24px rgba(0,0,0,.18); }
 .ml-phone-screen { position:relative; border-radius:36px; overflow:hidden; background:var(--card-bg, #fff); aspect-ratio:1320/2868; }
@@ -243,40 +239,20 @@
 
 /* ---- Sections ---- */
 .ml-section { padding:5rem var(--ml-gutter); }
-.ml-court-section { padding:4.5rem var(--ml-gutter); }
 .ml-h2 { margin:0 0 .6rem; font-size:clamp(1.9rem,3vw,2.5rem); font-weight:800; letter-spacing:-.02em; color:var(--ml-text-strong); }
 .ml-section-head { max-width:620px; margin-bottom:2.75rem; }
 .ml-section-head p { margin:0; font-size:1.1rem; color:var(--ml-text-muted); line-height:1.55; }
 
-/* ---- Features ---- */
-.ml-feature-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(248px,1fr)); gap:1.5rem; }
-.ml-feature-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.1rem; }
-.ml-feature-icon { width:52px; height:52px; border-radius:var(--ml-radius-md); display:inline-flex; align-items:center; justify-content:center;
-  background:var(--ml-surface-sunken); }
-.ml-feature-icon i { font-size:1.4rem; color:var(--ml-primary); }
-
-/* ---- Anchor ---- */
-.ml-anchor { background:var(--ml-surface-page); padding:4.5rem var(--ml-gutter); }
-.ml-anchor-card { max-width:1040px; margin:0 auto; background:var(--ml-surface-card); border-radius:var(--ml-radius-xl);
-  border:1px solid var(--ml-border); box-shadow:var(--ml-shadow-lg); overflow:hidden;
-  display:grid; grid-template-columns:1.1fr .9fr; align-items:center; }
-.ml-anchor-text { padding:2.75rem; }
-.ml-anchor-text h2 { margin:0 0 .85rem; font-size:clamp(1.7rem,2.6vw,2.25rem); font-weight:800; letter-spacing:-.02em; color:var(--ml-text-strong); }
-.ml-anchor-text p { margin:0 0 1.75rem; font-size:1.1rem; line-height:1.6; color:var(--ml-text-muted); }
-.ml-anchor-media { align-self:stretch; display:flex; align-items:center; justify-content:center; padding:2.5rem;
-  background:rgba(102,126,234,.10); }
-.ml-anchor-media img { width:100%; max-width:240px; height:auto; border-radius:var(--ml-radius-xl); box-shadow:0 20px 40px -12px rgba(102,126,234,.45); }
-
-/* ---- Court band ---- */
-.ml-court-inner { background:var(--ml-panel); border-radius:var(--ml-radius-xl); box-shadow:var(--ml-shadow-lg);
-  color:#fff; padding:3rem; display:grid; grid-template-columns:1.1fr .9fr; gap:2.5rem; align-items:center;
-  --heading-color: currentColor; }
-.ml-court-inner h2 { margin:0 0 .85rem; font-size:clamp(1.7rem,2.6vw,2.25rem); font-weight:800; letter-spacing:-.02em; color:#fff; }
-.ml-court-inner > div > p { margin:0 0 1.75rem; font-size:1.08rem; line-height:1.6; color:rgba(255,255,255,.9); max-width:460px; }
-.ml-court-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.9rem; }
-.ml-court-list li { display:flex; gap:.7rem; align-items:flex-start; }
-.ml-court-list i { color:var(--ml-gold-soft); margin-top:3px; font-size:1.05rem; }
-.ml-court-list span { color:rgba(255,255,255,.95); font-size:1.02rem; }
+/* ---- Toolkit list ---- */
+.ml-list { list-style:none; margin:0; padding:0; max-width:820px; display:grid; gap:1.2rem; }
+.ml-list li { display:grid; grid-template-columns:1fr auto; column-gap:1rem; row-gap:.25rem; align-items:baseline; }
+.ml .ml-list a { font-size:1.2rem; font-weight:700; color:var(--ml-primary); text-decoration:underline; text-underline-offset:3px;
+  display:inline-block; padding-block:.4rem; }
+.ml-list-note { font-size:.85rem; font-weight:600; color:var(--ml-text-muted); white-space:nowrap; }
+.ml-list p { grid-column:1 / -1; margin:0; max-width:60ch; color:var(--ml-text-muted); line-height:1.6; }
+@media (min-width:900px) {
+  .ml-list { max-width:none; grid-template-columns:1fr 1fr; column-gap:4rem; }
+}
 
 /* ---- Final CTA ---- */
 .ml-final { padding:1rem var(--ml-gutter) 5rem; }
@@ -290,15 +266,6 @@
 
 /* ---- Responsive ---- */
 /* ---- New toolkit + plans ---- */
-.ml-toolkit { background:var(--ml-surface-card); }
-.ml-tool-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:1.5rem; }
-.ml-tool { display:flex; flex-direction:column; text-decoration:none; color:inherit; }
-.ml-tool:hover { color:inherit; }
-.ml-tool p { flex:1; }
-.ml-tier { font-size:.78rem; font-weight:700; color:var(--ml-text-muted); display:inline-flex; align-items:center; gap:.35rem; text-align:right; }
-.ml-tool-cta { margin-top:1.1rem; font-weight:700; color:var(--ml-primary); display:inline-flex; align-items:center; gap:.4rem; }
-.ml-tool:hover .ml-tool-cta i { transform:translateX(3px); }
-.ml-tool-cta i { transition:transform var(--ml-trans); }
 .ml-plan-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:1.5rem; max-width:900px; margin:0 auto; }
 .ml-plan { display:flex; flex-direction:column; }
 .ml-plan h3 { display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; font-size:1.35rem; }
@@ -319,12 +286,7 @@
 }
 @media (max-width:860px) {
   .ml-hero-inner { grid-template-columns:1fr; gap:2.5rem; padding:3rem var(--ml-gutter) 3.5rem; }
-  .ml-anchor-card { grid-template-columns:1fr; }
-  .ml-anchor-media { order:-1; }
-  .ml-court-inner { grid-template-columns:1fr; gap:1.75rem; padding:2.25rem; }
   .ml-section { padding:3.5rem var(--ml-gutter); }
-  .ml-court-section { padding:3.5rem var(--ml-gutter); }
-  .ml-anchor { padding:3.5rem var(--ml-gutter); }
 }
 @media (max-width:480px) {
   .ml-phone, .ml-phone-shell { width:260px; }
@@ -332,7 +294,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .ml-btn, .ml-card { transition:none; }
-  .ml-btn:hover, .ml-card--hover:hover { transform:none; }
+  .ml-btn:hover { transform:none; }
 }
 
 /* ---- Night version ----
@@ -353,7 +315,6 @@
 [data-theme="dark"] .ml a.ml-btn--ghost, [data-theme="dark"] .ml a.ml-btn--ghost:hover { color:#fff; }
 [data-theme="dark"] .ml a.ml-btn--outline, [data-theme="dark"] .ml a.ml-btn--outline:hover,
 [data-theme="dark"] .ml a.ml-plan-more, [data-theme="dark"] .ml a.ml-plan-more:hover { color:var(--ml-primary); }
-[data-theme="dark"] .ml a.ml-tool, [data-theme="dark"] .ml a.ml-tool:hover { color:inherit; }
 </style>
 {% endblock %}
 
@@ -398,7 +359,6 @@
       </div>
       <div class="ml-hero-media">
         <div class="ml-phone">
-          <div class="ml-phone-glow" aria-hidden="true"></div>
           <div class="ml-phone-shell">
             <div class="ml-phone-screen">
               <img src="{% static 'images/screens/mobile-checkin.png' %}" alt="MyRecoveryPal app — daily mood check-in and days sober" width="1320" height="2868">
@@ -416,141 +376,59 @@
     </div>
   </header>
 
-  <!-- FEATURES -->
-  <section id="ml-features" class="ml-container ml-section">
+  <!-- TOOLKIT: what's inside, as one plain list. No current screenshots exist to show instead. -->
+  <section id="ml-toolkit" class="ml-container ml-section">
     <div class="ml-section-head">
-      <h2 class="ml-h2">Everything you need to keep going</h2>
+      <h2 class="ml-h2">Your recovery toolkit</h2>
+      <p>Guided help for the hard moments and the everyday ones. Start free; Premium opens all of it.</p>
     </div>
-    <div class="ml-feature-grid">
-      <div class="ml-card">
-        <div class="ml-feature-top">
-          <span class="ml-feature-icon"><i class="fas fa-users" aria-hidden="true"></i></span>
-        </div>
-        <h3>A community that gets it</h3>
-        <p>Share wins, ask for support, and cheer others on. Real people, one day at a time &mdash; no judgment.</p>
-      </div>
-      <div class="ml-card">
-        <div class="ml-feature-top">
-          <span class="ml-feature-icon"><i class="fas fa-chart-line" aria-hidden="true"></i></span>
-        </div>
-        <h3>Watch your days add up</h3>
-        <p>Your streak, front and center. Celebrate check-ins and every milestone of your journey.</p>
-      </div>
-      <div class="ml-card">
-        <div class="ml-feature-top">
-          <span class="ml-feature-icon"><i class="fas fa-robot" aria-hidden="true"></i></span>
-          <span class="ml-badge ml-badge--premium">Premium</span>
-        </div>
-        <h3>Anchor &mdash; AI coach</h3>
-        <p>Someone to talk to at 2am when the craving hits. Always on, judgment-free.</p>
-      </div>
-      <div class="ml-card">
-        <div class="ml-feature-top">
-          <span class="ml-feature-icon"><i class="fas fa-medal" aria-hidden="true"></i></span>
-        </div>
-        <h3>Milestones &amp; medallions</h3>
-        <p>Mark 30 days, 1 year, and beyond with shareable medallions that honor how far you&rsquo;ve come.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- TOOLKIT: the resources library (new features), with clear Free / Premium labels -->
-  <section id="ml-toolkit" class="ml-toolkit">
-    <div class="ml-container ml-section" style="padding-top:0;">
-      <div class="ml-section-head">
-        <h2 class="ml-h2">Your recovery toolkit</h2>
-        <p>Guided help for the hard moments and the everyday ones. Start free; Premium opens all of it.</p>
-      </div>
-      <div class="ml-tool-grid">
-        <a class="ml-card ml-card--hover ml-tool" href="{% url 'resources:audio' %}" data-promo="landing_toolkit_audio">
-          <div class="ml-feature-top">
-            <span class="ml-feature-icon"><i class="fas fa-headphones" aria-hidden="true"></i></span>
-            <span class="ml-tier">Free + <span class="ml-badge ml-badge--premium">Premium</span></span>
-          </div>
-          <h3>Guided audio</h3>
-          <p>Press play when a craving hits: urge surfing, breathing, grounding, a social-event plan and help after a slip, all free. Premium adds sleep, morning and body-scan sessions, plus every reflection read aloud.</p>
-          <span class="ml-tool-cta">Listen now <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-        </a>
-        <a class="ml-card ml-card--hover ml-tool" href="{% url 'resources:programs' %}" data-promo="landing_toolkit_programs">
-          <div class="ml-feature-top">
-            <span class="ml-feature-icon"><i class="fas fa-seedling" aria-hidden="true"></i></span>
-            <span class="ml-tier">First week free</span>
-          </div>
-          <h3>Day-by-day programs</h3>
-          <p>A five-minute lesson and one small action a day. First 30 Days, plus two-week tracks for alcohol, opioids, stimulants, cannabis and gambling, with daily reminders and a cohort that started when you did.</p>
-          <span class="ml-tool-cta">See the programs <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-        </a>
-        <a class="ml-card ml-card--hover ml-tool" href="{% url 'resources:reflections' %}" data-promo="landing_toolkit_reflections">
-          <div class="ml-feature-top">
-            <span class="ml-feature-icon"><i class="fas fa-sun" aria-hidden="true"></i></span>
-            <span class="ml-tier">Today's is free</span>
-          </div>
-          <h3>Daily reflections</h3>
-          <p>A short reading and a question to sit with, every day, for any path to recovery. Premium opens all 30 readings, favorites, and journaling on any of them.</p>
-          <span class="ml-tool-cta">Read today's <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-        </a>
-        <a class="ml-card ml-card--hover ml-tool" href="{% url 'resources:worksheets' %}" data-promo="landing_toolkit_worksheets">
-          <div class="ml-feature-top">
-            <span class="ml-feature-icon"><i class="fas fa-pen-to-square" aria-hidden="true"></i></span>
-            <span class="ml-tier">Free to fill &amp; print</span>
-          </div>
-          <h3>Recovery worksheets</h3>
-          <p>Cost-benefit analysis, thought records, trigger maps and more. Premium saves your answers, talks them through with Anchor, and builds your personal <em>My Recovery Workbook</em> PDF.</p>
-          <span class="ml-tool-cta">Open a worksheet <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-        </a>
-        <a class="ml-card ml-card--hover ml-tool" href="{% url 'resources:program_detail' 'family-and-friends' %}" data-promo="landing_toolkit_family">
-          <div class="ml-feature-top">
-            <span class="ml-feature-icon"><i class="fas fa-heart" aria-hidden="true"></i></span>
-            <span class="ml-tier">For loved ones</span>
-          </div>
-          <h3>Family &amp; friends course</h3>
-          <p>Fourteen days for the people who love someone in recovery: talking so you're heard, boundaries, and looking after yourself. Included with a Premium member's Supporter seat.</p>
-          <span class="ml-tool-cta">See the course <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-        </a>
-        <a class="ml-card ml-card--hover ml-tool" href="{% url 'core:craving_sos' %}" data-promo="landing_toolkit_sos">
-          <div class="ml-feature-top">
-            <span class="ml-feature-icon"><i class="fas fa-life-ring" aria-hidden="true"></i></span>
-            <span class="ml-tier">Always free</span>
-          </div>
-          <h3>Craving SOS</h3>
-          <p>One tap to breathing, urge surfing, grounding, guided audio, online meetings starting soon, and the 988 crisis line. No account needed.</p>
-          <span class="ml-tool-cta">Open SOS <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ANCHOR -->
-  <section id="ml-anchor" class="ml-anchor">
-    <div class="ml-anchor-card">
-      <div class="ml-anchor-text">
-        <h2>A coach in your pocket, 24/7</h2>
-        <p>&ldquo;I built an AI you can text at 2am when the craving hits.&rdquo; It&rsquo;s not therapy &mdash; it&rsquo;s something to talk to, judgment-free, whenever you need it. Free to try.</p>
-        <div class="ml-cta-row" style="margin-bottom:0;">
-          <a class="ml-btn ml-btn--lg ml-btn--primary" href="{% url 'core:ai_recovery_coach' %}"><i class="fas fa-comment-dots" aria-hidden="true"></i> Try Anchor free</a>
-        </div>
-      </div>
-      <div class="ml-anchor-media">
-        <img src="{% static 'images/anchor-ai-coach.png' %}" alt="Anchor AI Coach" width="300" height="300" loading="lazy">
-      </div>
-    </div>
-  </section>
-
-  <!-- COURT COMPLIANCE -->
-  <section class="ml-container ml-court-section">
-    <div class="ml-court-inner">
-      <div>
-        <h2>Court-ready meeting tracking</h2>
-        <p>Log meetings and generate a tamper-evident PDF report with a verifiable code. Program-neutral. No signup needed to verify.</p>
-        <a class="ml-btn ml-btn--ghost" href="{% url 'core:court_ordered_meeting_tracker' %}">See a sample report <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-      </div>
-      <ul class="ml-court-list">
-        <li><i class="fas fa-circle-check" aria-hidden="true"></i><span>Tamper-evident verification code</span></li>
-        <li><i class="fas fa-circle-check" aria-hidden="true"></i><span>Email, print, or hand to your PO</span></li>
-        <li><i class="fas fa-circle-check" aria-hidden="true"></i><span>AA · NA · CA · SMART · Refuge · LifeRing</span></li>
-        <li><i class="fas fa-circle-check" aria-hidden="true"></i><span>Clean attendance history, any time</span></li>
-      </ul>
-    </div>
+    <ul class="ml-list">
+        <li>
+          <a href="{% url 'resources:audio' %}" data-promo="landing_toolkit_audio">Guided audio</a>
+          <span class="ml-list-note">Free, more with Premium</span>
+          <p>Press play when a craving hits: urge surfing, breathing, grounding and help after a slip.</p>
+        </li>
+        <li>
+          <a href="{% url 'resources:programs' %}" data-promo="landing_toolkit_programs">Day-by-day programs</a>
+          <span class="ml-list-note">First week free</span>
+          <p>A five-minute lesson and one small action a day, for your first 30 days or a specific substance.</p>
+        </li>
+        <li>
+          <a href="{% url 'resources:reflections' %}" data-promo="landing_toolkit_reflections">Daily reflections</a>
+          <span class="ml-list-note">Today&rsquo;s is free</span>
+          <p>A short reading and a question to sit with, for any path to recovery.</p>
+        </li>
+        <li>
+          <a href="{% url 'resources:worksheets' %}" data-promo="landing_toolkit_worksheets">Recovery worksheets</a>
+          <span class="ml-list-note">Free to fill and print</span>
+          <p>Cost-benefit analysis, thought records, trigger maps and more.</p>
+        </li>
+        <li>
+          <a href="{% url 'core:ai_recovery_coach' %}" data-promo="landing_toolkit_anchor">Anchor, an AI coach</a>
+          <span class="ml-list-note">Free to try</span>
+          <p>Something to talk to at 2am when the craving hits. Not therapy, and never judging.</p>
+        </li>
+        <li>
+          <a href="{% url 'core:sobriety_medallion_maker' %}" data-promo="landing_toolkit_medallion">Milestone medallions</a>
+          <span class="ml-list-note">Free</span>
+          <p>Mark 30 days, a year and beyond with a medallion you can share.</p>
+        </li>
+        <li>
+          <a href="{% url 'core:craving_sos' %}" data-promo="landing_toolkit_sos">Craving SOS</a>
+          <span class="ml-list-note">Always free</span>
+          <p>Breathing, grounding, meetings starting soon and the 988 crisis line. No account needed.</p>
+        </li>
+        <li>
+          <a href="{% url 'resources:program_detail' 'family-and-friends' %}" data-promo="landing_toolkit_family">Family and friends course</a>
+          <span class="ml-list-note">For loved ones</span>
+          <p>Fourteen days on being heard, setting boundaries and looking after yourself.</p>
+        </li>
+        <li>
+          <a href="{% url 'core:court_ordered_meeting_tracker' %}" data-promo="landing_toolkit_court">Court-ordered meeting tracking</a>
+          <span class="ml-list-note">See a sample report</span>
+          <p>Log meetings and hand your PO a PDF report with a code anyone can verify.</p>
+        </li>
+    </ul>
   </section>
 
   <!-- FREE vs PREMIUM -->

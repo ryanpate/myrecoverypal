@@ -165,24 +165,7 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
         z-index: 30;
     }
 
-    /* Share Section Styles */
-    .share-section {
-        margin-top: 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-        flex-wrap: wrap;
-        position: relative;
-        z-index: 30;
-    }
-
-    .share-label {
-        color: var(--text-muted);
-        font-weight: 600;
-        font-size: 1rem;
-    }
-
+    /* Share buttons */
     .share-buttons {
         display: flex;
         gap: 0.75rem;
@@ -286,15 +269,15 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
         z-index: 10;
     }
 
+    /* A plain bordered note, so yellow is left for callouts inside the article */
     .trigger-warning {
-        background: #fff3cd;
-        border: 1px solid #ffeaa7;
+        max-width: 42rem;
+        margin: 0 auto 2rem;
+        padding: 0.85rem 1rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-left: 4px solid var(--brand-text, #1e4d8b);
         border-radius: 5px;
-        padding: 1rem;
-        margin-bottom: 2rem;
-        color: #856404;
-        /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        color: var(--text-dark, #2c3e50);
     }
 
     .post-content img {
@@ -416,7 +399,9 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
         line-height: 1.58;
         letter-spacing: -0.003em;
         color: var(--text-dark, rgba(0, 0, 0, 0.84));
-        max-width: 100%;
+        /* a readable line: about 68 characters of this serif at 21px */
+        max-width: 42rem;
+        margin-inline: auto;
     }
 
     .post-content-wrapper h1 {
@@ -558,11 +543,6 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
             max-width: 300px;
         }
 
-        .share-section {
-            flex-direction: column;
-            gap: 1rem;
-        }
-
         .share-buttons {
             width: 100%;
         }
@@ -577,7 +557,6 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
         <span>By {{ post.author.get_full_name|default:post.author.username }}</span>
         <span>{{ post.published_at|date:"F d, Y" }}</span>
         <span>{{ post.reading_time }} min read</span>
-        <span>{{ post.views }} views</span>
     </div>
 
     {% if user.is_authenticated and user == post.author or user.is_staff %}
@@ -595,32 +574,6 @@ overrides unconditionally -- that noindexed every post, keyword ones too.
     </div>
     {% endif %}
 
-    <!-- Share Section in Header -->
-    <div class="share-section">
-        <span class="share-label"><i class="fas fa-share-alt"></i> Share this story:</span>
-        <div class="share-buttons">
-            <a href="#" class="share-btn facebook" data-on-click="share-facebook" title="Share on Facebook">
-                <i class="fab fa-facebook-f"></i>
-            </a>
-            <a href="#" class="share-btn twitter" data-on-click="share-twitter" title="Share on Twitter/X">
-                <i class="fab fa-twitter"></i>
-            </a>
-            <a href="#" class="share-btn linkedin" data-on-click="share-linkedin" title="Share on LinkedIn">
-                <i class="fab fa-linkedin-in"></i>
-            </a>
-            <a href="#" class="share-btn whatsapp" data-on-click="share-whatsapp" title="Share on WhatsApp">
-                <i class="fab fa-whatsapp"></i>
-            </a>
-            <a href="#" class="share-btn email" data-on-click="share-email" title="Share via Email">
-                <i class="fas fa-envelope"></i>
-            </a>
-            <button class="share-btn copy" data-on-click="copy-link" title="Copy link"
-                style="position: relative;">
-                <i class="fas fa-link"></i>
-                <span class="copy-tooltip">Copied!</span>
-            </button>
-        </div>
-    </div>
 </div>
 
 <div class="post-container">

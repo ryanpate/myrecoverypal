@@ -61,7 +61,7 @@
         color: #999;
         font-size: 1.5rem;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .activity-avatar img {
@@ -121,7 +121,7 @@
         color: #e74c3c;
         background: #fee;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .engagement-btn i {
@@ -205,7 +205,7 @@
         color: #999;
         font-size: 1.2rem;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .connection-avatar img {
@@ -259,7 +259,7 @@
         width: 40px;
         height: 40px;
         border-radius: 8px;
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
         display: flex;
         align-items: center;
@@ -304,7 +304,7 @@
     }
 
     .mood-option.selected {
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
         border-color: #52b788;
     }
@@ -382,7 +382,7 @@
         color: #999;
         font-size: 1.3rem;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .suggestion-avatar img {
@@ -407,7 +407,7 @@
     }
 
     .follow-suggestion-btn {
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
         border: none;
         padding: 0.5rem 1rem;
@@ -797,15 +797,15 @@
                             <div class="activity-time">{{ activity.created_at|timesince }} ago</div>
                         </div>
                         {% if activity.activity_type == 'milestone_created' %}
-                        <div class="activity-type-icon" style="background: #fff3cd; color: #856404; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
+                        <div class="activity-type-icon" style="background: #fff3cd; color: #856404; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;">
                             <i class="fas fa-trophy"></i>
                         </div>
                         {% elif activity.activity_type == 'blog_post_published' %}
-                        <div class="activity-type-icon" style="background: #d1ecf1; color: #0c5460; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
+                        <div class="activity-type-icon" style="background: #d1ecf1; color: #0c5460; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;">
                             <i class="fas fa-newspaper"></i>
                         </div>
                         {% elif activity.activity_type == 'check_in_posted' %}
-                        <div class="activity-type-icon" style="background: #d4edda; color: #155724; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
+                        <div class="activity-type-icon" style="background: #d4edda; color: #155724; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;">
                             <i class="fas fa-check-circle"></i>
                         </div>
                         {% endif %}
@@ -1086,7 +1086,7 @@
                     <a href="https://ko-fi.com/myrecoverypal" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.5rem; background: #FF5E5B; color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: opacity 0.2s;">
                         <i class="fas fa-heart"></i> Support on Ko-fi
                     </a>
-                    <a href="https://buymeacoffee.com/myrecoverypal" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.5rem; background: #FFDD00; color: #000; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: opacity 0.2s; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
+                    <a href="https://buymeacoffee.com/myrecoverypal" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.5rem; background: #FFDD00; color: #000; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: opacity 0.2s; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;">
                         <i class="fas fa-mug-hot"></i> Buy Me a Coffee
                     </a>
                 </div>

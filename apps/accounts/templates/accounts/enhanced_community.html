@@ -67,14 +67,14 @@
     }
 
     .filter-tab.active {
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
         border-color: #52b788;
     }
 
     .filter-tab:hover {
-        border-color: #52b788;
-        color: #52b788;
+        border-color: var(--accent-green-strong);
+        color: var(--accent-green-strong);
         text-decoration: none;
     }
 
@@ -147,7 +147,7 @@
         border: 3px solid var(--border-color, #f0f0f0);
         position: relative;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .member-avatar img {
@@ -180,13 +180,13 @@
         background: #e8f5e9;
         color: #2e7d32;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .online-status.online-recently {
         background: #fff3e0;
         color: #ef6c00;
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .online-status.offline {
@@ -269,21 +269,21 @@
         align-items: center;
         gap: 0.5rem;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .recovery-badge.sponsor {
         background: #fff3cd;
         color: #856404;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .recovery-badge.pal-available {
         background: #d1ecf1;
         color: #0c5460;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .member-actions {
@@ -313,7 +313,7 @@
     }
 
     .follow-btn.follow {
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
     }
 
@@ -397,7 +397,7 @@
         font-weight: 600;
         text-transform: uppercase;
         /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;
+        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
     }
 
     .suggested-avatar img {
@@ -419,11 +419,19 @@
         z-index: 1040;
     }
 
+    /* Clear the bottom tab bar on phones and tablets */
+    @media (max-width: 1024px) {
+        .quick-actions-fab {
+            bottom: calc(56px + 1rem + env(safe-area-inset-bottom, 0px));
+            right: 1rem;
+        }
+    }
+
     .fab-button {
         width: 60px;
         height: 60px;
         border-radius: 50%;
-        background: var(--accent-green, #52b788);
+        background: var(--accent-green-strong, #2e8059);
         border: none;
         color: white;
         font-size: 1.5rem;
@@ -446,8 +454,18 @@
             grid-template-columns: 1fr;
         }
 
+        /* One row that scrolls sideways, not five stacked buttons */
         .filter-tabs {
-            flex-direction: column;
+            flex-wrap: nowrap;
+            gap: 0.5rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 0.25rem;
+        }
+
+        .filter-tab {
+            flex: 0 0 auto;
+            white-space: nowrap;
         }
 
         .member-actions {
@@ -636,14 +654,18 @@
                 <div class="member-username">@{{ member.username }}</div>
 
                 <div class="member-stats">
+                    {% if member.followers_count %}
                     <div class="member-stat">
-                        <div class="member-stat-number">{{ member.followers_count|default:0 }}</div>
+                        <div class="member-stat-number">{{ member.followers_count }}</div>
                         <div>Followers</div>
                     </div>
+                    {% endif %}
+                    {% if member.following_count %}
                     <div class="member-stat">
-                        <div class="member-stat-number">{{ member.following_count|default:0 }}</div>
+                        <div class="member-stat-number">{{ member.following_count }}</div>
                         <div>Following</div>
                     </div>
+                    {% endif %}
                     {% if member.get_public_days_sober > 0 %}
                     <div class="member-stat">
                         <div class="member-stat-number">{{ member.get_public_days_sober }}</div>

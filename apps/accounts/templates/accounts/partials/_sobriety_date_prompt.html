@@ -24,13 +24,13 @@ works without JavaScript; JS only adds the 3-day "Not now" dismissal.
     </div>
 </div>
 <style>
-    .sd-prompt { max-width: 1000px; margin: 1.5rem auto 0; padding: 1.5rem 1.75rem; display: flex; gap: 1.1rem;
+    .sd-prompt { width: calc(100% - 2rem); max-width: 968px; margin: 1.5rem auto 0; padding: 1.5rem 1.75rem; display: flex; gap: 1.1rem;
         align-items: flex-start; background: var(--card-bg);
         border: 1px solid var(--border-color); border-radius: var(--border-radius-xl); }
     /* iOS shows an empty date field as a blank box, so it needs a visible label */
     .sd-label { flex-basis: 100%; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
     .sd-icon { flex: none; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center;
-        justify-content: center; background: #52b788; color: #fff; font-size: 1.35rem; }
+        justify-content: center; background: var(--accent-green-strong); color: #fff; font-size: 1.35rem; }
     .sd-body { flex: 1; min-width: 0; }
     .sd-title { margin: 0 0 .3rem; font-size: 1.25rem; font-weight: 800; color: var(--text-dark, #1a2a44); }
     .sd-sub { margin: 0 0 .9rem; color: var(--text-muted, #4b5563); line-height: 1.5; font-size: .95rem; }
@@ -50,7 +50,7 @@ works without JavaScript; JS only adds the 3-day "Not now" dismissal.
     [data-theme="dark"] .sd-input { background: #374151; border-color: #4b5563; color: #e8eef7; }
     [data-theme="dark"] .sd-btn-ghost { color: #cfe0f5; border-color: #cfe0f5; }
     @media (max-width: 600px) {
-        .sd-prompt { margin: 1rem .75rem 0; padding: 1.25rem; }
+        .sd-prompt { margin: 1rem auto 0; padding: 1.25rem; }
         .sd-icon { display: none; }
         .sd-input, .sd-btn { flex: 1 1 100%; }
     }

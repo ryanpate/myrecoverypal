@@ -53,7 +53,8 @@ class ProgressDailyThoughtTests(TestCase):
         self.assertNotContains(resp, "Today&#x27;s reading")
         self.assertEqual(resp.status_code, 200)
 
-    def test_social_feed_still_renders_with_partial(self):
+    def test_social_feed_leaves_the_thought_to_today(self):
+        # Since 2026-11-19 the card shows on the progress home only.
         resp = self.client.get(reverse("accounts:social_feed"))
         self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, "Progress, not perfection.")
+        self.assertNotContains(resp, "Progress, not perfection.")

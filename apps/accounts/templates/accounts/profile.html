@@ -409,7 +409,7 @@
     }
 
     .badge-sponsor {
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
     }
 
@@ -454,7 +454,7 @@
         width: 28px;
         height: 28px;
         border-radius: 50%;
-        background: #52b788;
+        background: var(--accent-green-strong);
         color: white;
         border: none;
         cursor: pointer;
@@ -653,7 +653,7 @@
             <i class="fas fa-handshake-angle"></i> Request as Pal
         </a>
         {% elif request.user.get_recovery_pal == profile_user %}
-        <span class="btn" style="background: #e8f7f0; color: #2d6a4f; padding: 0.75rem 1.5rem; border-radius: 50px; display: inline-block; font-weight: 600; margin-left: 0.5rem; cursor: default; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b;">
+        <span class="btn" style="background: #e8f7f0; color: #2d6a4f; padding: 0.75rem 1.5rem; border-radius: 50px; display: inline-block; font-weight: 600; margin-left: 0.5rem; cursor: default; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;">
             <i class="fas fa-check-circle"></i> Your Recovery Pal
         </span>
         {% endif %}
