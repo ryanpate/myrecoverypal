@@ -1,0 +1,330 @@
+/* Styles for accounts/invite_friends.html */
+.invite-container {
+    max-width: 700px;
+    margin: 80px auto 2rem;
+    padding: 1rem;
+}
+
+.invite-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.invite-header h1 {
+    color: var(--text-dark, #333);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.invite-header p {
+    color: var(--text-muted, #666);
+    font-size: 1.1rem;
+}
+
+.invite-card {
+    background: var(--card-bg, #fff);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.invite-card h2 {
+    font-size: 1.3rem;
+    color: var(--text-dark, #333);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.invite-card h2 i {
+    color: #4db8e8;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--bg-light, #f8f9fa);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--border-color, #e8e8e8);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: #2e8059;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    color: var(--text-muted, #666);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+/* Invite Link Section */
+.invite-link-section {
+    background: #e8f7f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; color: var(--text-dark);
+}
+
+.invite-link-label {
+    font-weight: 600;
+    color: var(--text-dark, #333);
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.invite-link-box {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+}
+
+.invite-link-input {
+    flex: 1;
+    padding: 0.875rem 1rem;
+    border: 2px solid #d0e8d8;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    background: var(--card-bg, #fff);
+    color: var(--text-dark, #333);
+    font-family: monospace;
+}
+
+.invite-link-input:focus {
+    outline: none;
+    border-color: #52b788;
+}
+
+.btn-copy {
+    padding: 0.875rem 1.25rem;
+    background: var(--accent-green-strong);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition-ui);
+}
+
+.btn-copy:hover {
+    background: #45a078;
+}
+
+.btn-copy.copied {
+    background: #333;
+}
+
+/* Share Buttons */
+.share-buttons {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-btn, 10px);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: var(--transition-ui);
+}
+
+.share-btn:hover {
+    box-shadow: none;
+}
+
+.share-btn.facebook {
+    background: #1877f2;
+    color: white;
+}
+
+.share-btn.twitter {
+    background: #1da1f2;
+    color: white;
+}
+
+.share-btn.whatsapp {
+    background: #25d366;
+    color: white;
+}
+
+.share-btn.email {
+    background: #666;
+    color: white;
+}
+
+.share-btn.sms {
+    background: var(--accent-green-strong);
+    color: white;
+}
+
+/* Invite Code Display */
+.invite-code-display {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--bg-light, #f8f9fa);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.invite-code {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--text-dark, #333);
+    font-family: monospace;
+}
+
+.invite-code-label {
+    color: var(--text-muted, #666);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.uses-remaining {
+    display: inline-block;
+    background: #e8f7f0;
+    color: #52b788;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-top: 0.75rem;
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
+}
+
+/* Generate Button */
+.generate-section {
+    text-align: center;
+    padding: 2rem;
+}
+
+.btn-generate {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    background: #2e8059;
+    color: white;
+    border: none;
+    border-radius: var(--radius-btn, 10px);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-ui);
+    --heading-color: currentColor;
+}
+
+.btn-generate:hover {
+    box-shadow: none;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #ddd;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: var(--text-dark, #333);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: var(--text-muted, #666);
+    margin-bottom: 1.5rem;
+}
+
+/* Tips Section */
+.tips-section {
+    background: #fff8e6;
+    padding: 1rem 1.5rem;
+    border-radius: 0 8px 8px 0;
+}
+[data-theme="dark"] .tips-section { background: var(--bg-light); }
+
+.tips-section h3 {
+    color: #856404;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tips-section ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: #856404;
+}
+
+.tips-section li {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Back Link */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted, #666);
+    text-decoration: none;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.back-link:hover {
+    color: #4db8e8;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .invite-container {
+        margin-top: 60px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .invite-link-box {
+        flex-direction: column;
+    }
+
+    .share-buttons {
+        justify-content: center;
+    }
+}

@@ -1,0 +1,121 @@
+/* Styles for registration/login.html */
+.auth-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 2rem;
+    background: var(--card-bg, #fff);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-header h1 {
+    color: var(--brand-text, #1e4d8b);
+    margin-bottom: 0.5rem;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: var(--radius-btn, 10px);
+    width: 100%;
+    font-weight: 600;
+    transition: var(--transition-ui);
+    --heading-color: currentColor;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    color: #fff;
+}
+
+.auth-links {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.auth-links a {
+    color: var(--brand-text, #1e4d8b);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
+}
+
+/* Biometric login button (native only) */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+    color: var(--text-faint, #999);
+    font-size: 0.85rem;
+}
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #ddd;
+}
+.auth-divider span {
+    padding: 0 0.75rem;
+}
+.btn-biometric-login {
+    width: 100%;
+    padding: 0.85rem 2rem;
+    border: none;
+    border-radius: var(--radius-btn, 10px);
+    background: #007AFF;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.btn-biometric-login:hover {
+    background: #0066d6;
+}
+.btn-biometric-login:active {
+    background: #0055b3;
+    transform: translateY(0);
+}
+
+/* Dark mode */
+[data-theme="dark"] .auth-container {
+    background: #1c1c1e;
+    color: #e4e4e7;
+}
+[data-theme="dark"] .auth-divider {
+    color: #666;
+}
+[data-theme="dark"] .auth-divider::before,
+[data-theme="dark"] .auth-divider::after {
+    background: #333;
+}
+[data-theme="dark"] .auth-links a {
+    color: #7eb8ff;
+}
+[data-theme="dark"] .auth-container input[type="text"],
+[data-theme="dark"] .auth-container input[type="password"],
+[data-theme="dark"] .auth-container input[type="email"],
+[data-theme="dark"] .auth-container select {
+    background: #2c2c2e;
+    color: #e4e4e7;
+    border-color: #444;
+}
+[data-theme="dark"] .auth-container label {
+    color: #ccc;
+}

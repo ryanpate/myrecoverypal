@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Meeting Attendance Tracking for Sober Living Homes &amp; DUI Programs{% endblock %}
 {% block meta_description %}A free way for sober living homes, DUI programs and treatment aftercare to check residents' and clients' AA/NA meeting attendance: chair-confirmed logs and a PDF report you can verify.{% endblock %}
@@ -10,35 +11,7 @@
 {% block canonical_url %}https://www.myrecoverypal.com/for-sober-living-and-dui-programs/{% endblock %}
 
 {% block extra_css %}
-<style>
-    .rp-page { max-width: 780px; margin: 0 auto; padding: 3rem 1.25rem 4rem; line-height: 1.65; }
-    .rp-page h1 { color: var(--brand-text, #1e4d8b); font-size: 2rem; line-height: 1.25; margin: 0 0 0.5rem; }
-    .rp-sub { color: var(--text-muted, #555); font-size: 1.08rem; margin-bottom: 1.5rem; }
-    .rp-page h2 { color: var(--brand-text, #1e4d8b); font-size: 1.3rem; margin: 2.25rem 0 0.75rem; }
-    .rp-step { display: flex; gap: 0.9rem; margin-bottom: 0.9rem; }
-    .rp-step .num { flex: 0 0 28px; height: 28px; background: #1e4d8b; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; --heading-color: currentColor; }
-    .rp-box { background: #f7f9fc; border: 1px solid #e3eaf3; border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1rem 0; }
-    .rp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
-    .rp-grid .rp-box { margin: 0; }
-    .rp-grid h3 { margin: 0 0 0.3rem; font-size: 1.02rem; color: var(--text-dark, #1a2a44); }
-    .rp-grid p { margin: 0; font-size: 0.93rem; color: var(--text-muted, #555); }
-    .rp-btn { display: inline-block; background: #1e4d8b; color: #fff; border: none; padding: 0.65rem 1.4rem; border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none; --heading-color: currentColor; }
-    .rp-btn:hover { color: #fff; }
-    .rp-btn.alt { background: var(--card-bg, #fff); color: var(--brand-text, #1e4d8b); border: 1px solid #1e4d8b; }
-    .rp-handout { border: 2px dashed #9aa8bb; border-radius: 12px; padding: 1.2rem 1.4rem; margin-top: 1rem; }
-    .rp-handout h3 { margin: 0 0 0.5rem; color: var(--text-dark, #1a2a44); }
-    .rp-url { font-family: monospace; font-weight: 700; }
-    [data-theme="dark"] .rp-page h1, [data-theme="dark"] .rp-page h2 { color: #8ab4f8; }
-    [data-theme="dark"] .rp-sub, [data-theme="dark"] .rp-grid p { color: #bbb; }
-    [data-theme="dark"] .rp-box { background: #1e2430; border-color: #2e3949; }
-    [data-theme="dark"] .rp-grid h3, [data-theme="dark"] .rp-handout h3 { color: #eee; }
-    [data-theme="dark"] .rp-btn.alt { background: transparent; color: #8ab4f8; border-color: #8ab4f8; }
-    @media print {
-        nav, footer, .rp-noprint, .mobile-menu-footer, .footer-apps-row, #mobileBottomNav { display: none !important; }
-        .rp-page { padding: 0; max-width: none; }
-        body { font-size: 12px; }
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/pages/core__for_recovery_programs.css' %}">
 {% endblock %}
 
 {% block content %}

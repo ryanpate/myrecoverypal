@@ -1,0 +1,35 @@
+/* Styles for accounts/relapse_prevention_plan.html */
+.rpp-wrap { max-width: 860px; margin: 1.5rem auto 3rem; padding: 0 1rem; }
+.rpp-wrap h1 { font-size: 1.7rem; margin-bottom: 0.3rem; }
+.rpp-sub { opacity: 0.8; margin-bottom: 0.4rem; }
+.rpp-progress {
+    display: inline-block; font-weight: 700; font-size: 0.85rem;
+    background: rgba(82,183,136,0.15); color: #2f7d56;
+    border-radius: 999px; padding: 0.3rem 0.9rem; margin-bottom: 1.2rem;
+}
+.rpp-card {
+    border: 1px solid rgba(128,128,128,0.25); border-radius: 14px;
+    padding: 1.2rem 1.3rem; margin-bottom: 1.1rem;
+}
+.rpp-card h2 { font-size: 1.12rem; margin-bottom: 0.25rem; }
+.rpp-why { opacity: 0.75; font-size: 0.9rem; margin-bottom: 0.7rem; }
+.rpp-card textarea { width: 100%; }
+.rpp-contact-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.rpp-contact-row input { flex: 1 1 140px; }
+.rpp-remove { background: none; border: none; color: #b02a37; cursor: pointer; font-size: 1rem; }
+.rpp-actions { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; margin-top: 1.2rem; }
+.rpp-save {
+    background: var(--primary-color, #2c7a7b); color: #fff; border: none;
+    font-weight: 700; font-size: 1rem; padding: 0.75rem 1.8rem;
+    border-radius: 8px; cursor: pointer;
+    --heading-color: currentColor;
+}
+.rpp-pdf, .rpp-pdf-locked {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    font-weight: 600; text-decoration: none;
+    border-radius: 8px; padding: 0.7rem 1.3rem;
+}
+.rpp-pdf { background: #1e4d8b; color: #fff; --heading-color: currentColor; }
+.rpp-pdf-locked { background: rgba(128,128,128,0.15); color: inherit; }
+.rpp-add-contact { background: none; color: inherit; border: 1px dashed rgba(128,128,128,0.5);
+    border-radius: 8px; padding: 0.45rem 1rem; cursor: pointer; font-weight: 600; }

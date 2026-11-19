@@ -69,72 +69,7 @@
 {% endblock %}
 
 {% block extra_css %}
-<style>
-    :root { --accent-text: #5c4d7d; }
-    [data-theme="dark"] { --accent-text: #cdc3ea; }
-    .ar-hero { background: linear-gradient(135deg, #5c4d7d 0%, #8b7fad 60%, #b8d4e3 100%); padding: 5rem 2rem; text-align: center; color: white; }
-    .ar-hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.2; }
-    .ar-hero p { font-size: 1.3rem; max-width: 700px; margin: 0 auto 2rem; opacity: 0.95; }
-    .ar-hero .cta-button { display: inline-block; padding: 1rem 2.5rem; background: var(--accent-green-strong); color: white; text-decoration: none; border-radius: var(--radius-btn, 10px); font-weight: 600; font-size: 1.2rem; transition: var(--transition-ui); }
-    .ar-hero .cta-button:hover {background: var(--accent-green-strong-hover); }
-    .crisis-bar { background: #e3f2fd; padding: 1rem 2rem; text-align: center; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; color: var(--text-dark); }
-    .crisis-bar p { margin: 0; color: #1565c0; font-weight: 500; }
-    .crisis-bar a { color: #0d47a1; font-weight: 700; }
-    .features-section { padding: 4rem 2rem; background: var(--bg-light, #f8f9fa); }
-    .features-section h2 { text-align: center; color: var(--accent-text, #5c4d7d); font-size: 2.2rem; margin-bottom: 0.5rem; }
-    .features-section .subtitle { text-align: center; color: var(--text-muted, #666); font-size: 1.1rem; margin-bottom: 3rem; }
-    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
-    .feature-card {
-        /* Plain text columns: spacing does the grouping, no card chrome */
-        text-align: left;
-        background: none;
-        box-shadow: none;
-        border-radius: 0;
-        padding: 0;
-    }
-
-    .feature-card:hover {
-        transform: none;
-        box-shadow: none;
-    }
-
-    [data-theme="dark"] .feature-card {
-        background: none;
-    }
-    .feature-card h3 { color: var(--accent-text, #5c4d7d); margin-bottom: 0.75rem; }
-    .feature-card p { color: var(--text-muted, #666); line-height: 1.6; }
-    .mood-section { padding: 4rem 2rem; background: #ede7f6; text-align: center; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; color: var(--text-dark); }
-    .mood-section h2 { color: var(--accent-text, #5c4d7d); font-size: 2rem; margin-bottom: 2rem; }
-    .mood-grid { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; max-width: 600px; margin: 0 auto; }
-    .mood-item { background: var(--card-bg, #fff); padding: 1.5rem 2rem; border-radius: 15px; text-align: center; box-shadow: var(--shadow); min-width: 100px; }
-    .mood-item .emoji { font-size: 2.5rem; }
-    .mood-item .label { color: var(--accent-text, #5c4d7d); font-weight: 500; margin-top: 0.5rem; font-size: 0.9rem; }
-    .content-section { padding: 4rem 2rem; background: var(--card-bg, #fff); }
-    .content-section .container { max-width: 800px; margin: 0 auto; }
-    .content-section h2 { color: var(--accent-text, #5c4d7d); font-size: 2rem; margin-bottom: 1.5rem; }
-    .content-section h3 { color: var(--accent-text, #5c4d7d); font-size: 1.4rem; margin: 2rem 0 1rem; }
-    .content-section p { color: var(--text-muted, #555); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
-    .content-section ul { margin: 1.5rem 0; padding-left: 1.5rem; }
-    .content-section ul li { color: var(--text-muted, #555); line-height: 1.8; margin-bottom: 0.75rem; }
-    .faq-section { padding: 4rem 2rem; background: var(--bg-light, #f8f9fa); }
-    .faq-section h2 { text-align: center; color: var(--accent-text, #5c4d7d); font-size: 2.2rem; margin-bottom: 2rem; }
-    .faq-container { max-width: 800px; margin: 0 auto; }
-    .faq-item { background: var(--card-bg, #fff); border-radius: 10px; margin-bottom: 1rem; padding: 1.5rem; }
-    .faq-item h3 { color: var(--accent-text, #5c4d7d); margin-bottom: 0.75rem; font-size: 1.2rem; }
-    .faq-item p { color: var(--text-muted, #666); line-height: 1.7; margin: 0; }
-    .cta-section { padding: 5rem 2rem; background: linear-gradient(135deg, #5c4d7d 0%, #8b7fad 100%); text-align: center; color: white; }
-    .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
-    .cta-section p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.95; }
-    .cta-section .cta-button { display: inline-block; padding: 1rem 3rem; background: var(--accent-green-strong); color: white; text-decoration: none; border-radius: var(--radius-btn, 10px); font-weight: 600; font-size: 1.3rem; transition: var(--transition-ui); }
-    .cta-section .cta-button:hover {background: var(--accent-green-strong-hover); }
-    .cta-section .subtext { margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; }
-    .related-links { padding: 3rem 2rem; background: var(--bg-light, #f8f9fa); }
-    .related-links h3 { text-align: center; color: var(--accent-text, #5c4d7d); margin-bottom: 1.5rem; }
-    .related-grid { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto; }
-    .related-grid a { background: var(--card-bg, #fff); padding: 1rem 1.5rem; border-radius: 8px; text-decoration: none; color: var(--accent-text, #5c4d7d); font-weight: 500; box-shadow: var(--shadow); transition: transform 0.3s; }
-    .related-grid a:hover { transform: translateY(-3px); }
-    @media (max-width: 768px) { .ar-hero h1 { font-size: 2rem; } }
-</style>
+<link rel="stylesheet" href="{% static 'css/pages/core__mental_health_recovery_app.css' %}">
 {% endblock %}
 
 {% block content %}

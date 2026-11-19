@@ -1,0 +1,34 @@
+/* Styles for accounts/supporter/consent.html */
+.cns-page { max-width: 600px; margin: 0 auto; padding: 1.75rem 1.25rem 4rem; }
+.cns-card { background: var(--card-bg,#fff); border: 1px solid var(--border-color,#e8ecf1);
+  border-radius: 20px; padding: 2rem; box-shadow: 0 6px 20px rgba(16,32,64,.06); }
+.cns-card h1 { margin: 0 0 .35rem; font-size: 1.45rem; font-weight: 800; letter-spacing: -.02em;
+  color: var(--text-color,#1f2a44); }
+.cns-card .sub { margin: 0 0 1.5rem; color: var(--text-muted,#6b7689); line-height: 1.55; }
+.cns-label { display: block; font-weight: 700; font-size: .82rem;color: var(--text-muted,#7a869a); margin: 0 0 .55rem; }
+.cns-presets { display: grid; gap: .7rem; }
+.cns-preset { position: relative; display: flex; gap: .9rem; align-items: flex-start;
+  border: 1.5px solid var(--border-color,#e3e8ef); border-radius: 14px; padding: 1rem 1.1rem; cursor: pointer;
+  transition: border-color .15s ease, background .15s ease; }
+.cns-preset:hover { border-color: var(--primary-light,#4db8e8); }
+.cns-preset input { position: absolute; opacity: 0; pointer-events: none; }
+.cns-preset .emoji { font-size: 1.4rem; }
+.cns-preset .tt { font-weight: 700; color: var(--text-color,#1f2a44); }
+.cns-preset .dd { font-size: .88rem; color: var(--text-muted,#6b7689); margin-top: .15rem; line-height: 1.45; display:block; }
+.cns-preset .tick { margin-left: auto; width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid var(--border-color,#cfd8e3); flex: none; display: flex; align-items: center;
+  justify-content: center; color: #fff; font-size: .7rem; transition: var(--transition-ui); }
+.cns-preset input:checked ~ .tick { background: var(--accent-green,#52b788); border-color: var(--accent-green,#52b788); }
+.cns-preset:has(input:checked) { border-color: var(--accent-green,#52b788); background: rgba(82,183,136,.06); }
+.cns-actions { display: flex; gap: .8rem; margin-top: 1.8rem; }
+.cns-accept { flex: 1; border: none; cursor: pointer; border-radius: 999px; padding: .9rem;
+  font-size: 1rem; font-weight: 700; color: #fff; background: var(--gradient-primary, #1e4d8b);
+  box-shadow: 0 8px 18px rgba(30,77,139,.22); transition: transform .15s ease;
+  --heading-color: currentColor; }
+.cns-accept:hover { transform: translateY(-2px); }
+.cns-decline { border: 1px solid var(--border-color,#d6dde7); background: transparent; cursor: pointer;
+  border-radius: 999px; padding: .9rem 1.4rem; font-size: 1rem; font-weight: 600; color: var(--text-muted,#6b7689); }
+.cns-note { font-size: .82rem; color: var(--text-muted,#8a94a6); margin: 1rem 0 0; }
+[data-theme="dark"] .cns-card { background: #243041; border-color: #344256; }
+[data-theme="dark"] .cns-card h1, [data-theme="dark"] .cns-preset .tt { color: #e8eef7; }
+[data-theme="dark"] .cns-preset { border-color: #344256; }

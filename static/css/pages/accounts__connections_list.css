@@ -1,0 +1,248 @@
+/* Styles for accounts/connections_list.html */
+.community-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.community-filters {
+    background: var(--card-bg, #fff);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.member-card {
+    background: var(--card-bg, #fff);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+}
+
+.member-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.member-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #666;
+    overflow: hidden;
+    border: 3px solid var(--border-color, #f0f0f0);
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
+}
+
+.member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.member-info {
+    text-align: center;
+}
+
+.member-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark, #333);
+}
+
+.member-username {
+    color: var(--text-muted, #666);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.member-stats {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+    color: var(--text-muted, #777);
+}
+
+.member-stat {
+    text-align: center;
+}
+
+.member-stat-number {
+    font-weight: bold;
+    color: #52b788;
+}
+
+.recovery-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.recovery-badge {
+    background: #e8f4f8;
+    color: #1e4d8b;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
+}
+
+.recovery-badge.sponsor {
+    background: #fff3cd;
+    color: #856404;
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
+}
+
+.member-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.follow-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-ui);
+    text-decoration: none;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.follow-btn.follow {
+    background: var(--accent-green-strong);
+    color: white;
+}
+
+.follow-btn.following {
+    background: #e8f4f8;
+    color: #1e4d8b;
+    border: 1px solid #1e4d8b;
+}
+
+.follow-btn:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.action-btn {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 8px;
+    background: var(--card-bg, #fff);
+    color: var(--text-muted, #666);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-ui);
+}
+
+.action-btn:hover {
+    background: var(--bg-light, #f8f9fa);
+    color: #52b788;
+    text-decoration: none;
+}
+
+/* Header button styles */
+.header-action-buttons {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.header-btn {
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius-btn, 10px);
+    font-weight: 600;
+    transition: var(--transition-ui);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.header-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: none;
+    color: white;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .community-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .members-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .member-actions {
+        flex-direction: column;
+    }
+
+    .header-action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header-btn {
+        width: 100%;
+        max-width: 250px;
+        justify-content: center;
+    }
+}

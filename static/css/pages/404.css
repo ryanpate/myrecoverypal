@@ -1,0 +1,5 @@
+/* Styles for 404.html */
+.btn:hover {
+    box-shadow: none;
+    transition: var(--transition-ui);
+}

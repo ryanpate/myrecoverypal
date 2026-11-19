@@ -1,0 +1,163 @@
+/* Styles for core/demo.html */
+.demo-section {
+    padding: 4rem 2rem;
+}
+
+.demo-section:nth-child(even) {
+    background: var(--bg-light, #f8f9fa);
+}
+
+.demo-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.demo-content.reverse {
+    direction: rtl;
+}
+
+.demo-content.reverse > * {
+    direction: ltr;
+}
+
+.demo-text h2 {
+    color: var(--brand-text, #1e4d8b);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.demo-text p {
+    color: var(--text-muted, #666);
+    line-height: 1.8;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.demo-text ul {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+}
+
+.demo-text ul li {
+    padding: 0.75rem 0;
+    color: var(--text-muted, #666);
+    position: relative;
+    padding-left: 2rem;
+}
+
+.demo-text ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--green-text, #2e8059);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.demo-image {
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    border: 2px solid var(--border-color, #e0e0e0);
+    background: var(--card-bg, #fff);
+}
+
+.demo-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.demo-image-placeholder {
+    text-align: center;
+    color: var(--text-faint, #999);
+    padding: 2rem;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.demo-image-placeholder i {
+    font-size: 4rem;
+    color: var(--primary-light);
+    margin-bottom: 1rem;
+}
+
+.cta-section {
+    background: #2e8059;
+    padding: 4rem 2rem;
+    text-align: center;
+    color: white;
+    --heading-color: currentColor;
+}
+
+.cta-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.cta-section p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta-button {
+    padding: 1rem 2.5rem;
+    background: var(--card-bg, #fff);
+    color: var(--green-text, #2e8059);
+    text-decoration: none;
+    border-radius: var(--radius-btn, 10px);
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: var(--transition-ui);
+    display: inline-block;
+}
+
+.cta-button:hover {
+    box-shadow: none;
+}
+
+.cta-button-secondary {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .demo-hero h1 {
+        font-size: 2rem;
+    }
+
+    .demo-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .demo-content.reverse {
+        direction: ltr;
+    }
+
+    .demo-text h2 {
+        font-size: 1.5rem;
+    }
+
+    .cta-section h2 {
+        font-size: 1.8rem;
+    }
+}

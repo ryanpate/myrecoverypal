@@ -858,6 +858,10 @@ recovery_hub/             # Django config
 templates/                # Global templates
 static/
 ├── css/base-inline.css   # Main stylesheet (extracted from base.html)
+├── css/pages/            # One stylesheet per page template (accounts__progress.css = accounts/progress.html).
+│                         # Linked from the template where its <style> block used to be, so load order is unchanged.
+│                         # Partials, emails, PDFs, 500.html and the embed widget keep their styles inline.
+│                         # Run `collectstatic` after adding one, or template tests fail on the manifest lookup.
 └── js/
     ├── capacitor-native.js      # Native features (haptics, share, keyboard, app state, menu rebuild)
     ├── capacitor-push.js        # Push notification registration + deep linking

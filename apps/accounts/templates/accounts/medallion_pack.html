@@ -1,29 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Your HD Medallion Pack — MyRecoveryPal{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 
 {% block content %}
-<style>
-    .pack-page { max-width: 760px; margin: 2rem auto; padding: 0 1rem; text-align: center; }
-    .pack-page h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.35rem; }
-    .pack-page .pack-sub { color: var(--text-muted, #666); margin-bottom: 1.5rem; }
-    .pack-preview { width: 100%; max-width: 360px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); }
-    .pack-downloads { display: grid; gap: 0.75rem; margin: 1.75rem auto 1rem; max-width: 460px; }
-    .pack-download {
-        display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-        padding: 0.9rem 1.1rem; border-radius: 12px; text-decoration: none; font-weight: 600;
-        background: var(--primary-dark, #1e4d8b);
-    }
-    .pack-page a.pack-download, .pack-page a.pack-download:hover { color: #fff; }
-    .pack-download:hover { transform: translateY(-1px); }
-    .pack-note { color: var(--text-muted, #666); font-size: 0.85rem; }
-    .pack-pending {
-        margin: 1.5rem auto; max-width: 460px; padding: 1rem 1.25rem; border-radius: 12px;
-        background: #fff7e0; color: #7a5a00;
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/pages/accounts__medallion_pack.css' %}">
 
 <div class="pack-page">
     {% if purchase.status == 'paid' %}

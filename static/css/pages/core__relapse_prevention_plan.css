@@ -1,0 +1,17 @@
+/* Styles for core/relapse_prevention_plan.html */
+.rpl-hero { text-align: center; padding: 3rem 1rem 1.5rem; max-width: 800px; margin: 0 auto; }
+.rpl-hero h1 { font-size: 2.1rem; margin-bottom: 1rem; }
+.rpl-section { max-width: 800px; margin: 0 auto; padding: 1.2rem 1rem; }
+.rpl-cta {
+    display: inline-block; background: var(--primary-color, #2c7a7b); color: #fff;
+    padding: 0.8rem 1.8rem; border-radius: 8px; font-weight: 600;
+    text-decoration: none; margin-top: 1rem;
+    --heading-color: currentColor;
+}
+.rpl-card {
+    border: 1px solid rgba(128,128,128,0.25); border-radius: 12px;
+    padding: 1rem 1.2rem; margin-bottom: 0.9rem;
+}
+.rpl-card h3 { font-size: 1.05rem; margin-bottom: 0.3rem; }
+.rpl-card p { opacity: 0.85; font-size: 0.95rem; margin: 0; }
+.rpl-faq h3 { margin-top: 1.3rem; font-size: 1.05rem; }

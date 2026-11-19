@@ -1,0 +1,219 @@
+/* Styles for core/install.html */
+.install-header {
+    background: #1e4d8b;
+    padding: 100px 0 50px;
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    --heading-color: currentColor;
+}
+
+.install-content {
+    padding: 4rem 0;
+    background: var(--bg-light, #f8f9fa);
+}
+
+.install-intro {
+    background: var(--card-bg, #fff);
+    padding: 3rem 2rem;
+    border-radius: 10px;
+    margin-bottom: 3rem;
+    box-shadow: var(--shadow);
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.platform-tabs {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.platform-tab {
+    background: var(--card-bg, #fff);
+    border: 2px solid var(--border-color, #e9ecef);
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition-ui);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+}
+
+.platform-tab:hover {
+    border-color: #52b788;
+    transform: translateY(-2px);
+}
+
+.platform-tab.active {
+    background: var(--accent-green-strong);
+    color: white;
+    border-color: #52b788;
+}
+
+.platform-tab i {
+    font-size: 1.5rem;
+}
+
+.platform-instructions {
+    display: none;
+    background: var(--card-bg, #fff);
+    padding: 3rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.platform-instructions.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.instruction-step {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    align-items: start;
+}
+
+.step-number {
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    background: #2e8059;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    --heading-color: currentColor;
+}
+
+.step-content h4 {
+    color: var(--brand-text, #1e4d8b);
+    margin-bottom: 0.75rem;
+}
+
+.step-content p {
+    color: var(--text-muted, #666);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+.step-image {
+    background: var(--bg-light, #f8f9fa);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #e9ecef);
+    margin-top: 1rem;
+    text-align: center;
+    color: var(--text-faint, #999);
+    font-style: italic;
+}
+
+.benefits-section {
+    background: var(--card-bg, #fff);
+    padding: 3rem 2rem;
+    border-radius: 10px;
+    margin-top: 3rem;
+    box-shadow: var(--shadow);
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.benefit-item {
+    text-align: center;
+}
+
+.benefit-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1rem;
+    background: #2e8059;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    --heading-color: currentColor;
+}
+
+.benefit-item h4 {
+    color: var(--brand-text, #1e4d8b);
+    margin-bottom: 0.5rem;
+}
+
+.benefit-item p {
+    color: var(--text-muted, #666);
+}
+
+.install-button-section {
+    text-align: center;
+    margin: 3rem 0;
+}
+
+.btn-install-large {
+    background: var(--accent-green-strong);
+    border-color: #52b788;
+    color: white;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-ui);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.btn-install-large:hover {
+    background: var(--accent-green-strong-hover);
+    box-shadow: none;
+}
+
+.btn-install-large i {
+    font-size: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .install-header h1 {
+        font-size: 2rem;
+    }
+
+    .platform-instructions {
+        padding: 2rem 1.5rem;
+    }
+
+    .instruction-step {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}

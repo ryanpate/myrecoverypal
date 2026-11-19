@@ -1,0 +1,42 @@
+/* Styles for resources/my_bookmarks.html */
+.bookmarks-header {
+    background: #1e4d8b;
+    padding: 100px 0 50px;
+    color: white;
+    text-align: center;
+    --heading-color: currentColor;
+}
+
+.bookmarks-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.bookmarks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-state img {
+    max-width: 200px;
+    opacity: 0.5;
+    margin-bottom: 2rem;
+}
+
+.empty-state h3 {
+    color: var(--text-muted, #4B5563);
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: var(--text-muted, #6B7280);
+    margin-bottom: 2rem;
+}

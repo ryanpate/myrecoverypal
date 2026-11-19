@@ -1,0 +1,107 @@
+/* Styles for journal/entry_detail.html */
+.entry-container {
+    max-width: 800px;
+    margin: 100px auto 2rem;
+    padding: 0 2rem;
+}
+
+.entry-header {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+}
+
+.entries-header h1 {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+}    
+.entry-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: var(--text-muted, #666);
+}
+
+.mood-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-gray, #f0f0f0);
+    border-radius: 20px;
+}
+
+.entry-content {
+    background: var(--card-bg, #fff);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.entry-content p {
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+.prompt-info {
+    background: #e3f2fd;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; color: var(--text-dark);
+}
+
+.gratitude-list {
+    background: var(--bg-light, #f8f9fa);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-top: 2rem;
+}
+
+.gratitude-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.gratitude-item:last-child {
+    border-bottom: none;
+}
+
+.craving-info {
+    background: #fff3e0;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-top: 1rem;
+}
+[data-theme="dark"] .craving-info { background: var(--bg-light); }
+
+.entry-tags {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color, #eee);
+}
+
+.tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #e0e0e0;
+    border-radius: 15px;
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.entry-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+.entry-suggest { margin: 1.5rem 0; padding: 1.1rem 1.25rem; border-radius: 12px;
+    background: #eef6f1; border: 1px solid #b7dfc8; color: #1f3b2d; }
+.entry-suggest.crisis { background: #fdf0ee; border-color: #f2c4bc; color: #5a1f16; }
+.entry-suggest p { margin: 0 0 .75rem; line-height: 1.5; }
+.entry-suggest .suggest-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.entry-suggest .suggest-meta { font-size: .85rem; opacity: .8; margin-top: .6rem; }
+[data-theme="dark"] .entry-suggest { background: #16291f; border-color: #2c5a41; color: #d6eee0; }
+[data-theme="dark"] .entry-suggest.crisis { background: #2e1714; border-color: #6b2c22; color: #f5d9d4; }

@@ -1,0 +1,161 @@
+/* Styles for journal/prompts_list.html */
+.prompts-header {
+    background: #1e4d8b;
+    padding: 100px 0 50px;
+    text-align: center;
+}
+
+.prompts-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.category-filters {
+    background: var(--card-bg, #fff);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--border-color, #e0e0e0);
+    background: var(--card-bg, #fff);
+    border-radius: 20px;
+    text-decoration: none;
+    color: var(--text-muted, #666);
+    transition: var(--transition-ui);
+}
+
+.filter-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--brand-text, #1e4d8b);
+    transform: translateY(-2px);
+}
+
+.filter-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    --heading-color: currentColor;
+}
+
+.prompts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.prompt-card {
+    background: var(--card-bg, #fff);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    transition: var(--transition-ui);
+    position: relative;
+    overflow: hidden;
+}
+
+.prompt-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: var(--primary-color);
+}
+
+.prompt-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.prompt-category {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--bg-gray, #f0f0f0);
+    border-radius: 15px;
+    font-size: 0.85rem;
+    color: var(--text-muted, #666);
+    margin-bottom: 0.5rem;
+}
+
+.prompt-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--brand-text, #1e4d8b);
+    margin-bottom: 0.5rem;
+}
+
+.prompt-text {
+    color: var(--text-dark, #444);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.prompt-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color, #eee);
+}
+
+.stage-indicator {
+    font-size: 0.85rem;
+    color: var(--text-muted, #666);
+}
+
+.use-prompt-btn {
+    background: var(--accent-green-strong);
+    color: white;
+    padding: 0.5rem 1.5rem;
+    text-decoration: none;
+    border-radius: var(--radius-btn, 10px);
+    font-size: 0.9rem;
+    transition: var(--transition-ui);
+}
+
+.use-prompt-btn:hover {
+    background: var(--primary-color);
+    box-shadow: none;
+}
+
+.no-prompts {
+    text-align: center;
+    padding: 3rem;
+    background: var(--bg-light, #f8f9fa);
+    border-radius: 10px;
+}
+
+.stage-badges {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.stage-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: var(--secondary-color);
+    color: white;
+    border-radius: 3px;
+    font-size: 0.75rem;
+}
+
+@media (max-width: 768px) {
+    .prompts-grid {
+        grid-template-columns: 1fr;
+    }
+}

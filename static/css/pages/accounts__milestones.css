@@ -1,0 +1,224 @@
+/* Styles for accounts/milestones.html */
+.milestones-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.milestones-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color, #f0f0f0);
+}
+
+.milestones-header-content h2 {
+    color: var(--brand-text, #1e4d8b);
+    margin-bottom: 0.5rem;
+}
+
+.milestones-header-content p {
+    color: var(--text-muted, #666);
+    margin: 0;
+}
+
+.add-milestone-btn-top {
+    background: var(--accent-green-strong);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition-ui);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.add-milestone-btn-top:hover {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: none;
+}
+
+.milestone-timeline {
+    position: relative;
+    padding: 2rem 0;
+}
+
+.milestone-timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--primary-color);
+    transform: translateX(-50%);
+}
+
+.milestone-item {
+    background: var(--card-bg, #fff);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    position: relative;
+    width: calc(50% - 2rem);
+}
+
+.milestone-item:nth-child(odd) {
+    margin-left: auto;
+}
+
+.milestone-item::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: var(--shadow);
+}
+
+.milestone-item:nth-child(odd)::before {
+    left: -30px;
+}
+
+.milestone-item:nth-child(even)::before {
+    right: -30px;
+}
+
+.milestone-type {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    --heading-color: currentColor;
+}
+
+.milestone-date {
+    color: var(--text-muted, #666);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--bg-light, #f8f9fa);
+    border-radius: 10px;
+    margin: 2rem 0;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    color: #52b788;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: var(--text-muted, #666);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: var(--text-faint, #999);
+    margin-bottom: 1.5rem;
+}
+
+/* Share buttons */
+.milestone-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color, #f0f0f0);
+}
+
+.share-label {
+    font-size: 0.85rem;
+    color: var(--text-muted, #666);
+    margin-right: 0.25rem;
+}
+
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    text-decoration: none;
+    color: white;
+    font-size: 0.9rem;
+    transition: var(--transition-ui);
+}
+
+.share-btn:hover {
+    transform: scale(1.1);
+    color: white;
+}
+
+.share-btn.facebook { background: #1877f2; }
+.share-btn.twitter { background: #1da1f2; }
+.share-btn.linkedin { background: #0077b5; }
+.share-btn.whatsapp { background: #25d366; }
+.share-btn.native {
+    background: #2e8059;
+    cursor: pointer;
+    border: none;
+}
+.share-btn.copy {
+    background: #666;
+    cursor: pointer;
+    border: none;
+}
+
+.share-btn.copy.copied,
+.share-btn.native.shared {
+    background: #333;
+}
+
+/* Hide native share on desktop */
+@media (min-width: 769px) {
+    .share-btn.native {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .milestones-header-section {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .milestones-header-content {
+        margin-bottom: 1rem;
+    }
+
+    .milestone-item {
+        width: 100%;
+        margin-left: 0 !important;
+    }
+
+    .milestone-timeline::before {
+        left: 20px;
+    }
+
+    .milestone-item::before {
+        left: 10px !important;
+        right: auto !important;
+    }
+}

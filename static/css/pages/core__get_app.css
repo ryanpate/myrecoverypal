@@ -1,0 +1,152 @@
+/* Styles for core/get_app.html */
+body {
+    background: #1e4d8b;
+    min-height: 100vh;
+}
+
+.get-app-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.get-app-card {
+    background: var(--card-bg, #fff);
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    max-width: 500px;
+    text-align: center;
+    animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.app-logo {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 2rem;
+    background: #2e8059;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 20px rgba(82, 183, 136, 0.3);
+}
+
+.app-logo img {
+    width: 80px;
+    height: 80px;
+}
+
+.get-app-card h1 {
+    color: var(--brand-text, #1e4d8b);
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.get-app-card p {
+    color: var(--text-muted, #666);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.install-btn-large {
+    background: var(--accent-green-strong);
+    border: none;
+    color: white;
+    padding: 18px 40px;
+    font-size: 1.3rem;
+    border-radius: var(--radius-btn, 10px);
+    cursor: pointer;
+    transition: var(--transition-ui);
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: none;
+    width: 100%;
+    justify-content: center;
+    max-width: 350px;
+}
+
+.install-btn-large:hover {
+    background: var(--accent-green-strong-hover);
+    box-shadow: none;
+}
+
+.install-btn-large i {
+    font-size: 1.5rem;
+}
+
+.features-list {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+    text-align: left;
+}
+
+.features-list li {
+    padding: 0.75rem 0;
+    color: var(--text-muted, #666);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.features-list li i {
+    color: var(--green-text, #2e8059);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.manual-install-link {
+    color: var(--brand-text, #1e4d8b);
+    text-decoration: none;
+    margin-top: 1.5rem;
+    display: inline-block;
+    font-size: 0.95rem;
+}
+
+.manual-install-link:hover {
+    text-decoration: underline;
+}
+
+.device-detect {
+    background: var(--bg-light, #f8f9fa);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted, #666);
+}
+
+.pulse-animation {
+}
+
+
+@media (max-width: 768px) {
+    .get-app-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .get-app-card h1 {
+        font-size: 1.5rem;
+    }
+
+    .app-logo {
+        width: 100px;
+        height: 100px;
+    }
+}

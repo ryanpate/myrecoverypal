@@ -1,0 +1,16 @@
+/* Styles for resources/workbook/builder.html */
+.wb-option { display: flex; gap: 0.8rem; align-items: flex-start; padding: 0.85rem 0;
+             border-bottom: 1px solid rgba(128,128,128,0.2); cursor: pointer; }
+.wb-option:last-child { border-bottom: 0; }
+.wb-option input { margin-top: 0.3rem; width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
+.wb-option strong { display: block; }
+.wb-option small { display: block; opacity: 0.75; line-height: 1.4; }
+.wb-count { margin-left: auto; font-size: 0.82rem; opacity: 0.7; white-space: nowrap; padding-left: 0.5rem; }
+.wb-ranges { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.wb-ranges label { position: relative; }
+.wb-ranges input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.wb-ranges span { display: inline-block; padding: 0.45rem 1rem; border-radius: 999px; cursor: pointer;
+                  border: 1px solid rgba(128,128,128,0.45); font-weight: 600; font-size: 0.92rem; }
+.wb-ranges input:checked + span { background: var(--primary-color, #1e4d8b); border-color: var(--primary-color, #1e4d8b); color: #fff; --heading-color: currentColor; }
+.wb-ranges input:focus-visible + span { outline: 2px solid var(--accent-color, #52b788); outline-offset: 2px; }
+[data-theme="dark"] .wb-ranges input:checked + span { color: #0f172a; }

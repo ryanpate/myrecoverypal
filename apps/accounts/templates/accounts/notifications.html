@@ -4,10 +4,7 @@
 {% block title %}Notifications - MyRecoveryPal{% endblock %}
 
 {% block extra_css %}
-<style>
-    /* Two-tier width standard — focused tier */
-    .container { max-width: 1000px; }
-</style>
+<link rel="stylesheet" href="{% static 'css/pages/accounts__notifications-1.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -91,33 +88,5 @@
     </div>
 </div>
 
-<style>
-.notification-item-full {
-    padding: 1rem;
-    border-bottom: 1px solid var(--border-color, #e0e0e0);
-    transition: background 0.2s;
-}
-
-.notification-item-full:hover {
-    background: var(--bg-light, #f8f9fa);
-}
-
-.notification-item-full.unread {
-    background: #f0f8ff;
-    border-left: 3px solid var(--primary-light);
-}
-[data-theme="dark"] .notification-item-full.unread { background: var(--bg-light); }
-
-.notification-icon-circle {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: var(--primary-light);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-}
-</style>
+<link rel="stylesheet" href="{% static 'css/pages/accounts__notifications-2.css' %}">
 {% endblock %}

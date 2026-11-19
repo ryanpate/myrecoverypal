@@ -63,50 +63,7 @@
 {% endblock %}
 
 {% block extra_css %}
-<style>
-    .oam-hero {
-        text-align: center;
-        padding: 3rem 1rem 2rem;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-    .oam-hero h1 { font-size: 2.2rem; margin-bottom: 1rem; }
-    .oam-hero .oam-count {
-        display: inline-block;
-        background: var(--primary-color, #2c7a7b);
-        color: #fff;
-        border-radius: 999px;
-        padding: 0.4rem 1.2rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        --heading-color: currentColor;
-    }
-    .oam-section { max-width: 800px; margin: 0 auto; padding: 1.5rem 1rem; }
-    .oam-meeting-card {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-        border: 1px solid rgba(128, 128, 128, 0.25);
-        border-radius: 10px;
-        padding: 0.9rem 1.1rem;
-        margin-bottom: 0.75rem;
-    }
-    .oam-meeting-card .oam-name { font-weight: 600; }
-    .oam-meeting-card .oam-time { white-space: nowrap; opacity: 0.85; }
-    .oam-cta {
-        display: inline-block;
-        background: var(--primary-color, #2c7a7b);
-        color: #fff;
-        padding: 0.8rem 1.8rem;
-        border-radius: 8px;
-        font-weight: 600;
-        text-decoration: none;
-        margin-top: 1rem;
-        --heading-color: currentColor;
-    }
-    .oam-faq h3 { margin-top: 1.5rem; }
-</style>
+<link rel="stylesheet" href="{% static 'css/pages/core__online_aa_meetings.css' %}">
 {% endblock %}
 
 {% block content %}

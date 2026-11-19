@@ -1,0 +1,165 @@
+/* Styles for accounts/edit_profile.html */
+.edit-profile-container {
+    max-width: 800px;
+    margin: 100px auto 2rem;
+    padding: 2rem;
+    background: var(--card-bg, #fff);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--border-color, #f0f0f0);
+}
+
+.profile-header h1 {
+    color: var(--brand-text, #1e4d8b);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.current-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ddd;
+    font-size: 3rem;
+    color: #666;
+    overflow: hidden;
+    border: 4px solid var(--border-color, #f0f0f0);
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
+}
+
+.current-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.current-avatar i {
+    font-size: 3rem;
+    color: var(--text-faint, #999);
+}
+
+.form-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color, #eee);
+}
+
+.form-section:last-child {
+    border-bottom: none;
+}
+
+.form-section h3 {
+    color: var(--brand-text, #1e4d8b);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-section p {
+    color: var(--text-muted, #666);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.btn-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: center;
+}
+
+.btn-group .btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.privacy-note {
+    background: var(--bg-light, #f8f9fa);
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-muted, #666);
+    display: flex;
+    align-items: start;
+    gap: 0.5rem;
+}
+
+.privacy-note i {
+    color: var(--brand-text, #1e4d8b);
+    margin-top: 0.2rem;
+}
+
+.recovery-info {
+    background: #e3f2fd;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; color: var(--text-dark);
+}
+
+.recovery-info h4 {
+    color: var(--brand-text, #1e4d8b);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Custom checkbox styling */
+.form-check {
+    padding: 0.5rem 0;
+    padding-left: 1.75em;
+}
+
+.form-check-input:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+/* File input styling */
+.form-control[type="file"] {
+    padding: 0.375rem 0.75rem;
+}
+
+.help-text {
+    font-size: 0.85rem;
+    color: var(--text-muted, #6c757d);
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .edit-profile-container {
+        margin: 80px auto 2rem;
+        padding: 1rem;
+    }
+
+    .btn-group {
+        flex-direction: column;
+    }
+
+    .btn-group .btn {
+        width: 100%;
+    }
+}

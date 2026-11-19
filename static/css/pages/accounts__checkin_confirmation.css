@@ -1,0 +1,70 @@
+/* Styles for accounts/checkin_confirmation.html */
+.ckdone-page { max-width: 720px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+.ckdone-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-divider);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow);
+    padding: var(--space-7);
+    text-align: center;
+}
+.ckdone-card .emoji { font-size: 2.6rem; line-height: 1; }
+.ckdone-card h1 {
+    margin: 0.8rem 0 0.4rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--text-strong);
+}
+.ckdone-card .lede { margin: 0 auto 0.4rem; max-width: 380px; color: var(--text-muted); line-height: 1.55; }
+.ckdone-streak {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(245, 166, 35, 0.14);
+    color: var(--gold-deep);
+    border-radius: var(--radius-pill);
+    padding: 0.4rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: 0.4rem;
+}
+.ckdone-actions { display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; margin-top: 1.6rem; }
+.ckdone-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-btn, 10px);
+    padding: 0.7rem 1.4rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: var(--transition-ui);
+}
+.ckdone-btn.primary { background: var(--accent-green-strong); color: #fff; }
+.ckdone-btn.primary:hover { transform: var(--lift-hover); box-shadow: var(--shadow-accent); }
+.ckdone-btn.outline { background: var(--surface-card); color: var(--brand-text, #1e4d8b); border: 1.5px solid var(--color-primary); }
+.ckdone-btn.outline:hover { transform: var(--lift-hover); }
+
+.ckdone-support {
+    border: 1px solid var(--color-primary);
+    background: rgba(30, 77, 139, 0.06);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    margin: 1.5rem auto 0;
+    max-width: 420px;
+}
+.ckdone-support p { margin: 0 0 0.5rem; color: var(--text-body); }
+.ckdone-support .heavy { color: var(--brand-text, #1e4d8b); font-weight: 700; }
+.ckdone-support a {
+    display: inline-block;
+    margin-top: 0.5rem;
+    background: var(--color-primary);
+    color: #fff;
+    padding: 0.65rem 1.4rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    font-weight: 600;
+    --heading-color: currentColor;
+}
+.ckdone-support a:hover, .ckdone-support a:focus { color: #fff; filter: brightness(1.12); }

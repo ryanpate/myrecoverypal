@@ -4,6 +4,7 @@
 The calculators convert because the visitor sees their own number first and
 "Save my counter" carries the date into signup. The homepage used to open with
 a generic pitch and a screenshot of someone else's count."""
+from django.conf import settings
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -38,4 +39,6 @@ class LandingHeroCounterTest(TestCase):
         self.assertNotIn('59.99', self.widget.replace('data-yearly="59.99"', ''))
 
     def test_text_comes_before_the_phone_on_small_screens(self):
-        self.assertNotIn('.ml-hero-media { order:-1; }', self.html)
+        css = (settings.BASE_DIR / 'static/css/pages/core__index.css').read_text()
+        self.assertIn('.ml-hero-inner', css)  # guards against reading the wrong file
+        self.assertNotIn('.ml-hero-media { order:-1; }', css)

@@ -1,113 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block title %}Guided Journal Entry - MyRecoveryPal{% endblock %}
 
 {% block extra_css %}
-<style>
-    .guided-container {
-        max-width: 800px;
-        margin: 100px auto 2rem;
-        padding: 2rem;
-    }
-    
-    .prompt-display {
-        background: #1e4d8b;
-        color: white;
-        padding: 3rem;
-        border-radius: 10px;
-        margin-bottom: 2rem;
-        text-align: center;
-        box-shadow: var(--shadow);
-        --heading-color: currentColor;
-    }
-    
-    .prompt-display h2 {
-        margin-bottom: 1rem;
-        font-size: 1.8rem;
-    }
-    
-    .prompt-question {
-        font-size: 1.3rem;
-        line-height: 1.6;
-        margin-bottom: 1rem;
-    }
-    
-    .prompt-category {
-        display: inline-block;
-        background: rgba(255,255,255,0.2);
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        margin-top: 1rem;
-    }
-    
-    .journal-form {
-        background: var(--card-bg, #fff);
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: var(--shadow);
-    }
-    
-    .form-section {
-        margin-bottom: 2rem;
-        padding: 1.5rem;
-        background: var(--bg-light, #f8f9fa);
-        border-radius: 10px;
-    }
-    
-    .follow-up-section {
-        background: #e3f2fd;
-        border-left-color: var(--primary-color);
-        /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; color: var(--text-dark);
-    }
-    
-    .form-section h4 {
-        color: var(--brand-text, #1e4d8b);
-        margin-bottom: 1rem;
-    }
-    
-    .writing-tips {
-        background: #fff3e0;
-        padding: 1rem;
-        border-radius: 5px;
-        margin-bottom: 2rem;
-    }
-    [data-theme="dark"] .writing-tips { background: var(--bg-light); }
-    
-    .writing-tips h5 {
-        color: #f57c00;
-        margin-bottom: 0.5rem;
-    }
-    
-    .writing-tips ul {
-        margin: 0;
-        padding-left: 1.5rem;
-    }
-    
-    .no-prompt {
-        text-align: center;
-        padding: 3rem;
-        background: var(--bg-light, #f8f9fa);
-        border-radius: 10px;
-    }
-    
-    .btn-refresh {
-        background: var(--secondary-color);
-        color: white;
-        padding: 0.5rem 1.5rem;
-        border: none;
-        border-radius: var(--radius-btn, 10px);
-        cursor: pointer;
-        transition: var(--transition-ui);
-        margin-top: 1rem;
-    }
-    
-    .btn-refresh:hover {
-        box-shadow: none;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/pages/journal__guided_entry.css' %}">
 {% endblock %}
 
 {% block content %}

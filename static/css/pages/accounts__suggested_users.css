@@ -1,0 +1,88 @@
+/* Styles for accounts/suggested_users.html */
+.user-card {
+    background: var(--card-bg, #fff);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+    transition: var(--transition-ui);
+    height: 100%;
+}
+
+.user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #1e4d8b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    font-weight: bold;
+    overflow: hidden;
+    margin: 0 auto 1rem;
+    --heading-color: currentColor;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-card h5 {
+    color: var(--brand-text, #1e4d8b);
+    margin-bottom: 0.5rem;
+}
+
+.user-username {
+    color: var(--text-muted, #6c757d);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.user-bio {
+    color: var(--text-dark, #495057);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    min-height: 60px;
+}
+
+.btn-follow {
+    width: 100%;
+    background: var(--accent-green-strong);
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: var(--transition-ui);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-follow:hover {
+    background: #45a374;
+    box-shadow: none;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted, #666);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #52b788;
+    margin-bottom: 1rem;
+}
