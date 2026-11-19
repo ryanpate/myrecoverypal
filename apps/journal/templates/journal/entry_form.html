@@ -1,82 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block title %}Write Journal Entry - MyRecoveryPal{% endblock %}
 
 {% block extra_css %}
-<style>
-    .journal-form-container {
-        max-width: 800px;
-        margin: 100px auto 2rem;
-        padding: 2rem;
-        background: var(--card-bg, #fff);
-        border-radius: 10px;
-        box-shadow: var(--shadow);
-    }
-    
-    .form-header {
-        margin-bottom: 2rem;
-    }
-    
-    .form-section {
-        margin-bottom: 2rem;
-        padding: 1.5rem;
-        background: var(--bg-light, #f8f9fa);
-        border-radius: 10px;
-    }
-    
-    .form-section h4 {
-        color: var(--brand-text, #1e4d8b);
-        margin-bottom: 1rem;
-    }
-    
-    .mood-selector {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 1rem;
-    }
-    
-    .mood-option {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: var(--transition-ui);
-        border: 2px solid transparent;
-    }
-    
-    .mood-option:hover {
-        transform: scale(1.1);
-    }
-    
-    .mood-option.selected {
-        border-color: var(--primary-color);
-        transform: scale(1.2);
-    }
-    
-    .gratitude-section {
-        background: #e3f2fd;
-        /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; color: var(--text-dark);
-    }
-    
-    .craving-section {
-        background: #fff3e0;
-    }
-    [data-theme="dark"] .craving-section { background: var(--bg-light); }
-    
-    #id_craving_intensity_wrapper {
-        display: none;
-    }
-    
-    #id_craving_intensity_wrapper.show {
-        display: block;
-        margin-top: 1rem;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/pages/journal__entry_form.css' %}">
 {% endblock %}
 
 {% block content %}

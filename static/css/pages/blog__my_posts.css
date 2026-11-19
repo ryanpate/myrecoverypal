@@ -1,0 +1,62 @@
+/* Styles for blog/my_posts.html */
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-group .btn {
+    border-radius: 0;
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.modal-content {
+    border-radius: 10px;
+}
+
+.modal-header {
+    background: #1e4d8b;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    --heading-color: currentColor;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+}
+
+.my-posts-pagination a:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+@media (max-width: 768px) {
+    .my-posts-pagination {
+        padding: 1.5rem 1rem !important;
+        margin: 2rem 0 1rem 0 !important;
+    }
+
+    .my-posts-pagination a,
+    .my-posts-pagination span {
+        padding: 0.6rem 1rem !important;
+        font-size: 0.9rem !important;
+        margin: 0.25rem !important;
+        display: block !important;
+        margin-bottom: 0.5rem !important;
+    }
+}
+/* Pager links fill on hover (the inline styles set the resting colours) */
+.pager-link-hover:hover { background: #1e4d8b !important; color: white !important; }

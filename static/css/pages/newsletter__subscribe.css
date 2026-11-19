@@ -1,0 +1,88 @@
+/* Styles for newsletter/subscribe.html */
+.newsletter-header {
+    background: #1e4d8b;
+    padding: 100px 0 50px;
+    color: white;
+    text-align: center;
+    --heading-color: currentColor;
+}
+
+.newsletter-container {
+    max-width: 600px;
+    margin: -30px auto 2rem;
+    position: relative;
+    z-index: 10;
+}
+
+.subscribe-card {
+    background: var(--card-bg, #fff);
+    padding: 3rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+}
+
+.benefits-list li {
+    padding: 0.75rem 0;
+    padding-left: 2rem;
+    position: relative;
+}
+
+.benefits-list li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--accent-color);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.newsletter-preview {
+    background: var(--bg-light, #f8f9fa);
+    padding: 2rem;
+    border-radius: 10px;
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.frequency-info {
+    background: #e3f2fd;
+    padding: 1rem;
+    border-radius: 5px;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; color: var(--text-dark);
+}
+
+.privacy-note {
+    font-size: 0.85rem;
+    color: var(--text-muted, #666);
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.sample-topics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.topic-card {
+    background: var(--bg-gray, #f0f0f0);
+    padding: 1rem;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.topic-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}

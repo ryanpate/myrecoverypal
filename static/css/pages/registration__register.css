@@ -1,0 +1,21 @@
+/* Styles for registration/register.html */
+.form-control,
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form input[type="date"] {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1.5px solid var(--border-color, #ddd);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: var(--bg-light, #fafafa);
+    box-sizing: border-box;
+    font-family: inherit;
+}
+form input:focus {
+    outline: none;
+    border-color: #52b788;
+    background: var(--card-bg, #fff);
+    box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.15);
+}

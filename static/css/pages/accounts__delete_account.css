@@ -1,0 +1,128 @@
+/* Styles for accounts/delete_account.html */
+.delete-account-container {
+    max-width: 600px;
+    margin: 100px auto 2rem;
+    padding: 2rem;
+    background: var(--card-bg, #fff);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.delete-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-color, #f0f0f0);
+}
+
+.delete-header h1 {
+    color: #dc3545;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.delete-header p {
+    color: var(--text-muted, #666);
+    font-size: 0.95rem;
+}
+
+.warning-box {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.warning-box h3 {
+    color: #856404;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.warning-box ul {
+    color: #856404;
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 0.9rem;
+}
+
+.warning-box ul li {
+    margin-bottom: 0.25rem;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--text-dark, #333);
+    font-size: 0.9rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.form-group .help-text {
+    font-size: 0.8rem;
+    color: var(--text-muted, #888);
+    margin-top: 0.25rem;
+}
+
+.btn-delete {
+    width: 100%;
+    padding: 0.75rem;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+}
+
+.btn-delete:disabled {
+    background: #ccc;
+    color: #4b5563;
+    cursor: not-allowed;
+}
+
+.btn-cancel {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    color: var(--brand-text, #1e4d8b);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Dark mode */
+[data-theme="dark"] .delete-account-container {
+    background: #1e1e1e;
+}
+[data-theme="dark"] .delete-header h1 { color: #ff6b6b; }
+[data-theme="dark"] .delete-header p { color: #aaa; }
+[data-theme="dark"] .warning-box { background: #332b00; border-color: #665500; }
+[data-theme="dark"] .warning-box h3 { color: #ffc107; }
+[data-theme="dark"] .warning-box ul { color: #e6c200; }
+[data-theme="dark"] .form-group label { color: #ddd; }
+[data-theme="dark"] .form-group input { background: #2a2a2a; border-color: #444; color: #eee; }

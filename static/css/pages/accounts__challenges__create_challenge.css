@@ -1,0 +1,172 @@
+/* Styles for accounts/challenges/create_challenge.html */
+.form-container {
+    background: var(--card-bg, #fff);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color, #e9ecef);
+}
+
+.form-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.section-title {
+    color: #667eea;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.section-icon {
+    margin-right: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-dark, #495057);
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #ced4da);
+    padding: 0.75rem;
+    transition: var(--transition-ui);
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.form-check {
+    margin-bottom: 1rem;
+}
+
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.challenge-type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.challenge-type-option {
+    border: 2px solid var(--border-color, #e9ecef);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition-ui);
+    background: var(--card-bg, #fff);
+}
+
+.challenge-type-option:hover {
+    border-color: #667eea;
+    background: #f8f9fc;
+}
+
+.challenge-type-option.selected {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+}
+
+.challenge-type-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.duration-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.duration-option {
+    border: 1px solid var(--border-color, #ced4da);
+    border-radius: 6px;
+    padding: 0.75rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition-ui);
+    background: var(--card-bg, #fff);
+}
+
+.duration-option:hover {
+    border-color: #667eea;
+    background: #f8f9fc;
+}
+
+.duration-option.selected {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+}
+
+.tips-section {
+    background: #f8f9fc;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+[data-theme="dark"] .tips-section { background: var(--bg-light); }
+
+.tip-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.tip-item:last-child {
+    margin-bottom: 0;
+}
+
+.tip-icon {
+    margin-right: 0.75rem;
+    margin-top: 0.25rem;
+    font-size: 1.2rem;
+}
+
+.preview-section {
+    background: #e8f4f8;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+[data-theme="dark"] .preview-section { background: var(--bg-light); }
+
+.char-counter {
+    font-size: 0.8rem;
+    color: var(--text-muted, #6c757d);
+    text-align: right;
+    margin-top: 0.25rem;
+}
+
+.char-counter.warning {
+    color: #ffc107;
+}
+
+.char-counter.danger {
+    color: #dc3545;
+}

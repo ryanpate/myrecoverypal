@@ -1,30 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Support a Loved One in Recovery | MyRecoveryPal{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 
 {% block content %}
-<style>
-  .fam-page { max-width: 640px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
-  .fam-card { background: var(--card-bg,#fff); border: 1px solid var(--border-color,#e8ecf1);
-    border-radius: 20px; padding: 2rem; box-shadow: 0 6px 20px rgba(16,32,64,.06); color: var(--text-color,#1f2a44); }
-  .fam-card h1 { margin: 0 0 .35rem; font-size: 1.55rem; font-weight: 800; letter-spacing: -.02em; }
-  .fam-card .sub { margin: 0 0 1.4rem; color: var(--text-muted,#6b7689); line-height: 1.55; }
-  .fam-label { display: block; font-weight: 700; font-size: .82rem;color: var(--text-muted,#7a869a); margin: 1rem 0 .45rem; }
-  .fam-input { width: 100%; box-sizing: border-box; border: 1px solid var(--border-color,#d4dbe6);
-    border-radius: 12px; padding: .8rem 1rem; font-size: 1rem; background: var(--bg-light,#f8f9fa);
-    color: var(--text-color,#1f2a44); }
-  .fam-hint { font-size: .82rem; color: var(--text-muted,#8a94a6); margin: .35rem 0 0; }
-  .fam-btn { margin-top: 1.5rem; width: 100%; border: none; cursor: pointer; border-radius: var(--radius-btn, 10px); padding: .95rem;
-    font-size: 1rem; font-weight: 700; color: #fff; background: var(--gradient-primary, #1e4d8b);
-    --heading-color: currentColor; }
-  .fam-error { background: #fdecec; color: #b23b3b; padding: .75rem 1rem; border-radius: 10px; margin-bottom: 1rem; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; }
-  .fam-done { background: rgba(82,183,136,.1); border-radius: 14px; padding: 1rem 1.1rem; margin-top: 1rem; }
-  .fam-share { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .75rem; }
-  .fam-share a { padding: .6rem 1rem; border-radius: 999px; background: #1e4d8b; color: #fff; text-decoration: none; font-weight: 600; font-size: .9rem; --heading-color: currentColor; }
-  .fam-share a.fam-secondary { background: transparent; color: var(--brand-text, #1e4d8b); border: 1px solid currentColor; }
-  [data-theme="dark"] .fam-card { background: #243041; border-color: #344256; color: #e8eef7; }
-  [data-theme="dark"] .fam-share a.fam-secondary { color: #cfe0f5; }
-</style>
+<link rel="stylesheet" href="{% static 'css/pages/accounts__supporter__invite_member.css' %}">
 
 <div class="fam-page">
   <div class="fam-card">

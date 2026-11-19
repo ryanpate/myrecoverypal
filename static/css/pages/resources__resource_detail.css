@@ -1,0 +1,287 @@
+/* Styles for resources/resource_detail.html */
+/* Resource Detail Styles */
+.resource-detail-header {
+    background: #1e4d8b;
+    padding: 100px 0 50px;
+    color: white;
+    --heading-color: currentColor;
+}
+
+.resource-detail-container {
+    max-width: 1000px;
+    margin: -30px auto 0;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 10;
+}
+
+.resource-main-card {
+    background: var(--card-bg, #fff);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.resource-info-header {
+    padding: 2rem;
+    border-bottom: 1px solid var(--border-color, #E5E7EB);
+}
+
+.resource-title-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.resource-title-large {
+    font-size: 2rem;
+    color: var(--text-dark, #1F2937);
+    margin: 0;
+}
+
+.resource-meta {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted, #6B7280);
+    font-size: 0.95rem;
+}
+
+.resource-content-section {
+    padding: 2rem;
+}
+
+.resource-content {
+    line-height: 1.8;
+    color: var(--text-dark, #374151);
+}
+
+.resource-content h2 {
+    color: var(--text-dark, #1F2937);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.resource-content h3 {
+    color: var(--text-dark, #374151);
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.resource-content ul {
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+}
+
+.resource-content li {
+    margin-bottom: 0.5rem;
+}
+
+.download-section {
+    background: var(--bg-gray, #F3F4F6);
+    padding: 2rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.download-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2.5rem;
+    background: var(--accent-green-strong);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius-btn, 10px);
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: var(--transition-ui);
+    border: none;
+    cursor: pointer;
+}
+
+.download-button:hover {
+    box-shadow: none;
+    background: #45b89d;
+}
+
+.download-info {
+    margin-top: 1rem;
+    color: var(--text-muted, #6B7280);
+    font-size: 0.9rem;
+}
+
+.external-link-button {
+    background: var(--primary-color);
+}
+
+.external-link-button:hover {
+    background: var(--secondary-color);
+    box-shadow: none;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.bookmark-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--card-bg, #fff);
+    color: var(--brand-text, #1e4d8b);
+    border: 2px solid var(--primary-color);
+    border-radius: var(--radius-btn, 10px);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition-ui);
+    cursor: pointer;
+}
+
+.bookmark-button:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.bookmark-button.bookmarked {
+    background: var(--primary-color);
+    color: white;
+    --heading-color: currentColor;
+}
+
+.rating-section {
+    background: var(--bg-light, #F9FAFB);
+    padding: 2rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+}
+
+.rating-stars {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 2rem;
+    margin: 1rem 0;
+}
+
+.rating-star {
+    cursor: pointer;
+    color: #D1D5DB;
+    transition: color 0.2s ease;
+}
+
+.rating-star:hover,
+.rating-star.active {
+    color: #FCD34D;
+}
+
+.related-resources {
+    margin-top: 4rem;
+}
+
+.related-resources h2 {
+    color: var(--text-dark, #1F2937);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.breadcrumbs {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    color: var(--text-muted, #6B7280);
+}
+
+.breadcrumbs a {
+    color: var(--text-muted, #6B7280);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumbs a:hover {
+    color: var(--brand-text, #1e4d8b);
+}
+
+.access-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.access-free {
+    background: #D1FAE5;
+    color: #065F46;
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
+}
+
+.access-registered {
+    background: #DBEAFE;
+    color: #1E40AF;
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
+}
+
+.locked-resource-panel {
+    margin: 1.5rem 2rem 0;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    border: 1px dashed rgba(128,128,128,0.45);
+    border-radius: 14px;
+}
+.locked-resource-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.locked-resource-panel h3 { margin-bottom: 0.5rem; }
+.locked-resource-panel p { opacity: 0.8; margin-bottom: 1.2rem; }
+.locked-resource-login { display: block; margin-top: 0.9rem; font-size: 0.9rem; }
+.access-premium {
+    background: #FEF3C7;
+    color: #92400E;
+    /* light surface in both themes: keep dark text */
+    --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
+}
+
+@media (max-width: 768px) {
+    .resource-detail-header {
+        padding: 80px 0 40px;
+    }
+
+    .resource-title-large {
+        font-size: 1.5rem;
+    }
+
+    .resource-meta {
+        gap: 1rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .download-button,
+    .bookmark-button {
+        width: 100%;
+        justify-content: center;
+    }
+}

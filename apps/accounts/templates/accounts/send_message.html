@@ -1,81 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block title %}Send Message - MyRecoveryPal{% endblock %}
 
 {% block extra_css %}
-<style>
-    .message-form-container {
-        max-width: 600px;
-        margin: 100px auto 2rem;
-        padding: 2rem;
-        background: var(--card-bg, #fff);
-        border-radius: 10px;
-        box-shadow: var(--shadow);
-    }
-
-    .message-form-container h2 {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: var(--brand-text, #1e4d8b);
-        margin-bottom: 1.5rem;
-    }
-
-    .recipient-info {
-        background: var(--bg-light, #f8f9fa);
-        padding: 1rem;
-        border-radius: 5px;
-        margin-bottom: 2rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .recipient-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: #ddd;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        color: #666;
-        overflow: hidden;
-        /* light surface in both themes: keep dark text */
-        --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56;
-    }
-
-    .recipient-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .sponsor-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-        font-size: 0.85rem;
-        color: #52b788;
-    }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .btn-primary {
-        background: #1e4d8b;
-        border: none;
-    }
-
-    .btn-primary:hover {
-        box-shadow: none;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/pages/accounts__send_message.css' %}">
 {% endblock %}
 
 {% block content %}

@@ -1,34 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}A year of Premium, for you — MyRecoveryPal{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 
 {% block content %}
-<style>
-    .giftc { max-width: 640px; margin: 2.5rem auto 3.5rem; padding: 0 1.25rem; text-align: center; }
-    .giftc h1 { font-size: 2rem; font-weight: 700; margin: 0 0 0.5rem; }
-    .giftc .giftc-sub { opacity: 0.8; margin: 0 auto 1.75rem; max-width: 30em; line-height: 1.55; }
-    .giftc-actions { display: grid; gap: 0.7rem; max-width: 380px; margin: 1.9rem auto 0; }
-    .giftc-btn {
-        display: block; width: 100%; border: 0; border-radius: 12px; padding: 0.95rem 1.2rem; cursor: pointer;
-        font-size: 1.05rem; font-weight: 700; text-decoration: none;
-        background: #16324f; box-shadow: 0 0 0 2px #b98a2f inset;
-    }
-    .giftc a.giftc-btn, .giftc a.giftc-btn:hover, .giftc button.giftc-btn { color: #f8f1e3; }
-    .giftc-btn.giftc-quiet { background: transparent; box-shadow: 0 0 0 2px currentColor inset; }
-    .giftc a.giftc-quiet, .giftc a.giftc-quiet:hover, .giftc button.giftc-quiet { color: inherit; }
-    .giftc-note { font-size: 0.88rem; opacity: 0.75; margin: 1.1rem auto 0; max-width: 32em; line-height: 1.5; }
-    .giftc-link { font-family: ui-monospace, Menlo, monospace; font-size: 0.8rem; overflow-wrap: anywhere; opacity: 0.85; }
-    .giftc-state { margin: 0 auto 1.5rem; max-width: 460px; padding: 1rem 1.25rem; border-radius: 12px; background: #fff7e0; color: #7a5a00; --text-dark: #2c3e50; --text-muted: #4b5563; --text-faint: #6b7280; --brand-text: #1e4d8b; --heading-color: #1e4d8b; --text-link: #1e4d8b; --text-link-hover: #0f2d56; }
-    .giftc-print-url { display: none; }
-    @media print {
-        body * { visibility: hidden; }
-        .giftc-print, .giftc-print * { visibility: visible; }
-        .giftc-print { position: absolute; top: 1in; left: 0; right: 0; }
-        .giftc-print .gcard { filter: none; border: 1px solid #c9bfa8; }
-        .giftc-print-url { display: block; margin-top: 1.25rem; font: 12px/1.5 -apple-system, sans-serif; color: #333; text-align: center; }
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/pages/accounts__gift_card.css' %}">
 
 <div class="giftc">
     {% if gift.status == 'pending' %}

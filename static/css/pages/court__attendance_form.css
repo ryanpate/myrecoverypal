@@ -1,0 +1,5 @@
+/* Styles for court/attendance_form.html */
+form input, form select, form textarea {
+    width:100%; padding:.6rem; border:1px solid var(--border-color, #ccc); border-radius:6px; font-size:1rem; font-family:inherit;
+}
+form input[type="checkbox"] { width:auto; }
