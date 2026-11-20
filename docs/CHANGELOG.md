@@ -4,6 +4,12 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-11-20:** Scheduled posts in the social feed.
+  - **Composer:** the clock button opens a "Schedule for later" date and time picker. The browser sends the chosen local time as UTC; `SocialPost.scheduled_at` stores it (blank = published when created).
+  - **Hidden until live:** every read path uses `SocialPost.objects.live()`, which annotates `live_at` (publish time) and sorts by it, so nothing depends on a background job. `is_visible_to()` is False for a queued post, so nobody can react or comment early. New posts never sent notifications, so there is nothing to defer.
+  - **Scheduled list:** the author sees queued posts above the feed with Edit, Reschedule (or Post now) and Delete. `POST /accounts/social-feed/post/<id>/reschedule/`.
+  - **Post as:** staff can post as the account named in `OFFICIAL_POST_USERNAME` (env var, off while blank) and manage its queue.
+  - Files: `apps/accounts/models.py`, `views.py`, `tests_scheduled_posts.py`, migration 0080.
 - **2026-11-16:** Gift a year of Premium (`/gift/`), for family and friends buying for someone in recovery.
   - **Buying:** no account needed. One-time Stripe Checkout at the yearly Premium price (read from the `SubscriptionPlan` row, so a reprice carries over). The buyer gets a printable card with a QR code and a private link, on screen and by email. We never contact the recipient.
   - **Redeeming:** `/gift/<token>/` works once. New people sign up and come straight back (`register?next=`). The member's `Subscription` becomes `tier='premium'`, `status='active'`, `subscription_source='gift'`, with `current_period_end` a year out. A second gift adds a year. A member with a paid plan can't redeem; the gift stays unused.

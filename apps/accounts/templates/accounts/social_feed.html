@@ -78,12 +78,58 @@
                             <option value="friends">👥 Friends</option>
                             <option value="private">🔒 Only Me</option>
                         </select>
+                        <button type="button" id="schedule-toggle-btn" class="action-btn" style="padding: 0.25rem 0.75rem; margin: 0;" title="Schedule for later" aria-label="Schedule for later" aria-expanded="false" aria-controls="schedule-row">
+                            <i class="fas fa-clock" aria-hidden="true"></i>
+                        </button>
                     </div>
                     <button type="submit" class="post-btn" id="post-submit-btn" disabled>Post</button>
                 </div>
+                <div class="schedule-row" id="schedule-row" hidden>
+                    <label for="schedule-input">Schedule for later</label>
+                    <input type="datetime-local" id="schedule-input" class="schedule-input">
+                    <span class="schedule-hint">Your local time. Leave blank to post now.</span>
+                </div>
+                {% if official_account %}
+                <div class="schedule-row">
+                    <label for="post-as-select">Post as</label>
+                    <select name="post_as" id="post-as-select" class="visibility-select">
+                        <option value="">{{ user.get_full_name|default:user.username }} (me)</option>
+                        <option value="official">{{ official_account.get_full_name|default:official_account.username }} (@{{ official_account.username }})</option>
+                    </select>
+                </div>
+                {% endif %}
             </form>
         </div>
     </div>
+    {% if scheduled_posts %}
+    <!-- Scheduled posts: only the author sees these until they go live -->
+    <section class="create-post-box scheduled-box" id="scheduledPosts" aria-labelledby="scheduledHeading">
+        <h2 class="scheduled-heading" id="scheduledHeading"><i class="fas fa-clock" aria-hidden="true"></i> Scheduled <span class="scheduled-count">{{ scheduled_posts|length }}</span></h2>
+        <p class="scheduled-note">Only you can see these until they go live.</p>
+        {% for post in scheduled_posts %}
+        <div class="scheduled-item" data-post-id="{{ post.id }}">
+            <div class="scheduled-when">
+                <time class="scheduled-time" datetime="{{ post.scheduled_at|date:'c' }}">{{ post.scheduled_at|date:"M j, Y, g:i A" }}</time>
+                {% if post.author != user %}<span class="scheduled-as">as @{{ post.author.username }}</span>{% endif %}
+                <span class="scheduled-as">{{ post.get_visibility_display }}</span>
+            </div>
+            <div class="scheduled-content">{% if post.content %}{{ post.content|truncatechars:240 }}{% else %}<em>No text</em>{% endif %}{% if post.image %} <span class="scheduled-as"><i class="fas fa-image" aria-hidden="true"></i> Photo</span>{% endif %}{% if post.video %} <span class="scheduled-as"><i class="fas fa-video" aria-hidden="true"></i> Video</span>{% endif %}</div>
+            <div class="scheduled-actions">
+                <button type="button" class="edit-post-btn scheduled-btn" data-post-id="{{ post.id }}" data-content="{{ post.content|escapejs }}">Edit</button>
+                <button type="button" class="scheduled-btn sched-reschedule-btn">Reschedule</button>
+                <button type="button" class="delete-post-btn scheduled-btn scheduled-btn--danger" data-post-id="{{ post.id }}">Delete</button>
+            </div>
+            <div class="scheduled-reschedule" hidden>
+                <label for="resched-{{ post.id }}">New time</label>
+                <input type="datetime-local" id="resched-{{ post.id }}" class="schedule-input sched-input">
+                <button type="button" class="scheduled-btn sched-save-btn">Save time</button>
+                <button type="button" class="scheduled-btn sched-now-btn">Post now</button>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+
     <!-- Check-in nudge: only until today's check-in is done -->
     {% if not todays_checkin %}
     <div class="create-post-box ck-nudge">
@@ -151,7 +197,7 @@
                     <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
                     <div class="post-author-info">
                         <div><span class="m-name">{{ post.author.get_full_name|default:post.author.username }}</span>{% if post.author|is_premium_member %} <i class="fas fa-star m-star" title="Premium Member" aria-hidden="true"></i>{% endif %}</div>
-                        <div class="m-meta">@{{ post.author.username }} · {{ post.created_at|timesince }} ago</div>
+                        <div class="m-meta">@{{ post.author.username }} · {{ post.published_at|timesince }} ago</div>
                     </div>
                     <span class="milestone-medal"><i class="fas fa-medal" aria-hidden="true"></i> {{ post.milestone_days }} days</span>
                     {% if post.author == user or user.is_staff %}
@@ -181,7 +227,7 @@
                     {% endif %}
                     <div class="post-author-info">
                         <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}{% if post.author|is_premium_member %} <span class="premium-badge" title="Premium Member"><i class="fas fa-star" aria-hidden="true"></i></span>{% endif %}</div>
-                        <div class="post-meta">@{{ post.author.username }} · {{ post.created_at|timesince }} ago</div>
+                        <div class="post-meta">@{{ post.author.username }} · {{ post.published_at|timesince }} ago</div>
                     </div>
                     {% if post.mood_tag %}
                     <span class="mood-tag {{ post.mood_tag.kind }}"><span class="e">{{ post.mood_tag.emoji }}</span>{{ post.mood_tag.label }}</span>
@@ -530,6 +576,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const imagePreview = document.getElementById('image-preview');
     const removeImageBtn = document.getElementById('remove-image-btn');
     const createPostForm = document.getElementById('create-post-form');
+    const scheduleToggleBtn = document.getElementById('schedule-toggle-btn');
+    const scheduleRow = document.getElementById('schedule-row');
+    const scheduleInput = document.getElementById('schedule-input');
+
+    function submitLabel() {
+        return scheduleInput && scheduleInput.value ? 'Schedule' : 'Post';
+    }
 
     if (addPhotoBtn && imageInput) {
         addPhotoBtn.addEventListener('click', function() {
@@ -684,6 +737,15 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
 
             const formData = new FormData(this);
+            // The picker is in local time; the server stores UTC
+            if (scheduleInput && scheduleInput.value) {
+                const when = new Date(scheduleInput.value);
+                if (isNaN(when) || when <= new Date()) {
+                    alert('Pick a time in the future');
+                    return;
+                }
+                formData.append('scheduled_at', when.toISOString());
+            }
             if (submitBtn) {
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<div class="spinner"></div>';
@@ -715,7 +777,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert(data.error || 'Failed to create post');
                     if (submitBtn) {
                         submitBtn.disabled = false;
-                        submitBtn.textContent = 'Post';
+                        submitBtn.textContent = submitLabel();
                     }
                 }
             } catch (error) {
@@ -723,11 +785,93 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Failed to create post');
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.textContent = 'Post';
+                    submitBtn.textContent = submitLabel();
                 }
             }
         });
     }
+
+    // ----- Scheduled posts -----
+    // datetime-local wants local wall time: "YYYY-MM-DDTHH:MM"
+    function toLocalInputValue(date) {
+        const pad = n => String(n).padStart(2, '0');
+        return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate())
+            + 'T' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+    }
+
+    if (scheduleToggleBtn && scheduleRow && scheduleInput) {
+        scheduleToggleBtn.addEventListener('click', function() {
+            const opening = scheduleRow.hidden;
+            scheduleRow.hidden = !opening;
+            this.setAttribute('aria-expanded', opening ? 'true' : 'false');
+            if (opening) {
+                scheduleInput.min = toLocalInputValue(new Date());
+                scheduleInput.focus();
+            } else {
+                scheduleInput.value = '';
+            }
+            if (submitBtn) submitBtn.textContent = submitLabel();
+        });
+        scheduleInput.addEventListener('input', function() {
+            if (submitBtn) submitBtn.textContent = submitLabel();
+        });
+    }
+
+    // Show each queued time in the browser's own time zone
+    document.querySelectorAll('.scheduled-time').forEach(function(el) {
+        const when = new Date(el.getAttribute('datetime'));
+        if (!isNaN(when)) {
+            el.textContent = when.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+        }
+    });
+
+    async function reschedulePost(postId, fields) {
+        const body = new FormData();
+        Object.keys(fields).forEach(k => body.append(k, fields[k]));
+        try {
+            const response = await fetch(`/accounts/social-feed/post/${postId}/reschedule/`, {
+                method: 'POST',
+                body: body,
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            });
+            const data = await response.json();
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.error || 'Could not reschedule this post');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Could not reschedule this post');
+        }
+    }
+
+    document.querySelectorAll('.scheduled-item').forEach(function(item) {
+        const postId = item.dataset.postId;
+        const panel = item.querySelector('.scheduled-reschedule');
+        const input = item.querySelector('.sched-input');
+        const timeEl = item.querySelector('.scheduled-time');
+
+        item.querySelector('.sched-reschedule-btn').addEventListener('click', function() {
+            panel.hidden = !panel.hidden;
+            if (!panel.hidden) {
+                input.min = toLocalInputValue(new Date());
+                input.value = toLocalInputValue(new Date(timeEl.getAttribute('datetime')));
+                input.focus();
+            }
+        });
+        item.querySelector('.sched-save-btn').addEventListener('click', function() {
+            const when = new Date(input.value);
+            if (!input.value || isNaN(when) || when <= new Date()) {
+                alert('Pick a time in the future');
+                return;
+            }
+            reschedulePost(postId, { scheduled_at: when.toISOString() });
+        });
+        item.querySelector('.sched-now-btn').addEventListener('click', function() {
+            if (confirm('Post this now?')) reschedulePost(postId, { publish_now: '1' });
+        });
+    });
 
     // Follow button handlers for suggested users
     document.querySelectorAll('.follow-suggested-btn').forEach(btn => {
@@ -1034,6 +1178,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 // Update the post content in the DOM — linkify URLs
                 const postCard = document.querySelector(`.post-card[data-post-id="${currentEditPostId}"]`);
+                if (!postCard) {
+                    // A queued post in the Scheduled list
+                    window.location.reload();
+                    return;
+                }
                 const postEl = postCard.querySelector('.post-content');
                 // Remove existing link previews
                 postEl.querySelectorAll('.link-preview').forEach(function(p) { p.remove(); });
@@ -1059,7 +1208,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!confirm('Are you sure you want to delete this post?')) return;
 
             const postId = this.dataset.postId;
-            const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
+            const postCard = this.closest('.scheduled-item') || document.querySelector(`.post-card[data-post-id="${postId}"]`);
 
             try {
                 const response = await fetch(`/accounts/social-feed/post/${postId}/delete/`, {
