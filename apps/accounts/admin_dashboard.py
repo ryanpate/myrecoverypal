@@ -80,9 +80,9 @@ def engagement_dashboard(request):
     avg_checkins_per_user = round(checkins_30d / active_users_30d, 1) if active_users_30d > 0 else 0
 
     # Posts
-    total_posts = SocialPost.objects.count()
-    posts_7d = SocialPost.objects.filter(created_at__gte=last_7_days).count()
-    posts_30d = SocialPost.objects.filter(created_at__gte=last_30_days).count()
+    total_posts = SocialPost.objects.live().count()
+    posts_7d = SocialPost.objects.live().filter(live_at__gte=last_7_days).count()
+    posts_30d = SocialPost.objects.live().filter(live_at__gte=last_30_days).count()
 
     # Mood distribution (last 30 days)
     mood_distribution = list(
@@ -190,8 +190,8 @@ def engagement_dashboard(request):
     )
 
     weekly_posts = list(
-        SocialPost.objects.filter(created_at__gte=last_90_days)
-        .annotate(week=TruncWeek('created_at'))
+        SocialPost.objects.live().filter(live_at__gte=last_90_days)
+        .annotate(week=TruncWeek('live_at'))
         .values('week')
         .annotate(count=Count('id'))
         .order_by('week')

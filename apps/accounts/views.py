@@ -744,7 +744,7 @@ def dashboard_view(request):
         social_posts = SocialPost.objects.select_related('author', 'author__subscription').prefetch_related(
             'reactions',
             'comments__author__subscription'
-        ).all()[:10]
+        ).live().order_by('-live_at')[:10]
 
         # Filter posts based on visibility
         visible_social_posts = []
@@ -4281,10 +4281,10 @@ def social_feed_view(request):
     user = request.user
 
     # Get posts visible to the current user
-    posts = SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
+    posts = SocialPost.objects.live().select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
         'reactions',
         'comments__author__subscription'
-    ).order_by('-created_at')
+    ).order_by('-live_at')
 
     # Filter posts based on visibility
     visible_posts = []
@@ -4361,6 +4361,14 @@ def social_feed_view(request):
         context['checkin_streak'] = user.get_checkin_streak()
         context['is_premium'] = hasattr(user, 'subscription') and user.subscription.is_premium()
 
+        # The member's queued posts (plus the official account's, for staff)
+        official_account = _official_post_account(user)
+        context['official_account'] = official_account
+        queue_authors = [user] + ([official_account] if official_account else [])
+        context['scheduled_posts'] = SocialPost.objects.scheduled().filter(
+            author__in=queue_authors
+        ).select_related('author').order_by('scheduled_at')
+
         # Supporter presence row ("X of Y supporters are online now")
         try:
             from datetime import timedelta
@@ -4407,7 +4415,9 @@ def social_feed_view(request):
                 id__in=following_ids
             ).annotate(
                 annotated_followers=Count('follower_connections', filter=Q(follower_connections__connection_type='follow')),
-                posts_count=Count('social_posts')
+                posts_count=Count('social_posts', filter=(
+                    Q(social_posts__scheduled_at__isnull=True)
+                    | Q(social_posts__scheduled_at__lte=timezone.now())))
             ).filter(
                 posts_count__gt=0  # Only suggest users who have posted
             ).order_by('-annotated_followers', '-posts_count')[:6]
@@ -4458,19 +4468,19 @@ def social_feed_posts_api(request):
     try:
         if user.is_authenticated:
             # Get all posts with related data
-            posts = SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
+            posts = SocialPost.objects.live().select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
                 'reactions',
                 'comments__author'
-            ).order_by('-created_at')
+            ).order_by('-live_at')
 
             # Filter posts based on visibility
             visible_posts = [post for post in posts if post.is_visible_to(user)]
         else:
             # For unauthenticated users, only show public posts
-            visible_posts = list(SocialPost.objects.select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
+            visible_posts = list(SocialPost.objects.live().select_related('author', 'author__subscription', 'linked_checkin').prefetch_related(
                 'reactions',
                 'comments__author'
-            ).filter(visibility='public').order_by('-created_at')[:3])
+            ).filter(visibility='public').order_by('-live_at')[:3])
 
         # Paginate
         paginator = Paginator(visible_posts, 15)
@@ -4520,7 +4530,7 @@ def social_feed_posts_api(request):
                 'image_url': post.image.url if post.image else None,
                 'video_url': post.video.url if post.video else None,
                 'visibility': post.visibility,
-                'created_at': timesince(post.created_at) + ' ago',
+                'created_at': timesince(post.published_at) + ' ago',
                 'likes_count': len(all_reactions),
                 'comments_count': len(all_comments),
                 'user_liked': user_liked,
@@ -4550,6 +4560,49 @@ def social_feed_posts_api(request):
         return JsonResponse({'success': False, 'error': 'Failed to load posts'}, status=500)
 
 
+def _official_post_account(user):
+    """The official account `user` may post as, or None.
+
+    Only staff can post as it, and only if an account named
+    settings.OFFICIAL_POST_USERNAME exists.
+    """
+    username = getattr(settings, 'OFFICIAL_POST_USERNAME', '')
+    if not (user.is_authenticated and user.is_staff and username):
+        return None
+    return User.objects.filter(username=username, is_active=True).first()
+
+
+def _can_manage_scheduled_post(user, post):
+    """The author manages a queued post; staff also manage the official account's."""
+    if post.author_id == user.id:
+        return True
+    official = _official_post_account(user)
+    return official is not None and post.author_id == official.id
+
+
+def _parse_scheduled_at(raw):
+    """Parse the publish time the browser sends (ISO 8601, UTC).
+
+    Returns (datetime, None) or (None, error message).
+    """
+    from datetime import timezone as dt_timezone
+    from django.utils.dateparse import parse_datetime
+    try:
+        when = parse_datetime(raw)
+    except ValueError:
+        when = None
+    if when is None:
+        return None, 'That date and time is not valid'
+    if timezone.is_naive(when):
+        when = when.replace(tzinfo=dt_timezone.utc)
+    now = timezone.now()
+    if when <= now:
+        return None, 'Pick a time in the future'
+    if when > now + timedelta(days=365):
+        return None, 'Posts can be scheduled up to a year ahead'
+    return when, None
+
+
 @login_required
 @require_POST
 def create_social_post(request):
@@ -4558,6 +4611,21 @@ def create_social_post(request):
 
     content = request.POST.get('content', '').strip()
     visibility = request.POST.get('visibility', 'public')
+
+    # Optional publish time. Blank posts right away.
+    scheduled_at = None
+    raw_scheduled_at = request.POST.get('scheduled_at', '').strip()
+    if raw_scheduled_at:
+        scheduled_at, error = _parse_scheduled_at(raw_scheduled_at)
+        if error:
+            return JsonResponse({'error': error}, status=400)
+
+    # Staff can post as the official account
+    author = request.user
+    if request.POST.get('post_as') == 'official':
+        author = _official_post_account(request.user)
+        if author is None:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
     image = request.FILES.get('image')
     video = request.FILES.get('video')
 
@@ -4588,11 +4656,12 @@ def create_social_post(request):
     try:
         # Create the post
         post = SocialPost.objects.create(
-            author=request.user,
+            author=author,
             content=content,
             visibility=visibility,
             image=image,
-            video=video
+            video=video,
+            scheduled_at=scheduled_at
         )
 
         # Return post data for dynamic update
@@ -4610,6 +4679,7 @@ def create_social_post(request):
                 'video_url': post.video.url if post.video else None,
                 'visibility': post.get_visibility_display(),
                 'created_at': post.created_at.strftime('%B %d, %Y at %I:%M %p'),
+                'scheduled_at': post.scheduled_at.isoformat() if post.scheduled_at else None,
                 'likes_count': 0,
                 'comments_count': 0,
             }
@@ -4772,14 +4842,38 @@ def comment_social_post(request, post_id):
 @login_required
 @require_POST
 def delete_social_post(request, post_id):
-    """Delete a social post (only by author)"""
+    """Delete a social post (only by author; staff can delete the official account's queued posts)"""
     try:
-        post = get_object_or_404(SocialPost, id=post_id, author=request.user)
+        post = get_object_or_404(SocialPost, id=post_id)
+        if post.author_id != request.user.id and not (
+                post.is_scheduled and _can_manage_scheduled_post(request.user, post)):
+            return JsonResponse({'error': 'Post not found'}, status=404)
         post.delete()
 
         return JsonResponse({'success': True})
     except Exception:
         return JsonResponse({'error': 'Social feed is being set up. Please try again later.'}, status=503)
+
+
+@login_required
+@require_POST
+def reschedule_social_post(request, post_id):
+    """Move a queued post to a new time, or publish it now."""
+    post = SocialPost.objects.filter(id=post_id).first()
+    if post is None or not post.is_scheduled or not _can_manage_scheduled_post(request.user, post):
+        return JsonResponse({'error': 'Scheduled post not found'}, status=404)
+
+    if request.POST.get('publish_now'):
+        # Stamp the publish time so it sorts as posted now, not when it was written
+        post.scheduled_at = timezone.now()
+    else:
+        when, error = _parse_scheduled_at(request.POST.get('scheduled_at', '').strip())
+        if error:
+            return JsonResponse({'error': error}, status=400)
+        post.scheduled_at = when
+    post.save(update_fields=['scheduled_at', 'updated_at'])
+
+    return JsonResponse({'success': True, 'scheduled_at': post.scheduled_at.isoformat()})
 
 
 @login_required

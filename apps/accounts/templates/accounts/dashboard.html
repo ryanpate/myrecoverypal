@@ -484,7 +484,7 @@
                             {% endif %}
                             <div class="mobile-post-author-info">
                                 <div class="mobile-post-author-name">{{ post.author.get_full_name|default:post.author.username }}</div>
-                                <div class="mobile-post-meta">{{ post.created_at|timesince }} ago</div>
+                                <div class="mobile-post-meta">{{ post.published_at|timesince }} ago</div>
                             </div>
                         </div>
                         <div class="mobile-post-content">{{ post.content }}</div>

@@ -654,6 +654,10 @@ SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'support@myrecoverypal.com')
 # Flip to True when the community is big enough to fill them.
 SHOW_GROUPS_CHALLENGES_SPONSORS = False
 
+# Staff can publish feed posts as this account ("Post as" in the feed
+# composer). Off while blank. Set it to the username of an account you control.
+OFFICIAL_POST_USERNAME = os.environ.get('OFFICIAL_POST_USERNAME', '')
+
 # Django mails unhandled 500s here (belt and braces alongside Sentry).
 ADMINS = [('MyRecoveryPal', SUPPORT_EMAIL)]
 MANAGERS = ADMINS

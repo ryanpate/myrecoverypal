@@ -117,6 +117,7 @@ urlpatterns = [
     path('social-feed/post/<int:post_id>/comment/', views.comment_social_post, name='comment_social_post'),
     path('social-feed/post/<int:post_id>/delete/', views.delete_social_post, name='delete_social_post'),
     path('social-feed/post/<int:post_id>/edit/', views.edit_social_post, name='edit_social_post'),
+    path('social-feed/post/<int:post_id>/reschedule/', views.reschedule_social_post, name='reschedule_social_post'),
     path('social-feed/comment/<int:comment_id>/like/', views.like_comment, name='like_comment'),
     path('social-feed/comment/<int:comment_id>/reply/', views.reply_to_comment, name='reply_to_comment'),
     path('social-feed/comment/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),

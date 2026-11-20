@@ -570,9 +570,9 @@ def send_weekly_digests(self):
                 follower=user,
                 connection_type='follow'
             ).values_list('following_id', flat=True)
-            popular_posts = SocialPost.objects.filter(
+            popular_posts = SocialPost.objects.live().filter(
                 author_id__in=following_ids,
-                created_at__gte=one_week_ago,
+                live_at__gte=one_week_ago,
                 visibility='public'
             ).select_related('author').annotate(
                 like_count=db_models.Count('likes')

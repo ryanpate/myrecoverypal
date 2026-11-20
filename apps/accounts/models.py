@@ -1942,6 +1942,25 @@ def _social_post_video_storage():
     return default_storage
 
 
+class SocialPostQuerySet(models.QuerySet):
+    def live(self):
+        """Published posts only, annotated with `live_at` (their publish time).
+
+        A post with no `scheduled_at` went live when it was created. A
+        scheduled post goes live at `scheduled_at`. Sort and filter by
+        `live_at`, never `created_at`, so a scheduled post shows up as if it
+        had been written at its publish time.
+        """
+        from django.db.models.functions import Coalesce
+        return self.annotate(
+            live_at=Coalesce('scheduled_at', 'created_at')
+        ).filter(live_at__lte=timezone.now())
+
+    def scheduled(self):
+        """Posts still waiting for their publish time."""
+        return self.filter(scheduled_at__gt=timezone.now())
+
+
 class SocialPost(models.Model):
     """User-generated social media posts for the community feed"""
     VISIBILITY_CHOICES = [
@@ -1978,6 +1997,11 @@ class SocialPost(models.Model):
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    scheduled_at = models.DateTimeField(
+        null=True, blank=True, db_index=True,
+        help_text="Publish time (UTC). Blank means published when created.")
+
+    objects = SocialPostQuerySet.as_manager()
 
     class Meta:
         ordering = ['-created_at']
@@ -1995,8 +2019,22 @@ class SocialPost(models.Model):
     def likes_count(self):
         return self.likes.count()
 
+    @property
+    def is_scheduled(self):
+        """True while the post is waiting for its publish time."""
+        return self.scheduled_at is not None and self.scheduled_at > timezone.now()
+
+    @property
+    def published_at(self):
+        """When the post went (or will go) live."""
+        return self.scheduled_at or self.created_at
+
     def is_visible_to(self, user):
         """Check if a post is visible to a specific user"""
+        # A scheduled post is not in the feed for anyone yet, and nobody can
+        # react or comment on it. Its author manages it from the Scheduled list.
+        if self.is_scheduled:
+            return False
         if self.visibility == 'public':
             return True
         if self.visibility == 'private':

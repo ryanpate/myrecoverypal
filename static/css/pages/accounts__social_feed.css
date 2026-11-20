@@ -1486,3 +1486,116 @@
 @media (max-width: 480px) {
     .ck-nudge-grid { gap: 0.4rem; }
 }
+
+/* Scheduled posts: the composer's picker and the author's queue */
+.schedule-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding-top: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.schedule-row label,
+.scheduled-reschedule label {
+    font-weight: 600;
+}
+
+.schedule-input {
+    padding: 0.45rem 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #ddd);
+    background: var(--card-bg, #fff);
+    color: inherit;
+    font: inherit;
+    max-width: 100%;
+}
+
+.schedule-hint,
+.scheduled-note,
+.scheduled-as {
+    color: var(--text-muted, #666);
+    font-size: 0.85rem;
+}
+
+.scheduled-heading {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.scheduled-count {
+    background: var(--bg-gray, #f5f5f5);
+    border-radius: 999px;
+    padding: 0 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.scheduled-note {
+    margin: 0.25rem 0 0;
+}
+
+.scheduled-item {
+    border-top: 1px solid var(--border-color, #e0e0e0);
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+}
+
+.scheduled-when {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+}
+
+.scheduled-time {
+    font-weight: 600;
+}
+
+.scheduled-content {
+    margin: 0.35rem 0 0.6rem;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.scheduled-actions,
+.scheduled-reschedule {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.scheduled-reschedule {
+    margin-top: 0.6rem;
+}
+
+.scheduled-reschedule[hidden],
+.schedule-row[hidden] {
+    display: none;
+}
+
+.scheduled-btn {
+    min-height: 36px;
+    padding: 0.35rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #ddd);
+    background: var(--card-bg, #fff);
+    color: inherit;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.scheduled-btn:hover {
+    background: var(--bg-gray, #f5f5f5);
+}
+
+.scheduled-btn--danger {
+    color: var(--danger-text, #b91c1c);
+}
