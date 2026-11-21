@@ -1522,9 +1522,27 @@
 .scheduled-heading {
     margin: 0;
     font-size: 1rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    cursor: pointer;
+    list-style: none;
+}
+
+.scheduled-heading::-webkit-details-marker {
+    display: none;
+}
+
+.scheduled-chevron {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--text-muted, #666);
+    transition: transform 0.15s ease;
+}
+
+.scheduled-box[open] .scheduled-chevron {
+    transform: rotate(180deg);
 }
 
 .scheduled-count {

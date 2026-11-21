@@ -102,9 +102,10 @@
         </div>
     </div>
     {% if scheduled_posts %}
-    <!-- Scheduled posts: only the author sees these until they go live -->
-    <section class="create-post-box scheduled-box" id="scheduledPosts" aria-labelledby="scheduledHeading">
-        <h2 class="scheduled-heading" id="scheduledHeading"><i class="fas fa-clock" aria-hidden="true"></i> Scheduled <span class="scheduled-count">{{ scheduled_posts|length }}</span></h2>
+    <!-- Scheduled posts: only the author sees these until they go live.
+         Closed by default so the feed stays one line away. -->
+    <details class="create-post-box scheduled-box" id="scheduledPosts">
+        <summary class="scheduled-heading"><i class="fas fa-clock" aria-hidden="true"></i> Scheduled <span class="scheduled-count">{{ scheduled_posts|length }}</span><i class="fas fa-chevron-down scheduled-chevron" aria-hidden="true"></i></summary>
         <p class="scheduled-note">Only you can see these until they go live.</p>
         {% for post in scheduled_posts %}
         <div class="scheduled-item" data-post-id="{{ post.id }}">
@@ -127,7 +128,7 @@
             </div>
         </div>
         {% endfor %}
-    </section>
+    </details>
     {% endif %}
 
     <!-- Check-in nudge: only until today's check-in is done -->
@@ -815,6 +816,17 @@ document.addEventListener('DOMContentLoaded', function() {
         scheduleInput.addEventListener('input', function() {
             if (submitBtn) submitBtn.textContent = submitLabel();
         });
+    }
+
+    // Keep the Scheduled list open across the reload that follows an edit or reschedule
+    const scheduledBox = document.getElementById('scheduledPosts');
+    if (scheduledBox) {
+        try {
+            scheduledBox.open = sessionStorage.getItem('scheduledOpen') === '1';
+            scheduledBox.addEventListener('toggle', function() {
+                sessionStorage.setItem('scheduledOpen', scheduledBox.open ? '1' : '0');
+            });
+        } catch (e) {}
     }
 
     // Show each queued time in the browser's own time zone
