@@ -11,6 +11,7 @@ Moved out of CLAUDE.md. Most recent first.
   - **Reactions:** zero counts are hidden. A line above the buttons reads "You reacted", "You and 2 others reacted" or "3 people reacted" (`views.reaction_summary`). It never names anyone; keep it anonymous.
   - **Daily prompt:** the composer shows one question a day, the same for everyone, rotating on the member's local date (`views.COMPOSER_PROMPTS`).
   - **Reply chips:** opening a post's comments shows three one-tap replies ("Proud of you", "Been there", "Keep going"; milestone posts get their own set). A chip sends itself through the normal comment form. Hidden on your own posts and once you have commented (`post.user_has_commented`).
+  - **Shorter top on phones (≤480px):** tighter composer and check-in card, the check-in button appears only after a mood is tapped, and the support row is one line, so the first post is on screen at load.
   - **One feed:** the "My Feed" tab on Today is now a link to the Community feed. The embedded copy (`social_feed_fragment.html`, its stylesheet and the `?fragment=1` branch) is deleted, and `progress/#feed` redirects to the feed. Do not add a second feed template.
   - Files: `apps/accounts/templates/accounts/social_feed.html`, `progress.html`, `views.py`, `tests_feed_layout.py`, `static/css/pages/accounts__social_feed.css`.
 - **2026-11-20:** Scheduled posts in the social feed.
