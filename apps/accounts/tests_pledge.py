@@ -328,6 +328,35 @@ class SetTimezoneEndpointTests(TestCase):
         self.assertEqual(self.user.timezone, '')
         self.assertEqual(json.loads(r.content)['success'], False)
 
+    def test_utc_browser_does_not_overwrite_a_real_zone(self):
+        """A server-side or headless browser reports UTC; it must not move a
+        member whose phone already told us where they are."""
+        self.user.timezone = 'America/Chicago'
+        self.user.save()
+        for tz in ['UTC', 'Etc/UTC', 'GMT', 'Etc/GMT']:
+            self.client.post(self.url, data=json.dumps({'timezone': tz}),
+                             content_type='application/json')
+            self.user.refresh_from_db()
+            self.assertEqual(self.user.timezone, 'America/Chicago')
+
+    def test_real_zone_replaces_stored_utc(self):
+        self.user.timezone = 'UTC'
+        self.user.save()
+        self.client.post(self.url, data=json.dumps({'timezone': 'America/Chicago'}),
+                         content_type='application/json')
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.timezone, 'America/Chicago')
+
+    def test_page_compares_against_the_stored_zone(self):
+        """The browser re-sends whenever the account's zone differs from its
+        own, so a wrong stored value heals on the next page load (a per-browser
+        "already synced" flag used to leave it wrong for good)."""
+        self.user.timezone = 'UTC'
+        self.user.save()
+        resp = self.client.get(reverse('accounts:progress'))
+        self.assertContains(resp, 'var saved = "UTC";')
+        self.assertNotContains(resp, 'mrp_tz')
+
     def test_non_object_json_body_does_not_500(self):
         for body in ['null', '42', '[1,2]', '"x"', 'true', 'not json at all']:
             r = self.client.post(self.url, data=body, content_type='application/json')
