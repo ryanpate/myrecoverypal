@@ -95,3 +95,14 @@ class FeedEngagementTest(TestCase):
         html = self.client.get(reverse('accounts:progress')).content.decode()
         self.assertIn(f'<a class="landing-tab" href="{reverse("accounts:social_feed")}">', html)
         self.assertNotIn('fragment=1', html)
+
+    def test_reply_chips_show_on_other_peoples_posts_only(self):
+        from apps.accounts.models import SocialPost
+        self.assertEqual(self.feed().count('class="reply-chips"'), 1)
+        SocialPost.objects.create(author=self.user, content='Mine.')
+        self.assertEqual(self.feed().count('class="reply-chips"'), 1)
+
+    def test_reply_chips_go_once_you_have_commented(self):
+        from apps.accounts.models import SocialPostComment
+        SocialPostComment.objects.create(post=self.post, author=self.user, content='Been there')
+        self.assertNotIn('class="reply-chips"', self.feed())

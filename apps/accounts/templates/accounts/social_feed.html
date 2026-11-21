@@ -330,6 +330,21 @@
                         {% endfor %}
                     </div>
 
+                    {% if user.is_authenticated and post.author != user and not post.user_has_commented %}
+                    <!-- One-tap replies: each sends itself as a comment -->
+                    <div class="reply-chips" role="group" aria-label="Quick replies">
+                        {% if post.post_type == 'milestone' %}
+                        <button type="button" class="reply-chip">Congratulations!</button>
+                        <button type="button" class="reply-chip">Proud of you</button>
+                        <button type="button" class="reply-chip">This gives me hope</button>
+                        {% else %}
+                        <button type="button" class="reply-chip">Proud of you</button>
+                        <button type="button" class="reply-chip">Been there</button>
+                        <button type="button" class="reply-chip">Keep going</button>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
                     <!-- Comment Form -->
                     <form class="comment-form" data-post-id="{{ post.id }}">
                         {% csrf_token %}
@@ -1014,6 +1029,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // See toggleComments() function defined above
 
     // Comment form submission - OPTIMISTIC UI
+    // Reply chips: send the chip's text through the normal comment form,
+    // then retire the row so the same reply can't be sent twice.
+    document.querySelectorAll('.reply-chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+            const row = this.closest('.reply-chips');
+            const form = row.parentElement.querySelector('.comment-form');
+            form.querySelector('.comment-input').value = this.textContent;
+            row.hidden = true;
+            form.requestSubmit();
+        });
+    });
+
     const commentForms = document.querySelectorAll('.comment-form');
     console.log('Found comment forms:', commentForms.length);
     commentForms.forEach(form => {
