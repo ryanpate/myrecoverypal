@@ -989,6 +989,9 @@ def _available_timezones():
     return zoneinfo.available_timezones()
 
 
+_UTC_ALIASES = {'UTC', 'Etc/UTC', 'GMT', 'Etc/GMT', 'Etc/Universal', 'Universal', 'Zulu', 'Etc/Zulu'}
+
+
 @login_required
 @require_POST
 def set_sobriety_date(request):
@@ -1038,6 +1041,11 @@ def set_timezone(request):
     except (ValueError, TypeError):
         tz = ''
     if tz and tz in _available_timezones():
+        # Bare UTC comes from servers and headless browsers, not from where a
+        # member lives (London reports Europe/London), so it never replaces a
+        # zone a real device already gave us.
+        if tz in _UTC_ALIASES and request.user.timezone:
+            return JsonResponse({'success': True})
         if request.user.timezone != tz:
             request.user.timezone = tz
             request.user.save(update_fields=['timezone'])

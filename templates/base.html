@@ -1407,13 +1407,13 @@
       try {
         var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
         if (!tz) return;
-        if (localStorage.getItem('mrp_tz') === tz) return;  // already synced this tz
+        var saved = "{{ user.timezone|escapejs }}";
+        if (saved === tz) return;  // the account already has this zone
         fetch("{% url 'accounts:set_timezone' %}", {
           method: 'POST',
           headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
           body: JSON.stringify({timezone: tz})
-        }).then(r => r.json()).then(d => { if (d.success) localStorage.setItem('mrp_tz', tz); })
-          .catch(function(){});
+        }).catch(function(){});
       } catch (e) {}
     })();
     </script>
