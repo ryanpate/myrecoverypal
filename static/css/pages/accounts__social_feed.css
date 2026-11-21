@@ -1514,6 +1514,23 @@ a.post-author-name:hover, .milestone-head a.m-name:hover, .comment-author a:hove
     .ck-nudge-grid { gap: 0.4rem; }
     /* The card only shows before a check-in, so the status repeats itself. */
     .ck-nudge-head .status { display: none; }
+    /* Keep the top short so a post is on screen at first load. */
+    .create-post-box, .ck-nudge { margin-bottom: 0.75rem; }
+    .create-post-box { padding: 0.75rem 0.9rem; }
+    .create-post-compact .placeholder-text {
+        min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ck-nudge { padding: 0.85rem 0.9rem; }
+    .ck-nudge-head { margin-bottom: 0.6rem; }
+    .ck-nudge-mood { padding: 0.5rem 0.2rem; }
+    .ck-nudge-cta { margin-top: 0.7rem; }
+    /* The button appears once a mood is tapped. */
+    .ck-nudge:not(:has(.ck-nudge-mood.selected)) .ck-nudge-cta { display: none; }
+    .support-row { flex-wrap: nowrap; padding: 0 0.15rem 0.75rem; margin-bottom: 0.75rem; }
+    .support-row .copy { flex: 1 1 auto; font-size: 0.85rem; line-height: 1.35; }
+    .support-row .title { display: block; margin-right: 0; }
+    .support-row .manage-link { white-space: normal; }
+    .support-cta { flex-shrink: 0; padding: 0.5rem 0.8rem; font-size: 0.9rem; white-space: nowrap; }
     /* Composer: tools on one row, Post full width beneath. */
     .post-actions { flex-wrap: wrap; }
     .post-actions .post-btn { flex: 1 1 100%; }
