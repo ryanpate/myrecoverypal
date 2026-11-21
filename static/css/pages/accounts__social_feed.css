@@ -1,7 +1,7 @@
 /* Styles for accounts/social_feed.html */
 /* Mobile-first social feed styles */
 .social-feed-container {
-    max-width: 1000px;
+    max-width: 720px;
     margin: 0 auto;
     padding: 1rem;
 }
@@ -356,7 +356,7 @@
 .post-content a {
     color: var(--brand-text, #1e4d8b);
     text-decoration: none;
-    word-break: break-all;
+    overflow-wrap: anywhere;
 }
 
 .post-content a:hover {
@@ -1347,18 +1347,9 @@
    App-refresh redesign — card-based feed visual language.
    These rules come last so they take precedence over the legacy styles.
    ===================================================================== */
-.social-feed-container { max-width: 1000px; }
-
-/* Top widget cards (composer, check-in nudge, support, daily thought) span
-   the full 1000px; the post stream is a centered ~700px reading column so
-   posts stay compact and legible. */
-#postsContainer .post-card,
-#postsContainer .skeleton-post-card,
-#postsContainer .inline-suggestion-card {
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-}
+/* One 720px column: the composer, check-in nudge, posts and the cards
+   between posts all share the same edges. */
+.social-feed-container { max-width: 720px; }
 
 .create-post-box,
 .post-card {
@@ -1378,6 +1369,7 @@
     font-weight: 700;
 }
 .post-btn:hover:not(:disabled) { background: var(--color-accent-hover); }
+.post-btn:disabled { background: var(--surface-sunken); color: var(--text-faint); }
 .visibility-select {
     background: var(--surface-sunken);
     border: none;
@@ -1386,8 +1378,14 @@
     color: var(--text-body);
     padding: 0.45rem 0.7rem;
 }
-#add-photo-btn { background: var(--surface-sunken); border-radius: var(--radius-btn, 10px); }
+.composer-tool {
+    width: 44px; height: 44px; padding: 0; margin: 0; justify-content: center; flex-shrink: 0;
+    background: var(--surface-sunken); border-radius: var(--radius-btn, 10px);
+}
+.composer-tool i { font-size: 1.05rem; }
 #add-photo-btn i { color: var(--color-accent); }
+.composer-tools { display: flex; gap: 0.5rem; align-items: center; min-width: 0; }
+.post-actions { gap: 0.6rem; }
 
 /* ---- Check-in nudge ---- */
 .ck-nudge { padding: 1.25rem 1.4rem; margin-bottom: 1.25rem; }
@@ -1443,6 +1441,7 @@
 .post-meta { color: var(--text-faint); }
 .premium-badge { color: var(--gold-accent); }
 .post-content { padding: 0 1.4rem 1.1rem; color: var(--text-body); }
+.milestone-card .post-content { padding-top: 1.1rem; }
 
 .mood-tag {
     display: inline-flex; align-items: center; gap: 0.35rem; margin-left: auto;
@@ -1460,7 +1459,10 @@
     --heading-color: currentColor;
 }
 .milestone-head .m-name { font-weight: 700; }
-.milestone-head .m-meta { font-size: 0.82rem; color: rgba(255,255,255,0.85); }
+.milestone-head .m-meta {
+    font-size: 0.82rem; color: rgba(255,255,255,0.85);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .milestone-head .m-star { color: var(--gold-soft); font-size: 0.8rem; }
 .milestone-medal {
     display: inline-flex; align-items: center; gap: 0.4rem; margin-left: auto;
@@ -1474,7 +1476,17 @@
     padding: 0.5rem 0.85rem; gap: 0.25rem; align-items: center;
     border-top: 1px solid var(--border-divider);
 }
-.reaction-count { font-size: 0.85rem; color: var(--text-faint); font-weight: 600; margin: 0 0.2rem; }
+.reaction-summary {
+    padding: 0 1.4rem 0.7rem; font-size: 0.85rem; color: var(--text-faint); font-weight: 600;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.reaction-summary:empty { display: none; }
+.comment-toggle-btn span:empty { display: none; }
+
+/* Author links: look like the text they replace, underline on hover */
+.post-avatar-link { flex-shrink: 0; display: block; border-radius: 50%; }
+a.post-author-name, .milestone-head a.m-name, .comment-author a { color: inherit; text-decoration: none; }
+a.post-author-name:hover, .milestone-head a.m-name:hover, .comment-author a:hover { text-decoration: underline; }
 .reaction-btn.active[data-reaction="support"] { color: var(--danger); }
 .reaction-btn.active[data-reaction="strong"] { color: var(--color-accent-hover); }
 .reaction-btn.active[data-reaction="celebrate"] { color: var(--gold-deep); }
@@ -1483,8 +1495,31 @@
 /* Initials avatar sizing parity with prototype color avatars */
 .avatar-initials.avatar-medium { font-weight: 700; }
 
+.post-actions-bar .action-btn { white-space: nowrap; }
+
 @media (max-width: 480px) {
     .ck-nudge-grid { gap: 0.4rem; }
+    /* The card only shows before a check-in, so the status repeats itself. */
+    .ck-nudge-head .status { display: none; }
+    /* Composer: tools on one row, Post full width beneath. */
+    .post-actions { flex-wrap: wrap; }
+    .post-actions .post-btn { flex: 1 1 100%; }
+    /* Action bar: five controls have to fit a ~340px card. */
+    .social-post-header { padding: 1rem 1rem 0.85rem; }
+    .milestone-head { padding: 1rem; gap: 0.65rem; }
+    .post-content { padding: 0 1rem 1rem; }
+    .reaction-summary { padding: 0 1rem 0.6rem; }
+    .milestone-card .post-content { padding-top: 1rem; }
+    .post-actions-bar { padding: 0.35rem 0.4rem; gap: 0; }
+    .post-actions-bar .action-btn { padding: 0.55rem 0.5rem; gap: 0.35rem; font-size: 0.85rem; }
+    .post-actions-bar .action-btn i { font-size: 1.1rem; }
+    .post-actions-bar .share-btn span { display: none; }
+    .post-actions-bar .share-btn { min-width: 44px; justify-content: center; }
+}
+
+@media (max-width: 359px) {
+    .post-actions-bar .reaction-btn span { display: none; }
+    .post-actions-bar .reaction-btn { min-width: 44px; justify-content: center; }
 }
 
 /* Scheduled posts: the composer's picker and the author's queue */

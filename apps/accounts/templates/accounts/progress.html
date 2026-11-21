@@ -26,9 +26,9 @@
     <button class="landing-tab active" data-tab="progress" id="tabProgress">
         <i class="fas fa-chart-line" aria-hidden="true"></i> My Progress
     </button>
-    <button class="landing-tab" data-tab="feed" id="tabFeed">
+    <a class="landing-tab" href="{% url 'accounts:social_feed' %}">
         <i class="fas fa-comments" aria-hidden="true"></i> My Feed
-    </button>
+    </a>
 </div>
 
 <!-- ===== Daily Pledge Card ===== -->
@@ -509,53 +509,6 @@
         {% include 'accounts/_supporter_invite_card.html' %}
     </div>
 </div><!-- end #progressContent -->
-
-<!-- ===== Feed Tab Content ===== -->
-<div id="feedContent" style="display:none;">
-    <div class="feed-skeleton" id="feedSkeleton">
-        <div class="skeleton-post">
-            <div class="sk-header">
-                <div class="sk-avatar"></div>
-                <div style="flex:1;">
-                    <div class="sk-line short" style="margin-bottom:0.4rem;"></div>
-                    <div class="sk-line" style="width:25%;height:8px;"></div>
-                </div>
-            </div>
-            <div class="sk-body">
-                <div class="sk-line long"></div>
-                <div class="sk-line medium"></div>
-            </div>
-        </div>
-        <div class="skeleton-post">
-            <div class="sk-header">
-                <div class="sk-avatar"></div>
-                <div style="flex:1;">
-                    <div class="sk-line short" style="margin-bottom:0.4rem;"></div>
-                    <div class="sk-line" style="width:30%;height:8px;"></div>
-                </div>
-            </div>
-            <div class="sk-body">
-                <div class="sk-line long"></div>
-                <div class="sk-line medium"></div>
-                <div class="sk-line short"></div>
-            </div>
-        </div>
-        <div class="skeleton-post">
-            <div class="sk-header">
-                <div class="sk-avatar"></div>
-                <div style="flex:1;">
-                    <div class="sk-line" style="width:35%;margin-bottom:0.4rem;"></div>
-                    <div class="sk-line" style="width:20%;height:8px;"></div>
-                </div>
-            </div>
-            <div class="sk-body">
-                <div class="sk-line long"></div>
-                <div class="sk-line short"></div>
-            </div>
-        </div>
-    </div>
-    <div id="feedInner"></div>
-</div>
 
 <!-- Log a Slip link -->
 <div style="text-align: center; margin: 2rem 0; padding: 1rem; border-top: 1px solid var(--border-color, #eee);">
@@ -1133,68 +1086,17 @@
 })();
 </script>
 
-<!-- ===== Tab Switching ===== -->
+<!-- ===== Deep links ===== -->
 <script nonce="{{ csp_nonce }}">
 (function() {
-    var tabProgress = document.getElementById('tabProgress');
-    var tabFeed = document.getElementById('tabFeed');
-    var progressContent = document.getElementById('progressContent');
-    var feedContent = document.getElementById('feedContent');
-    var feedSkeleton = document.getElementById('feedSkeleton');
-    var feedInner = document.getElementById('feedInner');
-    var feedLoaded = false;
-
-    function switchTab(tab) {
-        if (tab === 'progress') {
-            tabProgress.classList.add('active');
-            tabFeed.classList.remove('active');
-            progressContent.style.display = '';
-            feedContent.style.display = 'none';
-            history.replaceState(null, '', window.location.pathname + window.location.search);
-        } else if (tab === 'feed') {
-            tabFeed.classList.add('active');
-            tabProgress.classList.remove('active');
-            progressContent.style.display = 'none';
-            feedContent.style.display = '';
-            history.replaceState(null, '', '#feed');
-
-            if (!feedLoaded) {
-                feedLoaded = true;
-                fetch('{% url "accounts:social_feed" %}?fragment=1', {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                })
-                .then(function(resp) { return resp.text(); })
-                .then(function(html) {
-                    feedInner.innerHTML = html;
-                    feedSkeleton.style.display = 'none';
-                    // innerHTML doesn't execute script tags — extract and run them
-                    var scripts = feedInner.querySelectorAll('script');
-                    scripts.forEach(function(oldScript) {
-                        var newScript = document.createElement('script');
-                        newScript.nonce = '{{ csp_nonce }}';
-                        newScript.textContent = oldScript.textContent;
-                        oldScript.parentNode.replaceChild(newScript, oldScript);
-                    });
-                })
-                .catch(function() {
-                    feedSkeleton.style.display = 'none';
-                    feedInner.innerHTML = '<div style="text-align:center;padding:3rem 1rem;color:#888;">' +
-                        '<p>Could not load feed. <a href="{% url "accounts:social_feed" %}">Open full feed</a></p></div>';
-                });
-            }
-        }
+    // The feed used to be a tab here; old #feed links go to the real feed.
+    if (window.location.hash === '#feed') {
+        window.location.replace('{% url "accounts:social_feed" %}');
+        return;
     }
-
-    tabProgress.addEventListener('click', function() { switchTab('progress'); });
-    tabFeed.addEventListener('click', function() { switchTab('feed'); });
-
-    // Check hash on load
     var insights = document.getElementById('insightsDetails');
     if (insights && (window.location.hash === '#analytics' || /[?&]days=/.test(window.location.search))) {
         insights.open = true;
-    }
-    if (window.location.hash === '#feed') {
-        switchTab('feed');
     }
 })();
 </script>

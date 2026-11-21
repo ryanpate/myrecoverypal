@@ -20,7 +20,7 @@
             {% else %}
             <div class="avatar-initials avatar-small" style="background: hsl({{ user.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ user.username|slice:":1"|upper }}</div>
             {% endif %}
-            <span class="placeholder-text">Share something...</span>
+            <span class="placeholder-text">{{ composer_prompt }}</span>
             <i class="fas fa-camera camera-icon" aria-hidden="true"></i>
         </div>
 
@@ -40,7 +40,7 @@
                     class="post-textarea"
                     name="content"
                     id="post-content"
-                    placeholder="Share your journey, wins, or words of encouragement..."
+                    placeholder="{{ composer_prompt }}"
                 ></textarea>
 
                 <!-- Image Preview -->
@@ -64,21 +64,21 @@
                 </div>
 
                 <div class="post-actions">
-                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <div class="composer-tools">
                         <input type="file" name="image" id="post-image-input" accept="image/*" style="display: none;">
-                        <button type="button" id="add-photo-btn" class="action-btn" style="padding: 0.25rem 0.75rem; margin: 0;">
-                            <i class="fas fa-image"></i>
+                        <button type="button" id="add-photo-btn" class="action-btn composer-tool" title="Add photo" aria-label="Add photo">
+                            <i class="fas fa-image" aria-hidden="true"></i>
                         </button>
                         <input type="file" name="video" id="post-video-input" accept="video/*" style="display: none;">
-                        <button type="button" id="add-video-btn" class="action-btn" style="padding: 0.25rem 0.75rem; margin: 0;" title="Add video (max 60s)">
-                            <i class="fas fa-video"></i>
+                        <button type="button" id="add-video-btn" class="action-btn composer-tool" title="Add video (max 60s)" aria-label="Add video (max 60 seconds)">
+                            <i class="fas fa-video" aria-hidden="true"></i>
                         </button>
                         <select name="visibility" class="visibility-select">
                             <option value="public">🌍 Everyone</option>
                             <option value="friends">👥 Friends</option>
                             <option value="private">🔒 Only Me</option>
                         </select>
-                        <button type="button" id="schedule-toggle-btn" class="action-btn" style="padding: 0.25rem 0.75rem; margin: 0;" title="Schedule for later" aria-label="Schedule for later" aria-expanded="false" aria-controls="schedule-row">
+                        <button type="button" id="schedule-toggle-btn" class="action-btn composer-tool" title="Schedule for later" aria-label="Schedule for later" aria-expanded="false" aria-controls="schedule-row">
                             <i class="fas fa-clock" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -195,15 +195,15 @@
                 {% if post.post_type == 'milestone' %}
                 <!-- Milestone Header -->
                 <div class="milestone-head">
-                    <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
+                    <a href="{% url 'accounts:profile' post.author.username %}" class="post-avatar-link" aria-hidden="true" tabindex="-1"><div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div></a>
                     <div class="post-author-info">
-                        <div><span class="m-name">{{ post.author.get_full_name|default:post.author.username }}</span>{% if post.author|is_premium_member %} <i class="fas fa-star m-star" title="Premium Member" aria-hidden="true"></i>{% endif %}</div>
+                        <div><a href="{% url 'accounts:profile' post.author.username %}" class="m-name">{{ post.author.get_full_name|default:post.author.username }}</a>{% if post.author|is_premium_member %} <i class="fas fa-star m-star" title="Premium Member" aria-hidden="true"></i>{% endif %}</div>
                         <div class="m-meta">@{{ post.author.username }} · {{ post.published_at|timesince }} ago</div>
                     </div>
                     <span class="milestone-medal"><i class="fas fa-medal" aria-hidden="true"></i> {{ post.milestone_days }} days</span>
                     {% if post.author == user or user.is_staff %}
                     <div class="post-menu" style="position: relative;">
-                        <button class="action-btn post-menu-btn" data-post-id="{{ post.id }}" style="padding: 0.25rem 0.5rem; color: #fff;">
+                        <button class="action-btn post-menu-btn" data-post-id="{{ post.id }}" aria-label="Post options" style="padding: 0.25rem 0.5rem; color: #fff;">
                             <i class="fas fa-ellipsis-h"></i>
                         </button>
                         <div class="post-menu-dropdown" id="menu-{{ post.id }}" style="display: none; position: absolute; right: 0; top: 100%; background: var(--card-bg, #fff); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); min-width: 120px; z-index: 100;">
@@ -220,14 +220,16 @@
                 {% else %}
                 <!-- Post Header -->
                 <div class="social-post-header">
+                    <a href="{% url 'accounts:profile' post.author.username %}" class="post-avatar-link" aria-hidden="true" tabindex="-1">
                     {% if post.author.avatar %}
-                    <img src="{{ post.author.avatar.url }}" alt="{{ post.author.username|slice:":1"|upper }}" class="avatar-medium" style="border-radius: 50%; object-fit: cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <img src="{{ post.author.avatar.url }}" alt="" class="avatar-medium" style="border-radius: 50%; object-fit: cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                     <div class="avatar-initials avatar-medium" style="display:none;background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
                     {% else %}
                     <div class="avatar-initials avatar-medium" style="background: hsl({{ post.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ post.author.username|slice:":1"|upper }}</div>
                     {% endif %}
+                    </a>
                     <div class="post-author-info">
-                        <div class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}{% if post.author|is_premium_member %} <span class="premium-badge" title="Premium Member"><i class="fas fa-star" aria-hidden="true"></i></span>{% endif %}</div>
+                        <a href="{% url 'accounts:profile' post.author.username %}" class="post-author-name">{{ post.author.get_full_name|default:post.author.username }}{% if post.author|is_premium_member %} <span class="premium-badge" title="Premium Member"><i class="fas fa-star" aria-hidden="true"></i></span>{% endif %}</a>
                         <div class="post-meta">@{{ post.author.username }} · {{ post.published_at|timesince }} ago</div>
                     </div>
                     {% if post.mood_tag %}
@@ -235,7 +237,7 @@
                     {% endif %}
                     {% if post.author == user or user.is_staff %}
                     <div class="post-menu" style="position: relative; margin-left: 0.5rem;">
-                        <button class="action-btn post-menu-btn" data-post-id="{{ post.id }}" style="padding: 0.25rem 0.5rem;">
+                        <button class="action-btn post-menu-btn" data-post-id="{{ post.id }}" aria-label="Post options" style="padding: 0.25rem 0.5rem;">
                             <i class="fas fa-ellipsis-h"></i>
                         </button>
                         <div class="post-menu-dropdown" id="menu-{{ post.id }}" style="display: none; position: absolute; right: 0; top: 100%; background: var(--card-bg, #fff); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); min-width: 120px; z-index: 100;">
@@ -267,6 +269,9 @@
                     <span class="comments-count" style="cursor:pointer;" onclick="toggleComments('{{ post.id }}')">{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
                 </div>
 
+                <!-- Who reacted (empty, and hidden, until someone does) -->
+                <div class="reaction-summary" aria-live="polite">{{ post.reaction_summary }}</div>
+
                 <!-- Action Buttons -->
                 <div class="post-actions-bar">
                     {% if post.post_type == 'milestone' %}
@@ -284,12 +289,11 @@
                         <span>Strength</span>
                     </button>
                     {% endif %}
-                    <span class="reaction-count">{{ post.reaction_count }}</span>
-                    <button class="action-btn comment-toggle-btn" data-post-id="{{ post.id }}" onclick="toggleComments('{{ post.id }}'); return false;">
+                    <button class="action-btn comment-toggle-btn" data-post-id="{{ post.id }}" onclick="toggleComments('{{ post.id }}'); return false;" title="Comments">
                         <i class="far fa-comment"></i>
-                        <span>{{ post.comments.count }}</span>
+                        <span>{% if post.comments.count %}{{ post.comments.count }}{% endif %}</span>
                     </button>
-                    <button class="action-btn share-btn" data-post-id="{{ post.id }}" type="button">
+                    <button class="action-btn share-btn" data-post-id="{{ post.id }}" type="button" aria-label="Share">
                         <i class="fas fa-share-nodes"></i>
                         <span>Share</span>
                     </button>
@@ -306,7 +310,7 @@
                             <div class="avatar-initials comment-avatar" style="background: hsl({{ comment.author.id|add:100 }}, 45%, 50%); border-radius: 50%;">{{ comment.author.username|slice:":1"|upper }}</div>
                             {% endif %}
                             <div class="comment-content">
-                                <div class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}{% if comment.author|is_premium_member %} <span class="premium-badge" title="Premium Member"><i class="fas fa-star" aria-hidden="true"></i></span>{% endif %}</div>
+                                <div class="comment-author"><a href="{% url 'accounts:profile' comment.author.username %}">{{ comment.author.get_full_name|default:comment.author.username }}</a>{% if comment.author|is_premium_member %} <span class="premium-badge" title="Premium Member"><i class="fas fa-star" aria-hidden="true"></i></span>{% endif %}</div>
                                 <div class="comment-text">{{ comment.content }}</div>
                                 <div class="comment-meta">
                                     <span class="comment-time">{{ comment.created_at|timesince }} ago</span>
@@ -923,9 +927,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Reaction handlers (Support / Strength / Cheer) — calls the typed react endpoint
-    function applyReactionState(card, userReaction, total) {
-        const countEl = card.querySelector('.reaction-count');
-        if (countEl != null && typeof total === 'number') countEl.textContent = total;
+    function applyReactionState(card, userReaction, summary) {
+        const summaryEl = card.querySelector('.reaction-summary');
+        if (summaryEl != null && typeof summary === 'string') summaryEl.textContent = summary;
         card.querySelectorAll('.reaction-btn').forEach(b => {
             const r = b.dataset.reaction;
             const isActive = userReaction === r || (r === 'support' && userReaction === 'like');
@@ -961,7 +965,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 const data = await response.json();
                 if (data.success) {
-                    applyReactionState(card, data.user_reaction, data.total_reactions);
+                    applyReactionState(card, data.user_reaction, data.reaction_summary);
                 } else {
                     throw new Error(data.error || 'Failed to react');
                 }
@@ -1063,7 +1067,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const commentCountEl = document.querySelector(`[data-post-id="${postId}"].comment-toggle-btn span`);
             if (commentCountEl) {
                 const currentCount = parseInt(commentCountEl.textContent) || 0;
-                commentCountEl.textContent = `${currentCount + 1} comments`;
+                commentCountEl.textContent = currentCount + 1;
             }
 
             // 3. Send request in background
@@ -1312,7 +1316,7 @@ document.addEventListener('click', function(e) {
                 var countEl = document.querySelector('[data-post-id="' + postId + '"].comment-toggle-btn span');
                 if (countEl) {
                     var c = data.comment_count;
-                    countEl.textContent = c + ' comment' + (c !== 1 ? 's' : '');
+                    countEl.textContent = c || '';
                 }
             } else {
                 showToast(data.error || 'Failed to delete comment', 'error');
