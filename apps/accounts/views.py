@@ -4361,6 +4361,9 @@ def social_feed_view(request):
             post.reaction_counts = counts
             post.reaction_summary = reaction_summary(
                 reactions_list, user if user.is_authenticated else None)
+            # Quick-reply chips are for a first reply only
+            post.user_has_commented = user.is_authenticated and any(
+                c.author_id == user.id for c in post.comments.all())
             # Mood pill from a linked check-in
             if post.linked_checkin_id and post.linked_checkin:
                 post.mood_tag = mood_tags.get(post.linked_checkin.mood)
