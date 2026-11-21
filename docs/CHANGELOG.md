@@ -4,6 +4,14 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-11-21:** Community feed tidy-up and engagement changes.
+  - **One column:** the composer, check-in card, posts and promo cards share one 720px column (posts used to be 700px under 1000px cards).
+  - **Phone fit:** the action bar under a post and the composer toolbar no longer overflow; Share is icon-only at ≤480px and Post sits full-width under the tools. Photo, video and schedule are matching 44px buttons (`.composer-tool`).
+  - **Profile links:** author names and avatars on posts, and names on comments, link to the member's profile.
+  - **Reactions:** zero counts are hidden. A line above the buttons reads "You reacted", "You and 2 others reacted" or "3 people reacted" (`views.reaction_summary`). It never names anyone; keep it anonymous.
+  - **Daily prompt:** the composer shows one question a day, the same for everyone, rotating on the member's local date (`views.COMPOSER_PROMPTS`).
+  - **One feed:** the "My Feed" tab on Today is now a link to the Community feed. The embedded copy (`social_feed_fragment.html`, its stylesheet and the `?fragment=1` branch) is deleted, and `progress/#feed` redirects to the feed. Do not add a second feed template.
+  - Files: `apps/accounts/templates/accounts/social_feed.html`, `progress.html`, `views.py`, `tests_feed_layout.py`, `static/css/pages/accounts__social_feed.css`.
 - **2026-11-20:** Scheduled posts in the social feed.
   - **Composer:** the clock button opens a "Schedule for later" date and time picker. The browser sends the chosen local time as UTC; `SocialPost.scheduled_at` stores it (blank = published when created).
   - **Hidden until live:** every read path uses `SocialPost.objects.live()`, which annotates `live_at` (publish time) and sorts by it, so nothing depends on a background job. `is_visible_to()` is False for a queued post, so nobody can react or comment early. New posts never sent notifications, so there is nothing to defer.

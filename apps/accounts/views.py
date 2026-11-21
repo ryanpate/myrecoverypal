@@ -4276,6 +4276,43 @@ def create_notification(recipient, sender, notification_type, title, message, li
 
 # Social Feed Views
 
+# One composer prompt per day, the same for everyone, so the feed has a shared
+# topic. Rotates by the member's local date.
+COMPOSER_PROMPTS = [
+    "What's one win from today, big or small?",
+    "What are you grateful for right now?",
+    "What helped you most this week?",
+    "What would you tell someone on day one?",
+    "What's one thing you're looking forward to?",
+    "Who or what kept you going today?",
+    "What's something sobriety gave back to you?",
+    "What's a small step you're taking today?",
+    "What did you do today instead of using?",
+    "What's one thing you've learned about yourself lately?",
+]
+
+
+def composer_prompt(day=None):
+    day = day or timezone.localdate()
+    return COMPOSER_PROMPTS[day.toordinal() % len(COMPOSER_PROMPTS)]
+
+
+def reaction_summary(reactions, viewer=None):
+    """Who reacted, without naming anyone: 'You reacted', 'You and 2 others
+    reacted', '3 people reacted' — or '' when nobody has."""
+    reactions = list(reactions)
+    total = len(reactions)
+    if not total:
+        return ''
+    viewer_id = getattr(viewer, 'id', None)
+    if any(r.user_id == viewer_id for r in reactions):
+        others = total - 1
+        if not others:
+            return 'You reacted'
+        return f"You and {others} other{'s' if others != 1 else ''} reacted"
+    return f"{total} {'person' if total == 1 else 'people'} reacted"
+
+
 def social_feed_view(request):
     """Display the social media feed"""
     user = request.user
@@ -4322,6 +4359,8 @@ def social_feed_view(request):
                 if user.is_authenticated and r.user_id == user.id:
                     post.user_reaction = r.reaction_type
             post.reaction_counts = counts
+            post.reaction_summary = reaction_summary(
+                reactions_list, user if user.is_authenticated else None)
             # Mood pill from a linked check-in
             if post.linked_checkin_id and post.linked_checkin:
                 post.mood_tag = mood_tags.get(post.linked_checkin.mood)
@@ -4358,6 +4397,7 @@ def social_feed_view(request):
         today = timezone.localdate()
         todays_checkin = DailyCheckIn.objects.filter(user=user, date=today).first()
         context['todays_checkin'] = todays_checkin
+        context['composer_prompt'] = composer_prompt(today)
         context['checkin_streak'] = user.get_checkin_streak()
         context['is_premium'] = hasattr(user, 'subscription') and user.subscription.is_premium()
 
@@ -4441,10 +4481,6 @@ def social_feed_view(request):
             # Get discover posts (recent public posts from users they don't follow)
             discover_posts = [p for p in visible_posts if p.author_id not in following_ids and p.author_id != user.id][:5]
             context['discover_posts'] = discover_posts
-
-    # Return fragment template if requested (for AJAX tab loading on progress page)
-    if request.GET.get('fragment') == '1' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return render(request, 'accounts/social_feed_fragment.html', context)
 
     return render(request, 'accounts/social_feed.html', context)
 
@@ -4778,6 +4814,8 @@ def react_to_post(request, post_id, reaction_type=None):
             'user_reaction': user_reaction,
             'reaction_counts': reaction_counts,
             'total_reactions': total_reactions,
+            'reaction_summary': reaction_summary(
+                post.reactions.all(), request.user),
             # Legacy compatibility
             'liked': reacted and user_reaction == 'like',
             'likes_count': total_reactions
