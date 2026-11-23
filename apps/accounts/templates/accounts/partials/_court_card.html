@@ -1,0 +1,32 @@
+{% comment %}
+Court attendance card on the progress home (court_service.progress_card).
+Shown only to Court subscribers and members who have logged a meeting.
+No prices here: the reports page shows them (hidden inside the iOS app).
+{% endcomment %}
+<div class="court-card" id="courtCard">
+    <div class="court-card-eyebrow"><i class="fas fa-gavel" aria-hidden="true"></i> Court attendance</div>
+    <strong class="court-card-title">{{ court_card.week_count }} of {{ court_card.required_per_week }} meeting{{ court_card.required_per_week|pluralize }} logged this week</strong>
+    <p>{{ court_card.total }} meeting{{ court_card.total|pluralize }} on your log in total.</p>
+    <a class="court-card-btn" href="{% url 'accounts:court_attendance_create' %}">Log a meeting</a>
+    <a class="court-card-link" href="{% url 'accounts:court_report_list' %}">Get your report &rarr;</a>
+    {% if not court_card.has_profile %}
+    <p class="court-card-setup">Is your order for a different number? <a class="court-card-link" href="{% url 'accounts:court_profile' %}">Set your weekly requirement</a> and we&rsquo;ll remind you when you&rsquo;re behind.</p>
+    {% endif %}
+</div>
+<style>
+    .court-card { margin: 0 0 1rem; padding: 1rem 1.1rem; border-radius: 14px; background: #eef3fa;
+        border: 1px solid #cfdcee; }
+    .court-card-eyebrow { font-size: 0.75rem; font-weight: 700; color: #1e4d8b; }
+    .court-card-title { display: block; font-size: 1.25rem; color: var(--text-dark, #1a2a44); margin: 0.15rem 0 0.35rem; }
+    .court-card p { margin: 0.35rem 0 0.6rem; color: var(--text-dark, #3a4a5c); }
+    .court-card-btn { display: inline-block; background: #1e4d8b; color: #fff; font-weight: 700; padding: 0.55rem 1.2rem;
+        border-radius: var(--radius-btn, 10px); text-decoration: none; margin-right: 0.75rem; --heading-color: currentColor; }
+    .court-card-btn:hover { color: #fff; background: #163a6b; }
+    .court-card-setup { font-size: 0.92rem; margin-top: 0.7rem; }
+    .court-card-link { font-weight: 700; color: var(--brand-text, #1e4d8b); }
+    [data-theme="dark"] .court-card { background: #18263a; border-color: #2c3e55; }
+    [data-theme="dark"] .court-card-eyebrow { color: #8fb8ee; }
+    [data-theme="dark"] .court-card-title { color: #f2f2f2; }
+    [data-theme="dark"] .court-card p { color: #c9d2dc; }
+    [data-theme="dark"] .court-card-link { color: #8fb8ee; }
+</style>

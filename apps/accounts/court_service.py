@@ -179,3 +179,27 @@ def generate_court_report(user, period_start: date, period_end: date) -> CourtRe
         court_name_snapshot=profile.court_name or '',
     )
     return report
+
+
+def progress_card(user):
+    """Card for the progress home: this week's logged meetings against the
+    member's weekly requirement. None unless they subscribe to Court or have
+    logged a meeting, so members with no court order never see it."""
+    from django.db.models import Count, Q
+
+    today = timezone.localdate()
+    monday = today - timezone.timedelta(days=today.weekday())
+    counts = MeetingAttendance.objects.filter(user=user).aggregate(
+        total=Count('id'),
+        week=Count('id', filter=Q(meeting_date__date__gte=monday)),
+    )
+    subscription = getattr(user, 'subscription', None)
+    if not counts['total'] and not (subscription and subscription.is_court()):
+        return None
+    profile = CourtReportProfile.objects.filter(user=user).first()
+    return {
+        'week_count': counts['week'],
+        'required_per_week': profile.required_meetings_per_week if profile else 3,
+        'total': counts['total'],
+        'has_profile': bool(profile),
+    }

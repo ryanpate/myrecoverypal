@@ -349,3 +349,39 @@ class CommunityLabelsTest(TestCase):
         top = _region(self.content, 'id="navLinks"', '</ul>\n            </div>')
         self.assertIn(f'href="{reverse("accounts:social_feed")}"', top)
         self.assertNotIn(f'href="{reverse("accounts:community")}"', top)
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CourtLoggerReturnVisitTest(TestCase):
+    """A free member who has logged a court meeting is sent back to their own
+    log (nav) and sees their week on the progress home."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='court_logger', email='logger@example.com', password='pw'
+        )
+        self.client.login(username='court_logger', password='pw')
+
+    def _log_meeting(self):
+        from django.utils import timezone
+        from apps.accounts.court_models import MeetingAttendance
+        MeetingAttendance.objects.create(
+            user=self.user, meeting_name='Tuesday Night Group',
+            meeting_date=timezone.now(),
+        )
+
+    def test_nav_links_to_dashboard_after_first_logged_meeting(self):
+        self._log_meeting()
+        content = self.client.get(reverse('accounts:social_feed')).content.decode('utf-8')
+        cta_idx = content.find('court-cta')
+        self.assertIn('/accounts/court/', content[max(0, cta_idx - 200):cta_idx + 400])
+
+    def test_progress_home_shows_court_card_after_logged_meeting(self):
+        self._log_meeting()
+        resp = self.client.get(reverse('accounts:progress'))
+        self.assertContains(resp, 'id="courtCard"')
+        self.assertContains(resp, '1 of 3 meetings logged this week')
+
+    def test_progress_home_has_no_court_card_without_court_activity(self):
+        resp = self.client.get(reverse('accounts:progress'))
+        self.assertNotContains(resp, 'id="courtCard"')

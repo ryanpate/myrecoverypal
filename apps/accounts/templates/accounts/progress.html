@@ -232,6 +232,7 @@
         </div>
         {% endif %}
 
+        {% if court_card %}{% include 'accounts/partials/_court_card.html' %}{% endif %}
         {% include 'accounts/_evening_card.html' %}
         {% program_progress_card %}
         {% include 'accounts/partials/_daily_thought.html' %}
