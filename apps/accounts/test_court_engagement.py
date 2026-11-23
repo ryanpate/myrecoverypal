@@ -83,6 +83,22 @@ class CourtMeetingReminderTests(TestCase):
         user.subscription.save()
         self.assertEqual(send_court_meeting_reminders(), 0)
 
+    def test_free_member_still_logging_gets_reminder(self):
+        user, profile = make_court_user('freelogger', required=7)
+        user.subscription.tier = 'free'
+        user.subscription.save()
+        log_meeting(user, timezone.now() - timedelta(days=3))
+        self.assertEqual(send_court_meeting_reminders(), 1)
+        self.assertTrue(Notification.objects.filter(
+            recipient=user, notification_type='meeting_reminder').exists())
+
+    def test_free_member_who_stopped_logging_not_reminded(self):
+        user, profile = make_court_user('freelapsed', required=7)
+        user.subscription.tier = 'free'
+        user.subscription.save()
+        log_meeting(user, timezone.now() - timedelta(days=20))
+        self.assertEqual(send_court_meeting_reminders(), 0)
+
     def test_expired_compliance_window_not_reminded(self):
         user, profile = make_court_user('doneuser')
         profile.report_period_end = timezone.now().date() - timedelta(days=5)

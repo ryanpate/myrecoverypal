@@ -12,6 +12,7 @@ def subscription_context(request):
         'user_subscription': None,
         'is_premium_user': False,
         'is_court_user': False,
+        'has_court_log': False,
         'is_free_user': True,
     }
 
@@ -31,6 +32,14 @@ def subscription_context(request):
     except Exception:
         # Handle case where subscription doesn't exist
         pass
+
+    # Court nav links go to the member's own log (not the sales page) once
+    # they subscribe or log a first meeting; logging is free.
+    if request.user.is_authenticated:
+        context['has_court_log'] = (
+            context['is_court_user']
+            or request.user.meeting_attendances.exists()
+        )
 
     return context
 

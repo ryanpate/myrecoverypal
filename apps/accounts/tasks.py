@@ -1457,12 +1457,22 @@ def _user_zoneinfo(user, fallback='UTC'):
         return ZoneInfo(fallback)
 
 
+# Free members stop getting court reminders this long after their last logged meeting.
+FREE_REMINDER_ACTIVE_DAYS = 14
+
+
 @shared_task
 def send_court_meeting_reminders():
     """
-    Evening nudge for court-tier users who are behind their weekly meeting
+    Evening nudge for members who are behind their weekly meeting
     requirement and haven't logged a meeting today (user-local day).
     In-app notification + push, max once per user-local day.
+
+    Court subscribers are always eligible. Free members are eligible once
+    they have set a court profile (so the weekly number is theirs, not a
+    guess) and only while they are still logging: a meeting in the last
+    FREE_REMINDER_ACTIVE_DAYS days. That stops the nudge on its own when a
+    court order ends and nobody tells us.
     """
     from .court_models import CourtReportProfile, MeetingAttendance
     from .models import Notification
@@ -1470,14 +1480,16 @@ def send_court_meeting_reminders():
     sent = 0
     profiles = CourtReportProfile.objects.filter(
         required_meetings_per_week__gt=0,
-        user__subscription__tier='court',
-    ).select_related('user')
+    ).select_related('user', 'user__subscription')
+    active_since = timezone.now() - timedelta(days=FREE_REMINDER_ACTIVE_DAYS)
 
     for profile in profiles:
         user = profile.user
         sub = getattr(user, 'subscription', None)
-        if not (sub and sub.is_active()):
-            continue
+        if not (sub and sub.tier == 'court' and sub.is_active()):
+            if not MeetingAttendance.objects.filter(
+                    user=user, meeting_date__gte=active_since).exists():
+                continue
 
         with timezone.override(_user_zoneinfo(user)):
             today = timezone.localdate()
