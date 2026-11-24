@@ -158,3 +158,24 @@ class CourtPlanTextTest(TestCase):
         self.assertEqual(
             reword('Save 25% vs monthly. Court-acceptable PDF attendance reports'),
             'Save 25% vs monthly. Verifiable PDF attendance reports')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class ChairConfirmTimeZoneTest(TestCase):
+    """The chair has no account, so the meeting time shows in the member's zone."""
+
+    def test_chair_sees_the_meeting_time_in_the_members_zone(self):
+        from datetime import datetime, timezone as dt_timezone
+        from unittest.mock import patch
+        user = User.objects.create_user(
+            username='chairtz', email='chairtz@example.com', password='pw', first_name='Jordan')
+        user.timezone = 'America/Chicago'
+        user.save()
+        # 7:00 PM Chicago on Monday Nov 23 is 01:00 UTC on Tuesday Nov 24.
+        meeting = datetime(2026, 11, 24, 1, 0, tzinfo=dt_timezone.utc)
+        att = MeetingAttendance.objects.create(
+            user=user, meeting_name='Monday Night', meeting_date=meeting,
+            chair_confirm_token='tz-test-token')
+        with patch('django.utils.timezone.now', return_value=meeting):
+            resp = Client().get(reverse('accounts:court_chair_confirm', args=[att.chair_confirm_token]))
+        self.assertContains(resp, 'Monday, Nov 23 at 7:00 PM')

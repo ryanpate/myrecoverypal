@@ -373,6 +373,14 @@ def court_chair_confirm(request, token):
     att = MeetingAttendance.objects.filter(chair_confirm_token=token).select_related('user').first()
     if not att:
         raise Http404('Unknown confirmation link')
+    # The chair has no account and so no time zone of their own. Show the
+    # meeting time in the member's zone (they are in the same room), not UTC.
+    from apps.accounts.tasks import _user_zoneinfo
+    with timezone.override(_user_zoneinfo(att.user, fallback='America/Chicago')):
+        return _chair_confirm_response(request, att)
+
+
+def _chair_confirm_response(request, att):
     context = {'att': att, 'member_name': _display_name(att.user), 'roles': CHAIR_ROLES}
 
     if att.chair_signature_at:

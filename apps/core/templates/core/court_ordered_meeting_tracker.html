@@ -10,6 +10,10 @@
 
 {% block canonical_url %}https://www.myrecoverypal.com/court-ordered-meeting-tracker/{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/core__court_ordered_meeting_tracker.css' %}">
+{% endblock %}
+
 {% block structured_data %}
 <script type="application/ld+json">
 {
@@ -17,7 +21,7 @@
   "@type": "SoftwareApplication",
   "name": "MyRecoveryPal Court Compliance",
   "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Web Browser, iOS, Android",
+  "operatingSystem": "Web Browser, iOS",
   "offers": [
     {"@type": "Offer", "name": "Meeting logging", "price": "0", "priceCurrency": "USD"},
     {"@type": "Offer", "name": "Verified attendance report", "price": "{{ single_report_price|floatformat:2 }}", "priceCurrency": "USD"},
@@ -74,7 +78,7 @@
       "name": "Can I use this for SMART Recovery or other secular programs?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. Courts cannot constitutionally require 12-step-only attendance. MyRecoveryPal tracks AA, NA, CA, MA, GA, SMART Recovery, Refuge Recovery, LifeRing, and other recovery programs equally."
+        "text": "Yes. MyRecoveryPal tracks AA, NA, CA, MA, GA, SMART Recovery, Refuge Recovery, LifeRing, and other recovery programs equally. Which programs count toward your requirement is up to your court, so check your order or ask your probation officer."
       }
     },
     {
@@ -82,7 +86,7 @@
       "name": "Is this a substitute for actually attending meetings?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. This is a record-keeping tool. Self-reported entries are clearly flagged. Misrepresenting attendance to a court is perjury."
+        "text": "No. This is a record-keeping tool, and self-reported entries are clearly flagged. Give your court an honest record."
       }
     }
   ]
@@ -91,168 +95,145 @@
 {% endblock %}
 
 {% block content %}
-<section style="background:#0f2d56; color:white; padding:5rem 1rem 4rem; text-align:center; --heading-color: currentColor;">
-    <div style="max-width:900px; margin:auto;">
-        <h1 style="font-size:2.6rem; font-weight:800; margin:0 0 1rem; color:#fff;">Court-Ordered Meeting Tracker</h1>
-        <p style="font-size:1.25rem; opacity:.93; line-height:1.5; max-width:700px; margin:0 auto 2rem;">
-            Log AA, NA, SMART Recovery, and secular recovery meeting attendance. Generate PDF attendance reports with tamper-evident fingerprints. Email them straight to your probation officer.
-        </p>
-        <a href="{% if user.is_authenticated %}{% url 'accounts:court_attendance_create' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:court_attendance_create' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:var(--accent-green-strong); color:white; text-decoration:none; border-radius:var(--radius-btn, 10px); font-weight:700; font-size:1.1rem;">Start logging meetings free &rarr;</a>
-        <p style="margin-top:1rem; font-size:0.95rem;">
-            Pay ${{ single_report_price|floatformat:2 }} only when you need a report for your PO. No subscription required.
-        </p>
-        <p style="font-size:0.9rem; opacity:.8; margin-top:1rem;">No card to start &middot; Works on web, iPhone, and Android</p>
-    </div>
-</section>
+<div class="cmt">
+    <h1>Court-Ordered Meeting Tracker</h1>
+    <p class="cmt-lead">
+        Log AA, NA, SMART Recovery, and secular recovery meeting attendance. Generate PDF attendance reports with tamper-evident fingerprints. Email them straight to your probation officer.
+    </p>
+    <a class="cmt-go" href="{% if user.is_authenticated %}{% url 'accounts:court_attendance_create' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:court_attendance_create' %}{% endif %}">Start logging meetings free &rarr;</a>
+    <p class="cmt-note">
+        Pay ${{ single_report_price|floatformat:2 }} only when you need a report for your PO. No subscription required.
+        No card to start. Works in the browser on any phone or computer, and there is an iPhone app.
+    </p>
 
-<section style="padding:4rem 1rem; background:var(--bg-light, #f7f9fc);">
-    <div style="max-width:1000px; margin:auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:1.5rem;">
-        <div style="background:var(--card-bg, #fff); padding:1.75rem; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
-            <h3 style="color:var(--brand-text, #1e4d8b);">&check; The Fields Courts Expect</h3>
-            <p>Reports include defendant name, case number, court, judge, meeting date/time/address/type, and signed attestation block. Same fields courts already expect on paper attendance cards. Requirements differ, so check with your probation officer which format they accept.</p>
-        </div>
-        <div style="background:var(--card-bg, #fff); padding:1.75rem; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
-            <h3 style="color:var(--brand-text, #1e4d8b);">&check; Tamper-Evident Fingerprint</h3>
-            <p>Every PDF includes a SHA-256 fingerprint. Courts can paste the fingerprint at <strong>myrecoverypal.com/verify/court/</strong> to confirm the document hasn't been edited. (<a href="{% url 'core:for_probation_officers' %}">Verification guide for probation officers</a>)</p>
-        </div>
-        <div style="background:var(--card-bg, #fff); padding:1.75rem; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
-            <h3 style="color:var(--brand-text, #1e4d8b);">&check; All Recovery Programs</h3>
-            <p>Tracks AA, NA, CA, SMART Recovery, Refuge Recovery, LifeRing, and secular meetings. Courts cannot mandate 12-step exclusively &mdash; your tracker shouldn't either.</p>
-        </div>
-        <div style="background:var(--card-bg, #fff); padding:1.75rem; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
-            <h3 style="color:var(--brand-text, #1e4d8b);">&check; Direct Email to PO &mdash; or Fully Automatic</h3>
-            <p>One click sends the PDF straight to your probation officer's inbox, with the verification link in the body. Or turn on auto-send and last month's report goes out on the 1st, every month, without you lifting a finger.</p>
-        </div>
-        <div style="background:var(--card-bg, #fff); padding:1.75rem; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
-            <h3 style="color:var(--brand-text, #1e4d8b);">&check; Weekly Progress Dashboard + Reminders</h3>
-            <p>See at a glance whether you're on pace for the week. If your court requires 3 meetings per week, you'll get an evening reminder when you're behind &mdash; before Sunday night, not after.</p>
-        </div>
-        <div style="background:var(--card-bg, #fff); padding:1.75rem; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
-            <h3 style="color:var(--brand-text, #1e4d8b);">&check; Includes Premium</h3>
-            <p>Court Compliance includes everything in MyRecoveryPal Premium &mdash; streak protection, Anchor AI Coach, milestone medallions, a free Supporter seat for a loved one, 90-day analytics, and the full recovery community.</p>
-        </div>
-    </div>
-</section>
+    <figure class="cmt-report">
+        <img src="{% static 'images/court/sample-report.webp' %}" width="1100" height="1028"
+             alt="Sample attendance report: participant and case details, a summary of 9 meetings against a requirement of 3 per week, and a log listing each meeting as chair-confirmed or self-reported.">
+        <figcaption>A sample report with made-up details. Yours carries your name, case number and court, and marks every meeting chair-confirmed or self-reported.</figcaption>
+    </figure>
 
-<section style="padding:4rem 1rem;">
-    <div style="max-width:800px; margin:auto;">
-        <h2 style="text-align:center; color:var(--brand-text, #1e4d8b);">How it works</h2>
-        <ol style="font-size:1.05rem; line-height:1.7;">
+    <h2>How it works</h2>
+    <div class="cmt-steps">
+        <ol>
             <li><strong>Log each meeting, free.</strong> After every AA, NA, SMART, or other recovery meeting, tap "Log Meeting" and enter the name, date, time, and address. Takes ~20 seconds.</li>
             <li><strong>Get it chair-confirmed.</strong> Show a one-time QR code at the meeting. The chair or secretary scans it on their own phone, and the report marks that meeting "Chair-confirmed" with their name and the time.</li>
             <li><strong>Generate a report when your PO asks.</strong> Pick a period (last month, since sentencing, custom range). Enter your case number and court once. The PDF is built in seconds.</li>
             <li><strong>Email it to your PO.</strong> One tap. Includes the verification link so your PO can confirm the document is authentic.</li>
         </ol>
+        <figure>
+            <img src="{% static 'images/court/chair-confirm.webp' %}" width="750" height="1100" loading="lazy"
+                 alt="The confirmation screen a meeting chair sees: the member's first name and last initial, the meeting and time, a name field, a role menu and a Confirm attendance button.">
+            <figcaption>What the chair sees on their own phone after scanning your code.</figcaption>
+        </figure>
     </div>
-</section>
 
-<section style="padding:4rem 1rem; background:var(--bg-light, #f7f9fc);">
-    <div style="max-width:960px; margin:auto;">
-        <h2 style="text-align:center; color:var(--brand-text, #1e4d8b); margin-bottom:2rem;">Pay only for what your court needs</h2>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.25rem;">
-            <div style="background:var(--card-bg, #fff); border:1px solid #e3eaf3; border-radius:14px; padding:1.5rem;">
-                <h3 style="margin:0; color:var(--brand-text, #1e4d8b);">Log meetings</h3>
-                <p style="font-size:2rem; font-weight:800; margin:.5rem 0; color:var(--text-dark, #1a2a44);">Free</p>
-                <p style="margin:0; color:var(--text-muted, #555);">Unlimited meeting logs and chair QR confirmations. Your weekly pace at a glance, and an evening reminder when you're behind.</p>
-            </div>
-            <div style="background:var(--card-bg, #fff); border:2px solid #52b788; border-radius:14px; padding:1.5rem;">
-                <h3 style="margin:0; color:var(--brand-text, #1e4d8b);">One verified report</h3>
-                <p style="font-size:2rem; font-weight:800; margin:.5rem 0; color:var(--text-dark, #1a2a44);">${{ single_report_price|floatformat:2 }}</p>
-                <p style="margin:0; color:var(--text-muted, #555);">A tamper-evident PDF for any date range, emailed to your PO in one tap. One-time payment.</p>
-            </div>
-            <div style="background:var(--card-bg, #fff); border:1px solid #e3eaf3; border-radius:14px; padding:1.5rem;">
-                <h3 style="margin:0; color:var(--brand-text, #1e4d8b);">Court Compliance</h3>
-                <p style="font-size:2rem; font-weight:800; margin:.5rem 0; color:var(--text-dark, #1a2a44);">${% firstof court_monthly_plan.price|floatformat:2 '29.99' %}<span style="font-size:1rem; font-weight:600;">/mo</span></p>
-                <p style="margin:0 0 .75rem; color:var(--text-muted, #555);">Unlimited reports, automatic monthly report to your PO, plus everything in Premium.</p>
-                <a href="{% url 'accounts:pricing' %}" style="color:var(--brand-text, #1e4d8b); font-weight:700;">See the plan &rarr;</a>
-            </div>
+    <h2>What the report gives your probation officer</h2>
+    <h3>The Fields Courts Expect</h3>
+    <p>Reports include defendant name, case number, court, judge, meeting date/time/address/type, and signed attestation block. Same fields courts already expect on paper attendance cards. Requirements differ, so check with your probation officer which format they accept.</p>
+    <h3>Tamper-Evident Fingerprint</h3>
+    <p>Every PDF includes a SHA-256 fingerprint. Courts can paste the fingerprint at <strong>myrecoverypal.com/verify/court/</strong> to confirm the document hasn't been edited. (<a href="{% url 'core:for_probation_officers' %}">Verification guide for probation officers</a>)</p>
+    <h3>All Recovery Programs</h3>
+    <p>Tracks AA, NA, CA, SMART Recovery, Refuge Recovery, LifeRing, and secular meetings. If a 12-step program isn't for you, ask your probation officer which programs count toward your requirement.</p>
+    <h3>Direct Email to PO &mdash; or Fully Automatic</h3>
+    <p>One click sends the PDF straight to your probation officer's inbox, with the verification link in the body. Or turn on auto-send and last month's report goes out on the 1st, every month, without you lifting a finger.</p>
+    <h3>Weekly Progress Dashboard + Reminders</h3>
+    <p>See at a glance whether you're on pace for the week. If your court requires 3 meetings per week, you'll get an evening reminder when you're behind &mdash; before Sunday night, not after.</p>
+
+    <h2>Pay only for what your court needs</h2>
+    <div class="cmt-plans">
+        <div>
+            <h3>Log meetings</h3>
+            <p class="cmt-price">Free</p>
+            <p>Unlimited meeting logs and chair QR confirmations. Your weekly pace at a glance, and an evening reminder when you're behind.</p>
+        </div>
+        <div class="cmt-plan-main">
+            <h3>One verified report</h3>
+            <p class="cmt-price">${{ single_report_price|floatformat:2 }}</p>
+            <p>A tamper-evident PDF for any date range, emailed to your PO in one tap. One-time payment.</p>
+        </div>
+        <div>
+            <h3>Court Compliance</h3>
+            <p class="cmt-price">${% firstof court_monthly_plan.price|floatformat:2 '29.99' %}<span>/mo</span></p>
+            <p>Unlimited reports, automatic monthly report to your PO, plus everything in Premium.</p>
+            <a href="{% url 'accounts:pricing' %}">See the plan &rarr;</a>
         </div>
     </div>
-</section>
 
-<section style="padding:4rem 1rem; background:var(--card-bg, #fff);">
-    <div style="max-width:800px; margin:auto;">
-        <h2 style="color:var(--brand-text, #1e4d8b);">Proof of AA Meeting Attendance for Probation</h2>
-        <p style="line-height:1.7;">
-            If you're on probation with a meeting requirement, your probation officer needs three things:
-            <strong>which meetings you attended</strong> (name, date, time, location), <strong>a running total</strong>
-            against your required count (e.g. 3 meetings per week for 12 months), and <strong>a reason to trust
-            the record</strong>. Paper attendance cards cover the first two and rely on a chair's signature for the
-            third &mdash; and they get lost, smudged, and questioned.
-        </p>
-        <p style="line-height:1.7;">
-            A MyRecoveryPal attendance report covers all three in one PDF: every logged meeting with full details,
-            a summary against your court's weekly requirement, and a SHA-256 fingerprint printed on the document
-            that your PO can check at our public verification page in ten seconds. Self-reported entries are
-            clearly flagged as such — the report never overstates what it can prove, which is exactly why POs can
-            take it seriously.
-        </p>
-        <p style="line-height:1.7;">
-            Prefer paper, or need a backup? Download our <a href="{% url 'core:court_attendance_sheet' %}">free printable
-            meeting attendance sheet</a>. Attending on Zoom? Here&rsquo;s <a href="{% url 'core:online_meeting_proof' %}">how
-            to get proof of attendance at online meetings</a>.
-        </p>
+    <h2>Proof of AA Meeting Attendance for Probation</h2>
+    <p>
+        If you're on probation with a meeting requirement, your probation officer needs three things:
+        <strong>which meetings you attended</strong> (name, date, time, location), <strong>a running total</strong>
+        against your required count (e.g. 3 meetings per week for 12 months), and <strong>a reason to trust
+        the record</strong>. Paper attendance cards cover the first two and rely on a chair's signature for the
+        third &mdash; and they get lost, smudged, and questioned.
+    </p>
+    <p>
+        A MyRecoveryPal attendance report covers all three in one PDF: every logged meeting with full details,
+        a summary against your court's weekly requirement, and a SHA-256 fingerprint printed on the document
+        that your PO can check at our public verification page in ten seconds. Self-reported entries are
+        clearly flagged as such — the report never overstates what it can prove, which is exactly why POs can
+        take it seriously.
+    </p>
+    <p>
+        Prefer paper, or need a backup? Download our <a href="{% url 'core:court_attendance_sheet' %}">free printable
+        meeting attendance sheet</a>. Attending on Zoom? Here&rsquo;s <a href="{% url 'core:online_meeting_proof' %}">how
+        to get proof of attendance at online meetings</a>.
+    </p>
 
-        <h2 style="color:var(--brand-text, #1e4d8b); margin-top:2.5rem;">DUI and Drug Court Attendance Reports</h2>
-        <p style="line-height:1.7;">
-            DUI/DWI sentences, drug court programs, and family court orders commonly require documented attendance
-            at AA, NA, or an equivalent secular program for a set period. MyRecoveryPal generates an attendance
-            report for any date range — last month, since sentencing, or the full program period — so the same
-            tool covers a 90-day DUI requirement and a two-year drug court program. And because courts cannot
-            constitutionally require 12-step-only attendance, the tracker treats SMART Recovery, LifeRing,
-            Refuge Recovery, and other secular meetings as first-class options.
-        </p>
+    <h2>DUI and Drug Court Attendance Reports</h2>
+    <p>
+        DUI/DWI sentences, drug court programs, and family court orders commonly require documented attendance
+        at AA, NA, or an equivalent secular program for a set period. MyRecoveryPal generates an attendance
+        report for any date range — last month, since sentencing, or the full program period — so the same
+        tool covers a 90-day DUI requirement and a two-year drug court program. The tracker logs SMART Recovery, LifeRing,
+        Refuge Recovery, and other secular meetings the same way as AA and NA. Ask your probation officer
+        which programs count toward your requirement.
+    </p>
+
+    <h2>Frequently Asked Questions</h2>
+    <details>
+        <summary>How does the court verify AA meeting attendance?</summary>
+        <p>Courts traditionally verify AA or NA attendance with a paper card signed by the meeting chair, which your probation officer reviews at check-ins. Increasingly, courts and POs also accept digital attendance logs. MyRecoveryPal generates a PDF attendance report with a tamper-evident SHA-256 fingerprint and a public verification URL, so your probation officer can independently confirm the report hasn't been altered &mdash; something a paper card can't offer. Always confirm with your PO which formats your court accepts.</p>
+    </details>
+
+    <details>
+        <summary>Does this work for DUI classes and drug court programs?</summary>
+        <p>Yes. The report covers any date range, so it works for a 90-day DUI meeting requirement, a multi-year drug court program, or family court orders. Note that DUI <em>education classes</em> (state-certified programs) issue their own completion certificates &mdash; MyRecoveryPal documents the recovery-meeting attendance portion of your requirements (AA, NA, SMART, and other programs).</p>
+    </details>
+
+    <details>
+        <summary>Will my court accept a PDF report instead of a signed paper card?</summary>
+        <p>Many courts and probation officers accept digital documentation, but not all, and some issue their own form. Check your court order or ask your probation officer before you rely on it. The tamper-evident fingerprint and verification URL let a probation officer confirm the report has not been altered. Self-reported entries are clearly flagged in the report.</p>
+    </details>
+
+    <details>
+        <summary>What if my court requires meeting chair signatures?</summary>
+        <p>At the meeting, you show a one-time QR code and the chair or secretary confirms it on their own phone. The report marks that meeting &ldquo;Chair-confirmed&rdquo; with their name and the time; everything else is labeled &ldquo;Self-reported&rdquo;. You can&rsquo;t confirm your own attendance, and editing an entry afterwards removes its confirmation. If your court specifically requires an ink signature, keep a paper card alongside this and use MyRecoveryPal for the cumulative, verifiable report.</p>
+    </details>
+
+    <details>
+        <summary>Can I use this for SMART Recovery or other secular programs?</summary>
+        <p>Yes. MyRecoveryPal tracks AA, NA, CA, MA, GA, SMART Recovery, Refuge Recovery, LifeRing, and other recovery programs equally. Which programs count toward your requirement is up to your court, so check your order or ask your probation officer.</p>
+    </details>
+
+    <details>
+        <summary>Is this a substitute for actually attending meetings?</summary>
+        <p>No. This is a record-keeping tool, and self-reported entries are clearly flagged. Give your court an honest record.</p>
+    </details>
+
+    <details>
+        <summary>How is my information protected?</summary>
+        <p>Your case number and probation officer's email are visible only to you and (when you choose) the people you email reports to. The public verify page intentionally does not show your name, case number, or any personal information &mdash; only that a report with that fingerprint exists.</p>
+    </details>
+
+    <div class="cmt-final">
+        <h2>Start Tracking Court-Ordered Meetings Today</h2>
+        <p>Logging is free. Pay ${{ single_report_price|floatformat:2 }} when you need a report.</p>
+        <a class="cmt-go" href="{% if user.is_authenticated %}{% url 'accounts:court_attendance_create' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:court_attendance_create' %}{% endif %}">Log your first meeting free &rarr;</a>
+        <p class="small"><a href="{% url 'core:for_probation_officers' %}">Are you a probation officer or court coordinator? Read the verification guide &rarr;</a></p>
+        <p class="small"><a href="{% url 'core:for_recovery_programs' %}">Run a sober living home or DUI program? See how it works for your residents and clients &rarr;</a></p>
     </div>
-</section>
-
-<section style="background:var(--bg-light, #f7f9fc); padding:4rem 1rem;">
-    <div style="max-width:700px; margin:auto;">
-        <h2 style="text-align:center; color:var(--brand-text, #1e4d8b); margin-bottom:2rem;">Frequently Asked Questions</h2>
-
-        <details style="background:var(--card-bg, #fff); padding:1rem 1.25rem; border-radius:10px; margin-bottom:.75rem;">
-            <summary style="font-weight:600; cursor:pointer;">How does the court verify AA meeting attendance?</summary>
-            <p style="margin-top:.75rem;">Courts traditionally verify AA or NA attendance with a paper card signed by the meeting chair, which your probation officer reviews at check-ins. Increasingly, courts and POs also accept digital attendance logs. MyRecoveryPal generates a PDF attendance report with a tamper-evident SHA-256 fingerprint and a public verification URL, so your probation officer can independently confirm the report hasn't been altered &mdash; something a paper card can't offer. Always confirm with your PO which formats your court accepts.</p>
-        </details>
-
-        <details style="background:var(--card-bg, #fff); padding:1rem 1.25rem; border-radius:10px; margin-bottom:.75rem;">
-            <summary style="font-weight:600; cursor:pointer;">Does this work for DUI classes and drug court programs?</summary>
-            <p style="margin-top:.75rem;">Yes. The report covers any date range, so it works for a 90-day DUI meeting requirement, a multi-year drug court program, or family court orders. Note that DUI <em>education classes</em> (state-certified programs) issue their own completion certificates &mdash; MyRecoveryPal documents the recovery-meeting attendance portion of your requirements (AA, NA, SMART, and other programs).</p>
-        </details>
-
-        <details style="background:var(--card-bg, #fff); padding:1rem 1.25rem; border-radius:10px; margin-bottom:.75rem;">
-            <summary style="font-weight:600; cursor:pointer;">Will my court accept a PDF report instead of a signed paper card?</summary>
-            <p style="margin-top:.75rem;">Many courts and probation officers accept digital documentation, but not all, and some issue their own form. Check your court order or ask your probation officer before you rely on it. The tamper-evident fingerprint and verification URL let a probation officer confirm the report has not been altered. Self-reported entries are clearly flagged in the report.</p>
-        </details>
-
-        <details style="background:var(--card-bg, #fff); padding:1rem 1.25rem; border-radius:10px; margin-bottom:.75rem;">
-            <summary style="font-weight:600; cursor:pointer;">What if my court requires meeting chair signatures?</summary>
-            <p style="margin-top:.75rem;">At the meeting, you show a one-time QR code and the chair or secretary confirms it on their own phone. The report marks that meeting &ldquo;Chair-confirmed&rdquo; with their name and the time; everything else is labeled &ldquo;Self-reported&rdquo;. You can&rsquo;t confirm your own attendance, and editing an entry afterwards removes its confirmation. If your court specifically requires an ink signature, keep a paper card alongside this and use MyRecoveryPal for the cumulative, verifiable report.</p>
-        </details>
-
-        <details style="background:var(--card-bg, #fff); padding:1rem 1.25rem; border-radius:10px; margin-bottom:.75rem;">
-            <summary style="font-weight:600; cursor:pointer;">Can I use this for SMART Recovery or other secular programs?</summary>
-            <p style="margin-top:.75rem;">Yes. Courts cannot constitutionally require 12-step-only attendance (per multiple appellate rulings). MyRecoveryPal tracks AA, NA, CA, MA, GA, SMART Recovery, Refuge Recovery, LifeRing, and other recovery programs equally.</p>
-        </details>
-
-        <details style="background:var(--card-bg, #fff); padding:1rem 1.25rem; border-radius:10px; margin-bottom:.75rem;">
-            <summary style="font-weight:600; cursor:pointer;">Is this a substitute for actually attending meetings?</summary>
-            <p style="margin-top:.75rem;">No. This is a record-keeping tool. Self-reported entries are clearly flagged. Misrepresenting attendance to a court is perjury &mdash; please don't.</p>
-        </details>
-
-        <details style="background:var(--card-bg, #fff); padding:1rem 1.25rem; border-radius:10px; margin-bottom:.75rem;">
-            <summary style="font-weight:600; cursor:pointer;">How is my information protected?</summary>
-            <p style="margin-top:.75rem;">Your case number and probation officer's email are visible only to you and (when you choose) the people you email reports to. The public verify page intentionally does not show your name, case number, or any personal information &mdash; only that a report with that fingerprint exists.</p>
-        </details>
-    </div>
-</section>
-
-<section style="padding:4rem 1rem; text-align:center; background:#0f2d56; color:white; --heading-color: currentColor;">
-    <h2 style="font-size:2rem; margin-bottom:1rem;">Start Tracking Court-Ordered Meetings Today</h2>
-    <p style="font-size:1.1rem; opacity:.9; margin-bottom:2rem; max-width:600px; margin-left:auto; margin-right:auto;">Logging is free. Pay ${{ single_report_price|floatformat:2 }} when you need a report.</p>
-    <a href="{% if user.is_authenticated %}{% url 'accounts:court_attendance_create' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:court_attendance_create' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:var(--accent-green-strong); color:white; text-decoration:none; border-radius:var(--radius-btn, 10px); font-weight:700; font-size:1.1rem;">Log your first meeting free &rarr;</a>
-    <p style="margin-top:1.25rem; font-size:0.95rem;"><a href="{% url 'core:for_probation_officers' %}" style="color:rgba(255,255,255,0.85);">Are you a probation officer or court coordinator? Read the verification guide &rarr;</a></p>
-    <p style="margin-top:0.5rem; font-size:0.95rem;"><a href="{% url 'core:for_recovery_programs' %}" style="color:rgba(255,255,255,0.85);">Run a sober living home or DUI program? See how it works for your residents and clients &rarr;</a></p>
-</section>
+</div>
 <script nonce="{{ csp_nonce }}">
 (function () {
     document.querySelectorAll('a[href*="/accounts/court/attendance/new/"]').forEach(function (el) {

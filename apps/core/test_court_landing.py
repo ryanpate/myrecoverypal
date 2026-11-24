@@ -15,7 +15,8 @@ class CourtLandingTests(TestCase):
 
     def test_primary_cta_is_free_logging_via_signup(self):
         signup = f"{reverse('accounts:register')}?next={reverse('accounts:court_attendance_create')}"
-        hero = self.html[self.html.index('<h1'):self.html.index('</section>', self.html.index('<h1'))]
+        # Everything above the first section heading: title, lead, button, note.
+        hero = self.html[self.html.index('<h1'):self.html.index('<h2', self.html.index('<h1'))]
         self.assertIn(signup, hero)
         self.assertIn('Start logging meetings free', hero)
         self.assertNotIn('/mo', hero)
@@ -30,3 +31,19 @@ class CourtLandingTests(TestCase):
     def test_chair_faq_describes_the_shipped_qr_flow(self):
         self.assertNotIn('on the roadmap', self.html)
         self.assertIn('one-time QR code', self.html)
+
+    def test_page_makes_no_claim_about_what_courts_must_allow(self):
+        lowered = self.html.lower()
+        self.assertNotIn('constitutionally', lowered)
+        self.assertNotIn('cannot mandate', lowered)
+        self.assertNotIn('perjury', lowered)
+
+    def test_page_does_not_promise_an_android_app(self):
+        # base.html mentions Android in its own meta tags, so look at the page body only.
+        page = self.html[self.html.index('<div class="cmt">'):self.html.index('court_signup_click')]
+        self.assertNotIn('Android', page)
+
+    def test_page_shows_the_real_report_and_chair_screen(self):
+        self.assertIn('images/court/sample-report', self.html)
+        self.assertIn('images/court/chair-confirm', self.html)
+        self.assertIn('made-up details', self.html)

@@ -1,0 +1,48 @@
+/* Styles for core/court_ordered_meeting_tracker.html. Same column, type and colours as
+   core__court_attendance_sheet.css so the three court pages read as one product. */
+.cmt { max-width: 860px; margin: 0 auto; padding: 3rem 1.25rem 4rem; line-height: 1.65; }
+.cmt h1 { color: var(--brand-text, #1e4d8b); font-size: 2.1rem; line-height: 1.25; margin: 0 0 0.75rem; }
+.cmt h2 { color: var(--brand-text, #1e4d8b); font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
+.cmt h3 { color: var(--text-dark, #1a2a44); font-size: 1.05rem; margin: 1.25rem 0 0.25rem; }
+.cmt h3 + p { margin-top: 0; }
+.cmt-lead { font-size: 1.1rem; color: var(--text-dark, #444); margin-bottom: 1.5rem; }
+.cmt-go { display: inline-block; background: var(--accent-green-strong); color: #fff; font-weight: 700; font-size: 1.05rem;
+    padding: 0.9rem 1.8rem; border-radius: var(--radius-btn, 10px); text-decoration: none; --heading-color: currentColor; }
+.cmt-go:hover { color: #fff; }
+.cmt-note { font-size: 0.9rem; color: var(--text-muted, #666); margin-top: 0.6rem; }
+.cmt figure { margin: 0; }
+.cmt figure img { display: block; width: 100%; height: auto; border: 1px solid #dde4ee; border-radius: 12px; background: #fff; }
+.cmt figcaption { font-size: 0.9rem; color: var(--text-muted, #666); margin-top: 0.5rem; }
+.cmt-report { margin-top: 2rem !important; }
+.cmt-steps ol { margin: 0; padding-left: 1.3rem; }
+.cmt-steps li { margin-bottom: 0.5rem; }
+.cmt-steps figure { max-width: 260px; margin-top: 1.5rem; }
+.cmt-plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
+.cmt-plans > div { border: 1px solid #dde4ee; border-radius: 12px; padding: 1.25rem; background: var(--card-bg, #fff); }
+.cmt-plans > .cmt-plan-main { border: 2px solid #52b788; }
+.cmt-plans h3 { color: var(--brand-text, #1e4d8b); margin: 0; }
+.cmt-plans p { margin: 0; color: var(--text-muted, #555); }
+.cmt-plans a { display: inline-block; margin-top: 0.75rem; font-weight: 700; color: var(--brand-text, #1e4d8b); }
+.cmt-plans .cmt-price { font-size: 2rem; font-weight: 800; margin: 0.25rem 0 0.5rem; color: var(--text-dark, #1a2a44);
+    font-variant-numeric: tabular-nums; }
+.cmt-price span { font-size: 1rem; font-weight: 600; }
+.cmt details { background: #f7f9fc; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+.cmt summary { font-weight: 600; cursor: pointer; }
+.cmt details p { margin: 0.75rem 0 0; }
+.cmt-final { background: #0f2d56; color: #fff; border-radius: 16px; padding: 1.75rem; margin: 2.5rem 0 0; --heading-color: currentColor; }
+.cmt-final h2 { color: #fff; margin-top: 0; }
+.cmt-final .small { font-size: 0.9rem; margin: 0.75rem 0 0; }
+.cmt-final .small a { color: #fff; }
+@media (min-width: 720px) {
+    .cmt-steps { display: grid; grid-template-columns: 1fr 240px; gap: 2rem; align-items: start; }
+    .cmt-steps figure { margin-top: 0; }
+}
+[data-theme="dark"] .cmt h1, [data-theme="dark"] .cmt h2, [data-theme="dark"] .cmt-plans h3, [data-theme="dark"] .cmt-plans a { color: #8ab4f8; }
+[data-theme="dark"] .cmt h3 { color: #eee; }
+[data-theme="dark"] .cmt-final h2 { color: #fff; }
+[data-theme="dark"] .cmt-lead, [data-theme="dark"] .cmt-note, [data-theme="dark"] .cmt figcaption, [data-theme="dark"] .cmt-plans p { color: #bbb; }
+[data-theme="dark"] .cmt-plans .cmt-price { color: #f2f2f2; }
+[data-theme="dark"] .cmt-plans > div { background: #1e2430; border-color: #2e3949; }
+[data-theme="dark"] .cmt-plans > .cmt-plan-main { border-color: #52b788; }
+[data-theme="dark"] .cmt figure img { border-color: #2e3949; }
+[data-theme="dark"] .cmt details { background: #1e2430; }
