@@ -128,6 +128,11 @@ def court_attendance_create(request):
             att.user = request.user
             att.meeting = meeting
             att.save()
+            first = not MeetingAttendance.objects.filter(
+                user=request.user).exclude(pk=att.pk).exists()
+            queue_ga_event(request, 'court_meeting_logged',
+                           first_meeting='yes' if first else 'no',
+                           online='yes' if att.meeting_online else 'no')
             messages.success(request, 'Meeting logged.')
             return redirect('accounts:court_attendance_list')
     else:
@@ -197,6 +202,7 @@ def court_report_generate(request):
         return _single_report_checkout(request, period_start, period_end)
 
     report = generate_court_report(request.user, period_start, period_end)
+    queue_ga_event(request, 'court_report_generated', meetings=report.attendance_count)
     messages.success(
         request,
         f'Report generated — {report.attendance_count} meetings logged for {period_start} to {period_end}.',
@@ -231,6 +237,7 @@ def court_report_email(request, report_id):
         messages.error(request, f'Email failed: {err}')
         return redirect('accounts:court_report_list')
 
+    queue_ga_event(request, 'court_report_emailed')
     messages.success(request, f'Report emailed to {recipient}.')
     return redirect('accounts:court_report_list')
 
@@ -389,6 +396,9 @@ def court_chair_confirm(request, token):
         att.chair_confirm_ip = _client_ip(request)
         att.chair_confirm_user_agent = request.META.get('HTTP_USER_AGENT', '')[:300]
         att.save()
+        # Fires on the chair's device, on the page rendered just below.
+        queue_ga_event(request, 'court_chair_confirmed',
+                       online='yes' if att.meeting_online else 'no')
         return render(request, 'court/chair_confirm.html', {**context, 'state': 'done'})
 
     return render(request, 'court/chair_confirm.html', {**context, 'state': 'form'})
