@@ -102,7 +102,7 @@ class CourtReportProfile(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.report_period_start:
-            self.report_period_start = timezone.now().date()
+            self.report_period_start = timezone.localdate()
         super().save(*args, **kwargs)
 
 

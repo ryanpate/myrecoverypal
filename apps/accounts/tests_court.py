@@ -652,3 +652,20 @@ class CourtDashboardWeekTest(TestCase):
         with patch('django.utils.timezone.now', return_value=sunday_evening):
             resp = self.client.get(reverse('accounts:court_dashboard'))
         self.assertEqual(resp.context['this_week_count'], 1)
+
+
+class CourtProfileStartDateTest(TestCase):
+    """A new profile's default start date is the member's local date, not UTC's."""
+
+    def test_evening_signup_gets_todays_local_date(self):
+        from datetime import timezone as dt_timezone
+        from unittest.mock import patch
+        from zoneinfo import ZoneInfo
+        user = User.objects.create_user(
+            username='starter', email='starter@example.com', password='pw')
+        # Sunday Nov 29, 8 PM Chicago is already Monday Nov 30 in UTC.
+        sunday_evening = datetime(2026, 11, 30, 2, 0, tzinfo=dt_timezone.utc)
+        with timezone.override(ZoneInfo('America/Chicago')), \
+                patch('django.utils.timezone.now', return_value=sunday_evening):
+            profile = CourtReportProfile.objects.create(user=user)
+        self.assertEqual(profile.report_period_start, date(2026, 11, 29))
