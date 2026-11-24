@@ -67,7 +67,7 @@ def court_dashboard(request):
     recent_reports = CourtReport.objects.filter(user=request.user)[:3]
 
     # Calculate this week's progress
-    today = timezone.now().date()
+    today = timezone.localdate()
     monday = today - timezone.timedelta(days=today.weekday())
     this_week_count = MeetingAttendance.objects.filter(
         user=request.user, meeting_date__date__gte=monday,
