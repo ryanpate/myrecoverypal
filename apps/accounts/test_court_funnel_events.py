@@ -115,3 +115,25 @@ class CourtSignupIntentTest(TestCase):
         for target in ('log', 'report', 'profile'):
             self.assertContains(resp, f'data-court-card="{target}"')
         self.assertContains(resp, 'court_card_click')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CourtPageClaimsTest(TestCase):
+    """Court pages never say a court accepts the report, and they agree with
+    each other that the behind-pace reminder is free."""
+
+    def test_tracker_page_makes_no_acceptance_claim(self):
+        resp = self.client.get(reverse('core:court_ordered_meeting_tracker'))
+        body = resp.content.decode('utf-8').lower()
+        self.assertNotIn('court-acceptable', body)
+        self.assertNotIn('most courts now accept', body)
+        self.assertIn('ask your probation officer', body)
+
+    def test_tracker_page_lists_the_reminder_as_free(self):
+        resp = self.client.get(reverse('core:court_ordered_meeting_tracker'))
+        self.assertContains(resp, "and an evening reminder when you're behind.")
+        self.assertNotContains(resp, 'behind-pace reminders')
+
+    def test_pricing_page_makes_no_acceptance_claim(self):
+        resp = self.client.get(reverse('accounts:pricing'))
+        self.assertNotContains(resp, 'Court-acceptable')

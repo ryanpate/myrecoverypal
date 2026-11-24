@@ -702,6 +702,9 @@ def _safe_url(value):
     return value if re.match(r"https?://", value, re.IGNORECASE) else ""
 
 
+_TEST_ROW = re.compile(r"\btest meeting\b", re.IGNORECASE)
+
+
 def _map(m, approve, default_tz):
     name = (m.get("name") or "").strip()
     if not name:
@@ -711,6 +714,11 @@ def _map(m, approve, default_tz):
     # payload and import a dead group as in-person — sending someone to a
     # meeting that no longer exists.
     if (m.get("attendance_option") or "").strip().lower() == "inactive":
+        return None
+    # Intergroups leave placeholder rows in their live feeds (Palm Beach
+    # published "New Test Meeting" at "123 Main St"). A newcomer should
+    # never be sent to one.
+    if _TEST_ROW.search(name):
         return None
 
     attendance = _attendance_option(m)

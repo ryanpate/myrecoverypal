@@ -909,3 +909,17 @@ class BotChallengeTests(TestCase):
         self.assertFalse([r for r in logs.records
                           if r.levelname == "ERROR" and "atlanta" in r.getMessage()])
         self.assertTrue(Meeting.objects.get(slug="mtg-atlanta-morning-serenity").is_active)
+
+
+class PlaceholderFeedRowTests(TestCase):
+    """Intergroups leave placeholder rows in live feeds; never import them."""
+
+    def test_a_row_named_test_meeting_is_skipped(self):
+        for name in ("New Test Meeting", "TEST MEETING - do not attend", "test meeting"):
+            self.assertIsNone(
+                _map({**FULL_IN_PERSON_MEETING, "name": name}, True, "America/Chicago"), name)
+
+    def test_real_names_containing_test_are_kept(self):
+        for name in ("Testimony Meeting", "Greatest Meeting on Earth", "Big Book Study"):
+            self.assertIsNotNone(
+                _map({**FULL_IN_PERSON_MEETING, "name": name}, True, "America/Chicago"), name)
