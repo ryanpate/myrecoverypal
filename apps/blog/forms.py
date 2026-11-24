@@ -76,6 +76,25 @@ class PostForm(forms.ModelForm):
         # Only show trigger description if trigger warning is checked
         self.fields['trigger_description'].widget.attrs['style'] = 'display:none;'
 
+    def clean_new_tags(self):
+        """Typed-in tags as a list of names. Tag.name and Tag.slug are both
+        50 characters, and a longer value used to reach the database and
+        raise DataError (a sentence typed into the tag box does it)."""
+        limit = Tag._meta.get_field('name').max_length
+        names = []
+        for name in (self.cleaned_data.get('new_tags') or '').split(','):
+            name = name.strip()
+            if not name:
+                continue
+            if len(name) > limit:
+                raise forms.ValidationError(
+                    f'Each tag can be up to {limit} characters. Separate tags with commas.')
+            # A tag with no letters or digits (emoji only) has no slug to
+            # give it a page, so leave it out.
+            if slugify(name):
+                names.append(name)
+        return names
+
     def save(self, commit=True):
         instance = super().save(commit=False)
 
@@ -93,20 +112,17 @@ class PostForm(forms.ModelForm):
         if commit:
             instance.save()
 
-            # Handle new tags
-            if self.cleaned_data.get('new_tags'):
-                tag_names = [tag.strip()
-                             for tag in self.cleaned_data['new_tags'].split(',')]
-                for tag_name in tag_names:
-                    if tag_name:
-                        tag, created = Tag.objects.get_or_create(
-                            name=tag_name,
-                            defaults={'slug': slugify(tag_name)}
-                        )
-                        instance.tags.add(tag)
-
-            # Save the many-to-many relationships
+            # Save the many-to-many relationships first: save_m2m() sets the
+            # post's tags to the ones picked from the list, which would wipe
+            # any typed-in tags added before it.
             self.save_m2m()
+
+            # Typed-in tags. Matched on slug, which is the unique column, so
+            # "Recovery!" reuses an existing "recovery" instead of colliding.
+            for tag_name in self.cleaned_data.get('new_tags') or []:
+                tag, created = Tag.objects.get_or_create(
+                    slug=slugify(tag_name), defaults={'name': tag_name})
+                instance.tags.add(tag)
 
         return instance
 

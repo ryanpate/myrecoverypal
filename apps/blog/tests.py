@@ -189,3 +189,65 @@ class SlugGenerationTest(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         post = form.save(commit=False)
         self.assertTrue(post.slug)
+
+
+class PostFormNewTagsTests(TestCase):
+    """Typed-in tags must never crash a post save (Sentry: DataError "value
+    too long for type character varying(50)" from PostForm.save)."""
+
+    def setUp(self):
+        self.author = User.objects.create_user(
+            username='tagauthor', email='tagauthor@example.com', password='x',
+        )
+        from apps.blog.models import Category
+        self.category = Category.objects.create(name='General')
+
+    def _form(self, new_tags):
+        from apps.blog.forms import PostForm
+        form = PostForm(data={
+            'title': 'A post', 'content': 'hi', 'status': 'draft',
+            'category': self.category.pk, 'new_tags': new_tags,
+        })
+        form.instance.author = self.author
+        return form
+
+    def test_a_tag_over_50_characters_is_a_form_error_not_a_crash(self):
+        form = self._form('recovery, ' + 'a sentence typed into the tag box by mistake ' * 2)
+        self.assertFalse(form.is_valid())
+        self.assertIn('50 characters', form.errors['new_tags'][0])
+
+    def test_a_tag_that_slugifies_like_an_existing_one_reuses_it(self):
+        from apps.blog.models import Tag
+        Tag.objects.create(name='recovery', slug='recovery')
+        form = self._form('Recovery!')
+        self.assertTrue(form.is_valid(), form.errors)
+        post = form.save()
+        self.assertEqual([t.name for t in post.tags.all()], ['recovery'])
+        self.assertEqual(Tag.objects.count(), 1)
+
+    def test_a_tag_with_no_letters_is_skipped(self):
+        from apps.blog.models import Tag
+        form = self._form('💪, hope')
+        self.assertTrue(form.is_valid(), form.errors)
+        post = form.save()
+        self.assertEqual([t.name for t in post.tags.all()], ['hope'])
+        self.assertEqual(Tag.objects.count(), 1)
+
+    def test_write_page_shows_the_tag_error_and_saves_nothing(self):
+        from django.test import override_settings
+        from django.urls import reverse
+        self.client.force_login(self.author)
+        with override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False):
+            resp = self.client.post(reverse('blog:post_create'), {
+                'title': 'A post', 'content': 'hi', 'status': 'draft',
+                'category': self.category.pk, 'new_tags': 'x' * 51,
+            })
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Each tag can be up to 50 characters')
+        self.assertFalse(Post.objects.filter(title='A post').exists())
+
+    def test_typed_in_tags_stay_on_the_saved_post(self):
+        form = self._form('hope, one day at a time')
+        self.assertTrue(form.is_valid(), form.errors)
+        post = form.save()
+        self.assertEqual(sorted(t.name for t in post.tags.all()), ['hope', 'one day at a time'])
