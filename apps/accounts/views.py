@@ -91,10 +91,13 @@ def register_view(request):
 
                 # GA4 conversion. Queued rather than inline: registration
                 # redirects to onboarding, so this fires on that page.
-                queue_ga_event(
-                    request, 'sign_up',
-                    method='invite' if request.POST.get('invite_code') else 'email',
-                )
+                signup_params = {
+                    'method': 'invite' if request.POST.get('invite_code') else 'email'}
+                # Signups that came from a court page (they return to the
+                # meeting log) are the court funnel's second step.
+                if request.session.get('register_next', '').startswith('/accounts/court/'):
+                    signup_params['intent'] = 'court'
+                queue_ga_event(request, 'sign_up', **signup_params)
 
                 if user.sobriety_date:
                     Milestone.objects.create(

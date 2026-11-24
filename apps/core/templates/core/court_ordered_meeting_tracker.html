@@ -253,4 +253,11 @@
     <p style="margin-top:1.25rem; font-size:0.95rem;"><a href="{% url 'core:for_probation_officers' %}" style="color:rgba(255,255,255,0.85);">Are you a probation officer or court coordinator? Read the verification guide &rarr;</a></p>
     <p style="margin-top:0.5rem; font-size:0.95rem;"><a href="{% url 'core:for_recovery_programs' %}" style="color:rgba(255,255,255,0.85);">Run a sober living home or DUI program? See how it works for your residents and clients &rarr;</a></p>
 </section>
+<script nonce="{{ csp_nonce }}">
+(function () {
+    document.querySelectorAll('a[href*="/accounts/court/attendance/new/"]').forEach(function (el) {
+        el.addEventListener('click', function () { if (window.gtag) gtag('event', 'court_signup_click', { page: 'tracker' }); });
+    });
+})();
+</script>
 {% endblock %}
