@@ -137,3 +137,24 @@ class CourtPageClaimsTest(TestCase):
     def test_pricing_page_makes_no_acceptance_claim(self):
         resp = self.client.get(reverse('accounts:pricing'))
         self.assertNotContains(resp, 'Court-acceptable')
+
+
+class CourtPlanTextTest(TestCase):
+    """Stored plan text carries no acceptance claim (migration 0081)."""
+
+    def test_seeded_court_plans_make_no_acceptance_claim(self):
+        from apps.accounts.payment_models import SubscriptionPlan
+        plans = list(SubscriptionPlan.objects.filter(tier='court'))
+        self.assertTrue(plans)
+        for plan in plans:
+            text = ' '.join([plan.description, *plan.features]).lower()
+            self.assertNotIn('court-acceptable', text)
+            self.assertIn('verifiable pdf', text)
+
+    def test_reword_leaves_other_text_alone(self):
+        from importlib import import_module
+        reword = import_module('apps.accounts.migrations.0081_reword_court_plan_text').reword
+        self.assertEqual(reword('Everything in Premium'), 'Everything in Premium')
+        self.assertEqual(
+            reword('Save 25% vs monthly. Court-acceptable PDF attendance reports'),
+            'Save 25% vs monthly. Verifiable PDF attendance reports')
