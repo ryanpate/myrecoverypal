@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Court-Ordered AA/NA Meeting Tracker &mdash; Court-Acceptable PDF Reports{% endblock %}
+{% block title %}Court-Ordered AA/NA Meeting Tracker &mdash; Verifiable PDF Attendance Reports{% endblock %}
 {% block meta_description %}Log court-ordered AA, NA or SMART meetings free, get each one confirmed by the meeting chair's QR scan, and send your probation officer a tamper-evident PDF report for ${{ single_report_price|floatformat:2 }}.{% endblock %}
-{% block og_title %}Court-Ordered AA/NA Meeting Tracker &mdash; Court-Acceptable PDF Reports{% endblock %}
+{% block og_title %}Court-Ordered AA/NA Meeting Tracker &mdash; Verifiable PDF Attendance Reports{% endblock %}
 {% block og_description %}Log court-ordered AA, NA or SMART meetings free, get each one confirmed by the meeting chair's QR scan, and send your probation officer a tamper-evident PDF report for ${{ single_report_price|floatformat:2 }}.{% endblock %}
-{% block twitter_title %}Court-Ordered AA/NA Meeting Tracker &mdash; Court-Acceptable PDF Reports{% endblock %}
+{% block twitter_title %}Court-Ordered AA/NA Meeting Tracker &mdash; Verifiable PDF Attendance Reports{% endblock %}
 {% block twitter_description %}Log court-ordered AA, NA or SMART meetings free, get each one confirmed by the meeting chair's QR scan, and send your probation officer a tamper-evident PDF report for ${{ single_report_price|floatformat:2 }}.{% endblock %}
 
 {% block canonical_url %}https://www.myrecoverypal.com/court-ordered-meeting-tracker/{% endblock %}
@@ -58,7 +58,7 @@
       "name": "Will my court accept a PDF report instead of a signed paper card?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Most courts now accept digital documentation. The tamper-evident fingerprint and verification URL make the report strong evidence, and probation officers can confirm authenticity instantly. We recommend confirming with your specific PO that they accept email submissions. Self-reported entries are clearly flagged in the report."
+        "text": "Many courts and probation officers accept digital documentation, but not all, and some issue their own form. Check your court order or ask your probation officer before you rely on it. The tamper-evident fingerprint and verification URL let a probation officer confirm the report has not been altered. Self-reported entries are clearly flagged in the report."
       }
     },
     {
@@ -95,7 +95,7 @@
     <div style="max-width:900px; margin:auto;">
         <h1 style="font-size:2.6rem; font-weight:800; margin:0 0 1rem; color:#fff;">Court-Ordered Meeting Tracker</h1>
         <p style="font-size:1.25rem; opacity:.93; line-height:1.5; max-width:700px; margin:0 auto 2rem;">
-            Log AA, NA, SMART Recovery, and secular recovery meeting attendance. Generate court-acceptable PDF reports with tamper-evident fingerprints. Email them straight to your probation officer.
+            Log AA, NA, SMART Recovery, and secular recovery meeting attendance. Generate PDF attendance reports with tamper-evident fingerprints. Email them straight to your probation officer.
         </p>
         <a href="{% if user.is_authenticated %}{% url 'accounts:court_attendance_create' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:court_attendance_create' %}{% endif %}" style="display:inline-block; padding:1rem 2.5rem; background:var(--accent-green-strong); color:white; text-decoration:none; border-radius:var(--radius-btn, 10px); font-weight:700; font-size:1.1rem;">Start logging meetings free &rarr;</a>
         <p style="margin-top:1rem; font-size:0.95rem;">
@@ -108,8 +108,8 @@
 <section style="padding:4rem 1rem; background:var(--bg-light, #f7f9fc);">
     <div style="max-width:1000px; margin:auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:1.5rem;">
         <div style="background:var(--card-bg, #fff); padding:1.75rem; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
-            <h3 style="color:var(--brand-text, #1e4d8b);">&check; Court-Acceptable Format</h3>
-            <p>Reports include defendant name, case number, court, judge, meeting date/time/address/type, and signed attestation block. Same fields courts already expect on paper attendance cards.</p>
+            <h3 style="color:var(--brand-text, #1e4d8b);">&check; The Fields Courts Expect</h3>
+            <p>Reports include defendant name, case number, court, judge, meeting date/time/address/type, and signed attestation block. Same fields courts already expect on paper attendance cards. Requirements differ, so check with your probation officer which format they accept.</p>
         </div>
         <div style="background:var(--card-bg, #fff); padding:1.75rem; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
             <h3 style="color:var(--brand-text, #1e4d8b);">&check; Tamper-Evident Fingerprint</h3>
@@ -153,7 +153,7 @@
             <div style="background:var(--card-bg, #fff); border:1px solid #e3eaf3; border-radius:14px; padding:1.5rem;">
                 <h3 style="margin:0; color:var(--brand-text, #1e4d8b);">Log meetings</h3>
                 <p style="font-size:2rem; font-weight:800; margin:.5rem 0; color:var(--text-dark, #1a2a44);">Free</p>
-                <p style="margin:0; color:var(--text-muted, #555);">Unlimited meeting logs and chair QR confirmations. Your weekly pace at a glance.</p>
+                <p style="margin:0; color:var(--text-muted, #555);">Unlimited meeting logs and chair QR confirmations. Your weekly pace at a glance, and an evening reminder when you're behind.</p>
             </div>
             <div style="background:var(--card-bg, #fff); border:2px solid #52b788; border-radius:14px; padding:1.5rem;">
                 <h3 style="margin:0; color:var(--brand-text, #1e4d8b);">One verified report</h3>
@@ -163,7 +163,7 @@
             <div style="background:var(--card-bg, #fff); border:1px solid #e3eaf3; border-radius:14px; padding:1.5rem;">
                 <h3 style="margin:0; color:var(--brand-text, #1e4d8b);">Court Compliance</h3>
                 <p style="font-size:2rem; font-weight:800; margin:.5rem 0; color:var(--text-dark, #1a2a44);">${% firstof court_monthly_plan.price|floatformat:2 '29.99' %}<span style="font-size:1rem; font-weight:600;">/mo</span></p>
-                <p style="margin:0 0 .75rem; color:var(--text-muted, #555);">Unlimited reports, automatic monthly report to your PO, behind-pace reminders, plus everything in Premium.</p>
+                <p style="margin:0 0 .75rem; color:var(--text-muted, #555);">Unlimited reports, automatic monthly report to your PO, plus everything in Premium.</p>
                 <a href="{% url 'accounts:pricing' %}" style="color:var(--brand-text, #1e4d8b); font-weight:700;">See the plan &rarr;</a>
             </div>
         </div>
@@ -221,7 +221,7 @@
 
         <details style="background:var(--card-bg, #fff); padding:1rem 1.25rem; border-radius:10px; margin-bottom:.75rem;">
             <summary style="font-weight:600; cursor:pointer;">Will my court accept a PDF report instead of a signed paper card?</summary>
-            <p style="margin-top:.75rem;">Most courts now accept digital documentation, especially during/after COVID. The tamper-evident fingerprint and verification URL make this report stronger evidence than a paper card &mdash; and probation officers can confirm authenticity instantly. We recommend confirming with your specific PO that they accept email submissions before relying solely on this. Self-reported entries are clearly flagged in the report.</p>
+            <p style="margin-top:.75rem;">Many courts and probation officers accept digital documentation, but not all, and some issue their own form. Check your court order or ask your probation officer before you rely on it. The tamper-evident fingerprint and verification URL let a probation officer confirm the report has not been altered. Self-reported entries are clearly flagged in the report.</p>
         </details>
 
         <details style="background:var(--card-bg, #fff); padding:1rem 1.25rem; border-radius:10px; margin-bottom:.75rem;">
