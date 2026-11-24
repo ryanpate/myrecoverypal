@@ -12,6 +12,8 @@
 .cas-preview table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 0.78rem; }
 .cas-preview th { background: #1e4d8b; color: #fff; text-align: left; padding: 0.35rem 0.45rem; --heading-color: currentColor; }
 .cas-preview td { border: 1px solid #c9d3e0; height: 1.8rem; color: var(--text-dark, #333); padding: 0 0.45rem; }
+.cas-preview-hint { display: none; font-size: 0.85rem; color: var(--text-muted, #666); margin: 0.5rem 0 0; }
+@media (max-width: 640px) { .cas-preview-hint { display: block; } }
 .cas-preview caption { caption-side: top; text-align: left; font-weight: 700; color: var(--text-dark, #1a2a44); padding-bottom: 0.5rem; }
 .cas ol li { margin-bottom: 0.5rem; }
 .cas-upgrade { background: #0f2d56; color: #fff; border-radius: 16px; padding: 1.75rem; margin: 2.5rem 0; --heading-color: currentColor; }

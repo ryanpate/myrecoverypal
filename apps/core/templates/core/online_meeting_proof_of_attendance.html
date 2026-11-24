@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static humanize %}
 
 {% block title %}Proof of Attendance for Online AA Meetings (Court-Ordered){% endblock %}
 {% block meta_description %}How to get proof of attendance for court-ordered online AA and NA meetings on Zoom: ask the host in chat, keep a record, and have the host confirm each meeting with a link.{% endblock %}
@@ -90,7 +90,7 @@
 
     <h2>Find an online meeting now</h2>
     <p>
-        We list {{ online_count|default:"hundreds of" }} online AA meetings, with join links and times in your time zone.
+        We list {% if online_count %}{{ online_count|intcomma }}{% else %}hundreds of{% endif %} online AA meetings, with join links and times in your time zone.
         <a href="{% url 'core:online_aa_meetings' %}">See today&rsquo;s online AA meetings</a>.
     </p>
 

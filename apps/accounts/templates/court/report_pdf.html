@@ -39,6 +39,8 @@ table { width: 100%; border-collapse: collapse; margin-top: 0.1in; }
 th { background: #1e4d8b; color: white; text-align: left; padding: 5pt 6pt; font-size: 9pt; }
 td { padding: 4pt 6pt; border-bottom: 1px solid #e0e0e0; font-size: 9pt; vertical-align: top; }
 tr:nth-child(even) td { background: #fafafa; }
+/* Keep each meeting on one page: a row split across pages printed with empty cells. */
+tr { break-inside: avoid; page-break-inside: avoid; }
 .attestation {
     margin-top: 0.25in;
     padding: 10pt 12pt;
