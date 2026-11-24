@@ -629,3 +629,26 @@ class CourtCheckoutWebhookTest(TestCase):
 
         self.user.subscription.refresh_from_db()
         self.assertEqual(self.user.subscription.tier, 'court')
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class CourtDashboardWeekTest(TestCase):
+    """The dashboard's "this week" follows the member's local week, not UTC's."""
+
+    def test_sunday_evening_local_still_counts_this_weeks_meetings(self):
+        from datetime import timezone as dt_timezone
+        from unittest.mock import patch
+        user = User.objects.create_user(
+            username='weekly', email='weekly@example.com', password='pw')
+        user.timezone = 'America/Chicago'
+        user.save()
+        self.client.login(username='weekly', password='pw')
+        # Wednesday Nov 25, 7 PM Chicago
+        MeetingAttendance.objects.create(
+            user=user, meeting_name='Midweek',
+            meeting_date=datetime(2026, 11, 26, 1, 0, tzinfo=dt_timezone.utc))
+        # Sunday Nov 29, 8 PM Chicago is already Monday Nov 30 in UTC.
+        sunday_evening = datetime(2026, 11, 30, 2, 0, tzinfo=dt_timezone.utc)
+        with patch('django.utils.timezone.now', return_value=sunday_evening):
+            resp = self.client.get(reverse('accounts:court_dashboard'))
+        self.assertEqual(resp.context['this_week_count'], 1)
