@@ -10,7 +10,7 @@ Each finding is marked:
 - **Reported**: a named press or industry source said it.
 - **Inferred**: a pattern across several sources, or my judgement.
 
-TikTok and YouTube were not scanned. Instagram doesn't show view counts on the web, so the numbers below are likes, comments, reposts and shares. Shares are the one to watch: they are what carries a Reel to non-followers.
+YouTube was not scanned. TikTok was scanned the same day (section after Instagram). Instagram doesn't show view counts on the web, so the numbers below are likes, comments, reposts and shares. Shares are the one to watch: they are what carries a Reel to non-followers.
 
 ## Instagram scan (observed, 2026-11-24)
 
@@ -46,6 +46,41 @@ About 20 top results from #sobriety, #sobertok, #dryjanuary, #dui and a "court o
 4. **Dry January virality is comedy, and much of it is pro-drinking.** The biggest #dryjanuary posts are jokes with shares far above likes. A calm how-to won't go viral there. One dry, self-aware joke per week can ride the tag; the how-tos serve the people who joined.
 5. **DUI "what to do" Reels get more shares than likes.** Lawyers' practical videos (26K+ shares) show the court audience shares useful, specific steps. We can't give legal advice, but "the three non-legal things to do this week" fits the same shape.
 6. **Court-ordered recovery content is small but it starts arguments.** "You can't court order someone into recovery" drew 375 comments on 240 likes. Few people make practical court-attendance content at all; nobody in this sample did.
+
+## TikTok scan (observed, 2026-11-24)
+
+The #sobertok tag page plus video searches for court-ordered meetings, first DUI, Dry January, first sober Christmas, alcohol withdrawal timeline, why sobriety feels boring, and sober curious. TikTok's web search shows likes on each result but not views. Numbers below are likes unless marked; "shares" and "saves" come from opening the video.
+
+| Account | What it is | Likes | Other |
+|---------|-----------|-------|-------|
+| @barchemistry (Jan 2026) | "Happy Dry January", bartender joke | 242.5K | |
+| @whathappenedln (Jan 2026) | Comedy skit, paid brand ad, #dryjanuary | 164.7K | |
+| @goesbymeg (Jan 2025) | Dry January before/after face, "i have mixed feelings" | 91.6K | |
+| @corrinadunne (Dec 2024) | Fitness coach, "the sobriety steps" tips list for Dry January | 70.3K | |
+| @strongersobernikki (Sep 2026) | "0 days sober" → "500 days sober" transformation | 52K | 1.7K comments, 4.3K saves, 1.3K shares |
+| @carmen.strives (Oct 2026) | Nurse dancing to a trending sound, timeline written on screen: "What happens when you stop drinking alcohol for: 16 hr…" | 41.3K | 4.3K shares, 1.4K saves |
+| @davespeakstruth93 (Nov 2026) | Talking head, "Addiction is so much more than what you see" | 29.8K | 1.3K comments, 5.2K saves, 2.9K shares |
+| @eatlizabeth (Jan 2025) | "Things I wish I understood about my sobriety earlier" list | 24.3K | |
+| @evan.the.counselor (2022) | "Alcohol withdrawals can be deadly. Always consult a medical professional" | 18.6K | |
+| @theseanmobley (Nov 2026) | Podcast clip: "Getting sober is weird because… you don't have anybody to hang out with" | 17.7K | 2.2K saves, 1.6K shares |
+| @ztspeaks (Dec 2025) | "The alcohol withdrawal timeline nobody talks about" | 14.9K | |
+| @jailbirdonbond2 (Oct 2025) | "Wait I gotta get my paper signed!" #aa #dwi joke | 7,030 | Top court-ordered result |
+| @riwhey_orthehighway (2026) | "What feels like boredom in early sobriety is a lack of chaos" | 6,037 | Top boredom result |
+| @akincontempt (2021) / @criminallawbyroland (Mar 2026) | DUI lawyers: first-DUI penalties | 3,963 / 2,150 | Top DUI results |
+| @riwhey_orthehighway (Nov 2026) | "Surviving the Holidays Sober Pt 1" | 1,435 | 47 comments, 12 shares |
+| @thesoberglowwithheather (Dec 2024) | "My first sober Christmas" | 784 | Top first-sober-Christmas result |
+| @soberdad84 (2026) | Talking head, posts on every topic (withdrawal, boredom, evenings) | 58–592 | Consistent but small |
+| "court ordered" complaints (2025–26) | "meeting 11 of 30 court ordered… total bullshit", "required meetings are ableism" | 52–180 | |
+
+**What TikTok adds to the Instagram picture**
+
+1. **The withdrawal/body timeline is TikTok's strongest topic for us,** and it can be done without a face: the 41.3K video is a timeline written on screen over a trending sound. The top results all lead with "see a doctor", so the safety line doesn't cost reach.
+2. **Dry January on TikTok isn't only jokes.** Comedy and brand ads top it, but practical tip lists (70.3K) and before/after results (91.6K) are close behind, unlike Instagram. Day 15's "three things before Dry January" has a real audience here.
+3. **Boredom is smaller on TikTok** (top result 6K) than on Instagram (213K). Keep Day 26 as an Instagram-first video.
+4. **Loneliness is a recurring hook** ("nobody to hang out with", 1.6K shares; Instagram's midlife list says the same). Not yet in the scripts; it's the backup topic for a "repeat the winner" slot.
+5. **Holiday-sober content is small on TikTok** (top first-Christmas result 784 likes). Don't expect the December holiday scripts to travel far; "Pt 1" series framing is what the top one used.
+6. **Court-ordered TikTok is jokes and complaints.** The one that spread (7K) is a relatable joke about chasing a signature. Practical court content is again missing. DUI lawyers do far less on TikTok than on Instagram.
+7. **Transformation ("0 days → 500 days") is the biggest recovery format,** and it needs a real person's before and after. Not something this account can do in first person.
 
 ## Topics
 

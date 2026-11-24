@@ -22,6 +22,8 @@ Written 2026-11-24 with the `viral-content-strategist` skill. The research behin
 
 **Changed after the Instagram scan (2026-11-24).** Three scripts were swapped for formats the scan showed working (details in `viral-research-2026-11.md`): Day 18 is now a dry Dry January joke, because the tag's viral posts are comedy; Day 20 is now the DUI-lawyer "what to do this week" shape applied to meetings; Day 26 is now the "why early sobriety feels flat" explainer, the strongest recovery topic found. Two things the scan raised that are your call: the top recovery posts are on-camera faces, and the bigger accounts use comment-a-keyword CTAs ("comment SHEET and I'll send the link"), which need you or an auto-DM tool to send the links. Days 1, 20 and 26 note a keyword version to use if you set that up.
 
+**Changed after the TikTok scan (2026-11-24).** Day 2 (the 72-hour timeline) is now written as on-screen text over b-roll with a trending sound, the format of the biggest TikTok result for that topic. Day 25 is now a light joke about chasing a signature, then the fix, because that is the only court-ordered TikTok that spread. Day 27 has a backup topic (loneliness) if no format has clearly won. Expect less from the holiday scripts on TikTok, where first-sober-Christmas videos stay small; Day 26 (boredom) is an Instagram-first video.
+
 **How to judge them.** Court scripts: attendance-sheet downloads and tracker signups from `utm_campaign=court`. General scripts: shares and saves first (those drive non-follower reach), then clicks from `utm_campaign=video`. After week 2, look at 3-second hold and completion in each platform's analytics; the two "repeat the winner" slots (Days 27 and 30) re-cut whichever format won.
 
 ## Calendar
@@ -52,7 +54,7 @@ Written 2026-11-24 with the `viral-content-strategist` skill. The research behin
 | 22 | Mon Jan 4 | A report that can be checked | Screen recording | Court | Meeting tracker |
 | 23 | Tue Jan 5 | The sleep thing | Nobody tells you | General | Sobriety calculator |
 | 24 | Wed Jan 6 | An AI you can text at 2 AM | Screen recording | General | Anchor |
-| 25 | Thu Jan 7 | Three meetings around a work week | How-to | Court | Meeting finder |
+| 25 | Thu Jan 7 | The signature scramble | Joke, then the fix | Court | Attendance sheet |
 | 26 | Fri Jan 8 | Why early sobriety feels flat | Graph explainer | General | Sobriety calculator |
 | 27 | Sat Jan 9 | Repeat the winner (general) | Best so far | General | Same as original |
 | 28 | Sun Jan 10 | A medallion for week one | Screen recording | General | Medallion maker |
@@ -79,7 +81,7 @@ Destinations: attendance sheet `/court-ordered-meeting-attendance-sheet/` · mee
 
 ## Day 2 · Tue Dec 15 · The first 72 hours (general)
 
-**Format:** timeline · 30 s
+**Format:** timeline written on screen over b-roll · 30 s. On TikTok this is the strongest topic found (41.3K likes for a timeline written over a trending sound). Use a trending, calm sound on TikTok; each time stamp gets its own cut.
 **Hook** (0–2 s): text: "What your body does in the first 72 hours without alcohol."
 **Body**
 - 2–5 s: doctor line on screen for 3 seconds: "Drink heavily every day? Talk to a doctor before you stop. Withdrawal can be dangerous."
@@ -389,25 +391,25 @@ Destinations: attendance sheet `/court-ordered-meeting-attendance-sheet/` · mee
 **Caption:** Anchor is an AI recovery coach. It isn't therapy and won't pretend to be. Three free messages a day. In crisis, call or text 988. #sobertok #recovery #ai
 **Judge by:** Anchor clicks.
 
-## Day 25 · Thu Jan 7 · Three meetings around a work week (court)
+## Day 25 · Thu Jan 7 · The signature scramble (court)
 
-**Format:** how-to · 22 s
-**Hook** (0–2 s): a weekly planner. Text: "Need three meetings a week around a full-time job?"
+**Format:** relatable joke, then the fix · 18 s. The court-ordered video that spread on TikTok (7K likes) was a joke about chasing a signature. Laugh at the situation, never at the person or the meeting.
+**Hook** (0–2 s): chairs scraping, people standing (feet only). Text: "The meeting ends. Everyone stands up. You, holding a clipboard:"
 **Body**
-- 2–8 s: "Early morning. Many cities have 6 or 7 AM meetings before work."
-- 8–13 s: "Lunch. Some meetings run noon to one."
-- 13–18 s: "Online, evenings. Ask your probation officer whether online counts for you."
-**CTA** (18–22 s): "Meeting finder, filter by time. Link in bio."
-**Shots:** planner with three slots marked, a sunrise car windshield, a laptop at night.
-**Caption:** Early morning, lunch, or online in the evening. Check whether online counts for you. Meeting finder, link in bio. #courtordered #aameetings #probation
-**Judge by:** meeting-finder clicks, `court`.
+- 2–5 s: a hand holding a clipboard up, slightly too high. Text: "wait"
+- 5–11 s: cut to calm. "Easier way: ask the chair before the meeting starts. Each group decides whether it signs."
+- 11–14 s: "And bring a sheet with a row ready to fill in."
+**CTA** (14–18 s): "Free sheet, link in bio."
+**Shots:** feet and chairs, a clipboard raised, the sheet on a table.
+**Caption:** Ask before it starts, not after. Each group decides whether it signs. Free attendance sheet, link in bio. #courtordered #aa #dui
+**Judge by:** shares, sheet downloads, `court`.
 
 ## Day 26 · Fri Jan 8 · Why early sobriety feels flat (general)
 
 **Format:** graph explainer · 30 s. The strongest recovery topic in the scan (213K likes, 104K shares on one video). Draw our own graph; don't reuse @zeroproofjoy's graphic.
 **Hook** (0–2 s): big three-line title on screen: "Sobriety. And. Boredom."
 **Body**
-- 2–9 s: a line chart animates. Many coloured lines narrow to one. "Drinking narrows your life down to one thing."
+- 2–9 s: a line chart animates. Many colored lines narrow to one. "Drinking narrows your life down to one thing."
 - 9–15 s: "When you stop, it doesn't widen back out overnight. First there's a flat stretch, where nothing feels like much."
 - 15–22 s: lines slowly fan back out. "For a lot of people that flatness passes. Small things start to land again: a meal, a walk, a morning."
 - 22–26 s: "If you're in the flat part, you're not doing it wrong."
@@ -420,6 +422,7 @@ Destinations: attendance sheet `/court-ordered-meeting-attendance-sheet/` · mee
 ## Day 27 · Sat Jan 9 · Repeat the winner (general)
 
 Pick the general script with the best 3-second hold and completion so far. Re-cut it with a new hook in the same pattern, same CTA. If it's Day 9 (cravings), for example: "Your craving has about ten minutes. Here's how to win them." Keep the body; change only the first two seconds and the first frame.
+**If nothing has clearly won,** use the backup topic both scans turned up: loneliness. Hook: "Getting sober is weird. Your life gets better and you realize you don't have anyone to hang out with." Body: three places people find sober company (a meeting's coffee before and after, a sober-friendly class or run club, an online community). CTA: meeting finder.
 **Judge by:** compare hold rate against the original.
 
 ## Day 28 · Sun Jan 10 · A medallion for week one (general)
