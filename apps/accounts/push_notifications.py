@@ -349,7 +349,7 @@ def send_push_to_user(user, title, body, data=None):
             # otherwise a single bad run silently kills every device.
             if status == PUSH_INVALID:
                 device.deactivate()
-                logger.info(f"Deactivated invalid token for {user.username}")
+                logger.info(f"Deactivated invalid token for user {user.pk}")
 
     return results
 
@@ -518,8 +518,7 @@ class PushNotificationService:
         push_data['notification_type'] = notification_type
 
         # Log the push notification (always, for debugging)
-        logger.info(f"[PUSH] To: {recipient.email} | Type: {notification_type} | "
-                   f"Title: {title} | Body: {body}")
+        logger.info(f"[PUSH] To: user {recipient.pk} | Type: {notification_type}")
 
         # Send actual push notifications to all user's devices
         results = send_push_to_user(recipient, title, body, push_data)
@@ -528,7 +527,7 @@ class PushNotificationService:
         total_sent = sum(r['sent'] for r in results.values())
         total_failed = sum(r['failed'] for r in results.values())
         if total_sent > 0 or total_failed > 0:
-            logger.info(f"[PUSH RESULT] {recipient.email}: sent={total_sent}, failed={total_failed}")
+            logger.info(f"[PUSH RESULT] user {recipient.pk}: sent={total_sent}, failed={total_failed}")
 
         return True
 
@@ -800,8 +799,7 @@ class PushNotificationService:
             title = template.get('title', 'Meeting Reminder')
             body = f"{meeting_name} starts in 30 minutes"
 
-            logger.info(f"[PUSH] To: {user.email} | Type: meeting_reminder | "
-                       f"Title: {title} | Body: {body}")
+            logger.info(f"[PUSH] To: user {user.pk} | Type: meeting_reminder")
             send_push_to_user(user, title, body, {
                 'notification_type': 'meeting_reminder',
                 'link': notification.link,
@@ -869,8 +867,7 @@ class PushNotificationService:
             title = template.get('title', 'Your Recovery Pal Misses You')
             body = f"{pal_name} is thinking of you - time for a check-in?"
 
-            logger.info(f"[PUSH] To: {inactive_user.email} | Type: pal_nudge_inactive | "
-                       f"Title: {title} | Body: {body}")
+            logger.info(f"[PUSH] To: user {inactive_user.pk} | Type: pal_nudge_inactive")
 
         return notification
 
@@ -899,7 +896,6 @@ class PushNotificationService:
             title = template.get('title', 'Check on Your Recovery Pal')
             body = f"{pal_name} could use your support"
 
-            logger.info(f"[PUSH] To: {active_pal.email} | Type: pal_nudge | "
-                       f"Title: {title} | Body: {body}")
+            logger.info(f"[PUSH] To: user {active_pal.pk} | Type: pal_nudge")
 
         return notification

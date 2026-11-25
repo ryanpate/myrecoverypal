@@ -189,7 +189,7 @@ def send_weekly_shop_digest() -> int:
         if success:
             sent += 1
         else:
-            logger.warning('Weekly digest send failed for %s: %s', user.email, err)
+            logger.warning('Weekly digest send failed for user %s: %s', user.pk, err)
 
     return sent
 
@@ -241,5 +241,5 @@ def send_milestone_celebration_email(user, milestone_days: int) -> bool:
     if success:
         MilestoneEmailSent.objects.get_or_create(user=user, milestone_days=milestone_days)
         return True
-    logger.warning('Milestone email send failed for %s @ %dd: %s', user.email, milestone_days, err)
+    logger.warning('Milestone email send failed for user %s @ %dd: %s', user.pk, milestone_days, err)
     return False

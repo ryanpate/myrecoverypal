@@ -30,12 +30,12 @@ def send_welcome_email_day_1(self, user_id):
 
         # Skip if user disabled email notifications
         if not user.email_notifications:
-            logger.info(f"Skipping welcome email for {user.email} - notifications disabled")
+            logger.info(f"Skipping welcome email for user {user.pk} - notifications disabled")
             return False
 
         # Skip if already sent
         if user.welcome_email_1_sent:
-            logger.info(f"Welcome email 1 already sent to {user.email}")
+            logger.info(f"Welcome email 1 already sent to user {user.pk}")
             return False
 
         from .email_sequences import marketing_unsubscribe_url
@@ -58,12 +58,12 @@ def send_welcome_email_day_1(self, user_id):
         )
 
         if not success:
-            raise Exception(f"Failed to send welcome email to {user.email}: {error}")
+            raise Exception(f"Failed to send welcome email to user {user.pk}: {error}")
 
         user.welcome_email_1_sent = timezone.now()
         user.save(update_fields=['welcome_email_1_sent'])
 
-        logger.info(f"Welcome email Day 1 sent to {user.email}")
+        logger.info(f"Welcome email Day 1 sent to user {user.pk}")
         return True
 
     except User.DoesNotExist:
@@ -178,7 +178,7 @@ def send_onboarding_sequence_emails(self):
             time.sleep(0.5)
 
         except Exception as e:
-            logger.error(f"Error in onboarding sequence for {user.email}: {e}")
+            logger.error(f"Error in onboarding sequence for user {user.pk}: {e}")
 
     logger.info(
         f"Onboarding sequence: sent={sent_count}, skipped={skipped_count}, "
@@ -280,7 +280,7 @@ def send_reengagement_emails(self):
             time.sleep(0.5)
 
         except Exception as e:
-            logger.error(f"Error in re-engagement sequence for {user.email}: {e}")
+            logger.error(f"Error in re-engagement sequence for user {user.pk}: {e}")
 
     logger.info(f"Re-engagement sequence: sent={sent_count}")
     return {'sent': sent_count}
@@ -364,13 +364,13 @@ def send_checkin_reminders(self):
             )
 
             if not success:
-                raise Exception(f"Failed to send check-in reminder to {user.email}: {error}")
+                raise Exception(f"Failed to send check-in reminder to user {user.pk}: {error}")
 
             # In-app notification + push (iOS/Android/web)
             try:
                 PushNotificationService.notify_checkin_reminder(user, streak=streak)
             except Exception as push_err:
-                logger.warning(f"Check-in push failed for {user.email}: {push_err}")
+                logger.warning(f"Check-in push failed for user {user.pk}: {push_err}")
 
             user.last_checkin_reminder_sent = timezone.now()
             user.save(update_fields=['last_checkin_reminder_sent'])
@@ -381,7 +381,7 @@ def send_checkin_reminders(self):
 
         except Exception as e:
             failed_count += 1
-            logger.error(f"Error sending check-in reminder to {user.email}: {e}")
+            logger.error(f"Error sending check-in reminder to user {user.pk}: {e}")
 
     logger.info(f"Check-in reminders sent to {sent_count} users, {failed_count} failed")
     return sent_count
@@ -618,7 +618,7 @@ def send_weekly_digests(self):
             )
 
             if not success:
-                raise Exception(f"Failed to send weekly digest to {user.email}: {error}")
+                raise Exception(f"Failed to send weekly digest to user {user.pk}: {error}")
 
             user.last_weekly_digest_sent = timezone.now()
             user.save(update_fields=['last_weekly_digest_sent'])
@@ -629,7 +629,7 @@ def send_weekly_digests(self):
 
         except Exception as e:
             failed_count += 1
-            logger.error(f"Error sending weekly digest to {user.email}: {e}")
+            logger.error(f"Error sending weekly digest to user {user.pk}: {e}")
 
     logger.info(f"Weekly digests sent to {sent_count} users, {failed_count} failed, {skipped_count} skipped (no activity)")
     return sent_count
@@ -733,14 +733,14 @@ def send_meeting_reminders(self):
                 )
 
                 if not success:
-                    logger.warning(f"Failed to send meeting reminder email to {user.email}: {error}")
+                    logger.warning(f"Failed to send meeting reminder email to user {user.pk}: {error}")
 
                 # Update last reminder sent
                 bookmark.last_reminder_sent = now
                 bookmark.save(update_fields=['last_reminder_sent'])
                 sent_count += 1
 
-                logger.info(f"Meeting reminder sent to {user.email} for {meeting_name}")
+                logger.info(f"Meeting reminder sent to user {user.pk} for {meeting_name}")
 
                 # Small delay between emails
                 time.sleep(0.5)
@@ -851,7 +851,7 @@ def send_pal_accountability_nudges(self):
             )
 
             if not success:
-                logger.warning(f"Failed to send pal nudge email to inactive user {inactive_user.email}: {error}")
+                logger.warning(f"Failed to send pal nudge email to inactive user user {inactive_user.pk}: {error}")
 
             # Send nudge to active pal
             inactive_pal_name = inactive_user.first_name or inactive_user.username
@@ -883,14 +883,14 @@ def send_pal_accountability_nudges(self):
             )
 
             if not success:
-                logger.warning(f"Failed to send pal nudge email to active user {active_user.email}: {error}")
+                logger.warning(f"Failed to send pal nudge email to active user user {active_user.pk}: {error}")
 
             # Update tracking on inactive user
             inactive_user.last_pal_nudge_sent = now
             inactive_user.save(update_fields=['last_pal_nudge_sent'])
             sent_count += 1
 
-            logger.info(f"Pal accountability nudge sent: {inactive_user.email} (inactive) <-> {active_user.email} (active)")
+            logger.info(f"Pal accountability nudge sent: user {inactive_user.pk} (inactive) <-> user {active_user.pk} (active)")
 
             # Small delay between emails to avoid rate limiting
             time.sleep(0.5)
@@ -919,9 +919,9 @@ def send_invite_email_task(self, invite_code_id):
         success = invite_code.send_invite_email()
         
         if success:
-            logger.info(f"Successfully sent invite email to {invite_code.email}")
+            logger.info(f"Successfully sent invite email to invite {invite_code.pk}")
         else:
-            logger.warning(f"Failed to send invite email to {invite_code.email}")
+            logger.warning(f"Failed to send invite email to invite {invite_code.pk}")
             
         return success
     except InviteCode.DoesNotExist:
@@ -992,14 +992,14 @@ def send_premium_trial_nudge(self):
                 user.premium_nudge_sent = timezone.now()
                 user.save(update_fields=['premium_nudge_sent'])
                 sent_count += 1
-                logger.info(f"Sent premium nudge to {user.email}")
+                logger.info(f"Sent premium nudge to user {user.pk}")
             else:
                 failed_count += 1
-                logger.warning(f"Failed to send premium nudge to {user.email}")
+                logger.warning(f"Failed to send premium nudge to user {user.pk}")
 
         except Exception as e:
             failed_count += 1
-            logger.error(f"Error sending premium nudge to {user.email}: {e}")
+            logger.error(f"Error sending premium nudge to user {user.pk}: {e}")
 
     logger.info(f"Premium trial nudge: sent={sent_count}, failed={failed_count}")
     return {'sent': sent_count, 'failed': failed_count}
@@ -1085,7 +1085,7 @@ def send_trial_ending_notifications(self):
                 link='/accounts/keep-premium/',
             )
         except Exception as e:
-            logger.error(f"Error creating trial-ending notification for {user.email}: {e}")
+            logger.error(f"Error creating trial-ending notification for user {user.pk}: {e}")
 
         # Send email
         try:
@@ -1100,9 +1100,9 @@ def send_trial_ending_notifications(self):
 
             if success:
                 sent_count += 1
-                logger.info(f"Sent trial-ending notification to {user.email}")
+                logger.info(f"Sent trial-ending notification to user {user.pk}")
         except Exception as e:
-            logger.error(f"Error sending trial-ending email to {user.email}: {e}")
+            logger.error(f"Error sending trial-ending email to user {user.pk}: {e}")
 
     logger.info(f"Trial-ending notifications: sent={sent_count}")
     return {'sent': sent_count}
@@ -1155,7 +1155,7 @@ def expire_ended_trials(self):
                 link='/accounts/pricing/',
             )
         except Exception as e:
-            logger.error(f"Error creating trial-ended notification for {user.email}: {e}")
+            logger.error(f"Error creating trial-ended notification for user {user.pk}: {e}")
 
         try:
             name = user.first_name or user.username
@@ -1196,7 +1196,7 @@ def expire_ended_trials(self):
             send_email(subject=subject, plain_message=plain_message,
                        html_message=html_message, recipient_email=user.email)
         except Exception as e:
-            logger.error(f"Error sending trial-ended email to {user.email}: {e}")
+            logger.error(f"Error sending trial-ended email to user {user.pk}: {e}")
 
         downgraded_count += 1
 
@@ -1274,9 +1274,9 @@ def send_winback_offers(self):
                 sub.winback_sent_at = now
                 sub.save(update_fields=['winback_sent_at'])
                 sent_count += 1
-                logger.info(f"Sent win-back offer to {user.email}")
+                logger.info(f"Sent win-back offer to user {user.pk}")
         except Exception as e:
-            logger.error(f"Error sending win-back offer to {user.email}: {e}")
+            logger.error(f"Error sending win-back offer to user {user.pk}: {e}")
 
     logger.info(f"send_winback_offers: sent={sent_count}")
     return {'sent': sent_count}
@@ -1538,13 +1538,13 @@ def send_court_meeting_reminders():
                           'type': 'meeting_reminder'},
                 )
             except Exception as push_err:
-                logger.warning(f'Court reminder push failed for {user.email}: {push_err}')
+                logger.warning(f'Court reminder push failed for user {user.pk}: {push_err}')
 
             profile.last_meeting_reminder_sent = today
             profile.save(update_fields=['last_meeting_reminder_sent'])
             sent += 1
         except Exception as e:
-            logger.error(f'Court meeting reminder failed for {user.email}: {e}')
+            logger.error(f'Court meeting reminder failed for user {user.pk}: {e}')
 
     logger.info(f'Court meeting reminders sent: {sent}')
     return sent
@@ -1606,7 +1606,7 @@ def send_court_monthly_po_reports():
                     recipient_email=user.email,
                 )
             except Exception as e:
-                logger.error(f'Empty-month court notice email failed for {user.email}: {e}')
+                logger.error(f'Empty-month court notice email failed for user {user.pk}: {e}')
             try:
                 Notification.objects.create(
                     recipient=user, sender=user,
@@ -1615,14 +1615,14 @@ def send_court_monthly_po_reports():
                     message=message, link='/accounts/court/reports/',
                 )
             except Exception as e:
-                logger.error(f'Empty-month court notification failed for {user.email}: {e}')
+                logger.error(f'Empty-month court notification failed for user {user.pk}: {e}')
             continue
 
         try:
             report = generate_court_report(user, period_start, period_end)
             success, err = email_report_to_po(report, profile.probation_officer_email)
         except Exception as e:
-            logger.error(f'Auto PO report failed for {user.email}: {e}')
+            logger.error(f'Auto PO report failed for user {user.pk}: {e}')
             success, err = False, str(e)
 
         if success:
@@ -1651,7 +1651,7 @@ def send_court_monthly_po_reports():
                 title=title, message=message, link=link,
             )
         except Exception as e:
-            logger.error(f'Auto PO report notification failed for {user.email}: {e}')
+            logger.error(f'Auto PO report notification failed for user {user.pk}: {e}')
 
     logger.info(f'Court monthly PO reports sent: {sent}')
     return sent
