@@ -13,6 +13,11 @@ from django.utils.safestring import mark_safe
 
 from apps.support_services.hubs import PROGRAM_NAMES, US_STATES, hub_program, hub_url
 
+# Same picture as the site-wide og:image in templates/base.html.
+EVENT_IMAGE = 'https://www.myrecoverypal.com/static/images/og-image.png'
+PROGRAM_SITES = {'AA': 'https://www.aa.org/', 'NA': 'https://na.org/'}
+# Feeds often leave the end time out; nearly every meeting runs an hour.
+DEFAULT_LENGTH = timedelta(hours=1)
 SCHEMA_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 MODES = {
     'in_person': 'https://schema.org/OfflineEventAttendanceMode',
@@ -132,24 +137,30 @@ def meeting_event(request, meeting, schedule, page_url, now=None):
         location = _place(meeting)
 
     start = _next_start(meeting, now)
+    # Some feeds put a group number ("2209") in the group field; that names
+    # nobody, so fall back.
+    organizer = {'@type': 'Organization',
+                 'name': (meeting.group if meeting.group and not meeting.group.strip().isdigit()
+                          else PROGRAM_NAMES.get(meeting.program, meeting.display_name)),
+                 'url': meeting.website or PROGRAM_SITES.get(meeting.program, page_url)}
     event = {
         '@context': 'https://schema.org',
         '@type': 'Event',
         'name': meeting.display_name,
         'description': meeting.seo_description,
         'url': page_url,
+        'image': [EVENT_IMAGE],
         'startDate': start.isoformat(),
         'eventStatus': 'https://schema.org/EventScheduled',
         'eventAttendanceMode': MODES.get(mode, MODES['in_person']),
         'location': location,
         'isAccessibleForFree': True,
         'offers': {'@type': 'Offer', 'price': '0', 'priceCurrency': 'USD',
-                   'availability': 'https://schema.org/InStock', 'url': page_url},
-        'organizer': {'@type': 'Organization',
-                      # Some feeds put a group number ("2209") in the group
-                      # field; that names nobody, so fall back.
-                      'name': (meeting.group if meeting.group and not meeting.group.strip().isdigit()
-                               else PROGRAM_NAMES.get(meeting.program, meeting.display_name))},
+                   'availability': 'https://schema.org/InStock', 'url': page_url,
+                   'validFrom': (meeting.created_at or start).isoformat()},
+        'organizer': organizer,
+        # The group holds the meeting, so it is also who "performs" it.
+        'performer': organizer,
         'eventSchedule': [
             {'@type': 'Schedule',
              'byDay': f'https://schema.org/{SCHEMA_DAYS[slot.day]}',
@@ -162,6 +173,9 @@ def meeting_event(request, meeting, schedule, page_url, now=None):
     }
     if meeting.end_time:
         end = datetime.combine(start.date(), meeting.end_time, tzinfo=start.tzinfo)
-        if end > start:
-            event['endDate'] = end.isoformat()
+        if end <= start:  # runs past midnight
+            end += timedelta(days=1)
+    else:
+        end = start + DEFAULT_LENGTH
+    event['endDate'] = end.isoformat()
     return event

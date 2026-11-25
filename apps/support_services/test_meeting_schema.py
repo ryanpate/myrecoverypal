@@ -1,7 +1,7 @@
 """JSON-LD on meeting pages and hubs, and the sectioned sitemap index."""
 import json
 import re
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
 from django.test import TestCase, override_settings
@@ -71,6 +71,28 @@ class MeetingEventSchemaTests(TestCase):
         _meeting(slug='named', group='Sunrise Group')
         event = _blocks(self.client.get('/support/meetings/named/'))['Event']
         self.assertEqual(event['organizer']['name'], 'Sunrise Group')
+
+    def test_event_has_googles_recommended_fields(self):
+        _meeting(slug='full', group='Sunrise Group', program='AA')
+        event = _blocks(self.client.get('/support/meetings/full/'))['Event']
+        self.assertTrue(event['image'][0].startswith('https://'))
+        self.assertIn('validFrom', event['offers'])
+        self.assertEqual(event['performer']['name'], 'Sunrise Group')
+        self.assertEqual(event['organizer']['url'], 'https://www.aa.org/')
+        # No end time in the feed -> an hour after the start.
+        start = datetime.fromisoformat(event['startDate'])
+        self.assertEqual(datetime.fromisoformat(event['endDate']) - start, timedelta(hours=1))
+
+    def test_group_website_is_the_organizer_url(self):
+        _meeting(slug='site', website='https://sunrisegroup.org/')
+        event = _blocks(self.client.get('/support/meetings/site/'))['Event']
+        self.assertEqual(event['organizer']['url'], 'https://sunrisegroup.org/')
+
+    def test_end_time_past_midnight_ends_the_next_day(self):
+        _meeting(slug='late', time=time(23, 30), end_time=time(0, 30))
+        event = _blocks(self.client.get('/support/meetings/late/'))['Event']
+        start = datetime.fromisoformat(event['startDate'])
+        self.assertEqual(datetime.fromisoformat(event['endDate']) - start, timedelta(hours=1))
 
     def test_no_event_without_a_start_time(self):
         _meeting(slug='no-time', time=None)
