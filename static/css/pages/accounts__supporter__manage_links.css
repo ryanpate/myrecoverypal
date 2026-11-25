@@ -2,7 +2,7 @@
 .sc-page { max-width: 920px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
 .sc-hero {
   position: relative; overflow: hidden;
-  background: var(--gradient-primary, #1e4d8b);
+  background: var(--panel-ink);
   border-radius: 20px; padding: 2.25rem 2rem; color: #fff;
   box-shadow: 0 12px 30px rgba(30,77,139,.22);
   --heading-color: currentColor;
@@ -23,7 +23,7 @@
 .sc-card {
   display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
   background: var(--card-bg,#fff); border: 1px solid var(--border-color,#e8ecf1);
-  border-radius: 16px; padding: 1.1rem 1.25rem; margin-bottom: .85rem;
+  border-radius: var(--border-radius-lg); padding: 1.1rem 1.25rem; margin-bottom: .85rem;
   box-shadow: 0 2px 8px rgba(16,32,64,.05);
 }
 .sc-avatar {
@@ -47,7 +47,7 @@
 .sc-btn { border: none; border-radius: 10px; padding: .55rem .9rem; font-size: .85rem; font-weight: 600;
   cursor: pointer; transition: filter .15s ease; }
 .sc-btn:hover { filter: brightness(1.05); }
-.sc-btn.primary { background: var(--accent-green-strong, #2e8059); color: #fff; }
+.sc-btn.primary { background: var(--cta-bg, #2e8059); color: #fff; }
 .sc-btn.ghost { background: transparent; color: #b23b3b; border: 1px solid #ecc7c7; }
 
 /* Empty state */

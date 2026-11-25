@@ -1,7 +1,7 @@
 /* Styles for support_services/meeting_detail.html */
 .meeting-detail-card {
     background: var(--card-bg, #fff);
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     padding: 30px;
     margin-bottom: 30px;
     box-shadow: var(--shadow);

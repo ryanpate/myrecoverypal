@@ -1,6 +1,6 @@
 /* Styles for core/alcohol_recovery_app.html */
 .ar-hero {
-    background: #1e4d8b;
+    background: var(--panel-ink);
     padding: 5rem 2rem;
     text-align: center;
     color: white;
@@ -24,7 +24,7 @@
 .ar-hero .cta-button {
     display: inline-block;
     padding: 1rem 2.5rem;
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     text-decoration: none;
     border-radius: var(--radius-btn, 10px);
@@ -36,7 +36,7 @@
 
 .ar-hero .cta-button:hover {
     box-shadow: none;
-    background: var(--accent-green-strong-hover);
+    background: var(--cta-bg-hover);
 }
 
 .features-section {
@@ -46,7 +46,7 @@
 
 .features-section h2 {
     text-align: center;
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     font-size: 2.2rem;
     margin-bottom: 0.5rem;
 }
@@ -85,7 +85,7 @@
 }
 
 .feature-card h3 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 0.75rem;
 }
 
@@ -105,13 +105,13 @@
 }
 
 .content-section h2 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     font-size: 2rem;
     margin-bottom: 1.5rem;
 }
 
 .content-section h3 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     font-size: 1.4rem;
     margin: 2rem 0 1rem;
 }
@@ -141,7 +141,7 @@
 
 .testimonial-section h2 {
     text-align: center;
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     font-size: 2rem;
     margin-bottom: 2rem;
 }
@@ -196,7 +196,7 @@
 
 .faq-section h2 {
     text-align: center;
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     font-size: 2.2rem;
     margin-bottom: 2rem;
 }
@@ -214,7 +214,7 @@
 }
 
 .faq-item h3 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 0.75rem;
     font-size: 1.2rem;
 }
@@ -227,7 +227,7 @@
 
 .cta-section {
     padding: 5rem 2rem;
-    background: #1e4d8b;
+    background: var(--panel-ink);
     text-align: center;
     color: white;
     --heading-color: currentColor;
@@ -247,7 +247,7 @@
 .cta-section .cta-button {
     display: inline-block;
     padding: 1rem 3rem;
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     text-decoration: none;
     border-radius: var(--radius-btn, 10px);
@@ -257,7 +257,7 @@
 }
 
 .cta-section .cta-button:hover {
-    background: var(--accent-green-strong-hover);
+    background: var(--cta-bg-hover);
 }
 
 .cta-section .subtext {
@@ -273,7 +273,7 @@
 
 .related-links h3 {
     text-align: center;
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 1.5rem;
 }
 

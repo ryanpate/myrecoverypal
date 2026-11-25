@@ -51,7 +51,7 @@ body {
 }
 
 .get-app-card h1 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 1rem;
     font-size: 2rem;
 }
@@ -64,7 +64,7 @@ body {
 }
 
 .install-btn-large {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     border: none;
     color: white;
     padding: 18px 40px;
@@ -82,7 +82,7 @@ body {
 }
 
 .install-btn-large:hover {
-    background: var(--accent-green-strong-hover);
+    background: var(--cta-bg-hover);
     box-shadow: none;
 }
 

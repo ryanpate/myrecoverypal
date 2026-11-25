@@ -50,9 +50,9 @@
 }
 
 .btn-primary {
-    background: #52b788;
+    background: var(--cta-bg);
     border-color: #52b788;
-    border-radius: 10px;
+    border-radius: var(--radius-btn);
     padding: 0.75rem 2rem;
     font-weight: 600;
 }
@@ -65,7 +65,7 @@
 .info-card {
     background: #e8f4f8;
     border: 1px solid #bee5eb;
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     padding: 1.5rem;
     margin-bottom: 2rem;
     /* light surface in both themes: keep dark text */
@@ -76,7 +76,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
 }
 
 .pal-stats {

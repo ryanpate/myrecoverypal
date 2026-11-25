@@ -21,7 +21,7 @@
 .stat-card {
     background: var(--card-bg, #fff);
     padding: 1.5rem;
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow);
     text-align: center;
 }
@@ -54,7 +54,7 @@
 .sidebar-card {
     background: var(--card-bg, #fff);
     padding: 1.5rem;
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow);
     margin-bottom: 1.5rem;
 }
@@ -62,11 +62,11 @@
 .prompt-card {
     background: var(--bg-light, #f8f9fa);
     padding: 1.5rem;
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
 }
 
 .prompt-card h4 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 1rem;
 }
 
@@ -103,7 +103,7 @@
 }
 
 .btn-journal {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     padding: 0.75rem 2rem;
     text-decoration: none;

@@ -4,14 +4,14 @@
         border-radius: var(--border-radius-lg); padding: 1rem 1.2rem; margin-bottom: 1.25rem; text-decoration: none;
         color: var(--text-dark); background: var(--card-bg); border: 1px solid var(--border-color);
         transition: border-color var(--dur-fast) var(--ease-out); }
-    .pg-home-card:hover { color: var(--text-dark); border-color: var(--accent-green-strong); }
+    .pg-home-card:hover { color: var(--text-dark); border-color: var(--cta-bg); }
     .pg-home-icon { font-size: 1.9rem; line-height: 1; }
     .pg-home-text { flex: 1 1 200px; }
     .pg-home-text strong { display: block; font-size: 1.02rem; }
     .pg-home-text span { font-size: 0.88rem; color: var(--text-muted); }
     .pg-home-bar { height: 6px; border-radius: 999px; background: var(--bg-gray); margin-top: 0.45rem; overflow: hidden; }
-    .pg-home-bar > span { display: block; height: 100%; background: var(--accent-green-strong); border-radius: 999px; }
-    .pg-home-cta { font-weight: 700; white-space: nowrap; color: var(--accent-green-strong); }
+    .pg-home-bar > span { display: block; height: 100%; background: var(--cta-bg); border-radius: 999px; }
+    .pg-home-cta { font-weight: 700; white-space: nowrap; color: var(--cta-bg); }
     [data-theme="dark"] .pg-home-cta { color: var(--accent-green); }
 </style>
 <a class="pg-home-card" href="{% if progress and progress.next_status == 'current' %}{% url 'resources:program_day' program.slug progress.next_day %}{% else %}{% url 'resources:program_detail' program.slug %}{% endif %}">

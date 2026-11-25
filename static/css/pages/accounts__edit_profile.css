@@ -16,7 +16,7 @@
 }
 
 .profile-header h1 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
@@ -63,7 +63,7 @@
 }
 
 .form-section h3 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 1rem;
     font-size: 1.3rem;
     display: flex;
@@ -117,7 +117,7 @@
 }
 
 .recovery-info h4 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;

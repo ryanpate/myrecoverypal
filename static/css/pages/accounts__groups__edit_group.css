@@ -1,7 +1,7 @@
 /* Styles for accounts/groups/edit_group.html */
 .form-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     padding: 2rem;
     box-shadow: var(--shadow);
     margin-bottom: 2rem;
@@ -19,7 +19,7 @@
 }
 
 .section-title {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -59,9 +59,9 @@
 }
 
 .btn-primary {
-    background: #52b788;
+    background: var(--cta-bg);
     border-color: #52b788;
-    border-radius: 10px;
+    border-radius: var(--radius-btn);
     padding: 0.75rem 2rem;
     font-weight: 600;
 }

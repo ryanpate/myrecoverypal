@@ -17,7 +17,7 @@
 .subscribe-card {
     background: var(--card-bg, #fff);
     padding: 3rem;
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow);
 }
 

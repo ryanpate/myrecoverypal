@@ -103,7 +103,7 @@ body {
     padding: 1rem 1.25rem;
     background: var(--bg-light, #f8f9fa);
     border: 2px solid transparent;
-    border-radius: 14px;
+    border-radius: var(--border-radius-lg);
     cursor: pointer;
     transition: var(--transition-ui);
 }

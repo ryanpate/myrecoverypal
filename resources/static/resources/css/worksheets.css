@@ -91,18 +91,19 @@
 .ws-inline-form { display: inline; margin: 0; }
 
 .ws-upsell {
-    border-radius: 14px; padding: 1.2rem 1.3rem; margin: 1.5rem 0;
-    background: #2e8059; color: #fff;
+    border-radius: var(--border-radius-lg, 20px); padding: 1.5rem 1.6rem; margin: 1.5rem 0;
+    background: var(--panel-ink, #0e1322); color: #fff;
     --heading-color: currentColor;
 }
 .ws-upsell h3 { margin: 0 0 0.5rem; font-size: 1.1rem; color: #fff; }
 .ws-upsell ul { margin: 0 0 1rem 1.1rem; padding: 0; line-height: 1.6; }
 .ws-upsell a.ws-upsell-btn {
-    display: inline-block; background: var(--card-bg, #fff); color: #2d6a4f; font-weight: 700;
+    /* white in both themes: it sits on the ink panel */
+    display: inline-block; background: #fff; color: #0e1322; font-weight: 700;
     padding: 0.6rem 1.3rem; border-radius: var(--radius-btn, 10px); text-decoration: none;
 }
 
-.ws-tip { border-left: 4px solid var(--accent-color, #52b788); padding: 0.6rem 1rem; margin: 1rem 0; opacity: 0.9; }
+.ws-tip { background: var(--bg-gray, #eef1f6); border-radius: var(--border-radius, 10px); padding: 0.8rem 1rem; margin: 1rem 0; }
 .ws-history h3 { font-size: 1.05rem; margin: 2rem 0 0.6rem; }
 .ws-history ul { list-style: none; padding: 0; margin: 0; }
 .ws-history li { padding: 0.55rem 0; border-bottom: 1px solid rgba(128,128,128,0.2); display: flex; justify-content: space-between; gap: 1rem; }
@@ -113,7 +114,7 @@
 .ws-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
 .ws-card {
     display: flex; flex-direction: column; gap: 0.4rem;
-    border: 1px solid rgba(128,128,128,0.25); border-radius: 14px; padding: 1.2rem;
+    border: 1px solid rgba(128,128,128,0.25); border-radius: var(--border-radius-lg); padding: 1.2rem;
     text-decoration: none; color: inherit; transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .ws-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); color: inherit; }
@@ -137,8 +138,8 @@
 
 /* Daily reflection library */
 .rf-today {
-    border-radius: 16px; padding: 1.6rem 1.6rem 1.4rem; margin-bottom: 1.5rem; color: #fff;
-    background: #1e4d8b;
+    border-radius: var(--border-radius-xl, 28px); padding: 2rem 2rem 1.75rem; margin-bottom: 1.5rem; color: #fff;
+    background: var(--panel-ink, #0e1322);
     --heading-color: currentColor;
 }
 .rf-today .rf-eyebrow { font-size: 0.75rem; font-weight: 700;opacity: 0.9; }

@@ -9,7 +9,7 @@
 /* Form Card */
 .milestone-form-card {
     background: var(--card-bg, #fff);
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow);
     overflow: hidden;
 }
@@ -31,7 +31,7 @@
 }
 
 .suggestions-header h4 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     font-size: 1.1rem;
     font-weight: 600;
     margin: 0;
@@ -290,7 +290,7 @@ textarea.form-control {
 }
 
 .btn-primary {
-    background: #2e8059;
+    background: var(--cta-bg);
     color: white;
     flex: 1;
     justify-content: center;

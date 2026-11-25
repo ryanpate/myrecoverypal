@@ -7,19 +7,19 @@
 <div class="container" style="max-width: 500px; margin: 3rem auto; padding: 0 1rem;">
 
     {% if invite_only and settings.waitlist_enabled %}
-    <div style="background: #2e8059; padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: center;">
+    <div style="background: var(--footer-bg, #0e1322); padding: 1.5rem; border-radius: 20px; margin-bottom: 1.5rem; text-align: center;">
         <h3 style="color: white; margin: 0 0 0.5rem 0; font-size: 1.15rem;">Don't have an invite code?</h3>
         <p style="color: white; margin: 0 0 0.85rem 0; font-size: 0.9rem;">
             Join our waitlist to get early access.
         </p>
         <a href="{% url 'accounts:request_access' %}"
-            style="display: inline-block; background: #fff; color: #1e4d8b; padding: 0.6rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none;">
+            style="display: inline-block; background: #fff; color: #0e1322; padding: 0.6rem 1.5rem; border-radius: 999px; font-weight: 600; text-decoration: none;">
             Request Access &rarr;
         </a>
     </div>
     {% endif %}
 
-    <div style="background: var(--card-bg, #fff); color: var(--text-dark, #333); padding: 2rem 1.75rem; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+    <div style="background: var(--card-bg, #fff); color: var(--text-dark, #333); padding: 2rem 1.75rem; border-radius: 20px; box-shadow: var(--shadow);">
 
         {% if invite_only %}
             {# INVITE-ONLY MODE: keep the full form path unchanged. #}

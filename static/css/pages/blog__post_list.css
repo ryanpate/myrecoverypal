@@ -41,10 +41,10 @@
 
 /* Featured CTA Box */
 .featured-cta {
-    background: #1e4d8b;
+    background: var(--panel-ink);
     color: white;
     padding: 2.5rem 2rem;
-    border-radius: 12px;
+    border-radius: var(--border-radius-xl);
     text-align: center;
     margin-bottom: 2rem;
     box-shadow: none;
@@ -120,7 +120,7 @@
 }
 
 .filter-tab.active {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     border-color: #52b788;
 }
@@ -153,7 +153,7 @@
 
 .post-card {
     background: var(--card-bg, #fff);
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow);
     transition: var(--transition-ui);
@@ -247,7 +247,7 @@
 }
 
 .post-title:hover {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
 }
 
 .post-excerpt {
@@ -273,7 +273,7 @@
 }
 
 .sidebar-section h5 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 1rem;
     font-size: 1.1rem;
 }
@@ -338,7 +338,7 @@
     right: 5px;
     top: 50%;
     transform: translateY(-50%);
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     border: none;
     color: white;
     padding: 0.5rem 1rem;
@@ -348,7 +348,7 @@
 }
 
 .search-box button:hover {
-    background: var(--accent-green-strong-hover);
+    background: var(--cta-bg-hover);
 }
 
 .blog-pagination-wrapper a:hover {

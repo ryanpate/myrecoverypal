@@ -1,9 +1,9 @@
 /* Styles for accounts/pricing.html */
 .habit-value { max-width: 860px; margin: 1.5rem auto 3rem; }
-.habit-value-title { font-size: 1.35rem; font-weight: 800; color: var(--brand-text, #1e4d8b); margin-bottom: 1.25rem; }
+.habit-value-title { font-size: 1.35rem; font-weight: 600; color: var(--text-dark); margin-bottom: 1.25rem; }
 .habit-value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: left; }
 .habit-value-item { display: flex; flex-direction: column; gap: 0.3rem; background: var(--card-bg, #fff);
-    border: 1px solid #e3eaf3; border-radius: 12px; padding: 1rem 1.1rem; }
+    border: 0; background: var(--bg-gray); border-radius: var(--border-radius-lg); padding: 1.1rem 1.25rem; }
 .habit-value-item strong { color: var(--text-dark, #1a2a44); }
 .habit-value-item span { color: var(--text-muted, #555); font-size: 0.9rem; line-height: 1.45; }
 .habit-value-note { color: var(--text-muted, #888); font-size: 0.85rem; margin: 1rem 0 0; }
@@ -17,8 +17,6 @@
     .habit-value-item span { display: none; }
     .plan-col-premium { order: -1; }
 }
-[data-theme="dark"] .habit-value-title { color: #8ab4f8; }
-[data-theme="dark"] .habit-value-item { background: #1e2430; border-color: #2e3949; }
 [data-theme="dark"] .habit-value-item strong { color: #e8eef7; }
 [data-theme="dark"] .habit-value-item span { color: #aab4c3; }
 /* Two-tier width standard — grid/browse tier */
@@ -93,12 +91,12 @@ h2.display-4 { font-variant-numeric: tabular-nums; }
     color: var(--brand-text, #1e4d8b);
 }
 .toggle-save {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: #fff;
     font-size: 0.65rem;
     font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
     margin-left: 4px;
     vertical-align: middle;
 }
@@ -115,10 +113,10 @@ h2.display-4 { font-variant-numeric: tabular-nums; }
 /* Dark mode card overrides */
 [data-theme="dark"] .card.shadow-sm .card-header.bg-light,
 [data-theme="dark"] .card.shadow-sm .card-footer.bg-light {
-    background-color: #2d2d2d !important;
+    background-color: var(--bg-light) !important;
 }
 [data-theme="dark"] .card .card-body.bg-white {
-    background-color: #1e1e1e !important;
+    background-color: var(--card-bg) !important;
 }
 [data-theme="dark"] .card .card-body.text-dark {
     color: #e0e0e0 !important;
@@ -127,10 +125,6 @@ h2.display-4 { font-variant-numeric: tabular-nums; }
 [data-theme="dark"] .card .card-header h2 {
     color: inherit !important;
 }
-[data-theme="dark"] .card .card-header.bg-light h3,
-[data-theme="dark"] .card .card-header.bg-light h2 {
-    color: #8ab4f8 !important;
-}
 [data-theme="dark"] .card .card-header.bg-light .text-muted {
     color: #adb5bd !important;
 }
@@ -138,5 +132,33 @@ h2.display-4 { font-variant-numeric: tabular-nums; }
 .faq { max-width: 760px; margin: 3rem auto 0; }
 .faq-row { border-top: 1px solid var(--border-color, #e5e7eb); }
 .faq-row:last-child { border-bottom: 1px solid var(--border-color, #e5e7eb); }
-.faq-row summary { min-height: 44px; padding: 0.85rem 0.25rem; font-weight: 600; color: var(--brand-text, #1e4d8b); cursor: pointer; }
+.faq-row summary { min-height: 44px; padding: 0.85rem 0.25rem; font-weight: 600; color: var(--text-dark); cursor: pointer; }
 .faq-row p { margin: 0; padding: 0 0.25rem 1rem; max-width: 65ch; color: var(--text-dark, #2c3e50); line-height: 1.6; }
+
+/* ---- Plan cards ----
+   Free and the other plans are quiet tiles. Premium is the one ink panel on
+   the page, with the warm glow used for the gift band and the day counter. */
+/* padding:0 so the header and footer run to the card's edge, not a box inside a box */
+.pricing .card { padding: 0; border: 0; border-radius: var(--border-radius-xl); overflow: hidden; box-shadow: var(--shadow); }
+.pricing .card.border-primary { box-shadow: var(--shadow), 0 30px 60px -30px rgba(14, 19, 34, 0.5); }
+.pricing .card-header, .pricing .card-footer { border: 0; padding: 2rem; }
+.pricing .card-body { padding: 2rem; }
+.pricing .card-header h3 { margin: 0 0 0.25rem !important; font-size: 1.05rem; font-weight: 600; letter-spacing: 0; }
+.pricing h2.display-4 { font-size: clamp(2.6rem, 5vw, 3.6rem); font-weight: 600; letter-spacing: -0.04em; line-height: 1.1; }
+.pricing h2.display-4 small { font-size: 1rem; font-weight: 400; letter-spacing: 0; }
+
+.pricing .plan-premium-head,
+.pricing .plan-premium-foot { background: var(--footer-bg, #0e1322) !important; color: #fff; --heading-color: #fff; }
+.pricing .plan-premium-head { position: relative; overflow: hidden; }
+.pricing .plan-premium-head::after { content: ""; position: absolute; right: -25%; top: -60%; width: 90%; height: 200%; pointer-events: none;
+    background: radial-gradient(closest-side, rgba(255, 205, 130, 0.3), transparent); }
+.pricing .plan-premium-head > * { position: relative; z-index: 1; }
+.pricing .plan-premium-head .badge { border-radius: 999px; padding: 0.4em 0.85em; font-weight: 700; }
+.pricing .plan-premium-head .badge-warning { background: #ffd9a0; color: #2a1703; }
+.pricing .plan-trial-badge { background: rgba(255, 255, 255, 0.14) !important; color: #fff; }
+/* The one light button on the ink panel. */
+.pricing .plan-premium-foot .btn,
+.pricing .plan-premium-foot .btn:hover { background: #fff; color: #0e1322 !important; }
+.pricing .plan-premium-foot .btn:hover { background: #e9edf5; }
+.pricing .plan-premium-foot .btn:disabled { background: rgba(255, 255, 255, 0.16); color: #fff !important; }
+.pricing .card-footer .btn { width: 100%; }

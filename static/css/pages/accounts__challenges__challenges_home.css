@@ -34,7 +34,7 @@
 
 .challenge-card {
     border: none;
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow);
     transition: var(--transition-ui);
     height: 100%;

@@ -14,7 +14,7 @@
 }
 
 .auth-header h1 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 0.5rem;
 }
 

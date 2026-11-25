@@ -131,7 +131,7 @@
 .cta-button {
     display: inline-block;
     padding: 0.75rem 2rem;
-    background: var(--accent-color);
+    background: var(--cta-bg);
     color: white;
     text-decoration: none;
     border-radius: var(--radius-btn, 10px);
@@ -169,7 +169,7 @@
 
 .category-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     padding: 2rem;
     border: 1px solid var(--border-color, #e5e7eb);
     box-shadow: var(--shadow);
@@ -259,7 +259,7 @@
 
 .featured-card {
     background: var(--card-bg, #fff);
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     padding: 1.5rem;
     box-shadow: var(--shadow);
     transition: var(--transition-ui);
@@ -276,7 +276,7 @@
 }
 
 .featured-card h3 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 0.75rem;
 }
 
@@ -311,7 +311,7 @@
 
 .resource-title {
     font-weight: 600;
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     font-size: 1.1rem;
     text-decoration: none;
 }

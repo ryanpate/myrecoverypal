@@ -28,7 +28,7 @@
 }
 
 .coming-soon-container h2 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 1.5rem;
 }
 
@@ -54,17 +54,17 @@
 }
 
 .btn-primary {
-    background: #52b788;
+    background: var(--cta-bg);
     border-color: #52b788;
     padding: 12px 30px;
     font-size: 1.1rem;
-    border-radius: 5px;
+    border-radius: var(--radius-btn);
     transition: var(--transition-ui);
     margin-top: 2rem;
 }
 
 .btn-primary:hover {
-    background: #45a675;
+    background: var(--cta-bg-hover);
     border-color: #45a675;
 }
 

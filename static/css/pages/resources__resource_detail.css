@@ -17,7 +17,7 @@
 
 .resource-main-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow);
     overflow: hidden;
 }
@@ -99,7 +99,7 @@
     align-items: center;
     gap: 0.75rem;
     padding: 1rem 2.5rem;
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     text-decoration: none;
     border-radius: var(--radius-btn, 10px);

@@ -25,7 +25,7 @@
 
 .service-card {
     background: var(--card-bg, #fff);
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     padding: 25px;
     margin-bottom: 20px;
     box-shadow: var(--shadow);

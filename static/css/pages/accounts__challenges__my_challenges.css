@@ -40,7 +40,7 @@
 .stat-card {
     text-align: center;
     padding: 1.5rem;
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     background: #f8f9fc;
     margin-bottom: 1rem;
 }
@@ -93,7 +93,7 @@
 
 .challenge-card {
     border: 1px solid var(--border-color, #e9ecef);
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     transition: var(--transition-ui);
@@ -166,10 +166,10 @@
 }
 
 .btn-check-in {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     padding: 0.5rem 1rem;
-    border-radius: 8px;
+    border-radius: var(--radius-btn);
     border: none;
     font-weight: 500;
     cursor: pointer;
@@ -180,7 +180,7 @@
 }
 
 .btn-check-in:hover {
-    background: var(--accent-green-strong-hover);
+    background: var(--cta-bg-hover);
     transform: translateY(-1px);
     color: white;
     text-decoration: none;
@@ -253,23 +253,23 @@
 }
 
 .rarity-1 {
-    border-left: 4px solid #28a745;
+    border: 1px solid #28a745;
 }
 
 .rarity-2 {
-    border-left: 4px solid #17a2b8;
+    border: 1px solid #17a2b8;
 }
 
 .rarity-3 {
-    border-left: 4px solid #ffc107;
+    border: 1px solid #ffc107;
 }
 
 .rarity-4 {
-    border-left: 4px solid #fd7e14;
+    border: 1px solid #fd7e14;
 }
 
 .rarity-5 {
-    border-left: 4px solid #dc3545;
+    border: 1px solid #dc3545;
 }
 
 .completed-challenges {

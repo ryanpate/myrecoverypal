@@ -41,7 +41,7 @@
     text-decoration: none;
     transition: var(--transition-ui);
 }
-.ckdone-btn.primary { background: var(--accent-green-strong); color: #fff; }
+.ckdone-btn.primary { background: var(--cta-bg); color: #fff; }
 .ckdone-btn.primary:hover { transform: var(--lift-hover); box-shadow: var(--shadow-accent); }
 .ckdone-btn.outline { background: var(--surface-card); color: var(--brand-text, #1e4d8b); border: 1.5px solid var(--color-primary); }
 .ckdone-btn.outline:hover { transform: var(--lift-hover); }

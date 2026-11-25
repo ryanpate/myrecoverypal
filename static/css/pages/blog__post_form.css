@@ -25,7 +25,7 @@
 
 .paste-tip h5 {
     margin: 0 0 0.5rem 0;
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     font-size: 1.1rem;
 }
 

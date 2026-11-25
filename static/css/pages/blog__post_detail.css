@@ -288,7 +288,7 @@
 .related-post-card {
     background: var(--bg-light, #f8f9fa);
     padding: 1.5rem;
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     text-decoration: none;
     color: var(--text-dark, #333);
     transition: var(--transition-ui);
