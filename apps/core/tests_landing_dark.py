@@ -27,4 +27,4 @@ class LandingDarkModeTest(TestCase):
 
     def test_signup_buttons_keep_white_text_in_dark_mode(self):
         self.assertIn('[data-theme="dark"] .ml a.ml-btn--primary', self.css)
-        self.assertIn('[data-theme="dark"] .ml a.ml-btn--premium', self.css)
+        self.assertIn('[data-theme="dark"] .ml a.ml-btn--light', self.css)

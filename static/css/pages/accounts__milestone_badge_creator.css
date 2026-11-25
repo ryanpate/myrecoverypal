@@ -322,7 +322,7 @@
     --heading-color: currentColor;
 }
 .btn-share {
-    background: #2e8059;
+    background: var(--cta-bg);
     color: white;
     --heading-color: currentColor;
 }
@@ -564,7 +564,7 @@
     color: #fff;
     border: none;
     padding: 0.55rem 1rem;
-    border-radius: 8px;
+    border-radius: var(--radius-btn);
     font-size: 0.82rem;
     font-weight: 700;
     cursor: pointer;

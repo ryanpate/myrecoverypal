@@ -34,7 +34,7 @@
 }
 
 .cookie-section h3 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 1.5rem;
 }
 
@@ -104,7 +104,7 @@
 }
 
 .important-note h4 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 0.5rem;
 }
 

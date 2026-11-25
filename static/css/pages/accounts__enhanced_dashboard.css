@@ -246,7 +246,7 @@
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     display: flex;
     align-items: center;
@@ -291,7 +291,7 @@
 }
 
 .mood-option.selected {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     border-color: #52b788;
 }
@@ -394,11 +394,11 @@
 }
 
 .follow-suggestion-btn {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     border: none;
     padding: 0.5rem 1rem;
-    border-radius: 6px;
+    border-radius: var(--radius-btn);
     font-size: 0.85rem;
     cursor: pointer;
     transition: var(--transition-ui);

@@ -105,7 +105,7 @@
     font-family: var(--font-sans);
     font-weight: 700;
     border-radius: var(--radius-btn, 10px);
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: #fff;
     transition: var(--transition-ui);
     padding: 0.8rem 1.6rem;

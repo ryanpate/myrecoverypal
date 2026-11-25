@@ -178,7 +178,7 @@
 
 .facility-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     padding: 25px;
     box-shadow: var(--shadow);
     transition: var(--transition-ui);

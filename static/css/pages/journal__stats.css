@@ -21,12 +21,12 @@
 .stat-card {
     background: var(--card-bg, #fff);
     padding: 2rem;
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow);
 }
 
 .stat-card h3 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 1.5rem;
 }
 

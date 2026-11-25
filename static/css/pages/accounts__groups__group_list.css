@@ -65,7 +65,7 @@
 }
 
 .filter-chip.active {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     border-color: #52b788;
     transform: translateY(-2px);
@@ -229,7 +229,7 @@
 }
 
 .join-btn.primary {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
 }
 

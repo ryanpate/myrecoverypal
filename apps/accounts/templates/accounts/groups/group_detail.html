@@ -50,7 +50,7 @@
 
     .info-card {
         background: var(--card-bg, #fff);
-        border-radius: 15px;
+        border-radius: var(--border-radius-lg);
         padding: 2rem;
         box-shadow: var(--shadow);
         margin-bottom: 2rem;
@@ -66,7 +66,7 @@
     .member-card {
         background: var(--card-bg, #fff);
         border: 2px solid var(--border-color, #e0e0e0);
-        border-radius: 10px;
+        border-radius: var(--border-radius-lg);
         padding: 1rem;
         text-align: center;
         transition: var(--transition-ui);
@@ -142,7 +142,7 @@
     }
 
     .join-btn.primary {
-        background: var(--accent-green-strong);
+        background: var(--cta-bg);
         color: white;
     }
 
@@ -185,7 +185,7 @@
     /* Post card styling (matching social feed) */
     .post-card {
         background: var(--card-bg, #fff);
-        border-radius: 12px;
+        border-radius: var(--border-radius-lg);
         margin-bottom: 1rem;
         box-shadow: var(--shadow);
         overflow: hidden;
@@ -500,7 +500,7 @@
     }
 
     .edit-modal-save {
-        background: var(--accent-green-strong);
+        background: var(--cta-bg);
         border: none;
         color: white;
     }

@@ -31,7 +31,7 @@
 
 .group-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     padding: 0;
     box-shadow: var(--shadow);
     transition: var(--transition-ui);
@@ -153,7 +153,7 @@
 }
 
 .btn-primary {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
 }
 
@@ -194,7 +194,7 @@
 
 .stat-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     padding: 2rem;
     text-align: center;
     box-shadow: var(--shadow);

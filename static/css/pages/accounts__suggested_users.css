@@ -1,7 +1,7 @@
 /* Styles for accounts/suggested_users.html */
 .user-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     padding: 1.5rem;
     box-shadow: var(--shadow);
     margin-bottom: 1.5rem;
@@ -37,7 +37,7 @@
 }
 
 .user-card h5 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 0.5rem;
 }
 
@@ -57,11 +57,11 @@
 
 .btn-follow {
     width: 100%;
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     border: none;
     padding: 0.75rem;
-    border-radius: 8px;
+    border-radius: var(--radius-btn);
     font-weight: 600;
     transition: var(--transition-ui);
     display: inline-flex;

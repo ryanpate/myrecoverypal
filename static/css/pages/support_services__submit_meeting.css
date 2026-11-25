@@ -8,7 +8,7 @@
 }
 
 .form-section h3 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 2px solid var(--border-color, #f0f0f0);
@@ -86,7 +86,7 @@
 }
 
 .btn-submit {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     padding: 12px 30px;
     border: none;
@@ -98,7 +98,7 @@
 }
 
 .btn-submit:hover {
-    background: var(--accent-green-strong-hover);
+    background: var(--cta-bg-hover);
     box-shadow: none;
 }
 

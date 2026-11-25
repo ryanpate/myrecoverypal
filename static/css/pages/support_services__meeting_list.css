@@ -10,7 +10,7 @@
     /* the meeting name link stretches over the whole row */
     position: relative;
     background: var(--card-bg, #fff);
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     padding: 20px;
     margin-bottom: 20px;
     box-shadow: var(--shadow);

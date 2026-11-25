@@ -27,7 +27,7 @@
 }
 
 .filter-tab.active {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     border-color: #52b788;
 }
@@ -47,7 +47,7 @@
 
 .member-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     padding: 1.5rem;
     box-shadow: var(--shadow);
     transition: transform 0.3s, box-shadow 0.3s;
@@ -183,7 +183,7 @@
 }
 
 .follow-btn.follow {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
 }
 

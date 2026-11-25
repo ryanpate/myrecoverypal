@@ -134,67 +134,118 @@
 {% block content %}
 <div class="ml">
 
-  <!-- HERO -->
-  <header class="ml-hero">
-    <div class="ml-container ml-hero-inner">
-      <div class="ml-hero-text">
-        <h1 class="ml-h1">Count your sober days alongside people in recovery</h1>
-        <p class="ml-lead">Join a community that actually gets it. Track your days, hit milestones, and find people who show up &mdash; whether you&rsquo;re 1 day or 10 years in.</p>
-        {# The visitor's own counter, before any signup. Nothing leaves the browser; the date rides into signup on the button below. #}
-        <div class="ml-count" id="ml-count">
-          <label class="ml-count-q" for="ml-count-date">When was your last drink or use?</label>
-          <div class="ml-count-row">
-            <input type="date" id="ml-count-date">
-            <button type="button" class="ml-count-today" id="ml-count-today">Today is day one</button>
-          </div>
-          <div class="ml-count-result" id="ml-count-result" hidden aria-live="polite">
-            <div class="ml-count-num"><span id="ml-count-days"></span> <small id="ml-count-unit"></small></div>
-            <p id="ml-count-next"></p>
-            <label class="ml-count-spend" for="ml-count-spend">I used to spend $
-              <input type="number" id="ml-count-spend" min="0" step="1" inputmode="decimal" placeholder="15"> a day</label>
-            <p class="ml-count-kept" id="ml-count-kept" hidden></p>
-            {# Implies a price, so stripe-only (hidden in the iOS app). #}
-            <p class="ml-count-premium stripe-only" id="ml-count-premium" hidden{% if premium_yearly_plan %} data-yearly="{{ premium_yearly_plan.price|floatformat:2 }}"{% endif %}>
-              <span id="ml-count-premium-text"></span>
-              <a href="{% url 'accounts:pricing' %}" data-promo="landing_hero_counter_premium">See what it adds</a>
-            </p>
-          </div>
-        </div>
-        <div class="ml-cta-row">
-          <a class="ml-btn ml-btn--lg ml-btn--primary js-carry-date" href="{% url 'accounts:register' %}" id="ml-count-cta"><span id="ml-count-cta-text">Claim your free spot</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-          <a class="ml-text-link" href="#ml-toolkit" data-promo="landing_hero_new">See the recovery toolkit</a>
-        </div>
-        <ul class="ml-trust">
-          <li><i class="fas fa-circle-check" aria-hidden="true"></i> Free to join</li>
-          <li><i class="fas fa-circle-check" aria-hidden="true"></i> No ads, ever</li>
-          <li><i class="fas fa-circle-check" aria-hidden="true"></i> Private &amp; secure</li>
-        </ul>
-      </div>
-      <div class="ml-hero-media">
-        <div class="ml-phone">
-          <div class="ml-phone-shell">
-            <div class="ml-phone-screen">
-              <img src="{% static 'images/screens/mobile-checkin.png' %}" alt="MyRecoveryPal app — daily mood check-in and days sober" width="1320" height="2868">
-            </div>
-          </div>
-          <div class="ml-chip ml-chip--medal">
-            <span class="ml-chip-icon ml-chip-icon--gold"><i class="fas fa-medal" aria-hidden="true"></i></span>
-            <div>
-              <div id="ml-chip-medal-label" style="font-size:1.05rem;font-weight:800;line-height:1.05;color:var(--ml-primary);">8 years</div>
-              <div id="ml-chip-medal-sub" style="font-size:.72rem;color:var(--ml-text-muted);margin-top:2px;">medallion unlocked</div>
-            </div>
-          </div>
+  {# The visitor's own counter, before any signup. Nothing leaves the browser unless they ask for milestone emails; the date rides into signup on the links marked js-carry-date. #}
+  <div id="ml-count">
+    <header class="ml-hero">
+      <div class="ml-container">
+        <h1 class="ml-h1">Your next medallion is closer than you think</h1>
+        <div class="ml-since">
+          <label for="ml-count-date">Sober since</label>
+          <input type="date" id="ml-count-date">
+          <button type="button" class="ml-since-today" id="ml-count-today">Today is day one</button>
         </div>
       </div>
-    </div>
-  </header>
+      <div class="ml-stage">
+        <div class="ml-wheel" id="ml-wheel" role="group" aria-label="Milestone medallions. Choose one to see its date.">
+          {% for stop in wheel %}<button type="button" class="ml-coin{% if forloop.first %} is-on{% endif %}"{% if stop.days %} data-days="{{ stop.days }}"{% else %} data-years="{{ stop.years }}"{% endif %}{% if not forloop.first and forloop.counter != 2 and not forloop.last %} tabindex="-1"{% endif %}>
+            <img src="{% static 'images/badges/home/'|add:stop.img|add:'.webp' %}" alt="" width="400" height="400"{% if forloop.counter > 3 and not forloop.last %} loading="lazy"{% endif %}>
+            <span class="ml-coin-cap"><b>{{ stop.n }}</b><span>{{ stop.unit }}</span></span>
+          </button>{% endfor %}
+        </div>
+      </div>
+    </header>
 
-  <!-- TOOLKIT: what's inside, as one plain list. No current screenshots exist to show instead. -->
-  <section id="ml-toolkit" class="ml-container ml-section">
-    <div class="ml-section-head">
-      <h2 class="ml-h2">Your recovery toolkit</h2>
-      <p>Guided help for the hard moments and the everyday ones. Start free; Premium opens all of it.</p>
+    <div class="ml-claim">
+      <div class="ml-container">
+        <p class="ml-when" id="ml-count-result" aria-live="polite"><span id="ml-count-what">Enter your date</span> <span class="ml-when-rest" id="ml-count-next">to see when you earn your next medallion</span></p>
+        {# No account needed: apps/accounts/counter_emails.py (double opt-in). Without JS the form posts normally. #}
+        <form class="ml-email" id="ml-email-form" method="post" action="{% url 'accounts:counter_email_signup' %}">
+          {% csrf_token %}
+          <input type="hidden" name="kind" value="sober">
+          <input type="hidden" name="start_date" id="ml-email-date">
+          <input type="hidden" name="timezone" id="ml-email-tz">
+          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="ml-email-hp">
+          <div class="ml-email-row">
+            <input type="email" name="email" id="ml-email-input" required autocomplete="email" placeholder="you@example.com" aria-label="Your email address">
+            <button type="submit" class="ml-btn ml-btn--primary">Email me my milestones</button>
+          </div>
+        </form>
+        <p class="ml-claim-note"><span id="ml-email-msg" role="status">Milestone days only. One tap to stop.</span>
+          Or <a class="ml-link js-carry-date" href="{% url 'accounts:register' %}" id="ml-count-cta">save your counter with a free account</a></p>
+      </div>
     </div>
+
+    <section class="ml-worth" aria-label="What your sober days have saved">
+      <div class="ml-container">
+        <p class="ml-worth-line">At $<input type="number" id="ml-count-spend" min="1" max="999" step="1" inputmode="decimal" value="15" aria-label="Dollars you used to spend each day"> a day, <span id="ml-count-lead">you&rsquo;ll keep</span> <output id="ml-count-kept" for="ml-count-spend ml-count-date">$105</output> <span id="ml-count-tail">in your first week</span></p>
+        {# Implies a price, so stripe-only (hidden in the iOS app). #}
+        <p class="ml-count-premium stripe-only" id="ml-count-premium" hidden{% if premium_yearly_plan %} data-yearly="{{ premium_yearly_plan.price|floatformat:2 }}"{% endif %}><span id="ml-count-premium-text"></span></p>
+        <div class="ml-cta-row">
+          <a class="ml-btn ml-btn--primary" href="{% url 'accounts:pricing' %}" data-promo="landing_hero_counter_premium">Try Premium free for 7 days</a>
+          <a class="ml-link" href="#ml-toolkit" data-promo="landing_hero_new">See the recovery toolkit</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- A DAY IN RECOVERY -->
+  <section id="ml-hours" class="ml-container ml-section">
+    <h2 class="ml-h2">Help for the hour you need it</h2>
+    <p class="ml-lede">Recovery doesn&rsquo;t keep office hours. Neither does this.</p>
+    <div class="ml-hours">
+      <article class="ml-hour ml-hour--night">
+        <div class="ml-hour-sky"><time>2:14 AM</time><span>Can&rsquo;t sleep, craving hard</span></div>
+        <div class="ml-hour-body">
+          <h3 class="ml-h3">Anchor, an AI coach that&rsquo;s awake</h3>
+          <p>Something to talk to when no one else is up. Not therapy, and never judging.</p>
+          <div class="ml-ui" aria-hidden="true">
+            <p class="ml-bubble ml-bubble--me">I keep thinking about the bar down the street.</p>
+            <p class="ml-bubble">That pull is real, and it passes. Ten minutes of urge surfing with me first?</p>
+            <span class="ml-eg">Example conversation</span>
+          </div>
+          <a class="ml-link" href="{% url 'core:ai_recovery_coach' %}" data-promo="landing_hours_anchor">Meet Anchor</a>
+        </div>
+      </article>
+      <article class="ml-hour ml-hour--dawn">
+        <div class="ml-hour-sky"><time>7:00 AM</time><span>A new day to keep</span></div>
+        <div class="ml-hour-body">
+          <h3 class="ml-h3">One tap to pledge, one minute to check in</h3>
+          <p>Your streak, mood and cravings build into trends you can read.</p>
+          <div class="ml-ui" aria-hidden="true">
+            <p class="ml-pledge"><i></i>I&rsquo;ll stay sober today</p>
+            <div class="ml-week"><b></b><b></b><b class="is-off"></b><b></b><b></b><b></b><b class="is-off"></b></div>
+          </div>
+          <a class="ml-link js-carry-date" href="{% url 'accounts:register' %}" data-promo="landing_hours_pledge">Start my counter</a>
+        </div>
+      </article>
+      <article class="ml-hour ml-hour--dusk">
+        <div class="ml-hour-sky"><time>6:45 PM</time><span>The hardest hour of the day</span></div>
+        <div class="ml-hour-body">
+          <h3 class="ml-h3">A meeting, and people who get it</h3>
+          <p>AA and NA meetings online and near you, plus a community feed that notices when you show up.</p>
+          <a class="ml-link" href="{% url 'support_services:meeting_list' %}" data-promo="landing_hours_meetings">Find a meeting</a>
+          <a class="ml-link" href="{% url 'core:craving_sos' %}" data-promo="landing_hours_sos">Craving right now? Open Craving SOS</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- MEDALLION DESIGNS -->
+  <section class="ml-container ml-section ml-designs">
+    <div>
+      <h2 class="ml-h2">24 designs, one for every kind of person</h2>
+      <p class="ml-lede">Classic bronze, stained glass, a lighthouse, a phoenix. Pick yours, add your date and share it, or keep it to yourself.</p>
+      <p class="ml-designs-cta"><a class="ml-btn ml-btn--primary" href="{% url 'core:sobriety_medallion_maker' %}" data-promo="landing_toolkit_medallion">Open the medallion maker</a></p>
+    </div>
+    <div class="ml-design-grid">
+      {% for name in designs %}<img src="{% static 'images/badges/home/'|add:name|add:'.webp' %}" alt="{{ name|capfirst }} medallion design" width="220" height="220" loading="lazy">{% endfor %}
+    </div>
+  </section>
+
+  <!-- TOOLKIT: what's inside, as one plain list. -->
+  <section id="ml-toolkit" class="ml-container ml-section">
+    <h2 class="ml-h2">Everything in your recovery toolkit</h2>
+    <p class="ml-lede">Guided help for the hard moments and the everyday ones. Start free; Premium opens all of it.</p>
     <ul class="ml-list">
         <li>
           <a href="{% url 'resources:audio' %}" data-promo="landing_toolkit_audio">Guided audio</a>
@@ -222,11 +273,6 @@
           <p>Something to talk to at 2am when the craving hits. Not therapy, and never judging.</p>
         </li>
         <li>
-          <a href="{% url 'core:sobriety_medallion_maker' %}" data-promo="landing_toolkit_medallion">Milestone medallions</a>
-          <span class="ml-list-note">Free</span>
-          <p>Mark 30 days, a year and beyond with a medallion you can share.</p>
-        </li>
-        <li>
           <a href="{% url 'core:craving_sos' %}" data-promo="landing_toolkit_sos">Craving SOS</a>
           <span class="ml-list-note">Always free</span>
           <p>Breathing, grounding, meetings starting soon and the 988 crisis line. No account needed.</p>
@@ -244,29 +290,39 @@
     </ul>
   </section>
 
+  <!-- GIFT: states a price, so stripe-only (hidden in the iOS app). -->
+  <section class="ml-container ml-section stripe-only">
+    <div class="ml-gift">
+      <div>
+        <h2 class="ml-h2">Give someone their first year</h2>
+        <p class="ml-lede">A prepaid year of Premium with a printable card.{% if premium_yearly_plan %} ${{ premium_yearly_plan.price|floatformat:2 }} once, and it never renews.{% else %} Paid once, and it never renews.{% endif %} No account needed to buy.</p>
+        <p class="ml-gift-cta"><a class="ml-btn ml-btn--light" href="{% url 'core:gift_premium' %}" data-promo="landing_plans_gift">Gift a year</a></p>
+      </div>
+      <img src="{% static 'images/badges/home/artdeco.webp' %}" alt="" width="400" height="400" loading="lazy">
+    </div>
+  </section>
+
   <!-- FREE vs PREMIUM -->
   <section id="ml-plans" class="ml-container ml-section">
-    <div class="ml-section-head" style="margin-left:auto;margin-right:auto;text-align:center;">
-      <h2 class="ml-h2">Start free, upgrade when you&rsquo;re ready</h2>
-      <p>The community, your counter and every safety tool stay free. Premium adds the full library and a coach.</p>
-    </div>
+    <h2 class="ml-h2">Start free, upgrade when you&rsquo;re ready</h2>
+    <p class="ml-lede">The community, your counter and every safety tool stay free. No ads, ever.</p>
     {% include 'accounts/_founding_offer_banner.html' with slot='landing' %}
     <div class="ml-plan-grid">
-      <div class="ml-card ml-plan">
-        <h3>Free</h3>
+      <div class="ml-plan">
+        <h3 class="ml-h3">Free</h3>
         <div class="ml-plan-price">$0 <small>forever</small></div>
         <ul>
-          <li><i class="fas fa-check" aria-hidden="true"></i> {% if SHOW_GROUPS_CHALLENGES_SPONSORS %}Community feed, groups, messaging &amp; challenges{% else %}Community feed &amp; private messaging{% endif %}</li>
-          <li><i class="fas fa-check" aria-hidden="true"></i> Sobriety counter, daily check-in &amp; pledge</li>
-          <li><i class="fas fa-check" aria-hidden="true"></i> Craving SOS and free guided audio</li>
-          <li><i class="fas fa-check" aria-hidden="true"></i> Today&rsquo;s reflection &amp; the first week of every program</li>
-          <li><i class="fas fa-check" aria-hidden="true"></i> Worksheets to fill in and print</li>
-          <li><i class="fas fa-check" aria-hidden="true"></i> 3 Anchor messages a day</li>
+          <li>{% if SHOW_GROUPS_CHALLENGES_SPONSORS %}Community feed, groups, messaging &amp; challenges{% else %}Community feed &amp; private messaging{% endif %}</li>
+          <li>Sobriety counter, daily check-in &amp; pledge</li>
+          <li>Craving SOS and free guided audio</li>
+          <li>Today&rsquo;s reflection &amp; the first week of every program</li>
+          <li>Worksheets to fill in and print</li>
+          <li>3 Anchor messages a day</li>
         </ul>
-        <a class="ml-btn ml-btn--outline" href="{% url 'accounts:register' %}" data-promo="landing_plans_free">Join free</a>
+        <a class="ml-btn ml-btn--light js-carry-date" href="{% url 'accounts:register' %}" data-promo="landing_plans_free">Join free</a>
       </div>
-      <div class="ml-card ml-plan ml-plan--premium">
-        <h3>Premium <span class="ml-badge ml-badge--premium">7-day free trial</span></h3>
+      <div class="ml-plan ml-plan--premium">
+        <h3 class="ml-h3">Premium <span class="ml-plan-trial">7-day free trial</span></h3>
         {% if premium_yearly_plan or premium_monthly_plan %}
         <div class="ml-plan-price stripe-only">
           {% if premium_yearly_plan %}${{ premium_yearly_plan.price|floatformat:2 }} <small>/ year</small>{% else %}${{ premium_monthly_plan.price|floatformat:2 }} <small>/ month</small>{% endif %}
@@ -274,32 +330,20 @@
         {% if premium_yearly_plan and premium_monthly_plan %}<div class="ml-plan-note stripe-only">or ${{ premium_monthly_plan.price|floatformat:2 }} monthly. Cancel anytime.</div>{% endif %}
         {% endif %}
         <ul>
-          <li><i class="fas fa-check" aria-hidden="true"></i> <span><strong>Everything in Free</strong>, plus:</span></li>
-          <li><i class="fas fa-check" aria-hidden="true"></i> Every guided program, start to finish</li>
-          <li><i class="fas fa-check" aria-hidden="true"></i> The full audio library: sleep, morning, body scan &amp; reflections read aloud</li>
-          <li><i class="fas fa-check" aria-hidden="true"></i> All 30 daily reflections, favorites &amp; journaling</li>
-          <li><i class="fas fa-check" aria-hidden="true"></i> Saved worksheets + your Recovery Workbook PDF</li>
-          <li><i class="fas fa-check" aria-hidden="true"></i> Anchor AI coach, 20 messages a day</li>
-          <li><i class="fas fa-check" aria-hidden="true"></i> Mood &amp; craving trends, milestone medallions, and a free Supporter seat for a loved one</li>
+          <li><span><strong>Everything in Free</strong>, plus:</span></li>
+          <li>Every guided program, start to finish</li>
+          <li>The full audio library: sleep, morning, body scan &amp; reflections read aloud</li>
+          <li>All 30 daily reflections, favorites &amp; journaling</li>
+          <li>Saved worksheets + your Recovery Workbook PDF</li>
+          <li>Anchor AI coach, 20 messages a day</li>
+          <li>Mood &amp; craving trends, milestone medallions, and a free Supporter seat for a loved one</li>
         </ul>
         <a class="ml-btn ml-btn--primary" href="{% url 'accounts:pricing' %}" data-promo="landing_plans_premium">Start your free trial</a>
-        <a class="ml-plan-more" href="{% url 'accounts:pricing' %}" data-promo="landing_plans_compare">Compare all plans</a>
-        <a class="ml-plan-more stripe-only" href="{% url 'core:gift_premium' %}" data-promo="landing_plans_gift">Buying for someone else? Gift a year</a>
+        <a class="ml-link ml-plan-more" href="{% url 'accounts:pricing' %}" data-promo="landing_plans_compare">Compare all plans</a>
       </div>
     </div>
-  </section>
-
-  <!-- FINAL CTA -->
-  <section class="ml-final">
-    <div class="ml-final-panel">
-      <img src="{% static 'images/logo-white.svg' %}" alt="" aria-hidden="true" width="56" height="56">
-      <h2>Heal together, grow together</h2>
-      <p>Joining is free, and it stays free. Come build this community with us.</p>
-      <div class="ml-final-cta">
-        <a class="ml-btn ml-btn--lg ml-btn--primary" href="{% url 'accounts:register' %}">Claim your free spot <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-        <a class="ml-btn ml-btn--lg ml-btn--ghost" href="{% url 'core:get_app' %}"><i class="fab fa-apple" aria-hidden="true"></i> Get the app</a>
-      </div>
-    </div>
+    <p class="ml-plans-foot">Court-ordered to attend meetings? <a class="ml-link" href="{% url 'core:court_ordered_meeting_tracker' %}" data-promo="landing_plans_court">See how attendance reports work</a>.
+      On an iPhone? <a class="ml-link" href="{% url 'core:get_app' %}" data-promo="landing_plans_app">Get the app</a>.</p>
   </section>
 
 </div>
@@ -313,15 +357,18 @@ document.addEventListener('click', function (e) {
 });
 </script>
 <script nonce="{{ csp_nonce }}">
-// Hero counter. Same day math, milestones and localStorage keys as the
-// calculators, so a date or daily spend entered on either follows the visitor
-// to signup and to the pricing page.
+// Hero counter and medallion wheel. Same localStorage keys as the calculators,
+// so a date or daily spend entered on either follows the visitor to signup and
+// to the pricing page.
 (function () {
   var input = document.getElementById('ml-count-date');
-  if (!input) return;
+  var wheel = document.getElementById('ml-wheel');
+  if (!input || !wheel) return;
   var spend = document.getElementById('ml-count-spend');
-  var MILESTONES = [[1, '1 Day'], [7, '1 Week'], [14, '2 Weeks'], [30, '1 Month'], [60, '2 Months'],
-    [90, '90 Days'], [180, '6 Months'], [365, '1 Year'], [730, '2 Years'], [1825, '5 Years']];
+  var coins = Array.prototype.slice.call(wheel.querySelectorAll('.ml-coin'));
+  var STEP = 360 / coins.length;
+  var rot = 0, picked = 0;
+
   function el(id) { return document.getElementById(id); }
   function iso(d) {
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -329,8 +376,10 @@ document.addEventListener('click', function (e) {
   function stored(key) { try { return localStorage.getItem(key) || ''; } catch (e) { return ''; } }
   function store(key, value) { try { localStorage.setItem(key, value); } catch (e) {} }
   function track(name, params) { if (typeof gtag === 'function') gtag('event', name, params || {}); }
+  function plural(n, word) { return n + ' ' + word + (n === 1 ? '' : 's'); }
 
   var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   var todayISO = iso(now);
   input.max = todayISO;
 
@@ -342,56 +391,80 @@ document.addEventListener('click', function (e) {
       - Date.UTC(+p[0], +p[1] - 1, +p[2])) / 86400000);
   }
 
-  // The next milestone as {label, on}; past five years it's the next anniversary.
-  function nextMilestone(date, days) {
+  // The day a medallion is earned: a day count, or a calendar anniversary.
+  function earnedOn(coin, date) {
     var p = date.split('-');
-    for (var i = 0; i < MILESTONES.length; i++) {
-      if (MILESTONES[i][0] > days) {
-        return { label: MILESTONES[i][1], on: new Date(+p[0], +p[1] - 1, +p[2] + MILESTONES[i][0]) };
-      }
-    }
-    var years = now.getFullYear() - (+p[0]);
-    var on = new Date(+p[0] + years, +p[1] - 1, +p[2]);
-    if (iso(on) <= todayISO) { years += 1; on = new Date(+p[0] + years, +p[1] - 1, +p[2]); }
-    return { label: years + ' Years', on: on };
+    return coin.dataset.days
+      ? new Date(+p[0], +p[1] - 1, +p[2] + (+coin.dataset.days))
+      : new Date(+p[0] + (+coin.dataset.years), +p[1] - 1, +p[2]);
+  }
+  function label(coin) {
+    return coin.querySelector('b').textContent + ' ' + coin.querySelector('.ml-coin-cap span').textContent;
   }
 
-  function renderSpend(days) {
-    var amount = parseFloat(spend.value) || 0;
-    var kept = el('ml-count-kept');
-    kept.hidden = !(amount > 0 && days > 0);
-    if (!kept.hidden) {
-      kept.textContent = "That's about $" + Math.round(amount * days).toLocaleString() + ' you\u2019ve kept.';
+  // Past the first year, the year medallions count up from the next anniversary.
+  function relabelYears(date) {
+    var p = date.split('-');
+    var done = now.getFullYear() - (+p[0]);
+    if (iso(new Date(+p[0] + done, +p[1] - 1, +p[2])) > todayISO) done -= 1;
+    var first = Math.max(1, done + 1);
+    coins.filter(function (c) { return !c.dataset.days; }).forEach(function (coin, i) {
+      var n = first + i;
+      coin.dataset.years = n;
+      coin.querySelector('b').textContent = n;
+      coin.querySelector('.ml-coin-cap span').textContent = n === 1 ? 'year' : 'years';
+    });
+  }
+
+  function show(i) {
+    picked = i;
+    rot += ((-i * STEP - rot + 540) % 360 + 360) % 360 - 180;   // shortest way round
+    wheel.style.setProperty('--ml-rot', rot + 'deg');
+    coins.forEach(function (coin, k) {
+      var gap = Math.min(Math.abs(k - i), coins.length - Math.abs(k - i));
+      coin.classList.toggle('is-on', k === i);
+      coin.tabIndex = gap <= 1 ? 0 : -1;   // only the medallions on screen take keyboard focus
+      coin.setAttribute('aria-label', label(coin));
+    });
+    var date = input.value;
+    el('ml-count-what').textContent = label(coins[i]);
+    if (daysSince(date) < 0) {
+      el('ml-count-next').textContent = 'medallion. Enter your date to see when you earn it';
+      return;
     }
+    var on = earnedOn(coins[i], date);
+    var left = Math.round((on - today) / 86400000);
+    var opts = { month: 'long', day: 'numeric' };
+    if (on.getFullYear() !== now.getFullYear()) opts.year = 'numeric';
+    var day = on.toLocaleDateString(undefined, opts);
+    el('ml-count-next').textContent = left > 1 ? 'on ' + day + ', ' + left + ' days from now'
+      : left === 1 ? 'tomorrow' : left === 0 ? 'is today. You earned it' : 'earned on ' + day;
+  }
+
+  function renderSpend() {
+    var days = Math.max(0, daysSince(input.value));
+    var amount = parseFloat(spend.value) || 0;
+    el('ml-count-lead').textContent = days ? 'you’ve kept' : 'you’ll keep';
+    el('ml-count-kept').textContent = '$' + Math.round(amount * (days || 7)).toLocaleString();
+    el('ml-count-tail').textContent = days ? 'so far' : 'in your first week';
     var premium = el('ml-count-premium');
     var price = parseFloat(premium.dataset.yearly) || 0;
     var cover = amount > 0 && price > 0 ? Math.ceil(price / amount) : 0;
     // Only say it when it's a small number of days; otherwise stay quiet.
     premium.hidden = !(cover > 0 && cover <= 90);
     if (!premium.hidden) {
-      el('ml-count-premium-text').textContent =
-        (cover === 1 ? 'One day' : cover + ' days') + ' of that covers a whole year of Premium.';
+      el('ml-count-premium-text').textContent = 'A year of Premium is $' + price.toFixed(2) + '. That’s '
+        + (cover === 1 ? 'one day' : cover + ' days') + ' of what you used to spend.';
     }
   }
 
   function render(date) {
     var days = daysSince(date);
     if (days < 0) return false;
-    var next = nextMilestone(date, days);
-    var opts = { month: 'long', day: 'numeric' };
-    if (next.on.getFullYear() !== now.getFullYear()) opts.year = 'numeric';
-    var when = days === 0 ? 'tomorrow' : next.on.toLocaleDateString(undefined, opts);
-
-    el('ml-count-days').textContent = days === 0 ? 'Day one' : days.toLocaleString();
-    el('ml-count-unit').textContent = days === 0 ? '' : (days === 1 ? 'day' : 'days');
-    el('ml-count-next').textContent = 'Your ' + next.label + ' milestone is ' + when
-      + '. Save your counter and it counts up every day.';
-    el('ml-count-result').hidden = false;
-    el('ml-count-cta-text').textContent = 'Save my counter: free';
-    el('ml-chip-medal-label').textContent = next.label;
-    el('ml-chip-medal-sub').textContent = 'your next medallion';
-    renderSpend(days);
-
+    relabelYears(date);
+    var next = coins.findIndex(function (coin) { return earnedOn(coin, date) > today; });
+    show(next < 0 ? coins.length - 1 : next);
+    renderSpend();
     document.querySelectorAll('a.js-carry-date').forEach(function (link) {
       var url = new URL(link.href, window.location.origin);
       url.searchParams.set('sobriety_date', date);
@@ -411,12 +484,54 @@ document.addEventListener('click', function (e) {
     input.value = todayISO;
     entered(todayISO, 'day_one');
   });
+  wheel.addEventListener('click', function (e) {
+    var coin = e.target.closest('.ml-coin');
+    if (!coin) return;
+    show(coins.indexOf(coin));
+    track('home_wheel_pick', { medallion: label(coin) });
+  });
+  wheel.addEventListener('focusin', function (e) {
+    var i = coins.indexOf(e.target.closest('.ml-coin'));
+    if (i >= 0 && i !== picked) show(i);
+  });
   spend.addEventListener('input', function () {
     store('mrpCalcSpend', spend.value);
-    renderSpend(daysSince(input.value));
+    renderSpend();
   });
   el('ml-count-cta').addEventListener('click', function () {
     track('home_counter_save_click', { has_date: daysSince(input.value) >= 0 });
+  });
+
+  // Milestone emails without an account. Posts in place; without JS the form
+  // posts normally and the server redirects with a message.
+  var form = el('ml-email-form');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var msg = el('ml-email-msg');
+    if (daysSince(input.value) < 0) {
+      msg.textContent = 'Enter your date first.';
+      input.focus();
+      return;
+    }
+    el('ml-email-date').value = input.value;
+    try { el('ml-email-tz').value = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (err) {}
+    var button = form.querySelector('button');
+    button.disabled = true;
+    fetch(form.action, {
+      method: 'POST', body: new FormData(form),
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin'
+    }).then(function (r) { return r.json(); }).then(function (data) {
+      msg.textContent = data.message;
+      if (data.ok) {
+        form.hidden = true;
+        track('home_counter_email_submit', { days: daysSince(input.value) });
+      } else {
+        button.disabled = false;
+      }
+    }).catch(function () {
+      msg.textContent = 'That didn’t send. Check your connection and try again.';
+      button.disabled = false;
+    });
   });
 
   // A returning visitor sees their own count, not an empty form.
@@ -424,6 +539,7 @@ document.addEventListener('click', function (e) {
   if (parseFloat(savedSpend) > 0) spend.value = savedSpend;
   var saved = stored('mrpCalcDate');
   if (daysSince(saved) >= 0) { input.value = saved; render(saved); }
+  else { renderSpend(); }
 })();
 </script>
 {% endblock %}

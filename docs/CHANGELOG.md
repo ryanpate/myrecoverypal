@@ -4,6 +4,14 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-11-24:** Site-wide redesign ("Milestones" look).
+  - **Homepage:** rebuilt around a wheel of twelve real medallions. Enter a sober date and it turns to the next one you earn; click another to see its date. Under it: milestone emails without an account (the calculators' `counter_email_signup` endpoint), the savings line ("At $15 a day, you've kept $585 so far", Premium price read from the plan row), three time-of-day cards, the 24 designs, the toolkit list, a gift band and the plans. Wheel stops are `HOME_WHEEL` in `apps/core/views.py` and match `counter_emails.MILESTONE_DAYS`; past a year the year medallions relabel from the visitor's date.
+  - **Tokens (`static/css/main.css`):** the primary action is brand blue on a pill (`--cta-bg`, `--cta-bg-hover`, `--radius-btn: 999px`); green is kept for success and progress. Text is ink (`--text-dark: #0e1322`), headings default to it, cards use 20/28px corners, pages are flat (`--grain: none`) and the footer is dark (`--footer-bg`).
+  - **Emphasis panel:** `--panel-ink` (ink with a warm glow) replaces the large blue, green and gradient blocks: landing-page heroes, calculator panels, upgrade prompts, the Days Sober card and the Premium plan on pricing. A rule at the end of `base-inline.css` gives the main button on those panels a white fill; add new panel classes to its list.
+  - **Page stylesheets:** a scripted pass over 100+ files turned blue headings to ink, solid green or blue buttons to the pill and `*-card` corners to the surface radius. Status side-stripes (toasts, alerts) became full hairline borders.
+  - **Pricing:** plan headers run to the card edge; the "Current Plan" label on a disabled outline button was white on a light card and is now readable.
+  - **Not changed:** emails, PDFs and the embeddable calculator keep their own styles.
+  - Files: `apps/core/templates/core/index.html`, `apps/core/views.py`, `static/css/main.css`, `static/css/base-inline.css`, `static/css/pages/*`, `static/images/badges/home/`, `apps/accounts/templates/accounts/pricing.html`, `apps/core/tests_landing_counter.py`, `tests_landing_dark.py`.
 - **2026-11-21:** Community feed tidy-up and engagement changes.
   - **One column:** the composer, check-in card, posts and promo cards share one 720px column (posts used to be 700px under 1000px cards).
   - **Phone fit:** the action bar under a post and the composer toolbar no longer overflow; Share is icon-only at ≤480px and Post sits full-width under the tools. Photo, video and schedule are matching 44px buttons (`.composer-tool`).

@@ -32,7 +32,7 @@
 }
 
 .offline-content h1 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 1rem;
     font-size: 2rem;
 }
@@ -45,19 +45,19 @@
 }
 
 .retry-btn {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     border-color: #52b788;
     color: white;
     padding: 12px 30px;
     font-size: 1.1rem;
-    border-radius: 5px;
+    border-radius: var(--radius-btn);
     border: none;
     cursor: pointer;
     transition: var(--transition-ui);
 }
 
 .retry-btn:hover {
-    background: var(--accent-green-strong-hover);
+    background: var(--cta-bg-hover);
     border-color: #45a675;
 }
 
@@ -68,7 +68,7 @@
 }
 
 .offline-tips h3 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     font-size: 1.2rem;
     margin-bottom: 1rem;
 }

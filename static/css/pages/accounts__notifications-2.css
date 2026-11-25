@@ -11,7 +11,6 @@
 
 .notification-item-full.unread {
     background: #f0f8ff;
-    border-left: 3px solid var(--primary-light);
 }
 [data-theme="dark"] .notification-item-full.unread { background: var(--bg-light); }
 

@@ -14,7 +14,7 @@
 }
 .dashboard-header h1 {
     margin: 0;
-    color: #1e4d8b;
+    color: var(--text-dark);
 }
 .nav-links a {
     color: #1e4d8b;
@@ -52,7 +52,7 @@
     font-weight: 600;
 }
 .status-running {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
 }
 .status-stopped {
@@ -150,7 +150,7 @@
     background: #1e4d8b;
     color: white;
     text-decoration: none;
-    border-radius: 6px;
+    border-radius: var(--radius-btn);
     font-weight: 600;
     --heading-color: currentColor;
 }
@@ -161,7 +161,7 @@
 .key-metric {
     display: inline-block;
     padding: 3px 8px;
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     border-radius: 4px;
     font-size: 0.85em;

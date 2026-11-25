@@ -68,7 +68,7 @@
 
 .leaderboard-card {
     background: var(--card-bg, #fff);
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     padding: 1.5rem;
     box-shadow: var(--shadow);
     margin-bottom: 2rem;
@@ -183,7 +183,7 @@
 /* Post card styling (matching social feed) */
 .post-card {
     background: var(--card-bg, #fff);
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     margin-bottom: 1rem;
     box-shadow: var(--shadow);
     overflow: hidden;
@@ -421,7 +421,7 @@
     background: #764ba2;
     color: white;
     padding: 2rem;
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     margin-bottom: 2rem;
     --heading-color: currentColor;
 }

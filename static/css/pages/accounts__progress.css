@@ -72,9 +72,10 @@
 }
 
 /* Milestone Progress Card */
+/* Ink panel with a warm glow, the same treatment as the gift band on the homepage. */
 .milestone-card {
-    background: #2e8059;
-    border-radius: 20px;
+    background: var(--footer-bg, #0e1322);
+    border-radius: var(--border-radius-xl);
     padding: 2.25rem;
     margin-bottom: 2rem;
     color: white;
@@ -89,10 +90,10 @@
     position: absolute;
     top: -90px;
     right: -60px;
-    width: 280px;
-    height: 280px;
+    width: 420px;
+    height: 420px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.10);
+    background: radial-gradient(closest-side, rgba(255, 205, 130, 0.32), transparent);
     pointer-events: none;
 }
 
@@ -190,7 +191,7 @@
 
 .week-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     padding: 1.25rem;
     text-align: center;
     box-shadow: var(--shadow);
@@ -249,7 +250,7 @@
 .stat-card {
     background: var(--card-bg, #fff);
     padding: 1.25rem;
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     text-align: left;
     border: 1px solid var(--border-color, #e5e7eb);
     box-shadow: var(--shadow);
@@ -314,7 +315,7 @@
 /* Chart Cards */
 .chart-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     border: 1px solid var(--border-color, #e5e7eb);
@@ -416,7 +417,7 @@
 /* Insights */
 .insight-card {
     background: var(--surface-sunken, #f3f4f6);
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     padding: 1rem 1.15rem;
     margin-bottom: 1.5rem;
 }
@@ -474,7 +475,7 @@
 }
 
 .btn-checkin {
-    background: #2e8059;
+    background: var(--cta-bg);
     color: white;
     border: none;
     padding: 0.75rem 2rem;
@@ -647,7 +648,7 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: #fff;
     border: none;
     border-radius: 50px;
@@ -1134,7 +1135,7 @@
 .ios-native-app .milestone-card,
 .android-native-app .milestone-card {
     padding: 1.25rem 1rem;
-    border-radius: 16px;
+    border-radius: var(--border-radius-lg);
     margin-bottom: 1.25rem;
 }
 
@@ -1157,7 +1158,7 @@
 .ios-native-app .stat-card,
 .android-native-app .stat-card {
     padding: 1rem;
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
 }
 
 .ios-native-app .stat-value,
@@ -1168,7 +1169,7 @@
 .ios-native-app .chart-card,
 .android-native-app .chart-card {
     padding: 1rem;
-    border-radius: 16px;
+    border-radius: var(--border-radius-lg);
     margin-bottom: 1rem;
 }
 
@@ -1211,7 +1212,7 @@
 .ios-native-app .week-card,
 .android-native-app .week-card {
     padding: 1rem;
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
 }
 
 .ios-native-app .heatmap-grid,
@@ -1236,7 +1237,7 @@
 .ios-native-app .insight-card,
 .android-native-app .insight-card {
     padding: 1rem;
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     margin-bottom: 1rem;
 }
 
@@ -1337,10 +1338,10 @@
 
 .pledge-shield { margin: -0.4rem 0 0.85rem; font-size: 0.85rem; color: var(--brand-text, #1e4d8b); }
 .streak-saved-card { display: flex; flex-direction: column; gap: 0.2rem; margin: 0 0 1rem;
-    padding: 0.75rem 0.9rem; border-radius: 12px; background: #fff7ed; border: 1px solid #fed7aa;
+    padding: 0.75rem 0.9rem; border-radius: var(--border-radius-lg); background: #fff7ed; border: 1px solid #fed7aa;
     font-size: 0.9rem; color: #7c2d12; text-align: left; }
 .streak-saved-link { font-weight: 700; color: #c2410c; margin-top: 0.2rem; }
-.anchor-followup-card { margin: 0 0 1rem; padding: 0.9rem 1rem; border-radius: 12px;
+.anchor-followup-card { margin: 0 0 1rem; padding: 0.9rem 1rem; border-radius: var(--border-radius-lg);
     background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a5f; font-size: 0.95rem; }
 .anchor-followup-card p { margin: 0.35rem 0 0.5rem; }
 .anchor-followup-link { font-weight: 700; color: var(--brand-text, #1e4d8b); }

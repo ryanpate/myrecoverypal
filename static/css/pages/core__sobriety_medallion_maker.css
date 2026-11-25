@@ -71,7 +71,7 @@
     color: #fff;
     border: none;
     padding: 0.9rem 1.75rem;
-    border-radius: 12px;
+    border-radius: var(--radius-btn);
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
@@ -91,7 +91,7 @@
 .smm-card {
     background: var(--card-bg, #fff);
     border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 16px;
+    border-radius: var(--border-radius-lg);
     overflow: hidden;
     text-align: center;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -178,7 +178,7 @@
 
 /* Bottom CTA */
 .smm-bottom-cta {
-    background: var(--primary-dark, #1e4d8b);
+    background: var(--panel-ink);
     color: #fff;
     border-radius: 24px;
     padding: 3rem 2rem;

@@ -58,7 +58,7 @@
 .prompt-card {
     background: var(--card-bg, #fff);
     padding: 1.5rem;
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow);
     transition: var(--transition-ui);
     position: relative;
@@ -93,7 +93,7 @@
 .prompt-title {
     font-size: 1.2rem;
     font-weight: bold;
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 0.5rem;
 }
 
@@ -118,7 +118,7 @@
 }
 
 .use-prompt-btn {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     padding: 0.5rem 1.5rem;
     text-decoration: none;

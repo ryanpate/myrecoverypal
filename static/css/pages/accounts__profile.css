@@ -333,7 +333,7 @@
 
 .bio-section h3 {
     margin-bottom: 1rem;
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     font-weight: 600;
 }
 
@@ -365,7 +365,7 @@
 }
 
 .info-section h3 {
-    color: var(--brand-text, #1e4d8b);
+    color: var(--text-dark);
     margin-bottom: 1rem;
     font-size: 1.2rem;
     font-weight: 600;
@@ -402,7 +402,7 @@
 }
 
 .badge-sponsor {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
 }
 
@@ -447,7 +447,7 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     border: none;
     cursor: pointer;

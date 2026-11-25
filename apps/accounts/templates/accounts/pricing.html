@@ -26,12 +26,12 @@
     </div>
 </div>
 
-<div class="container py-5">
+<div class="container py-5 pricing">
     {% include 'accounts/_founding_offer_banner.html' with slot='pricing' %}
 
     <!-- Trial Status Alert -->
     {% if user_subscription and user_subscription.status == 'trialing' %}
-    <div class="alert alert-info text-center mb-4" style="background: #1e4d8b; border: none; color: white; --heading-color: currentColor;">
+    <div class="alert alert-info text-center mb-4" style="background: var(--footer-bg, #0e1322); border: none; color: white; --heading-color: currentColor;">
         <i class="fas fa-clock"></i> <strong>You're on a Premium trial!</strong>
         {% if user_subscription.trial_end %}
             Your trial ends on {{ user_subscription.trial_end|date:"F d, Y" }}.
@@ -52,8 +52,8 @@
         <div class="col-lg-5 col-md-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <div class="card-header text-center bg-light" style="background-color: var(--bg-light, #f8f9fa) !important;">
-                    <h3 class="my-3" style="color: var(--brand-text, #1e4d8b) !important;">Free</h3>
-                    <h2 class="display-4" style="color: var(--brand-text, #1e4d8b) !important;">$0</h2>
+                    <h3 class="my-3">Free</h3>
+                    <h2 class="display-4">$0</h2>
                     <p class="text-muted" style="color: var(--text-muted, #6c757d) !important;">Forever</p>
                 </div>
                 <div class="card-body text-dark bg-white">
@@ -89,10 +89,10 @@
         {% if premium_monthly_plan or premium_yearly_plan %}
         <div class="col-lg-5 col-md-6 mb-4 plan-col-premium">
             <div class="card h-100 shadow-lg border-primary">
-                <div class="card-header text-center bg-primary text-white" style="background-color: #1e4d8b !important;">
+                <div class="card-header text-center bg-primary text-white plan-premium-head">
                     <span class="badge badge-warning mb-2">MOST POPULAR</span>
                     {% if not user.is_authenticated or card_trial_eligible %}
-                    <span class="badge badge-success mb-2 ml-1" style="background: #2e8059 !important; color: #fff;">7-DAY FREE TRIAL</span>
+                    <span class="badge badge-success mb-2 ml-1 plan-trial-badge">7-DAY FREE TRIAL</span>
                     {% endif %}
                     <h3 class="my-3" style="color: white !important;">Premium</h3>
 
@@ -131,7 +131,7 @@
                     {% endif %}
                 </div>
                 <div class="card-body text-dark bg-white">
-                    <p class="mb-2" style="font-weight: 600; color: var(--brand-text, #1e4d8b);"><i class="fas fa-check-double text-success"></i> Everything in Free, plus:</p>
+                    <p class="mb-2" style="font-weight: 600;"><i class="fas fa-check-double text-success"></i> Everything in Free, plus:</p>
 
                     <!-- Featured benefit: the daily habit people actually keep (pledge + check-in) -->
                     <div class="pricing-ai-highlight">
@@ -154,7 +154,7 @@
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Premium profile badge</li>
                     </ul>
                 </div>
-                <div class="card-footer text-center bg-primary">
+                <div class="card-footer text-center bg-primary plan-premium-foot">
                     {% if user.is_authenticated and user_subscription.tier == 'premium' and user_subscription.is_active %}
                         <button class="btn btn-light btn-block" disabled>Current Plan</button>
                     {% elif not user.is_authenticated %}
@@ -213,15 +213,15 @@
         <div class="col-lg-5 col-md-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <div class="card-header text-center bg-light" style="background-color: var(--bg-light, #f8f9fa) !important;">
-                    <h3 class="my-3" style="color: var(--brand-text, #1e4d8b) !important;">Court Compliance</h3>
-                    <h2 class="display-4" style="color: var(--brand-text, #1e4d8b) !important;">${% if court_monthly_plan %}{{ court_monthly_plan.price|floatformat:2 }}{% else %}29.99{% endif %}</h2>
+                    <h3 class="my-3">Court Compliance</h3>
+                    <h2 class="display-4">${% if court_monthly_plan %}{{ court_monthly_plan.price|floatformat:2 }}{% else %}29.99{% endif %}</h2>
                     <p class="text-muted" style="color: var(--text-muted, #6c757d) !important;">per month</p>
                     {% if court_yearly_plan %}
                     <small style="color: var(--text-dark, #2c3e50);">Annual: ${{ court_yearly_plan.price|floatformat:0 }}/yr (save 25%)</small>
                     {% endif %}
                 </div>
                 <div class="card-body text-dark bg-white">
-                    <p class="mb-2" style="font-weight: 600; color: var(--brand-text, #1e4d8b);"><i class="fas fa-check-double text-success"></i> Everything in Premium, plus:</p>
+                    <p class="mb-2" style="font-weight: 600;"><i class="fas fa-check-double text-success"></i> Everything in Premium, plus:</p>
                     <ul class="list-unstyled">
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Log AA, NA, SMART &amp; secular meeting attendance</li>
                         <li class="mb-2"><i class="fas fa-check text-success"></i> PDF reports with a tamper-evident fingerprint</li>

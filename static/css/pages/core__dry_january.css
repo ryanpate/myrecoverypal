@@ -5,12 +5,12 @@
 .dj-hero .lead { font-size: 1.15rem; color: var(--text-dark, #445); max-width: 640px; margin: 0 auto 1.5rem; }
 .dj-count { font-size: 1rem; color: var(--text-muted, #555); margin-bottom: 1.25rem; }
 .dj-count strong { font-size: 1.6rem; color: var(--brand-text, #1e4d8b); }
-.dj-cta { display: inline-block; background: var(--accent-green-strong); color: #fff; border: none; cursor: pointer; font-weight: 700; font-size: 1.1rem;
+.dj-cta { display: inline-block; background: var(--cta-bg); color: #fff; border: none; cursor: pointer; font-weight: 700; font-size: 1.1rem;
     padding: 0.95rem 2.2rem; border-radius: var(--radius-btn, 10px); text-decoration: none; }
 .dj-cta:hover { color: #fff; background: #40a274; }
 .dj-joined { display: inline-block; background: #eef8f1; color: #2a7a52; font-weight: 700; padding: 0.7rem 1.4rem; border-radius: 50px; }
 .dj-small { font-size: 0.9rem; color: var(--text-muted, #666); margin-top: 0.75rem; }
-.dj h2 { color: var(--brand-text, #1e4d8b); font-size: 1.6rem; margin: 3rem 0 1rem; }
+.dj h2 { color: var(--text-dark); font-size: 1.6rem; margin: 3rem 0 1rem; }
 .dj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
 .dj-feature { background: #f7f9fc; border-radius: 14px; padding: 1.2rem 1.25rem; }
 .dj-feature i { color: #2d7dd2; font-size: 1.3rem; }

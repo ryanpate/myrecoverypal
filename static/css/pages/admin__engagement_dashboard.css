@@ -9,7 +9,7 @@
 }
 .dashboard-header h1 {
     margin: 0 0 10px 0;
-    color: #1e4d8b;
+    color: var(--text-dark);
 }
 .dashboard-header p {
     color: #666;
@@ -23,14 +23,14 @@
 }
 .metric-card {
     background: white;
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    border-left: 4px solid #1e4d8b;
+    border: 1px solid var(--border-color);
 }
-.metric-card.success { border-left-color: #52b788; }
-.metric-card.warning { border-left-color: #ffa502; }
-.metric-card.info { border-left-color: #4db8e8; }
+.metric-card.success { border-color: #52b788; }
+.metric-card.warning { border-color: #ffa502; }
+.metric-card.info { border-color: #4db8e8; }
 .metric-card h3 {
     margin: 0 0 10px 0;
     font-size: 14px;
@@ -68,7 +68,7 @@
 }
 .section h2 {
     margin: 0 0 20px 0;
-    color: #1e4d8b;
+    color: var(--text-dark);
     font-size: 18px;
     padding-bottom: 10px;
     border-bottom: 2px solid #f0f0f0;

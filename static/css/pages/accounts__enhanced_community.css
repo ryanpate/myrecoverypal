@@ -60,14 +60,14 @@
 }
 
 .filter-tab.active {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     border-color: #52b788;
 }
 
 .filter-tab:hover {
-    border-color: var(--accent-green-strong);
-    color: var(--accent-green-strong);
+    border-color: var(--cta-bg);
+    color: var(--cta-bg);
     text-decoration: none;
 }
 
@@ -80,7 +80,7 @@
 
 .member-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     padding: 1.5rem;
     box-shadow: var(--shadow);
     transition: transform 0.3s, box-shadow 0.3s;
@@ -306,7 +306,7 @@
 }
 
 .follow-btn.follow {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
 }
 
@@ -424,7 +424,7 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: var(--accent-green-strong, #2e8059);
+    background: var(--cta-bg, #2e8059);
     border: none;
     color: white;
     font-size: 1.5rem;

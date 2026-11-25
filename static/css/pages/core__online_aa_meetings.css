@@ -23,7 +23,7 @@
     align-items: center;
     gap: 1rem;
     border: 1px solid rgba(128, 128, 128, 0.25);
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     padding: 0.9rem 1.1rem;
     margin-bottom: 0.75rem;
 }
@@ -34,7 +34,7 @@
     background: var(--primary-color, #2c7a7b);
     color: #fff;
     padding: 0.8rem 1.8rem;
-    border-radius: 8px;
+    border-radius: var(--radius-btn);
     font-weight: 600;
     text-decoration: none;
     margin-top: 1rem;

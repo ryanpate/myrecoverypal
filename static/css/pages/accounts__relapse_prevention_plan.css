@@ -8,7 +8,7 @@
     border-radius: 999px; padding: 0.3rem 0.9rem; margin-bottom: 1.2rem;
 }
 .rpp-card {
-    border: 1px solid rgba(128,128,128,0.25); border-radius: 14px;
+    border: 1px solid rgba(128,128,128,0.25); border-radius: var(--border-radius-lg);
     padding: 1.2rem 1.3rem; margin-bottom: 1.1rem;
 }
 .rpp-card h2 { font-size: 1.12rem; margin-bottom: 0.25rem; }

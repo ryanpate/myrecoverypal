@@ -19,7 +19,7 @@
 
 .support-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     padding: 30px;
     margin-bottom: 30px;
     box-shadow: var(--shadow);

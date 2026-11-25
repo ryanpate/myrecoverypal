@@ -286,9 +286,9 @@
                             </div>
                             <span>{{ user.username }}
                                 {% if is_pro_user %}
-                                <span class="badge badge-warning" style="background: linear-gradient(135deg, #ffd700, #ffed4e); color: #000; font-size: 0.65rem; padding: 2px 6px; border-radius: 3px; margin-left: 4px;">PRO</span>
+                                <span class="badge badge-warning" style="background: #ffd9a0; color: #2a1703; font-size: 0.7rem; padding: 2px 8px; border-radius: 999px; margin-left: 4px;">PRO</span>
                                 {% elif is_premium_user %}
-                                <span class="badge badge-primary" style="background: #764ba2; color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 3px; margin-left: 4px; --heading-color: currentColor;">PREMIUM</span>
+                                <span class="badge badge-primary" style="background: #764ba2; color: #fff; font-size: 0.7rem; padding: 2px 8px; border-radius: 999px; margin-left: 4px; --heading-color: currentColor;">PREMIUM</span>
                                 {% endif %}
                             </span>
 
@@ -325,7 +325,7 @@
                                 <a href="{% url 'accounts:community' %}">
                                     <i class="fas fa-people-group"></i> Members{% if SHOW_GROUPS_CHALLENGES_SPONSORS %} &amp; Groups{% endif %}
                                 </a>
-                                <a href="{% url 'accounts:supporter_manage' %}" style="color: #52b788;">
+                                <a href="{% url 'accounts:supporter_manage' %}" style="color: var(--green-text, #2e8059);">
                                     <i class="fas fa-hand-holding-heart"></i> My Support Circle
                                 </a>
                             </div>
@@ -354,19 +354,19 @@
 
                             <div class="user-dropdown-section">
                                 <div class="user-dropdown-section-label">Account</div>
-                                <a href="{% url 'accounts:subscription_management' %}" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)); border-left: 3px solid #f5a623; font-weight: 600;">
+                                <a href="{% url 'accounts:subscription_management' %}" style="background: rgba(255, 217, 160, 0.28); font-weight: 600;">
                                     <i class="fas fa-crown" style="color: #f5a623;"></i> Subscription
                                 </a>
                                 {% if has_court_log %}
-                                <a href="{% url 'accounts:court_dashboard' %}" style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
+                                <a href="{% url 'accounts:court_dashboard' %}" style="background: var(--bg-gray); font-weight: 600;">
                                     <i class="fas fa-gavel" style="color: var(--brand-text, #1e4d8b);"></i> Court Compliance
                                 </a>
                                 {% else %}
-                                <a href="{% url 'core:court_ordered_meeting_tracker' %}" style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
+                                <a href="{% url 'core:court_ordered_meeting_tracker' %}" style="background: var(--bg-gray); font-weight: 600;">
                                     <i class="fas fa-gavel" style="color: var(--brand-text, #1e4d8b);"></i> Court Compliance
                                 </a>
                                 {% endif %}
-                                <a href="{% url 'accounts:invite_friends' %}" style="color: #52b788;">
+                                <a href="{% url 'accounts:invite_friends' %}" style="color: var(--green-text, #2e8059);">
                                     <i class="fas fa-user-plus"></i> Invite Friends
                                 </a>
                                 <a href="{% url 'accounts:edit_profile' %}">
@@ -440,9 +440,9 @@
                 <div class="mobile-menu-user-info">
                     <h3>{{ user.username }}
                         {% if is_pro_user %}
-                        <span class="badge badge-warning" style="background: linear-gradient(135deg, #ffd700, #ffed4e); color: #000; font-size: 0.65rem; padding: 2px 6px; border-radius: 3px; margin-left: 4px;">PRO</span>
+                        <span class="badge badge-warning" style="background: #ffd9a0; color: #2a1703; font-size: 0.7rem; padding: 2px 8px; border-radius: 999px; margin-left: 4px;">PRO</span>
                         {% elif is_premium_user %}
-                        <span class="badge badge-primary" style="background: #764ba2; color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 3px; margin-left: 4px; --heading-color: currentColor;">PREMIUM</span>
+                        <span class="badge badge-primary" style="background: #764ba2; color: #fff; font-size: 0.7rem; padding: 2px 8px; border-radius: 999px; margin-left: 4px; --heading-color: currentColor;">PREMIUM</span>
                         {% endif %}
                     </h3>
                     <p>{{ user.email }}</p>
@@ -495,7 +495,7 @@
                 </a>
                 <a href="{% url 'accounts:supporter_manage' %}"
                     class="{% if 'supporter' in request.resolver_match.url_name %}active{% endif %}"
-                    style="color: #52b788;">
+                    style="color: var(--green-text, #2e8059);">
                     <i class="fas fa-hand-holding-heart" style="margin-right: 0.5rem;"></i> My Support Circle
                 </a>
             </div>
@@ -591,25 +591,25 @@
                 <div class="mobile-menu-label">Account</div>
                 <a href="{% url 'accounts:subscription_management' %}"
                     class="{% if request.resolver_match.url_name == 'subscription_management' %}active{% endif %}"
-                    style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)); border-left: 3px solid #f5a623; font-weight: 600;">
+                    style="background: rgba(255, 217, 160, 0.28); font-weight: 600;">
                     <i class="fas fa-crown" style="margin-right: 0.5rem; color: #f5a623;"></i> Subscription
                 </a>
                 {% if has_court_log %}
                 <a href="{% url 'accounts:court_dashboard' %}"
                     class="{% if request.resolver_match.url_name == 'court_dashboard' %}active{% endif %}"
-                    style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
+                    style="background: var(--bg-gray); font-weight: 600;">
                     <i class="fas fa-gavel" style="margin-right: 0.5rem; color: var(--brand-text, #1e4d8b);"></i> Court Compliance
                 </a>
                 {% else %}
                 <a href="{% url 'core:court_ordered_meeting_tracker' %}"
                     class="{% if request.resolver_match.url_name == 'court_ordered_meeting_tracker' %}active{% endif %}"
-                    style="background: linear-gradient(135deg, rgba(30, 77, 139, 0.12), rgba(15, 45, 86, 0.12)); border-left: 3px solid #1e4d8b; font-weight: 600;">
+                    style="background: var(--bg-gray); font-weight: 600;">
                     <i class="fas fa-gavel" style="margin-right: 0.5rem; color: var(--brand-text, #1e4d8b);"></i> Court Compliance
                 </a>
                 {% endif %}
                 <a href="{% url 'accounts:invite_friends' %}"
                     class="{% if request.resolver_match.url_name == 'invite_friends' %}active{% endif %}"
-                    style="color: #52b788;">
+                    style="color: var(--green-text, #2e8059);">
                     <i class="fas fa-user-plus" style="margin-right: 0.5rem;"></i> Invite Friends
                 </a>
                 <a href="{% url 'accounts:edit_profile' %}"

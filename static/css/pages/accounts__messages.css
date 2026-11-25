@@ -108,7 +108,7 @@
 
 .compose-btn {
     padding: 0.75rem 1.5rem;
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
     border: none;
     border-radius: var(--radius-btn, 10px);
@@ -122,7 +122,7 @@
 }
 
 .compose-btn:hover {
-    background: var(--accent-green-strong-hover);
+    background: var(--cta-bg-hover);
     box-shadow: none;
     color: white;
 }
@@ -148,7 +148,6 @@
 
 .message-item.unread {
     background: #f0f8ff;
-    border-left: 3px solid var(--primary-light);
 }
 [data-theme="dark"] .message-item.unread { background: var(--bg-light); }
 

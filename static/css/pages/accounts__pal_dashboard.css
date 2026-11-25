@@ -31,7 +31,7 @@
 
 .dashboard-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     padding: 2rem;
     box-shadow: var(--shadow);
     margin-bottom: 2rem;
@@ -44,7 +44,7 @@
 
 .pal-card {
     background: var(--card-bg, #fff);
-    border-radius: 15px;
+    border-radius: var(--border-radius-lg);
     padding: 1.5rem;
     border: 2px solid var(--border-color, #e0e0e0);
     margin-bottom: 1rem;
@@ -120,7 +120,7 @@
 }
 
 .btn-accept {
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: white;
 }
 
@@ -156,7 +156,7 @@
     text-align: center;
     padding: 1.5rem;
     border: 2px dashed var(--border-color, #ddd);
-    border-radius: 10px;
+    border-radius: var(--border-radius-lg);
     transition: var(--transition-ui);
 }
 

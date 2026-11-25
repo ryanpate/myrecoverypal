@@ -23,6 +23,13 @@
     --accent-green-strong: #2e8059;
     /* Button green: 4.8:1 with white text */
     --accent-green-strong-hover: #256b4a;
+    /* The primary action: brand blue, on a pill. Green is kept for success and
+       progress (a streak, a completed check-in), not for buttons. */
+    --cta-bg: #1e4d8b;
+    --cta-bg-hover: #173c6e;
+    --footer-bg: #0e1322;
+    /* The one emphasis panel: ink with a warm glow in the top corner. Text on it is white. */
+    --panel-ink: radial-gradient(70% 130% at 88% -10%, rgba(255, 205, 130, 0.24), transparent 62%), #0e1322;
     /* Green and red as text: pass 4.5:1 on the page in both themes */
     --green-text: #2e8059;
     --danger-text: #b91c1c;
@@ -49,14 +56,14 @@
     --accent-color: #52b788;
 
     /* Text Colors */
-    --text-dark: #2c3e50;
+    --text-dark: #0e1322;
     --text-light: #ffffff;
-    --text-muted: #6B7280;
+    --text-muted: #545c70;
 
     /* Background Colors */
-    --bg-light: #f8f9fa;
+    --bg-light: #f5f6fa;
     --bg-lighter: #ffffff;
-    --bg-gray: #F3F4F6;
+    --bg-gray: #eef1f6;
 
     /* Shadows */
     /* Resting surfaces are outlined with a hairline, not lifted with a blur.
@@ -72,15 +79,16 @@
 
     /* Borders */
     --border-radius: 10px;
-    --border-radius-lg: 14px;
-    --border-radius-xl: 18px;
-    /* Buttons are rounded rectangles; pills are kept for chips and filters. */
-    --radius-btn: 10px;
-    --grain: url("../images/grain-light.png");
+    --border-radius-lg: 20px;
+    --border-radius-xl: 28px;
+    /* Buttons are pills. Inputs and small controls keep --radius-control. */
+    --radius-btn: 999px;
+    /* Pages are flat: no paper grain. The token stays so one line brings it back. */
+    --grain: none;
 
     /* Additional variables for dark mode compatibility */
     --card-bg: #ffffff;
-    --border-color: #e5e7eb;
+    --border-color: #e1e5ee;
     --input-bg: #ffffff;
     --input-border: #d1d5db;
     --dropdown-bg: #ffffff;
@@ -108,8 +116,8 @@
     --color-accent-hover: #45a675;
 
     /* ---- Text ---- */
-    --text-strong: #2c3e50;
-    --text-body: #2c3e50;
+    --text-strong: #0e1322;
+    --text-body: #0e1322;
     --text-faint: #6b7280;
     /* Links are navy in light mode: the light blue is 2.25:1 on white */
     --text-link: #1e4d8b;
@@ -117,9 +125,9 @@
     --text-on-brand: #ffffff;
 
     /* ---- Surfaces ---- */
-    --surface-page: #f8f9fa;
+    --surface-page: #f5f6fa;
     --surface-card: #ffffff;
-    --surface-sunken: #f3f4f6;
+    --surface-sunken: #eef1f6;
     --surface-input: #ffffff;
     --surface-nav: rgba(255, 255, 255, 0.98);
 
@@ -156,19 +164,19 @@
     /* ---- Radius ---- */
     --radius-sm: 8px;
     --radius-md: 10px;
-    --radius-lg: 14px;
-    --radius-xl: 18px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
     --radius-pill: 50px;
     --radius-chip: 25px;
     --radius-badge: 20px;
     /* The two radii new work uses: controls, and the surfaces that hold them */
     --radius-control: 10px;
-    --radius-surface: 16px;
+    --radius-surface: 20px;
 
     /* ---- Shadows ---- */
     --shadow-sm: 0 1px 4px rgba(15, 45, 86, 0.25);
     --shadow-dropdown: 0 4px 20px rgba(0, 0, 0, 0.15);
-    --shadow-accent: 0 5px 15px rgba(82, 183, 136, 0.3);
+    --shadow-accent: 0 10px 24px -10px rgba(30, 77, 139, 0.5);
 
     /* ---- Motion ---- */
     --ease: cubic-bezier(0.4, 0, 0.2, 1);
@@ -219,6 +227,11 @@
 
     --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.4);
     --shadow-dropdown: 0 4px 20px rgba(0, 0, 0, 0.4);
+
+    --cta-bg: #2f66b3;
+    --cta-bg-hover: #3b74c9;
+    --footer-bg: #0a0f1c;
+    --panel-ink: radial-gradient(70% 130% at 88% -10%, rgba(255, 205, 130, 0.18), transparent 62%), #0a0f1c;
 }
 
 /* =============================================
@@ -249,7 +262,6 @@
     /* Shadows - darker for dark mode */
     --shadow: 0 0 0 1px var(--border-color);
     --shadow-hover: 0 0 0 1px var(--border-color), 0 10px 24px -8px rgba(0, 0, 0, 0.5);
-    --grain: url("../images/grain-dark.png");
     --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.3);
 
     /* Keep brand colors - they have good contrast */
@@ -687,7 +699,7 @@
 /* Skeleton Post Card */
 .skeleton-post-card {
     background: var(--card-bg);
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     padding: 20px;
     margin-bottom: 20px;
     box-shadow: var(--shadow);
@@ -790,15 +802,15 @@
     max-width: 400px;
     pointer-events: auto;
     animation: toast-slide-in 0.3s ease;
-    border-left: 4px solid var(--primary-light);
+    border: 1px solid var(--primary-light);
 }
 
 .toast.toast-error {
-    border-left-color: #ef4444;
+    border-color: #ef4444;
 }
 
 .toast.toast-success {
-    border-left-color: var(--accent-green);
+    border-color: var(--accent-green);
 }
 
 .toast.toast-hiding {
@@ -1027,7 +1039,11 @@ textarea {
 /* Type: tight display tracking, balanced headings, no orphans in copy,
    figures that do not jiggle when they change. */
 h1,
-h2,
+h2 {
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+}
+
 h3 {
     letter-spacing: -0.015em;
     text-wrap: balance;
@@ -1072,7 +1088,7 @@ time {
     font-variant-numeric: tabular-nums;
 }
 
-/* Headings default to brand blue. Inside a solid-colour panel that sets its
+/* Headings default to the text ink. Inside a solid-colour panel that sets its
    own text colour, the panel sets --heading-color: currentColor so headings
    follow that text colour instead of disappearing into the background. */
 .text-white,
@@ -1087,7 +1103,7 @@ h4,
 h5,
 h6 {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    color: var(--heading-color, var(--primary-dark));
+    color: var(--heading-color, var(--text-dark));
     font-weight: 600;
     line-height: 1.2;
 }
@@ -1144,8 +1160,8 @@ a:hover {
 .entries-header h1,
 .hero-section h1 {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
-    font-size: clamp(1.75rem, 1.1rem + 2.2vw, 2.5rem);
-    color: var(--brand-text) !important;
+    font-size: clamp(1.9rem, 1.1rem + 2.6vw, 2.9rem);
+    color: var(--text-dark) !important;
     text-shadow: none;
     margin-bottom: 0.5rem;
 }
@@ -1173,7 +1189,7 @@ a:hover {
 .search-button,
 .download-button {
     padding: 0.75rem 1.5rem;
-    background: var(--accent-green-strong);
+    background: var(--cta-bg);
     color: #fff !important;
     border: none;
     border-radius: var(--radius-btn);
@@ -1195,7 +1211,7 @@ a:hover {
 .cta-button:hover,
 .search-button:hover,
 .download-button:hover {
-    background: var(--accent-green-strong-hover);
+    background: var(--cta-bg-hover);
     color: #fff !important;
     --heading-color: currentColor;
 }
@@ -1211,12 +1227,23 @@ a:hover {
     transform: scale(0.97);
 }
 
-.btn-secondary {
-    background: var(--primary-light);
+/* A disabled outline button ("Current Plan" on pricing) has no fill, so the
+   white label every .btn gets was invisible on the light card behind it. */
+.btn-outline-secondary:disabled,
+.btn-outline-secondary.disabled {
+    background: transparent;
+    color: var(--text-muted) !important;
+    box-shadow: 0 0 0 1px var(--border-color) inset;
+}
+
+.btn-secondary,
+.btn-secondary:hover {
+    background: var(--bg-gray);
+    color: var(--text-dark) !important;
 }
 
 .btn-secondary:hover {
-    background: var(--primary-dark);
+    background: var(--border-color);
 }
 
 /* Cards - Unified Styles */

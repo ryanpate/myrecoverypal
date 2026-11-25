@@ -83,7 +83,7 @@
     color: #fff;
     border: none;
     padding: 0.85rem 1.5rem;
-    border-radius: 12px;
+    border-radius: var(--radius-btn);
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
@@ -116,7 +116,7 @@
 .ms-value-card {
     background: var(--card-bg, #fff);
     border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 16px;
+    border-radius: var(--border-radius-lg);
     padding: 1.5rem 1.25rem;
     text-align: center;
 }
