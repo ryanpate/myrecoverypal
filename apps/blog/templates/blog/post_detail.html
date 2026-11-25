@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static blog_extras %}
 
-{% block title %}{{ post.title }} | MyRecoveryPal Recovery Stories{% endblock %}
+{% block title %}{{ post.title }} | MyRecoveryPal{% endblock %}
 
 {% block meta_description %}{{ post.meta_description|default:post.excerpt|default:post.content|striptags|truncatewords:30 }}{% endblock %}
 

@@ -123,10 +123,10 @@ def group_seo(primary, schedule):
         where = f'{primary.city}, {primary.state}' if primary.city and primary.state else (primary.city or '')
         kind = f'{label} meeting held in person and online' if primary.attendance_option == 'hybrid' \
             else f'{label} meeting'
-    title = (f'{primary.name} — {when} ' + (f'{primary.program} ' if primary.program else '') + 'Meetings'
+    title = (f'{primary.display_name} — {when} ' + (f'{primary.program} ' if primary.program else '') + 'Meetings'
              + (f', {where}' if where else ''))
     count = len(schedule)
-    text = (f'{primary.name} is a free {kind}'
+    text = (f'{primary.display_name} is a free {kind}'
             + (f' in {where}' if where and primary.attendance_option != 'online' else '')
             + f' with {count} meetings a week ({when.lower() if when in ("Daily", "Weekdays") else when}). '
             + (f'See every time, the {link} and the format.' if primary.attendance_option == 'online'

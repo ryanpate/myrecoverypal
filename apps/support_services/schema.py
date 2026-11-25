@@ -69,7 +69,7 @@ def meeting_breadcrumbs(request, meeting):
         crumbs.append((US_STATES.get(meeting.state, meeting.state),
                        hub_url(program, meeting.state)))
         crumbs.append((meeting.city, meeting.city_hub_url))
-    crumbs.append((meeting.name, meeting.get_absolute_url()))
+    crumbs.append((meeting.display_name, meeting.get_absolute_url()))
     return breadcrumbs(request, crumbs)
 
 
@@ -135,7 +135,7 @@ def meeting_event(request, meeting, schedule, page_url, now=None):
     event = {
         '@context': 'https://schema.org',
         '@type': 'Event',
-        'name': meeting.name,
+        'name': meeting.display_name,
         'description': meeting.seo_description,
         'url': page_url,
         'startDate': start.isoformat(),
@@ -149,7 +149,7 @@ def meeting_event(request, meeting, schedule, page_url, now=None):
                       # Some feeds put a group number ("2209") in the group
                       # field; that names nobody, so fall back.
                       'name': (meeting.group if meeting.group and not meeting.group.strip().isdigit()
-                               else PROGRAM_NAMES.get(meeting.program, meeting.name))},
+                               else PROGRAM_NAMES.get(meeting.program, meeting.display_name))},
         'eventSchedule': [
             {'@type': 'Schedule',
              'byDay': f'https://schema.org/{SCHEMA_DAYS[slot.day]}',

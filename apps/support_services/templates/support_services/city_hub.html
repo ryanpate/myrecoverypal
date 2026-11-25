@@ -32,7 +32,7 @@
         <ul class="list-unstyled">
             {% for m in day_meetings %}
             <li class="mb-2">
-                <a href="{{ m.get_absolute_url }}"><strong>{{ m.name }}</strong></a>
+                <a href="{{ m.get_absolute_url }}"><strong>{{ m.display_name }}</strong></a>
                 {% if m.time %} &middot; {{ m.time|time:"g:i A" }}{% endif %}
                 {% if m.location %} &middot; {{ m.location }}{% endif %}
                 {% if m.attendance_option != 'in_person' %}

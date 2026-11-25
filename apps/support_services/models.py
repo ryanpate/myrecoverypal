@@ -5,6 +5,33 @@ from django.conf import settings
 from django.utils import timezone
 from django.core.validators import RegexValidator
 import json
+import re
+
+# Feed names often arrive in all caps ("SAT MENS EARLY AWAKENING"). These stay
+# upper case when such a name is shown in normal case.
+_NAME_KEEP_UPPER = {
+    'AA', 'NA', 'CA', 'MA', 'GA', 'OA', 'ACA', 'CODA', 'SMART', 'YPAA',
+    'LGBT', 'LGBTQ', 'LGBTQ+', 'LGBTQIA', 'LGBTQIA+', 'DUI', 'AM', 'PM',
+    'II', 'III', 'IV', 'USA', 'HIV', 'BIPOC', 'ASL', 'VA',
+}
+_NAME_SMALL_WORDS = {'a', 'an', 'and', 'at', 'by', 'for', 'in', 'of', 'on', 'or', 'the', 'to', 'with'}
+
+
+def readable_name(name):
+    """An all-caps meeting name in normal case; any other name unchanged."""
+    if not name or name != name.upper() or not any(c.isalpha() for c in name):
+        return name
+    words = []
+    for i, word in enumerate(name.split(' ')):
+        core = word.strip('()[]"\'.,:;!?-')
+        if core in _NAME_KEEP_UPPER:
+            words.append(word)
+        elif i and core.lower() in _NAME_SMALL_WORDS:
+            words.append(word.lower())
+        else:
+            words.append(re.sub(r'(^|[-/("])([a-z])',
+                                lambda m: m.group(1) + m.group(2).upper(), word.lower()))
+    return ' '.join(words)
 
 # Note: We removed the ArrayField import since SQLite doesn't support it
 # If you're using PostgreSQL, uncomment the next line:
@@ -235,6 +262,10 @@ class Meeting(models.Model):
         return reverse('support_services:meeting_detail', kwargs={'slug': self.slug})
 
     @property
+    def display_name(self):
+        return readable_name(self.name)
+
+    @property
     def seo_title(self):
         """Page/OG/Twitter title for the detail page.
 
@@ -254,7 +285,7 @@ class Meeting(models.Model):
         bits.append(f'{self.program_label} Meeting')
         if self.attendance_option == 'online' and self.is_zoom:
             bits.append('on Zoom')
-        return f'{self.name} \u2014 {" ".join(bits)}'
+        return f'{self.display_name} \u2014 {" ".join(bits)}'
 
     @property
     def program_label(self):
@@ -325,7 +356,7 @@ class Meeting(models.Model):
             link = 'Zoom link' if self.is_zoom else 'join link'
             tail = f'Get the {link}, meeting format and full schedule.'
 
-        text = f'{self.name} is a {kind}{where}{when}. {tail}'
+        text = f'{self.display_name} is a {kind}{where}{when}. {tail}'
         return text if len(text) <= 160 else text[:157].rstrip() + '...'
 
     @property
