@@ -7,6 +7,7 @@ from apps.support_services.hubs import (
     hub_url, resolve_city,
 )
 from apps.support_services.grouping import group_seo
+from apps.support_services import schema
 from apps.support_services.coverage import record_coverage_gap
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -242,6 +243,11 @@ def meeting_detail(request, slug):
     }
     if len(schedule) > 1:
         context['seo_title'], context['seo_description'] = group_seo(primary, schedule)
+    blocks = [schema.meeting_breadcrumbs(request, meeting)]
+    event = schema.meeting_event(request, meeting, schedule, context['seo_url'])
+    if event:
+        blocks.insert(0, event)
+    context['structured_data'] = schema.ld_json(blocks)
 
     if request.user.is_authenticated:
         context['is_bookmarked'] = UserBookmark.objects.filter(
@@ -641,6 +647,15 @@ def city_hub(request, state, city_slug, program='AA'):
             f'{city.lower()} recovery meetings'
         ),
         'seo_url': request.build_absolute_uri(hub_url(program, state, city_slug.lower())),
+        'structured_data': schema.ld_json([
+            schema.breadcrumbs(request, [
+                ('NA Meetings' if program == 'NA' else 'Meetings', hub_url(program)),
+                (state_name, hub_url(program, state)),
+                (city, hub_url(program, state, city_slug.lower())),
+            ]),
+            schema.item_list(request, f'{program} meetings in {city}, {state}',
+                             [(m.name, m.get_absolute_url()) for m in meetings]),
+        ]),
     })
 
 
@@ -675,6 +690,14 @@ def state_hub(request, state, program='AA'):
             f'{state_name.lower()}, {program.lower()} meeting directory {state_name.lower()}'
         ),
         'seo_url': request.build_absolute_uri(hub_url(program, state)),
+        'structured_data': schema.ld_json([
+            schema.breadcrumbs(request, [
+                ('NA Meetings' if program == 'NA' else 'Meetings', hub_url(program)),
+                (state_name, hub_url(program, state)),
+            ]),
+            schema.item_list(request, f'{program} meetings in {state_name} by city',
+                             [(c['city'], c['url']) for c in sorted(cities, key=lambda c: c['city'])]),
+        ]),
     })
 
 

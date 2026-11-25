@@ -354,3 +354,23 @@ sitemaps = {
     'state_hubs': StateHubSitemap,
     'city_hubs': CityHubSitemap,
 }
+
+
+def sitemap_index(request):
+    """/sitemap-index.xml: one child sitemap per section above, so Search
+    Console reports indexed counts per section (meetings vs blog vs hubs)
+    instead of one number for 23k URLs.
+
+    Django's own index view takes its domain from the Sites table; the
+    sitemaps above pin settings.SITE_DOMAIN instead, so this does too.
+    """
+    from django.http import HttpResponse
+    base = f'https://{settings.SITE_DOMAIN}'
+    entries = ''.join(
+        f'<sitemap><loc>{base}{reverse("sitemap-section", kwargs={"section": name})}</loc></sitemap>'
+        for name in sitemaps
+    )
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+           '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+           f'{entries}</sitemapindex>')
+    return HttpResponse(xml, content_type='application/xml')
