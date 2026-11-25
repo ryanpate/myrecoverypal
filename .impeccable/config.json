@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "all-caps-body",
+        "value": "*",
+        "files": [
+          "apps/core/templates/core/terms.html"
+        ],
+        "createdAt": "2026-11-25T13:31:53.332Z",
+        "reason": "Claude triage: the two caps paragraphs are the warranty disclaimer and liability limit, set in caps on purpose so they stand out, as US law (UCC 2-316) expects"
+      }
+    ]
+  }
+}
