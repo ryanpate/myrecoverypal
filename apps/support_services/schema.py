@@ -146,7 +146,10 @@ def meeting_event(request, meeting, schedule, page_url, now=None):
         'offers': {'@type': 'Offer', 'price': '0', 'priceCurrency': 'USD',
                    'availability': 'https://schema.org/InStock', 'url': page_url},
         'organizer': {'@type': 'Organization',
-                      'name': meeting.group or PROGRAM_NAMES.get(meeting.program, meeting.name)},
+                      # Some feeds put a group number ("2209") in the group
+                      # field; that names nobody, so fall back.
+                      'name': (meeting.group if meeting.group and not meeting.group.strip().isdigit()
+                               else PROGRAM_NAMES.get(meeting.program, meeting.name))},
         'eventSchedule': [
             {'@type': 'Schedule',
              'byDay': f'https://schema.org/{SCHEMA_DAYS[slot.day]}',
