@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block structured_data %}
+{% if structured_data %}<script type="application/ld+json">{{ structured_data }}</script>{% endif %}
+{% endblock %}
+
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/pages/support_services__meeting_detail.css' %}">
