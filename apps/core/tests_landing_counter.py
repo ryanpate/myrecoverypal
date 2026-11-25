@@ -2,8 +2,8 @@
 """The homepage hero lets a visitor start their day counter before signing up.
 
 The calculators convert because the visitor sees their own number first and
-"Save my counter" carries the date into signup. The homepage used to open with
-a generic pitch and a screenshot of someone else's count."""
+"Save my counter" carries the date into signup. The homepage does the same with
+a wheel of medallions: enter a date and it turns to the next one you earn."""
 from django.conf import settings
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -15,7 +15,7 @@ class LandingHeroCounterTest(TestCase):
     def setUp(self):
         self.html = self.client.get(reverse('core:index')).content.decode()
         start = self.html.index('id="ml-count"')
-        self.widget = self.html[start:self.html.index('<ul class="ml-trust">')]
+        self.widget = self.html[start:self.html.index('id="ml-hours"')]
 
     def test_hero_has_a_date_input_and_a_day_one_button(self):
         self.assertIn('type="date" id="ml-count-date"', self.widget)
@@ -38,7 +38,21 @@ class LandingHeroCounterTest(TestCase):
         self.assertIn(reverse('accounts:pricing'), self.widget)
         self.assertNotIn('59.99', self.widget.replace('data-yearly="59.99"', ''))
 
-    def test_text_comes_before_the_phone_on_small_screens(self):
+    def test_wheel_has_every_milestone_the_emails_celebrate(self):
+        from apps.accounts.counter_emails import MILESTONE_DAYS
+        for days in MILESTONE_DAYS:
+            if days < 365:
+                self.assertIn(f'data-days="{days}"', self.widget)
+        self.assertIn('data-years="1"', self.widget)
+        self.assertEqual(self.widget.count('<button type="button" class="ml-coin'), 12)
+
+    def test_milestone_emails_need_no_account(self):
+        self.assertIn(f'action="{reverse("accounts:counter_email_signup")}"', self.widget)
+        self.assertIn('name="start_date"', self.widget)
+        self.assertIn('name="website"', self.widget)  # honeypot
+
+    def test_wheel_stays_inside_the_hero(self):
+        # overflow:clip, not hidden: a hidden box scrolls when an off-screen
+        # medallion takes focus, which slid the headline out of view.
         css = (settings.BASE_DIR / 'static/css/pages/core__index.css').read_text()
-        self.assertIn('.ml-hero-inner', css)  # guards against reading the wrong file
-        self.assertNotIn('.ml-hero-media { order:-1; }', css)
+        self.assertIn('.ml-hero { position:relative; overflow:clip;', css)

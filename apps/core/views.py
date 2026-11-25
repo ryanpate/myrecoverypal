@@ -17,6 +17,27 @@ from django.views.decorators.http import require_http_methods
 from apps.support_services.meeting_queries import starting_soon
 
 
+# Homepage medallion wheel, in order. Day stops match the milestone emails
+# (apps/accounts/counter_emails.py::MILESTONE_DAYS) plus the first 24 hours;
+# after a year the page relabels the year medallions from the visitor's date.
+HOME_WHEEL = (
+    {'days': 1, 'n': '24', 'unit': 'hours', 'img': 'silver'},
+    {'days': 7, 'n': '7', 'unit': 'days', 'img': 'classic'},
+    {'days': 30, 'n': '30', 'unit': 'days', 'img': 'emerald'},
+    {'days': 60, 'n': '60', 'unit': 'days', 'img': 'sunrise'},
+    {'days': 90, 'n': '90', 'unit': 'days', 'img': 'sapphire'},
+    {'days': 180, 'n': '6', 'unit': 'months', 'img': 'rosegold'},
+    {'days': 270, 'n': '9', 'unit': 'months', 'img': 'olive'},
+    {'years': 1, 'n': '1', 'unit': 'year', 'img': 'artdeco'},
+    {'years': 2, 'n': '2', 'unit': 'years', 'img': 'blossom'},
+    {'years': 3, 'n': '3', 'unit': 'years', 'img': 'celestial'},
+    {'years': 4, 'n': '4', 'unit': 'years', 'img': 'stainedglass'},
+    {'years': 5, 'n': '5', 'unit': 'years', 'img': 'antique'},
+)
+HOME_DESIGNS = ('anchor', 'dove', 'lighthouse', 'midnight', 'mountain', 'obsidian',
+                'onyx', 'parchment', 'pearl', 'phoenix', 'sunset', 'winter')
+
+
 class IndexView(TemplateView):
     template_name = 'core/index.html'
 
@@ -37,6 +58,8 @@ class IndexView(TemplateView):
         context['premium_yearly_plan'] = plans.filter(billing_period='yearly').first()
         from apps.accounts.founding_offer import context_for
         context.update(context_for(self.request.user, context['premium_yearly_plan']))
+        context['wheel'] = HOME_WHEEL
+        context['designs'] = HOME_DESIGNS
         return context
 class AboutView(TemplateView):
     template_name = 'core/about.html'
