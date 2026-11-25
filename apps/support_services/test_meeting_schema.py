@@ -62,6 +62,16 @@ class MeetingEventSchemaTests(TestCase):
         event = _blocks(self.client.get('/support/meetings/hybrid-one/'))['Event']
         self.assertEqual([l['@type'] for l in event['location']], ['Place', 'VirtualLocation'])
 
+    def test_numeric_group_is_not_used_as_organizer(self):
+        _meeting(slug='numbered', group='2209', program='AA')
+        event = _blocks(self.client.get('/support/meetings/numbered/'))['Event']
+        self.assertEqual(event['organizer']['name'], 'Alcoholics Anonymous')
+
+    def test_named_group_is_the_organizer(self):
+        _meeting(slug='named', group='Sunrise Group')
+        event = _blocks(self.client.get('/support/meetings/named/'))['Event']
+        self.assertEqual(event['organizer']['name'], 'Sunrise Group')
+
     def test_no_event_without_a_start_time(self):
         _meeting(slug='no-time', time=None)
         blocks = _blocks(self.client.get('/support/meetings/no-time/'))
