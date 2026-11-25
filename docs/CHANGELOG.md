@@ -4,6 +4,11 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-11-24:** Blog tag limit and worker logging.
+  - **Blog tags:** `Tag.name` and `Tag.slug` go from 50 to 100 characters (migration `blog/0006`). Longer typed-in tags are still a form error, and `Tag.build_slug()` trims a slug that `slugify()` makes longer than the name. Fixes Sentry PYTHON-DJANGO-62.
+  - **Log levels:** `settings.LOGGING` sends DEBUG to WARNING to stdout and ERROR+ to stderr, because Railway labels every stderr line "error". `CELERY_WORKER_HIJACK_ROOT_LOGGER = False` keeps that setup in the worker.
+  - **No emails in logs:** `recovery_hub/logging_utils.RedactingFormatter` masks every address in every line, tracebacks included (r***@gmail.com). Task log lines name `user <pk>` instead, and push logs no longer print title or body. Log user IDs, never emails, names or message text.
+  - Files: `apps/blog/models.py`, `forms.py`, `recovery_hub/settings.py`, `recovery_hub/logging_utils.py`, `apps/accounts/tasks.py`, `push_notifications.py`, `email_service.py`, `apps/accounts/tests_logging.py`.
 - **2026-11-24:** Site-wide redesign ("Milestones" look).
   - **Homepage:** rebuilt around a wheel of twelve real medallions. Enter a sober date and it turns to the next one you earn; click another to see its date. Under it: milestone emails without an account (the calculators' `counter_email_signup` endpoint), the savings line ("At $15 a day, you've kept $585 so far", Premium price read from the plan row), three time-of-day cards, the 24 designs, the toolkit list, a gift band and the plans. Wheel stops are `HOME_WHEEL` in `apps/core/views.py` and match `counter_emails.MILESTONE_DAYS`; past a year the year medallions relabel from the visitor's date.
   - **Tokens (`static/css/main.css`):** the primary action is brand blue on a pill (`--cta-bg`, `--cta-bg-hover`, `--radius-btn: 999px`); green is kept for success and progress. Text is ink (`--text-dark: #0e1322`), headings default to it, cards use 20/28px corners, pages are flat (`--grain: none`) and the footer is dark (`--footer-bg`).

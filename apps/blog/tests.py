@@ -211,10 +211,28 @@ class PostFormNewTagsTests(TestCase):
         form.instance.author = self.author
         return form
 
-    def test_a_tag_over_50_characters_is_a_form_error_not_a_crash(self):
-        form = self._form('recovery, ' + 'a sentence typed into the tag box by mistake ' * 2)
+    def test_a_tag_over_100_characters_is_a_form_error_not_a_crash(self):
+        form = self._form('recovery, ' + 'a sentence typed into the tag box by mistake ' * 3)
         self.assertFalse(form.is_valid())
-        self.assertIn('50 characters', form.errors['new_tags'][0])
+        self.assertIn('100 characters', form.errors['new_tags'][0])
+
+    def test_a_60_character_tag_now_saves(self):
+        name = 'a' * 60
+        form = self._form(name)
+        self.assertTrue(form.is_valid(), form.errors)
+        post = form.save()
+        self.assertEqual([t.name for t in post.tags.all()], [name])
+
+    def test_a_tag_whose_slug_grows_past_the_limit_is_truncated(self):
+        # NFKD turns each '\u3390' (Hz) into two letters, so a 100-char
+        # name slugifies to 200 characters.
+        from apps.blog.models import Tag
+        form = self._form('\u3390' * 100)
+        self.assertTrue(form.is_valid(), form.errors)
+        post = form.save()
+        tag = post.tags.get()
+        self.assertLessEqual(len(tag.slug), Tag._meta.get_field('slug').max_length)
+        self.assertEqual(Tag(name='\u3390' * 100).build_slug(), tag.slug)
 
     def test_a_tag_that_slugifies_like_an_existing_one_reuses_it(self):
         from apps.blog.models import Tag
@@ -240,10 +258,10 @@ class PostFormNewTagsTests(TestCase):
         with override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False):
             resp = self.client.post(reverse('blog:post_create'), {
                 'title': 'A post', 'content': 'hi', 'status': 'draft',
-                'category': self.category.pk, 'new_tags': 'x' * 51,
+                'category': self.category.pk, 'new_tags': 'x' * 101,
             })
         self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, 'Each tag can be up to 50 characters')
+        self.assertContains(resp, 'Each tag can be up to 100 characters')
         self.assertFalse(Post.objects.filter(title='A post').exists())
 
     def test_typed_in_tags_stay_on_the_saved_post(self):

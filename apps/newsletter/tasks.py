@@ -67,7 +67,7 @@ def send_newsletter_task(newsletter_id):
                 )
 
                 if not success:
-                    logger.warning(f"Failed to send newsletter to {subscriber.email}: {error}")
+                    logger.warning(f"Failed to send newsletter to subscriber {subscriber.pk}: {error}")
                     continue
 
                 # Small delay between emails to avoid rate limiting
@@ -81,7 +81,7 @@ def send_newsletter_task(newsletter_id):
                 sent_count += 1
                 
             except Exception as e:
-                logger.error(f"Error sending to {subscriber.email}: {str(e)}")
+                logger.error(f"Error sending to subscriber {subscriber.pk}: {str(e)}")
                 continue
         
         # Update newsletter status

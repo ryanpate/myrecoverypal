@@ -26,15 +26,21 @@ class Category(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=50)
-    slug = models.SlugField(unique=True)
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
 
+    def build_slug(self):
+        """slugify() can make a slug longer than the name (NFKD expands
+        some characters), so cut it to the column and drop a trailing dash."""
+        limit = self._meta.get_field('slug').max_length
+        return slugify(self.name)[:limit].rstrip('-')
+
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = self.build_slug()
         super().save(*args, **kwargs)
 
 

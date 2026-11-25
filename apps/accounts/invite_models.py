@@ -3,6 +3,8 @@ from django.db import models
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
+
+from recovery_hub.logging_utils import mask_emails
 import secrets
 import string
 
@@ -281,7 +283,7 @@ class InviteCode(models.Model):
             )
 
             if response.status_code in [200, 201]:
-                logger.info(f"✅ Resend API: Email sent to {self.email}")
+                logger.info(f"✅ Resend API: Email sent to {mask_emails(self.email)}")
                 return True
             else:
                 logger.error(
@@ -305,12 +307,12 @@ class InviteCode(models.Model):
                 email.attach_alternative(html_message, "text/html")
                 email.send(fail_silently=False)
 
-                logger.info(f"✅ SMTP: Email sent to {self.email}")
+                logger.info(f"✅ SMTP: Email sent to {mask_emails(self.email)}")
                 return True
 
             except Exception as smtp_error:
                 logger.error(
-                    f"❌ Both Resend API and SMTP failed for {self.email}: {smtp_error}")
+                    f"❌ Both Resend API and SMTP failed for {mask_emails(self.email)}: {smtp_error}")
                 return False
 
 class SystemSettings(models.Model):

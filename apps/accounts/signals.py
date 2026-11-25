@@ -74,7 +74,7 @@ def _send_welcome_email_directly(user):
     from .email_sequences import marketing_unsubscribe_url
 
     if not user.email_notifications:
-        logger.info(f"Skipping welcome email for {user.email} - notifications disabled")
+        logger.info(f"Skipping welcome email for user {user.pk} - notifications disabled")
         return
 
     site_url = getattr(settings, 'SITE_URL', 'https://myrecoverypal.com')
@@ -97,9 +97,9 @@ def _send_welcome_email_directly(user):
     if success:
         user.welcome_email_1_sent = timezone.now()
         user.save(update_fields=['welcome_email_1_sent'])
-        logger.info(f"Welcome email sent directly to {user.email}")
+        logger.info(f"Welcome email sent directly to user {user.pk}")
     else:
-        raise Exception(f"Email service failed for {user.email}: {error}")
+        raise Exception(f"Email service failed for user {user.pk}: {error}")
 
 
 @receiver(post_save, sender=Milestone)

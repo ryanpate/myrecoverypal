@@ -21,6 +21,8 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from datetime import timedelta, datetime
 from django.conf import settings
+
+from recovery_hub.logging_utils import mask_emails
 import cloudinary.uploader
 from django.core.serializers import serialize
 import json
@@ -526,7 +528,7 @@ def send_invite_email_view(request):
         )
 
         if response.status_code in [200, 201]:
-            logger.info(f"Invite email sent from {user.username} to {recipient_email}")
+            logger.info(f"Invite email sent from user {user.pk} to {mask_emails(recipient_email)}")
             return JsonResponse({
                 'success': True,
                 'message': f'Invitation sent to {recipient_email}!'
@@ -612,7 +614,7 @@ def admin_approve_waitlist(request, request_id):
         # Try to send email synchronously with error handling
         try:
             logger.info(
-                f"Attempting to send invite email to {waitlist_request.email}")
+                f"Attempting to send invite email to {mask_emails(waitlist_request.email)}")
             success = invite_code.send_invite_email()
 
             if success:
@@ -629,7 +631,7 @@ def admin_approve_waitlist(request, request_id):
 
         except Exception as e:
             logger.error(
-                f"Email sending failed for {waitlist_request.email}: {e}", exc_info=True)
+                f"Email sending failed for {mask_emails(waitlist_request.email)}: {e}", exc_info=True)
             messages.warning(
                 request,
                 f'⚠️ Approved! Invite code <strong>{invite_code.code}</strong> generated for {waitlist_request.email}. '

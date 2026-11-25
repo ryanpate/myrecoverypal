@@ -8,6 +8,8 @@ Falls back to Django's SMTP backend if the API call fails.
 """
 
 import logging
+
+from recovery_hub.logging_utils import mask_emails
 import os
 import time
 import requests
@@ -91,7 +93,7 @@ def send_email(
             )
 
             if response.status_code in [200, 201]:
-                logger.info(f"Email sent successfully to {recipient_email} via Resend API")
+                logger.info(f"Email sent successfully to {mask_emails(recipient_email)} via Resend API")
                 return (True, None)
 
             # Check for rate limiting
@@ -164,7 +166,7 @@ def _send_via_smtp(
                 html_message=html_message,
                 fail_silently=False,
             )
-            logger.info(f"Email sent successfully to {recipient_email} via SMTP")
+            logger.info(f"Email sent successfully to {mask_emails(recipient_email)} via SMTP")
             return (True, None)
 
         except Exception as e:
@@ -178,7 +180,7 @@ def _send_via_smtp(
                     time.sleep(wait_time)
                     continue
 
-            logger.error(f"SMTP send failed for {recipient_email}: {e}")
+            logger.error(f"SMTP send failed for {mask_emails(recipient_email)}: {e}")
             return (False, f"SMTP error: {last_error}")
 
     return (False, f"SMTP failed after {max_retries} retries: {last_error}")
@@ -217,7 +219,7 @@ def send_email_batch(
                 failed += 1
                 errors.append({'email': email_data.get('recipient_email'), 'error': error})
         except Exception as e:
-            logger.error(f"Error sending email to {email_data.get('recipient_email')}: {e}")
+            logger.error(f"Error sending email to {mask_emails(email_data.get('recipient_email') or '')}: {e}")
             failed += 1
             errors.append({'email': email_data.get('recipient_email'), 'error': str(e)})
 

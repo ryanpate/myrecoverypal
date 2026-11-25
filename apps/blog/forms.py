@@ -78,7 +78,7 @@ class PostForm(forms.ModelForm):
 
     def clean_new_tags(self):
         """Typed-in tags as a list of names. Tag.name and Tag.slug are both
-        50 characters, and a longer value used to reach the database and
+        100 characters, and a longer value used to reach the database and
         raise DataError (a sentence typed into the tag box does it)."""
         limit = Tag._meta.get_field('name').max_length
         names = []
@@ -121,7 +121,7 @@ class PostForm(forms.ModelForm):
             # "Recovery!" reuses an existing "recovery" instead of colliding.
             for tag_name in self.cleaned_data.get('new_tags') or []:
                 tag, created = Tag.objects.get_or_create(
-                    slug=slugify(tag_name), defaults={'name': tag_name})
+                    slug=Tag(name=tag_name).build_slug(), defaults={'name': tag_name})
                 instance.tags.add(tag)
 
         return instance

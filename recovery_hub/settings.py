@@ -998,6 +998,10 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 # Celery worker memory optimization (Railway cost reduction)
+# Keep settings.LOGGING (stdout/stderr split, email masking) in the worker
+# instead of Celery's own root handler, which writes everything to stderr.
+CELERY_WORKER_HIJACK_ROOT_LOGGER = False
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True  # Celery 5.3 default; silences its warning
 CELERY_WORKER_MAX_TASKS_PER_CHILD = 50  # Restart worker after 50 tasks to reclaim memory
 CELERY_WORKER_MAX_MEMORY_PER_CHILD = 200_000  # Kill child if it exceeds 200MB (kB)
 CELERY_WORKER_CONCURRENCY = 1  # Only 1 worker process needed for this workload
@@ -1082,53 +1086,49 @@ REST_FRAMEWORK = {
 # Logging Configuration
 # ========================================
 
+# Routine records go to stdout and ERROR+ to stderr: Railway labels every
+# stderr line "error", which made the celery-worker log look all red.
+# RedactingFormatter masks email addresses (r***@gmail.com) in every line.
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'below_error': {'()': 'recovery_hub.logging_utils.BelowErrorFilter'},
+    },
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
+            '()': 'recovery_hub.logging_utils.RedactingFormatter',
+            'format': '{levelname} {asctime} {name} {message}',
             'style': '{',
         },
     },
     'handlers': {
-        'console': {
+        'stdout': {
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose',  # Changed to verbose for better debugging
+            'stream': 'ext://sys.stdout',
+            'formatter': 'verbose',
+            'filters': ['below_error'],
+        },
+        'stderr': {
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://sys.stderr',
+            'formatter': 'verbose',
+            'level': 'ERROR',
         },
         'file': {
             'class': 'logging.FileHandler',
             'filename': BASE_DIR / 'logs' / 'django.log',
             'formatter': 'verbose',
         },
-        'mail_handler': {  # NEW: Dedicated handler for email logs
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-            'level': 'DEBUG',
-        },
     },
     'root': {
-        'handlers': ['console'],
+        'handlers': ['stdout', 'stderr'],
         'level': 'INFO' if not DEBUG else 'DEBUG',
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'] if os.path.exists(BASE_DIR / 'logs') else ['console'],
+            'handlers': ['stdout', 'stderr', 'file'] if os.path.exists(BASE_DIR / 'logs') else ['stdout', 'stderr'],
             'level': 'INFO',
-            'propagate': False,
-        },
-        'django.core.mail': {  # NEW: Email-specific logger
-            'handlers': ['console', 'mail_handler'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        'apps.accounts': {  # NEW: Your accounts app logger
-            'handlers': ['console'],
-            'level': 'DEBUG',
             'propagate': False,
         },
     },
