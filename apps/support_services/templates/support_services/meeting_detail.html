@@ -21,7 +21,7 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="meeting-detail-card">
-                <h1 class="meeting-detail-name">{{ meeting.name }}</h1>
+                <h1 class="meeting-detail-name">{{ meeting.display_name }}</h1>
                 <div class="meeting-detail-time">
                     {% if meeting.day is not None %}{{ meeting.get_day_display }}{% endif %}
                     {% if meeting.time %}
@@ -206,7 +206,7 @@
                 </h3>
                 {% for nearby in nearby_meetings %}
                 <a href="{% url 'support_services:meeting_detail' nearby.slug %}" class="nearby-meeting">
-                    <strong>{{ nearby.name }}</strong><br>
+                    <strong>{{ nearby.display_name }}</strong><br>
                     <small class="text-muted">
                         {% if nearby.day is not None %}{{ nearby.get_day_display }}{% endif %}
                         {% if nearby.time %}{{ nearby.time|time:"g:i A" }}{% endif %}

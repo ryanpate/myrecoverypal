@@ -175,7 +175,7 @@ def meeting_list(request):
         'seo_description': (
             'Search thousands of free AA meetings and NA meetings by day, '
             'city, state or online. Times, addresses and Zoom links, updated '
-            'weekly from local AA intergroups and NA regions. No signup.'
+            'weekly. No signup.'
         ),
         'seo_keywords': (
             'aa meetings near me, aa meeting finder, aa meeting directory, '
