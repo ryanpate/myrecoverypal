@@ -1,0 +1,50 @@
+/* Styles for core/probation_proof_guide.html */
+.ppg { max-width: 960px; margin: 0 auto; padding: 3rem 1.25rem 4rem; line-height: 1.65; }
+.ppg h1 { color: var(--text-dark); font-size: 2.1rem; line-height: 1.25; margin: 0 0 0.75rem; max-width: 820px; }
+.ppg h2 { color: var(--text-dark); font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
+.ppg > p, .ppg > ul, .ppg-way { max-width: 820px; }
+.ppg-lead { font-size: 1.1rem; color: var(--text-dark, #444); }
+.ppg-way { border: 1px solid #dde4ee; border-radius: 12px; padding: 1.1rem 1.25rem; margin-bottom: 0.9rem; background: var(--card-bg, #fff); }
+.ppg-way h3 { margin: 0 0 0.35rem; font-size: 1.05rem; color: var(--text-dark, #1a2a44); }
+.ppg-way p { margin: 0; color: var(--text-dark, #444); }
+.ppg-note { font-size: 0.9rem; color: #5a6577; }
+
+.ppg-table-wrap { overflow-x: auto; border: 1px solid #dde4ee; border-radius: 12px; margin: 0.5rem 0 1rem; }
+.ppg-table-wrap:focus-visible { outline: 2px solid var(--cta-bg); outline-offset: 2px; }
+.ppg-table { border-collapse: collapse; width: 100%; min-width: 860px; font-size: 0.92rem; line-height: 1.45; background: var(--card-bg, #fff); }
+.ppg-table th, .ppg-table td { padding: 0.75rem 0.85rem; text-align: left; vertical-align: top; border-bottom: 1px solid #e6ebf2; }
+.ppg-table thead th { background: #f3f6fa; font-size: 0.95rem; color: var(--text-dark, #1a2a44); }
+.ppg-table tbody th { width: 150px; font-weight: 600; color: var(--text-dark, #1a2a44); position: sticky; left: 0; background: #f7f9fc; }
+.ppg-table tbody tr:last-child th, .ppg-table tbody tr:last-child td { border-bottom: 0; }
+.ppg-table .ppg-us { background: #eef8f2; }
+.ppg-table thead .ppg-us { background: #d8f0e2; }
+@media (max-width: 600px) {
+    .ppg-table { min-width: 720px; font-size: 0.88rem; }
+    .ppg-table tbody th { width: 96px; }
+    .ppg-table th, .ppg-table td { padding: 0.65rem 0.6rem; }
+}
+
+.ppg-fit li { margin-bottom: 0.6rem; }
+.ppg-cta { background: #0f2d56; color: #fff; border-radius: 16px; padding: 1.75rem; margin: 2.5rem 0; max-width: 820px; --heading-color: currentColor; }
+.ppg-cta h2 { color: #fff; margin-top: 0; }
+.ppg-cta a.btn-go { display: inline-block; background: var(--cta-bg); color: #fff; font-weight: 700; padding: 0.8rem 1.6rem; border-radius: var(--radius-btn, 10px); text-decoration: none; }
+.ppg-cta .small { font-size: 0.9rem; opacity: 0.85; margin: 0.75rem 0 0; }
+.ppg-cta .small a { color: #fff; }
+.ppg details { background: #f7f9fc; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 0.75rem; max-width: 820px; }
+.ppg summary { font-weight: 600; cursor: pointer; }
+.ppg-sources { font-size: 0.85rem; color: #5a6577; margin-top: 2rem; }
+
+[data-theme="dark"] .ppg h1, [data-theme="dark"] .ppg h2 { color: #8ab4f8; }
+[data-theme="dark"] .ppg-cta h2 { color: #fff; }
+[data-theme="dark"] .ppg-lead { color: #bbb; }
+[data-theme="dark"] .ppg-note, [data-theme="dark"] .ppg-sources { color: #9aa4b2; }
+[data-theme="dark"] .ppg-way { background: #1e2430; border-color: #2e3949; }
+[data-theme="dark"] .ppg-way h3 { color: #eee; }
+[data-theme="dark"] .ppg-way p { color: #ccc; }
+[data-theme="dark"] .ppg-table-wrap { border-color: #2e3949; }
+[data-theme="dark"] .ppg-table { background: #1a1f29; color: #ddd; }
+[data-theme="dark"] .ppg-table th, [data-theme="dark"] .ppg-table td { border-color: #2e3949; }
+[data-theme="dark"] .ppg-table thead th, [data-theme="dark"] .ppg-table tbody th { background: #232a36; color: #eee; }
+[data-theme="dark"] .ppg-table .ppg-us { background: #1d3328; }
+[data-theme="dark"] .ppg-table thead .ppg-us { background: #24402f; }
+[data-theme="dark"] .ppg details { background: #1e2430; }

@@ -61,3 +61,24 @@ class ProgramPartnerPageTests(TestCase):
         self.assertContains(self.client.get(reverse('core:court_ordered_meeting_tracker')),
                             reverse('core:for_recovery_programs'))
         self.assertIn('/for-sober-living-and-dui-programs/', self.client.get('/sitemap.xml').content.decode())
+
+
+@override_settings(PREPEND_WWW=False, SECURE_SSL_REDIRECT=False)
+class ProbationProofGuideTests(TestCase):
+
+    def test_page_renders_comparison_and_faq(self):
+        resp = self.client.get(reverse('core:probation_proof_guide'))
+        self.assertContains(resp, '"@type": "FAQPage"')
+        for name in ('12 Step Online', 'Cope Compass', 'My Meeting Card', 'MeetingMaker'):
+            self.assertContains(resp, name)
+        self.assertContains(resp, reverse('accounts:register') + '?next=' + reverse('accounts:court_attendance_create'))
+
+    def test_report_price_is_hidden_in_the_ios_app(self):
+        resp = self.client.get(reverse('core:probation_proof_guide'))
+        self.assertContains(resp, '<span class="stripe-only"> A report is $')
+
+    def test_page_is_linked_and_in_the_sitemap(self):
+        url = reverse('core:probation_proof_guide')
+        self.assertIn(url, self.client.get('/sitemap.xml').content.decode())
+        self.assertContains(self.client.get(reverse('core:court_ordered_meeting_tracker')), url)
+        self.assertContains(self.client.get(reverse('core:online_meeting_proof')), url)

@@ -7,6 +7,7 @@ MyRecoveryPal is free to join. Premium and Court Compliance are paid plans; curr
 ## Court-ordered meeting attendance
 
 - [Court-ordered meeting tracker](https://www.myrecoverypal.com/court-ordered-meeting-tracker/): Log court-ordered AA, NA, SMART, Refuge, LifeRing and secular meetings and generate a PDF attendance report with a SHA-256 fingerprint anyone can verify online. Reports can be emailed straight to a probation officer.
+- [How to prove meeting attendance to your probation officer](https://www.myrecoverypal.com/prove-meeting-attendance-to-probation-officer/): Paper court cards, host confirmations and court-attendance apps (MyRecoveryPal, 12 Step Online, Cope Compass, My Meeting Card, MeetingMaker) compared.
 - [Online meeting proof of attendance](https://www.myrecoverypal.com/online-meetings-proof-of-attendance/): How to document online AA/NA meetings for a court or probation officer.
 - [Printable attendance sheet](https://www.myrecoverypal.com/court-ordered-meeting-attendance-sheet/): Free printable court meeting attendance sheet.
 - [For probation officers](https://www.myrecoverypal.com/for-probation-officers/): What a MyRecoveryPal attendance report contains and how to verify one.
