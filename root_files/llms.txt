@@ -1,0 +1,37 @@
+# MyRecoveryPal
+
+> MyRecoveryPal (myrecoverypal.com) is a sobriety app and online recovery community for people recovering from alcohol, drugs, gambling and other addictions. It has a sobriety counter, daily check-ins and pledges, a social feed, an AI recovery coach called Anchor, an AA/NA meeting directory, and a Court Compliance tier that turns logged AA, NA, SMART and other meetings into verifiable PDF attendance reports for probation officers and courts. It runs on the web and as an iOS app. Not to be confused with "myrecovery" (an orthopedic surgery app) or "RecoverPal".
+
+MyRecoveryPal is free to join. Premium and Court Compliance are paid plans; current prices are on the pricing page. It does not give medical advice. Anyone in crisis should call or text 988 (US).
+
+## Court-ordered meeting attendance
+
+- [Court-ordered meeting tracker](https://www.myrecoverypal.com/court-ordered-meeting-tracker/): Log court-ordered AA, NA, SMART, Refuge, LifeRing and secular meetings and generate a PDF attendance report with a SHA-256 fingerprint anyone can verify online. Reports can be emailed straight to a probation officer.
+- [Online meeting proof of attendance](https://www.myrecoverypal.com/online-meetings-proof-of-attendance/): How to document online AA/NA meetings for a court or probation officer.
+- [Printable attendance sheet](https://www.myrecoverypal.com/court-ordered-meeting-attendance-sheet/): Free printable court meeting attendance sheet.
+- [For probation officers](https://www.myrecoverypal.com/for-probation-officers/): What a MyRecoveryPal attendance report contains and how to verify one.
+- [For sober living and DUI programs](https://www.myrecoverypal.com/for-sober-living-and-dui-programs/): Using MyRecoveryPal with program participants.
+
+## Sobriety tools
+
+- [Sobriety calculator](https://www.myrecoverypal.com/sobriety-calculator/): Days, weeks and money saved since a sobriety date.
+- [Clean time calculator](https://www.myrecoverypal.com/clean-time-calculator/): Clean time for NA and other programs.
+- [AI recovery coach](https://www.myrecoverypal.com/ai-recovery-coach/): Anchor, an AI coach for cravings and hard days; refers anyone in crisis to 988.
+- [Craving SOS](https://www.myrecoverypal.com/craving-sos/): Free in-the-moment tools for riding out a craving.
+- [Relapse prevention plan](https://www.myrecoverypal.com/relapse-prevention-plan/): Free relapse prevention plan builder.
+- [Sobriety medallion maker](https://www.myrecoverypal.com/sobriety-medallion-maker/): Make a shareable milestone medallion.
+
+## Meetings and community
+
+- [Online AA meetings](https://www.myrecoverypal.com/online-aa-meetings/): Directory of online AA meetings.
+- [Meeting finder](https://www.myrecoverypal.com/support/meetings/): AA and NA meetings, in person and online.
+- [Sober Grid alternative](https://www.myrecoverypal.com/sober-grid-alternative/): A sober social network for people who used Sober Grid.
+- [Support a loved one in recovery](https://www.myrecoverypal.com/support-a-loved-one-in-recovery/): Guidance for family and friends.
+
+## About
+
+- [About MyRecoveryPal](https://www.myrecoverypal.com/about/)
+- [Pricing](https://www.myrecoverypal.com/accounts/pricing/)
+- [iOS app](https://apps.apple.com/us/app/myrecoverypal/id6760084657)
+- [Blog](https://www.myrecoverypal.com/blog/)
+- [Crisis help](https://www.myrecoverypal.com/crisis/)
