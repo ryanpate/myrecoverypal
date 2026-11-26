@@ -389,6 +389,18 @@ def _attendance_sheet_pdf_bytes():
     return buf.getvalue()
 
 
+class ProbationProofGuideView(TemplateView):
+    """SEO/AI-answer page for "how to prove AA attendance to probation officer":
+    the attendee's options, and a sourced comparison of court-proof apps."""
+    template_name = 'core/probation_proof_guide.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from apps.accounts.court_purchase import SINGLE_REPORT_PRICE_CENTS
+        context['single_report_price'] = SINGLE_REPORT_PRICE_CENTS / 100
+        return context
+
+
 class OnlineMeetingProofView(TemplateView):
     """SEO landing page for "proof of attendance online AA meetings": court-ordered
     members attending on Zoom have no chair to sign a paper card."""

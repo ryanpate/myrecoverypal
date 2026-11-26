@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}How to Prove AA/NA Meeting Attendance to Your Probation Officer{% endblock %}
+{% block meta_description %}Your options for proving court-ordered AA, NA or SMART meeting attendance to a probation officer: paper court cards, host confirmations, and apps compared side by side.{% endblock %}
+{% block og_title %}How to Prove AA/NA Meeting Attendance to Your Probation Officer{% endblock %}
+{% block og_description %}Paper court cards, host confirmations, and court-attendance apps compared side by side.{% endblock %}
+{% block twitter_title %}How to Prove AA/NA Meeting Attendance to Your Probation Officer{% endblock %}
+{% block twitter_description %}Paper court cards, host confirmations, and court-attendance apps compared side by side.{% endblock %}
+
+{% block canonical_url %}https://www.myrecoverypal.com/prove-meeting-attendance-to-probation-officer/{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I prove AA meeting attendance to my probation officer?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Ask your probation officer what proof they accept first. The usual options are a paper court card signed by the meeting chair, a written confirmation from an online meeting's host, or an app that records each meeting and produces a report. Whatever you use, the record should list each meeting's name, date, time and place, and show who confirmed it."}
+    },
+    {
+      "@type": "Question",
+      "name": "Will my probation officer accept an app instead of a signed court card?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Many probation officers accept digital records, but not all, and some courts issue their own form that must be signed. Show your officer a sample report before you rely on any app, and keep a paper card as backup if they are unsure."}
+    },
+    {
+      "@type": "Question",
+      "name": "What is the best app for court-ordered meeting attendance?",
+      "acceptedAnswer": {"@type": "Answer", "text": "It depends on what your court asks for. My Meeting Card uses GPS check-in, 12 Step Online verifies its own online meetings against chat logs, Cope Compass focuses on gambling recovery, MeetingMaker records check-in and check-out times, and MyRecoveryPal logs in-person and online meetings of any program for free, gets each one confirmed by the chair, and produces a PDF report with a fingerprint the officer can verify online."}
+    },
+    {
+      "@type": "Question",
+      "name": "Can my probation officer tell if an attendance report was altered?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Only if the report is built for it. A MyRecoveryPal report carries a SHA-256 fingerprint the officer can check at myrecoverypal.com/verify/court/; any edit to the PDF changes the fingerprint. Cope Compass signs its records, and 12 Step Online will confirm a document on request from a legal official. A plain screenshot or spreadsheet offers no such check."}
+    },
+    {
+      "@type": "Question",
+      "name": "Does an AA group have to sign my court card?",
+      "acceptedAnswer": {"@type": "Answer", "text": "No. Each AA group decides for itself whether to sign court slips. Ask the chair or secretary before the meeting starts. If a group won't sign, an app confirmation from the chair, or a different meeting, are the usual alternatives."}
+    },
+    {
+      "@type": "Question",
+      "name": "Do online meetings count for court-ordered attendance?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Many courts accept online meetings, but some require in-person attendance or cap how many can be online. Check your court order or ask your probation officer."}
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/core__probation_proof_guide.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="ppg">
+    <h1>How to Prove Meeting Attendance to Your Probation Officer</h1>
+    <p class="ppg-lead">
+        If your sentence or probation includes AA, NA or other recovery meetings, your probation officer will want
+        proof. Here are your options, what each one gives your officer, and how the apps built for this compare.
+    </p>
+
+    <h2>Start with one question to your officer</h2>
+    <p>Courts and probation offices differ, so ask your officer before you pick a method:</p>
+    <ul>
+        <li>Do you accept a digital report, or only a signed paper card or your own form?</li>
+        <li>Do online meetings count, and is there a limit on how many?</li>
+        <li>Which programs count: AA and NA only, or also SMART Recovery and other secular meetings?</li>
+        <li>How often do you want proof, and how should I send it?</li>
+    </ul>
+
+    <h2>What a record your officer trusts looks like</h2>
+    <p>
+        Whatever method you use, a good record lists every meeting with its <strong>name, date, time and place</strong>,
+        shows a <strong>running total</strong> against your requirement (for example, 3 a week), and gives your officer
+        <strong>a reason to believe it</strong>: a signature, a confirmation from the meeting&rsquo;s chair or host,
+        or a way to check the document hasn&rsquo;t been edited.
+    </p>
+
+    <h2>Your options</h2>
+    <div class="ppg-way">
+        <h3>A paper court card signed by the chair</h3>
+        <p>The traditional method. Bring your court&rsquo;s card or a <a href="{% url 'core:court_attendance_sheet' %}">printable attendance sheet</a> and ask the chair or secretary to sign it before the meeting starts. Each AA group decides whether to sign. Cards are free, but they get lost and signatures are hard for an officer to check.</p>
+    </div>
+    <div class="ppg-way">
+        <h3>A confirmation from an online meeting&rsquo;s host</h3>
+        <p>For Zoom meetings, message the host or secretary in the chat after the meeting and ask them to confirm your attendance. Some groups email confirmations. <a href="{% url 'core:online_meeting_proof' %}">More on proof for online meetings</a>.</p>
+    </div>
+    <div class="ppg-way">
+        <h3>An app that records each meeting</h3>
+        <p>Several apps are built for court-ordered attendance. They differ in how they confirm you were there, what your officer receives, and what they cost. The table below compares them.</p>
+    </div>
+
+    <h2>Court-attendance apps compared</h2>
+    <p class="ppg-note">From each company&rsquo;s own website and App Store listing, checked November 2026. Prices and features change, so check the current listing before you pay.</p>
+    <div class="ppg-table-wrap" tabindex="0" role="region" aria-label="Comparison of court-attendance apps">
+        <table class="ppg-table">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col" class="ppg-us">MyRecoveryPal</th>
+                    <th scope="col">12 Step Online</th>
+                    <th scope="col">Cope Compass</th>
+                    <th scope="col">My Meeting Card</th>
+                    <th scope="col">MeetingMaker</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Meetings covered</th>
+                    <td class="ppg-us">In-person and online</td>
+                    <td>Its own online meetings</td>
+                    <td>Online video meetings; in-person meetings with a chair</td>
+                    <td>In-person and Zoom</td>
+                    <td>In-person, virtual and hybrid</td>
+                </tr>
+                <tr>
+                    <th scope="row">How attendance is confirmed</th>
+                    <td class="ppg-us">The chair scans a one-time QR code on their own phone, or an online host opens a confirmation link. Unconfirmed meetings are marked self-reported.</td>
+                    <td>Checked against the meeting&rsquo;s chat logs, after an ID check</td>
+                    <td>Presence checked during online meetings; a rotating QR code shown by the chair in person</td>
+                    <td>Live check-in with GPS location; staff verify the meeting</td>
+                    <td>You check in on arrival and check out when you leave</td>
+                </tr>
+                <tr>
+                    <th scope="row">What your officer gets</th>
+                    <td class="ppg-us">A PDF report emailed in one tap, or sent automatically each month</td>
+                    <td>A PDF by email</td>
+                    <td>A secure link or a PDF</td>
+                    <td>A proof of verification sent to them</td>
+                    <td>Attendance reports sent automatically to contacts you add</td>
+                </tr>
+                <tr>
+                    <th scope="row">Can the officer check it wasn&rsquo;t altered?</th>
+                    <td class="ppg-us">Yes: a SHA-256 fingerprint they can check at our public verify page, with no personal details shown</td>
+                    <td>On request: the company confirms a document for a legal official</td>
+                    <td>Yes: records are cryptographically signed</td>
+                    <td>Not stated</td>
+                    <td>Not stated</td>
+                </tr>
+                <tr>
+                    <th scope="row">Programs</th>
+                    <td class="ppg-us">AA, NA, CA, MA, GA, SMART, Refuge Recovery, LifeRing and other secular meetings</td>
+                    <td>AA, NA and Christian meetings on its site</td>
+                    <td>GA, SMART, Celebrate Recovery and other recovery meetings</td>
+                    <td>NA, AA, CA, SMART and other 12-step meetings</td>
+                    <td>AA, NA, SMART and others</td>
+                </tr>
+                <tr>
+                    <th scope="row">Price</th>
+                    <td class="ppg-us">Logging is free.<span class="stripe-only"> A report is ${{ single_report_price|floatformat:2 }}, one time.</span> Or a <a href="{% url 'accounts:pricing' %}">Court Compliance plan</a> for unlimited reports.</td>
+                    <td>$20 a month, or less for 2, 3 or 6 months</td>
+                    <td>Court verification is free for now</td>
+                    <td>$24.99 for a one-year license</td>
+                    <td>$6.99 a month or $61.99 a year</td>
+                </tr>
+                <tr>
+                    <th scope="row">Where it runs</th>
+                    <td class="ppg-us">Web browser on any phone or computer, and an iPhone app</td>
+                    <td>Web</td>
+                    <td>Web</td>
+                    <td>iPhone</td>
+                    <td>iPhone</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Which one fits your situation</h2>
+    <ul class="ppg-fit">
+        <li><strong>Your officer wants GPS proof you were at the meeting location:</strong> My Meeting Card is built around GPS check-in. MyRecoveryPal doesn&rsquo;t track your location; it relies on the chair confirming you instead.</li>
+        <li><strong>You only attend online and want the meeting provider to vouch for you:</strong> 12 Step Online verifies attendance at its own meetings against chat logs.</li>
+        <li><strong>Your requirement is Gamblers Anonymous or gambling recovery:</strong> Cope Compass is built for gambling recovery.</li>
+        <li><strong>You mix in-person and online meetings, use a non-12-step program, or want to log for free and pay only when your officer asks for a report:</strong> MyRecoveryPal.</li>
+        <li><strong>Your court issues its own form that must be signed in ink:</strong> use that form. Any app is a backup, not a replacement.</li>
+    </ul>
+
+    <div class="ppg-cta">
+        <h2>Log your meetings free</h2>
+        <p>Log each meeting in about 20 seconds, get it confirmed by the chair, and email your probation officer a PDF they can verify online.</p>
+        <a class="btn-go" id="ppgSignup" href="{% if user.is_authenticated %}{% url 'accounts:court_attendance_create' %}{% else %}{% url 'accounts:register' %}?next={% url 'accounts:court_attendance_create' %}{% endif %}">Start logging free &rarr;</a>
+        <p class="small"><a href="{% url 'core:court_ordered_meeting_tracker' %}">How the court tracker works</a> &middot; <a href="{% url 'core:for_probation_officers' %}">What your officer sees</a></p>
+    </div>
+
+    <h2>Frequently asked questions</h2>
+    <details>
+        <summary>How do I prove AA meeting attendance to my probation officer?</summary>
+        <p>Ask your probation officer what proof they accept first. The usual options are a paper court card signed by the meeting chair, a written confirmation from an online meeting&rsquo;s host, or an app that records each meeting and produces a report. Whatever you use, the record should list each meeting&rsquo;s name, date, time and place, and show who confirmed it.</p>
+    </details>
+    <details>
+        <summary>Will my probation officer accept an app instead of a signed court card?</summary>
+        <p>Many probation officers accept digital records, but not all, and some courts issue their own form that must be signed. Show your officer a sample report before you rely on any app, and keep a paper card as backup if they are unsure.</p>
+    </details>
+    <details>
+        <summary>What is the best app for court-ordered meeting attendance?</summary>
+        <p>It depends on what your court asks for. My Meeting Card uses GPS check-in, 12 Step Online verifies its own online meetings against chat logs, Cope Compass focuses on gambling recovery, MeetingMaker records check-in and check-out times, and MyRecoveryPal logs in-person and online meetings of any program for free, gets each one confirmed by the chair, and produces a PDF report with a fingerprint the officer can verify online.</p>
+    </details>
+    <details>
+        <summary>Can my probation officer tell if an attendance report was altered?</summary>
+        <p>Only if the report is built for it. A MyRecoveryPal report carries a SHA-256 fingerprint the officer can check at myrecoverypal.com/verify/court/; any edit to the PDF changes the fingerprint. Cope Compass signs its records, and 12 Step Online will confirm a document on request from a legal official. A plain screenshot or spreadsheet offers no such check.</p>
+    </details>
+    <details>
+        <summary>Does an AA group have to sign my court card?</summary>
+        <p>No. Each AA group decides for itself whether to sign court slips. Ask the chair or secretary before the meeting starts. If a group won&rsquo;t sign, an app confirmation from the chair, or a different meeting, are the usual alternatives.</p>
+    </details>
+    <details>
+        <summary>Do online meetings count for court-ordered attendance?</summary>
+        <p>Many courts accept online meetings, but some require in-person attendance or cap how many can be online. Check your court order or ask your probation officer.</p>
+    </details>
+
+    <p class="ppg-sources">
+        Sources:
+        <a href="https://www.12step-online.com/?p=10801" rel="nofollow noopener" target="_blank">12 Step Online</a>,
+        <a href="https://copecompass.com/court-verification/" rel="nofollow noopener" target="_blank">Cope Compass court verification</a> and <a href="https://copecompass.com/pricing/" rel="nofollow noopener" target="_blank">pricing</a>,
+        <a href="https://apps.apple.com/app/id6472879940" rel="nofollow noopener" target="_blank">My Meeting Card on the App Store</a>,
+        <a href="https://apps.apple.com/us/app/meetingmaker/id1569057287" rel="nofollow noopener" target="_blank">MeetingMaker on the App Store</a>,
+        <a href="https://www.aa.org/sites/default/files/literature/MG-5_0224.pdf" rel="noopener" target="_blank">A.A. guidelines on cooperating with the court system</a>.
+    </p>
+</div>
+<script nonce="{{ csp_nonce }}">
+(function () {
+    var el = document.getElementById('ppgSignup');
+    if (el) el.addEventListener('click', function () { if (window.gtag) gtag('event', 'court_signup_click', { page: 'probation_proof_guide' }); });
+})();
+</script>
+{% endblock %}
