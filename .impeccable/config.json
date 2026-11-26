@@ -11,6 +11,15 @@
         ],
         "createdAt": "2026-11-25T13:31:53.332Z",
         "reason": "Claude triage: the two caps paragraphs are the warranty disclaimer and liability limit, set in caps on purpose so they stand out, as US law (UCC 2-316) expects"
+      },
+      {
+        "rule": "border-accent-on-rounded",
+        "value": "*",
+        "files": [
+          "staticfiles/debug_toolbar/css/toolbar.134a3583f16b.css"
+        ],
+        "createdAt": "2026-11-26T14:14:58.025Z",
+        "reason": "Claude: third-party django-debug-toolbar CSS copied into gitignored staticfiles/ by collectstatic; not project design"
       }
     ]
   }
