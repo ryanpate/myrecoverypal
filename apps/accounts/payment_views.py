@@ -53,6 +53,7 @@ def pricing(request):
     court_yearly_plan = plans.filter(tier='court', billing_period='yearly').first()
     supporter_monthly_plan = plans.filter(tier='supporter', billing_period='monthly').first()
 
+    from .court_purchase import SINGLE_REPORT_PRICE_CENTS
     context = {
         'plans': plans,
         'user_subscription': user_subscription,
@@ -61,6 +62,7 @@ def pricing(request):
         'court_monthly_plan': court_monthly_plan,
         'court_yearly_plan': court_yearly_plan,
         'supporter_monthly_plan': supporter_monthly_plan,
+        'single_report_price': SINGLE_REPORT_PRICE_CENTS / 100,
         'card_trial_eligible': bool(user_subscription and user_subscription.card_trial_eligible()),
         'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
     }

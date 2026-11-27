@@ -50,6 +50,13 @@ class PricingPageTests(TestCase):
         self.assertIn('Start 7-day free trial', content)
         self.assertNotIn('14-day', content.lower())
 
+    def test_court_card_mentions_free_logging_and_the_single_report(self):
+        content = self.client.get(reverse('accounts:pricing')).content.decode()
+        self.assertIn('Logging meetings is free without a plan.', content)
+        # Has a price, so it must be hidden inside the iOS app.
+        self.assertIn('<span class="stripe-only"> Need just one report? It&rsquo;s $9.99, one time.</span>', content)
+        self.assertIn(reverse('core:court_ordered_meeting_tracker'), content)
+
     def test_single_premium_card_with_annual_default(self):
         response = self.client.get(reverse('accounts:pricing'))
         content = response.content.decode()

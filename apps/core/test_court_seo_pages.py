@@ -73,6 +73,13 @@ class ProbationProofGuideTests(TestCase):
             self.assertContains(resp, name)
         self.assertContains(resp, reverse('accounts:register') + '?next=' + reverse('accounts:court_attendance_create'))
 
+    def test_where_it_runs_row_lists_the_android_apps(self):
+        resp = self.client.get(reverse('core:probation_proof_guide'))
+        self.assertContains(resp, '<td>Web and Android</td>')        # Cope Compass
+        self.assertContains(resp, '<td>iPhone and Android</td>')     # MeetingMaker
+        self.assertContains(resp, 'play.google.com/store/apps/details?id=com.copecompass.app')
+        self.assertContains(resp, 'play.google.com/store/apps/details?id=com.girlcode.meetingmaker')
+
     def test_report_price_is_hidden_in_the_ios_app(self):
         resp = self.client.get(reverse('core:probation_proof_guide'))
         self.assertContains(resp, '<span class="stripe-only"> A report is $')
