@@ -203,7 +203,7 @@ SEO_DEFAULT_KEYWORDS = "recovery support, addiction recovery, sobriety tracker, 
 
 # Social Media
 TWITTER_HANDLE = "@myrecoverypal"
-FACEBOOK_PAGE = "https://www.facebook.com/myrecoverypal"
+FACEBOOK_PAGE = "https://www.facebook.com/getmyrecoverypal"
 INSTAGRAM_HANDLE = "@myrecoverypal"
 
 MIDDLEWARE = [
