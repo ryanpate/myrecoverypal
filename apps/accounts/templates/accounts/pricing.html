@@ -232,6 +232,7 @@
                         <li class="mb-2"><i class="fas fa-check text-success"></i> Unlimited reports + attendance logs</li>
                     </ul>
                     <p class="small text-muted mt-3 mb-0">Designed for DUI/DWI defendants, drug court participants, and anyone with court-ordered meeting attendance requirements. Supports both 12-step and secular recovery programs.</p>
+                    <p class="small mt-2 mb-0">Logging meetings is free without a plan.<span class="stripe-only"> Need just one report? It&rsquo;s ${{ single_report_price|floatformat:2 }}, one time.</span> <a href="{% url 'core:court_ordered_meeting_tracker' %}">How court reports work</a></p>
                 </div>
                 <div class="card-footer text-center bg-light">
                     {% if user.is_authenticated and user_subscription.is_court %}
