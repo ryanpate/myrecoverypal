@@ -4,6 +4,11 @@ Moved out of CLAUDE.md. Most recent first.
 
 ## Changelog
 
+- **2026-11-27:** Contrast fixes found while documenting the design system.
+  - **Tokens (`static/css/main.css`):** `--green-text` is `#2b7a55` and `--text-faint` is `#676e7c` in light mode (both were just under 4.5:1 on the page background). Dark-mode `--text-muted` is `#a9b0bb` (was 4.06:1 on `--bg-gray`).
+  - **Focus:** inputs focus with a navy border and ring in light mode (`--text-link`); the light blue was 2.25:1 on white. Dark mode is unchanged.
+  - **Today:** the Days Sober progress bar fill is white in both themes (it was darker than its track in dark mode), the streak badge text is ink instead of white, and the selected mood label uses `--green-text`.
+  - Files: `static/css/main.css`, `static/css/base-inline.css`, `static/css/pages/accounts__progress.css`.
 - **2026-11-24:** Blog tag limit and worker logging.
   - **Blog tags:** `Tag.name` and `Tag.slug` go from 50 to 100 characters (migration `blog/0006`). Longer typed-in tags are still a form error, and `Tag.build_slug()` trims a slug that `slugify()` makes longer than the name. Fixes Sentry PYTHON-DJANGO-62.
   - **Log levels:** `settings.LOGGING` sends DEBUG to WARNING to stdout and ERROR+ to stderr, because Railway labels every stderr line "error". `CELERY_WORKER_HIJACK_ROOT_LOGGER = False` keeps that setup in the worker.

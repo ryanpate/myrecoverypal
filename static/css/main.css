@@ -31,7 +31,7 @@
     /* The one emphasis panel: ink with a warm glow in the top corner. Text on it is white. */
     --panel-ink: radial-gradient(70% 130% at 88% -10%, rgba(255, 205, 130, 0.24), transparent 62%), #0e1322;
     /* Green and red as text: pass 4.5:1 on the page in both themes */
-    --green-text: #2e8059;
+    --green-text: #2b7a55;
     --danger-text: #b91c1c;
 
     /* Motion: one set of curves and durations for the whole site */
@@ -118,7 +118,8 @@
     /* ---- Text ---- */
     --text-strong: #0e1322;
     --text-body: #0e1322;
-    --text-faint: #6b7280;
+    /* 4.7:1 on the page background, 4.5:1 on --surface-sunken */
+    --text-faint: #676e7c;
     /* Links are navy in light mode: the light blue is 2.25:1 on white */
     --text-link: #1e4d8b;
     --text-link-hover: #0f2d56;
@@ -241,7 +242,8 @@
     /* Text Colors */
     --text-dark: #e4e4e7;
     --text-light: #111827;
-    --text-muted: #9ca3af;
+    /* 4.7:1 on --bg-gray, the darkest surface muted text sits on */
+    --text-muted: #a9b0bb;
 
     /* Background Colors */
     --bg-light: #1f2937;

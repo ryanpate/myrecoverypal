@@ -166,7 +166,8 @@
 }
 
 .milestone-progress-fill {
-    background: var(--card-bg, #fff);
+    /* White in both themes: the card behind it is always ink */
+    background: #fff;
     height: 100%;
     border-radius: 10px;
     transition: width 0.5s ease;
@@ -698,7 +699,7 @@
 .inline-mood-btn:hover { background: rgba(82, 183, 136, 0.08); }
 .inline-mood-btn.selected { border-color: #52b788; background: rgba(82, 183, 136, 0.10); }
 .inline-mood-btn.selected .mood-emoji { filter: none; }
-.inline-mood-btn.selected .mood-label { color: #45a675; }
+.inline-mood-btn.selected .mood-label { color: var(--green-text); }
 
 .inline-craving-row { display: flex; gap: 0.55rem; flex-wrap: wrap; align-items: center; margin-top: 1.25rem; }
 .inline-craving-label { flex-basis: 100%; font-size: 0.9rem; font-weight: 600; color: var(--text-dark, #2c3e50); margin: 0 0 0.55rem; }
@@ -817,7 +818,8 @@
     gap: 0.3rem;
     padding: 0.3rem 0.75rem;
     background: linear-gradient(135deg, #ffa502 0%, #ff6348 100%);
-    color: white;
+    /* Ink, not white: white is 2:1 on the yellow end */
+    color: #0e1322;
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;

@@ -3017,8 +3017,10 @@ ALERT MESSAGES - Fixed positioning
 input:focus,
 textarea:focus,
 select:focus {
-    border-color: var(--primary-light) !important;
-    box-shadow: 0 0 0 3px rgba(77, 184, 232, 0.1) !important;
+    /* Navy in light mode: the light blue is 2.25:1 on a white field.
+       Dark mode keeps its own rule in main.css. */
+    border-color: var(--text-link) !important;
+    box-shadow: 0 0 0 3px rgba(30, 77, 139, 0.2) !important;
     outline: none;
 }
 
